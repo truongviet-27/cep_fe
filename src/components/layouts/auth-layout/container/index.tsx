@@ -14,7 +14,7 @@ export default function AuthContainer({
   const breadcrumbItems = [{ title: 'システム設定' }]
 
   return (
-    <Content className="bg-gray-50">
+    <Content>
       <Breadcrumb items={breadcrumbItems} />
       <div className="px-6 pb-6">{children}</div>
     </Content>

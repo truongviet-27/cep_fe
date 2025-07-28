@@ -45,13 +45,13 @@ export default function SystemConfigList() {
       dataIndex: 'settingItem',
       key: 'settingItem',
       width: 200,
-      className: 'bg-gray-50',
+      // className: 'bg-gray-50',
     },
     {
       title: '初期設定',
       key: 'initialSetting',
       width: 200,
-      className: 'bg-gray-50',
+      // className: 'bg-gray-50',
       render: (_, record) => (
         <Radio.Group
           value={record.currentValue}
@@ -89,6 +89,14 @@ export default function SystemConfigList() {
         bordered
         size="middle"
         className="mb-6"
+        onRow={(record) => {
+          return {
+            className: 'cursor-pointer',
+            // onClick: () => {
+            //   console.log('Clicked on row:', record.key)
+            // },
+          }
+        }}
       />
       <ActionButtons
         onCancel={handleCancel}
