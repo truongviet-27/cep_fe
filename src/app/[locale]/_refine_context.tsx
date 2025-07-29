@@ -1,19 +1,20 @@
 'use client'
 
-import React from 'react'
-import { type AuthProvider, Refine } from '@refinedev/core'
-import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
-import { SessionProvider, signIn, signOut, useSession } from 'next-auth/react'
-import { usePathname } from 'next/navigation'
-import { useNotificationProvider } from '@refinedev/antd'
-
-import routerProvider from '@refinedev/nextjs-router'
-
-import { dataProvider } from '@providers/data-provider'
-import { AntdRegistry } from '@ant-design/nextjs-registry'
 import '@refinedev/antd/dist/reset.css'
-import { AppIcon } from '@components/app-icon'
+
+import { AntdRegistry } from '@ant-design/nextjs-registry'
+import { AppIcon } from '@components/common/app-icon'
+import { setUserLocale } from '@i18n'
+import { dataProvider } from '@providers/data-provider'
+import { useNotificationProvider } from '@refinedev/antd'
+import { type AuthProvider, type I18nProvider, Refine } from '@refinedev/core'
+import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
+import routerProvider from '@refinedev/nextjs-router'
 import { RESOURCE } from '@utility/constants'
+import { usePathname } from 'next/navigation'
+import { SessionProvider, signIn, signOut, useSession } from 'next-auth/react'
+import { useLocale, useTranslations } from 'next-intl'
+import React from 'react'
 
 type RefineContextProps = {
   defaultMode?: string
@@ -32,6 +33,17 @@ export const RefineContext = (
 const App = (props: React.PropsWithChildren) => {
   const { data, status } = useSession()
   const to = usePathname()
+
+  const t = useTranslations()
+
+  const i18nProvider: I18nProvider = {
+    translate: (
+      key: string,
+      options?: Record<string, string | number | Date> | undefined,
+    ) => t(key, options),
+    getLocale: useLocale,
+    changeLocale: setUserLocale,
+  }
 
   if (status === 'loading') {
     return <span>loading...</span>
@@ -101,6 +113,7 @@ const App = (props: React.PropsWithChildren) => {
     <RefineKbarProvider>
       <AntdRegistry>
         <Refine
+          i18nProvider={i18nProvider}
           routerProvider={routerProvider}
           dataProvider={dataProvider}
           notificationProvider={useNotificationProvider}

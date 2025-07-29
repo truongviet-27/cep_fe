@@ -1,0 +1,24 @@
+{
+  "login": {
+    "title": "Lets get you started",
+    "noAccount": "Don't have an account?",
+    "signUp": "sign up",
+    "signin": "Sign in",
+    "divider": "Or sign in with",
+    "google": "Sign in with Google",
+    "microsoft": "Sign in with Microsoft",
+    "language": "Language",
+    "form": {
+      "email": "Username/Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot Password?"
+    },
+    "errors": {
+      "emailRequired": "Please enter your email!",
+      "passwordRequired": "Please enter your password!"
+    }
+  }
+}

@@ -1,9 +1,8 @@
 'use client'
 
-import { Suspense } from 'react'
-
-import { NavigateToResource } from '@refinedev/nextjs-router'
 import { Authenticated } from '@refinedev/core'
+import { NavigateToResource } from '@refinedev/nextjs-router'
+import { Suspense } from 'react'
 
 export default function IndexPage() {
   return (

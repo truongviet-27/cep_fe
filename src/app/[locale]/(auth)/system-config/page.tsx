@@ -1,11 +1,11 @@
 'use client'
 
-import { message, Radio, Table, Tabs } from 'antd'
-import React, { useState } from 'react'
-import { SettingItem } from '@type/config'
-import { defaultSettingsData } from '@app/(auth)/system-config/fakeAPI'
-import { ColumnsType } from 'antd/es/table'
+import { defaultSettingsData } from '@app/[locale]/(auth)/system-config/fakeAPI'
 import ActionButtons from '@components/common/action-button'
+import type { SettingItem } from '@type/config'
+import { message, Radio, Table, Tabs } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
+import React, { useState } from 'react'
 
 export default function SystemConfigList() {
   const [settings, setSettings] = useState<SettingItem[]>(defaultSettingsData)
@@ -34,6 +34,7 @@ export default function SystemConfigList() {
       message.success('設定を保存しました')
     } catch (error) {
       message.error('保存に失敗しました')
+      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -89,7 +90,7 @@ export default function SystemConfigList() {
         bordered
         size="middle"
         className="mb-6"
-        onRow={(record) => {
+        onRow={() => {
           return {
             className: 'cursor-pointer',
             // onClick: () => {

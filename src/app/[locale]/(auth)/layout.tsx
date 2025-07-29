@@ -1,8 +1,9 @@
-import React from 'react'
-import { Layout } from 'antd'
-import AuthHeader from '@components/layouts/auth-layout/header'
-import AuthContainer from '@components/layouts/auth-layout/container'
 import './auth.css'
+
+import AuthContainer from '@components/layout/container'
+import AuthHeader from '@components/layout/header'
+import { Layout } from 'antd'
+import React from 'react'
 
 export default async function AuthLayout({
   children,

@@ -1,7 +1,7 @@
 'use client'
 
+import type { ActionButtonsProps } from '@type/config'
 import { Button } from 'antd'
-import { ActionButtonsProps } from '@type/config'
 
 export default function ActionButtons({
   onCancel,

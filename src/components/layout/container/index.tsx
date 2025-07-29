@@ -1,8 +1,9 @@
 'use client'
 
 import { Layout } from 'antd'
-import Breadcrumb from '../breadcrumbs'
 import React from 'react'
+
+import Breadcrumb from '../breadcrumbs'
 
 const { Content } = Layout
 

@@ -1,7 +1,7 @@
 'use client'
 
+import type { HeaderProps } from '@type/config'
 import { Layout, Menu } from 'antd'
-import { HeaderProps } from '@type/config'
 
 const { Header } = Layout
 
