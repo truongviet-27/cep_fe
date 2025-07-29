@@ -1,0 +1,24 @@
+{
+  "login": {
+    "title": "始めましょう",
+    "noAccount": "アカウントをお持ちではありません",
+    "signUp": "サインアップ",
+    "signin": "サインイン",
+    "divider": "または",
+    "google": "Sign in with Google",
+    "microsoft": "Sign in with Microsoft",
+    "language": "言語",
+    "form": {
+      "email": "ユーザー名/メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力してください",
+      "password": "パスワード",
+      "passwordPlaceholder": "パスワードを入力してください",
+      "rememberMe": "私を思い出して",
+      "forgotPassword": "パスワードを忘れましたか？"
+    },
+    "errors": {
+      "emailRequired": "メールアドレスを入力してください！",
+      "passwordRequired": "パスワードを入力してください！"
+    }
+  }
+}
