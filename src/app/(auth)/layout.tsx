@@ -2,15 +2,14 @@ import './auth.css'
 
 import AuthContainer from '@components/layout/container'
 import { Navbar } from '@components/layout/navbar'
-import { Layout } from 'antd'
+import { ThemedLayoutV2 } from '@refinedev/antd'
 
 export default function AuthLayout({
   children,
 }: Readonly<React.PropsWithChildren>) {
   return (
-    <Layout className="min-h-screen">
-      <Navbar />
+    <ThemedLayoutV2 Sider={Navbar}>
       <AuthContainer>{children}</AuthContainer>
-    </Layout>
+    </ThemedLayoutV2>
   )
 }
