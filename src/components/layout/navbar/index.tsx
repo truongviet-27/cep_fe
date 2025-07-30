@@ -12,13 +12,8 @@ export const Navbar: React.FC = () => {
 
   return (
     <Sider
-      render={({ items, logout }) => {
-        return (
-          <>
-            {items}
-            {logout}
-          </>
-        )
+      render={({ items }) => {
+        return <>{items}</>
       }}
     />
   )

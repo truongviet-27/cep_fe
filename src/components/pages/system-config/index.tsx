@@ -1,13 +1,16 @@
 'use client'
 
-import { defaultSettingsData } from '@app/(auth)/system-config/fakeAPI'
+import { defaultSettingsData } from '@app/(auth)/(layout-breadcrumb)/system-config/fakeAPI'
 import ActionButtons from '@components/common/action-button'
 import type { SettingItem } from '@type/config'
 import { message, Radio, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
 
-export default function Page() {
+export default function SystemConfigPage() {
+  const t = useTranslations('systemConfig')
+  const t_buttons = useTranslations('buttons')
   const [settings, setSettings] = useState<SettingItem[]>(defaultSettingsData)
   const [loading, setLoading] = useState(false)
 
@@ -24,16 +27,16 @@ export default function Page() {
 
   const handleCancel = () => {
     setSettings(defaultSettingsData)
-    message.info('変更をキャンセルしました')
+    message.info(t('cancelMessage'))
   }
 
   const handleSave = async () => {
     setLoading(true)
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      message.success('設定を保存しました')
+      message.success(t('saveSuccessMessage'))
     } catch (error) {
-      message.error('保存に失敗しました')
+      message.error(t('saveErrorMessage'))
       console.error(error)
     } finally {
       setLoading(false)
@@ -42,14 +45,14 @@ export default function Page() {
 
   const columns: ColumnsType<SettingItem> = [
     {
-      title: '設定項目',
+      title: t('settingItem'),
       dataIndex: 'settingItem',
       key: 'settingItem',
       width: 200,
       // className: 'bg-gray-50',
     },
     {
-      title: '初期設定',
+      title: t('initialSetting'),
       key: 'initialSetting',
       width: 200,
       // className: 'bg-gray-50',
@@ -61,18 +64,18 @@ export default function Page() {
           <div className="space-y-2">
             <Radio value="notManage" className="block">
               {record.settingItem.includes('マスタ')
-                ? '管理しない'
-                : '利用しない'}
+                ? t('notManage')
+                : t('notUse')}
             </Radio>
             <Radio value="manage" className="block text-blue-500">
-              {record.settingItem.includes('マスタ') ? '管理する' : '利用する'}
+              {record.settingItem.includes('マスタ') ? t('manage') : t('use')}
             </Radio>
           </div>
         </Radio.Group>
       ),
     },
     {
-      title: '変更目的',
+      title: t('purpose'),
       dataIndex: 'purpose',
       key: 'purpose',
       render: (text) => (
@@ -103,6 +106,8 @@ export default function Page() {
         onCancel={handleCancel}
         onSave={handleSave}
         loading={loading}
+        cancelText={t_buttons('cancel')}
+        saveText={t_buttons('saveSettings')}
       />
     </div>
   )
@@ -114,6 +119,8 @@ export default function Page() {
         onCancel={handleCancel}
         onSave={handleSave}
         loading={loading}
+        cancelText={t_buttons('cancel')}
+        saveText={t_buttons('saveSettings')}
       />
     </div>
   )
@@ -121,24 +128,24 @@ export default function Page() {
   const tabItems = [
     {
       key: '1',
-      label: '1. クイックスタート用設定',
+      label: t('quickStart'),
       children: renderSettingsTable(),
     },
     {
       key: '2',
-      label: '2. 高度設定（プロ用）',
-      children: renderPlaceholderContent('高度設定の内容'),
+      label: t('advanced'),
+      children: renderPlaceholderContent(t('advancedContent')),
     },
     {
       key: '3',
-      label: '3. エンタープライズ向け設定',
-      children: renderPlaceholderContent('エンタープライズ設定の内容'),
+      label: t('enterprise'),
+      children: renderPlaceholderContent(t('enterpriseContent')),
     },
   ]
 
   return (
     <div className="rounded-lg bg-white p-6 shadow-sm">
-      <h1 className="mb-6 text-xl font-medium">パラメータ設定</h1>
+      <h1 className="mb-6 text-xl font-medium">{t('pageTitle')}</h1>
       <Tabs
         defaultActiveKey="1"
         items={tabItems}

@@ -1,5 +1,6 @@
 'use client'
 
+import { PRIMARY } from '@utility/color'
 import { Typography } from 'antd'
 import React from 'react'
 
@@ -11,7 +12,7 @@ interface AppIconProps {
 
 export const AppIcon: React.FC<AppIconProps> = ({ level }) => {
   return (
-    <Title style={{ color: '#2D51C2', display: 'flex' }} level={level}>
+    <Title style={{ color: PRIMARY, display: 'flex' }} level={level}>
       eeRP
     </Title>
   )

@@ -21,6 +21,10 @@
       "passwordRequired": "Please enter your password!"
     }
   },
+  "buttons": {
+    "cancel": "Cancel",
+    "saveSettings": "Save Settings"
+  },
   "menu": {
     "dashboard": "Dashboard",
     "tenants": "Tenants",
@@ -31,5 +35,30 @@
     "audit": "Audit",
     "settings": "Settings",
     "logout": "Logout"
+  },
+  "breadcrumb": {
+    "estimates": "Estimates",
+    "orders": "Orders",
+    "delivery": "Delivery Notes",
+    "invoices": "Invoices",
+    "system": "System Settings"
+  },
+  "systemConfig": {
+    "pageTitle": "Parameter Settings",
+    "cancelMessage": "Changes cancelled",
+    "saveSuccessMessage": "Settings saved",
+    "saveErrorMessage": "Failed to save",
+    "settingItem": "Setting Item",
+    "initialSetting": "Initial Setting",
+    "notManage": "Don't manage",
+    "notUse": "Don't use",
+    "manage": "Manage",
+    "use": "Use",
+    "purpose": "Purpose of change",
+    "quickStart": "1. Quick Start Settings",
+    "advanced": "2. Advanced Settings (for Pro)",
+    "enterprise": "3. Enterprise Settings",
+    "advancedContent": "Content for advanced settings",
+    "enterpriseContent": "Content for enterprise settings"
   }
 }

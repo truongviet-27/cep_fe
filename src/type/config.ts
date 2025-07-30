@@ -21,5 +21,7 @@ export interface ParameterSettingsTableProps {
 export interface ActionButtonsProps {
   onCancel: () => void
   onSave: () => void
+  cancelText: string
+  saveText: string
   loading?: boolean
 }

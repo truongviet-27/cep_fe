@@ -21,6 +21,10 @@
       "passwordRequired": "パスワードを入力してください！"
     }
   },
+  "buttons": {
+    "cancel": "キャンセル",
+    "saveSettings": "設定を保存"
+  },
   "menu": {
     "dashboard": "ダッシュボード",
     "tenants": "テナント",
@@ -31,5 +35,30 @@
     "audit": "監査",
     "settings": "設定",
     "logout": "ログアウト"
+  },
+  "breadcrumb": {
+    "estimates": "見積書",
+    "orders": "注文書",
+    "delivery": "納品書",
+    "invoices": "請求書",
+    "system": "システム設定"
+  },
+  "systemConfig": {
+    "pageTitle": "パラメータ設定",
+    "cancelMessage": "変更をキャンセルしました",
+    "saveSuccessMessage": "設定を保存しました",
+    "saveErrorMessage": "保存に失敗しました",
+    "settingItem": "設定項目",
+    "initialSetting": "初期設定",
+    "notManage": "管理しない",
+    "notUse": "利用しない",
+    "manage": "管理する",
+    "use": "利用する",
+    "purpose": "変更目的",
+    "quickStart": "1. クイックスタート用設定",
+    "advanced": "2. 高度設定（プロ用）",
+    "enterprise": "3. エンタープライズ向け設定",
+    "advancedContent": "高度設定の内容",
+    "enterpriseContent": "エンタープライズ設定の内容"
   }
 }

@@ -1,3 +1,4 @@
+import { LAYOUT_BG } from '@utility/color'
 import { Layout } from 'antd'
 import React from 'react'
 
@@ -13,7 +14,7 @@ function Background({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: '#f0f2f5',
+        background: LAYOUT_BG,
       }}
     >
       {children}

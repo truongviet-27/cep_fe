@@ -1,22 +1,25 @@
-import '../auth.css'
+import './style.css'
 
 import { AppIcon } from '@components/common/app-icon'
 import AuthContainer from '@components/layout/container'
 import AuthHeader from '@components/layout/header'
 import { Layout, Menu } from 'antd'
+import { useTranslations } from 'next-intl'
 import React from 'react'
 
-export default async function AuthLayout({
+export default function AuthLayout({
   children,
 }: Readonly<React.PropsWithChildren>) {
+  const t = useTranslations('breadcrumb')
+
   const currentUser = '伊藤太郎',
     selectedMenuKey = 'system',
     menuItems = [
-      { key: 'estimates', label: '見積書' },
-      { key: 'orders', label: '注文書' },
-      { key: 'delivery', label: '納品書' },
-      { key: 'invoices', label: '請求書' },
-      { key: 'system', label: 'システム設定' },
+      { key: 'estimates', label: t('estimates') },
+      { key: 'orders', label: t('orders') },
+      { key: 'delivery', label: t('delivery') },
+      { key: 'invoices', label: t('invoices') },
+      { key: 'system', label: t('system') },
     ]
 
   return (
@@ -30,8 +33,8 @@ export default async function AuthLayout({
             items={menuItems}
             selectedKeys={[selectedMenuKey]}
           />
+          <div className="text-gray-700">{currentUser}</div>
         </div>
-        <div className="text-gray-700">{currentUser}</div>
       </AuthHeader>
       <AuthContainer>{children}</AuthContainer>
     </Layout>
