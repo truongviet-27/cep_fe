@@ -1,13 +1,13 @@
 'use client'
 
-import { defaultSettingsData } from '@app/[locale]/(auth)/system-config/fakeAPI'
+import { defaultSettingsData } from '@app/(auth)/system-config/fakeAPI'
 import ActionButtons from '@components/common/action-button'
 import type { SettingItem } from '@type/config'
 import { message, Radio, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useState } from 'react'
 
-export default function SystemConfigList() {
+export default function Page() {
   const [settings, setSettings] = useState<SettingItem[]>(defaultSettingsData)
   const [loading, setLoading] = useState(false)
 

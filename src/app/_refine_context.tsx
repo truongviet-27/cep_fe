@@ -3,14 +3,17 @@
 import '@refinedev/antd/dist/reset.css'
 
 import { AntdRegistry } from '@ant-design/nextjs-registry'
-import { AppIcon } from '@components/common/app-icon'
 import { setUserLocale } from '@i18n'
-import { dataProvider } from '@providers/data-provider'
 import { useNotificationProvider } from '@refinedev/antd'
-import { type AuthProvider, type I18nProvider, Refine } from '@refinedev/core'
+import {
+  type AuthProvider,
+  type I18nProvider,
+  Refine,
+  useTranslation,
+} from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import routerProvider from '@refinedev/nextjs-router'
-import { RESOURCE } from '@utility/constants'
+import { getResources } from '@utility/get-resources'
 import { usePathname } from 'next/navigation'
 import { SessionProvider, signIn, signOut, useSession } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
@@ -35,6 +38,10 @@ const App = (props: React.PropsWithChildren) => {
   const to = usePathname()
 
   const t = useTranslations()
+  const { getLocale } = useTranslation()
+  const currentLocale = getLocale() ?? 'ja'
+
+  const resources = getResources(t)
 
   const i18nProvider: I18nProvider = {
     translate: (
@@ -63,7 +70,7 @@ const App = (props: React.PropsWithChildren) => {
     logout: async () => {
       signOut({
         redirect: true,
-        callbackUrl: '/login',
+        callbackUrl: `/${currentLocale}/login`,
       })
 
       return {
@@ -85,7 +92,7 @@ const App = (props: React.PropsWithChildren) => {
       if (status === 'unauthenticated') {
         return {
           authenticated: false,
-          redirectTo: '/login',
+          redirectTo: `/${currentLocale}/login`,
         }
       }
 
@@ -115,15 +122,15 @@ const App = (props: React.PropsWithChildren) => {
         <Refine
           i18nProvider={i18nProvider}
           routerProvider={routerProvider}
-          dataProvider={dataProvider}
+          // dataProvider={dataProvider}
           notificationProvider={useNotificationProvider}
           authProvider={authProvider}
-          resources={RESOURCE}
+          resources={resources}
           options={{
             syncWithLocation: true,
             warnWhenUnsavedChanges: true,
             useNewQueryKeys: true,
-            title: { text: 'CEP', icon: <AppIcon /> },
+            title: { icon: null },
           }}
         >
           {props.children}

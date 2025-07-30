@@ -20,5 +20,16 @@
       "emailRequired": "Please enter your email!",
       "passwordRequired": "Please enter your password!"
     }
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "tenants": "Tenants",
+    "clients": "Clients",
+    "roles": "Roles",
+    "groups": "Groups",
+    "users": "Users",
+    "audit": "Audit",
+    "settings": "Settings",
+    "logout": "Logout"
   }
 }

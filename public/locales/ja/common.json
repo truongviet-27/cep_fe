@@ -20,5 +20,16 @@
       "emailRequired": "メールアドレスを入力してください！",
       "passwordRequired": "パスワードを入力してください！"
     }
+  },
+  "menu": {
+    "dashboard": "ダッシュボード",
+    "tenants": "テナント",
+    "clients": "クライアント",
+    "roles": "役割",
+    "groups": "グループ",
+    "users": "ユーザー",
+    "audit": "監査",
+    "settings": "設定",
+    "logout": "ログアウト"
   }
 }

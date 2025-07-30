@@ -27,8 +27,6 @@ function LoginPage() {
   const { getLocale } = useTranslation()
   const currentLocale = getLocale()
 
-  console.log(currentLocale, 'currentLocale')
-
   return (
     <Background>
       <Card
