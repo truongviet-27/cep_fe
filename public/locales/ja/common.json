@@ -37,10 +37,12 @@
     "logout": "ログアウト"
   },
   "breadcrumb": {
-    "estimates": "見積書",
-    "orders": "注文書",
-    "delivery": "納品書",
-    "invoices": "請求書",
+    "estimates": "見積",
+    "customers": "顧客",
+    "projects": "案件",
+    "products": "商品",
+    "departments": "部門",
+    "employees": "社員",
     "system": "システム設定"
   },
   "systemConfig": {
@@ -63,5 +65,27 @@
     "enterpriseContent": "エンタープライズ設定の内容",
     "employee": "社員",
     "manager": "マネージャー "
+  },
+  "projects": {
+    "list": {
+      "title": "案件一覧",
+      "buttons": {
+        "create": "登録",
+        "csvExport": "CSV一括登録"
+      },
+      "filters": {
+        "projectSearchPlaceholder": "案件コード・案件名で検索",
+        "customerSearchPlaceholder": "取引先で検索",
+        "search": "検索",
+        "clear": "クリア"
+      },
+      "columns": {
+        "projectCode": "案件コード",
+        "projectName": "案件名",
+        "customer": "取引先",
+        "registrant": "登録者",
+        "lastUpdated": "最終更新日"
+      }
+    }
   }
 }

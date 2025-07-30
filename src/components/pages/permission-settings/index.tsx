@@ -1,8 +1,9 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import { defaultSettingsData } from '@app/(auth)/(layout-breadcrumb)/(system-config)/permission-settings/fakeAPI'
+import { defaultSettingsData } from '@app/(auth)/(layout-breadcrumb)/(system-config)/permission-settings/mockData'
 import ActionButtons from '@components/common/action-button'
+import CommonCard from '@components/common/common-card'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { SettingItem } from '@type/config'
 import { PRIMARY } from '@utility/color'
@@ -86,7 +87,7 @@ export default function PermissionSettingsPage() {
     <div>
       <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
 
-      <div className="min-h-[82vh] rounded-lg bg-white p-6 shadow-sm">
+      <CommonCard>
         <h1 className="mb-6 text-xl font-medium">
           {t('systemConfig.permissionSettings')}
         </h1>
@@ -105,7 +106,7 @@ export default function PermissionSettingsPage() {
           cancelText={t('buttons.cancel')}
           saveText={t('buttons.saveSettings')}
         />
-      </div>
+      </CommonCard>
     </div>
   )
 }

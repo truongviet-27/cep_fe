@@ -38,9 +38,11 @@
   },
   "breadcrumb": {
     "estimates": "Estimates",
-    "orders": "Orders",
-    "delivery": "Delivery Notes",
-    "invoices": "Invoices",
+    "customers": "Customers",
+    "projects": "Projects",
+    "products": "Products",
+    "departments": "Departments",
+    "employees": "Employees",
     "system": "System Settings"
   },
   "systemConfig": {
@@ -63,5 +65,27 @@
     "enterpriseContent": "Content for enterprise settings",
     "employee": "Employee",
     "manager": "Manager"
+  },
+  "projects": {
+    "list": {
+      "title": "Project List",
+      "buttons": {
+        "create": "Register",
+        "csvExport": "CSV Bulk Upload"
+      },
+      "filters": {
+        "projectSearchPlaceholder": "Search by Project Code / Name",
+        "customerSearchPlaceholder": "Search by Customer",
+        "search": "Search",
+        "clear": "Clear"
+      },
+      "columns": {
+        "projectCode": "Project Code",
+        "projectName": "Project Name",
+        "customer": "Customer",
+        "registrant": "Registrant",
+        "lastUpdated": "Last Updated"
+      }
+    }
   }
 }
