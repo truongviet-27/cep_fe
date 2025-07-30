@@ -1,19 +1,15 @@
 'use client'
 
+import type { BreadcrumbProps } from 'antd'
 import { Breadcrumb } from 'antd'
-import type {
-  BreadcrumbItemType,
-  BreadcrumbSeparatorType,
-} from 'antd/es/breadcrumb/Breadcrumb'
+import React from 'react'
 
-interface BreadcrumbProps {
-  items: Partial<BreadcrumbItemType & BreadcrumbSeparatorType>[]
-}
-
-export default function Breadcrumbs({ items }: Readonly<BreadcrumbProps>) {
+const Breadcrumbs: React.FC<BreadcrumbProps> = (props) => {
   return (
-    <div className="px-6 py-4">
-      <Breadcrumb items={items} />
+    <div className="px-6 py-2 pl-10">
+      <Breadcrumb {...props} />
     </div>
   )
 }
+
+export default Breadcrumbs

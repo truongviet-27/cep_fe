@@ -1,6 +1,7 @@
 'use client'
 
-import { Sider } from '@refinedev/antd'
+import { AppIcon } from '@components/common/app-icon'
+import { ThemedSiderV2, ThemedTitleV2 } from '@refinedev/antd'
 import React from 'react'
 
 export const Navbar: React.FC = () => {
@@ -11,7 +12,10 @@ export const Navbar: React.FC = () => {
   // const { mutate: logout } = useLogout()
 
   return (
-    <Sider
+    <ThemedSiderV2
+      Title={({ collapsed }) => (
+        <ThemedTitleV2 collapsed={collapsed} text={<AppIcon level={2} />} />
+      )}
       render={({ items }) => {
         return <>{items}</>
       }}

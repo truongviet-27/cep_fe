@@ -15,20 +15,20 @@ export default function AuthHeader({
   const { query } = useKBar()
 
   return (
-    <div className={'flex justify-center'}>
+    <div className={cn(children && 'flex justify-center')}>
       <Header
         className={cn(
-          'flex w-full items-center border-b px-6 pb-6',
+          'flex w-full items-center border-b',
           'rounded-lg',
           'border',
           'shadow-sm',
-          'px-6 py-4',
-          children ? 'justify-center' : 'justify-end',
+          'px-6 py-4 pb-6',
+          children ? 'justify-between' : 'justify-end',
         )}
         style={{
           background: WHITE,
           borderColor: GRAY,
-          width: `calc(100% - 3rem)`,
+          width: children ? `calc(100% - 3rem)` : '100%',
         }}
       >
         {children}

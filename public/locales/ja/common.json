@@ -44,7 +44,8 @@
     "system": "システム設定"
   },
   "systemConfig": {
-    "pageTitle": "パラメータ設定",
+    "permissionSettings": "権限設定",
+    "numberingAssignmentSettings": "コード採番設定 ",
     "cancelMessage": "変更をキャンセルしました",
     "saveSuccessMessage": "設定を保存しました",
     "saveErrorMessage": "保存に失敗しました",
@@ -59,6 +60,8 @@
     "advanced": "2. 高度設定（プロ用）",
     "enterprise": "3. エンタープライズ向け設定",
     "advancedContent": "高度設定の内容",
-    "enterpriseContent": "エンタープライズ設定の内容"
+    "enterpriseContent": "エンタープライズ設定の内容",
+    "employee": "社員",
+    "manager": "マネージャー "
   }
 }

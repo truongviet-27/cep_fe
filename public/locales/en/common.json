@@ -44,7 +44,8 @@
     "system": "System Settings"
   },
   "systemConfig": {
-    "pageTitle": "Parameter Settings",
+    "permissionSettings": "Permission Settings",
+    "numberingAssignmentSettings": "Numbering Assignment Settings",
     "cancelMessage": "Changes cancelled",
     "saveSuccessMessage": "Settings saved",
     "saveErrorMessage": "Failed to save",
@@ -59,6 +60,8 @@
     "advanced": "2. Advanced Settings (for Pro)",
     "enterprise": "3. Enterprise Settings",
     "advancedContent": "Content for advanced settings",
-    "enterpriseContent": "Content for enterprise settings"
+    "enterpriseContent": "Content for enterprise settings",
+    "employee": "Employee",
+    "manager": "Manager"
   }
 }
