@@ -4,6 +4,7 @@ import '@refinedev/antd/dist/reset.css'
 
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { setUserLocale } from '@i18n'
+import { dataProvider } from '@providers/data-provider'
 import { useNotificationProvider } from '@refinedev/antd'
 import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
@@ -114,7 +115,7 @@ const App = (props: React.PropsWithChildren) => {
         <Refine
           i18nProvider={i18nProvider}
           routerProvider={routerProvider}
-          // dataProvider={dataProvider}
+          dataProvider={dataProvider}
           notificationProvider={useNotificationProvider}
           // authProvider={authProvider}
           resources={resources}

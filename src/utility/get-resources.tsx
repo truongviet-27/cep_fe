@@ -19,4 +19,8 @@ export const getResources = (t: any): ResourceProps[] => [
       icon: <TeamOutlined />,
     },
   },
+  {
+    name: 'projects',
+    list: '/projects',
+  },
 ]

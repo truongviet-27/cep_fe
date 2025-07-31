@@ -1,8 +1,8 @@
-import DashboardPage from '@components/pages/dashboard'
+'use client'
 import React from 'react'
 
 function Page() {
-  return <DashboardPage />
+  return <div></div>
 }
 
 export default Page
