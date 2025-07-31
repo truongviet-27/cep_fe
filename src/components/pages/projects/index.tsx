@@ -54,6 +54,8 @@ export const ProjectPage: React.FC = () => {
     <>
       <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       <CommonCard>
+        <h1 className="mb-6 text-xl font-medium">{t('title')}</h1>
+
         <Form {...searchFormProps} layout="inline">
           <Row gutter={[16, 16]} style={{ width: '100%' }}>
             <Col xs={12} sm={6} md={6}>

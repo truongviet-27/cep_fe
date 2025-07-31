@@ -23,7 +23,7 @@ interface IProject {
 }
 
 export const DepartmentPage: React.FC = () => {
-  const t = useTranslations('projects.list')
+  const t = useTranslations('departments.list')
   const t_breadcrumb = useTranslations('breadcrumb')
 
   const { tableProps, searchFormProps } = useTable<IProject>({
@@ -41,7 +41,7 @@ export const DepartmentPage: React.FC = () => {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t_breadcrumb('projects')}
+          {t_breadcrumb('departments')}
         </Title>
       ),
     },
@@ -54,12 +54,14 @@ export const DepartmentPage: React.FC = () => {
     <>
       <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       <CommonCard>
+        <h1 className="mb-6 text-xl font-medium">{t('title')}</h1>
+
         <Form {...searchFormProps} layout="inline">
           <Row gutter={[16, 16]} style={{ width: '100%' }}>
             <Col xs={12} sm={6} md={6}>
               <Form.Item name="q">
                 <Input
-                  placeholder={t('filters.projectSearchPlaceholder')}
+                  placeholder={t('filters.searchPlaceholder')}
                   prefix={<SearchOutlined />}
                 />
               </Form.Item>
@@ -85,27 +87,23 @@ export const DepartmentPage: React.FC = () => {
 
         <Table {...tableProps} rowKey="key">
           <Table.Column
-            title={t('columns.projectCode')}
-            dataIndex="projectCode"
+            title={t('columns.departmentCode')}
+            dataIndex="departmentCode"
             render={(value) => (
-              <Link href={`/projects/${value}`}>
+              <Link href={`/departments/${value}`}>
                 <Text style={{ color: '#1677ff' }}>{value}</Text>
               </Link>
             )}
           />
           <Table.Column
-            title={t('columns.projectName')}
-            dataIndex="projectName"
+            title={t('columns.departmentName')}
+            dataIndex="departmentName"
           />
-          <Table.Column title={t('columns.customer')} dataIndex="customer" />
           <Table.Column
             title={t('columns.registrant')}
             dataIndex="registrant"
           />
-          <Table.Column
-            title={t('columns.lastUpdated')}
-            dataIndex="lastUpdated"
-          />
+          <Table.Column title={t('columns.remarks')} dataIndex="remarks" />
         </Table>
       </CommonCard>
     </>

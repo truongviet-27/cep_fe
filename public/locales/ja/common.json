@@ -87,5 +87,24 @@
         "lastUpdated": "最終更新日"
       }
     }
+  },
+  "departments": {
+    "list": {
+      "title": "部門一覧",
+      "buttons": {
+        "create": "登録"
+      },
+      "filters": {
+        "searchPlaceholder": "部門コード・部門名で検索",
+        "clear": "クリア",
+        "search": "検索"
+      },
+      "columns": {
+        "departmentCode": "部門コード",
+        "departmentName": "部門名",
+        "registrant": "登録者",
+        "remarks": "備考"
+      }
+    }
   }
 }

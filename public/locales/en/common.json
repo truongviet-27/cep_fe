@@ -87,5 +87,24 @@
         "lastUpdated": "Last Updated"
       }
     }
+  },
+  "departments": {
+    "list": {
+      "title": "Department List",
+      "buttons": {
+        "create": "Register"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by Department Code / Name",
+        "clear": "Clear",
+        "search": "Search"
+      },
+      "columns": {
+        "departmentCode": "Department Code",
+        "departmentName": "Department Name",
+        "registrant": "Registrant",
+        "remarks": "Remarks"
+      }
+    }
   }
 }
