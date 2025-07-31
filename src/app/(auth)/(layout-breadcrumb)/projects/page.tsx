@@ -7,6 +7,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useTable } from '@refinedev/antd'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import React from 'react'
@@ -52,7 +53,7 @@ export default function Page() {
     <>
       <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       <CommonCard>
-        <h1 className="mb-6 text-xl font-medium">{t('title')}</h1>
+        <h1 className="text-xl font-medium">{t('title')}</h1>
 
         <Form {...searchFormProps} layout="inline">
           <Row gutter={[16, 16]} style={{ width: '100%' }}>
@@ -92,7 +93,12 @@ export default function Page() {
           </Row>
         </Form>
 
-        <CommonTable {...tableProps} dataSource={dataSource} rowKey="id">
+        <CommonTable
+          className={'mt-6'}
+          {...tableProps}
+          dataSource={dataSource}
+          rowKey="id"
+        >
           <Table.Column
             title={t('columns.projectCode')}
             dataIndex="projectCode"
@@ -107,13 +113,13 @@ export default function Page() {
             dataIndex="projectName"
           />
           <Table.Column title={t('columns.customer')} dataIndex="customer" />
-          <Table.Column
-            title={t('columns.registrant')}
-            dataIndex="registrant"
-          />
+          <Table.Column title={t('columns.registrant')} dataIndex="author" />
           <Table.Column
             title={t('columns.lastUpdated')}
-            dataIndex="lastUpdated"
+            dataIndex="updatedDate"
+            render={(value: string) =>
+              dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+            }
           />
         </CommonTable>
       </CommonCard>
