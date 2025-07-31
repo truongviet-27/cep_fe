@@ -23,7 +23,10 @@ function Menu() {
         label: <Link href={'/projects'}>{t('projects')}</Link>,
       },
       { key: 'products', label: t('products') },
-      { key: 'departments', label: t('departments') },
+      {
+        key: 'departments',
+        label: <Link href={'/departments'}>{t('departments')}</Link>,
+      },
       { key: 'employees', label: t('employees') },
       {
         key: 'system',
