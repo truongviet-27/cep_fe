@@ -1,4 +1,4 @@
-import type { SettingItem } from '@type/config'
+import type { SettingItem } from '@interfaces/config'
 
 export const defaultSettingsData: SettingItem[] = [
   {

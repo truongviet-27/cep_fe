@@ -22,5 +22,8 @@ export const getResources = (t: any): ResourceProps[] => [
   {
     name: 'projects',
     list: '/projects',
+    edit: '/projects/edit/:id',
+    create: '/projects/create',
+    show: '/projects/show/:id',
   },
 ]

@@ -23,7 +23,11 @@
   },
   "buttons": {
     "cancel": "Cancel",
-    "saveSettings": "Save Settings"
+    "saveSettings": "Save Settings",
+    "create": "Create",
+    "back": "Back",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -85,6 +89,46 @@
         "customer": "Customer",
         "registrant": "Registrant",
         "lastUpdated": "Last Updated"
+      }
+    },
+    "create": {
+      "title": "Create Project",
+      "notifications": {
+        "createSuccess": "Project created successfully!"
+      },
+      "fields": {
+        "projectCode": {
+          "label": "Project Code",
+          "required": "Please enter the project code!",
+          "extra": "Cannot be edited if automatic numbering is set."
+        },
+        "projectName": {
+          "label": "Project Name",
+          "required": "Please enter the project name!",
+          "placeholder": "Enter project name"
+        },
+        "customer": {
+          "label": "Customer",
+          "required": "Please select a customer!",
+          "placeholder": "Search by customer code or name"
+        },
+        "remarks": {
+          "label": "Remarks",
+          "placeholder": "Enter any special notes about the project"
+        }
+      }
+    },
+    "show": {
+      "title": "Project Details",
+      "fields": {
+        "projectCode": "Project Code",
+        "projectName": "Project Name",
+        "customer": "Customer",
+        "estimateNumber": "Estimate Number",
+        "remarks": "Remarks",
+        "registrant": "Registrant",
+        "registrationDate": "Registration Date",
+        "lastUpdated": "Last Updated Date"
       }
     }
   },

@@ -4,7 +4,9 @@ import { RightOutlined, SearchOutlined } from '@ant-design/icons'
 import CommonCard from '@components/common/common-card'
 import CommonTable from '@components/common/common-table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import type { IProject } from '@interfaces/products'
 import { useTable } from '@refinedev/antd'
+import { useGo } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -14,27 +16,17 @@ import React from 'react'
 
 const { Text, Title } = Typography
 
-interface IProject {
-  id: string
-  projectCode: string
-  projectName: string
-  customer: string
-  registrant: string
-  lastUpdated: string
-}
-
 export default function Page() {
   const t = useTranslations('projects.list')
   const t_breadcrumb = useTranslations('breadcrumb')
+
+  const go = useGo()
 
   const { tableProps, searchFormProps } = useTable<IProject>({
     syncWithLocation: true,
   })
 
-  // bug response must be a array when using useTable
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const dataSource = tableProps?.dataSource?.data
+  const dataSource = tableProps?.dataSource || []
 
   const breadcrumbItems = [
     {
@@ -86,7 +78,16 @@ export default function Page() {
 
             <Col xs={12} sm={12} md={9} style={{ textAlign: 'right' }}>
               <Space>
-                <Button>{t('buttons.create')}</Button>
+                <Button
+                  onClick={() =>
+                    go({
+                      to: '/projects/create',
+                      type: 'push',
+                    })
+                  }
+                >
+                  {t('buttons.create')}
+                </Button>
                 <Button type="primary">{t('buttons.csvExport')}</Button>
               </Space>
             </Col>
@@ -98,6 +99,16 @@ export default function Page() {
           {...tableProps}
           dataSource={dataSource}
           rowKey="id"
+          onRow={(record) => {
+            return {
+              onClick: () =>
+                go({
+                  to: `/projects/show/${record.id}`,
+                  type: 'push',
+                }),
+              style: { cursor: 'pointer' },
+            }
+          }}
         >
           <Table.Column
             title={t('columns.projectCode')}

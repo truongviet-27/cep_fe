@@ -5,7 +5,7 @@ import { defaultSettingsData } from '@app/(auth)/(layout-breadcrumb)/(system-con
 import ActionButtons from '@components/common/action-button'
 import CommonCard from '@components/common/common-card'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import type { SettingItem } from '@type/config'
+import type { SettingItem } from '@interfaces/config'
 import { PRIMARY } from '@utility/color'
 import { Checkbox, message, Table, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'

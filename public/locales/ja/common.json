@@ -23,7 +23,11 @@
   },
   "buttons": {
     "cancel": "キャンセル",
-    "saveSettings": "設定を保存"
+    "saveSettings": "設定を保存",
+    "create": "登録",
+    "back": "戻る",
+    "edit": "編集",
+    "delete": "削除"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -84,6 +88,46 @@
         "projectName": "案件名",
         "customer": "取引先",
         "registrant": "登録者",
+        "lastUpdated": "最終更新日"
+      }
+    },
+    "create": {
+      "title": "案件登録",
+      "notifications": {
+        "createSuccess": "案件を正常に登録しました！"
+      },
+      "fields": {
+        "projectCode": {
+          "label": "案件コード",
+          "required": "案件コードを入力してください！",
+          "extra": "自動採番設定の場合編集できない"
+        },
+        "projectName": {
+          "label": "案件名",
+          "required": "案件名を入力してください！",
+          "placeholder": "案件名を入力"
+        },
+        "customer": {
+          "label": "取引先",
+          "required": "取引先を選択してください！",
+          "placeholder": "取引先コード・取引先名で検索"
+        },
+        "remarks": {
+          "label": "備考",
+          "placeholder": "案件に関する特記事項があれば入力してください"
+        }
+      }
+    },
+    "show": {
+      "title": "詳細情報",
+      "fields": {
+        "projectCode": "案件コード",
+        "projectName": "案件名",
+        "customer": "取引先",
+        "estimateNumber": "見積番号",
+        "remarks": "備考",
+        "registrant": "登録者",
+        "registrationDate": "登録日",
         "lastUpdated": "最終更新日"
       }
     }

@@ -69,7 +69,7 @@ export default function Page() {
           </Row>
         </Form>
 
-        <CommonTable {...tableProps} rowKey="key">
+        <CommonTable className={'mt-6'} {...tableProps} rowKey="key">
           <Table.Column
             title={t('columns.departmentCode')}
             dataIndex="departmentCode"

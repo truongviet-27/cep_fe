@@ -10,7 +10,7 @@ export default function AuthLayout({
   children,
 }: Readonly<React.PropsWithChildren>) {
   return (
-    <Layout className="min-h-screen space-y-4">
+    <Layout className={`min-h-screen space-y-4`}>
       <AuthHeader>
         <Menu />
       </AuthHeader>

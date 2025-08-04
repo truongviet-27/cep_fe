@@ -1,6 +1,6 @@
 'use client'
 
-import type { ActionButtonsProps } from '@type/config'
+import type { ActionButtonsProps } from '@interfaces/config'
 import { Button } from 'antd'
 
 export default function ActionButtons({
