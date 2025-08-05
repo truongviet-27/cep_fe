@@ -3,6 +3,7 @@
 import '@refinedev/antd/dist/reset.css'
 
 import { AntdRegistry } from '@ant-design/nextjs-registry'
+import { PageLoading } from '@ant-design/pro-layout'
 import { setUserLocale } from '@i18n'
 import { dataProvider } from '@providers/data-provider'
 import { useNotificationProvider } from '@refinedev/antd'
@@ -46,7 +47,7 @@ const App = (props: React.PropsWithChildren) => {
   }
 
   if (status === 'loading') {
-    return <span>loading...</span>
+    return <PageLoading />
   }
 
   // const authProvider: AuthProvider = {

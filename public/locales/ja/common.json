@@ -115,7 +115,9 @@
         "remarks": {
           "label": "備考",
           "placeholder": "案件に関する特記事項があれば入力してください"
-        }
+        },
+        "updatedDate": "最終更新日",
+        "createdAt": "登録日"
       }
     },
     "show": {
@@ -129,6 +131,32 @@
         "registrant": "登録者",
         "registrationDate": "登録日",
         "lastUpdated": "最終更新日"
+      }
+    },
+    "csvUpload": {
+      "title": "CSV一括登録",
+      "steps": {
+        "selectFile": "ファイル選択",
+        "confirmData": "データ確認",
+        "validation": "バリデーション",
+        "complete": "登録完了"
+      },
+      "template": {
+        "title": "CSVテンプレート",
+        "description": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
+        "downloadLink": "CSVテンプレートをダウンロード"
+      },
+      "upload": {
+        "dragAndDropText": "CSVファイルをここにドラッグ&ドロップ",
+        "selectFileText": "または、下のボタンからファイルを選択してください"
+      },
+      "notes": {
+        "title": "CSV登録時の注意事項",
+        "point1": "CSVファイルの行項目はヘッダー行として扱われます",
+        "point2": "文字コードはUTF-8またはShift_JISで保存してください",
+        "point3": "同じ商品コードがある場合は上書きされます",
+        "point4": "一度に登録できる上限は1000件です",
+        "point5": "必須項目が空の行はスキップされます"
       }
     }
   },

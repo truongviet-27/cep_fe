@@ -1,8 +1,8 @@
 'use client'
 
 import { RightOutlined, SearchOutlined } from '@ant-design/icons'
-import CommonCard from '@components/common/common-card'
-import CommonTable from '@components/common/common-table'
+import CommonCard from '@components/common/card'
+import CommonTable from '@components/common/table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useTable } from '@refinedev/antd'
 import { PRIMARY } from '@utility/color'

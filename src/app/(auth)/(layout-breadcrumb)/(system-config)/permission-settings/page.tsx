@@ -3,7 +3,7 @@
 import { RightOutlined } from '@ant-design/icons'
 import { defaultSettingsData } from '@app/(auth)/(layout-breadcrumb)/(system-config)/permission-settings/mockData'
 import ActionButtons from '@components/common/action-button'
-import CommonCard from '@components/common/common-card'
+import CommonCard from '@components/common/card'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { SettingItem } from '@interfaces/config'
 import { PRIMARY } from '@utility/color'

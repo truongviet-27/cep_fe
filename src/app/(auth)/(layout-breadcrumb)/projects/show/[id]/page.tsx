@@ -1,33 +1,97 @@
 'use client'
-//
-// import { Stack, Typography } from '@mui/material'
-// import { useShow } from '@refinedev/core'
-// import { Show, TextFieldComponent as TextField } from '@refinedev/antd'
-//
-// export default function CategoryShow() {
-//   const { query } = useShow({})
-//   const { data, isLoading } = query
-//
-//   const record = data?.data
-//
-//   return (
-//     <Show isLoading={isLoading}>
-//       <Stack gap={1}>
-//         <Typography variant="body1" fontWeight="bold">
-//           {'ID'}
-//         </Typography>
-//         <TextField value={record?.id} />
-//         <Typography variant="body1" fontWeight="bold">
-//           {'Title'}
-//         </Typography>
-//         <TextField value={record?.title} />
-//       </Stack>
-//     </Show>
-//   )
-// }
 
-import { AntdInferencer } from '@refinedev/inferencer/antd'
+import { RightOutlined } from '@ant-design/icons'
+import { CommonShow } from '@components/common/show'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import { DateField, NumberField, TextField } from '@refinedev/antd'
+import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
+import { PRIMARY } from '@utility/color'
+import { Button, Space, Typography } from 'antd'
+import { useTranslations } from 'next-intl'
+import React from 'react'
 
-export default function Page() {
-  return <AntdInferencer />
+const { Title } = Typography
+
+const Page = () => {
+  const translate = useTranslate()
+  const { query } = useShow()
+  const { data, isLoading } = query
+
+  const record = data?.data
+
+  const { t, t_breadcrumb, t_buttons } = {
+    t: useTranslations('projects.create'),
+    t_breadcrumb: useTranslations('breadcrumb'),
+    t_buttons: useTranslations('buttons'),
+  }
+  const go = useGo()
+  const { id } = useParsed()
+
+  const breadcrumbItems = [
+    {
+      title: (
+        <Title level={5} style={{ color: PRIMARY }}>
+          {t_breadcrumb('projects')}
+        </Title>
+      ),
+    },
+    {
+      title: <Title level={5}>{t('title')}</Title>,
+    },
+  ]
+
+  return (
+    <CommonShow
+      title={
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+      isLoading={isLoading}
+      footerButtons={
+        <Space>
+          <Button
+            onClick={() =>
+              go({
+                to: '/projects',
+                type: 'push',
+              })
+            }
+          >
+            {t_buttons('back')}
+          </Button>
+          <Button
+            onClick={() =>
+              go({
+                to: `/projects/edit/${id}`,
+                type: 'push',
+              })
+            }
+            type="primary"
+          >
+            {t_buttons('edit')}
+          </Button>
+        </Space>
+      }
+    >
+      <Title level={5}>{translate('projects.fields.id')}</Title>
+      <NumberField value={record?.id ?? ''} />
+      <Title level={5}>{translate('projects.fields.projectCode')}</Title>
+      <TextField value={record?.projectCode} />
+      <Title level={5}>{translate('projects.fields.projectName')}</Title>
+      <TextField value={record?.projectName} />
+      <Title level={5}>{translate('projects.fields.customer')}</Title>
+      <TextField value={record?.customer} />
+      <Title level={5}>{translate('projects.fields.author')}</Title>
+      <TextField value={record?.author} />
+      <Title level={5}>{translate('projects.fields.updatedDate')}</Title>
+      <DateField value={record?.updatedDate} />
+      <Title level={5}>{translate('projects.fields.createdAt')}</Title>
+      <DateField value={record?.createdAt} />
+      <Title level={5}>{translate('projects.fields.status')}</Title>
+      <TextField value={record?.status} />
+      <Title level={5}>{translate('projects.fields.description')}</Title>
+      <TextField value={record?.description} />
+    </CommonShow>
+  )
 }
+
+export default Page
