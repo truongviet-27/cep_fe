@@ -3,8 +3,8 @@
 import { RightOutlined } from '@ant-design/icons'
 import { CommonShow } from '@components/common/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { DateField, NumberField, TextField } from '@refinedev/antd'
-import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
+import { DateField, TextField } from '@refinedev/antd'
+import { useGo, useParsed, useShow } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Button, Space, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
@@ -13,7 +13,6 @@ import React from 'react'
 const { Title } = Typography
 
 const Page = () => {
-  const translate = useTranslate()
   const { query } = useShow()
   const { data, isLoading } = query
 
@@ -72,23 +71,21 @@ const Page = () => {
         </Space>
       }
     >
-      <Title level={5}>{translate('projects.fields.id')}</Title>
-      <NumberField value={record?.id ?? ''} />
-      <Title level={5}>{translate('projects.fields.projectCode')}</Title>
+      <Title level={5}>{t('fields.projectCode.label')}</Title>
       <TextField value={record?.projectCode} />
-      <Title level={5}>{translate('projects.fields.projectName')}</Title>
+      <Title level={5}>{t('fields.projectName.label')}</Title>
       <TextField value={record?.projectName} />
-      <Title level={5}>{translate('projects.fields.customer')}</Title>
+      <Title level={5}>{t('fields.customer.label')}</Title>
       <TextField value={record?.customer} />
-      <Title level={5}>{translate('projects.fields.author')}</Title>
+      <Title level={5}>{t('fields.author.label')}</Title>
       <TextField value={record?.author} />
-      <Title level={5}>{translate('projects.fields.updatedDate')}</Title>
+      <Title level={5}>{t('fields.updatedDate')}</Title>
       <DateField value={record?.updatedDate} />
-      <Title level={5}>{translate('projects.fields.createdAt')}</Title>
+      <Title level={5}>{t('fields.createdAt')}</Title>
       <DateField value={record?.createdAt} />
-      <Title level={5}>{translate('projects.fields.status')}</Title>
+      <Title level={5}>{t('fields.status')}</Title>
       <TextField value={record?.status} />
-      <Title level={5}>{translate('projects.fields.description')}</Title>
+      <Title level={5}>{t('fields.remarks.label')}</Title>
       <TextField value={record?.description} />
     </CommonShow>
   )

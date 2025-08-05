@@ -1,7 +1,7 @@
 'use client'
 
 import { RightOutlined, SearchOutlined } from '@ant-design/icons'
-import CommonCard from '@components/common/card'
+import { CommonList } from '@components/common/list'
 import CommonTable from '@components/common/table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useTable } from '@refinedev/antd'
@@ -35,61 +35,59 @@ export default function Page() {
   ]
 
   return (
-    <>
-      <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
-      <CommonCard>
-        <h1 className="mb-6 text-xl font-medium">{t('title')}</h1>
+    <CommonList
+      title={
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+    >
+      <h1 className="mb-6 text-xl font-medium">{t('title')}</h1>
 
-        <Form {...searchFormProps} layout="inline">
-          <Row gutter={[16, 16]} style={{ width: '100%' }}>
-            <Col xs={12} sm={6} md={6}>
-              <Form.Item name="q">
-                <Input
-                  placeholder={t('filters.searchPlaceholder')}
-                  prefix={<SearchOutlined />}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
-              <Space>
-                <Button htmlType="submit" type="primary">
-                  {t('filters.search')}
-                </Button>
-                <Button onClick={() => searchFormProps.form?.resetFields()}>
-                  {t('filters.clear')}
-                </Button>
-              </Space>
-            </Col>
+      <Form {...searchFormProps} layout="inline">
+        <Row gutter={[16, 16]} style={{ width: '100%' }}>
+          <Col xs={12} sm={6} md={6}>
+            <Form.Item name="q">
+              <Input
+                placeholder={t('filters.searchPlaceholder')}
+                prefix={<SearchOutlined />}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
+            <Space>
+              <Button htmlType="submit" type="primary">
+                {t('filters.search')}
+              </Button>
+              <Button onClick={() => searchFormProps.form?.resetFields()}>
+                {t('filters.clear')}
+              </Button>
+            </Space>
+          </Col>
 
-            <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
-              <Space>
-                <Button type="primary">{t('buttons.create')}</Button>
-              </Space>
-            </Col>
-          </Row>
-        </Form>
+          <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
+            <Space>
+              <Button type="primary">{t('buttons.create')}</Button>
+            </Space>
+          </Col>
+        </Row>
+      </Form>
 
-        <CommonTable className={'mt-6'} {...tableProps} rowKey="key">
-          <Table.Column
-            title={t('columns.departmentCode')}
-            dataIndex="departmentCode"
-            render={(value) => (
-              <Link href={`/departments/${value}`}>
-                <Text style={{ color: '#1677ff' }}>{value}</Text>
-              </Link>
-            )}
-          />
-          <Table.Column
-            title={t('columns.departmentName')}
-            dataIndex="departmentName"
-          />
-          <Table.Column
-            title={t('columns.registrant')}
-            dataIndex="registrant"
-          />
-          <Table.Column title={t('columns.remarks')} dataIndex="remarks" />
-        </CommonTable>
-      </CommonCard>
-    </>
+      <CommonTable className={'mt-6'} {...tableProps} rowKey="key">
+        <Table.Column
+          title={t('columns.departmentCode')}
+          dataIndex="departmentCode"
+          render={(value) => (
+            <Link href={`/departments/${value}`}>
+              <Text style={{ color: '#1677ff' }}>{value}</Text>
+            </Link>
+          )}
+        />
+        <Table.Column
+          title={t('columns.departmentName')}
+          dataIndex="departmentName"
+        />
+        <Table.Column title={t('columns.registrant')} dataIndex="registrant" />
+        <Table.Column title={t('columns.remarks')} dataIndex="remarks" />
+      </CommonTable>
+    </CommonList>
   )
 }

@@ -3,11 +3,12 @@
 import { RightOutlined } from '@ant-design/icons'
 import { defaultSettingsData } from '@app/(auth)/(layout-breadcrumb)/(system-config)/permission-settings/mockData'
 import ActionButtons from '@components/common/action-button'
-import CommonCard from '@components/common/card'
+import { CommonCreate } from '@components/common/create'
+import CommonTable from '@components/common/table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { SettingItem } from '@interfaces/config'
 import { PRIMARY } from '@utility/color'
-import { Checkbox, message, Table, Typography } from 'antd'
+import { Checkbox, message, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
@@ -84,21 +85,12 @@ export default function Page() {
   ]
 
   return (
-    <div>
-      <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
-
-      <CommonCard>
-        <h1 className="mb-6 text-xl font-medium">
-          {t('systemConfig.permissionSettings')}
-        </h1>
-        <Table
-          columns={columns}
-          dataSource={settings}
-          pagination={false}
-          bordered
-          size="middle"
-          className="mb-6"
-        />
+    <CommonCreate
+      title={
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+      isLoading={loading}
+      footerButtons={
         <ActionButtons
           onCancel={handleCancel}
           onSave={handleSave}
@@ -106,7 +98,19 @@ export default function Page() {
           cancelText={t('buttons.cancel')}
           saveText={t('buttons.saveSettings')}
         />
-      </CommonCard>
-    </div>
+      }
+    >
+      <h1 className="mb-6 text-xl font-medium">
+        {t('systemConfig.permissionSettings')}
+      </h1>
+      <CommonTable
+        columns={columns}
+        dataSource={settings}
+        pagination={false}
+        bordered
+        size="middle"
+        className="mt-6"
+      />
+    </CommonCreate>
   )
 }
