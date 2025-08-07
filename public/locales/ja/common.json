@@ -5,8 +5,9 @@
     "signUp": "サインアップ",
     "signin": "サインイン",
     "divider": "または",
-    "google": "Sign in with Google",
-    "microsoft": "Sign in with Microsoft",
+    "google": "Googleでサインイン",
+    "microsoft": "Microsoftでサインイン",
+    "keycloak": "Keycloakでサインイン",
     "language": "言語",
     "form": {
       "email": "ユーザー名/メールアドレス",

@@ -1,7 +1,8 @@
-import AuthContainer from '@components/layout/container'
-import AuthHeader from '@components/layout/header'
-import { Navbar } from '@components/layout/navbar'
 import { ThemedLayoutV2 } from '@refinedev/antd'
+
+import AuthContainer from '@/components/layout/container'
+import AuthHeader from '@/components/layout/header'
+import { Navbar } from '@/components/layout/navbar'
 
 export default function AuthLayout({
   children,

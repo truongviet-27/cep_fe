@@ -1,11 +1,8 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import { CommonEdit } from '@components/common/edit'
-import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DateField, TextField, useForm } from '@refinedev/antd'
 import { useGo, useModal } from '@refinedev/core'
-import { PRIMARY } from '@utility/color'
 import {
   Button,
   Col,
@@ -20,6 +17,10 @@ import {
 import TextArea from 'antd/es/input/TextArea'
 import { useTranslations } from 'next-intl'
 import React from 'react'
+
+import { CommonEdit } from '@/components/common/edit'
+import Breadcrumbs from '@/components/layout/breadcrumbs'
+import { PRIMARY } from '@/utility/color'
 
 const { Title } = Typography
 

@@ -1,11 +1,12 @@
 'use client'
 
 import { BellOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
-import { cn } from '@utility/cn'
-import { GRAY, WHITE } from '@utility/color'
 import { Avatar, Badge, Input, Layout, Space } from 'antd'
 import { useKBar } from 'kbar'
 import React from 'react'
+
+import { cn } from '@/utility/cn'
+import { GRAY, WHITE } from '@/utility/color'
 
 const { Header } = Layout
 

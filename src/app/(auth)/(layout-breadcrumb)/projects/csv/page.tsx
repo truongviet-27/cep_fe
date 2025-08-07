@@ -6,10 +6,7 @@ import {
   InfoCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import { CommonList } from '@components/common/list'
-import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useGo } from '@refinedev/core'
-import { PRIMARY } from '@utility/color'
 import type { UploadProps } from 'antd'
 import {
   Alert,
@@ -23,6 +20,10 @@ import {
 } from 'antd'
 import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
+
+import { CommonList } from '@/components/common/list'
+import Breadcrumbs from '@/components/layout/breadcrumbs'
+import { PRIMARY } from '@/utility/color'
 
 const { Title, Text, Link, Paragraph } = Typography
 const { Dragger } = Upload
