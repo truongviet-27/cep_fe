@@ -3,13 +3,14 @@
 import '@refinedev/antd/dist/reset.css'
 
 import { AntdRegistry } from '@ant-design/nextjs-registry'
-import { PageLoading } from '@ant-design/pro-layout'
+import LoadingPage from '@components/common/loading-page'
+import keyCloakProvider from '@providers/keycloak-provider'
 import { useNotificationProvider } from '@refinedev/antd'
-import { type AuthProvider, type I18nProvider, Refine } from '@refinedev/core'
+import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import routerProvider from '@refinedev/nextjs-router'
 import { usePathname } from 'next/navigation'
-import { SessionProvider, signIn, signOut, useSession } from 'next-auth/react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
 
@@ -32,10 +33,14 @@ export const RefineContext = (
 }
 
 const App = (props: React.PropsWithChildren) => {
-  const { status, data } = useSession()
+  const session = useSession()
+  const { status } = session
   const to = usePathname()
-
   const t = useTranslations()
+
+  if (status === 'loading') {
+    return <LoadingPage />
+  }
 
   const resources = getResources(t)
 
@@ -48,69 +53,7 @@ const App = (props: React.PropsWithChildren) => {
     changeLocale: setUserLocale,
   }
 
-  if (status === 'loading') {
-    return <PageLoading />
-  }
-
-  const authProvider: AuthProvider = {
-    login: async () => {
-      signIn('keycloak', {
-        callbackUrl: to ? to.toString() : '/',
-        redirect: true,
-      })
-
-      return {
-        success: true,
-      }
-    },
-    logout: async () => {
-      signOut({
-        redirect: true,
-        callbackUrl: '/login',
-      })
-
-      return {
-        success: true,
-      }
-    },
-    onError: async (error) => {
-      if (error.response?.status === 401) {
-        return {
-          logout: true,
-        }
-      }
-
-      return {
-        error,
-      }
-    },
-    check: async () => {
-      if (status === 'unauthenticated') {
-        return {
-          authenticated: false,
-          redirectTo: '/login',
-        }
-      }
-
-      return {
-        authenticated: true,
-      }
-    },
-    getPermissions: async () => {
-      return null
-    },
-    getIdentity: async () => {
-      if (data?.user) {
-        const { user } = data
-        return {
-          name: user.name,
-          avatar: user.image,
-        }
-      }
-
-      return null
-    },
-  }
+  const authProvider = keyCloakProvider({ session, to })
 
   return (
     <RefineKbarProvider>
