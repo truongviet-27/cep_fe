@@ -20,7 +20,8 @@
     "start": "refine start",
     "lint": "next lint",
     "refine": "refine",
-    "prepare": "husky"
+    "prepare": "husky",
+    "openapi-ts": "openapi-ts"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
@@ -50,6 +51,7 @@
     "zustand": "^5.0.7"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.80.1",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^18.16.2",
     "@types/react": "^18.0.0",
