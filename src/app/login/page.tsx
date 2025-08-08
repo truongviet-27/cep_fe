@@ -1,9 +1,12 @@
 'use client'
 
 import { GoogleOutlined, WindowsOutlined } from '@ant-design/icons'
-import { AppIcon } from '@components/common/app-icon'
-import Background from '@components/layout/background'
-import { useSetLocale, useTranslate, useTranslation } from '@refinedev/core'
+import {
+  useLogin,
+  useSetLocale,
+  useTranslate,
+  useTranslation,
+} from '@refinedev/core'
 import {
   Button,
   Card,
@@ -17,7 +20,11 @@ import {
   Space,
   Typography,
 } from 'antd'
+import Image from 'next/image'
 import React from 'react'
+
+import { AppIcon } from '@/components/common/app-icon'
+import Background from '@/components/layout/background'
 
 const { Title, Text, Link } = Typography
 
@@ -26,6 +33,7 @@ function Page() {
   const changeLocale = useSetLocale()
   const { getLocale } = useTranslation()
   const currentLocale = getLocale()
+  const { mutate: login } = useLogin()
 
   return (
     <Background>
@@ -129,6 +137,28 @@ function Page() {
             // onClick={() => login({ provider: 'microsoft' })}
           >
             {t('login.microsoft', 'Sign in with Microsoft')}
+          </Button>
+          <Button
+            block
+            icon={
+              <Image
+                alt={'keycloak icon'}
+                src={
+                  'https://img.icons8.com/?size=100&id=37PBwQwtRMDZ&format=png&color=000000'
+                }
+                width={24}
+                height={24}
+                objectFit={'contain'}
+                objectPosition={'center'}
+                layout={'fixed'}
+                quality={100}
+                placeholder={'blur'}
+                blurDataURL={'https://via.placeholder.com/150'}
+              />
+            }
+            onClick={() => login({})}
+          >
+            {t('login.keycloak', 'Sign in with keycloak')}
           </Button>
         </Space>
         <div style={{ marginTop: '24px', textAlign: 'center' }}>

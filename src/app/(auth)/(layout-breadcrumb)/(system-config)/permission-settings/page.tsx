@@ -1,17 +1,18 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import { defaultSettingsData } from '@app/(auth)/(layout-breadcrumb)/(system-config)/permission-settings/mockData'
-import ActionButtons from '@components/common/action-button'
-import { CommonCreate } from '@components/common/create'
-import CommonTable from '@components/common/table'
-import Breadcrumbs from '@components/layout/breadcrumbs'
-import type { SettingItem } from '@interfaces/config'
-import { PRIMARY } from '@utility/color'
 import { Checkbox, message, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
+
+import { defaultSettingsData } from '@/app/(auth)/(layout-breadcrumb)/(system-config)/permission-settings/mockData'
+import ActionButtons from '@/components/common/action-button'
+import { CommonCreate } from '@/components/common/create'
+import CommonTable from '@/components/common/table'
+import Breadcrumbs from '@/components/layout/breadcrumbs'
+import type { SettingItem } from '@/interfaces/config'
+import { PRIMARY } from '@/utility/color'
 
 const { Title } = Typography
 

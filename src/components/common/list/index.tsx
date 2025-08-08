@@ -1,6 +1,7 @@
-import CommonCard from '@components/common/card'
 import { List, type ListProps } from '@refinedev/antd'
 import React from 'react'
+
+import CommonCard from '@/components/common/card'
 
 type CommonListProps = Omit<ListProps, 'footerButtons'> & {
   title: React.ReactNode

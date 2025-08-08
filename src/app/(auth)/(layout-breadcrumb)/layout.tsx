@@ -1,10 +1,11 @@
 import './style.css'
 
-import AuthContainer from '@components/layout/container'
-import AuthHeader from '@components/layout/header'
-import Menu from '@components/layout/menu'
 import { Layout } from 'antd'
 import React from 'react'
+
+import AuthContainer from '@/components/layout/container'
+import AuthHeader from '@/components/layout/header'
+import Menu from '@/components/layout/menu'
 
 export default function AuthLayout({
   children,

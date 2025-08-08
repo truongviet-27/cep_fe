@@ -1,6 +1,7 @@
-import { LAYOUT_BG } from '@utility/color'
 import { Layout } from 'antd'
 import React from 'react'
+
+import { LAYOUT_BG } from '@/utility/color'
 
 function Background({
   children,

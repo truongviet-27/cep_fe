@@ -4,16 +4,18 @@ import '@refinedev/antd/dist/reset.css'
 
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { PageLoading } from '@ant-design/pro-layout'
-import { setUserLocale } from '@i18n'
-import { dataProvider } from '@providers/data-provider'
 import { useNotificationProvider } from '@refinedev/antd'
-import { type I18nProvider, Refine } from '@refinedev/core'
+import { type AuthProvider, type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import routerProvider from '@refinedev/nextjs-router'
-import { getResources } from '@utility/get-resources'
-import { SessionProvider, useSession } from 'next-auth/react'
+import { usePathname } from 'next/navigation'
+import { SessionProvider, signIn, signOut, useSession } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
+
+import { setUserLocale } from '@/i18n'
+import { dataProvider } from '@/providers/data-provider'
+import { getResources } from '@/utility/get-resources'
 
 type RefineContextProps = {
   defaultMode?: string
@@ -30,8 +32,8 @@ export const RefineContext = (
 }
 
 const App = (props: React.PropsWithChildren) => {
-  const { status } = useSession()
-  // const to = usePathname()
+  const { status, data } = useSession()
+  const to = usePathname()
 
   const t = useTranslations()
 
@@ -50,65 +52,65 @@ const App = (props: React.PropsWithChildren) => {
     return <PageLoading />
   }
 
-  // const authProvider: AuthProvider = {
-  //   login: async () => {
-  //     signIn('keycloak', {
-  //       callbackUrl: to ? to.toString() : '/',
-  //       redirect: true,
-  //     })
-  //
-  //     return {
-  //       success: true,
-  //     }
-  //   },
-  //   logout: async () => {
-  //     signOut({
-  //       redirect: true,
-  //       callbackUrl: `/login`,
-  //     })
-  //
-  //     return {
-  //       success: true,
-  //     }
-  //   },
-  //   onError: async (error) => {
-  //     if (error.response?.status === 401) {
-  //       return {
-  //         logout: true,
-  //       }
-  //     }
-  //
-  //     return {
-  //       error,
-  //     }
-  //   },
-  //   check: async () => {
-  //     if (status === 'unauthenticated') {
-  //       return {
-  //         authenticated: false,
-  //         redirectTo: `/login`,
-  //       }
-  //     }
-  //
-  //     return {
-  //       authenticated: true,
-  //     }
-  //   },
-  //   getPermissions: async () => {
-  //     return null
-  //   },
-  //   getIdentity: async () => {
-  //     if (data?.user) {
-  //       const { user } = data
-  //       return {
-  //         name: user.name,
-  //         avatar: user.image,
-  //       }
-  //     }
-  //
-  //     return null
-  //   },
-  // }
+  const authProvider: AuthProvider = {
+    login: async () => {
+      signIn('keycloak', {
+        callbackUrl: to ? to.toString() : '/',
+        redirect: true,
+      })
+
+      return {
+        success: true,
+      }
+    },
+    logout: async () => {
+      signOut({
+        redirect: true,
+        callbackUrl: '/login',
+      })
+
+      return {
+        success: true,
+      }
+    },
+    onError: async (error) => {
+      if (error.response?.status === 401) {
+        return {
+          logout: true,
+        }
+      }
+
+      return {
+        error,
+      }
+    },
+    check: async () => {
+      if (status === 'unauthenticated') {
+        return {
+          authenticated: false,
+          redirectTo: '/login',
+        }
+      }
+
+      return {
+        authenticated: true,
+      }
+    },
+    getPermissions: async () => {
+      return null
+    },
+    getIdentity: async () => {
+      if (data?.user) {
+        const { user } = data
+        return {
+          name: user.name,
+          avatar: user.image,
+        }
+      }
+
+      return null
+    },
+  }
 
   return (
     <RefineKbarProvider>
@@ -118,7 +120,7 @@ const App = (props: React.PropsWithChildren) => {
           routerProvider={routerProvider}
           dataProvider={dataProvider}
           notificationProvider={useNotificationProvider}
-          // authProvider={authProvider}
+          authProvider={authProvider}
           resources={resources}
           options={{
             syncWithLocation: true,

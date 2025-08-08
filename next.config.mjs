@@ -6,6 +6,15 @@ const withNextIntl = createNextIntlPlugin()
 const nextConfig = {
   transpilePackages: ['@refinedev/antd'],
   output: 'standalone',
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.icons8.com',
+        pathname: '/**',
+      },
+    ],
+  },
 }
 
 export default withNextIntl(nextConfig)
