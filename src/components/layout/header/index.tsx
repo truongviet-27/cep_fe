@@ -1,37 +1,66 @@
 'use client'
 
-import type { HeaderProps } from '@type/config'
-import { Layout, Menu } from 'antd'
+import { BellOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
+import { Avatar, Badge, Input, Layout, Space } from 'antd'
+import { useKBar } from 'kbar'
+import React from 'react'
+
+import { cn } from '@/utility/cn'
+import { GRAY, WHITE } from '@/utility/color'
 
 const { Header } = Layout
 
 export default function AuthHeader({
-  currentUser = '伊藤太郎',
-  selectedMenuKey = 'system',
-}: Readonly<HeaderProps>) {
-  const menuItems = [
-    { key: 'estimates', label: '見積書' },
-    { key: 'orders', label: '注文書' },
-    { key: 'delivery', label: '納品書' },
-    { key: 'invoices', label: '請求書' },
-    { key: 'system', label: 'システム設定' },
-  ]
+  children,
+}: Readonly<React.PropsWithChildren>) {
+  const { query } = useKBar()
 
   return (
-    <Header
-      className="flex items-center justify-between border-b px-6"
-      style={{ background: '#fff', borderColor: '#e5e7eb' }}
-    >
-      <div className="flex items-center space-x-8">
-        <div className="text-xl font-semibold text-blue-500">eeERP</div>
-        <Menu
-          mode="horizontal"
-          className="flex-1 border-none bg-transparent"
-          items={menuItems}
-          selectedKeys={[selectedMenuKey]}
-        />
-      </div>
-      <div className="text-gray-700">{currentUser}</div>
-    </Header>
+    <div className={cn(children && 'flex justify-center')}>
+      <Header
+        className={cn(
+          'flex w-full items-center border-b',
+          'rounded-lg',
+          'border',
+          'shadow-sm',
+          'px-6 py-4 pb-6',
+          children ? 'justify-between' : 'justify-end',
+        )}
+        style={{
+          background: WHITE,
+          borderColor: GRAY,
+          width: children ? `calc(100% - 3rem)` : '100%',
+        }}
+      >
+        {children}
+
+        {!children && (
+          <div className={'ml-6 flex w-full items-center space-x-3'}>
+            <Input
+              prefix={<SearchOutlined />}
+              onClick={() => query.toggle()}
+              placeholder="Type to search"
+              style={{
+                maxWidth: '40rem',
+                minWidth: '80%',
+                borderRadius: '6px',
+                marginRight: '1rem',
+              }}
+            />
+            <Space size="middle">
+              <Badge dot>
+                <BellOutlined style={{ fontSize: '18px' }} />
+              </Badge>
+              <Space>
+                <Avatar
+                  src={'https://via.placeholder.com/48'}
+                  icon={<UserOutlined />}
+                />
+              </Space>
+            </Space>
+          </div>
+        )}
+      </Header>
+    </div>
   )
 }

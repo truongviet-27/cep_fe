@@ -2,10 +2,19 @@ import createNextIntlPlugin from 'next-intl/plugin'
 
 const withNextIntl = createNextIntlPlugin()
 
-/** @type {import('next').NextConfig} */
+/** @interfaces {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@refinedev/antd'],
   output: 'standalone',
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.icons8.com',
+        pathname: '/**',
+      },
+    ],
+  },
 }
 
 export default withNextIntl(nextConfig)

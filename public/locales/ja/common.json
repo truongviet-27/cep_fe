@@ -5,8 +5,9 @@
     "signUp": "サインアップ",
     "signin": "サインイン",
     "divider": "または",
-    "google": "Sign in with Google",
-    "microsoft": "Sign in with Microsoft",
+    "google": "Googleでサインイン",
+    "microsoft": "Microsoftでサインイン",
+    "keycloak": "Keycloakでサインイン",
     "language": "言語",
     "form": {
       "email": "ユーザー名/メールアドレス",
@@ -19,6 +20,164 @@
     "errors": {
       "emailRequired": "メールアドレスを入力してください！",
       "passwordRequired": "パスワードを入力してください！"
+    }
+  },
+  "buttons": {
+    "cancel": "キャンセル",
+    "saveSettings": "設定を保存",
+    "create": "登録",
+    "back": "戻る",
+    "edit": "編集",
+    "delete": "削除"
+  },
+  "menu": {
+    "dashboard": "ダッシュボード",
+    "tenants": "テナント",
+    "clients": "クライアント",
+    "roles": "役割",
+    "groups": "グループ",
+    "users": "ユーザー",
+    "audit": "監査",
+    "settings": "設定",
+    "logout": "ログアウト"
+  },
+  "breadcrumb": {
+    "estimates": "見積",
+    "customers": "顧客",
+    "projects": "案件",
+    "products": "商品",
+    "departments": "部門",
+    "employees": "社員",
+    "system": "システム設定"
+  },
+  "systemConfig": {
+    "permissionSettings": "権限設定",
+    "numberingAssignmentSettings": "コード採番設定 ",
+    "cancelMessage": "変更をキャンセルしました",
+    "saveSuccessMessage": "設定を保存しました",
+    "saveErrorMessage": "保存に失敗しました",
+    "settingItem": "設定項目",
+    "initialSetting": "初期設定",
+    "notManage": "管理しない",
+    "notUse": "利用しない",
+    "manage": "管理する",
+    "use": "利用する",
+    "purpose": "変更目的",
+    "quickStart": "1. クイックスタート用設定",
+    "advanced": "2. 高度設定（プロ用）",
+    "enterprise": "3. エンタープライズ向け設定",
+    "advancedContent": "高度設定の内容",
+    "enterpriseContent": "エンタープライズ設定の内容",
+    "employee": "社員",
+    "manager": "マネージャー "
+  },
+  "projects": {
+    "list": {
+      "title": "案件一覧",
+      "buttons": {
+        "create": "登録",
+        "csvExport": "CSV一括登録"
+      },
+      "filters": {
+        "projectSearchPlaceholder": "案件コード・案件名で検索",
+        "customerSearchPlaceholder": "取引先で検索",
+        "search": "検索",
+        "clear": "クリア"
+      },
+      "columns": {
+        "projectCode": "案件コード",
+        "projectName": "案件名",
+        "customer": "取引先",
+        "registrant": "登録者",
+        "lastUpdated": "最終更新日"
+      }
+    },
+    "create": {
+      "title": "案件登録",
+      "notifications": {
+        "createSuccess": "案件を正常に登録しました！"
+      },
+      "fields": {
+        "projectCode": {
+          "label": "案件コード",
+          "required": "案件コードを入力してください！",
+          "extra": "自動採番設定の場合編集できない"
+        },
+        "projectName": {
+          "label": "案件名",
+          "required": "案件名を入力してください！",
+          "placeholder": "案件名を入力"
+        },
+        "customer": {
+          "label": "取引先",
+          "required": "取引先を選択してください！",
+          "placeholder": "取引先コード・取引先名で検索"
+        },
+        "remarks": {
+          "label": "備考",
+          "placeholder": "案件に関する特記事項があれば入力してください"
+        },
+        "updatedDate": "最終更新日",
+        "createdAt": "登録日"
+      }
+    },
+    "show": {
+      "title": "詳細情報",
+      "fields": {
+        "projectCode": "案件コード",
+        "projectName": "案件名",
+        "customer": "取引先",
+        "estimateNumber": "見積番号",
+        "remarks": "備考",
+        "registrant": "登録者",
+        "registrationDate": "登録日",
+        "lastUpdated": "最終更新日"
+      }
+    },
+    "csvUpload": {
+      "title": "CSV一括登録",
+      "steps": {
+        "selectFile": "ファイル選択",
+        "confirmData": "データ確認",
+        "validation": "バリデーション",
+        "complete": "登録完了"
+      },
+      "template": {
+        "title": "CSVテンプレート",
+        "description": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
+        "downloadLink": "CSVテンプレートをダウンロード"
+      },
+      "upload": {
+        "dragAndDropText": "CSVファイルをここにドラッグ&ドロップ",
+        "selectFileText": "または、下のボタンからファイルを選択してください"
+      },
+      "notes": {
+        "title": "CSV登録時の注意事項",
+        "point1": "CSVファイルの行項目はヘッダー行として扱われます",
+        "point2": "文字コードはUTF-8またはShift_JISで保存してください",
+        "point3": "同じ商品コードがある場合は上書きされます",
+        "point4": "一度に登録できる上限は1000件です",
+        "point5": "必須項目が空の行はスキップされます"
+      }
+    }
+  },
+  "departments": {
+    "list": {
+      "title": "部門一覧",
+      "buttons": {
+        "create": "登録"
+      },
+      "filters": {
+        "searchPlaceholder": "部門コード・部門名で検索",
+        "clear": "クリア",
+        "search": "検索"
+      },
+      "columns": {
+        "departmentCode": "部門コード",
+        "departmentName": "部門名",
+        "registrant": "登録者",
+        "remarks": "備考"
+      }
     }
   }
 }

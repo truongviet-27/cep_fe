@@ -7,6 +7,7 @@
     "divider": "Or sign in with",
     "google": "Sign in with Google",
     "microsoft": "Sign in with Microsoft",
+    "keycloak": "Sign in with Keycloak",
     "language": "Language",
     "form": {
       "email": "Username/Email Address",
@@ -19,6 +20,164 @@
     "errors": {
       "emailRequired": "Please enter your email!",
       "passwordRequired": "Please enter your password!"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "saveSettings": "Save Settings",
+    "create": "Create",
+    "back": "Back",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "tenants": "Tenants",
+    "clients": "Clients",
+    "roles": "Roles",
+    "groups": "Groups",
+    "users": "Users",
+    "audit": "Audit",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "breadcrumb": {
+    "estimates": "Estimates",
+    "customers": "Customers",
+    "projects": "Projects",
+    "products": "Products",
+    "departments": "Departments",
+    "employees": "Employees",
+    "system": "System Settings"
+  },
+  "systemConfig": {
+    "permissionSettings": "Permission Settings",
+    "numberingAssignmentSettings": "Numbering Assignment Settings",
+    "cancelMessage": "Changes cancelled",
+    "saveSuccessMessage": "Settings saved",
+    "saveErrorMessage": "Failed to save",
+    "settingItem": "Setting Item",
+    "initialSetting": "Initial Setting",
+    "notManage": "Don't manage",
+    "notUse": "Don't use",
+    "manage": "Manage",
+    "use": "Use",
+    "purpose": "Purpose of change",
+    "quickStart": "1. Quick Start Settings",
+    "advanced": "2. Advanced Settings (for Pro)",
+    "enterprise": "3. Enterprise Settings",
+    "advancedContent": "Content for advanced settings",
+    "enterpriseContent": "Content for enterprise settings",
+    "employee": "Employee",
+    "manager": "Manager"
+  },
+  "projects": {
+    "list": {
+      "title": "Project List",
+      "buttons": {
+        "create": "Register",
+        "csvExport": "CSV Bulk Upload"
+      },
+      "filters": {
+        "projectSearchPlaceholder": "Search by Project Code / Name",
+        "customerSearchPlaceholder": "Search by Customer",
+        "search": "Search",
+        "clear": "Clear"
+      },
+      "columns": {
+        "projectCode": "Project Code",
+        "projectName": "Project Name",
+        "customer": "Customer",
+        "registrant": "Registrant",
+        "lastUpdated": "Last Updated"
+      }
+    },
+    "create": {
+      "title": "Create Project",
+      "notifications": {
+        "createSuccess": "Project created successfully!"
+      },
+      "fields": {
+        "projectCode": {
+          "label": "Project Code",
+          "required": "Please enter the project code!",
+          "extra": "Cannot be edited if automatic numbering is set."
+        },
+        "projectName": {
+          "label": "Project Name",
+          "required": "Please enter the project name!",
+          "placeholder": "Enter project name"
+        },
+        "customer": {
+          "label": "Customer",
+          "required": "Please select a customer!",
+          "placeholder": "Search by customer code or name"
+        },
+        "remarks": {
+          "label": "Remarks",
+          "placeholder": "Enter any special notes about the project"
+        },
+        "updatedDate": "Updated date",
+        "createdAt": "Created at"
+      }
+    },
+    "show": {
+      "title": "Project Details",
+      "fields": {
+        "projectCode": "Project Code",
+        "projectName": "Project Name",
+        "customer": "Customer",
+        "estimateNumber": "Estimate Number",
+        "remarks": "Remarks",
+        "registrant": "Registrant",
+        "registrationDate": "Registration Date",
+        "lastUpdated": "Last Updated Date"
+      }
+    },
+    "csvUpload": {
+      "title": "CSV Bulk Registration",
+      "steps": {
+        "selectFile": "Select File",
+        "confirmData": "Confirm Data",
+        "validation": "Validation",
+        "complete": "Complete"
+      },
+      "template": {
+        "title": "CSV Template",
+        "description": "To register data in the correct format, please download the CSV template first. By entering the necessary information into the template and uploading it, you can prevent errors.",
+        "downloadLink": "Download CSV Template"
+      },
+      "upload": {
+        "dragAndDropText": "Drag & drop CSV file here",
+        "selectFileText": "or select a file from the button below"
+      },
+      "notes": {
+        "title": "Notes on CSV Registration",
+        "point1": "The first row of the CSV file will be treated as the header.",
+        "point2": "Please save the file with UTF-8 or Shift_JIS character encoding.",
+        "point3": "Existing records with the same product code will be overwritten.",
+        "point4": "The maximum number of records that can be registered at one time is 1000.",
+        "point5": "Rows with empty required fields will be skipped."
+      }
+    }
+  },
+  "departments": {
+    "list": {
+      "title": "Department List",
+      "buttons": {
+        "create": "Register"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by Department Code / Name",
+        "clear": "Clear",
+        "search": "Search"
+      },
+      "columns": {
+        "departmentCode": "Department Code",
+        "departmentName": "Department Name",
+        "registrant": "Registrant",
+        "remarks": "Remarks"
+      }
     }
   }
 }

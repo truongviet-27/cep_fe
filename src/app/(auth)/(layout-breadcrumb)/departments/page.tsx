@@ -1,0 +1,94 @@
+'use client'
+
+import { RightOutlined, SearchOutlined } from '@ant-design/icons'
+import { useTable } from '@refinedev/antd'
+import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
+import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import React from 'react'
+
+import { CommonList } from '@/components/common/list'
+import CommonTable from '@/components/common/table'
+import Breadcrumbs from '@/components/layout/breadcrumbs'
+import { PRIMARY } from '@/utility/color'
+
+const { Text, Title } = Typography
+
+export default function Page() {
+  const t = useTranslations('departments.list')
+  const t_breadcrumb = useTranslations('breadcrumb')
+
+  const { tableProps, searchFormProps } = useTable({
+    syncWithLocation: true,
+  })
+
+  const breadcrumbItems = [
+    {
+      title: (
+        <Title level={5} style={{ color: PRIMARY }}>
+          {t_breadcrumb('departments')}
+        </Title>
+      ),
+    },
+    {
+      title: <Title level={5}>{t('title')}</Title>,
+    },
+  ]
+
+  return (
+    <CommonList
+      title={
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+    >
+      <h1 className="mb-6 text-xl font-medium">{t('title')}</h1>
+
+      <Form {...searchFormProps} layout="inline">
+        <Row gutter={[16, 16]} style={{ width: '100%' }}>
+          <Col xs={12} sm={6} md={6}>
+            <Form.Item name="q">
+              <Input
+                placeholder={t('filters.searchPlaceholder')}
+                prefix={<SearchOutlined />}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
+            <Space>
+              <Button htmlType="submit" type="primary">
+                {t('filters.search')}
+              </Button>
+              <Button onClick={() => searchFormProps.form?.resetFields()}>
+                {t('filters.clear')}
+              </Button>
+            </Space>
+          </Col>
+
+          <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
+            <Space>
+              <Button type="primary">{t('buttons.create')}</Button>
+            </Space>
+          </Col>
+        </Row>
+      </Form>
+
+      <CommonTable className={'mt-6'} {...tableProps} rowKey="key">
+        <Table.Column
+          title={t('columns.departmentCode')}
+          dataIndex="departmentCode"
+          render={(value) => (
+            <Link href={`/departments/${value}`}>
+              <Text style={{ color: '#1677ff' }}>{value}</Text>
+            </Link>
+          )}
+        />
+        <Table.Column
+          title={t('columns.departmentName')}
+          dataIndex="departmentName"
+        />
+        <Table.Column title={t('columns.registrant')} dataIndex="registrant" />
+        <Table.Column title={t('columns.remarks')} dataIndex="remarks" />
+      </CommonTable>
+    </CommonList>
+  )
+}

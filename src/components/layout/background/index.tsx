@@ -1,6 +1,8 @@
 import { Layout } from 'antd'
 import React from 'react'
 
+import { LAYOUT_BG } from '@/utility/color'
+
 function Background({
   children,
 }: Readonly<{
@@ -13,7 +15,7 @@ function Background({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: '#f0f2f5',
+        background: LAYOUT_BG,
       }}
     >
       {children}

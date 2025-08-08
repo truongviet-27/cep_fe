@@ -1,11 +1,13 @@
 'use client'
 
-import type { ActionButtonsProps } from '@type/config'
+import type { ActionButtonsProps } from '@interfaces/config'
 import { Button } from 'antd'
 
 export default function ActionButtons({
   onCancel,
   onSave,
+  cancelText,
+  saveText,
   loading = false,
 }: Readonly<ActionButtonsProps>) {
   return (
@@ -16,7 +18,7 @@ export default function ActionButtons({
         onClick={onCancel}
         disabled={loading}
       >
-        キャンセル
+        {cancelText}
       </Button>
       &nbsp;&nbsp;
       <Button
@@ -26,7 +28,7 @@ export default function ActionButtons({
         onClick={onSave}
         loading={loading}
       >
-        設定を保存
+        {saveText}
       </Button>
     </div>
   )
