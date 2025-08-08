@@ -21,7 +21,7 @@
     "lint": "next lint",
     "refine": "refine",
     "prepare": "husky",
-    "openapi-ts": "openapi-ts"
+    "openapi-ts": "mkdir -p ./src/sdk/hey-api && openapi-ts"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
