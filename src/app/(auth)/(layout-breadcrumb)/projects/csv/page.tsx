@@ -6,8 +6,10 @@ import {
   InfoCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons'
+import CsvViewerEditor from '@components/common/csv-view-editor'
 import { useGo } from '@refinedev/core'
-import type { UploadProps } from 'antd'
+import { ENC_IN } from '@utility/instance'
+import type { UploadFile, UploadProps } from 'antd'
 import {
   Alert,
   Button,
@@ -34,28 +36,34 @@ const Page: React.FC = () => {
   const go = useGo()
   const [currentStep, setCurrentStep] = useState(0)
 
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileBuffer, setFileBuffer] = useState<ArrayBuffer | null>(null)
+  const [fileName, setFileName] = useState<string>('')
+
   const t_breadcrumb = useTranslations('breadcrumb')
 
-  // Cấu hình cho component Upload
   const uploadProps: UploadProps = {
-    name: 'file',
+    accept: '.csv,.txt',
     multiple: false,
-    // action: 'URL_API_để_upload_file_của_em', // Thay bằng API endpoint thật
-    onChange(info) {
-      const { status } = info.file
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList)
-      }
-      if (status === 'done') {
-        // message.success(`${info.file.name} file uploaded successfully.`)
-        setCurrentStep(1) // Tự động chuyển sang bước tiếp theo khi upload thành công
-      } else if (status === 'error') {
-        // message.error(`${info.file.name} file upload failed.`)
-      }
+    fileList,
+    beforeUpload: async (file) => {
+      setFileName(file.name.replace(/\.(csv|txt)$/i, '') + '.csv')
+      const buf = await file.arrayBuffer()
+      setFileBuffer(buf)
+      setFileList([file as UploadFile])
+      setCurrentStep(1)
+      return false
+    },
+    onRemove: () => {
+      setFileList([])
+      setFileBuffer(null)
+      setFileName('')
+      setCurrentStep(0)
     },
     onDrop(e) {
       console.log('Dropped files', e.dataTransfer.files)
     },
+    showUploadList: { showRemoveIcon: true },
   }
 
   const breadcrumbItems = [
@@ -72,18 +80,10 @@ const Page: React.FC = () => {
   ]
 
   const steps = [
-    {
-      title: t('steps.selectFile'),
-    },
-    {
-      title: t('steps.confirmData'),
-    },
-    {
-      title: t('steps.validation'),
-    },
-    {
-      title: t('steps.complete'),
-    },
+    { title: t('steps.selectFile') },
+    { title: t('steps.confirmData') },
+    { title: t('steps.validation') },
+    { title: t('steps.complete') },
   ]
 
   return (
@@ -93,6 +93,7 @@ const Page: React.FC = () => {
       }
     >
       <Title level={4}>{t('title')}</Title>
+
       <Steps
         responsive
         labelPlacement="vertical"
@@ -116,7 +117,7 @@ const Page: React.FC = () => {
             }
             type="info"
             showIcon
-            style={{ marginBottom: 24 }}
+            style={{ marginBottom: 16 }}
           />
 
           <Dragger {...uploadProps} height={200}>
@@ -158,7 +159,18 @@ const Page: React.FC = () => {
         </>
       )}
 
-      {/* {currentStep === 1 && <DataConfirmationComponent />} */}
+      {currentStep === 1 && fileBuffer && (
+        <CsvViewerEditor
+          source={{
+            buffer: fileBuffer,
+            encoding: ENC_IN,
+            fileName,
+          }}
+          onBack={() => setCurrentStep(0)}
+          onNext={() => setCurrentStep(2)}
+        />
+      )}
+
       {/* {currentStep === 2 && <ValidationComponent />} */}
       {/* {currentStep === 3 && <CompletionComponent />} */}
 
@@ -171,8 +183,6 @@ const Page: React.FC = () => {
           </Button>
           <Button
             type="primary"
-            // Nút này có thể bị vô hiệu hóa cho đến khi có file được chọn
-            // Hoặc chức năng của nó sẽ là chuyển sang bước tiếp theo
             onClick={() => console.log('Register clicked')}
           >
             {t_buttons('create')}
