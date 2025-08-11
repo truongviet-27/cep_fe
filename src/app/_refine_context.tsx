@@ -9,7 +9,6 @@ import { useNotificationProvider } from '@refinedev/antd'
 import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import routerProvider from '@refinedev/nextjs-router'
-import { usePathname } from 'next/navigation'
 import { SessionProvider, useSession } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
@@ -35,8 +34,8 @@ export const RefineContext = (
 const App = (props: React.PropsWithChildren) => {
   const session = useSession()
   const { status } = session
-  const to = usePathname()
   const t = useTranslations()
+  const authProvider = keyCloakProvider({ session })
 
   if (status === 'loading') {
     return <LoadingPage />
@@ -52,8 +51,6 @@ const App = (props: React.PropsWithChildren) => {
     getLocale: useLocale,
     changeLocale: setUserLocale,
   }
-
-  const authProvider = keyCloakProvider({ session, to })
 
   return (
     <RefineKbarProvider>

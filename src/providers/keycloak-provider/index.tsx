@@ -1,10 +1,26 @@
+'use client'
+
 /* eslint-disable */
 import type { AuthProvider } from '@refinedev/core'
 import { signIn, signOut } from 'next-auth/react'
+import { useEffect } from 'react'
 import { axiosInstance } from '@utility/axios-instance'
+import { usePathname } from 'next/navigation'
 
-const keyCloakProvider = ({ session, to }: { session: any; to: string }) => {
+const keyCloakProvider = ({ session }: { session: any }) => {
   const { status, data } = session
+
+  const to = usePathname()
+
+  useEffect(() => {
+    fetch('/api/get-token')
+      .then((res) => res.json())
+      .then(
+        (data) =>
+          (axiosInstance.defaults.headers.common['Authorization'] =
+            `Bearer ${data.token}`),
+      )
+  }, [])
 
   const authProvider: AuthProvider = {
     login: async () => {
@@ -39,16 +55,12 @@ const keyCloakProvider = ({ session, to }: { session: any; to: string }) => {
       }
     },
     check: async () => {
-      const token = 't'
-
-      if (status === 'unauthenticated' || !token) {
+      if (status === 'unauthenticated') {
         return {
           authenticated: false,
           redirectTo: '/login',
         }
       }
-
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
       return {
         authenticated: true,

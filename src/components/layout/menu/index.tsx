@@ -4,7 +4,6 @@ import { DownOutlined } from '@ant-design/icons'
 import { Menu as MenuAntd, Space } from 'antd'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
@@ -14,8 +13,6 @@ function Menu() {
   const t = useTranslations('breadcrumb')
   const t_system = useTranslations('systemConfig')
   const selectedMenuKey = usePathname().split('/')?.[1]
-
-  const session = useSession()
 
   const menuItems = [
     { key: 'estimates', label: t('estimates') },
@@ -69,7 +66,6 @@ function Menu() {
           selectedKeys={[selectedMenuKey]}
         />
       </div>
-      <div className="text-gray-700">{session?.data?.user?.name}</div>
     </>
   )
 }
