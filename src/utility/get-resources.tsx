@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { DashboardOutlined, TeamOutlined } from '@ant-design/icons'
-import type { ResourceProps } from '@refinedev/core/src/contexts/resource/types'
+import type { ResourceProps } from '@refinedev/core'
 
 export const getResources = (t: any): ResourceProps[] => [
   {
