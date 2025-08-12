@@ -3,6 +3,7 @@
 import { BellOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Badge, Input, Layout, Space } from 'antd'
 import { useKBar } from 'kbar'
+import { useSession } from 'next-auth/react'
 import React from 'react'
 
 import { cn } from '@/utility/cn'
@@ -14,6 +15,7 @@ export default function AuthHeader({
   children,
 }: Readonly<React.PropsWithChildren>) {
   const { query } = useKBar()
+  const session = useSession()
 
   return (
     <div className={cn(children && 'flex justify-center')}>
@@ -34,7 +36,24 @@ export default function AuthHeader({
       >
         {children}
 
-        {!children && (
+        {children ? (
+          <div className="flex items-center gap-2">
+            <div className="text-right leading-tight">
+              <div className="text-[12px] font-semibold text-[#74232A]">
+                株式会社ピオネロ
+              </div>
+
+              <div className="flex items-center justify-end gap-1">
+                <span className="max-w-[180px] truncate text-[14px] font-medium text-gray-900">
+                  {session?.data?.user?.name}
+                </span>
+                <UserOutlined className="text-[16px] text-[#1677ff]" />
+              </div>
+
+              <div className="text-[11px] text-gray-400">テナント管理者</div>
+            </div>
+          </div>
+        ) : (
           <div className={'ml-6 flex w-full items-center space-x-3'}>
             <Input
               prefix={<SearchOutlined />}
