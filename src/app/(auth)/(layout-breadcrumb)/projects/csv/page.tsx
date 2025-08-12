@@ -7,23 +7,14 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import CsvViewerEditor from '@components/common/csv-view-editor'
+import { CommonShow } from '@components/common/show'
 import { useGo } from '@refinedev/core'
 import { ENC_IN } from '@utility/instance'
 import type { UploadFile, UploadProps } from 'antd'
-import {
-  Alert,
-  Button,
-  Card,
-  Divider,
-  Space,
-  Steps,
-  Typography,
-  Upload,
-} from 'antd'
+import { Alert, Button, Card, Space, Steps, Typography, Upload } from 'antd'
 import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
 
-import { CommonList } from '@/components/common/list'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { PRIMARY } from '@/utility/color'
 
@@ -80,16 +71,35 @@ const Page: React.FC = () => {
   ]
 
   const steps = [
-    { title: t('steps.selectFile') },
+    { title: t('steps.selectFile'), onClick: () => setCurrentStep(0) },
     { title: t('steps.confirmData') },
     { title: t('steps.validation') },
     { title: t('steps.complete') },
   ]
 
   return (
-    <CommonList
+    <CommonShow
+      isLoading={false}
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+      footerButtons={
+        <Space>
+          <Button onClick={() => go({ to: '/projects' })}>
+            {t_buttons('back')}
+          </Button>
+          {currentStep > 0 && currentStep < 3 && (
+            <Button onClick={() => setCurrentStep((val) => val - 1)}>
+              {t_buttons('back')}
+            </Button>
+          )}
+          <Button
+            type="primary"
+            onClick={() => console.log('Register clicked')}
+          >
+            {t_buttons('create')}
+          </Button>
+        </Space>
       }
     >
       <Title level={4}>{t('title')}</Title>
@@ -166,30 +176,12 @@ const Page: React.FC = () => {
             encoding: ENC_IN,
             fileName,
           }}
-          onBack={() => setCurrentStep(0)}
-          onNext={() => setCurrentStep(2)}
         />
       )}
 
       {/* {currentStep === 2 && <ValidationComponent />} */}
       {/* {currentStep === 3 && <CompletionComponent />} */}
-
-      <Divider />
-
-      <div style={{ textAlign: 'right' }}>
-        <Space>
-          <Button onClick={() => go({ to: '/projects' })}>
-            {t_buttons('back')}
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => console.log('Register clicked')}
-          >
-            {t_buttons('create')}
-          </Button>
-        </Space>
-      </div>
-    </CommonList>
+    </CommonShow>
   )
 }
 
