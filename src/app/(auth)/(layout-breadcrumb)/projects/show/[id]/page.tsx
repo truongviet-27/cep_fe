@@ -1,14 +1,15 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import { CommonShow } from '@components/common/show'
-import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DateField, TextField } from '@refinedev/antd'
 import { useGo, useParsed, useShow } from '@refinedev/core'
-import { PRIMARY } from '@utility/color'
 import { Button, Space, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import React from 'react'
+
+import { CommonShow } from '@/components/common/show'
+import Breadcrumbs from '@/components/layout/breadcrumbs'
+import { PRIMARY } from '@/utility/color'
 
 const { Title } = Typography
 
