@@ -1,5 +1,6 @@
 'use client'
 
+import { LAYOUT_BG } from '@utility/color'
 import { Layout } from 'antd'
 import React from 'react'
 
@@ -12,7 +13,9 @@ export default function AuthContainer({
 }>) {
   return (
     <Content>
-      <div className="px-6 pb-6">{children}</div>
+      <div className="px-6 pb-6" style={{ backgroundColor: LAYOUT_BG }}>
+        {children}
+      </div>
     </Content>
   )
 }

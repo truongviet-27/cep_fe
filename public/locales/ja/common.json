@@ -53,6 +53,7 @@
   "systemConfig": {
     "permissionSettings": "権限設定",
     "numberingAssignmentSettings": "コード採番設定 ",
+    "productCategory": "商品分類設定",
     "cancelMessage": "変更をキャンセルしました",
     "saveSuccessMessage": "設定を保存しました",
     "saveErrorMessage": "保存に失敗しました",
