@@ -1,6 +1,8 @@
 export interface ITree {
   id: string
   name: string
-  public: boolean
+  code?: string
+  isPublic?: boolean
+  open?: boolean
   children?: ITree[]
 }

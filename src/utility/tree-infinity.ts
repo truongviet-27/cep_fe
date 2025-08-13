@@ -1,64 +1,128 @@
 import type { ITree } from '@interfaces/tree'
 
-const uid = () =>
-  crypto?.randomUUID?.() ??
-  `id_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+function toggleAll(arr: ITree[], open: boolean): ITree[] {
+  return arr.map((c) => ({
+    ...c,
+    open,
+    children: c.children ? toggleAll(c.children, open) : undefined,
+  }))
+}
 
-const deepClone = <T>(x: T): T => JSON.parse(JSON.stringify(x))
+function updateAt<T extends { id: string }>(
+  arr: T[],
+  id: string,
+  updater: (x: T) => T,
+): T[] {
+  return arr.map((it) => (it.id === id ? updater(it) : it))
+}
 
-function walk<T>(
-  nodes: ITree[],
-  fn: (c: ITree, parent?: ITree) => T | void,
-  parent?: ITree,
-): T | undefined {
-  for (const n of nodes) {
-    const r = fn(n, parent)
-    if (r !== undefined) return r as T
-    if (n.children?.length) {
-      const rr = walk(n.children, fn, n)
-      if (rr !== undefined) return rr
+function replaceChildren(arr: ITree[], id: string, children: ITree[]): ITree[] {
+  return arr.map((it) => (it.id === id ? { ...it, children } : it))
+}
+
+function findParentIdOf(
+  arr: ITree[],
+  id: string,
+  parent: string | null = null,
+): string | null {
+  for (const c of arr) {
+    if (c.id === id) return parent
+    if (c.children) {
+      const r = findParentIdOf(c.children, id, c.id)
+      if (r) return r
     }
+  }
+  return null
+}
+
+function getChildrenOf(arr: ITree[], parentId: string | null) {
+  if (parentId === null) return arr
+  const node = findById(arr, parentId)
+  return node?.children ?? null
+}
+
+function setChildrenOf(
+  arr: ITree[],
+  parentId: string | null,
+  children: ITree[],
+) {
+  if (parentId === null) return children
+  return replaceChildren(arr, parentId, children)
+}
+
+function findById(arr: ITree[], id: string): ITree | undefined {
+  for (const c of arr) {
+    if (c.id === id) return c
+    const hit = c.children && findById(c.children, id)
+    if (hit) return hit
   }
   return undefined
 }
 
-function updateNode(
+function findNameById(arr: ITree[], id: string): string {
+  return findById(arr, id)?.name ?? ''
+}
+
+function toggleOpen(arr: ITree[], id: string): ITree[] {
+  return arr.map((c) => {
+    if (c.id === id) return { ...c, open: !c.open }
+    if (c.children) return { ...c, children: toggleOpen(c.children, id) }
+    return c
+  })
+}
+
+function removeById(arr: ITree[], id: string): ITree[] {
+  return arr
+    .filter((c) => c.id !== id)
+    .map((c) =>
+      c.children ? { ...c, children: removeById(c.children, id) } : c,
+    )
+}
+
+function nextRootCode(list: ITree[]): string {
+  const nums = list
+    .map((c) => c.code?.match(/^ct(\d+)$/)?.[1])
+    .filter(Boolean)
+    .map(Number)
+  const n = nums.length ? Math.max(...nums) + 1 : 1
+  return `ct${n}`
+}
+
+function updateDeep(
   nodes: ITree[],
   id: string,
-  updater: (c: ITree, parent?: ITree) => void,
-) {
-  const root = deepClone(nodes)
-  walk(root, (c, p) => {
-    if (c.id === id) {
-      updater(c, p)
-      return true
+  updater: (node: ITree) => ITree,
+): [ITree[], boolean] {
+  let changed = false
+
+  const next = nodes.map((n) => {
+    if (n.id === id) {
+      changed = true
+      return updater(n)
     }
-  })
-  return root
-}
-
-function removeById(nodes: ITree[], id: string) {
-  const root = deepClone(nodes)
-  const removeIn = (arr?: ITree[]) => {
-    if (!arr) return
-    for (let i = arr.length - 1; i >= 0; i--) {
-      if (arr[i].id === id) arr.splice(i, 1)
-      else removeIn(arr[i].children)
+    if (n.children?.length) {
+      const [kids, kidChanged] = updateDeep(n.children, id, updater)
+      if (kidChanged) {
+        changed = true
+        return { ...n, children: kids }
+      }
     }
-  }
-  removeIn(root)
-  return root
-}
-
-function collectOrder(list: ITree[]) {
-  const result = {
-    root: list.map((c) => c.id),
-    children: {} as Record<string, string[]>,
-  }
-  walk(list, (c) => {
-    if (c.children?.length) result.children[c.id] = c.children.map((x) => x.id)
+    return n
   })
-  return result
+
+  return [next, changed]
 }
 
-export { collectOrder, removeById, uid, updateNode, walk }
+export {
+  findById,
+  findNameById,
+  findParentIdOf,
+  getChildrenOf,
+  nextRootCode,
+  removeById,
+  setChildrenOf,
+  toggleAll,
+  toggleOpen,
+  updateAt,
+  updateDeep,
+}

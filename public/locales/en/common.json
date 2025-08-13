@@ -53,6 +53,7 @@
   "systemConfig": {
     "permissionSettings": "Permission Settings",
     "numberingAssignmentSettings": "Numbering Assignment Settings",
+    "productCategory": "Product Category",
     "cancelMessage": "Changes cancelled",
     "saveSuccessMessage": "Settings saved",
     "saveErrorMessage": "Failed to save",
