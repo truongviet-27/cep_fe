@@ -29,6 +29,8 @@ export default function Page() {
 
   const dataSource = tableProps?.dataSource || []
 
+  console.log(dataSource, 'dataSource')
+
   const breadcrumbItems = [
     {
       title: (
