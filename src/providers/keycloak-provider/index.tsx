@@ -4,8 +4,8 @@
 import type { AuthProvider } from '@refinedev/core'
 import { signIn, signOut } from 'next-auth/react'
 import { useEffect } from 'react'
-import { axiosInstance } from '@utility/axios-instance'
 import { usePathname } from 'next/navigation'
+import { axiosInstance } from '@rest-data-provider/utils'
 
 const keyCloakProvider = ({ session }: { session: any }) => {
   const { status, data } = session
