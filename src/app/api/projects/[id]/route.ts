@@ -1,8 +1,7 @@
+import { mockProjects } from '@mockApi/project'
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { mockProjects } from '@/lib/mockData'
-
-const projects = [...mockProjects]
+const projects = [...mockProjects.data]
 
 export async function GET(
   request: NextRequest,
