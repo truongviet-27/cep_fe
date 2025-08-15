@@ -19,7 +19,7 @@ const { Text, Title } = Typography
 
 export default function Page() {
   const t = useTranslations('projects.list')
-  const t_breadcrumb = useTranslations('breadcrumb')
+  const t_prj = useTranslations('projects')
 
   const go = useGo()
 
@@ -29,13 +29,11 @@ export default function Page() {
 
   const dataSource = tableProps?.dataSource || []
 
-  console.log(dataSource, 'dataSource')
-
   const breadcrumbItems = [
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t_breadcrumb('projects')}
+          {t_prj('projects')}
         </Title>
       ),
     },
