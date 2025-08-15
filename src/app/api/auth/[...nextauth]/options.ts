@@ -1,9 +1,11 @@
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
+const clientId = process.env.NEXT_PUBLIC_CLIENT_ID ?? ''
+const clientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET ?? ''
+const issuer = process.env.NEXT_PUBLIC_ISSUER
+
 const authOptions = {
-  // Configure one or more authentication providers
   providers: [
-    // !!! Should be stored in .env file.
     KeycloakProvider({
       clientId: process.env.NEXT_PUBLIC_CLIENT_ID || '',
       clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET || '',

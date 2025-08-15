@@ -19,9 +19,9 @@ const Page = () => {
 
   const record = data?.data
 
-  const { t, t_breadcrumb, t_buttons } = {
+  const { t, t_prj, t_buttons } = {
     t: useTranslations('projects.create'),
-    t_breadcrumb: useTranslations('breadcrumb'),
+    t_prj: useTranslations('projects'),
     t_buttons: useTranslations('buttons'),
   }
   const go = useGo()
@@ -31,7 +31,7 @@ const Page = () => {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t_breadcrumb('projects')}
+          {t_prj('projects')}
         </Title>
       ),
     },

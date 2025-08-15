@@ -26,7 +26,7 @@ const { Title } = Typography
 
 export default function Page() {
   const t = useTranslations('projects.create')
-  const t_breadcrumb = useTranslations('breadcrumb')
+  const t_prj = useTranslations('projects')
   const t_buttons = useTranslations('buttons')
   const go = useGo()
   const { formProps, saveButtonProps, formLoading } = useForm()
@@ -38,7 +38,7 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t_breadcrumb('projects')}
+          {t_prj('projects')}
         </Title>
       ),
     },

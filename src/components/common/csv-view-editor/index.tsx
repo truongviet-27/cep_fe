@@ -31,7 +31,7 @@ const CsvViewEditor: React.FC = () => {
   const [fileBuffer, setFileBuffer] = useState<ArrayBuffer | null>(null)
   const [fileName, setFileName] = useState<string>('')
 
-  const t_breadcrumb = useTranslations('breadcrumb')
+  const t_prj = useTranslations('projects')
 
   const uploadProps: UploadProps = {
     accept: '.csv,.txt',
@@ -61,7 +61,7 @@ const CsvViewEditor: React.FC = () => {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t_breadcrumb('projects')}
+          {t_prj('projects')}
         </Title>
       ),
     },
