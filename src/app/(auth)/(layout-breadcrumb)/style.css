@@ -112,4 +112,18 @@
   .ant-radio-wrapper {
     margin-right: 0;
   }
+
+  .ant-menu .ant-menu-item a,
+  .ant-menu .ant-menu-submenu-title a {
+    color: inherit;
+  }
+
+  .ant-menu .ant-menu-item-selected a,
+  .ant-menu .ant-menu-item-active a {
+    color: #1677ff;
+  }
+
+  .ant-menu .ant-menu-item:not(.ant-menu-item-selected):hover a {
+    color: #1677ff;
+  }
 }

@@ -16,7 +16,7 @@ const { Text, Title } = Typography
 
 export default function Page() {
   const t = useTranslations('departments.list')
-  const t_breadcrumb = useTranslations('breadcrumb')
+  const t_dp = useTranslations('departments')
 
   const { tableProps, searchFormProps } = useTable({
     syncWithLocation: true,
@@ -26,7 +26,7 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t_breadcrumb('departments')}
+          {t_dp('departments')}
         </Title>
       ),
     },

@@ -20,7 +20,7 @@ type IProjectCreate = Omit<IProject, 'id' | 'key' | 'author' | 'updatedDate'>
 export default function Page() {
   const t = useTranslations('projects.create')
   const t_buttons = useTranslations('buttons')
-  const t_breadcrumb = useTranslations('breadcrumb')
+  const t_prj = useTranslations('projects')
   const go = useGo()
 
   const { formProps, saveButtonProps, formLoading } = useForm<IProjectCreate>({
@@ -37,7 +37,7 @@ export default function Page() {
       title: (
         <a onClick={() => go({ to: '/projects', type: 'push' })}>
           <Title level={5} style={{ color: PRIMARY }}>
-            {t_breadcrumb('projects')}
+            {t_prj('projects')}
           </Title>
         </a>
       ),

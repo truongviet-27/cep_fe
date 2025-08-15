@@ -8,17 +8,17 @@ import {
 } from '@ant-design/icons'
 import { CommonCreate } from '@components/common/create'
 import TreeSortable from '@components/common/tree'
-import Breadcrumbs from '@components/layout/breadcrumbs'
-import type { ITree } from '@interfaces/tree'
-import { fetchCategories } from '@mockApi/categories'
-import { LAYOUT_BG, PRIMARY } from '@utility/color'
 import {
   nextRootCode,
   removeById,
   toggleAll,
   toggleOpen,
   updateDeep,
-} from '@utility/tree-infinity'
+} from '@components/common/tree/utils/tree-infinity'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import type { ITree } from '@interfaces/tree'
+import { fetchCategories } from '@mockApi/categories'
+import { LAYOUT_BG, PRIMARY } from '@utility/color'
 import { Button, message, Space, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -103,7 +103,7 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('breadcrumb.system')}
+          {t('systemConfig.systemConfig')}
         </Title>
       ),
     },
@@ -164,7 +164,7 @@ export default function Page() {
               onAddChild={addChild}
               onEdit={edit}
               onDelete={del}
-              depth={2}
+              depth={3}
             />
           ))}
         </div>
