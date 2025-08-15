@@ -7,9 +7,10 @@ const issuer = process.env.NEXT_PUBLIC_ISSUER
 const authOptions = {
   providers: [
     KeycloakProvider({
-      clientId,
-      clientSecret,
-      issuer,
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID || '',
+      clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET || '',
+      issuer: process.env.NEXT_PUBLIC_ISSUER || '',
+      authorization: { params: { scope: 'openid profile email organization' } },
       profile(profile) {
         return {
           id: profile.sub,
