@@ -25,7 +25,7 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('breadcrumb.system')}
+          {t('systemConfig.systemConfig')}
         </Title>
       ),
     },

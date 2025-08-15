@@ -1,72 +1,40 @@
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
-import { Menu as MenuAntd, Space } from 'antd'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useTranslations } from 'next-intl'
+import { recursiveNestedMenu } from '@components/layout/menu/utils/recursive-nested-menu'
+import { useGo, useMenu } from '@refinedev/core'
+import { Menu as MenuAntd } from 'antd'
+import { last } from 'lodash'
 import React from 'react'
 
 import { AppIcon } from '@/components/common/app-icon'
 
 function Menu() {
-  const t = useTranslations('breadcrumb')
-  const t_system = useTranslations('systemConfig')
-  const selectedMenuKey = usePathname().split('/')?.[1]
+  const { menuItems, selectedKey } = useMenu()
+  const go = useGo()
 
-  const menuItems = [
-    { key: 'estimates', label: t('estimates') },
-    { key: 'customers', label: t('customers') },
-    {
-      key: 'projects',
-      label: <Link href={'/projects'}>{t('projects')}</Link>,
-    },
-    { key: 'products', label: t('products') },
-    {
-      key: 'departments',
-      label: <Link href={'/departments'}>{t('departments')}</Link>,
-    },
-    { key: 'employees', label: t('employees') },
-    {
-      key: 'system',
-      label: (
-        <Space size="small">
-          {t('system')}
-          <DownOutlined style={{ fontSize: '10px' }} />
-        </Space>
-      ),
-      children: [
-        {
-          key: 'permission-settings',
-          label: (
-            <Link href={'/permission-settings'}>
-              {t_system('permissionSettings')}
-            </Link>
-          ),
-        },
-        {
-          key: 'numbering-assignment-settings',
-          label: (
-            <Link href={'/'}>{t_system('numberingAssignmentSettings')}</Link>
-          ),
-          href: '/numbering-assignment-settings',
-        },
-      ],
-    },
-  ]
+  const handleNavigation = (to: string) => {
+    go({
+      type: 'replace',
+      to,
+    })
+  }
+
+  const selectedKeys = [last(selectedKey.split('/')) ?? '/']
+
+  const items = recursiveNestedMenu(menuItems, handleNavigation)
 
   return (
-    <>
-      <div className="flex items-center justify-start space-x-8">
-        <AppIcon level={4} />
-        <MenuAntd
-          mode="horizontal"
-          className="flex-1 border-none bg-transparent"
-          items={menuItems}
-          selectedKeys={[selectedMenuKey]}
-        />
-      </div>
-    </>
+    <div className="flex items-center justify-start space-x-8">
+      <AppIcon level={4} />
+      <MenuAntd
+        mode="horizontal"
+        className="flex-1 border-none bg-transparent"
+        items={items}
+        selectedKeys={selectedKeys}
+        expandIcon={<DownOutlined style={{ fontSize: '10px' }} />}
+      />
+    </div>
   )
 }
 

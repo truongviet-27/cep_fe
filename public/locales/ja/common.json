@@ -41,16 +41,29 @@
     "settings": "設定",
     "logout": "ログアウト"
   },
-  "breadcrumb": {
-    "estimates": "見積",
-    "customers": "顧客",
-    "projects": "案件",
-    "products": "商品",
-    "departments": "部門",
-    "employees": "社員",
-    "system": "システム設定"
+  "estimates": {
+    "estimates": "見積"
+  },
+  "customers": {
+    "customers": "顧客"
+  },
+  "products": {
+    "products": "商品"
+  },
+  "employees": {
+    "employees": "社員"
+  },
+  "permissionSettings": {
+    "permissionSettings": "権限設定"
+  },
+  "numberingAssignmentSettings": {
+    "numberingAssignmentSettings": "コード採番設定 "
+  },
+  "productCategorySettings": {
+    "productCategorySettings": "商品単位設定"
   },
   "systemConfig": {
+    "systemConfig": "システム設定",
     "permissionSettings": "権限設定",
     "numberingAssignmentSettings": "コード採番設定 ",
     "productCategory": "商品分類設定",
@@ -73,6 +86,7 @@
     "manager": "マネージャー "
   },
   "projects": {
+    "projects": "案件",
     "list": {
       "title": "案件一覧",
       "buttons": {
@@ -163,6 +177,7 @@
     }
   },
   "departments": {
+    "departments": "部門",
     "list": {
       "title": "部門一覧",
       "buttons": {

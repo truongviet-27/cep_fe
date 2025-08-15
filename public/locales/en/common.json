@@ -41,16 +41,29 @@
     "settings": "Settings",
     "logout": "Logout"
   },
-  "breadcrumb": {
-    "estimates": "Estimates",
-    "customers": "Customers",
-    "projects": "Projects",
-    "products": "Products",
-    "departments": "Departments",
-    "employees": "Employees",
-    "system": "System Settings"
+  "estimates": {
+    "estimates": "Estimates"
+  },
+  "customers": {
+    "customers": "Customers"
+  },
+  "products": {
+    "products": "Products"
+  },
+  "employees": {
+    "employees": "Employees"
+  },
+  "permissionSettings": {
+    "permissionSettings": "Permission Settings"
+  },
+  "numberingAssignmentSettings": {
+    "numberingAssignmentSettings": "Numbering Assignment Settings"
+  },
+  "productCategorySettings": {
+    "productCategorySettings": "Numbering Assignment Settings"
   },
   "systemConfig": {
+    "systemConfig": "System Settings",
     "permissionSettings": "Permission Settings",
     "numberingAssignmentSettings": "Numbering Assignment Settings",
     "productCategory": "Product Category",
@@ -73,6 +86,7 @@
     "manager": "Manager"
   },
   "projects": {
+    "projects": "Projects",
     "list": {
       "title": "Project List",
       "buttons": {
@@ -163,6 +177,7 @@
     }
   },
   "departments": {
+    "departments": "Departments",
     "list": {
       "title": "Department List",
       "buttons": {

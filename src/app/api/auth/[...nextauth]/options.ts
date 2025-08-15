@@ -1,13 +1,15 @@
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
+const clientId = process.env.NEXT_PUBLIC_CLIENT_ID ?? ''
+const clientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET ?? ''
+const issuer = process.env.NEXT_PUBLIC_ISSUER
+
 const authOptions = {
-  // Configure one or more authentication providers
   providers: [
-    // !!! Should be stored in .env file.
     KeycloakProvider({
-      clientId: `refine-demo`,
-      clientSecret: `refine`,
-      issuer: `https://lemur-0.cloud-iam.com/auth/realms/refine`,
+      clientId,
+      clientSecret,
+      issuer,
       profile(profile) {
         return {
           id: profile.sub,
