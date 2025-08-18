@@ -1,6 +1,7 @@
+import type { AuthOptions } from 'next-auth'
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
-const authOptions = {
+const authOptions: AuthOptions = {
   providers: [
     KeycloakProvider({
       clientId: process.env.NEXT_PUBLIC_CLIENT_ID || '',
@@ -18,6 +19,24 @@ const authOptions = {
     }),
   ],
   secret: `UItTuD1HcGXIj8ZfHUswhYdNd40Lc325R8VlxQPUoR0=`,
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account) {
+        token.idToken = account.id_token
+        token.accessToken = account.access_token
+        token.refreshToken = account.refresh_token
+        token.expiresAt = account.expires_at
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.accessToken = String(token?.accessToken ?? '')
+      }
+
+      return session
+    },
+  },
 }
 
 export default authOptions

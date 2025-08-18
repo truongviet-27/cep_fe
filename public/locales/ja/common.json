@@ -28,7 +28,8 @@
     "create": "登録",
     "back": "戻る",
     "edit": "編集",
-    "delete": "削除"
+    "delete": "削除",
+    "select": "選択"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -194,6 +195,20 @@
         "registrant": "登録者",
         "remarks": "備考"
       }
+    }
+  },
+  "tenant": {
+    "tenant": "テナント選択",
+    "filters": {
+      "label": "テナントコード・テナント名",
+      "placeholder": "部分一致",
+      "search": "検索",
+      "clear": "クリア"
+    },
+    "columns": {
+      "tenantCode": "テナントコード",
+      "tenantName": "テナント名",
+      "actions": "操作"
     }
   }
 }
