@@ -1,13 +1,13 @@
 import { SearchOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { useTable } from '@refinedev/antd'
-import { axiosInstance } from '@rest-data-provider/utils'
+import useTenantStore from '@stores/useTenantStore'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Table } from 'antd'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
-function TenantSwitchingModal() {
+function TenantSwitchingModal({ close }: { close: () => void }) {
   const t = useTranslations('tenant')
   const t_btn = useTranslations('buttons')
 
@@ -86,10 +86,11 @@ function TenantSwitchingModal() {
           render={(_, record) => (
             <Button
               onClick={() => {
-                axiosInstance.defaults.headers.common['tenant-id'] = record?.id
+                useTenantStore.setState({ tenantId: record.id })
+                close()
               }}
             >
-              {t_btn('cancel')}
+              {t_btn('select')}
             </Button>
           )}
         />

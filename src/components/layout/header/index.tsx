@@ -97,10 +97,10 @@ export default function AuthHeader({
           open={visible}
           onCancel={close}
           cancelButtonProps={{ style: { display: 'none' } }}
-          okText={t_btn('select')}
+          okText={t_btn('cancel')}
           width={'50vw'}
         >
-          <TenantSwitchingModal />
+          <TenantSwitchingModal close={close} />
         </Modal>
       </Header>
     </div>
