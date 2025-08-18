@@ -1,7 +1,24 @@
 import type { HttpError } from '@refinedev/core'
 import axios from 'axios'
+import { getSession } from 'next-auth/react'
 
 const axiosInstance = axios.create()
+
+axiosInstance.interceptors.request.use(
+  async (request) => {
+    const session = await getSession()
+
+    const accessToken = session?.accessToken
+    if (accessToken) {
+      request.headers['Authorization'] = `Bearer ${accessToken}`
+      request.headers['tenant-id'] = 1
+    }
+    return request
+  },
+  (error) => {
+    return Promise.reject(error)
+  },
+)
 
 axiosInstance.interceptors.response.use(
   (response) => {

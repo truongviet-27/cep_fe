@@ -1,9 +1,17 @@
 'use client'
 
-import { BellOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Badge, Input, Layout, Space } from 'antd'
+import {
+  BellOutlined,
+  DownOutlined,
+  SearchOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
+import { useModal } from '@refinedev/core'
+import { Avatar, Badge, Input, Layout, Modal, Space } from 'antd'
 import { useKBar } from 'kbar'
 import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 import React from 'react'
 
 import { cn } from '@/utility/cn'
@@ -14,8 +22,10 @@ const { Header } = Layout
 export default function AuthHeader({
   children,
 }: Readonly<React.PropsWithChildren>) {
+  const t_btn = useTranslations('buttons')
   const { query } = useKBar()
   const session = useSession()
+  const { show, visible, close } = useModal()
 
   return (
     <div className={cn(children && 'flex justify-center')}>
@@ -39,9 +49,12 @@ export default function AuthHeader({
         {children ? (
           <div className="flex items-center gap-2">
             <div className="text-right leading-tight">
-              <div className="text-[12px] font-semibold text-[#74232A]">
-                株式会社ピオネロ
-              </div>
+              <Space size={4} className={'cursor-pointer'} onClick={show}>
+                <div className="text-[12px] font-semibold text-[#74232A]">
+                  {session.data?.tenant?.name ?? '株式会社ピオネロ'}
+                </div>
+                <DownOutlined style={{ fontSize: '10px' }} />
+              </Space>
 
               <div className="flex items-center justify-end gap-1">
                 <span className="max-w-[180px] truncate text-[14px] font-medium text-gray-900">
@@ -79,6 +92,16 @@ export default function AuthHeader({
             </Space>
           </div>
         )}
+
+        <Modal
+          open={visible}
+          onCancel={close}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okText={t_btn('select')}
+          width={'50vw'}
+        >
+          <TenantSwitchingModal />
+        </Modal>
       </Header>
     </div>
   )

@@ -28,7 +28,8 @@
     "create": "Create",
     "back": "Back",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "select": "Select"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -194,6 +195,20 @@
         "registrant": "Registrant",
         "remarks": "Remarks"
       }
+    }
+  },
+  "tenant": {
+    "tenant": "Tenant Selection",
+    "filters": {
+      "label": "Tenant Code / Tenant Name",
+      "placeholder": "Partial Match",
+      "search": "Search",
+      "clear": "Clear"
+    },
+    "columns": {
+      "tenantCode": "Tenant Code",
+      "tenantName": "Tenant Name",
+      "actions": "Actions"
     }
   }
 }

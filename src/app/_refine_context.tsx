@@ -4,7 +4,7 @@ import '@refinedev/antd/dist/reset.css'
 
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import LoadingPage from '@components/common/loading-page'
-import keyCloakProvider from '@providers/keycloak-provider'
+import authProvider from '@providers/keycloak-provider'
 import { useNotificationProvider } from '@refinedev/antd'
 import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
@@ -35,7 +35,6 @@ const App = (props: React.PropsWithChildren) => {
   const session = useSession()
   const { status } = session
   const t = useTranslations()
-  const authProvider = keyCloakProvider({ session })
 
   if (status === 'loading') {
     return <LoadingPage />

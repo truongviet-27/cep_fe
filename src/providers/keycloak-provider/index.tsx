@@ -1,88 +1,61 @@
 'use client'
 
-/* eslint-disable */
 import type { AuthProvider } from '@refinedev/core'
-import { signIn, signOut } from 'next-auth/react'
-import { useEffect } from 'react'
-import { usePathname } from 'next/navigation'
 import { axiosInstance } from '@rest-data-provider/utils'
+import { getSession, signIn, signOut } from 'next-auth/react'
 
-const keyCloakProvider = ({ session }: { session: any }) => {
-  const { status, data } = session
+const authProvider: AuthProvider = {
+  login: async () => {
+    await signIn('keycloak', {
+      callbackUrl: '/',
+      redirect: true,
+    })
 
-  const to = usePathname()
+    return { success: true }
+  },
+  logout: async () => {
+    await signOut({
+      redirect: true,
+      callbackUrl: '/login',
+    })
+    delete axiosInstance.defaults.headers.common['Authorization']
+    return { success: true, redirectTo: '/login' }
+  },
+  onError: async (error) => {
+    if (error?.response?.status === 401) {
+      return { logout: true }
+    }
+    return { error }
+  },
+  check: async () => {
+    const session = await getSession()
 
-  useEffect(() => {
-    fetch('/api/get-token')
-      .then((res) => res.json())
-      .then(
-        (data) =>
-          (axiosInstance.defaults.headers.common['Authorization'] =
-            `Bearer ${data.token}`),
-      )
-  }, [])
+    const now = new Date()
+    const specificDate = new Date(session?.expires ?? now)
 
-  const authProvider: AuthProvider = {
-    login: async () => {
-      signIn('keycloak', {
-        callbackUrl: to ? to.toString() : '/',
-        redirect: true,
-      })
-
+    if (specificDate <= now) {
       return {
-        success: true,
+        authenticated: false,
+        redirectTo: '/login',
       }
-    },
-    logout: async () => {
-      signOut({
-        redirect: true,
-        callbackUrl: '/login',
-      })
+    }
 
-      return {
-        success: true,
-      }
-    },
-    onError: async (error) => {
-      if (error.response?.status === 401) {
-        return {
-          logout: true,
-        }
-      }
-
-      return {
-        error,
-      }
-    },
-    check: async () => {
-      if (status === 'unauthenticated') {
-        return {
-          authenticated: false,
-          redirectTo: '/login',
-        }
-      }
-
-      return {
-        authenticated: true,
-      }
-    },
-    getPermissions: async () => {
-      return null
-    },
-    getIdentity: async () => {
-      if (data?.user) {
-        const { user } = data
-        return {
-          name: user.name,
-          avatar: user.image,
-        }
-      }
-
-      return null
-    },
-  }
-
-  return authProvider
+    return { authenticated: true }
+  },
+  getPermissions: async () => {
+    return null
+  },
+  getIdentity: async () => {
+    // const res = await fetch('/api/get-user')
+    // if (res.status === 200) {
+    //   const user = await res.json()
+    //   return {
+    //     name: user.name,
+    //     avatar: user.image,
+    //   }
+    // }
+    return null
+  },
 }
 
-export default keyCloakProvider
+export default authProvider
