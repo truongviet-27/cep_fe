@@ -25,27 +25,27 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('systemConfig.systemConfig')}
+          {t('system_config.system_config')}
         </Title>
       ),
     },
     {
-      title: <Title level={5}>{t('systemConfig.permissionSettings')}</Title>,
+      title: <Title level={5}>{t('system_config.permission_settings')}</Title>,
     },
   ]
 
   const handleCancel = () => {
     setSettings(defaultSettingsData)
-    message.info(t('systemConfig.cancelMessage'))
+    message.info(t('system_config.cancelMessage'))
   }
 
   const handleSave = async () => {
     setLoading(true)
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      message.success(t('systemConfig.saveSuccessMessage'))
+      message.success(t('system_config.saveSuccessMessage'))
     } catch (error) {
-      message.error(t('systemConfig.saveErrorMessage'))
+      message.error(t('system_config.saveErrorMessage'))
       console.error(error)
     } finally {
       setLoading(false)
@@ -54,28 +54,28 @@ export default function Page() {
 
   const columns: ColumnsType<SettingItem> = [
     {
-      title: t('systemConfig.settingItem'),
+      title: t('system_config.settingItem'),
       dataIndex: 'settingItem',
       key: 'settingItem',
       width: 300,
       align: 'center',
     },
     {
-      title: t('systemConfig.employee'),
+      title: t('system_config.employee'),
       key: 'employee',
       width: 200,
       align: 'center',
       render: () => <Checkbox />,
     },
     {
-      title: t('systemConfig.manager'),
+      title: t('system_config.manager'),
       key: 'manager',
       width: 200,
       align: 'center',
       render: () => <Checkbox />,
     },
     {
-      title: t('systemConfig.purpose'),
+      title: t('system_config.purpose'),
       dataIndex: 'purpose',
       key: 'purpose',
       align: 'center',
@@ -102,7 +102,7 @@ export default function Page() {
       }
     >
       <h1 className="mb-6 text-xl font-medium">
-        {t('systemConfig.permissionSettings')}
+        {t('system_config.permission_settings')}
       </h1>
       <CommonTable
         columns={columns}

@@ -1,8 +1,8 @@
 {
   "login": {
     "title": "Lets get you started",
-    "noAccount": "Don't have an account?",
-    "signUp": "sign up",
+    "no_account": "Don't have an account?",
+    "sign_up": "sign up",
     "signin": "Sign in",
     "divider": "Or sign in with",
     "google": "Sign in with Google",
@@ -11,20 +11,20 @@
     "language": "Language",
     "form": {
       "email": "Username/Email Address",
-      "emailPlaceholder": "Enter your email address",
+      "email_placeholder": "Enter your email address",
       "password": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot Password?"
+      "password_placeholder": "Enter your password",
+      "remember_me": "Remember me",
+      "forgot_password": "Forgot Password?"
     },
     "errors": {
-      "emailRequired": "Please enter your email!",
-      "passwordRequired": "Please enter your password!"
+      "email_required": "Please enter your email!",
+      "password_required": "Please enter your password!"
     }
   },
   "buttons": {
     "cancel": "Cancel",
-    "saveSettings": "Save Settings",
+    "save_settings": "Save Settings",
     "create": "Create",
     "back": "Back",
     "edit": "Edit",
@@ -54,35 +54,32 @@
   "employees": {
     "employees": "Employees"
   },
-  "permissionSettings": {
-    "permissionSettings": "Permission Settings"
+  "permission_settings": {
+    "permission_settings": "Permission Settings"
   },
-  "numberingAssignmentSettings": {
-    "numberingAssignmentSettings": "Numbering Assignment Settings"
+  "code_issue_setting": {
+    "code_issue_setting": "Code Issue Setting"
   },
-  "productCategorySettings": {
-    "productCategorySettings": "Numbering Assignment Settings"
-  },
-  "systemConfig": {
-    "systemConfig": "System Settings",
-    "permissionSettings": "Permission Settings",
-    "numberingAssignmentSettings": "Numbering Assignment Settings",
-    "productCategory": "Product Category",
-    "cancelMessage": "Changes cancelled",
-    "saveSuccessMessage": "Settings saved",
-    "saveErrorMessage": "Failed to save",
-    "settingItem": "Setting Item",
-    "initialSetting": "Initial Setting",
-    "notManage": "Don't manage",
-    "notUse": "Don't use",
+  "system_config": {
+    "system_config": "System Settings",
+    "permission_settings": "Permission Settings",
+    "code_issue_setting": "Code Issue Setting",
+    "product_category": "Product Category",
+    "cancel_message": "Changes cancelled",
+    "save_success_message": "Settings saved",
+    "save_error_message": "Failed to save",
+    "setting_item": "Setting Item",
+    "initial_setting": "Initial Setting",
+    "not_manage": "Don't manage",
+    "not_use": "Don't use",
     "manage": "Manage",
     "use": "Use",
     "purpose": "Purpose of change",
-    "quickStart": "1. Quick Start Settings",
+    "quick_start": "1. Quick Start Settings",
     "advanced": "2. Advanced Settings (for Pro)",
     "enterprise": "3. Enterprise Settings",
-    "advancedContent": "Content for advanced settings",
-    "enterpriseContent": "Content for enterprise settings",
+    "advanced_content": "Content for advanced settings",
+    "enterprise_content": "Content for enterprise settings",
     "employee": "Employee",
     "manager": "Manager"
   },
@@ -92,34 +89,34 @@
       "title": "Project List",
       "buttons": {
         "create": "Register",
-        "csvExport": "CSV Bulk Upload"
+        "csv_export": "CSV Bulk Upload"
       },
       "filters": {
-        "projectSearchPlaceholder": "Search by Project Code / Name",
-        "customerSearchPlaceholder": "Search by Customer",
+        "project_search_placeholder": "Search by Project Code / Name",
+        "customer_search_placeholder": "Search by Customer",
         "search": "Search",
         "clear": "Clear"
       },
       "columns": {
-        "projectCode": "Project Code",
-        "projectName": "Project Name",
+        "project_code": "Project Code",
+        "project_name": "Project Name",
         "customer": "Customer",
         "registrant": "Registrant",
-        "lastUpdated": "Last Updated"
+        "last_updated": "Last Updated"
       }
     },
     "create": {
       "title": "Create Project",
       "notifications": {
-        "createSuccess": "Project created successfully!"
+        "create_success": "Project created successfully!"
       },
       "fields": {
-        "projectCode": {
+        "project_code": {
           "label": "Project Code",
           "required": "Please enter the project code!",
           "extra": "Cannot be edited if automatic numbering is set."
         },
-        "projectName": {
+        "project_name": {
           "label": "Project Name",
           "required": "Please enter the project name!",
           "placeholder": "Enter project name"
@@ -133,39 +130,39 @@
           "label": "Remarks",
           "placeholder": "Enter any special notes about the project"
         },
-        "updatedDate": "Updated date",
-        "createdAt": "Created at"
+        "updated_date": "Updated date",
+        "created_at": "Created at"
       }
     },
     "show": {
       "title": "Project Details",
       "fields": {
-        "projectCode": "Project Code",
-        "projectName": "Project Name",
+        "project_code": "Project Code",
+        "project_name": "Project Name",
         "customer": "Customer",
-        "estimateNumber": "Estimate Number",
+        "estimate_number": "Estimate Number",
         "remarks": "Remarks",
         "registrant": "Registrant",
-        "registrationDate": "Registration Date",
-        "lastUpdated": "Last Updated Date"
+        "registration_date": "Registration Date",
+        "last_updated": "Last Updated Date"
       }
     },
-    "csvUpload": {
+    "csv_upload": {
       "title": "CSV Bulk Registration",
       "steps": {
-        "selectFile": "Select File",
-        "confirmData": "Confirm Data",
+        "select_file": "Select File",
+        "confirm_data": "Confirm Data",
         "validation": "Validation",
         "complete": "Complete"
       },
       "template": {
         "title": "CSV Template",
         "description": "To register data in the correct format, please download the CSV template first. By entering the necessary information into the template and uploading it, you can prevent errors.",
-        "downloadLink": "Download CSV Template"
+        "download_link": "Download CSV Template"
       },
       "upload": {
-        "dragAndDropText": "Drag & drop CSV file here",
-        "selectFileText": "or select a file from the button below"
+        "drag_and_drop_text": "Drag & drop CSV file here",
+        "select_file_text": "or select a file from the button below"
       },
       "notes": {
         "title": "Notes on CSV Registration",
@@ -185,13 +182,13 @@
         "create": "Register"
       },
       "filters": {
-        "searchPlaceholder": "Search by Department Code / Name",
+        "search_placeholder": "Search by Department Code / Name",
         "clear": "Clear",
         "search": "Search"
       },
       "columns": {
-        "departmentCode": "Department Code",
-        "departmentName": "Department Name",
+        "department_code": "Department Code",
+        "department_name": "Department Name",
         "registrant": "Registrant",
         "remarks": "Remarks"
       }
@@ -206,8 +203,27 @@
       "clear": "Clear"
     },
     "columns": {
-      "tenantCode": "Tenant Code",
-      "tenantName": "Tenant Name",
+      "tenant_code": "Tenant Code",
+      "tenant_name": "Tenant Name",
+      "actions": "Actions"
+    }
+  },
+  "product_units": {
+    "product_units": "Product Unit Settings",
+    "filters": {
+      "label": "Unit Name",
+      "placeholder": "Partial Match",
+      "search": "Search",
+      "clear": "Clear"
+    },
+    "buttons": {
+      "create_new": "Create New",
+      "back": "Back",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "columns": {
+      "unit_name": "Unit Name",
       "actions": "Actions"
     }
   }

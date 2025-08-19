@@ -3,45 +3,175 @@
 import { z } from 'zod'
 
 /**
- * Generic paginated response structure
+ * Code Issue Setting model
  */
-export const zPaginatedResponse = z.object({
-  current_page: z.optional(z.int()),
-  data: z.optional(z.array(z.object({}))),
-  first_page_url: z.optional(z.string()),
-  from: z.optional(z.int()),
-  last_page: z.optional(z.int()),
-  last_page_url: z.optional(z.string()),
-  links: z.optional(
-    z.array(
-      z.object({
-        url: z.optional(z.union([z.string(), z.null()])),
-        label: z.optional(z.string()),
-        active: z.optional(z.boolean()),
-      }),
-    ),
-  ),
-  next_page_url: z.optional(z.union([z.string(), z.null()])),
-  path: z.optional(z.string()),
-  per_page: z.optional(z.int()),
-  prev_page_url: z.optional(z.union([z.string(), z.null()])),
-  to: z.optional(z.int()),
-  total: z.optional(z.int()),
-})
-
-/**
- * User model
- */
-export const zUser = z.object({
+export const zCodeIssueSetting = z.object({
   id: z.optional(z.int()),
+  tenant_id: z.optional(z.string()),
+  code: z.optional(z.string()),
   name: z.optional(z.string()),
-  email: z.optional(z.email()),
-  email_verified_at: z.optional(z.union([z.iso.datetime(), z.null()])),
-  role: z.optional(z.string()),
+  issue_method: z.optional(z.enum(['automatic', 'manual'])),
+  hash_dash: z.optional(z.boolean()),
+  prefix: z.optional(z.string()),
+  segment: z.optional(z.enum(['year_range', 'month_range'])),
+  total: z.optional(z.int()),
+  preview_code: z.optional(z.string()),
+  serial_length: z.optional(z.int()),
   created_by: z.optional(z.union([z.int(), z.null()])),
   updated_by: z.optional(z.union([z.int(), z.null()])),
   created_at: z.optional(z.iso.datetime()),
   updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * User who created the resource
+ */
+export const zCreatedBy = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+})
+
+/**
+ * User who updated the resource
+ */
+export const zUpdatedBy = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+})
+
+/**
+ * Code Issue Setting response model
+ */
+export const zCodeIssueSettingResponse = z.object({
+  id: z.optional(z.int()),
+  tenant_id: z.optional(z.string()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  issue_method: z.optional(z.enum(['automatic', 'manual'])),
+  prefix: z.optional(z.string()),
+  hash_dash: z.optional(z.boolean()),
+  segment: z.optional(
+    z.enum([
+      'none',
+      'year',
+      'year_range',
+      'year_month',
+      'year_month_range',
+      'year_month_day',
+      'year_month_day_range',
+    ]),
+  ),
+  serial_length: z.optional(z.int()),
+  total: z.optional(z.int()),
+  preview_code: z.optional(z.string()),
+  created_by: z.optional(z.union([z.int(), z.null()])),
+  updated_by: z.optional(z.union([z.int(), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+  author: z.optional(z.union([zCreatedBy, z.null()])),
+  editor: z.optional(z.union([zUpdatedBy, z.null()])),
+})
+
+/**
+ * Success response for getting code issue setting detail
+ */
+export const zCodeIssueSettingDetailResponse = z.object({
+  success: z.optional(z.boolean()),
+  data: z.optional(zCodeIssueSettingResponse),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Generic paginated response structure
+ */
+export const zPaginatedResponse = z.object({
+  data: z.optional(z.array(z.object({}))),
+  meta: z.optional(
+    z.object({
+      current_page: z.optional(z.int()),
+      from: z.optional(z.int()),
+      last_page: z.optional(z.int()),
+      per_page: z.optional(z.int()),
+      to: z.optional(z.int()),
+      total: z.optional(z.int()),
+    }),
+  ),
+  links: z.optional(
+    z.object({
+      first: z.optional(z.string()),
+      last: z.optional(z.string()),
+      prev: z.optional(z.union([z.string(), z.null()])),
+      next: z.optional(z.union([z.string(), z.null()])),
+    }),
+  ),
+})
+
+/**
+ * Paginated response for code issue settings
+ */
+export const zCodeIssueSettingsPaginatedResponse = zPaginatedResponse.and(
+  z.object({
+    data: z.optional(z.array(zCodeIssueSetting)),
+  }),
+)
+
+/**
+ * Request body for updating code issue setting
+ */
+export const zUpdateCodeIssueSettingRequest = z.object({
+  issue_method: z.enum(['automatic', 'manual']),
+  hash_dash: z.boolean(),
+  prefix: z.optional(z.union([z.string(), z.null()])),
+  segment: z.enum([
+    'none',
+    'year',
+    'year_range',
+    'year_month',
+    'year_month_range',
+    'year_month_day',
+    'year_month_day_range',
+  ]),
+  serial_length: z.int().gte(1).lte(10),
+})
+
+/**
+ * Success response for updating code issue setting
+ */
+export const zUpdateCodeIssueSettingResponse = z.object({
+  data: z.optional(zCodeIssueSettingResponse),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Standard error response format
+ */
+export const zErrorResponse = z.object({
+  status: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Forbidden access response
+ */
+export const zForbiddenResponse = z.object({
+  status: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Internal server error response
+ */
+export const zInternalServerErrorResponse = z.object({
+  status: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Resource not found response
+ */
+export const zNotFoundResponse = z.object({
+  status: z.optional(z.boolean()),
+  message: z.optional(z.string()),
 })
 
 /**
@@ -61,8 +191,8 @@ export const zPost = z.object({
   updated_by: z.optional(z.union([z.int(), z.null()])),
   created_at: z.optional(z.iso.datetime()),
   updated_at: z.optional(z.iso.datetime()),
-  author: z.optional(z.union([zUser, z.null()])),
-  editor: z.optional(z.union([zUser, z.null()])),
+  author: z.optional(z.union([zCreatedBy, z.null()])),
+  editor: z.optional(z.union([zUpdatedBy, z.null()])),
 })
 
 /**
@@ -73,6 +203,57 @@ export const zPostsPaginatedResponse = zPaginatedResponse.and(
     data: z.optional(z.array(zPost)),
   }),
 )
+
+/**
+ * Product unit model
+ */
+export const zProductUnit = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Paginated response for product units
+ */
+export const zProductUnitsPaginatedResponse = zPaginatedResponse.and(
+  z.object({
+    data: z.optional(z.array(zProductUnit)),
+  }),
+)
+
+/**
+ * Unauthorized access response
+ */
+export const zUnauthorizedResponse = z.object({
+  status: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+})
+
+/**
+ * User model
+ */
+export const zUser = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  email: z.optional(z.email()),
+  email_verified_at: z.optional(z.union([z.iso.datetime(), z.null()])),
+  role: z.optional(z.string()),
+  created_by: z.optional(z.union([z.int(), z.null()])),
+  updated_by: z.optional(z.union([z.int(), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Validation error response
+ */
+export const zValidationErrorResponse = z.object({
+  status: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  errors: z.optional(z.object({})),
+})
 
 export const zB39Fb0Dd3A8Eca7E26483C4E675C0aData = z.object({
   body: z.optional(z.never()),
@@ -100,6 +281,30 @@ export const zB39Fb0Dd3A8Eca7E26483C4E675C0aResponse = z.object({
       laravel_version: z.optional(z.string()),
       memory_usage: z.optional(z.string()),
       uptime: z.optional(z.int()),
+    }),
+  ),
+})
+
+export const zBc8F1062847Db698Daf69F22426Dd8eData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Application is running
+ */
+export const zBc8F1062847Db698Daf69F22426Dd8eResponse = z.object({
+  status: z.optional(z.string()),
+  message: z.optional(z.string()),
+  timestamp: z.optional(z.iso.datetime()),
+  version: z.optional(z.string()),
+  environment: z.optional(z.string()),
+  system: z.optional(
+    z.object({
+      php_version: z.optional(z.string()),
+      laravel_version: z.optional(z.string()),
+      memory_usage: z.optional(z.string()),
     }),
   ),
 })
@@ -205,6 +410,51 @@ export const zBa30F404343172Ff3A8Fa2Cca1Db68E5Response = z.object({
   message: z.optional(z.string()),
 })
 
+export const zCodeIssueSettingControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Code Issue Settings retrieved successfully
+ */
+export const zCodeIssueSettingControllerIndexResponse =
+  zCodeIssueSettingsPaginatedResponse
+
+export const zCodeIssueSettingControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Code Issue Setting detail retrieved successfully
+ */
+export const zCodeIssueSettingControllerShowResponse =
+  zCodeIssueSettingDetailResponse
+
+export const zCade34322664382Bd2B7971982208Eb9Data = z.object({
+  body: zUpdateCodeIssueSettingRequest,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Code Issue Setting updated successfully
+ */
+export const zCade34322664382Bd2B7971982208Eb9Response =
+  zUpdateCodeIssueSettingResponse
+
 export const zD88E9Abc08D34E08B091737239DdfData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -294,4 +544,89 @@ export const zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Response = z.object({
   success: z.optional(z.boolean()),
   message: z.optional(z.string()),
   data: z.optional(zPost),
+})
+
+export const zProductUnitControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      name_lk: z.optional(z.string()),
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Units retrieved successfully
+ */
+export const zProductUnitControllerIndexResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(z.array(zProductUnit)),
+})
+
+export const zProductUnitControllerStoreData = z.object({
+  body: z.object({
+    name: z.string(),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Product unit created successfully
+ */
+export const zProductUnitControllerStoreResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zProductUnit),
+})
+
+export const zProductUnitControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Product unit deleted successfully
+ */
+export const zProductUnitControllerDestroyResponse = z.object({
+  message: z.optional(z.string()),
+})
+
+export const zProductUnitControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Product unit retrieved successfully
+ */
+export const zProductUnitControllerShowResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zProductUnit),
+})
+
+export const zProductUnitControllerUpdateData = z.object({
+  body: z.object({
+    name: z.optional(z.string()),
+  }),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Product unit updated successfully
+ */
+export const zProductUnitControllerUpdateResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zProductUnit),
 })

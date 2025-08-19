@@ -96,8 +96,7 @@ export const buildClientParams = (
 
   let config: FieldsConfig[number] | undefined
 
-  for (let index = 0; index < args.length; index++) {
-    const arg = args[index]
+  for (const [index, arg] of args.entries()) {
     if (fields[index]) {
       config = fields[index]
     }

@@ -72,17 +72,17 @@ const Page = () => {
         </Space>
       }
     >
-      <Title level={5}>{t('fields.projectCode.label')}</Title>
+      <Title level={5}>{t('fields.project_code.label')}</Title>
       <TextField value={record?.projectCode} />
-      <Title level={5}>{t('fields.projectName.label')}</Title>
+      <Title level={5}>{t('fields.project_name.label')}</Title>
       <TextField value={record?.projectName} />
       <Title level={5}>{t('fields.customer.label')}</Title>
       <TextField value={record?.customer} />
       <Title level={5}>{t('fields.author.label')}</Title>
       <TextField value={record?.author} />
-      <Title level={5}>{t('fields.updatedDate')}</Title>
+      <Title level={5}>{t('fields.updated_date')}</Title>
       <DateField value={record?.updatedDate} />
-      <Title level={5}>{t('fields.createdAt')}</Title>
+      <Title level={5}>{t('fields.created_at')}</Title>
       <DateField value={record?.createdAt} />
       <Title level={5}>{t('fields.status')}</Title>
       <TextField value={record?.status} />

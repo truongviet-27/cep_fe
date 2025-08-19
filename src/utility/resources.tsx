@@ -29,27 +29,33 @@ export const resource: ResourceProps[] = [
     list: '/employees',
   },
   {
-    name: 'systemConfig',
+    name: 'system-config',
   },
   {
-    name: 'permissionSettings',
+    name: 'permission-settings',
     list: '/permission-settings',
     meta: {
-      parent: 'systemConfig',
+      parent: 'system-config',
     },
   },
   {
-    name: 'numberingAssignmentSettings',
-    list: '/numbering-assignment-settings',
+    name: 'code-issue-setting',
+    list: '/code-issue-setting',
+    show: '/code-issue-setting/show/:id',
+    edit: '/code-issue-setting/edit/:id',
     meta: {
-      parent: 'systemConfig',
+      parent: 'system-config',
     },
   },
   {
-    name: 'productCategorySettings',
-    list: '/product-category',
+    name: 'product-units',
+    list: '/product-units',
+    show: '/product-units/:id',
+    create: '/product-units/:id',
+    edit: '/product-units/:id',
     meta: {
-      parent: 'systemConfig',
+      parent: 'system-config',
+      canDelete: true,
     },
   },
 ]
