@@ -1,3 +1,4 @@
+import { PRIMARY } from '@utility/color'
 import type { TableProps } from 'antd'
 import { Table } from 'antd'
 import React from 'react'
@@ -21,7 +22,11 @@ function CommonTable<T extends object>(
           ) => (
             <th
               {...props}
-              style={{ ...props.style, backgroundColor: '#e6f7ff' }}
+              style={{
+                ...props.style,
+                backgroundColor: '#e6f7ff',
+                color: PRIMARY,
+              }}
             />
           ),
         },
