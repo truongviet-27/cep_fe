@@ -2,7 +2,7 @@
 
 import type { AuthProvider } from '@refinedev/core'
 import { axiosInstance } from '@rest-data-provider/utils'
-import { getSession, signIn, signOut } from 'next-auth/react'
+import { signIn, signOut } from 'next-auth/react'
 
 const authProvider: AuthProvider = {
   login: async () => {
@@ -28,18 +28,6 @@ const authProvider: AuthProvider = {
     return { error }
   },
   check: async () => {
-    const session = await getSession()
-
-    const now = new Date()
-    const specificDate = new Date(session?.expires ?? now)
-
-    if (specificDate <= now) {
-      return {
-        authenticated: false,
-        redirectTo: '/login',
-      }
-    }
-
     return { authenticated: true }
   },
   getPermissions: async () => {

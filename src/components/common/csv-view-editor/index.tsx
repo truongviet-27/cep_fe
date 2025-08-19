@@ -22,7 +22,7 @@ const { Title, Text, Link, Paragraph } = Typography
 const { Dragger } = Upload
 
 const CsvViewEditor: React.FC = () => {
-  const t = useTranslations('projects.csvUpload')
+  const t = useTranslations('projects.csv_upload')
   const t_buttons = useTranslations('buttons')
   const go = useGo()
   const [currentStep, setCurrentStep] = useState(0)

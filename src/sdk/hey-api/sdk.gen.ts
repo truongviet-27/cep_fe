@@ -5,6 +5,8 @@ import type {
   B39Fb0Dd3A8Eca7E26483C4E675C0aData,
   B39Fb0Dd3A8Eca7E26483C4E675C0aResponses,
   B39Fb0Dd3A8Eca7E26483C4E675C0aErrors,
+  Bc8F1062847Db698Daf69F22426Dd8eData,
+  Bc8F1062847Db698Daf69F22426Dd8eResponses,
   B03Eb66E9Fc14Dbed91D82E3A240A06Data,
   B03Eb66E9Fc14Dbed91D82E3A240A06Responses,
   B03Eb66E9Fc14Dbed91D82E3A240A06Errors,
@@ -20,6 +22,15 @@ import type {
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Data,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Errors,
+  CodeIssueSettingControllerIndexData,
+  CodeIssueSettingControllerIndexResponses,
+  CodeIssueSettingControllerIndexErrors,
+  CodeIssueSettingControllerShowData,
+  CodeIssueSettingControllerShowResponses,
+  CodeIssueSettingControllerShowErrors,
+  Cade34322664382Bd2B7971982208Eb9Data,
+  Cade34322664382Bd2B7971982208Eb9Responses,
+  Cade34322664382Bd2B7971982208Eb9Errors,
   D88E9Abc08D34E08B091737239DdfData,
   D88E9Abc08D34E08B091737239DdfResponses,
   Acb89614Ac12565Ecf7396Ba321Eb3Data,
@@ -31,18 +42,42 @@ import type {
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Errors,
+  ProductUnitControllerIndexData,
+  ProductUnitControllerIndexResponses,
+  ProductUnitControllerIndexErrors,
+  ProductUnitControllerStoreData,
+  ProductUnitControllerStoreResponses,
+  ProductUnitControllerStoreErrors,
+  ProductUnitControllerDestroyData,
+  ProductUnitControllerDestroyResponses,
+  ProductUnitControllerDestroyErrors,
+  ProductUnitControllerShowData,
+  ProductUnitControllerShowResponses,
+  ProductUnitControllerShowErrors,
+  ProductUnitControllerUpdateData,
+  ProductUnitControllerUpdateResponses,
+  ProductUnitControllerUpdateErrors,
 } from './types.gen'
 import {
   zB39Fb0Dd3A8Eca7E26483C4E675C0aData,
+  zBc8F1062847Db698Daf69F22426Dd8eData,
   zB03Eb66E9Fc14Dbed91D82E3A240A06Data,
   zEe643Cac55A982Fc398983Af84Bf28AaData,
   zCc3D6A8269D166673C5B9A3Ce3028772Data,
   zFaedd72A00012E0F68519B5407E844AaData,
   zBa30F404343172Ff3A8Fa2Cca1Db68E5Data,
+  zCodeIssueSettingControllerIndexData,
+  zCodeIssueSettingControllerShowData,
+  zCade34322664382Bd2B7971982208Eb9Data,
   zD88E9Abc08D34E08B091737239DdfData,
   zAcb89614Ac12565Ecf7396Ba321Eb3Data,
   zDdb2E25Ff33D718A9Addfb6Da6D01259Data,
   zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
+  zProductUnitControllerIndexData,
+  zProductUnitControllerStoreData,
+  zProductUnitControllerDestroyData,
+  zProductUnitControllerShowData,
+  zProductUnitControllerUpdateData,
 } from './zod.gen'
 import { client as _heyApiClient } from './client.gen'
 
@@ -81,6 +116,28 @@ export const b39Fb0Dd3A8Eca7E26483C4E675C0A = <
       return await zB39Fb0Dd3A8Eca7E26483C4E675C0aData.parseAsync(data)
     },
     url: '/api/health',
+    ...options,
+  })
+}
+
+/**
+ * Simple health check endpoint
+ * Simple health check without database or cache connectivity checks
+ */
+export const bc8F1062847Db698Daf69F22426Dd8E = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<Bc8F1062847Db698Daf69F22426Dd8eData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    Bc8F1062847Db698Daf69F22426Dd8eResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zBc8F1062847Db698Daf69F22426Dd8eData.parseAsync(data)
+    },
+    url: '/api/health/simple',
     ...options,
   })
 }
@@ -220,6 +277,94 @@ export const ba30F404343172Ff3A8Fa2Cca1Db68E5 = <
 }
 
 /**
+ * Get list of code issue settings
+ * Retrieve paginated list of code issue settings with filtering capabilities
+ */
+export const codeIssueSettingControllerIndex = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<CodeIssueSettingControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    CodeIssueSettingControllerIndexResponses,
+    CodeIssueSettingControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCodeIssueSettingControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/code-issue-setting',
+    ...options,
+  })
+}
+
+/**
+ * Get code issue setting detail
+ * Retrieve a specific code issue setting by its ID
+ */
+export const codeIssueSettingControllerShow = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CodeIssueSettingControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    CodeIssueSettingControllerShowResponses,
+    CodeIssueSettingControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCodeIssueSettingControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/code-issue-setting/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Update code issue setting
+ * Update an existing code issue setting with new configuration values
+ */
+export const cade34322664382Bd2B7971982208Eb9 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<Cade34322664382Bd2B7971982208Eb9Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    Cade34322664382Bd2B7971982208Eb9Responses,
+    Cade34322664382Bd2B7971982208Eb9Errors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCade34322664382Bd2B7971982208Eb9Data.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/code-issue-setting/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get list of posts with advanced filters
  * Retrieve paginated list of posts with advanced filtering capabilities
  */
@@ -331,6 +476,152 @@ export const ddd0B8D0A4Fbdc804Fe40999F5Eb58E8 = <
       },
     ],
     url: '/api/v1/posts/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Get list of product units
+ * Retrieve a paginated list of product units with search and filter options.
+ */
+export const productUnitControllerIndex = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ProductUnitControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ProductUnitControllerIndexResponses,
+    ProductUnitControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductUnitControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-units',
+    ...options,
+  })
+}
+
+/**
+ * Create a new product unit
+ * Create a new product unit with the provided data.
+ */
+export const productUnitControllerStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductUnitControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    ProductUnitControllerStoreResponses,
+    ProductUnitControllerStoreErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductUnitControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-units',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Delete a product unit
+ * Soft delete a product unit by ID.
+ */
+export const productUnitControllerDestroy = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductUnitControllerDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    ProductUnitControllerDestroyResponses,
+    ProductUnitControllerDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductUnitControllerDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-units/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Get a specific product unit
+ * Retrieve a specific product unit by ID.
+ */
+export const productUnitControllerShow = <ThrowOnError extends boolean = false>(
+  options: Options<ProductUnitControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ProductUnitControllerShowResponses,
+    ProductUnitControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductUnitControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-units/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Update a product unit
+ * Update an existing product unit.
+ */
+export const productUnitControllerUpdate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductUnitControllerUpdateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    ProductUnitControllerUpdateResponses,
+    ProductUnitControllerUpdateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductUnitControllerUpdateData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-units/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',

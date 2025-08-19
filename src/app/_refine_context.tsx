@@ -43,8 +43,11 @@ const App = (props: React.PropsWithChildren) => {
   const i18nProvider: I18nProvider = {
     translate: (
       key: string,
-      options?: Record<string, string | number | Date> | undefined,
-    ) => t(key, options),
+      options?: Record<string, string | number | Date>,
+    ) => {
+      const i18nKey = key.replace(/-/g, '_')
+      return t(i18nKey, options)
+    },
     getLocale: useLocale,
     changeLocale: setUserLocale,
   }

@@ -55,7 +55,7 @@ export const customDataProvider = (
     const total = +headers['x-total-count']
 
     return {
-      data: data?.data,
+      data: data?.data?.items || [],
       total: total || data.length,
     }
   },
@@ -70,7 +70,7 @@ export const customDataProvider = (
     )
 
     return {
-      data,
+      data: data?.data,
     }
   },
 
@@ -85,7 +85,7 @@ export const customDataProvider = (
     })
 
     return {
-      data,
+      data: data?.data,
     }
   },
 
@@ -100,7 +100,7 @@ export const customDataProvider = (
     })
 
     return {
-      data,
+      data: data?.data,
     }
   },
 
@@ -113,7 +113,7 @@ export const customDataProvider = (
     const { data } = await httpClient[requestMethod](url, { headers })
 
     return {
-      data,
+      data: data?.data,
     }
   },
 
@@ -129,7 +129,7 @@ export const customDataProvider = (
     })
 
     return {
-      data,
+      data: data?.data,
     }
   },
 
@@ -193,6 +193,6 @@ export const customDataProvider = (
 
     const { data } = axiosResponse
 
-    return Promise.resolve({ data })
+    return Promise.resolve({ data: data?.data })
   },
 })

@@ -78,8 +78,8 @@ function TenantSwitchingModal({ close }: { close: () => void }) {
         ]}
         rowKey="id"
       >
-        <Table.Column title={t('columns.tenantCode')} dataIndex="tenantCode" />
-        <Table.Column title={t('columns.tenantName')} dataIndex="tenantName" />
+        <Table.Column title={t('columns.tenant_code')} dataIndex="tenantCode" />
+        <Table.Column title={t('columns.tenant_name')} dataIndex="tenantName" />
         <Table.Column
           title={t('columns.actions')}
           dataIndex="action"

@@ -7,7 +7,7 @@ import {
   createClient,
   createConfig,
 } from './client'
-import { createClientConfig } from '../../utility/hey-api'
+import { createClientConfig } from '../../lib/hey-api'
 
 /**
  * The `createClientConfig()` function will be called on client initialization
