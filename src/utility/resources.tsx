@@ -39,10 +39,10 @@ export const resource: ResourceProps[] = [
     },
   },
   {
-    name: 'code-issue-setting',
-    list: '/code-issue-setting',
-    show: '/code-issue-setting/show/:id',
-    edit: '/code-issue-setting/edit/:id',
+    name: 'code-issue-settings',
+    list: '/code-issue-settings',
+    show: '/code-issue-settings/show/:id',
+    edit: '/code-issue-settings/edit/:id',
     meta: {
       parent: 'system-config',
     },
@@ -56,6 +56,7 @@ export const resource: ResourceProps[] = [
     meta: {
       parent: 'system-config',
       canDelete: true,
+      canCreate: true,
     },
   },
 ]

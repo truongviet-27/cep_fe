@@ -7,7 +7,7 @@ import { Button, Space, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
-import { CommonShow } from '@/components/common/show'
+import { Show } from '@/components/crud/show'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { PRIMARY } from '@/utility/color'
 
@@ -41,7 +41,7 @@ const Page = () => {
   ]
 
   return (
-    <CommonShow
+    <Show
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
@@ -88,7 +88,7 @@ const Page = () => {
       <TextField value={record?.status} />
       <Title level={5}>{t('fields.remarks.label')}</Title>
       <TextField value={record?.description} />
-    </CommonShow>
+    </Show>
   )
 }
 

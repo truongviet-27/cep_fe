@@ -29,7 +29,14 @@
     "back": "戻る",
     "edit": "編集",
     "delete": "削除",
-    "select": "選択"
+    "select": "選択",
+    "create_new": "新規登録",
+    "save_all": "全て保存",
+    "confirm": "確認"
+  },
+  "notifications": {
+    "success": "成功しました",
+    "editSuccess": "更新が成功しました"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -41,6 +48,9 @@
     "audit": "監査",
     "settings": "設定",
     "logout": "ログアウト"
+  },
+  "table": {
+    "actions": "操作"
   },
   "estimates": {
     "estimates": "見積"
@@ -57,13 +67,13 @@
   "permission_settings": {
     "permission_settings": "権限設定"
   },
-  "code_issue_setting": {
-    "code_issue_setting": "コード採番設定 "
+  "code_issue_settings": {
+    "code_issue_settings": "コード採番設定 "
   },
   "system_config": {
     "system_config": "システム設定",
     "permission_settings": "権限設定",
-    "code_issue_setting": "コード採番設定 ",
+    "code_issue_settings": "コード採番設定 ",
     "product_category": "商品分類設定",
     "cancel_message": "変更をキャンセルしました",
     "save_success_message": "設定を保存しました",

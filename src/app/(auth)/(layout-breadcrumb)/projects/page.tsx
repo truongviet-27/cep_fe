@@ -1,6 +1,7 @@
 'use client'
 
 import { RightOutlined, SearchOutlined } from '@ant-design/icons'
+import { List } from '@components/crud/list'
 import { useTable } from '@refinedev/antd'
 import { useGo } from '@refinedev/core'
 import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
@@ -9,7 +10,6 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
-import { CommonList } from '@/components/common/list'
 import CommonTable from '@/components/common/table'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import type { IProject } from '@/interfaces/products'
@@ -43,7 +43,7 @@ export default function Page() {
   ]
 
   return (
-    <CommonList
+    <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
@@ -144,6 +144,6 @@ export default function Page() {
           render={(value: string) => dayjs(value).format('YYYY-MM-DD HH:mm:ss')}
         />
       </CommonTable>
-    </CommonList>
+    </List>
   )
 }

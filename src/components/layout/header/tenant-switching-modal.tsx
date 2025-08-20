@@ -20,7 +20,14 @@ function TenantSwitchingModal({ close }: { close: () => void }) {
 
   return (
     <div>
-      <h1 className={`text-bl font-medium text-[${PRIMARY}]`}>{t('tenant')}</h1>
+      <h1
+        style={{
+          color: PRIMARY,
+        }}
+        className={`text-bl font-medium`}
+      >
+        {t('tenant')}
+      </h1>
 
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[24, 24]} style={{ width: '100%' }}>
