@@ -29,7 +29,14 @@
     "back": "Back",
     "edit": "Edit",
     "delete": "Delete",
-    "select": "Select"
+    "select": "Select",
+    "create_new": "Create New",
+    "save_all": "Save All",
+    "confirm": "Confirm"
+  },
+  "notifications": {
+    "success": "Success",
+    "editSuccess": "Edit Success"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -41,6 +48,9 @@
     "audit": "Audit",
     "settings": "Settings",
     "logout": "Logout"
+  },
+  "table": {
+    "actions": "Actions"
   },
   "estimates": {
     "estimates": "Estimates"
@@ -57,14 +67,19 @@
   "permission_settings": {
     "permission_settings": "Permission Settings"
   },
-  "code_issue_setting": {
-    "code_issue_setting": "Code Issue Setting"
+  "code_issue_settings": {
+    "code_issue_settings": "Code Issue Setting"
+  },
+  "product_categories": {
+    "product_categories": "Product Category"
+  },
+  "tags": {
+    "tags": "Tags"
   },
   "system_config": {
     "system_config": "System Settings",
     "permission_settings": "Permission Settings",
-    "code_issue_setting": "Code Issue Setting",
-    "product_category": "Product Category",
+    "code_issue_settings": "Code Issue Setting",
     "cancel_message": "Changes cancelled",
     "save_success_message": "Settings saved",
     "save_error_message": "Failed to save",

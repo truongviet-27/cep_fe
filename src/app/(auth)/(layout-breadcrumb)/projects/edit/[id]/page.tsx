@@ -18,7 +18,7 @@ import TextArea from 'antd/es/input/TextArea'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
-import { CommonEdit } from '@/components/common/edit'
+import { Edit } from '@/components/crud/edit'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { PRIMARY } from '@/utility/color'
 
@@ -48,7 +48,7 @@ export default function Page() {
   ]
 
   return (
-    <CommonEdit
+    <Edit
       isLoading={formLoading}
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
@@ -176,6 +176,6 @@ export default function Page() {
           aaaa
         </Modal>
       </Form>
-    </CommonEdit>
+    </Edit>
   )
 }

@@ -4,11 +4,11 @@
   "private": true,
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "eslint --fix --cache --ignore-path .eslintignore --quiet",
+      "prettier --write --ignore-path .prettierignore"
     ],
     "*.{json,md,css,scss}": [
-      "prettier --write"
+      "prettier --write --ignore-path .prettierignore"
     ]
   },
   "engines": {
@@ -34,6 +34,7 @@
     "@refinedev/inferencer": "^5.1.1",
     "@refinedev/kbar": "^1.3.6",
     "@refinedev/nextjs-router": "^6.0.0",
+    "@refinedev/react-hook-form": "^4.10.2",
     "@refinedev/simple-rest": "^5.0.1",
     "@tailwindcss/cli": "^4.1.11",
     "@tailwindcss/postcss": "^4.1.11",

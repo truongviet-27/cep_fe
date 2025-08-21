@@ -1,0 +1,4289 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Laravel API Documentation",
+    "description": "API documentation for Laravel application with authentication and post management",
+    "contact": {
+      "email": "admin@example.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8001",
+      "description": "API Server"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "description": "Check application health status including database and cache connectivity",
+        "operationId": "28b39fb0dd3a8eca7e26483c4e675c0a",
+        "responses": {
+          "200": {
+            "description": "Application is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-08-03T10:30:00Z"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    },
+                    "environment": {
+                      "type": "string",
+                      "example": "production"
+                    },
+                    "services": {
+                      "properties": {
+                        "database": {
+                          "type": "string",
+                          "example": "ok"
+                        },
+                        "cache": {
+                          "type": "string",
+                          "example": "ok"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "system": {
+                      "properties": {
+                        "php_version": {
+                          "type": "string",
+                          "example": "8.3.0"
+                        },
+                        "laravel_version": {
+                          "type": "string",
+                          "example": "11.0.0"
+                        },
+                        "memory_usage": {
+                          "type": "string",
+                          "example": "10.5 MB"
+                        },
+                        "uptime": {
+                          "type": "integer",
+                          "example": 3600
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable - one or more services are down",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/simple": {
+      "get": {
+        "summary": "Simple health check endpoint",
+        "description": "Simple health check without database or cache connectivity checks",
+        "operationId": "3bc8f1062847db698daf69f22426dd8e",
+        "responses": {
+          "200": {
+            "description": "Application is running",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Service is running"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-08-03T10:30:00Z"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    },
+                    "environment": {
+                      "type": "string",
+                      "example": "production"
+                    },
+                    "system": {
+                      "properties": {
+                        "php_version": {
+                          "type": "string",
+                          "example": "8.3.0"
+                        },
+                        "laravel_version": {
+                          "type": "string",
+                          "example": "11.0.0"
+                        },
+                        "memory_usage": {
+                          "type": "string",
+                          "example": "10.5 MB"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "description": "Authenticate user and return JWT token",
+        "operationId": "3b03eb66e9fc14dbed91d82e3a240a06",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "hung.pham@pionero.io"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "Hung1208"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "data": {
+                      "properties": {
+                        "access_token": {
+                          "type": "string"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "bearer"
+                        },
+                        "expires_in": {
+                          "type": "integer",
+                          "example": 3600
+                        },
+                        "user": {
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "John Doe"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "admin@example.com"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid credentials"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User logout",
+        "description": "Logout user and invalidate JWT token",
+        "operationId": "ee643cac55a982fc398983af84bf28aa",
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully logged out"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/refresh-token": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Refresh JWT token",
+        "description": "Refresh JWT token using current valid token",
+        "operationId": "cc3d6a8269d166673c5b9a3ce3028772",
+        "responses": {
+          "200": {
+            "description": "Token refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Token refreshed successfully"
+                    },
+                    "data": {
+                      "properties": {
+                        "access_token": {
+                          "type": "string"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "bearer"
+                        },
+                        "expires_in": {
+                          "type": "integer",
+                          "example": 3600
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/password/forgot": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Forgot password",
+        "description": "Send password reset email to user",
+        "operationId": "faedd72a00012e0f68519b5407e844aa",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Password reset email sent successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Email not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Email not found"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/password/reset": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset password",
+        "description": "Reset user password using token from email",
+        "operationId": "ba30f404343172ff3a8fa2cca1db68e5",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "email",
+                  "password",
+                  "password_confirmation",
+                  "token"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "newpassword123"
+                  },
+                  "password_confirmation": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "newpassword123"
+                  },
+                  "token": {
+                    "type": "string",
+                    "example": "reset-token-from-email"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Password reset successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid token or email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid token or email"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/code-issue-setting": {
+      "get": {
+        "tags": ["Code Issue Setting"],
+        "summary": "Get list of code issue settings",
+        "description": "Retrieve paginated list of code issue settings with filtering capabilities",
+        "operationId": "CodeIssueSettingController_index",
+        "parameters": [
+          {
+            "name": "_page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Code Issue Settings retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeIssueSettingsPaginatedResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/code-issue-setting/{id}": {
+      "get": {
+        "tags": ["Code Issue Setting"],
+        "summary": "Get code issue setting detail",
+        "description": "Retrieve a specific code issue setting by its ID",
+        "operationId": "CodeIssueSettingController_show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Code Issue Setting ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Code Issue Setting detail retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeIssueSettingDetailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Code Issue Setting not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Code Issue Setting"],
+        "summary": "Update code issue setting",
+        "description": "Update an existing code issue setting with new configuration values",
+        "operationId": "cade34322664382bd2b7971982208eb9",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Code Issue Setting ID to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Code Issue Setting update data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCodeIssueSettingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code Issue Setting updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCodeIssueSettingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Code Issue Setting not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/departments": {
+      "get": {
+        "tags": ["Department"],
+        "summary": "Get list of departments",
+        "description": "Retrieve paginated list of departments with filtering capabilities",
+        "operationId": "DepartmentController_index",
+        "parameters": [
+          {
+            "name": "_page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search by name or code",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "finance"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Departments retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartmentsPaginatedResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Department"],
+        "summary": "Create department",
+        "description": "Create a new department",
+        "operationId": "DepartmentController_store",
+        "requestBody": {
+          "description": "Department create data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["name", "code"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Finance"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "FIN"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Department created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Department"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/departments/{id}": {
+      "get": {
+        "tags": ["Department"],
+        "summary": "Get department detail",
+        "description": "Retrieve a specific department by its ID",
+        "operationId": "DepartmentController_show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Department ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Department detail retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Department"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Department not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Department"],
+        "summary": "Update department",
+        "description": "Update an existing department",
+        "operationId": "DepartmentController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Department ID to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Department update data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Finance & Ops"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "FINOPS"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Department updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Department"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Department not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Department"],
+        "summary": "Delete a department",
+        "description": "Soft delete a department by ID.",
+        "operationId": "DepartmentController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Department ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Department deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Department deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid department ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Department not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Department not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/posts": {
+      "get": {
+        "tags": ["Api Example"],
+        "summary": "Get list of posts with advanced filters",
+        "description": "Retrieve paginated list of posts with advanced filtering capabilities",
+        "operationId": "196d88e9abc08d34e08b091737239ddf",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["draft", "published", "archived"],
+              "example": "published"
+            }
+          },
+          {
+            "name": "title_lk",
+            "in": "query",
+            "description": "Filter by exact title match",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "My Post Title"
+            }
+          },
+          {
+            "name": "created_by",
+            "in": "query",
+            "description": "Filter by creator user ID",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "published_at_gte",
+            "in": "query",
+            "description": "Filter posts published after or on date",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-01-01"
+            }
+          },
+          {
+            "name": "published_at_lte",
+            "in": "query",
+            "description": "Filter posts published before or on date",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-12-31"
+            }
+          },
+          {
+            "name": "_sort",
+            "in": "query",
+            "description": "Sort fields (prefix with - for desc). Multiple fields separated by comma",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-published_at,title"
+            }
+          },
+          {
+            "name": "_page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "description": "Range query: limit results",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Posts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostsPaginatedResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Api Example"],
+        "summary": "Create a new post",
+        "description": "Create a new post with the provided data",
+        "operationId": "83acb89614ac12565ecf7396ba321eb3",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title", "content"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "My First Post"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "This is the content of my first post"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "example": "my-first-post"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["draft", "published", "archived"],
+                    "example": "draft"
+                  },
+                  "excerpt": {
+                    "type": "string",
+                    "example": "Short description of the post"
+                  },
+                  "featured_image": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                  },
+                  "meta_data": {
+                    "type": "object",
+                    "example": {
+                      "tags": ["laravel", "php"]
+                    }
+                  },
+                  "published_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-08-01 10:00:00"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Post đã được tạo thành công"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Post"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Validation failed"
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/posts/{id}": {
+      "get": {
+        "tags": ["Api Example"],
+        "summary": "Get specific post",
+        "description": "Retrieve a specific post by ID",
+        "operationId": "ddb2e25ff33d718a9addfb6da6d01259",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Post retrieved successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Post"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Post not found"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Api Example"],
+        "summary": "Update a post",
+        "description": "Update an existing post with the provided data",
+        "operationId": "ddd0b8d0a4fbdc804fe40999f5eb58e8",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Updated Post Title"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "Updated content of the post"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "example": "updated-post-title"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["draft", "published", "archived"],
+                    "example": "published"
+                  },
+                  "excerpt": {
+                    "type": "string",
+                    "example": "Updated excerpt"
+                  },
+                  "featured_image": {
+                    "type": "string",
+                    "example": "https://example.com/new-image.jpg"
+                  },
+                  "meta_data": {
+                    "type": "object",
+                    "example": {
+                      "tags": ["laravel", "php", "api"]
+                    }
+                  },
+                  "published_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-08-01 15:00:00"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Post đã được cập nhật thành công"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Post"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Post không tồn tại"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/product-categories": {
+      "get": {
+        "tags": ["Product Category Management"],
+        "summary": "Get a list of product categories in a tree structure",
+        "description": "Retrieve a tree-like list of product categories.",
+        "operationId": "ProductCategoryController_index",
+        "responses": {
+          "200": {
+            "description": "Categories tree retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Categories tree retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "parent_id": {
+                            "type": "integer",
+                            "example": null,
+                            "nullable": true
+                          },
+                          "level": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Fashion & Accessories"
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "example": [
+                        {
+                          "id": 1,
+                          "parent_id": null,
+                          "level": 1,
+                          "name": "Fashion & Accessories",
+                          "children": [
+                            {
+                              "id": 2,
+                              "parent_id": 1,
+                              "level": 2,
+                              "name": "Women's Fashion",
+                              "children": []
+                            },
+                            {
+                              "id": 5,
+                              "parent_id": 1,
+                              "level": 2,
+                              "name": "Men's Fashion",
+                              "children": [
+                                {
+                                  "id": 6,
+                                  "parent_id": 5,
+                                  "level": 3,
+                                  "name": "Men's Shirts",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": 7,
+                          "parent_id": null,
+                          "level": 1,
+                          "name": "Electronics & Technology",
+                          "children": [
+                            {
+                              "id": 8,
+                              "parent_id": 7,
+                              "level": 2,
+                              "name": "Phones & Accessories",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "An error occurred while retrieving categories: Something went wrong"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Product Category Management"],
+        "summary": "Create a new product category",
+        "description": "Create a new product category with the provided data.",
+        "operationId": "ProductCategoryController_store",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["name", "level"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Electronics and Technology"
+                  },
+                  "parent_id": {
+                    "type": "integer",
+                    "example": null,
+                    "nullable": true
+                  },
+                  "level": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category created successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ProductCategory"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Parent category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Parent category not found"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict with existing category data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Category level must be one level deeper than its parent."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field is required."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name has already been taken."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/product-categories/{id}": {
+      "get": {
+        "tags": ["Product Category Management"],
+        "summary": "Get a specific product category",
+        "description": "Retrieve a specific product category by ID.",
+        "operationId": "ProductCategoryController_show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Category ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category retrieved successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ProductCategory"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid category ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Category not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "An error occurred while retrieving the category: Something went wrong"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Product Category Management"],
+        "summary": "Update a product category",
+        "description": "Update an existing product category.",
+        "operationId": "ProductCategoryController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Category ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "New Category Name"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ProductCategory"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid category ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Category not found or already deleted."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field format is invalid."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name has already been taken."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Product Category Management"],
+        "summary": "Delete a product category",
+        "description": "Soft delete a product category by ID.",
+        "operationId": "ProductCategoryController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Category ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid category ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Category not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict due to existing child categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Cannot delete category with children."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/product-units": {
+      "get": {
+        "tags": ["Product Unit Management"],
+        "summary": "Get list of product units",
+        "description": "Retrieve a paginated list of product units with search and filter options.",
+        "operationId": "ProductUnitController_index",
+        "parameters": [
+          {
+            "name": "name_lk",
+            "in": "query",
+            "description": "Filter by partial name match. Trims leading/trailing spaces. Example: ' box ' becomes 'box'.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "box"
+            }
+          },
+          {
+            "name": "_page",
+            "in": "query",
+            "description": "Page number. Defaults to 1.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "description": "Number of items per page. Defaults to 10.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Units retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductUnitsPaginatedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The _page field must be an integer. (and 1 more error)"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "_page": ["The _page field must be an integer."],
+                        "_per_page": ["The per page field must be an integer."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Product Unit Management"],
+        "summary": "Create a new product unit",
+        "description": "Create a new product unit with the provided data.",
+        "operationId": "ProductUnitController_store",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Box"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product unit created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unit created successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ProductUnit"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error (name is required, invalid or already exists)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field is required."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name field is required."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/product-units/{id}": {
+      "get": {
+        "tags": ["Product Unit Management"],
+        "summary": "Get a specific product unit",
+        "description": "Retrieve a specific product unit by ID.",
+        "operationId": "ProductUnitController_show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Unit ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product unit retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unit retrieved successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ProductUnit"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid unit ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product unit not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unit not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Product Unit Management"],
+        "summary": "Update a product unit",
+        "description": "Update an existing product unit.",
+        "operationId": "ProductUnitController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Unit ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Case"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product unit updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unit updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ProductUnit"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid unit ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product unit not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unit not found or already deleted."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error (name already exists or invalid)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field is invalid."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name field is invalid."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Product Unit Management"],
+        "summary": "Delete a product unit",
+        "description": "Soft delete a product unit by ID.",
+        "operationId": "ProductUnitController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Unit ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product unit deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unit deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid unit ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product unit not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unit not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/tags": {
+      "get": {
+        "tags": ["Tag Management"],
+        "summary": "Get list of tags",
+        "description": "Retrieve a paginated list of tags with search and filter options.",
+        "operationId": "TagController_index",
+        "parameters": [
+          {
+            "name": "name_lk",
+            "in": "query",
+            "description": "Filter by partial name match. Trims leading/trailing spaces. Example: ' laravel ' becomes 'laravel'.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "laravel"
+            }
+          },
+          {
+            "name": "_page",
+            "in": "query",
+            "description": "Page number. Defaults to 1.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "description": "Number of items per page. Defaults to 10.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tags retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagsPaginatedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The _page field must be an integer. (and 1 more error)"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "_page": ["The _page field must be an integer."],
+                        "_per_page": ["The per page field must be an integer."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Tag Management"],
+        "summary": "Create a new tag",
+        "description": "Create a new tag with the provided data.",
+        "operationId": "TagController_store",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Laravel"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tag created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Tag created successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Tag"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error (name is required, invalid or already exists)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field is required."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name field is required."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/tags/{id}": {
+      "get": {
+        "tags": ["Tag Management"],
+        "summary": "Get a specific tag",
+        "description": "Retrieve a specific tag by ID.",
+        "operationId": "TagController_show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Tag ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Tag retrieved successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Tag"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid tag ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tag not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Tag Management"],
+        "summary": "Update a tag",
+        "description": "Update an existing tag.",
+        "operationId": "TagController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Tag ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "PHP"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tag updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Tag updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Tag"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid tag ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tag not found or already deleted."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error (name already exists or invalid)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field is invalid."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name field is invalid."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Tag Management"],
+        "summary": "Delete a tag",
+        "description": "Soft delete a tag by ID.",
+        "operationId": "TagController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Tag ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Tag deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid tag ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tag not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CodeIssueSetting": {
+        "description": "Code Issue Setting model",
+        "properties": {
+          "id": {
+            "description": "Code Issue Setting ID",
+            "type": "integer",
+            "example": 1
+          },
+          "tenant_id": {
+            "description": "Tenant ID",
+            "type": "string",
+            "example": "11111111-1111-1111-1111-111111111111"
+          },
+          "code": {
+            "description": "Code",
+            "type": "string",
+            "example": "products"
+          },
+          "name": {
+            "description": "Name of the code",
+            "type": "string",
+            "example": "Product module"
+          },
+          "issue_method": {
+            "description": "Method of issue generation",
+            "type": "string",
+            "enum": ["automatic", "manual"],
+            "example": "automatic"
+          },
+          "hash_dash": {
+            "description": "Whether to include hash and dash in the code",
+            "type": "boolean",
+            "example": true
+          },
+          "prefix": {
+            "description": "Prefix for the code",
+            "type": "string",
+            "example": "CP"
+          },
+          "segment": {
+            "description": "Segment for the code generation",
+            "type": "string",
+            "enum": ["year_range", "month_range"],
+            "example": "year_range"
+          },
+          "total": {
+            "description": "Total number of codes to generate",
+            "type": "integer",
+            "example": 13
+          },
+          "preview_code": {
+            "description": "Preview code for the current date",
+            "type": "string",
+            "example": "CP-2504-0001"
+          },
+          "serial_length": {
+            "description": "Length of the serial number in the code",
+            "type": "integer",
+            "example": 4
+          },
+          "created_by": {
+            "description": "ID of the user who created this setting",
+            "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "updated_by": {
+            "description": "ID of the user who last updated this setting",
+            "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Timestamp when this setting was created",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-07T09:20:37.000000Z"
+          },
+          "updated_at": {
+            "description": "Timestamp when this setting was last updated",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-07T09:20:37.000000Z"
+          }
+        },
+        "type": "object"
+      },
+      "CodeIssueSettingDetailResponse": {
+        "description": "Success response for getting code issue setting detail",
+        "properties": {
+          "success": {
+            "description": "Indicates if the request was successful",
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/CodeIssueSettingResponse"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Get code issue setting detail successfully"
+          }
+        },
+        "type": "object"
+      },
+      "CodeIssueSettingResponse": {
+        "description": "Code Issue Setting response model",
+        "properties": {
+          "id": {
+            "description": "Code Issue Setting ID",
+            "type": "integer",
+            "example": 1
+          },
+          "tenant_id": {
+            "description": "Tenant ID",
+            "type": "string",
+            "example": "11111111-1111-1111-1111-111111111111"
+          },
+          "code": {
+            "description": "Code identifier",
+            "type": "string",
+            "example": "customers"
+          },
+          "name": {
+            "description": "Display name of the code",
+            "type": "string",
+            "example": "取引先コード"
+          },
+          "issue_method": {
+            "description": "Method of issue generation",
+            "type": "string",
+            "enum": ["automatic", "manual"],
+            "example": "automatic"
+          },
+          "prefix": {
+            "description": "Prefix for the code",
+            "type": "string",
+            "example": "CT"
+          },
+          "hash_dash": {
+            "description": "Whether to include hash and dash in the code",
+            "type": "boolean",
+            "example": false
+          },
+          "segment": {
+            "description": "Segment for the code generation",
+            "type": "string",
+            "enum": [
+              "none",
+              "year",
+              "year_range",
+              "year_month",
+              "year_month_range",
+              "year_month_day",
+              "year_month_day_range"
+            ],
+            "example": "none"
+          },
+          "serial_length": {
+            "description": "Length of the serial number in the code",
+            "type": "integer",
+            "example": 1
+          },
+          "total": {
+            "description": "Total number of existing records",
+            "type": "integer",
+            "example": 3
+          },
+          "preview_code": {
+            "description": "Preview of the next generated code",
+            "type": "string",
+            "example": "CP-25-0000000004"
+          },
+          "created_by": {
+            "description": "ID of the user who created this setting",
+            "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "updated_by": {
+            "description": "ID of the user who last updated this setting",
+            "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Timestamp when this setting was created",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-14T06:50:20.000000Z"
+          },
+          "updated_at": {
+            "description": "Timestamp when this setting was last updated",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-14T06:50:20.000000Z"
+          },
+          "author": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreatedBy"
+              }
+            ],
+            "nullable": true,
+            "description": "User who created this setting",
+            "type": "object"
+          },
+          "editor": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedBy"
+              }
+            ],
+            "nullable": true,
+            "description": "User who last updated this setting",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "CodeIssueSettingsPaginatedResponse": {
+        "description": "Paginated response for code issue settings",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaginatedResponse"
+          },
+          {
+            "properties": {
+              "data": {
+                "description": "Array of posts",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CodeIssueSetting"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "UpdateCodeIssueSettingRequest": {
+        "description": "Request body for updating code issue setting",
+        "required": ["issue_method", "hash_dash", "segment", "serial_length"],
+        "properties": {
+          "issue_method": {
+            "description": "Method of issue generation",
+            "type": "string",
+            "enum": ["automatic", "manual"],
+            "example": "manual"
+          },
+          "hash_dash": {
+            "description": "Whether to include hash and dash in the code",
+            "type": "boolean",
+            "example": true
+          },
+          "prefix": {
+            "description": "Prefix for the code",
+            "type": "string",
+            "example": "CP",
+            "nullable": true
+          },
+          "segment": {
+            "description": "Segment for the code generation",
+            "type": "string",
+            "enum": [
+              "none",
+              "year",
+              "year_range",
+              "year_month",
+              "year_month_range",
+              "year_month_day",
+              "year_month_day_range"
+            ],
+            "example": "year_range"
+          },
+          "serial_length": {
+            "description": "Length of the serial number in the code",
+            "type": "integer",
+            "maximum": 10,
+            "minimum": 1,
+            "example": 10
+          }
+        },
+        "type": "object"
+      },
+      "UpdateCodeIssueSettingResponse": {
+        "description": "Success response for updating code issue setting",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CodeIssueSettingResponse"
+          },
+          "message": {
+            "description": "Success message",
+            "type": "string",
+            "example": "Code Issue Setting updated successfully"
+          }
+        },
+        "type": "object"
+      },
+      "Department": {
+        "description": "Department model",
+        "properties": {
+          "id": {
+            "description": "Department ID",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "Department name",
+            "type": "string",
+            "example": "Finance"
+          },
+          "code": {
+            "description": "Department code",
+            "type": "string",
+            "example": "DPT001"
+          },
+          "tenant_id": {
+            "description": "Tenant ID",
+            "type": "string",
+            "format": "uuid",
+            "example": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+          },
+          "created_by": {
+            "description": "User ID who created",
+            "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "updated_by": {
+            "description": "User ID who last updated",
+            "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Creation timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-02T02:19:38.000000Z"
+          },
+          "updated_at": {
+            "description": "Last update timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-02T02:19:38.000000Z"
+          },
+          "deleted_at": {
+            "description": "Soft delete timestamp",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "DepartmentsPaginatedResponse": {
+        "description": "Paginated response for departments",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaginatedResponse"
+          },
+          {
+            "properties": {
+              "data": {
+                "description": "Array of departments",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Department"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "ErrorResponse": {
+        "description": "Standard error response format",
+        "properties": {
+          "status": {
+            "description": "Indicates if the request was successful",
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "description": "Error message",
+            "type": "string",
+            "example": "Error occurred"
+          }
+        },
+        "type": "object"
+      },
+      "ForbiddenResponse": {
+        "description": "Forbidden access response",
+        "properties": {
+          "status": {
+            "description": "Indicates if the request was successful",
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "description": "Forbidden access message",
+            "type": "string",
+            "example": "Access denied"
+          }
+        },
+        "type": "object"
+      },
+      "InternalServerErrorResponse": {
+        "description": "Internal server error response",
+        "properties": {
+          "status": {
+            "description": "Indicates if the request was successful",
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "description": "Internal server error message",
+            "type": "string",
+            "example": "Internal server error occurred"
+          }
+        },
+        "type": "object"
+      },
+      "Meta": {
+        "description": "Pagination metadata",
+        "properties": {
+          "current_page": {
+            "type": "integer",
+            "example": 1
+          },
+          "from": {
+            "type": "integer",
+            "example": 1
+          },
+          "last_page": {
+            "type": "integer",
+            "example": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "example": 10
+          },
+          "to": {
+            "type": "integer",
+            "example": 1
+          },
+          "total": {
+            "type": "integer",
+            "example": 1
+          }
+        },
+        "type": "object"
+      },
+      "NotFoundResponse": {
+        "description": "Resource not found response",
+        "properties": {
+          "status": {
+            "description": "Indicates if the request was successful",
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "description": "Not found message",
+            "type": "string",
+            "example": "Record not found"
+          }
+        },
+        "type": "object"
+      },
+      "PaginatedResponse": {
+        "description": "Generic paginated response structure",
+        "properties": {
+          "data": {
+            "description": "Array of data items",
+            "type": "array",
+            "items": {
+              "description": "Dynamic data item - type depends on the specific endpoint",
+              "type": "object"
+            }
+          },
+          "meta": {
+            "description": "Pagination metadata",
+            "properties": {
+              "current_page": {
+                "description": "Current page number",
+                "type": "integer",
+                "example": 2
+              },
+              "from": {
+                "description": "Starting item number for current page",
+                "type": "integer",
+                "example": 2
+              },
+              "last_page": {
+                "description": "Last page number",
+                "type": "integer",
+                "example": 8
+              },
+              "per_page": {
+                "description": "Number of items per page",
+                "type": "integer",
+                "example": 1
+              },
+              "to": {
+                "description": "Ending item number for current page",
+                "type": "integer",
+                "example": 2
+              },
+              "total": {
+                "description": "Total number of items",
+                "type": "integer",
+                "example": 8
+              }
+            },
+            "type": "object"
+          },
+          "links": {
+            "description": "Pagination links",
+            "properties": {
+              "first": {
+                "description": "URL to the first page",
+                "type": "string",
+                "example": "http://localhost:8001/api/v1/code-issue-setting?_per_page=1&_page=1"
+              },
+              "last": {
+                "description": "URL to the last page",
+                "type": "string",
+                "example": "http://localhost:8001/api/v1/code-issue-setting?_per_page=1&_page=8"
+              },
+              "prev": {
+                "description": "URL to the previous page",
+                "type": "string",
+                "example": "http://localhost:8001/api/v1/code-issue-setting?_per_page=1&_page=1",
+                "nullable": true
+              },
+              "next": {
+                "description": "URL to the next page",
+                "type": "string",
+                "example": "http://localhost:8001/api/v1/code-issue-setting?_per_page=1&_page=3",
+                "nullable": true
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "Post": {
+        "description": "Post model",
+        "properties": {
+          "id": {
+            "description": "Post ID",
+            "type": "integer",
+            "example": 1
+          },
+          "title": {
+            "description": "Post title",
+            "type": "string",
+            "example": "My First Post"
+          },
+          "content": {
+            "description": "Post content",
+            "type": "string",
+            "example": "This is the content of my first post"
+          },
+          "slug": {
+            "description": "Post slug",
+            "type": "string",
+            "example": "my-first-post"
+          },
+          "status": {
+            "description": "Post status",
+            "type": "string",
+            "enum": ["draft", "published", "archived"],
+            "example": "published"
+          },
+          "excerpt": {
+            "description": "Post excerpt",
+            "type": "string",
+            "example": "Short description of the post",
+            "nullable": true
+          },
+          "featured_image": {
+            "description": "Featured image URL",
+            "type": "string",
+            "example": "https://example.com/image.jpg",
+            "nullable": true
+          },
+          "meta_data": {
+            "description": "Meta data in JSON format",
+            "type": "object",
+            "example": {
+              "tags": ["laravel", "php"]
+            },
+            "nullable": true
+          },
+          "published_at": {
+            "description": "Publication date",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-15T10:00:00.000000Z",
+            "nullable": true
+          },
+          "created_by": {
+            "description": "User ID who created the post",
+            "type": "integer",
+            "example": 1
+          },
+          "updated_by": {
+            "description": "User ID who last updated the post",
+            "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Creation timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-02T02:19:38.000000Z"
+          },
+          "updated_at": {
+            "description": "Last update timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-02T02:19:38.000000Z"
+          },
+          "author": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreatedBy"
+              }
+            ],
+            "nullable": true,
+            "description": "Post author (User who created)"
+          },
+          "editor": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedBy"
+              }
+            ],
+            "nullable": true,
+            "description": "Post editor (User who last updated)"
+          }
+        },
+        "type": "object"
+      },
+      "PostsPaginatedResponse": {
+        "description": "Paginated response for posts",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaginatedResponse"
+          },
+          {
+            "properties": {
+              "data": {
+                "description": "Array of posts",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "ProductCategory": {
+        "description": "Product category model",
+        "properties": {
+          "id": {
+            "description": "Category ID",
+            "type": "integer",
+            "example": 1
+          },
+          "tenant_id": {
+            "description": "Tenant ID to which the category belongs",
+            "type": "string",
+            "format": "uuid",
+            "example": "9f93c83a-8f1b-4b2a-8d1a-5b6d9a0d8d0c",
+            "nullable": true
+          },
+          "parent_id": {
+            "description": "ID of the parent category",
+            "type": "integer",
+            "example": 2,
+            "nullable": true
+          },
+          "level": {
+            "description": "Level of the category in the hierarchy",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "Category name",
+            "type": "string",
+            "example": "Electronics"
+          }
+        },
+        "type": "object"
+      },
+      "ProductUnit": {
+        "description": "Product unit model",
+        "properties": {
+          "id": {
+            "description": "Unit ID",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "Unit name",
+            "type": "string",
+            "example": "Box"
+          }
+        },
+        "type": "object"
+      },
+      "UnitLinks": {
+        "description": "Pagination links",
+        "properties": {
+          "first": {
+            "type": "string",
+            "format": "url",
+            "example": "http://localhost:8001/api/v1/product-units?_per_page=10&_page=1"
+          },
+          "last": {
+            "type": "string",
+            "format": "url",
+            "example": "http://localhost:8001/api/v1/product-units?_per_page=10&_page=1"
+          },
+          "prev": {
+            "type": "string",
+            "format": "url",
+            "nullable": true
+          },
+          "next": {
+            "type": "string",
+            "format": "url",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "ProductUnitsPaginatedResponse": {
+        "description": "Paginated response for product units",
+        "properties": {
+          "data": {
+            "description": "Paginated data and links for product units",
+            "properties": {
+              "items": {
+                "description": "Array of product units",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProductUnit"
+                }
+              },
+              "meta": {
+                "$ref": "#/components/schemas/Meta"
+              },
+              "links": {
+                "$ref": "#/components/schemas/UnitLinks"
+              }
+            },
+            "type": "object"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Units retrieved successfully"
+          }
+        },
+        "type": "object"
+      },
+      "Tag": {
+        "description": "Tag model",
+        "properties": {
+          "id": {
+            "description": "Tag ID",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "Tag name",
+            "type": "string",
+            "example": "Laravel"
+          }
+        },
+        "type": "object"
+      },
+      "Links": {
+        "description": "Pagination links",
+        "properties": {
+          "first": {
+            "type": "string",
+            "format": "url",
+            "example": "http://localhost:8001/api/v1/tags?_per_page=10&_page=1"
+          },
+          "last": {
+            "type": "string",
+            "format": "url",
+            "example": "http://localhost:8001/api/v1/tags?_per_page=10&_page=1"
+          },
+          "prev": {
+            "type": "string",
+            "format": "url",
+            "nullable": true
+          },
+          "next": {
+            "type": "string",
+            "format": "url",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "TagsPaginatedResponse": {
+        "description": "Paginated response for tags",
+        "properties": {
+          "data": {
+            "description": "Paginated data and links for tags",
+            "properties": {
+              "items": {
+                "description": "Array of tags",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              },
+              "meta": {
+                "$ref": "#/components/schemas/Meta"
+              },
+              "links": {
+                "$ref": "#/components/schemas/Links"
+              }
+            },
+            "type": "object"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Tags retrieved successfully"
+          }
+        },
+        "type": "object"
+      },
+      "UnauthorizedResponse": {
+        "description": "Unauthorized access response",
+        "properties": {
+          "status": {
+            "description": "Indicates if the request was successful",
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "description": "Unauthorized message",
+            "type": "string",
+            "example": "Unauthorized"
+          }
+        },
+        "type": "object"
+      },
+      "CreatedBy": {
+        "description": "User who created the resource",
+        "properties": {
+          "id": {
+            "description": "User ID",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "Name of the user",
+            "type": "string",
+            "example": "Alejandrin Kautzer"
+          }
+        },
+        "type": "object"
+      },
+      "UpdatedBy": {
+        "description": "User who updated the resource",
+        "properties": {
+          "id": {
+            "description": "User ID",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "Name of the user",
+            "type": "string",
+            "example": "Alejandrin Kautzer"
+          }
+        },
+        "type": "object"
+      },
+      "User": {
+        "description": "User model",
+        "properties": {
+          "id": {
+            "description": "User ID",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "User full name",
+            "type": "string",
+            "example": "Dr. Reynold Veum V"
+          },
+          "email": {
+            "description": "User email address",
+            "type": "string",
+            "format": "email",
+            "example": "hung.pham@pionero.io"
+          },
+          "email_verified_at": {
+            "description": "Email verification timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-17T23:38:42.000000Z",
+            "nullable": true
+          },
+          "role": {
+            "description": "User role",
+            "type": "string",
+            "example": "admin"
+          },
+          "created_by": {
+            "description": "User ID who created this user",
+            "type": "integer",
+            "example": null,
+            "nullable": true
+          },
+          "updated_by": {
+            "description": "User ID who last updated this user",
+            "type": "integer",
+            "example": null,
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Creation timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-17T23:38:43.000000Z"
+          },
+          "updated_at": {
+            "description": "Last update timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-17T23:38:43.000000Z"
+          }
+        },
+        "type": "object"
+      },
+      "ValidationErrorResponse": {
+        "description": "Validation error response",
+        "properties": {
+          "status": {
+            "description": "Indicates if the request was successful",
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "description": "Validation error message",
+            "type": "string",
+            "example": "The given data was invalid."
+          },
+          "errors": {
+            "description": "Validation errors by field",
+            "type": "object",
+            "example": {
+              "field_name": ["The field name is required."]
+            }
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Enter JWT Bearer token",
+        "bearerFormat": "JWT",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "API Endpoints for authentication"
+    },
+    {
+      "name": "Product Category Management",
+      "description": "API Endpoints for managing product categories"
+    },
+    {
+      "name": "Code Issue Setting",
+      "description": "Code Issue Setting"
+    },
+    {
+      "name": "Department",
+      "description": "Department"
+    },
+    {
+      "name": "Api Example",
+      "description": "Api Example"
+    },
+    {
+      "name": "Product Unit Management",
+      "description": "Product Unit Management"
+    },
+    {
+      "name": "Tag Management",
+      "description": "Tag Management"
+    }
+  ]
+}

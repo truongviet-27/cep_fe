@@ -7,7 +7,7 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import Step1 from '@components/common/csv-view-editor/step1'
-import { CommonShow } from '@components/common/show'
+import { Show } from '@components/crud/show'
 import { useGo } from '@refinedev/core'
 import { ENC_IN } from '@utility/instance'
 import type { UploadFile, UploadProps } from 'antd'
@@ -78,7 +78,7 @@ const CsvViewEditor: React.FC = () => {
   ]
 
   return (
-    <CommonShow
+    <Show
       isLoading={false}
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
@@ -181,7 +181,7 @@ const CsvViewEditor: React.FC = () => {
 
       {/* {currentStep === 2 && <ValidationComponent />} */}
       {/* {currentStep === 3 && <CompletionComponent />} */}
-    </CommonShow>
+    </Show>
   )
 }
 
