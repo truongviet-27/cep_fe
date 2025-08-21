@@ -1,22 +1,21 @@
 'use client'
 
-import AutoHeading from '@components/common/auto-heading'
 import { useForm } from '@refinedev/antd'
-import { useTranslate } from '@refinedev/core'
+import { type useModalReturnType, useTranslate } from '@refinedev/core'
 import { Button, Checkbox, DatePicker, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
 
-export const CodeIssueSettingEdit = ({
-  id,
-  close,
-}: {
-  id: number | string
-  close: () => void
-}) => {
+type Props = {
+  modalProps: useModalReturnType
+  id: string | number
+}
+
+export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
   const t = useTranslate()
+  const { close } = modalProps
   const { formProps, saveButtonProps, formLoading } = useForm({
     id,
     resource: 'code-issue-settings',
@@ -35,7 +34,7 @@ export const CodeIssueSettingEdit = ({
       }
       saveButtonProps={saveButtonProps}
       isLoading={formLoading}
-      title={<AutoHeading />}
+      contentProps={{ style: { boxShadow: 'none' } }}
     >
       <Form {...formProps} layout="vertical">
         <Form.Item

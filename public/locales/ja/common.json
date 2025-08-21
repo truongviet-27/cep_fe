@@ -70,11 +70,16 @@
   "code_issue_settings": {
     "code_issue_settings": "コード採番設定 "
   },
+  "product_categories": {
+    "product_categories": "商品カテゴリ設定"
+  },
+  "tags": {
+    "tags": "見積タグ設定"
+  },
   "system_config": {
     "system_config": "システム設定",
     "permission_settings": "権限設定",
     "code_issue_settings": "コード採番設定 ",
-    "product_category": "商品分類設定",
     "cancel_message": "変更をキャンセルしました",
     "save_success_message": "設定を保存しました",
     "save_error_message": "保存に失敗しました",

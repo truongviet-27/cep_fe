@@ -70,11 +70,16 @@
   "code_issue_settings": {
     "code_issue_settings": "Code Issue Setting"
   },
+  "product_categories": {
+    "product_categories": "Product Category"
+  },
+  "tags": {
+    "tags": "Tags"
+  },
   "system_config": {
     "system_config": "System Settings",
     "permission_settings": "Permission Settings",
     "code_issue_settings": "Code Issue Setting",
-    "product_category": "Product Category",
     "cancel_message": "Changes cancelled",
     "save_success_message": "Settings saved",
     "save_error_message": "Failed to save",

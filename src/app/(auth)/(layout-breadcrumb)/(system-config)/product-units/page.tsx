@@ -3,11 +3,15 @@
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
-import { BaseRecord, useCreate, useNotification } from '@refinedev/core'
-import { useTranslate } from '@refinedev/core'
-import { Button, Input, Space, Table } from 'antd'
+import { BaseRecord, useCreate, useTranslate } from '@refinedev/core'
+import { Button, Input, Space, Table, Typography } from 'antd'
 import React from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { PRIMARY } from '@utility/color'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import { RightOutlined } from '@ant-design/icons'
+
+const { Title } = Typography
 
 type Row = { id?: string; name: string }
 type FormValues = { tempRows: Row[] }
@@ -27,8 +31,6 @@ export default function Page() {
   })
 
   const { mutate: createRow } = useCreate()
-
-  const { open: notify } = useNotification()
 
   const [editingKey, setEditingKey] = React.useState<string | null>(null)
   const [serverEdits, setServerEdits] = React.useState<Record<string, Row>>({})
@@ -65,30 +67,43 @@ export default function Page() {
   const handleAddRow = () => {
     const tempRow = { name: '', __key: Date.now().toString() }
 
-    // Gọi API tạo mới
     createRow(
       {
         resource: 'product-units',
-        values: { name: 'product template' + Date.now().toString() },
+        values: { name: 'product template ' + Date.now().toString() },
       },
       {
-        onError: (error) => {
-          // Remove dòng tạm nếu lỗi
+        onError: () => {
           const idx = fields.findIndex((f) => f.__key === tempRow.__key)
           if (idx > -1) remove(idx)
-          notify?.({
-            type: 'error',
-            message: 'Tạo thất bại!',
-            description: error?.message,
-          })
         },
       },
     )
   }
 
+  const breadcrumbItems = [
+    {
+      title: (
+        <Title level={5} style={{ color: PRIMARY }}>
+          {translate('system_config.system_config')}
+        </Title>
+      ),
+    },
+    {
+      title: (
+        <Title level={5}>
+          {translate('product_categories.product_categories')}
+        </Title>
+      ),
+    },
+  ]
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <List
+        title={
+          <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+        }
         footer={
           <div className="flex justify-end">
             <Button onClick={() => append({ name: 'test' })}>create</Button>
@@ -166,7 +181,6 @@ export default function Page() {
 
               return (
                 <Space>
-                  <Button size="small">Edit</Button>
                   <Button size="small" danger onClick={() => remove(index)}>
                     Delete
                   </Button>

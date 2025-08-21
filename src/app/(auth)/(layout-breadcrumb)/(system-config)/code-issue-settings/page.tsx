@@ -20,7 +20,9 @@ export default function Page() {
     syncWithLocation: true,
   })
 
-  const { show, visible, close } = useModal()
+  const modalProps = useModal()
+
+  const { show, close, visible } = modalProps
 
   const [editId, setEditId] = React.useState<number | string | null>(null)
 
@@ -109,7 +111,7 @@ export default function Page() {
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
       >
-        {editId && <CodeIssueSettingEdit id={editId} close={close} />}
+        {editId && <CodeIssueSettingEdit id={editId} modalProps={modalProps} />}
       </Modal>
     </List>
   )

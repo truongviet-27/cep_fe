@@ -59,4 +59,28 @@ export const resource: ResourceProps[] = [
       canCreate: true,
     },
   },
+  {
+    name: 'product-categories',
+    list: '/product-categories',
+    show: '/product-categories/:id',
+    create: '/product-categories/:id',
+    edit: '/product-categories/:id',
+    meta: {
+      parent: 'system-config',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
+    name: 'tags',
+    list: '/tags',
+    show: '/tags/:id',
+    create: '/tags/:id',
+    edit: '/tags/:id',
+    meta: {
+      parent: 'system-config',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
 ]

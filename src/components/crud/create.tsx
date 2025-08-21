@@ -11,9 +11,10 @@ import {
 import type { CreateProps } from '@refinedev/antd'
 import { PageHeader, SaveButton, type SaveButtonProps } from '@refinedev/antd'
 import { Card, Space, Spin } from 'antd'
+import AutoHeading from '@components/common/auto-heading'
 
 type CustomProps = {
-  saveButtonProps: SaveButtonProps
+  isAutoHeading?: boolean
 }
 
 /**
@@ -22,7 +23,7 @@ type CustomProps = {
  *
  * @see {@link https://refine.dev/docs/ui-frameworks/antd/components/basic-views/create} for more details.
  */
-export const Create: React.FC<CreateProps> = ({
+export const Create: React.FC<CreateProps & CustomProps> = ({
   title,
   saveButtonProps: saveButtonPropsFromProps,
   children,
@@ -37,6 +38,7 @@ export const Create: React.FC<CreateProps> = ({
   footerButtonProps,
   footerButtons,
   // goBack: goBackFromProps,
+  isAutoHeading = true,
 }) => {
   const translate = useTranslate()
   const { options: { breadcrumb: globalBreadcrumb } = {} } = useRefineContext()
@@ -122,6 +124,7 @@ export const Create: React.FC<CreateProps> = ({
             ]}
             {...(contentProps ?? {})}
           >
+            {isAutoHeading && <AutoHeading />}
             {children}
           </Card>
         </Spin>

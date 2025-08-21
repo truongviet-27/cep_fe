@@ -89,6 +89,8 @@ export default function Page() {
         <Table.Column title={t('columns.registrant')} dataIndex="registrant" />
         <Table.Column title={t('columns.remarks')} dataIndex="remarks" />
       </CommonTable>
+
+      {/*<AntdInferencer />*/}
     </List>
   )
 }

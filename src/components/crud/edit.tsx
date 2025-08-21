@@ -159,19 +159,19 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
         //       : back
         //     : undefined
         // }
-        title={
-          title ??
-          translate(
-            `${identifier}.titles.edit`,
-            `Edit ${getUserFriendlyName(
-              resource?.meta?.label ??
-                resource?.options?.label ??
-                resource?.label ??
-                identifier,
-              'singular',
-            )}`,
-          )
-        }
+        // title={
+        //   title ??
+        //   translate(
+        //     `${identifier}.titles.edit`,
+        //     `Edit ${getUserFriendlyName(
+        //       resource?.meta?.label ??
+        //         resource?.options?.label ??
+        //         resource?.label ??
+        //         identifier,
+        //       'singular',
+        //     )}`,
+        //   )
+        // }
         // extra={
         //   <Space wrap {...(headerButtonProps ?? {})}>
         //     {headerButtons

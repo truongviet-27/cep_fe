@@ -6,7 +6,7 @@ import React from 'react'
 type Props = {
   cat: ITree
   onToggle: (id: string) => void
-  onAddChild: (id: string) => void
+  onAddChild: (id: string, level: number) => void
   onEdit: (id: string) => void
   onDelete: (id: string) => void
   depth?: number
@@ -41,7 +41,7 @@ export default function CommonTree({
           cat={node}
           hasChildren={hasChildrenForToggle}
           onToggle={onToggle}
-          onAddChild={onAddChild}
+          onAddChild={(id) => onAddChild(id, level + 1)}
           onEdit={onEdit}
           onDelete={onDelete}
           canAddChild={canAddChild}

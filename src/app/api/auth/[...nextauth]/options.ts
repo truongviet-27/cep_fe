@@ -18,7 +18,7 @@ const authOptions: AuthOptions = {
       },
     }),
   ],
-  secret: `UItTuD1HcGXIj8ZfHUswhYdNd40Lc325R8VlxQPUoR0=`,
+  secret: process.env.NEXTAUTH_SECRET || '',
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
