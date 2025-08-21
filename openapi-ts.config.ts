@@ -1,7 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input: process.env.SWAGGER_URL ?? 'http://localhost:8080/v3/api-docs',
+  input: 'api-docs/swagger.json',
   output: {
     format: `prettier`,
     lint: `eslint`,
@@ -24,7 +24,7 @@ export default defineConfig({
     },
     {
       name: '@hey-api/client-axios',
-      runtimeConfigPath: './src/utility/hey-api.ts',
+      runtimeConfigPath: './src/lib/hey-api.ts',
     },
   ],
 })

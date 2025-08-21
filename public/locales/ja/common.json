@@ -1,8 +1,8 @@
 {
   "login": {
     "title": "始めましょう",
-    "noAccount": "アカウントをお持ちではありません",
-    "signUp": "サインアップ",
+    "no_account": "アカウントをお持ちではありません",
+    "sign_up": "サインアップ",
     "signin": "サインイン",
     "divider": "または",
     "google": "Googleでサインイン",
@@ -11,25 +11,32 @@
     "language": "言語",
     "form": {
       "email": "ユーザー名/メールアドレス",
-      "emailPlaceholder": "メールアドレスを入力してください",
+      "email_placeholder": "メールアドレスを入力してください",
       "password": "パスワード",
-      "passwordPlaceholder": "パスワードを入力してください",
-      "rememberMe": "私を思い出して",
-      "forgotPassword": "パスワードを忘れましたか？"
+      "password_placeholder": "パスワードを入力してください",
+      "remember_me": "私を思い出して",
+      "forgot_password": "パスワードを忘れましたか？"
     },
     "errors": {
-      "emailRequired": "メールアドレスを入力してください！",
-      "passwordRequired": "パスワードを入力してください！"
+      "email_required": "メールアドレスを入力してください！",
+      "password_required": "パスワードを入力してください！"
     }
   },
   "buttons": {
     "cancel": "キャンセル",
-    "saveSettings": "設定を保存",
+    "save_settings": "設定を保存",
     "create": "登録",
     "back": "戻る",
     "edit": "編集",
     "delete": "削除",
-    "select": "選択"
+    "select": "選択",
+    "create_new": "新規登録",
+    "save_all": "全て保存",
+    "confirm": "確認"
+  },
+  "notifications": {
+    "success": "成功しました",
+    "editSuccess": "更新が成功しました"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -41,6 +48,9 @@
     "audit": "監査",
     "settings": "設定",
     "logout": "ログアウト"
+  },
+  "table": {
+    "actions": "操作"
   },
   "estimates": {
     "estimates": "見積"
@@ -54,35 +64,37 @@
   "employees": {
     "employees": "社員"
   },
-  "permissionSettings": {
-    "permissionSettings": "権限設定"
+  "permission_settings": {
+    "permission_settings": "権限設定"
   },
-  "numberingAssignmentSettings": {
-    "numberingAssignmentSettings": "コード採番設定 "
+  "code_issue_settings": {
+    "code_issue_settings": "コード採番設定 "
   },
-  "productCategorySettings": {
-    "productCategorySettings": "商品単位設定"
+  "product_categories": {
+    "product_categories": "商品カテゴリ設定"
   },
-  "systemConfig": {
-    "systemConfig": "システム設定",
-    "permissionSettings": "権限設定",
-    "numberingAssignmentSettings": "コード採番設定 ",
-    "productCategory": "商品分類設定",
-    "cancelMessage": "変更をキャンセルしました",
-    "saveSuccessMessage": "設定を保存しました",
-    "saveErrorMessage": "保存に失敗しました",
-    "settingItem": "設定項目",
-    "initialSetting": "初期設定",
-    "notManage": "管理しない",
-    "notUse": "利用しない",
+  "tags": {
+    "tags": "見積タグ設定"
+  },
+  "system_config": {
+    "system_config": "システム設定",
+    "permission_settings": "権限設定",
+    "code_issue_settings": "コード採番設定 ",
+    "cancel_message": "変更をキャンセルしました",
+    "save_success_message": "設定を保存しました",
+    "save_error_message": "保存に失敗しました",
+    "setting_item": "設定項目",
+    "initial_setting": "初期設定",
+    "not_manage": "管理しない",
+    "not_use": "利用しない",
     "manage": "管理する",
     "use": "利用する",
     "purpose": "変更目的",
-    "quickStart": "1. クイックスタート用設定",
+    "quick_start": "1. クイックスタート用設定",
     "advanced": "2. 高度設定（プロ用）",
     "enterprise": "3. エンタープライズ向け設定",
-    "advancedContent": "高度設定の内容",
-    "enterpriseContent": "エンタープライズ設定の内容",
+    "advanced_content": "高度設定の内容",
+    "enterprise_content": "エンタープライズ設定の内容",
     "employee": "社員",
     "manager": "マネージャー "
   },
@@ -92,34 +104,34 @@
       "title": "案件一覧",
       "buttons": {
         "create": "登録",
-        "csvExport": "CSV一括登録"
+        "csv_export": "CSV一括登録"
       },
       "filters": {
-        "projectSearchPlaceholder": "案件コード・案件名で検索",
-        "customerSearchPlaceholder": "取引先で検索",
+        "project_search_placeholder": "案件コード・案件名で検索",
+        "customer_search_placeholder": "取引先で検索",
         "search": "検索",
         "clear": "クリア"
       },
       "columns": {
-        "projectCode": "案件コード",
-        "projectName": "案件名",
+        "project_code": "案件コード",
+        "project_name": "案件名",
         "customer": "取引先",
         "registrant": "登録者",
-        "lastUpdated": "最終更新日"
+        "last_updated": "最終更新日"
       }
     },
     "create": {
       "title": "案件登録",
       "notifications": {
-        "createSuccess": "案件を正常に登録しました！"
+        "create_success": "案件を正常に登録しました！"
       },
       "fields": {
-        "projectCode": {
+        "project_code": {
           "label": "案件コード",
           "required": "案件コードを入力してください！",
           "extra": "自動採番設定の場合編集できない"
         },
-        "projectName": {
+        "project_name": {
           "label": "案件名",
           "required": "案件名を入力してください！",
           "placeholder": "案件名を入力"
@@ -133,39 +145,39 @@
           "label": "備考",
           "placeholder": "案件に関する特記事項があれば入力してください"
         },
-        "updatedDate": "最終更新日",
-        "createdAt": "登録日"
+        "updated_date": "最終更新日",
+        "created_at": "登録日"
       }
     },
     "show": {
       "title": "詳細情報",
       "fields": {
-        "projectCode": "案件コード",
-        "projectName": "案件名",
+        "project_code": "案件コード",
+        "project_name": "案件名",
         "customer": "取引先",
-        "estimateNumber": "見積番号",
+        "estimate_number": "見積番号",
         "remarks": "備考",
         "registrant": "登録者",
-        "registrationDate": "登録日",
-        "lastUpdated": "最終更新日"
+        "registration_date": "登録日",
+        "last_updated": "最終更新日"
       }
     },
-    "csvUpload": {
+    "csv_upload": {
       "title": "CSV一括登録",
       "steps": {
-        "selectFile": "ファイル選択",
-        "confirmData": "データ確認",
+        "select_file": "ファイル選択",
+        "confirm_data": "データ確認",
         "validation": "バリデーション",
         "complete": "登録完了"
       },
       "template": {
         "title": "CSVテンプレート",
         "description": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
-        "downloadLink": "CSVテンプレートをダウンロード"
+        "download_link": "CSVテンプレートをダウンロード"
       },
       "upload": {
-        "dragAndDropText": "CSVファイルをここにドラッグ&ドロップ",
-        "selectFileText": "または、下のボタンからファイルを選択してください"
+        "drag_and_drop_text": "CSVファイルをここにドラッグ&ドロップ",
+        "select_file_text": "または、下のボタンからファイルを選択してください"
       },
       "notes": {
         "title": "CSV登録時の注意事項",
@@ -185,13 +197,13 @@
         "create": "登録"
       },
       "filters": {
-        "searchPlaceholder": "部門コード・部門名で検索",
+        "search_placeholder": "部門コード・部門名で検索",
         "clear": "クリア",
         "search": "検索"
       },
       "columns": {
-        "departmentCode": "部門コード",
-        "departmentName": "部門名",
+        "department_code": "部門コード",
+        "department_name": "部門名",
         "registrant": "登録者",
         "remarks": "備考"
       }
@@ -206,8 +218,27 @@
       "clear": "クリア"
     },
     "columns": {
-      "tenantCode": "テナントコード",
-      "tenantName": "テナント名",
+      "tenant_code": "テナントコード",
+      "tenant_name": "テナント名",
+      "actions": "操作"
+    }
+  },
+  "product_units": {
+    "product_units": "商品単位設定",
+    "filters": {
+      "label": "単位名",
+      "placeholder": "部分一致",
+      "search": "検索",
+      "clear": "クリア"
+    },
+    "buttons": {
+      "create_new": "新規登録",
+      "back": "戻る",
+      "edit": "編集",
+      "delete": "削除"
+    },
+    "columns": {
+      "unit_name": "単位名",
       "actions": "操作"
     }
   }

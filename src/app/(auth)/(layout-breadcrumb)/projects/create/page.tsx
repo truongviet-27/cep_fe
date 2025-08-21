@@ -1,13 +1,13 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
+import { Create } from '@components/crud/create'
 import { useForm } from '@refinedev/antd'
 import { useGo } from '@refinedev/core'
 import { Button, Form, Input, message, Select, Space, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
-import { CommonCreate } from '@/components/common/create'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import type { IProject } from '@/interfaces/products'
 import { PRIMARY } from '@/utility/color'
@@ -48,7 +48,7 @@ export default function Page() {
   ]
 
   return (
-    <CommonCreate
+    <Create
       isLoading={formLoading}
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
@@ -125,6 +125,6 @@ export default function Page() {
           <TextArea rows={4} placeholder={t('fields.remarks.placeholder')} />
         </Form.Item>
       </Form>
-    </CommonCreate>
+    </Create>
   )
 }

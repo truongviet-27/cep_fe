@@ -1,6 +1,7 @@
 'use client'
 
 import { RightOutlined, SearchOutlined } from '@ant-design/icons'
+import { List } from '@components/crud/list'
 import { useTable } from '@refinedev/antd'
 import { useGo } from '@refinedev/core'
 import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
@@ -9,7 +10,6 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
-import { CommonList } from '@/components/common/list'
 import CommonTable from '@/components/common/table'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import type { IProject } from '@/interfaces/products'
@@ -43,7 +43,7 @@ export default function Page() {
   ]
 
   return (
-    <CommonList
+    <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
@@ -55,7 +55,7 @@ export default function Page() {
           <Col xs={12} sm={6} md={6}>
             <Form.Item name="q">
               <Input
-                placeholder={t('filters.projectSearchPlaceholder')}
+                placeholder={t('filters.project_search_placeholder')}
                 prefix={<SearchOutlined />}
               />
             </Form.Item>
@@ -63,7 +63,7 @@ export default function Page() {
           <Col xs={12} sm={6} md={6}>
             <Form.Item name="customer">
               <Input
-                placeholder={t('filters.customerSearchPlaceholder')}
+                placeholder={t('filters.customer_search_placeholder')}
                 prefix={<SearchOutlined />}
               />
             </Form.Item>
@@ -100,7 +100,7 @@ export default function Page() {
                 }
                 type="primary"
               >
-                {t('buttons.csvExport')}
+                {t('buttons.csv_export')}
               </Button>
             </Space>
           </Col>
@@ -124,7 +124,7 @@ export default function Page() {
         }}
       >
         <Table.Column
-          title={t('columns.projectCode')}
+          title={t('columns.project_code')}
           dataIndex="projectCode"
           render={(value) => (
             <Link href={`/projects/${value}`}>
@@ -133,17 +133,17 @@ export default function Page() {
           )}
         />
         <Table.Column
-          title={t('columns.projectName')}
+          title={t('columns.project_name')}
           dataIndex="projectName"
         />
         <Table.Column title={t('columns.customer')} dataIndex="customer" />
         <Table.Column title={t('columns.registrant')} dataIndex="author" />
         <Table.Column
-          title={t('columns.lastUpdated')}
+          title={t('columns.last_updated')}
           dataIndex="updatedDate"
           render={(value: string) => dayjs(value).format('YYYY-MM-DD HH:mm:ss')}
         />
       </CommonTable>
-    </CommonList>
+    </List>
   )
 }

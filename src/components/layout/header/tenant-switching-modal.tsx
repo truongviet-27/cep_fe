@@ -1,15 +1,28 @@
+'use client'
+
 import { SearchOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { useTable } from '@refinedev/antd'
+import {
+  useInvalidate,
+  type useModalReturnType,
+  useResource,
+} from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Table } from 'antd'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
-function TenantSwitchingModal({ close }: { close: () => void }) {
+function TenantSwitchingModal({
+  modalProps,
+}: {
+  modalProps: useModalReturnType
+}) {
   const t = useTranslations('tenant')
   const t_btn = useTranslations('buttons')
+
+  const { resource } = useResource()
 
   const { searchFormProps, tableProps } = useTable({
     syncWithLocation: true,
@@ -18,9 +31,18 @@ function TenantSwitchingModal({ close }: { close: () => void }) {
 
   // const dataSource = tableProps?.dataSource || []
 
+  const invalidate = useInvalidate()
+
   return (
     <div>
-      <h1 className={`text-bl font-medium text-[${PRIMARY}]`}>{t('tenant')}</h1>
+      <h1
+        style={{
+          color: PRIMARY,
+        }}
+        className={`text-bl font-medium`}
+      >
+        {t('tenant')}
+      </h1>
 
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[24, 24]} style={{ width: '100%' }}>
@@ -78,8 +100,8 @@ function TenantSwitchingModal({ close }: { close: () => void }) {
         ]}
         rowKey="id"
       >
-        <Table.Column title={t('columns.tenantCode')} dataIndex="tenantCode" />
-        <Table.Column title={t('columns.tenantName')} dataIndex="tenantName" />
+        <Table.Column title={t('columns.tenant_code')} dataIndex="tenantCode" />
+        <Table.Column title={t('columns.tenant_name')} dataIndex="tenantName" />
         <Table.Column
           title={t('columns.actions')}
           dataIndex="action"
@@ -87,7 +109,11 @@ function TenantSwitchingModal({ close }: { close: () => void }) {
             <Button
               onClick={() => {
                 useTenantStore.setState({ tenantId: record.id })
-                close()
+                modalProps.close()
+                invalidate({
+                  dataProviderName: resource?.name ?? 'default',
+                  invalidates: ['all'],
+                })
               }}
             >
               {t_btn('select')}

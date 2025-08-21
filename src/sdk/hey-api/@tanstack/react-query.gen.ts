@@ -3,19 +3,29 @@
 import {
   type Options,
   b39Fb0Dd3A8Eca7E26483C4E675C0A,
+  bc8F1062847Db698Daf69F22426Dd8E,
   b03Eb66E9Fc14Dbed91D82E3A240A06,
   ee643Cac55A982Fc398983Af84Bf28Aa,
   cc3D6A8269D166673C5B9A3Ce3028772,
   faedd72A00012E0F68519B5407E844Aa,
   ba30F404343172Ff3A8Fa2Cca1Db68E5,
+  codeIssueSettingControllerIndex,
+  codeIssueSettingControllerShow,
+  cade34322664382Bd2B7971982208Eb9,
   d88E9Abc08D34E08B091737239Ddf,
   acb89614Ac12565Ecf7396Ba321Eb3,
   ddb2E25Ff33D718A9Addfb6Da6D01259,
   ddd0B8D0A4Fbdc804Fe40999F5Eb58E8,
+  productUnitControllerIndex,
+  productUnitControllerStore,
+  productUnitControllerDestroy,
+  productUnitControllerShow,
+  productUnitControllerUpdate,
 } from '../sdk.gen'
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query'
 import type {
   B39Fb0Dd3A8Eca7E26483C4E675C0aData,
+  Bc8F1062847Db698Daf69F22426Dd8eData,
   B03Eb66E9Fc14Dbed91D82E3A240A06Data,
   B03Eb66E9Fc14Dbed91D82E3A240A06Error,
   B03Eb66E9Fc14Dbed91D82E3A240A06Response,
@@ -31,6 +41,11 @@ import type {
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Data,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Error,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Response,
+  CodeIssueSettingControllerIndexData,
+  CodeIssueSettingControllerShowData,
+  Cade34322664382Bd2B7971982208Eb9Data,
+  Cade34322664382Bd2B7971982208Eb9Error,
+  Cade34322664382Bd2B7971982208Eb9Response,
   D88E9Abc08D34E08B091737239DdfData,
   Acb89614Ac12565Ecf7396Ba321Eb3Data,
   Acb89614Ac12565Ecf7396Ba321Eb3Error,
@@ -39,6 +54,17 @@ import type {
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Error,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Response,
+  ProductUnitControllerIndexData,
+  ProductUnitControllerStoreData,
+  ProductUnitControllerStoreError,
+  ProductUnitControllerStoreResponse,
+  ProductUnitControllerDestroyData,
+  ProductUnitControllerDestroyError,
+  ProductUnitControllerDestroyResponse,
+  ProductUnitControllerShowData,
+  ProductUnitControllerUpdateData,
+  ProductUnitControllerUpdateError,
+  ProductUnitControllerUpdateResponse,
 } from '../types.gen'
 import { client as _heyApiClient } from '../client.gen'
 
@@ -100,6 +126,31 @@ export const b39Fb0Dd3A8Eca7E26483C4E675C0aOptions = (
       return data
     },
     queryKey: b39Fb0Dd3A8Eca7E26483C4E675C0aQueryKey(options),
+  })
+}
+
+export const bc8F1062847Db698Daf69F22426Dd8eQueryKey = (
+  options?: Options<Bc8F1062847Db698Daf69F22426Dd8eData>,
+) => createQueryKey('bc8F1062847Db698Daf69F22426Dd8E', options)
+
+/**
+ * Simple health check endpoint
+ * Simple health check without database or cache connectivity checks
+ */
+export const bc8F1062847Db698Daf69F22426Dd8eOptions = (
+  options?: Options<Bc8F1062847Db698Daf69F22426Dd8eData>,
+) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await bc8F1062847Db698Daf69F22426Dd8E({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: bc8F1062847Db698Daf69F22426Dd8eQueryKey(options),
   })
 }
 
@@ -368,6 +419,84 @@ export const ba30F404343172Ff3A8Fa2Cca1Db68E5Mutation = (
   return mutationOptions
 }
 
+export const codeIssueSettingControllerIndexQueryKey = (
+  options?: Options<CodeIssueSettingControllerIndexData>,
+) => createQueryKey('codeIssueSettingControllerIndex', options)
+
+/**
+ * Get list of code issue settings
+ * Retrieve paginated list of code issue settings with filtering capabilities
+ */
+export const codeIssueSettingControllerIndexOptions = (
+  options?: Options<CodeIssueSettingControllerIndexData>,
+) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await codeIssueSettingControllerIndex({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: codeIssueSettingControllerIndexQueryKey(options),
+  })
+}
+
+export const codeIssueSettingControllerShowQueryKey = (
+  options: Options<CodeIssueSettingControllerShowData>,
+) => createQueryKey('codeIssueSettingControllerShow', options)
+
+/**
+ * Get code issue setting detail
+ * Retrieve a specific code issue setting by its ID
+ */
+export const codeIssueSettingControllerShowOptions = (
+  options: Options<CodeIssueSettingControllerShowData>,
+) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await codeIssueSettingControllerShow({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: codeIssueSettingControllerShowQueryKey(options),
+  })
+}
+
+/**
+ * Update code issue setting
+ * Update an existing code issue setting with new configuration values
+ */
+export const cade34322664382Bd2B7971982208Eb9Mutation = (
+  options?: Partial<Options<Cade34322664382Bd2B7971982208Eb9Data>>,
+): UseMutationOptions<
+  Cade34322664382Bd2B7971982208Eb9Response,
+  Cade34322664382Bd2B7971982208Eb9Error,
+  Options<Cade34322664382Bd2B7971982208Eb9Data>
+> => {
+  const mutationOptions: UseMutationOptions<
+    Cade34322664382Bd2B7971982208Eb9Response,
+    Cade34322664382Bd2B7971982208Eb9Error,
+    Options<Cade34322664382Bd2B7971982208Eb9Data>
+  > = {
+    mutationFn: async (localOptions) => {
+      const { data } = await cade34322664382Bd2B7971982208Eb9({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
 export const d88E9Abc08D34E08B091737239DdfQueryKey = (
   options?: Options<D88E9Abc08D34E08B091737239DdfData>,
 ) => createQueryKey('d88E9Abc08D34E08B091737239Ddf', options)
@@ -489,6 +618,165 @@ export const ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Mutation = (
   > = {
     mutationFn: async (localOptions) => {
       const { data } = await ddd0B8D0A4Fbdc804Fe40999F5Eb58E8({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const productUnitControllerIndexQueryKey = (
+  options?: Options<ProductUnitControllerIndexData>,
+) => createQueryKey('productUnitControllerIndex', options)
+
+/**
+ * Get list of product units
+ * Retrieve a paginated list of product units with search and filter options.
+ */
+export const productUnitControllerIndexOptions = (
+  options?: Options<ProductUnitControllerIndexData>,
+) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await productUnitControllerIndex({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: productUnitControllerIndexQueryKey(options),
+  })
+}
+
+export const productUnitControllerStoreQueryKey = (
+  options: Options<ProductUnitControllerStoreData>,
+) => createQueryKey('productUnitControllerStore', options)
+
+/**
+ * Create a new product unit
+ * Create a new product unit with the provided data.
+ */
+export const productUnitControllerStoreOptions = (
+  options: Options<ProductUnitControllerStoreData>,
+) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await productUnitControllerStore({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: productUnitControllerStoreQueryKey(options),
+  })
+}
+
+/**
+ * Create a new product unit
+ * Create a new product unit with the provided data.
+ */
+export const productUnitControllerStoreMutation = (
+  options?: Partial<Options<ProductUnitControllerStoreData>>,
+): UseMutationOptions<
+  ProductUnitControllerStoreResponse,
+  ProductUnitControllerStoreError,
+  Options<ProductUnitControllerStoreData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    ProductUnitControllerStoreResponse,
+    ProductUnitControllerStoreError,
+    Options<ProductUnitControllerStoreData>
+  > = {
+    mutationFn: async (localOptions) => {
+      const { data } = await productUnitControllerStore({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a product unit
+ * Soft delete a product unit by ID.
+ */
+export const productUnitControllerDestroyMutation = (
+  options?: Partial<Options<ProductUnitControllerDestroyData>>,
+): UseMutationOptions<
+  ProductUnitControllerDestroyResponse,
+  ProductUnitControllerDestroyError,
+  Options<ProductUnitControllerDestroyData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    ProductUnitControllerDestroyResponse,
+    ProductUnitControllerDestroyError,
+    Options<ProductUnitControllerDestroyData>
+  > = {
+    mutationFn: async (localOptions) => {
+      const { data } = await productUnitControllerDestroy({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const productUnitControllerShowQueryKey = (
+  options: Options<ProductUnitControllerShowData>,
+) => createQueryKey('productUnitControllerShow', options)
+
+/**
+ * Get a specific product unit
+ * Retrieve a specific product unit by ID.
+ */
+export const productUnitControllerShowOptions = (
+  options: Options<ProductUnitControllerShowData>,
+) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await productUnitControllerShow({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: productUnitControllerShowQueryKey(options),
+  })
+}
+
+/**
+ * Update a product unit
+ * Update an existing product unit.
+ */
+export const productUnitControllerUpdateMutation = (
+  options?: Partial<Options<ProductUnitControllerUpdateData>>,
+): UseMutationOptions<
+  ProductUnitControllerUpdateResponse,
+  ProductUnitControllerUpdateError,
+  Options<ProductUnitControllerUpdateData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    ProductUnitControllerUpdateResponse,
+    ProductUnitControllerUpdateError,
+    Options<ProductUnitControllerUpdateData>
+  > = {
+    mutationFn: async (localOptions) => {
+      const { data } = await productUnitControllerUpdate({
         ...options,
         ...localOptions,
         throwOnError: true,

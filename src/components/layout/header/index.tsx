@@ -25,7 +25,7 @@ export default function AuthHeader({
   const t_btn = useTranslations('buttons')
   const { query } = useKBar()
   const session = useSession()
-  const { show, visible, close } = useModal()
+  const modalProps = useModal()
 
   return (
     <div className={cn(children && 'flex justify-center')}>
@@ -49,7 +49,11 @@ export default function AuthHeader({
         {children ? (
           <div className="flex items-center gap-2">
             <div className="text-right leading-tight">
-              <Space size={4} className={'cursor-pointer'} onClick={show}>
+              <Space
+                size={4}
+                className={'cursor-pointer'}
+                onClick={modalProps.show}
+              >
                 <div className="text-[12px] font-semibold text-[#74232A]">
                   {session.data?.tenant?.name ?? '株式会社ピオネロ'}
                 </div>
@@ -94,13 +98,13 @@ export default function AuthHeader({
         )}
 
         <Modal
-          open={visible}
-          onCancel={close}
+          {...modalProps}
+          onCancel={modalProps.close}
           cancelButtonProps={{ style: { display: 'none' } }}
           okText={t_btn('cancel')}
           width={'50vw'}
         >
-          <TenantSwitchingModal close={close} />
+          <TenantSwitchingModal modalProps={modalProps} />
         </Modal>
       </Header>
     </div>

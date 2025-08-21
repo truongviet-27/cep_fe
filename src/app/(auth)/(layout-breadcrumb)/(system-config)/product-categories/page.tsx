@@ -6,18 +6,18 @@ import {
   RightOutlined,
   UpOutlined,
 } from '@ant-design/icons'
-import { CommonCreate } from '@components/common/create'
 import TreeSortable from '@components/common/tree'
 import {
-  nextRootCode,
   removeById,
   toggleAll,
   toggleOpen,
   updateDeep,
 } from '@components/common/tree/utils/tree-infinity'
+import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { ITree } from '@interfaces/tree'
-import { fetchCategories } from '@mockApi/categories'
+import { useTable } from '@refinedev/antd'
+import { useCreate } from '@refinedev/core'
 import { LAYOUT_BG, PRIMARY } from '@utility/color'
 import { Button, message, Space, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
@@ -31,17 +31,15 @@ export default function Page() {
 
   const t = useTranslations()
 
-  useEffect(() => {
-    fetchCategories().then((data) => {
-      setTree(data)
-    })
-  }, [])
+  const { tableProps } = useTable<ITree>()
+
+  const { mutate: createRow, isSuccess } = useCreate()
 
   const toggle = (id: string) => {
     setTree((prev) => toggleOpen(prev, id))
   }
 
-  const addChild = (id: string) => {
+  const addChild = (id: string, level: number) => {
     setTree((prev) => {
       const newChild: ITree = {
         id: crypto.randomUUID(),
@@ -57,6 +55,15 @@ export default function Page() {
 
       if (changed) setDirty(true)
       return next
+    })
+
+    createRow({
+      resource: 'product-categories',
+      values: {
+        name: crypto.randomUUID(),
+        parent_id: id,
+        level,
+      },
     })
   }
 
@@ -84,18 +91,16 @@ export default function Page() {
 
   const addRootCategory = () => {
     const id = crypto.randomUUID()
-    const code = nextRootCode(tree)
 
-    const newCat: ITree = {
-      id,
-      name: 'New Category',
-      code,
-      isPublic: true,
-      open: false,
-      children: [],
-    }
+    createRow({
+      resource: 'product-categories',
+      values: {
+        name: id,
+        parent_id: null,
+        level: 1,
+      },
+    })
 
-    setTree((prev) => [...prev, newCat])
     setDirty(true)
   }
 
@@ -103,16 +108,25 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('systemConfig.systemConfig')}
+          {t('system_config.system_config')}
         </Title>
       ),
     },
     {
-      title: <Title level={5}>{t('systemConfig.productCategory')}</Title>,
+      title: (
+        <Title level={5}>{t('product_categories.product_categories')}</Title>
+      ),
     },
   ]
+
+  useEffect(() => {
+    if (tableProps?.dataSource) {
+      setTree(tableProps.dataSource as ITree[])
+    }
+  }, [tableProps?.dataSource, isSuccess])
+
   return (
-    <CommonCreate
+    <Create
       isLoading={false}
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
@@ -169,6 +183,6 @@ export default function Page() {
           ))}
         </div>
       </div>
-    </CommonCreate>
+    </Create>
   )
 }
