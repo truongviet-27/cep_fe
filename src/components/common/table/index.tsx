@@ -4,7 +4,7 @@ import { Table } from 'antd'
 import React from 'react'
 
 function CommonTable<T extends object>(
-  tableProps: TableProps<T>,
+  tableProps: Readonly<TableProps<T>>,
 ): React.ReactElement {
   const { components, ...restTableProps } = tableProps
 

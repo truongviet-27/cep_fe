@@ -56,7 +56,7 @@ export const customDataProvider = (
 
     return {
       data: data?.data?.items || [],
-      total: total || data.length,
+      total: (total || data?.meta?.total) ?? 0,
     }
   },
 

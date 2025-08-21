@@ -825,7 +825,7 @@ export type CodeIssueSettingControllerIndexData = {
      */
     _per_page?: number
   }
-  url: '/api/v1/code-issue-setting'
+  url: '/api/v1/code-issue-settings'
 }
 
 export type CodeIssueSettingControllerIndexErrors = {
@@ -861,7 +861,7 @@ export type CodeIssueSettingControllerShowData = {
     id: number
   }
   query?: never
-  url: '/api/v1/code-issue-setting/{id}'
+  url: '/api/v1/code-issue-settings/{id}'
 }
 
 export type CodeIssueSettingControllerShowErrors = {
@@ -908,7 +908,7 @@ export type Cade34322664382Bd2B7971982208Eb9Data = {
     id: number
   }
   query?: never
-  url: '/api/v1/code-issue-setting/{id}'
+  url: '/api/v1/code-issue-settings/{id}'
 }
 
 export type Cade34322664382Bd2B7971982208Eb9Errors = {

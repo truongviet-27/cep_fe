@@ -48,9 +48,9 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    if (error.response?.status === 401) {
-      await ensureSignIn()
-    }
+    // if (error.response?.status === 401) {
+    //   await ensureSignIn()
+    // }
 
     const customError: HttpError = {
       ...error,
