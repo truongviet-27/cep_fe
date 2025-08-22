@@ -11,7 +11,6 @@ import {
   removeById,
   toggleAll,
   toggleOpen,
-  updateDeep,
 } from '@components/common/tree/utils/tree-infinity'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -40,22 +39,22 @@ export default function Page() {
   }
 
   const addChild = (id: string, level: number) => {
-    setTree((prev) => {
-      const newChild: ITree = {
-        id: crypto.randomUUID(),
-        name: 'New Category',
-        isPublic: true,
-      }
-
-      const [next, changed] = updateDeep(prev, id, (cat) => ({
-        ...cat,
-        open: true,
-        children: [...(cat.children ?? []), newChild],
-      }))
-
-      if (changed) setDirty(true)
-      return next
-    })
+    // setTree((prev) => {
+    //   const newChild: ITree = {
+    //     id: crypto.randomUUID(),
+    //     name: 'New Category',
+    //     isPublic: true,
+    //   }
+    //
+    //   const [next, changed] = updateDeep(prev, id, (cat) => ({
+    //     ...cat,
+    //     open: true,
+    //     children: [...(cat.children ?? []), newChild],
+    //   }))
+    //
+    //   if (changed) setDirty(true)
+    //   return next
+    // })
 
     createRow({
       resource: 'product-categories',
@@ -127,7 +126,7 @@ export default function Page() {
 
   return (
     <Create
-      isLoading={false}
+      isLoading={!!tableProps.loading}
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
@@ -167,7 +166,7 @@ export default function Page() {
         </div>
 
         <div
-          className={`rounded-xl border border-zinc-200 p-3`}
+          className={`rounded-xl border border-zinc-200 p-2`}
           style={{ backgroundColor: LAYOUT_BG }}
         >
           {tree.map((cat) => (

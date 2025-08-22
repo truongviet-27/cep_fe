@@ -1,13 +1,18 @@
 'use client'
 
-import { SearchOutlined } from '@ant-design/icons'
+import { RightOutlined, SearchOutlined } from '@ant-design/icons'
+import { CommonButton } from '@components/common/common-button'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
+import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
-import { Button, Col, Form, Input, Row, Space, Table } from 'antd'
+import { PRIMARY } from '@utility/color'
+import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
 import React from 'react'
+
+const { Title } = Typography
 
 const Page = () => {
   const translate = useTranslate()
@@ -15,8 +20,29 @@ const Page = () => {
     syncWithLocation: true,
   })
 
+  const breadcrumbItems = [
+    {
+      title: (
+        <Title level={5} style={{ color: PRIMARY }}>
+          {translate('system_config.system_config')}
+        </Title>
+      ),
+    },
+    {
+      title: (
+        <Title level={5}>
+          {translate('product_categories.product_categories')}
+        </Title>
+      ),
+    },
+  ]
+
   return (
-    <List>
+    <List
+      title={
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+    >
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
@@ -50,6 +76,14 @@ const Page = () => {
             >
               ddd
             </Button>
+          </Col>
+          <Col xs={6} sm={4} md={3} style={{ textAlign: 'left' }}>
+            <Button
+              type={'primary'}
+              onClick={() => searchFormProps.form?.resetFields()}
+            ></Button>
+
+            <CommonButton type={'delete'} />
           </Col>
         </Row>
       </Form>

@@ -1,3 +1,4 @@
+import refreshAccessToken from '@utility/refresh-token'
 import type { AuthOptions } from 'next-auth'
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
@@ -31,11 +32,13 @@ const authOptions: AuthOptions = {
 
       const willExpireIn =
         (Number(token.expiresAt) ?? 0) - Math.floor(Date.now() / 1000)
-      if (willExpireIn <= 0) {
-        token.error = 'AUTH_EXPIRED'
+      if (willExpireIn > 0) {
+        return token
       }
-      return token
+
+      return await refreshAccessToken(token)
     },
+
     async session({ session, token }) {
       session.accessToken = String(token?.accessToken ?? '')
       session.refreshToken = String(token?.refreshToken ?? '')

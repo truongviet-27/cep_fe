@@ -2,31 +2,13 @@ import { getSessionOnce } from '@lib/get-session-once'
 import type { HttpError } from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
 import axios from 'axios'
-import { signIn } from 'next-auth/react'
 
 const axiosInstance = axios.create()
-
-let signingIn = false
-const ensureSignIn = async () => {
-  if (!signingIn) {
-    signingIn = true
-    try {
-      await signIn()
-    } finally {
-      signingIn = false
-    }
-  }
-}
 
 axiosInstance.interceptors.request.use(
   async (request) => {
     const session = await getSessionOnce()
     const { tenantId } = useTenantStore.getState()
-
-    if (session?.error) {
-      await ensureSignIn()
-      return Promise.reject(new axios.Cancel(session?.error))
-    }
 
     if (session?.accessToken) {
       request.headers = request.headers ?? {}
@@ -47,10 +29,6 @@ axiosInstance.interceptors.response.use(
     if (error?.message === 'AUTH_EXPIRED') {
       return Promise.reject(error)
     }
-
-    // if (error.response?.status === 401) {
-    //   await ensureSignIn()
-    // }
 
     const customError: HttpError = {
       ...error,

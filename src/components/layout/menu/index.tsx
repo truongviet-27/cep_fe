@@ -1,13 +1,12 @@
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
+import { AppIcon } from '@components/icons/app-icon'
 import { recursiveNestedMenu } from '@components/layout/menu/utils/recursive-nested-menu'
 import { useGo, useMenu } from '@refinedev/core'
 import { Menu as MenuAntd } from 'antd'
 import { last } from 'lodash'
 import React from 'react'
-
-import { AppIcon } from '@/components/common/app-icon'
 
 function Menu() {
   const { menuItems, selectedKey } = useMenu()
@@ -33,6 +32,7 @@ function Menu() {
         items={items}
         selectedKeys={selectedKeys}
         expandIcon={<DownOutlined style={{ fontSize: '10px' }} />}
+        style={{ minWidth: 'max-content' }}
       />
     </div>
   )

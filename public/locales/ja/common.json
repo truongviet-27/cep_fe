@@ -32,11 +32,16 @@
     "select": "選択",
     "create_new": "新規登録",
     "save_all": "全て保存",
-    "confirm": "確認"
+    "confirm": "確認",
+    "add": "追加",
+    "save": "登録"
   },
   "notifications": {
     "success": "成功しました",
-    "editSuccess": "更新が成功しました"
+    "editSuccess": "更新が成功しました",
+    "deleteSuccess": "deleteSuccess",
+    "deleteError": "deleteSuccess",
+    "createSuccess": "createSuccess"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -68,7 +73,24 @@
     "permission_settings": "権限設定"
   },
   "code_issue_settings": {
-    "code_issue_settings": "コード採番設定 "
+    "code_issue_settings": "コード採番設定 ",
+    "fields": {
+      "name": "コード名",
+      "issue_method": "採番方法",
+      "enum_issue": {
+        "manual": "手動",
+        "auto": "自動"
+      },
+      "prefix": "接続詞",
+      "segment": "区分",
+      "serial_length": "連番桁数",
+      "total": "現在値",
+      "preview_code": "計算例",
+      "created_by": "登録者",
+      "updated_by": "更新者",
+      "created_at": "登録日",
+      "updated_at": "更新日"
+    }
   },
   "product_categories": {
     "product_categories": "商品カテゴリ設定"
@@ -79,7 +101,6 @@
   "system_config": {
     "system_config": "システム設定",
     "permission_settings": "権限設定",
-    "code_issue_settings": "コード採番設定 ",
     "cancel_message": "変更をキャンセルしました",
     "save_success_message": "設定を保存しました",
     "save_error_message": "保存に失敗しました",

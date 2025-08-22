@@ -1,12 +1,9 @@
-import {
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
+import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
 import { TextField } from '@refinedev/antd'
-import { Button, Space, Tag, Tooltip, Typography } from 'antd'
+import { useDelete, useResource } from '@refinedev/core'
+import { Space, Tag, Typography } from 'antd'
 import React from 'react'
 
 const { Text } = Typography
@@ -17,7 +14,8 @@ type Props = {
   onToggle: (id: string) => void
   onAddChild: (id: string) => void
   onEdit: (id: string) => void
-  onDelete: (id: string) => void
+  // onDelete: (id: string) => void
+  tag: string
   canAddChild?: boolean
 }
 
@@ -25,13 +23,21 @@ const TreeRow: React.FC<Props> = ({
   cat,
   hasChildren,
   onToggle,
-  onAddChild,
   onEdit,
-  onDelete,
   canAddChild,
+  tag,
 }) => {
   const border = 'border-zinc-200'
   const hover = 'hover:bg-zinc-50'
+
+  const { mutate } = useDelete()
+  const { resource } = useResource()
+
+  const handleDelete = (id: string) =>
+    mutate({
+      resource: resource?.name ?? 'default',
+      id,
+    })
 
   return (
     <div className="mb-2">
@@ -42,9 +48,9 @@ const TreeRow: React.FC<Props> = ({
           <Space size={8} className="min-w-0 flex-1">
             <Tag
               color="blue-inverse"
-              className="m-0 rounded-md px-2 py-0.5 text-[12px] font-medium"
+              className="m-0 rounded-md px-2 py-0.5 text-[14px] font-medium"
             >
-              公開22
+              {tag}
             </Tag>
 
             <TextField className="truncate font-medium" value={cat.name} />
@@ -58,36 +64,20 @@ const TreeRow: React.FC<Props> = ({
           </Space>
 
           <Space size={12} className="text-zinc-400">
-            <Tooltip title="編集">
-              <button
-                type="button"
-                onClick={() => onEdit(cat.id)}
-                className="rounded-md p-1 hover:bg-zinc-100 hover:text-zinc-600"
-              >
-                <EditOutlined />
-              </button>
-            </Tooltip>
-            <Tooltip title="削除">
-              <button
-                type="button"
-                onClick={() => onDelete(cat.id)}
-                className="rounded-md p-1 hover:bg-zinc-100 hover:text-red-500"
-              >
-                <DeleteOutlined />
-              </button>
-            </Tooltip>
+            <CommonButton type={'edit'} onClick={() => onEdit(cat.id)} />
 
-            {canAddChild && (
-              <Button
-                size="small"
-                type="text"
-                icon={<PlusOutlined />}
-                onClick={() => onAddChild(cat.id)}
-                className="text-zinc-600 hover:!text-zinc-800"
-              >
-                サブカテゴリを追加
-              </Button>
-            )}
+            <CommonButton
+              type={'delete'}
+              onClick={() => handleDelete(cat.id)}
+            />
+
+            <CommonButton
+              type={'add'}
+              onClick={() => handleDelete(cat.id)}
+              style={{
+                visibility: canAddChild ? 'initial' : 'hidden',
+              }}
+            />
 
             <button
               className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${

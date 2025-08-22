@@ -17,7 +17,6 @@ export default function CommonTree({
   onToggle,
   onAddChild,
   onEdit,
-  onDelete,
   depth,
 }: Props) {
   const withinLimit = (level: number) =>
@@ -25,6 +24,12 @@ export default function CommonTree({
 
   const canShowChildren = (level: number) =>
     depth === undefined ? true : level < depth
+
+  function getLevelLabel(level: number): string {
+    if (level === 1) return '大'
+    if (level === 2) return '中'
+    return '小'
+  }
 
   const renderNode = (node: ITree, level: number) => {
     const children = node.children ?? []
@@ -43,8 +48,8 @@ export default function CommonTree({
           onToggle={onToggle}
           onAddChild={(id) => onAddChild(id, level + 1)}
           onEdit={onEdit}
-          onDelete={onDelete}
           canAddChild={canAddChild}
+          tag={getLevelLabel(level)}
         />
 
         <AnimatePresence initial={false}>
