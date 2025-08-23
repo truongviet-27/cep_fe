@@ -118,64 +118,50 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       footer={
-        <div className="flex justify-end">
-          <Button htmlType="submit">{translate('buttons.back')}</Button>
+        <div className="mt-10 flex justify-end">
+          <Button>{translate('buttons.back')}</Button>
         </div>
       }
-      createButtonProps={{
-        children: translate('buttons.create_new'),
-        onClick: handleAddRow,
-      }}
+      createButtonProps={{ style: { display: 'none' } }}
     >
-      <Form {...searchFormProps} layout="vertical">
-        <Row gutter={[16, 16]} style={{ width: '100%' }}>
-          <Col xs={12} sm={6} md={6}>
-            <Form.Item name="q" label={'カテゴリレベル'}>
-              <Select
-                placeholder={translate('placeholders.select')}
-                allowClear
-                options={[
-                  { value: 1, label: '大' },
-                  { value: 2, label: '中' },
-                  { value: 3, label: '小' },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={12} sm={6} md={6}>
-            <Form.Item name="customer" label={'カテゴリ名'}>
-              <Input
-                placeholder={translate('placeholders.partial_match')}
-                allowClear
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={12} sm={6} md={6}>
-            <Form.Item label=" " colon={false}>
-              <Space>
-                <Button htmlType="submit" type="primary">
-                  {translate('filters.search')}
-                </Button>
-                <Button onClick={() => searchFormProps.form?.resetFields()}>
-                  {translate('filters.clear')}
-                </Button>
-              </Space>
-            </Form.Item>
+      <Form {...searchFormProps} layout="vertical" colon={false}>
+        <Row
+          align="middle"
+          justify="space-between"
+          wrap={false}
+          gutter={[16, 16]}
+          style={{ width: '100%' }}
+        >
+          <Col flex="auto">
+            <Row align="middle" gutter={16} wrap={false}>
+              <Col>
+                <div style={{ fontWeight: 600 }}>単位名</div>
+              </Col>
+
+              <Col flex="360px">
+                <Form.Item name="name" style={{ margin: 0 }}>
+                  <Input placeholder="部分一致" allowClear size="large" />
+                </Form.Item>
+              </Col>
+
+              <Col>
+                <Space size="middle">
+                  <Button htmlType="submit" type="primary" size="large">
+                    検索
+                  </Button>
+                  <Button size="large" type="default">
+                    クリア
+                  </Button>
+                </Space>
+              </Col>
+            </Row>
           </Col>
 
-          {/*<Col xs={12} sm={12} md={9} style={{ textAlign: 'right' }}>*/}
-          {/*  <Space>*/}
-          {/*    <Button*/}
-          {/*    >*/}
-          {/*      {translate('buttons.create')}*/}
-          {/*    </Button>*/}
-          {/*    <Button*/}
-          {/*      type="primary"*/}
-          {/*    >*/}
-          {/*      {translate('buttons.csv_export')}*/}
-          {/*    </Button>*/}
-          {/*  </Space>*/}
-          {/*</Col>*/}
+          <Col>
+            <Button type="primary" size="large" onClick={handleAddRow}>
+              新規登録
+            </Button>
+          </Col>
         </Row>
       </Form>
 

@@ -1,3 +1,4 @@
+import LoadingPage from '@components/common/loading-page'
 import TreeRow from '@components/common/tree/tree-row'
 import type { ITree } from '@interfaces/tree'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -9,6 +10,7 @@ type Props = {
   onAddChild: (id: string, level: number) => void
   onEdit: (id: string) => void
   onDelete: (id: string) => void
+  loading?: boolean
   depth?: number
 }
 
@@ -18,6 +20,7 @@ export default function CommonTree({
   onAddChild,
   onEdit,
   depth,
+  loading,
 }: Props) {
   const withinLimit = (level: number) =>
     depth === undefined ? true : level < depth
@@ -39,6 +42,10 @@ export default function CommonTree({
     const hasChildrenForToggle = hasActualChildren && withinLimit(level)
     const shouldRenderChildren =
       hasActualChildren && node.open && canShowChildren(level)
+
+    if (loading) {
+      return <LoadingPage />
+    }
 
     return (
       <div key={node.id} className="mb-2 last:mb-0">

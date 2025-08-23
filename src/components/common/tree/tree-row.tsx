@@ -1,9 +1,10 @@
 import { DownOutlined } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
-import { TextField } from '@refinedev/antd'
+import { DeleteButton, TextField } from '@refinedev/antd'
 import { useDelete, useResource } from '@refinedev/core'
 import { Space, Tag, Typography } from 'antd'
+import { useTranslations } from 'next-intl'
 import React from 'react'
 
 const { Text } = Typography
@@ -26,12 +27,15 @@ const TreeRow: React.FC<Props> = ({
   onEdit,
   canAddChild,
   tag,
+  onAddChild,
 }) => {
   const border = 'border-zinc-200'
   const hover = 'hover:bg-zinc-50'
 
   const { mutate } = useDelete()
   const { resource } = useResource()
+
+  const translate = useTranslations()
 
   const handleDelete = (id: string) =>
     mutate({
@@ -66,14 +70,13 @@ const TreeRow: React.FC<Props> = ({
           <Space size={12} className="text-zinc-400">
             <CommonButton type={'edit'} onClick={() => onEdit(cat.id)} />
 
-            <CommonButton
-              type={'delete'}
-              onClick={() => handleDelete(cat.id)}
-            />
+            <DeleteButton size="middle" onClick={() => handleDelete(cat.id)}>
+              {translate('buttons.delete')}
+            </DeleteButton>
 
             <CommonButton
               type={'add'}
-              onClick={() => handleDelete(cat.id)}
+              onClick={() => onAddChild(cat.id)}
               style={{
                 visibility: canAddChild ? 'initial' : 'hidden',
               }}

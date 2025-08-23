@@ -16,7 +16,7 @@ axiosInstance.interceptors.request.use(
     }
     if (tenantId) {
       request.headers = request.headers ?? {}
-      request.headers['tenant-id'] = tenantId
+      request.headers['x-tenant-id'] = tenantId
     }
     return request
   },

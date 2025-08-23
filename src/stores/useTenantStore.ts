@@ -1,12 +1,12 @@
 import { create } from 'zustand'
 
 interface TenantStore {
-  tenantId: number
-  setTenant: (tenantId: number) => void
+  tenantId: string
+  setTenant: (tenantId: string) => void
 }
 
 const useTenantStore = create<TenantStore>((set) => ({
-  tenantId: 1,
+  tenantId: '90a925c8-091c-43a5-8d40-e3a9610d1731',
   setTenant: (tenantId) => set({ tenantId }),
 }))
 
