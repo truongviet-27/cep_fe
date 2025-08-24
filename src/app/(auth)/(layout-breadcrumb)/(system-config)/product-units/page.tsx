@@ -217,7 +217,11 @@ export default function Page() {
 
                   {/*<SaveButton size="middle" recordItemId={record.id} />*/}
 
-                  <DeleteButton size="middle" recordItemId={record.id}>
+                  <DeleteButton
+                    icon={null}
+                    size="middle"
+                    recordItemId={record.id}
+                  >
                     {translate('buttons.delete')}
                   </DeleteButton>
                 </Space>

@@ -1,8 +1,7 @@
 import { DownOutlined } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
-import { DeleteButton, TextField } from '@refinedev/antd'
-import { useDelete, useResource } from '@refinedev/core'
+import { DeleteButton, EditButton, TextField } from '@refinedev/antd'
 import { Space, Tag, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import React from 'react'
@@ -32,16 +31,7 @@ const TreeRow: React.FC<Props> = ({
   const border = 'border-zinc-200'
   const hover = 'hover:bg-zinc-50'
 
-  const { mutate } = useDelete()
-  const { resource } = useResource()
-
   const translate = useTranslations()
-
-  const handleDelete = (id: string) =>
-    mutate({
-      resource: resource?.name ?? 'default',
-      id,
-    })
 
   return (
     <div className="mb-2">
@@ -68,9 +58,9 @@ const TreeRow: React.FC<Props> = ({
           </Space>
 
           <Space size={12} className="text-zinc-400">
-            <CommonButton type={'edit'} onClick={() => onEdit(cat.id)} />
+            <EditButton icon={null} onClick={() => onEdit(cat.id)} />
 
-            <DeleteButton size="middle" onClick={() => handleDelete(cat.id)}>
+            <DeleteButton icon={null} size="middle" recordItemId={cat.id}>
               {translate('buttons.delete')}
             </DeleteButton>
 

@@ -45,13 +45,12 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
     },
   }
 
-  const { label, type: btnType, danger, icon } = config[type]
+  const { label, type: btnType, danger } = config[type]
 
   return (
     <Button
       type={btnType}
       danger={danger}
-      icon={icon}
       onClick={onClick}
       disabled={disabled}
       style={style}
