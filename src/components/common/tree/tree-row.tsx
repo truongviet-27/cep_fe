@@ -1,9 +1,8 @@
 import { DownOutlined } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
-import { DeleteButton, EditButton, TextField } from '@refinedev/antd'
-import { Space, Tag, Typography } from 'antd'
-import { useTranslations } from 'next-intl'
+import { DeleteButton } from '@refinedev/antd'
+import { Button, Input, Space, Tag, Typography } from 'antd'
 import React from 'react'
 
 const { Text } = Typography
@@ -13,8 +12,13 @@ type Props = {
   hasChildren: boolean
   onToggle: (id: string) => void
   onAddChild: (id: string) => void
-  onEdit: (id: string) => void
-  // onDelete: (id: string) => void
+  onStartEdit: (id: string) => void
+  onChangeName: (id: string, name: string) => void
+  onSave: (id: string) => void
+  onCancel: (id: string) => void
+  editingName?: string
+  saving?: boolean
+
   tag: string
   canAddChild?: boolean
 }
@@ -23,15 +27,20 @@ const TreeRow: React.FC<Props> = ({
   cat,
   hasChildren,
   onToggle,
-  onEdit,
+  onStartEdit,
+  onChangeName,
+  onSave,
+  onCancel,
   canAddChild,
   tag,
   onAddChild,
+  editingName,
+  saving,
 }) => {
   const border = 'border-zinc-200'
   const hover = 'hover:bg-zinc-50'
 
-  const translate = useTranslations()
+  const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
   return (
     <div className="mb-2">
@@ -47,10 +56,19 @@ const TreeRow: React.FC<Props> = ({
               {tag}
             </Tag>
 
-            <TextField className="truncate font-medium" value={cat.name} />
+            {isEditing ? (
+              <Input
+                size="middle"
+                value={editingName}
+                onChange={(e) => onChangeName(cat.id, e.target.value)}
+                onPressEnter={() => onSave(cat.id)}
+                className="min-w-[420px]"
+              />
+            ) : (
+              <Text className="truncate font-medium">{cat.name}</Text>
+            )}
 
-            <Text className="truncate font-medium">{cat.name}</Text>
-            {cat.code && (
+            {cat.code && !isEditing && (
               <Text type="secondary" className="truncate">
                 ID:{cat.code}
               </Text>
@@ -58,19 +76,37 @@ const TreeRow: React.FC<Props> = ({
           </Space>
 
           <Space size={12} className="text-zinc-400">
-            <EditButton icon={null} onClick={() => onEdit(cat.id)} />
-
-            <DeleteButton icon={null} size="middle" recordItemId={cat.id}>
-              {translate('buttons.delete')}
-            </DeleteButton>
+            {isEditing ? (
+              <>
+                <Button
+                  type="primary"
+                  size="small"
+                  loading={!!saving}
+                  onClick={() => onSave(cat.id)}
+                >
+                  保存
+                </Button>
+                <Button size="small" onClick={() => onCancel(cat.id)}>
+                  キャンセル
+                </Button>
+              </>
+            ) : (
+              <Button
+                type="link"
+                size="small"
+                onClick={() => onStartEdit(cat.id)}
+              >
+                編集
+              </Button>
+            )}
 
             <CommonButton
               type={'add'}
               onClick={() => onAddChild(cat.id)}
-              style={{
-                visibility: canAddChild ? 'initial' : 'hidden',
-              }}
+              style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
             />
+
+            <DeleteButton icon={null} recordItemId={cat.id} />
 
             <button
               className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${
@@ -81,9 +117,7 @@ const TreeRow: React.FC<Props> = ({
               type="button"
             >
               <DownOutlined
-                className={`transition-transform ${
-                  cat.open ? 'rotate-0' : '-rotate-90'
-                }`}
+                className={`transition-transform ${cat.open ? 'rotate-0' : '-rotate-90'}`}
               />
             </button>
           </Space>
