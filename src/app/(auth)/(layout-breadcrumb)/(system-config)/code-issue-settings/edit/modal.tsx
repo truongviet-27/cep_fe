@@ -1,8 +1,21 @@
 'use client'
 
+import HashDashIcon from '@components/icons/hash-dash-icon'
 import { useForm } from '@refinedev/antd'
 import { type useModalReturnType, useTranslate } from '@refinedev/core'
-import { Button, Checkbox, DatePicker, Form, Input, Space } from 'antd'
+import { segmentOptions } from '@utility/options'
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+  Space,
+  Typography,
+} from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
@@ -16,178 +29,134 @@ type Props = {
 export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
   const t = useTranslate()
   const { close } = modalProps
-  const { formProps, saveButtonProps, formLoading } = useForm({
+  const { formProps, saveButtonProps, formLoading, queryResult } = useForm({
     id,
     resource: 'code-issue-settings',
     action: 'edit',
   })
 
+  const record = queryResult?.data?.data
+
   return (
     <Edit
-      footerButtons={
-        <Space>
-          <Button onClick={close}>{t('buttons.back')}</Button>
-          <Button {...saveButtonProps} type="primary">
-            {t('buttons.edit')}
-          </Button>
-        </Space>
-      }
+      // footerButtons={
+      //   <Space>
+      //     <Button onClick={close}>{t('buttons.back')}</Button>
+      //     <Button {...saveButtonProps} type="primary">
+      //       {t('buttons.save_settings')}
+      //     </Button>
+      //   </Space>
+      // }
       saveButtonProps={saveButtonProps}
       isLoading={formLoading}
-      contentProps={{ style: { boxShadow: 'none' } }}
+      contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
     >
-      <Form {...formProps} layout="vertical">
+      <Form
+        {...formProps}
+        layout="horizontal"
+        labelCol={{ span: 6 }}
+        labelAlign="left"
+        colon={false}
+      >
         <Form.Item
-          label={t('code-issue-settings.fields.code')}
-          name={['code']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.name')}
+          name="name"
+          rules={[{ required: true }]}
         >
-          <Input />
+          <Input disabled />
         </Form.Item>
+
         <Form.Item
-          label={t('code-issue-settings.fields.name')}
-          name={['name']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.issue_method')}
+          name="issue_method"
+          rules={[{ required: true }]}
         >
-          <Input />
+          <Radio.Group>
+            <Radio value="manual">
+              {t('code_issue_settings.fields.enum_issue.manual')}
+            </Radio>
+            <Radio value="automatic">
+              {t('code_issue_settings.fields.enum_issue.auto')}
+            </Radio>
+          </Radio.Group>
         </Form.Item>
+
         <Form.Item
-          label={t('code-issue-settings.fields.issue_method')}
-          name={['issue_method']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.prefix')}
+          name="prefix"
+          rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder="例: PD" />
         </Form.Item>
+
         <Form.Item
-          label={t('code-issue-settings.fields.prefix')}
-          name={['prefix']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={t('code-issue-settings.fields.hash_dash')}
+          label={<HashDashIcon />}
           valuePropName="checked"
-          name={['hash_dash']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          name="hash_dash"
         >
-          <Checkbox>Hash Dash</Checkbox>
+          <Checkbox />
         </Form.Item>
+
         <Form.Item
-          label={t('code-issue-settings.fields.segment')}
-          name={['segment']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.segment')}
+          name="segment"
+          rules={[{ required: true }]}
         >
-          <Input />
+          <Select options={segmentOptions} />
         </Form.Item>
+
         <Form.Item
-          label={t('code-issue-settings.fields.serial_length')}
-          name={['serial_length']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.serial_length')}
+          name="serial_length"
+          rules={[{ required: true }]}
         >
-          <Input />
+          <InputNumber min={1} max={10} />
         </Form.Item>
-        <Form.Item
-          label={t('code-issue-settings.fields.total')}
-          name={['total']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input />
+
+        <Form.Item label={t('code_issue_settings.fields.total')} name="total">
+          <InputNumber disabled />
         </Form.Item>
+
         <Form.Item
-          label={t('code-issue-settings.fields.preview_code')}
-          name={['preview_code']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.preview_code')}
+          name="preview_code"
         >
-          <Input />
+          <Input disabled />
         </Form.Item>
+
+        <Divider />
+
         <Form.Item
-          label={t('code-issue-settings.fields.created_by')}
-          name={['created_by']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.created_by')}
+          colon={false}
         >
-          <Input />
+          <Typography.Text type="secondary">
+            {record?.author} {record?.author && '---'}
+            {record?.created_at
+              ? dayjs(record.created_at).format('DD/MM/YYYY HH:mm')
+              : ''}
+          </Typography.Text>
         </Form.Item>
+
         <Form.Item
-          label={t('code-issue-settings.fields.updated_by')}
-          name={['updated_by']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={t('code_issue_settings.fields.updated_by')}
+          colon={false}
         >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={t('code-issue-settings.fields.created_at')}
-          name={['created_at']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          getValueProps={(value) => ({
-            value: value ? dayjs(value) : undefined,
-          })}
-        >
-          <DatePicker />
-        </Form.Item>
-        <Form.Item
-          label={t('code-issue-settings.fields.updated_at')}
-          name={['updated_at']}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          getValueProps={(value) => ({
-            value: value ? dayjs(value) : undefined,
-          })}
-        >
-          <DatePicker />
+          <Typography.Text type="secondary">
+            {record?.editor} {record?.editor && '---'}
+            {record?.updated_at
+              ? dayjs(record.updated_at).format('DD/MM/YYYY HH:mm')
+              : ''}
+          </Typography.Text>
         </Form.Item>
       </Form>
+
+      <Space className={'flex w-full justify-end'}>
+        <Button onClick={close}>{t('buttons.back')}</Button>
+        <Button {...saveButtonProps} type="primary">
+          {t('buttons.save_settings')}
+        </Button>
+      </Space>
     </Edit>
   )
 }

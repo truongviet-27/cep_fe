@@ -1,9 +1,8 @@
 'use client'
 
+import { AppIcon } from '@components/icons/app-icon'
 import { ThemedSiderV2, ThemedTitleV2 } from '@refinedev/antd'
 import React from 'react'
-
-import { AppIcon } from '@/components/common/app-icon'
 
 export const Navbar: React.FC = () => {
   // const [initialSiderCollapsed, setInitialSiderCollapsed] = useState(false)

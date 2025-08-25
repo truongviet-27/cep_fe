@@ -32,11 +32,16 @@
     "select": "Select",
     "create_new": "Create New",
     "save_all": "Save All",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "add": "Add"
   },
   "notifications": {
     "success": "Success",
-    "editSuccess": "Edit Success"
+    "editSuccess": "Edit Success",
+    "deleteSuccess": "Delete Success",
+    "deleteError": "Delete Success",
+    "createSuccess": "Create Success",
+    "error": "Error"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -68,7 +73,24 @@
     "permission_settings": "Permission Settings"
   },
   "code_issue_settings": {
-    "code_issue_settings": "Code Issue Setting"
+    "code_issue_settings": "Code Issue Setting",
+    "fields": {
+      "name": "Name",
+      "issue_method": "Issue Method",
+      "enum_issue": {
+        "manual": "Manual",
+        "automatic": "Auto"
+      },
+      "prefix": "Prefix",
+      "segment": "Segment",
+      "serial_length": "Serial Length",
+      "total": "Total",
+      "preview_code": "Preview Code",
+      "created_by": "Created By",
+      "updated_by": "Updated By",
+      "created_at": "Created At",
+      "updated_at": "Updated At"
+    }
   },
   "product_categories": {
     "product_categories": "Product Category"
@@ -79,7 +101,6 @@
   "system_config": {
     "system_config": "System Settings",
     "permission_settings": "Permission Settings",
-    "code_issue_settings": "Code Issue Setting",
     "cancel_message": "Changes cancelled",
     "save_success_message": "Settings saved",
     "save_error_message": "Failed to save",
@@ -104,7 +125,8 @@
       "title": "Project List",
       "buttons": {
         "create": "Register",
-        "csv_export": "CSV Bulk Upload"
+        "csv_export": "CSV Bulk Upload",
+        "save": "Save"
       },
       "filters": {
         "project_search_placeholder": "Search by Project Code / Name",

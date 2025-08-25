@@ -2,14 +2,18 @@
 
 import { RightOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import { CommonButton } from '@components/common/common-button'
+import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { BooleanField, EditButton, useTable } from '@refinedev/antd'
+import { BooleanField, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useModal } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
+import { segmentOptions } from '@utility/options'
 import { Modal, Table, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
+import type { SegmentedValue } from 'rc-segmented'
 import React from 'react'
 
 const { Title } = Typography
@@ -25,6 +29,12 @@ export default function Page() {
   const { show, close, visible } = modalProps
 
   const [editId, setEditId] = React.useState<number | string | null>(null)
+
+  const segmentLabelByValue: Record<SegmentedValue, string> =
+    Object.fromEntries(segmentOptions.map((o) => [o.value, o.label])) as Record<
+      SegmentedValue,
+      string
+    >
 
   const breadcrumbItems = [
     {
@@ -47,11 +57,7 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
     >
-      <Table {...tableProps} rowKey="id">
-        <Table.Column
-          dataIndex="code"
-          title={t('code_issue_settings.fields.code')}
-        />
+      <CommonTable {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="name"
           title={t('code_issue_settings.fields.name')}
@@ -66,12 +72,15 @@ export default function Page() {
         />
         <Table.Column
           dataIndex={['hash_dash']}
-          title={t('code_issue_settings.fields.hash_dash')}
+          title={<b>_</b>}
           render={(value) => <BooleanField value={value} />}
         />
         <Table.Column
           dataIndex="segment"
           title={t('code_issue_settings.fields.segment')}
+          render={(value: SegmentedValue) =>
+            segmentLabelByValue[value] ?? String(value)
+          }
         />
         <Table.Column
           dataIndex="serial_length"
@@ -90,12 +99,9 @@ export default function Page() {
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
             <div className={'w-8'}>
-              <EditButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                onClick={(e) => {
-                  e.preventDefault()
+              <CommonButton
+                type={'edit'}
+                onClick={() => {
                   show()
                   setEditId(record?.id ?? null)
                 }}
@@ -103,13 +109,14 @@ export default function Page() {
             </div>
           )}
         />
-      </Table>
+      </CommonTable>
 
       <Modal
         open={visible}
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
+        width={'70vh'}
       >
         {editId && <CodeIssueSettingEdit id={editId} modalProps={modalProps} />}
       </Modal>
