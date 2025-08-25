@@ -39,9 +39,10 @@
   "notifications": {
     "success": "成功しました",
     "editSuccess": "更新が成功しました",
-    "deleteSuccess": "deleteSuccess",
-    "deleteError": "deleteSuccess",
-    "createSuccess": "createSuccess"
+    "deleteSuccess": "削除しました",
+    "deleteError": "削除に失敗しました",
+    "createSuccess": "登録しました",
+    "error": "Error"
   },
   "menu": {
     "dashboard": "ダッシュボード",
