@@ -1,7 +1,7 @@
 import { DownOutlined } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
-import { DeleteButton } from '@refinedev/antd'
+import { DeleteButton, EditButton } from '@refinedev/antd'
 import { Button, Input, Space, Tag, Typography } from 'antd'
 import React from 'react'
 
@@ -80,24 +80,24 @@ const TreeRow: React.FC<Props> = ({
               <>
                 <Button
                   type="primary"
-                  size="small"
+                  size="middle"
                   loading={!!saving}
                   onClick={() => onSave(cat.id)}
                 >
                   保存
                 </Button>
-                <Button size="small" onClick={() => onCancel(cat.id)}>
+                <Button size="middle" onClick={() => onCancel(cat.id)}>
                   キャンセル
                 </Button>
               </>
             ) : (
-              <Button
-                type="link"
-                size="small"
+              <EditButton
+                icon={null}
+                size="middle"
                 onClick={() => onStartEdit(cat.id)}
               >
                 編集
-              </Button>
+              </EditButton>
             )}
 
             <CommonButton

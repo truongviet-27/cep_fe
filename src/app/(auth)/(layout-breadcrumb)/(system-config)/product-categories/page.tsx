@@ -47,29 +47,28 @@ export default function Page() {
 
   const toggle = (id: string) => setTree((prev) => toggleOpen(prev, id))
 
-  // Add child: tạo DRAFT (không gọi API), bật edit
-  const addChild = (parentId: string, level: number) => {
-    const tmpId = `${TEMP_PREFIX}${crypto.randomUUID()}`
+  const addChild = (parentId: string) => {
+    const parent = findNode(tree, parentId)
+    const parentLevel = parent?.level ?? 0
+
+    const tmpId = `tmp-${crypto.randomUUID()}`
     setTree((prev) =>
-      updateNode(prev, parentId, (p) => {
-        const children = (p.children as CatNode[] | undefined) ?? []
-        return {
-          ...(p as CatNode),
-          open: true,
-          children: [
-            ...children,
-            {
-              id: tmpId,
-              name: '',
-              level: level + 1,
-              parent_id: parentId,
-              open: false,
-              _isNew: true,
-              children: [],
-            } as CatNode,
-          ],
-        }
-      }),
+      updateNode(prev, parentId, (p) => ({
+        ...p,
+        open: true,
+        children: [
+          ...((p.children as CatNode[] | undefined) ?? []),
+          {
+            id: tmpId,
+            name: '',
+            level: parentLevel + 1,
+            parent_id: parentId,
+            open: false,
+            _isNew: true,
+            children: [],
+          } as CatNode,
+        ],
+      })),
     )
     setEditing((prev) => ({ ...prev, [tmpId]: { name: '', original: '' } }))
     setDirty(true)

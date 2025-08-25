@@ -40,7 +40,8 @@
     "editSuccess": "Edit Success",
     "deleteSuccess": "Delete Success",
     "deleteError": "Delete Success",
-    "createSuccess": "createSuccess"
+    "createSuccess": "Create Success",
+    "error": "Error"
   },
   "menu": {
     "dashboard": "Dashboard",

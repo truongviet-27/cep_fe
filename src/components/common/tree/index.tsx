@@ -33,6 +33,7 @@ export default function CommonTree({
   saving,
   depth,
   loading,
+  onDelete,
 }: Props) {
   const withinLimit = (level: number) =>
     depth === undefined ? true : level < depth
@@ -94,7 +95,7 @@ export default function CommonTree({
                   onCancel={onCancel}
                   editing={editing}
                   saving={saving}
-                  onDelete={() => {}}
+                  onDelete={() => onDelete(ch.id)}
                   depth={depth}
                 />
               ))}

@@ -10,8 +10,9 @@ import {
 } from '@refinedev/core'
 import type { CreateProps } from '@refinedev/antd'
 import { PageHeader, SaveButton, type SaveButtonProps } from '@refinedev/antd'
-import { Card, Space, Spin } from 'antd'
+import { Button, Card, Space, Spin } from 'antd'
 import AutoHeading from '@components/common/auto-heading'
+import { PRIMARY } from '@utility/color'
 
 type CustomProps = {
   isAutoHeading?: boolean
@@ -112,14 +113,31 @@ export const Create: React.FC<CreateProps & CustomProps> = ({
                 style={{ float: 'right', marginRight: 24 }}
                 {...(footerButtonProps ?? {})}
               >
-                {footerButtons
-                  ? typeof footerButtons === 'function'
-                    ? footerButtons({
-                        defaultButtons: defaultFooterButtons,
-                        saveButtonProps: saveButtonProps,
-                      })
-                    : footerButtons
-                  : defaultFooterButtons}
+                {footerButtons ? (
+                  typeof footerButtons === 'function' ? (
+                    footerButtons({
+                      defaultButtons: defaultFooterButtons,
+                      saveButtonProps: saveButtonProps,
+                    })
+                  ) : (
+                    <>
+                      {footerButtons}
+                      <Button
+                        type="default"
+                        style={{
+                          background: '#fff',
+                          borderColor: PRIMARY,
+                          color: PRIMARY,
+                          fontWeight: 600,
+                        }}
+                      >
+                        戻る
+                      </Button>
+                    </>
+                  )
+                ) : (
+                  defaultFooterButtons
+                )}
               </Space>,
             ]}
             {...(contentProps ?? {})}
