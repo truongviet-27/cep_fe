@@ -1,12 +1,8 @@
-import {
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
+import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
-import { TextField } from '@refinedev/antd'
-import { Button, Space, Tag, Tooltip, Typography } from 'antd'
+import { DeleteButton, EditButton } from '@refinedev/antd'
+import { Button, Input, Space, Tag, Typography } from 'antd'
 import React from 'react'
 
 const { Text } = Typography
@@ -16,8 +12,14 @@ type Props = {
   hasChildren: boolean
   onToggle: (id: string) => void
   onAddChild: (id: string) => void
-  onEdit: (id: string) => void
-  onDelete: (id: string) => void
+  onStartEdit: (id: string) => void
+  onChangeName: (id: string, name: string) => void
+  onSave: (id: string) => void
+  onCancel: (id: string) => void
+  editingName?: string
+  saving?: boolean
+
+  tag: string
   canAddChild?: boolean
 }
 
@@ -25,13 +27,20 @@ const TreeRow: React.FC<Props> = ({
   cat,
   hasChildren,
   onToggle,
-  onAddChild,
-  onEdit,
-  onDelete,
+  onStartEdit,
+  onChangeName,
+  onSave,
+  onCancel,
   canAddChild,
+  tag,
+  onAddChild,
+  editingName,
+  saving,
 }) => {
   const border = 'border-zinc-200'
   const hover = 'hover:bg-zinc-50'
+
+  const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
   return (
     <div className="mb-2">
@@ -42,15 +51,24 @@ const TreeRow: React.FC<Props> = ({
           <Space size={8} className="min-w-0 flex-1">
             <Tag
               color="blue-inverse"
-              className="m-0 rounded-md px-2 py-0.5 text-[12px] font-medium"
+              className="m-0 rounded-md px-2 py-0.5 text-[14px] font-medium"
             >
-              公開22
+              {tag}
             </Tag>
 
-            <TextField className="truncate font-medium" value={cat.name} />
+            {isEditing ? (
+              <Input
+                size="middle"
+                value={editingName}
+                onChange={(e) => onChangeName(cat.id, e.target.value)}
+                onPressEnter={() => onSave(cat.id)}
+                className="min-w-[420px]"
+              />
+            ) : (
+              <Text className="truncate font-medium">{cat.name}</Text>
+            )}
 
-            <Text className="truncate font-medium">{cat.name}</Text>
-            {cat.code && (
+            {cat.code && !isEditing && (
               <Text type="secondary" className="truncate">
                 ID:{cat.code}
               </Text>
@@ -58,36 +76,37 @@ const TreeRow: React.FC<Props> = ({
           </Space>
 
           <Space size={12} className="text-zinc-400">
-            <Tooltip title="編集">
-              <button
-                type="button"
-                onClick={() => onEdit(cat.id)}
-                className="rounded-md p-1 hover:bg-zinc-100 hover:text-zinc-600"
+            {isEditing ? (
+              <>
+                <Button
+                  type="primary"
+                  size="middle"
+                  loading={!!saving}
+                  onClick={() => onSave(cat.id)}
+                >
+                  保存
+                </Button>
+                <Button size="middle" onClick={() => onCancel(cat.id)}>
+                  キャンセル
+                </Button>
+              </>
+            ) : (
+              <EditButton
+                icon={null}
+                size="middle"
+                onClick={() => onStartEdit(cat.id)}
               >
-                <EditOutlined />
-              </button>
-            </Tooltip>
-            <Tooltip title="削除">
-              <button
-                type="button"
-                onClick={() => onDelete(cat.id)}
-                className="rounded-md p-1 hover:bg-zinc-100 hover:text-red-500"
-              >
-                <DeleteOutlined />
-              </button>
-            </Tooltip>
-
-            {canAddChild && (
-              <Button
-                size="small"
-                type="text"
-                icon={<PlusOutlined />}
-                onClick={() => onAddChild(cat.id)}
-                className="text-zinc-600 hover:!text-zinc-800"
-              >
-                サブカテゴリを追加
-              </Button>
+                編集
+              </EditButton>
             )}
+
+            <CommonButton
+              type={'add'}
+              onClick={() => onAddChild(cat.id)}
+              style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
+            />
+
+            <DeleteButton icon={null} recordItemId={cat.id} />
 
             <button
               className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${
@@ -98,9 +117,7 @@ const TreeRow: React.FC<Props> = ({
               type="button"
             >
               <DownOutlined
-                className={`transition-transform ${
-                  cat.open ? 'rotate-0' : '-rotate-90'
-                }`}
+                className={`transition-transform ${cat.open ? 'rotate-0' : '-rotate-90'}`}
               />
             </button>
           </Space>
