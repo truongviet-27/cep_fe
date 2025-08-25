@@ -3,6 +3,7 @@
 import HashDashIcon from '@components/icons/hash-dash-icon'
 import { useForm } from '@refinedev/antd'
 import { type useModalReturnType, useTranslate } from '@refinedev/core'
+import { segmentOptions } from '@utility/options'
 import {
   Button,
   Checkbox,
@@ -101,13 +102,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
           name="segment"
           rules={[{ required: true }]}
         >
-          <Select
-            options={[
-              { value: 'none', label: 'YY' },
-              { value: 'year_month', label: 'YYYY/MM' },
-              { value: 'year_month_day_range', label: 'YYY/MM/DD' },
-            ]}
-          />
+          <Select options={segmentOptions} />
         </Form.Item>
 
         <Form.Item

@@ -25,6 +25,7 @@ import {
 } from 'antd'
 import React from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { PRIMARY } from '@utility/color'
 
 const { Title } = Typography
 
@@ -146,8 +147,14 @@ export default function Page() {
 
   // UI
   const breadcrumbItems = [
-    { title: <Title level={5}>{t('system_config.system_config')}</Title> },
-    { title: <Title level={5}>商品単位設定</Title> },
+    {
+      title: (
+        <Title level={5} style={{ color: PRIMARY }}>
+          {t('system_config.system_config')}
+        </Title>
+      ),
+    },
+    { title: <Title level={5}>{t('product_units.product_units')}</Title> },
   ]
 
   const onAddDraft = () => append({ name: '', active: true })
@@ -202,7 +209,6 @@ export default function Page() {
         className="mt-6"
         dataSource={dataSource}
         rowKey={(r: any) => r.id ?? r.__key}
-        rowClassName={(r: UnitRow) => (!r.active ? 'bg-gray-100' : '')}
       >
         {/* 単位名 */}
         <Table.Column<UnitRow>

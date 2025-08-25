@@ -74,7 +74,7 @@
     "permission_settings": "権限設定"
   },
   "code_issue_settings": {
-    "code_issue_settings": "コード採番設定 ",
+    "code_issue_settings": "各種コード採番設定",
     "fields": {
       "name": "コード名",
       "issue_method": "採番方法",
@@ -98,6 +98,15 @@
   },
   "tags": {
     "tags": "見積タグ設定"
+  },
+  "parameter_settings": {
+    "parameter_settings": "見積タグ設定"
+  },
+  "estimate_form_settings": {
+    "estimate_form_settings": "見積フォーム設定"
+  },
+  "mail_template_settings": {
+    "mail_template_settings": "メールテンプレート設定"
   },
   "system_config": {
     "system_config": "システム設定",

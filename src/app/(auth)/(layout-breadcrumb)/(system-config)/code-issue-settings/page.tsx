@@ -10,8 +10,10 @@ import { BooleanField, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useModal } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
+import { segmentOptions } from '@utility/options'
 import { Modal, Table, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
+import type { SegmentedValue } from 'rc-segmented'
 import React from 'react'
 
 const { Title } = Typography
@@ -27,6 +29,12 @@ export default function Page() {
   const { show, close, visible } = modalProps
 
   const [editId, setEditId] = React.useState<number | string | null>(null)
+
+  const segmentLabelByValue: Record<SegmentedValue, string> =
+    Object.fromEntries(segmentOptions.map((o) => [o.value, o.label])) as Record<
+      SegmentedValue,
+      string
+    >
 
   const breadcrumbItems = [
     {
@@ -70,6 +78,9 @@ export default function Page() {
         <Table.Column
           dataIndex="segment"
           title={t('code_issue_settings.fields.segment')}
+          render={(value: SegmentedValue) =>
+            segmentLabelByValue[value] ?? String(value)
+          }
         />
         <Table.Column
           dataIndex="serial_length"
