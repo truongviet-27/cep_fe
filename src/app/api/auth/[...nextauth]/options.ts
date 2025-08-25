@@ -19,10 +19,11 @@ const authOptions: AuthOptions = {
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET || '',
+  secret: `UItTuD1HcGXIj8ZfHUswhYdNd40Lc325R8VlxQPUoR0=`,
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
+        token.idToken = account.id_token
         token.accessToken = account.access_token
         token.refreshToken = account.refresh_token
         token.expiresAt = account.expires_at
@@ -40,9 +41,10 @@ const authOptions: AuthOptions = {
     },
 
     async session({ session, token }) {
-      session.accessToken = String(token?.accessToken ?? '')
-      session.refreshToken = String(token?.refreshToken ?? '')
-      session.error = token?.error
+      if (token) {
+        session.accessToken = String(token?.accessToken ?? '')
+      }
+
       return session
     },
   },
