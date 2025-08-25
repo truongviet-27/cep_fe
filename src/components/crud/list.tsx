@@ -42,31 +42,31 @@ export const List: React.FC<ListProps & CustomProps> = ({
   const translate = useTranslate()
   // const { options: { breadcrumb: globalBreadcrumb } = {} } = useRefineContext()
 
-  const routerType = useRouterType()
+  // const routerType = useRouterType()
   const getUserFriendlyName = useUserFriendlyName()
 
   const { resource, identifier } = useResource(resourceFromProps)
 
-  const isCreateButtonVisible =
-    canCreate ??
-    ((resource?.canCreate ?? !!resource?.create) || createButtonPropsFromProps)
+  // const isCreateButtonVisible =
+  //   canCreate ??
+  //   ((resource?.canCreate ?? !!resource?.create) || createButtonPropsFromProps)
 
   // const breadcrumb =
   //   typeof breadcrumbFromProps === 'undefined'
   //     ? globalBreadcrumb
   //     : breadcrumbFromProps
 
-  const createButtonProps: CreateButtonProps | undefined = isCreateButtonVisible
-    ? {
-        size: 'middle',
-        resource: routerType === 'legacy' ? resource?.route : identifier,
-        ...createButtonPropsFromProps,
-      }
-    : undefined
+  // const createButtonProps: CreateButtonProps | undefined = isCreateButtonVisible
+  //   ? {
+  //       size: 'middle',
+  //       resource: routerType === 'legacy' ? resource?.route : identifier,
+  //       ...createButtonPropsFromProps,
+  //     }
+  //   : undefined
 
-  const defaultExtra = isCreateButtonVisible ? (
-    <CreateButton {...createButtonProps} />
-  ) : null
+  // const defaultExtra = isCreateButtonVisible ? (
+  //   <CreateButton {...createButtonProps} />
+  // ) : null
 
   return (
     <div {...(wrapperProps ?? {})}>
@@ -113,7 +113,7 @@ export const List: React.FC<ListProps & CustomProps> = ({
         >
           <div className={'mb-4 flex items-center justify-between'}>
             {isAutoHeading && <AutoHeading />}
-            {defaultExtra}
+            {/*{defaultExtra}*/}
           </div>
           {children}
           {footer}

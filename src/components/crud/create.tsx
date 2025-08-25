@@ -123,6 +123,7 @@ export const Create: React.FC<CreateProps & CustomProps> = ({
               </Space>,
             ]}
             {...(contentProps ?? {})}
+            className="min-h-[82vh]"
           >
             {isAutoHeading && <AutoHeading />}
             {children}
