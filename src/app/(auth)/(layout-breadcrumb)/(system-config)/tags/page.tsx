@@ -174,7 +174,7 @@ const Page = () => {
             control={control}
             name={`rows.${index}.name`}
             render={({ field }) => (
-              <Input {...field} size="large" autoFocus placeholder="タグ名" />
+              <Input {...field} size="middle" autoFocus placeholder="タグ名" />
             )}
           />
         ) : (
@@ -251,15 +251,15 @@ const Page = () => {
               </Col>
               <Col flex="360px">
                 <Form.Item name="name" style={{ margin: 0 }}>
-                  <Input placeholder="部分一致" allowClear size="large" />
+                  <Input placeholder="部分一致" allowClear size="middle" />
                 </Form.Item>
               </Col>
               <Col>
                 <Space size="middle">
-                  <Button htmlType="submit" type="primary" size="large">
+                  <Button htmlType="submit" type="primary" size="middle">
                     検索
                   </Button>
-                  <Button size="large" type="default">
+                  <Button size="middle" type="default">
                     クリア
                   </Button>
                 </Space>
@@ -267,7 +267,7 @@ const Page = () => {
             </Row>
           </Col>
           <Col>
-            <Button type="primary" size="large" onClick={addNew}>
+            <Button type="primary" size="middle" onClick={addNew}>
               新規登録
             </Button>
           </Col>

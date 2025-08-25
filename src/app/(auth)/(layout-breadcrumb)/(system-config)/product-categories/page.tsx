@@ -45,9 +45,10 @@ export default function Page() {
   const { mutate: createRow } = useCreate()
   const { mutate: updateRow, isLoading: saving } = useUpdate()
 
-  const toggle = (id: string) => setTree((prev) => toggleOpen(prev, id))
+  const toggle = (id: string | number) =>
+    setTree((prev) => toggleOpen(prev, id))
 
-  const addChild = (parentId: string) => {
+  const addChild = (parentId: string | number) => {
     const parent = findNode(tree, parentId)
     const parentLevel = parent?.level ?? 0
 
@@ -92,18 +93,17 @@ export default function Page() {
     setDirty(true)
   }
 
-  const del = (id: string) => {
+  const del = (id: string | number) => {
     setTree((prev) => removeById(prev, id))
     setDirty(true)
   }
 
-  // nút lưu sắp xếp (giữ UI cũ)
   const save = () => {
     setDirty(false)
     message.success('並べ替えを保存しました')
   }
 
-  const startEdit = (id: string) => {
+  const startEdit = (id: string | number) => {
     const node = findNode(tree, id)
     if (!node) return
     setEditing((prev) => ({
@@ -112,19 +112,19 @@ export default function Page() {
     }))
   }
 
-  const changeName = (id: string, name: string) =>
+  const changeName = (id: string | number, name: string) =>
     setEditing((prev) =>
       prev[id] ? { ...prev, [id]: { ...prev[id], name } } : prev,
     )
 
-  const cancelEdit = (id: string) =>
+  const cancelEdit = (id: string | number) =>
     setEditing((prev) => {
       const next = { ...prev }
       delete next[id]
       return next
     })
 
-  const saveEdit = (id: string) => {
+  const saveEdit = (id: string | number) => {
     const node = findNode(tree, id)
     if (!node) return
 
@@ -321,7 +321,7 @@ export default function Page() {
               onSave={saveEdit}
               onCancel={cancelEdit}
               onDelete={del}
-              depth={2}
+              depth={3}
               saving={saving}
             />
           ))}

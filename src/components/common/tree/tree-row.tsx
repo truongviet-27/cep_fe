@@ -10,12 +10,13 @@ const { Text } = Typography
 type Props = {
   cat: ITree
   hasChildren: boolean
-  onToggle: (id: string) => void
-  onAddChild: (id: string) => void
-  onStartEdit: (id: string) => void
-  onChangeName: (id: string, name: string) => void
-  onSave: (id: string) => void
-  onCancel: (id: string) => void
+  onToggle: (id: string | number) => void
+  onAddChild: (id: string | number) => void
+  onStartEdit: (id: string | number) => void
+  onChangeName: (id: string | number, name: string) => void
+  onSave: (id: string | number) => void
+  onCancel: (id: string | number) => void
+  onDelete: () => void
   editingName?: string
   saving?: boolean
 
@@ -36,9 +37,12 @@ const TreeRow: React.FC<Props> = ({
   onAddChild,
   editingName,
   saving,
+  onDelete,
 }) => {
   const border = 'border-zinc-200'
   const hover = 'hover:bg-zinc-50'
+
+  console.log(cat, 'cat')
 
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
@@ -106,7 +110,11 @@ const TreeRow: React.FC<Props> = ({
               style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
             />
 
-            <DeleteButton icon={null} recordItemId={cat.id} />
+            {typeof cat.id === 'number' ? (
+              <DeleteButton icon={null} recordItemId={cat.id} />
+            ) : (
+              <CommonButton onClick={onDelete} type={'delete'} />
+            )}
 
             <button
               className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${

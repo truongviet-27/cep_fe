@@ -33,7 +33,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
     },
     delete: {
       label: t('buttons.delete'),
-      type: 'primary' as const,
+      type: 'default' as const,
       danger: true,
       icon: <DeleteOutlined />,
     },

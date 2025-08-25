@@ -20,21 +20,6 @@ function replaceChildren(arr: ITree[], id: string, children: ITree[]): ITree[] {
   return arr.map((it) => (it.id === id ? { ...it, children } : it))
 }
 
-function findParentIdOf(
-  arr: ITree[],
-  id: string,
-  parent: string | null = null,
-): string | null {
-  for (const c of arr) {
-    if (c.id === id) return parent
-    if (c.children) {
-      const r = findParentIdOf(c.children, id, c.id)
-      if (r) return r
-    }
-  }
-  return null
-}
-
 function getChildrenOf(arr: ITree[], parentId: string | null) {
   if (parentId === null) return arr
   const node = findById(arr, parentId)
@@ -63,7 +48,7 @@ function findNameById(arr: ITree[], id: string): string {
   return findById(arr, id)?.name ?? ''
 }
 
-function toggleOpen(arr: ITree[], id: string): ITree[] {
+function toggleOpen(arr: ITree[], id: string | number): ITree[] {
   return arr.map((c) => {
     if (c.id === id) return { ...c, open: !c.open }
     if (c.children) return { ...c, children: toggleOpen(c.children, id) }
@@ -71,7 +56,7 @@ function toggleOpen(arr: ITree[], id: string): ITree[] {
   })
 }
 
-function removeById(arr: ITree[], id: string): ITree[] {
+function removeById(arr: ITree[], id: string | number): ITree[] {
   return arr
     .filter((c) => c.id !== id)
     .map((c) =>
@@ -116,7 +101,6 @@ function updateDeep(
 export {
   findById,
   findNameById,
-  findParentIdOf,
   getChildrenOf,
   nextRootCode,
   removeById,

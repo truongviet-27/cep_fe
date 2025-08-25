@@ -65,6 +65,9 @@ export default function Page() {
         <Table.Column
           dataIndex="issue_method"
           title={t('code_issue_settings.fields.issue_method')}
+          render={(value) =>
+            t(`code_issue_settings.fields.enum_issue.${value}`)
+          }
         />
         <Table.Column
           dataIndex="prefix"
@@ -73,7 +76,7 @@ export default function Page() {
         <Table.Column
           dataIndex={['hash_dash']}
           title={<b>_</b>}
-          render={(value) => <BooleanField value={value} />}
+          render={(value) => value && <BooleanField value={value} />}
         />
         <Table.Column
           dataIndex="segment"

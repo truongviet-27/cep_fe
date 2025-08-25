@@ -80,7 +80,7 @@
       "issue_method": "採番方法",
       "enum_issue": {
         "manual": "手動",
-        "auto": "自動"
+        "automatic": "自動"
       },
       "prefix": "接続詞",
       "segment": "区分",

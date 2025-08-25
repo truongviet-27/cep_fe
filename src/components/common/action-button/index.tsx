@@ -13,7 +13,7 @@ export default function ActionButtons({
   return (
     <div className="flex justify-end space-x-6">
       <Button
-        size="large"
+        size="middle"
         className="pr-10"
         onClick={onCancel}
         disabled={loading}
@@ -23,7 +23,7 @@ export default function ActionButtons({
       &nbsp;&nbsp;
       <Button
         type="primary"
-        size="large"
+        size="middle"
         className="px-8"
         onClick={onSave}
         loading={loading}
