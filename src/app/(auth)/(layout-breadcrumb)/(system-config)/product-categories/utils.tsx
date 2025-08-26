@@ -1,6 +1,6 @@
 import type { CatNode } from '@interfaces/tree'
 
-const findNode = (nodes: CatNode[], id: string): CatNode | null => {
+const findNode = (nodes: CatNode[], id: string | number): CatNode | null => {
   for (const n of nodes) {
     if (n.id === id) return n
     if (n.children?.length) {
@@ -13,7 +13,7 @@ const findNode = (nodes: CatNode[], id: string): CatNode | null => {
 
 const updateNode = (
   nodes: CatNode[],
-  id: string,
+  id: string | number,
   updater: (n: CatNode) => CatNode,
 ): CatNode[] =>
   nodes.map((n) =>
@@ -29,7 +29,7 @@ const updateNode = (
 
 const getParentId = (
   nodes: CatNode[],
-  targetId: string,
+  targetId: string | number,
   parent: string | null = null,
 ): string | null => {
   for (const n of nodes) {

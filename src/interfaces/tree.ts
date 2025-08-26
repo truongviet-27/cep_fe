@@ -1,5 +1,5 @@
 export interface ITree {
-  id: string
+  id: string | number
   name: string
   code?: string
   isPublic?: boolean

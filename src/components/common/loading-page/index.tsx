@@ -11,7 +11,7 @@ function LoadingPage() {
         alignItems: 'center',
       }}
     >
-      <Spin size="large" />
+      <Spin size="middle" />
     </Layout>
   )
 }

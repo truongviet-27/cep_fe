@@ -1,3 +1,5 @@
+'use client'
+
 import LoadingPage from '@components/common/loading-page'
 import TreeRow from '@components/common/tree/tree-row'
 import type { ITree } from '@interfaces/tree'
@@ -8,17 +10,18 @@ type EditingMap = Record<string, { name: string }>
 
 type Props = {
   cat: ITree
-  onToggle: (id: string) => void
-  onAddChild: (id: string, level: number) => void
-  onStartEdit: (id: string) => void
-  onChangeName: (id: string, name: string) => void
-  onSave: (id: string) => void
-  onCancel: (id: string) => void
+  onToggle: (id: string | number) => void
+  onAddChild: (id: string | number, level: number) => void
+  onStartEdit: (id: string | number) => void
+  onChangeName: (id: string | number, name: string) => void
+  onSave: (id: string | number) => void
+  onCancel: (id: string | number) => void
   editing?: EditingMap
   saving?: boolean
-  onDelete: (id: string) => void
+  onDelete: (id: string | number) => void
   loading?: boolean
   depth?: number
+  level?: number
 }
 
 export default function CommonTree({
@@ -34,26 +37,26 @@ export default function CommonTree({
   depth,
   loading,
   onDelete,
+  level = 1, // <- default: root
 }: Props) {
-  const withinLimit = (level: number) =>
-    depth === undefined ? true : level < depth
-  const canShowChildren = (level: number) =>
-    depth === undefined ? true : level < depth
+  const withinLimit = (lv: number) => (depth === undefined ? true : lv < depth)
+  const canShowChildren = (lv: number) =>
+    depth === undefined ? true : lv < depth
 
-  function getLevelLabel(level: number): string {
-    if (level === 1) return '大'
-    if (level === 2) return '中'
+  const getLevelLabel = (lv: number): string => {
+    if (lv === 1) return '大'
+    if (lv === 2) return '中'
     return '小'
   }
 
-  const renderNode = (node: ITree, level: number) => {
+  const renderNode = (node: ITree, lv: number) => {
     const children = node.children ?? []
     const hasActualChildren = children.length > 0
 
-    const canAddChild = withinLimit(level)
-    const hasChildrenForToggle = hasActualChildren && withinLimit(level)
+    const canAddChild = withinLimit(lv)
+    const hasChildrenForToggle = hasActualChildren && withinLimit(lv)
     const shouldRenderChildren =
-      hasActualChildren && node.open && canShowChildren(level)
+      hasActualChildren && node.open && canShowChildren(lv)
 
     if (loading) return <LoadingPage />
 
@@ -63,7 +66,7 @@ export default function CommonTree({
           cat={node}
           hasChildren={hasChildrenForToggle}
           onToggle={onToggle}
-          onAddChild={(id) => onAddChild(id, level)}
+          onAddChild={(id) => onAddChild(id, lv)}
           onStartEdit={onStartEdit}
           onChangeName={onChangeName}
           onSave={onSave}
@@ -71,7 +74,8 @@ export default function CommonTree({
           editingName={editing?.[String(node.id)]?.name}
           saving={saving}
           canAddChild={canAddChild}
-          tag={getLevelLabel(level)}
+          tag={getLevelLabel(lv)}
+          onDelete={() => onDelete(String(node.id))}
         />
 
         <AnimatePresence initial={false}>
@@ -95,8 +99,9 @@ export default function CommonTree({
                   onCancel={onCancel}
                   editing={editing}
                   saving={saving}
-                  onDelete={() => onDelete(ch.id)}
+                  onDelete={onDelete}
                   depth={depth}
+                  level={lv + 1}
                 />
               ))}
             </motion.div>
@@ -106,5 +111,5 @@ export default function CommonTree({
     )
   }
 
-  return renderNode(cat, 1)
+  return renderNode(cat, level)
 }
