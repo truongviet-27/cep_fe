@@ -22,7 +22,7 @@ export type TreeRowProps = {
   editingName?: string
   saving?: boolean
   canAddChild?: boolean
-  tag: '大' | '中' | '小'
+  tag: string
   depth?: number
   level?: number
 }
