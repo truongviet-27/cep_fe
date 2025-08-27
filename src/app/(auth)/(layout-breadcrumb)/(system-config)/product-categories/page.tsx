@@ -205,12 +205,12 @@ export default function Page() {
         { resource: 'product-categories', id, values: { name } },
         {
           onSuccess: () => {
-            setTree((prev) =>
-              updateNode(prev, id, (n: CatNode) => ({
-                ...n,
-                name,
-              })),
-            )
+            // setTree((prev) =>
+            //   updateNode(prev, id, (n: CatNode) => ({
+            //     ...n,
+            //     name,
+            //   })),
+            // )
             setEditing((prev) => {
               const next = { ...prev }
               delete next[id]
