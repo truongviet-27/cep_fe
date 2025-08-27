@@ -7,130 +7,117 @@ import React from 'react'
 
 const { Text } = Typography
 
-type Props = {
+type Id = string | number
+
+export type TreeRowProps = {
   cat: ITree
   hasChildren: boolean
-  onToggle: (id: string | number) => void
-  onAddChild: (id: string | number) => void
-  onStartEdit: (id: string | number) => void
-  onChangeName: (id: string | number, name: string) => void
-  onSave: (id: string | number) => void
-  onCancel: (id: string | number) => void
+  onToggle: (id: Id) => void
+  onAddChild: (id: Id) => void
+  onStartEdit: (id: Id) => void
+  onChangeName: (id: Id, name: string) => void
+  onSave: (id: Id) => void
+  onCancel: (id: Id) => void
   onDelete: () => void
   editingName?: string
   saving?: boolean
-
-  tag: string
   canAddChild?: boolean
+  tag: '大' | '中' | '小'
+  depth?: number
+  level?: number
 }
 
-const TreeRow: React.FC<Props> = ({
+const TreeRow: React.FC<TreeRowProps> = ({
   cat,
   hasChildren,
   onToggle,
+  onAddChild,
   onStartEdit,
   onChangeName,
   onSave,
   onCancel,
-  canAddChild,
-  tag,
-  onAddChild,
+  onDelete,
   editingName,
   saving,
-  onDelete,
+  canAddChild,
+  tag,
 }) => {
-  const border = 'border-zinc-200'
-  const hover = 'hover:bg-zinc-50'
-
-  console.log(cat, 'cat')
-
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
   return (
-    <div className="mb-2">
-      <div
-        className={`relative rounded-xl border ${border} bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] ${hover} transition-colors`}
-      >
-        <div className="flex items-center gap-3 px-3 py-2">
-          <Space size={8} className="min-w-0 flex-1">
-            <Tag
-              color="blue-inverse"
-              className="m-0 rounded-md px-2 py-0.5 text-[14px] font-medium"
+    <div className="flex items-center gap-3 rounded-md bg-white px-3 py-2">
+      <Space size={8} className="min-w-0 flex-1">
+        <Tag
+          color="blue-inverse"
+          className="m-0 rounded-md px-2 py-0.5 text-[14px] font-medium"
+        >
+          {tag}
+        </Tag>
+
+        {isEditing ? (
+          <Input
+            size="middle"
+            value={editingName}
+            onChange={(e) => onChangeName(cat.id, e.target.value)}
+            onPressEnter={() => onSave(cat.id)}
+            allowClear
+            className="min-w-[320px]"
+          />
+        ) : (
+          <Text className="truncate font-medium">{cat.name}</Text>
+        )}
+
+        {cat.code && !isEditing && (
+          <Text type="secondary" className="truncate">
+            ID:{cat.code}
+          </Text>
+        )}
+      </Space>
+
+      <Space size={12} className="text-zinc-400">
+        {isEditing ? (
+          <>
+            <Button
+              type="primary"
+              size="middle"
+              loading={Boolean(saving)}
+              onClick={() => onSave(cat.id)}
             >
-              {tag}
-            </Tag>
+              保存
+            </Button>
+            <Button size="middle" onClick={() => onCancel(cat.id)}>
+              キャンセル
+            </Button>
+          </>
+        ) : (
+          <EditButton size="middle" onClick={() => onStartEdit(cat.id)}>
+            編集
+          </EditButton>
+        )}
 
-            {isEditing ? (
-              <Input
-                size="middle"
-                value={editingName}
-                onChange={(e) => onChangeName(cat.id, e.target.value)}
-                onPressEnter={() => onSave(cat.id)}
-                className="min-w-[420px]"
-              />
-            ) : (
-              <Text className="truncate font-medium">{cat.name}</Text>
-            )}
+        <CommonButton
+          type="add"
+          onClick={() => onAddChild(cat.id)}
+          style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
+        />
 
-            {cat.code && !isEditing && (
-              <Text type="secondary" className="truncate">
-                ID:{cat.code}
-              </Text>
-            )}
-          </Space>
+        {typeof cat.id === 'number' ? (
+          <DeleteButton recordItemId={cat.id} />
+        ) : (
+          <CommonButton onClick={onDelete} type="delete" />
+        )}
 
-          <Space size={12} className="text-zinc-400">
-            {isEditing ? (
-              <>
-                <Button
-                  type="primary"
-                  size="middle"
-                  loading={!!saving}
-                  onClick={() => onSave(cat.id)}
-                >
-                  保存
-                </Button>
-                <Button size="middle" onClick={() => onCancel(cat.id)}>
-                  キャンセル
-                </Button>
-              </>
-            ) : (
-              <EditButton
-                icon={null}
-                size="middle"
-                onClick={() => onStartEdit(cat.id)}
-              >
-                編集
-              </EditButton>
-            )}
-
-            <CommonButton
-              type={'add'}
-              onClick={() => onAddChild(cat.id)}
-              style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
-            />
-
-            {typeof cat.id === 'number' ? (
-              <DeleteButton icon={null} recordItemId={cat.id} />
-            ) : (
-              <CommonButton onClick={onDelete} type={'delete'} />
-            )}
-
-            <button
-              className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${
-                hasChildren ? '' : 'pointer-events-none opacity-0'
-              }`}
-              onClick={() => onToggle(cat.id)}
-              aria-label="toggle"
-              type="button"
-            >
-              <DownOutlined
-                className={`transition-transform ${cat.open ? 'rotate-0' : '-rotate-90'}`}
-              />
-            </button>
-          </Space>
-        </div>
-      </div>
+        <button
+          className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${hasChildren ? '' : 'pointer-events-none opacity-0'}`}
+          onClick={() => onToggle(cat.id)}
+          aria-label="toggle"
+          type="button"
+        >
+          <DownOutlined
+            className={`transition-transform duration-200 ${cat.open ? 'rotate-0' : '-rotate-90'}`}
+          />
+        </button>
+      </Space>
     </div>
   )
 }

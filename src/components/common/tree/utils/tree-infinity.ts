@@ -1,4 +1,4 @@
-import type { ITree } from '@interfaces/tree'
+import type { CatNode, ITree } from '@interfaces/tree'
 
 function toggleAll(arr: ITree[], open: boolean): ITree[] {
   return arr.map((c) => ({
@@ -98,15 +98,190 @@ function updateDeep(
   return [next, changed]
 }
 
+const deepClone = <T>(v: T): T => structuredClone(v)
+
+const findParentAndIndex = (
+  nodes: readonly CatNode[],
+  id: string,
+  parent: CatNode | null = null,
+): {
+  parent: CatNode | null
+  index: number
+  container: CatNode[]
+} | null => {
+  for (let i = 0; i < nodes.length; i += 1) {
+    const n = nodes[i]
+    if (String(n.id) === id) {
+      return { parent, index: i, container: nodes as CatNode[] }
+    }
+    if (n.children?.length) {
+      const r = findParentAndIndex(n.children, id, n)
+      if (r) return r
+    }
+  }
+  return null
+}
+
+const removeNodeById = (
+  nodes: readonly CatNode[],
+  id: string,
+): { removed: CatNode | null; next: CatNode[] } => {
+  const root = deepClone(nodes) as CatNode[]
+  const where = findParentAndIndex(root, id)
+  if (!where) return { removed: null, next: root }
+  const { container, index } = where
+  const [removed] = container.splice(index, 1)
+  return { removed: removed ?? null, next: root }
+}
+
+const getParentIdOf = (
+  nodes: readonly CatNode[],
+  id: string,
+): string | null => {
+  const where = findParentAndIndex(nodes, id)
+  if (!where) return null
+  return where.parent ? String(where.parent.id) : null
+}
+
+const indexInParent = (nodes: readonly CatNode[], id: string): number => {
+  const where = findParentAndIndex(nodes, id)
+  return where ? where.index : -1
+}
+
+const findNodeById = (
+  nodes: readonly CatNode[],
+  id: string,
+): CatNode | null => {
+  const stack: CatNode[] = [...(nodes as CatNode[])]
+  while (stack.length) {
+    const cur = stack.pop() as CatNode
+    if (String(cur.id) === id) return cur
+    if (cur.children?.length) stack.push(...cur.children)
+  }
+  return null
+}
+
+const isDescendant = (
+  nodes: readonly CatNode[],
+  ancestorId: string,
+  targetId: string,
+): boolean => {
+  const ancestor = findNodeById(nodes, ancestorId)
+  if (!ancestor) return false
+  const stack: CatNode[] = [...(ancestor.children ?? [])]
+  while (stack.length) {
+    const cur = stack.pop() as CatNode
+    if (String(cur.id) === targetId) return true
+    if (cur.children?.length) stack.push(...cur.children)
+  }
+  return false
+}
+
+const updateLevelsRecursively = (node: CatNode, startLevel: number): void => {
+  // cập nhật level cho node và toàn bộ con cháu
+  // (không chạm các field khác => giữ nguyên logic)
+  node.level = startLevel
+  if (node.children?.length) {
+    for (const c of node.children) updateLevelsRecursively(c, startLevel + 1)
+  }
+}
+
+const maxDepthOf = (node: CatNode): number => {
+  let maxD = node.level ?? 1
+  if (node.children?.length) {
+    for (const c of node.children) {
+      const childMax = maxDepthOf(c)
+      maxD = Math.max(maxD, childMax)
+    }
+  }
+  return maxD
+}
+
+const insertNode = (
+  nodes: readonly CatNode[],
+  parentId: string | null,
+  at: number,
+  node: CatNode,
+): CatNode[] => {
+  const root = deepClone(nodes) as CatNode[]
+  if (parentId === null) {
+    const safeAt = Math.max(0, Math.min(at, root.length))
+    root.splice(safeAt, 0, node)
+    return root
+  }
+  const parent = findNodeById(root, parentId)
+  if (!parent) return root
+  const arr = deepClone(parent.children ?? []) as CatNode[]
+  const safeAt = Math.max(0, Math.min(at, arr.length))
+  arr.splice(safeAt, 0, node)
+  parent.children = arr
+  return root
+}
+
+const findNode = (nodes: CatNode[], id: string | number): CatNode | null => {
+  for (const n of nodes) {
+    if (n.id === id) return n
+    if (n.children?.length) {
+      const f = findNode(n.children as CatNode[], id)
+      if (f) return f
+    }
+  }
+  return null
+}
+
+const updateNode = (
+  nodes: CatNode[],
+  id: string | number,
+  updater: (n: CatNode) => CatNode,
+): CatNode[] =>
+  nodes.map((n) =>
+    n.id === id
+      ? updater(n)
+      : {
+          ...n,
+          children: n.children
+            ? updateNode(n.children as CatNode[], id, updater)
+            : n.children,
+        },
+  )
+
+const getParentId = (
+  nodes: CatNode[],
+  targetId: string | number,
+  parent: string | null = null,
+): string | null => {
+  for (const n of nodes) {
+    if (n.id === targetId) return parent
+    if (n.children?.length) {
+      const p = getParentId(n.children as CatNode[], targetId, n.id as string)
+      if (p !== null) return p
+    }
+  }
+  return null
+}
+
 export {
+  deepClone,
   findById,
   findNameById,
+  findNode,
+  findNodeById,
+  findParentAndIndex,
   getChildrenOf,
+  getParentId,
+  getParentIdOf,
+  indexInParent,
+  insertNode,
+  isDescendant,
+  maxDepthOf,
   nextRootCode,
   removeById,
+  removeNodeById,
   setChildrenOf,
   toggleAll,
   toggleOpen,
   updateAt,
   updateDeep,
+  updateLevelsRecursively,
+  updateNode,
 }
