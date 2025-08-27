@@ -76,7 +76,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
               {t('code_issue_settings.fields.enum_issue.manual')}
             </Radio>
             <Radio value="automatic">
-              {t('code_issue_settings.fields.enum_issue.auto')}
+              {t('code_issue_settings.fields.enum_issue.automatic')}
             </Radio>
           </Radio.Group>
         </Form.Item>
@@ -152,7 +152,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
       </Form>
 
       <Space className={'flex w-full justify-end'}>
-        <Button onClick={close}>{t('buttons.back')}</Button>
+        <Button onClick={close}>{t('buttons.cancel')}</Button>
         <Button {...saveButtonProps} type="primary">
           {t('buttons.save_settings')}
         </Button>
