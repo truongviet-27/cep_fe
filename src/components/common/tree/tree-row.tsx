@@ -22,11 +22,8 @@ export type TreeRowProps = {
   editingName?: string
   saving?: boolean
   canAddChild?: boolean
-  /** Nhãn cấp độ hiển thị: 大 / 中 / 小 */
   tag: '大' | '中' | '小'
-  /** Giới hạn độ sâu toàn cây (dùng cho aria/data attr, không đổi UI) */
   depth?: number
-  /** Cấp hiện tại của row (dùng cho aria/data attr, không đổi UI) */
   level?: number
 }
 
@@ -44,18 +41,11 @@ const TreeRow: React.FC<TreeRowProps> = ({
   saving,
   canAddChild,
   tag,
-  depth,
-  level,
 }) => {
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
   return (
-    <div
-      data-tree-key={String(cat.id)}
-      aria-level={level}
-      data-depth={depth}
-      className="flex items-center gap-3 rounded-md bg-white px-3 py-2 shadow-sm hover:shadow-md"
-    >
+    <div className="flex items-center gap-3 rounded-md bg-white px-3 py-2">
       <Space size={8} className="min-w-0 flex-1">
         <Tag
           color="blue-inverse"
@@ -70,7 +60,8 @@ const TreeRow: React.FC<TreeRowProps> = ({
             value={editingName}
             onChange={(e) => onChangeName(cat.id, e.target.value)}
             onPressEnter={() => onSave(cat.id)}
-            className="min-w-[420px]"
+            allowClear
+            className="min-w-[320px]"
           />
         ) : (
           <Text className="truncate font-medium">{cat.name}</Text>
@@ -99,11 +90,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             </Button>
           </>
         ) : (
-          <EditButton
-            icon={null}
-            size="middle"
-            onClick={() => onStartEdit(cat.id)}
-          >
+          <EditButton size="middle" onClick={() => onStartEdit(cat.id)}>
             編集
           </EditButton>
         )}
@@ -115,15 +102,13 @@ const TreeRow: React.FC<TreeRowProps> = ({
         />
 
         {typeof cat.id === 'number' ? (
-          <DeleteButton icon={null} recordItemId={cat.id} />
+          <DeleteButton recordItemId={cat.id} />
         ) : (
           <CommonButton onClick={onDelete} type="delete" />
         )}
 
         <button
-          className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${
-            hasChildren ? '' : 'pointer-events-none opacity-0'
-          }`}
+          className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${hasChildren ? '' : 'pointer-events-none opacity-0'}`}
           onClick={() => onToggle(cat.id)}
           aria-label="toggle"
           type="button"

@@ -127,7 +127,9 @@
     color: #1677ff;
   }
 
-  .draggable-tree .ant-tree-treenode .ant-tree-draggable-icon {
-    display: none;
+  .draggable-tree .ant-tree-treenode .ant-tree-draggable-icon .anticon svg {
+    color: #1677ff;
+    margin-top: 10px;
+    font-size: 22px;
   }
 }

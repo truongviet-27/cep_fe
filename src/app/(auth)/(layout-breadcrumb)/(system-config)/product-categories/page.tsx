@@ -3,7 +3,9 @@
 import { DownOutlined, RightOutlined, UpOutlined } from '@ant-design/icons'
 import TreeRow from '@components/common/tree/tree-row'
 import {
+  findNode,
   findNodeById,
+  getParentId,
   getParentIdOf,
   indexInParent,
   insertNode,
@@ -14,6 +16,7 @@ import {
   toggleAll,
   toggleOpen,
   updateLevelsRecursively,
+  updateNode,
 } from '@components/common/tree/utils/tree-infinity'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -37,16 +40,14 @@ import {
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { findNode, getParentId, updateNode } from './utils'
-
 const { Title } = Typography
 
 const TEMP_PREFIX = 'tmp-'
 const MAX_DEPTH = 3
 
-const a = '[&_.ant-tree-draggable-icon]:opacity-0'
+// const a = '[&_.ant-tree-draggable-icon]:opacity-0'
 // const b = ' [&_.ant-tree-indent]:hidden'
-// const c = '[&_.ant-tree-list-holder-inner]:!w-full'
+const c = '[&_.ant-tree-list-holder-inner]:!w-full'
 // const d = ' [&_.ant-tree-node-content-wrapper]:!px-0'
 const e = '[&_.ant-tree-switcher]:hidden'
 // const f = '[&_.ant-tree-treenode]:!px-0'
@@ -184,8 +185,8 @@ export default function Page() {
           onSuccess: ({ data }) => {
             const newId = String(data?.id)
             setTree((prev) =>
-              updateNode(prev, id, (n) => ({
-                ...(n as CatNode),
+              updateNode(prev, id, (n: CatNode) => ({
+                ...n,
                 id: newId,
                 name,
                 _isNew: false,
@@ -205,7 +206,10 @@ export default function Page() {
         {
           onSuccess: () => {
             setTree((prev) =>
-              updateNode(prev, id, (n) => ({ ...(n as CatNode), name })),
+              updateNode(prev, id, (n: CatNode) => ({
+                ...n,
+                name,
+              })),
             )
             setEditing((prev) => {
               const next = { ...prev }
@@ -289,31 +293,19 @@ export default function Page() {
       : 1
 
     updateLevelsRecursively(dragNode, parentLevel)
-    if (maxDepthOf(dragNode) > MAX_DEPTH) return // vượt độ sâu -> bỏ
+    if (maxDepthOf(dragNode) > MAX_DEPTH) return
 
-    // Chèn vào nơi mới
     const afterInsert = insertNode(next, targetParentId, insertAt, dragNode)
 
-    setTree(afterInsert as CatNode[])
-    setDirty(true) // giữ luồng "Save all" của bạn
+    setTree(afterInsert)
+    setDirty(true)
   }
-
-  const border = 'border-zinc-200'
-  const hover = 'hover:bg-zinc-50'
 
   const toTreeData = React.useCallback(
     (nodes: readonly CatNode[]): TreeDataNode[] =>
       nodes.map((n) => {
-        const level = n.level ?? 1
-        const indent = Math.max(0, (level - 1) * 24)
-
-        const nodeStyle = {
-          ['--indent' as unknown as keyof React.CSSProperties]: `${indent}px`,
-        } as React.CSSProperties & { ['--indent']?: string }
-
         return {
           key: String(n.id),
-          style: nodeStyle,
           title: (
             <TreeRow
               cat={n}
@@ -369,7 +361,6 @@ export default function Page() {
         </Space>
       }
     >
-      {/* search bar - giữ nguyên UI */}
       <Form layout="horizontal" colon={false}>
         <Row
           align="middle"
@@ -429,7 +420,6 @@ export default function Page() {
         </Row>
       </Form>
 
-      {/* tree list */}
       <div className="space-y-3">
         <div className="flex items-center justify-end">
           <Button
@@ -442,12 +432,13 @@ export default function Page() {
         </div>
 
         <div
-          className={`relative rounded-lg border ${border} bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] ${hover} transition-colors`}
+          className={`relative rounded-lg border border-zinc-200 bg-white transition-colors`}
         >
           <Tree
-            className={`draggable-tree ${a} ${e}`}
+            className={`draggable-tree ${e} ${c}`}
             style={{
               backgroundColor: LAYOUT_BG,
+              paddingTop: 4,
             }}
             blockNode
             draggable
