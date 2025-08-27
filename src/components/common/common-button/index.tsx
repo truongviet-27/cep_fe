@@ -33,7 +33,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
     },
     delete: {
       label: t('buttons.delete'),
-      type: 'primary' as const,
+      type: 'default' as const,
       danger: true,
       icon: <DeleteOutlined />,
     },
@@ -45,7 +45,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
     },
   }
 
-  const { label, type: btnType, danger } = config[type]
+  const { label, type: btnType, danger, icon } = config[type]
 
   return (
     <Button
@@ -54,6 +54,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       style={style}
+      icon={icon}
     >
       {label}
     </Button>

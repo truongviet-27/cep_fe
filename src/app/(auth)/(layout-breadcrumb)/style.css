@@ -126,4 +126,10 @@
   .ant-menu .ant-menu-item:not(.ant-menu-item-selected):hover a {
     color: #1677ff;
   }
+
+  .draggable-tree .ant-tree-treenode .ant-tree-draggable-icon .anticon svg {
+    color: #1677ff;
+    margin-top: 10px;
+    font-size: 22px;
+  }
 }
