@@ -11,18 +11,26 @@ import {
   insertNode,
   isDescendant,
   maxDepthOf,
+  mergeEditingIntoTree,
   removeById,
   removeNodeById,
   toggleAll,
   toggleOpen,
+  toSaveTree,
   updateLevelsRecursively,
   updateNode,
 } from '@components/common/tree/utils/tree-infinity'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import type { CatNode, ITree } from '@interfaces/tree'
+import type { CatNode, ITree, SavePayloadNode } from '@interfaces/tree'
 import { useTable } from '@refinedev/antd'
-import { useCreate, useUpdate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCreate,
+  useCustomMutation,
+  useResource,
+  useUpdate,
+} from '@refinedev/core'
 import { LAYOUT_BG, PRIMARY } from '@utility/color'
 import type { TreeDataNode, TreeProps } from 'antd'
 import {
@@ -58,11 +66,27 @@ export default function Page() {
   const [editing, setEditing] = useState<
     Record<string, { name: string; original: string }>
   >({})
+  const { resource: rs } = useResource()
+  const resource = String(rs?.name)
 
   const t = useTranslations()
   const { tableProps } = useTable<ITree>()
-  const { mutate: createRow } = useCreate()
-  const { mutate: updateRow, isLoading: saving } = useUpdate()
+  const { mutate: createRow } = useCreate({
+    resource,
+  })
+  const apiUrl = useApiUrl()
+  const { mutate: updateAll } = useCustomMutation()
+
+  const handleUpdateAll = (values: SavePayloadNode[]) => {
+    updateAll({
+      url: `${apiUrl}/${resource}/update-tree`,
+      method: 'post',
+      values: { data: { items: values } },
+    })
+  }
+  const { mutate: updateRow, isLoading: saving } = useUpdate({
+    resource,
+  })
 
   const toggle = (id: string | number) =>
     setTree((prev) => toggleOpen(prev, id))
@@ -133,8 +157,10 @@ export default function Page() {
   }
 
   const save = () => {
+    const patched = mergeEditingIntoTree(tree, editing)
+
     setDirty(false)
-    message.success('並べ替えを保存しました')
+    handleUpdateAll(toSaveTree(patched))
   }
 
   const startEdit = (id: string | number) => {
@@ -178,7 +204,6 @@ export default function Page() {
     if (node._isNew) {
       createRow(
         {
-          resource: 'product-categories',
           values: { name, parent_id: parentId, level: node.level },
         },
         {
@@ -202,15 +227,15 @@ export default function Page() {
       )
     } else {
       updateRow(
-        { resource: 'product-categories', id, values: { name } },
+        { id, values: { name } },
         {
           onSuccess: () => {
-            setTree((prev) =>
-              updateNode(prev, id, (n: CatNode) => ({
-                ...n,
-                name,
-              })),
-            )
+            // setTree((prev) =>
+            //   updateNode(prev, id, (n: CatNode) => ({
+            //     ...n,
+            //     name,
+            //   })),
+            // )
             setEditing((prev) => {
               const next = { ...prev }
               delete next[id]
