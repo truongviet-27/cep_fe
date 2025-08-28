@@ -238,6 +238,19 @@
         "registrant": "登録者",
         "remarks": "備考"
       }
+    },
+    "create": {
+      "create": "部門登録"
+    },
+    "fields": {
+      "id": "ID",
+      "name": "部門名（支社/部/課）",
+      "code": "部門コード",
+      "created_by": "登録者",
+      "updated_by": "更新者",
+      "created_at": "作成日",
+      "updated_at": "最終更新日",
+      "number_of_employee": "社員数"
     }
   },
   "tenant": {

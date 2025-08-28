@@ -9,6 +9,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
+import { PRIMARY } from '@utility/color'
 import type { TableColumnsType, TableProps } from 'antd'
 import { Button, Table } from 'antd'
 import React, { useContext, useMemo } from 'react'
@@ -124,11 +125,29 @@ export default function TableDnd<T extends object>(
     <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         <Table<T>
-          components={{ body: { row: DndRow } }}
+          components={{
+            body: { row: DndRow },
+            header: {
+              cell: (
+                props: React.JSX.IntrinsicAttributes &
+                  React.ClassAttributes<HTMLTableHeaderCellElement> &
+                  React.ThHTMLAttributes<HTMLTableHeaderCellElement>,
+              ) => (
+                <th
+                  {...props}
+                  style={{
+                    backgroundColor: '#e6f7ff',
+                    color: PRIMARY,
+                  }}
+                />
+              ),
+            },
+          }}
           rowKey={(record) => getRowId(record)}
           columns={injectedColumns}
           dataSource={dataSource}
           pagination={false}
+          scroll={{ x: 'max-content' }}
           {...tableProps}
         />
       </SortableContext>

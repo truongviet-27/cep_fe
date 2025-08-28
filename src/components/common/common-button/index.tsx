@@ -6,6 +6,7 @@ type ActionType = 'edit' | 'delete' | 'add'
 
 interface CommonButtonProps {
   type: ActionType
+  hideText?: boolean
   onClick?: () => void
   disabled?: boolean
   style?: React.CSSProperties
@@ -16,6 +17,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
   onClick,
   disabled,
   style,
+  hideText,
 }) => {
   const t = useTranslate()
 
@@ -56,7 +58,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
       style={style}
       icon={icon}
     >
-      {label}
+      {!hideText && label}
     </Button>
   )
 }
