@@ -229,6 +229,19 @@
         "registrant": "Registrant",
         "remarks": "Remarks"
       }
+    },
+    "create": {
+      "create": "Create Department"
+    },
+    "fields": {
+      "id": "ID",
+      "name": "Department name",
+      "code": "Department code",
+      "created_by": "Created by",
+      "updated_by": "Updated by",
+      "created_at": "Created at",
+      "updated_at": "Last updated",
+      "number_of_employee": "Employees"
     }
   },
   "tenant": {

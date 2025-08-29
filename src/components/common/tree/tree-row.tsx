@@ -1,4 +1,4 @@
-import { DownOutlined } from '@ant-design/icons'
+import { DownOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
 import { DeleteButton, EditButton } from '@refinedev/antd'
@@ -19,10 +19,11 @@ export type TreeRowProps = {
   onSave: (id: Id) => void
   onCancel: (id: Id) => void
   onDelete: () => void
+  tag: string
+  isNew?: boolean
   editingName?: string
   saving?: boolean
   canAddChild?: boolean
-  tag: string
   depth?: number
   level?: number
 }
@@ -41,6 +42,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
   saving,
   canAddChild,
   tag,
+  isNew,
 }) => {
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
@@ -82,29 +84,34 @@ const TreeRow: React.FC<TreeRowProps> = ({
               size="middle"
               loading={Boolean(saving)}
               onClick={() => onSave(cat.id)}
-            >
-              保存
-            </Button>
-            <Button size="middle" onClick={() => onCancel(cat.id)}>
-              キャンセル
-            </Button>
+              icon={<SaveOutlined />}
+            />
+            <Button
+              size="middle"
+              onClick={() => (isNew ? onDelete() : onCancel(cat.id))}
+              icon={<RollbackOutlined />}
+            />
           </>
         ) : (
-          <EditButton size="middle" onClick={() => onStartEdit(cat.id)}>
-            編集
-          </EditButton>
+          <EditButton
+            hideText
+            size="middle"
+            onClick={() => onStartEdit(cat.id)}
+          />
         )}
 
         <CommonButton
+          hideText
           type="add"
+          disabled={isNew}
           onClick={() => onAddChild(cat.id)}
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
         />
 
         {typeof cat.id === 'number' ? (
-          <DeleteButton recordItemId={cat.id} />
+          <DeleteButton hideText recordItemId={cat.id} />
         ) : (
-          <CommonButton onClick={onDelete} type="delete" />
+          <CommonButton hideText onClick={onDelete} type="delete" />
         )}
 
         <button

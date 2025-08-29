@@ -109,8 +109,8 @@ export const List: React.FC<ListProps & CustomProps> = ({
             {/*{defaultExtra}*/}
           </div>
           {children}
-          {footer}
-          <div className={'mt-15 flex justify-end'}>
+          <div className={'mt-15 flex justify-end space-x-3'}>
+            {footer}
             <Button
               type="default"
               style={{
