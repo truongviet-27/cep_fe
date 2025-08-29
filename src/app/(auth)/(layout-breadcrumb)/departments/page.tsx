@@ -77,7 +77,6 @@ export default function Page() {
     return false
   }, [rows])
 
-  // ===== Save All (update order only) =====
   const { mutate: updateOne, isLoading: savingAll } = useUpdate()
   const onSaveAll = () => {
     const payload = rows.map((r, idx) => ({ id: r.id, order: idx }))
@@ -102,9 +101,8 @@ export default function Page() {
   }
 
   const columns: ColumnsType<RowVM> = [
-    { dataIndex: 'id', title: t('departments.fields.id') },
-    { dataIndex: 'name', title: t('departments.fields.name') },
     { dataIndex: 'code', title: t('departments.fields.code') },
+    { dataIndex: 'name', title: t('departments.fields.name') },
     { dataIndex: 'created_by', title: t('departments.fields.created_by') },
     { dataIndex: 'updated_by', title: t('departments.fields.updated_by') },
     {
@@ -116,10 +114,6 @@ export default function Page() {
       dataIndex: 'updated_at',
       title: t('departments.fields.updated_at'),
       render: (value: any) => <DateField value={value} />,
-    },
-    {
-      dataIndex: 'number_of_employee',
-      title: t('departments.fields.number_of_employee'),
     },
     {
       title: t('table.actions'),
@@ -175,10 +169,10 @@ export default function Page() {
           <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
             <Space>
               <Button htmlType="submit" type="primary">
-                {t('filters.search')}
+                {t('buttons.search')}
               </Button>
               <Button onClick={() => searchFormProps.form?.resetFields()}>
-                {t('filters.clear')}
+                {t('buttons.clear')}
               </Button>
             </Space>
           </Col>
@@ -188,7 +182,6 @@ export default function Page() {
         </Row>
       </Form>
 
-      {/* TableDnd only for reordering; no inline edit */}
       <div className="mt-6">
         <TableDnd<RowVM>
           {...tableProps}
