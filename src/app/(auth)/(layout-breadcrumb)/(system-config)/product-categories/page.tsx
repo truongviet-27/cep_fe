@@ -277,10 +277,9 @@ export default function Page() {
   const onDrop: NonNullable<TreeProps['onDrop']> = (info) => {
     const dropKey = String(info.node.key)
     const dragKey = String(info.dragNode.key)
+    if (dropKey === dragKey) return
 
-    if (dropKey === dragKey) return // tự thả vào chính nó -> bỏ
-
-    // Lấy kiểu thả: vào giữa (child) hay khe (trên/dưới)
+    // Kiểu thả: vào giữa (child) hay khe (trên/dưới)
     const dropPosPath = (info.node as unknown as { pos: string }).pos.split('-')
     const relative =
       info.dropPosition - Number(dropPosPath[dropPosPath.length - 1]) // -1 | 0 | 1
@@ -311,6 +310,9 @@ export default function Page() {
     // Không cho thả vào hậu duệ của chính dragNode
     if (targetParentId && isDescendant([dragNode], dragKey, targetParentId))
       return
+
+    // --- QUAN TRỌNG: cập nhật parentId trước khi tính level & chèn
+    dragNode.parent_id = targetParentId
 
     // Tính level mới theo parent
     const parentLevel = targetParentId

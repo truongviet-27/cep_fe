@@ -34,7 +34,9 @@
     "save_all": "全て保存",
     "confirm": "確認",
     "add": "追加",
-    "save": "登録"
+    "save": "登録",
+    "search": "検索",
+    "clear": "クリア"
   },
   "notifications": {
     "success": "成功しました",

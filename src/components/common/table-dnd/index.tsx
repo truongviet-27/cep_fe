@@ -1,29 +1,29 @@
 'use client'
 
 import { HolderOutlined } from '@ant-design/icons'
-import type { DragEndEvent } from '@dnd-kit/core'
-import { DndContext } from '@dnd-kit/core'
+import type { DragEndEvent, UniqueIdentifier } from '@dnd-kit/core'
+import { DndContext, DragOverlay, MeasuringStrategy } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { PRIMARY } from '@utility/color'
 import type { TableColumnsType, TableProps } from 'antd'
 import { Button, Table } from 'antd'
 import React, { useContext, useMemo } from 'react'
 
-export type SortableListeners = ReturnType<typeof useSortable>['listeners']
+type SortableListeners = ReturnType<typeof useSortable>['listeners']
 
-interface RowContextProps {
-  setActivatorNodeRef?: (element: HTMLElement | null) => void
+const RowCtx = React.createContext<{
+  setActivatorNodeRef?: (el: HTMLElement | null) => void
   listeners?: SortableListeners
-}
-const RowContext = React.createContext<RowContextProps>({})
+}>({})
 
-export const DragHandle: React.FC = () => {
-  const { setActivatorNodeRef, listeners } = useContext(RowContext)
+const DragHandle: React.FC = () => {
+  const { setActivatorNodeRef, listeners } = useContext(RowCtx)
   return (
     <Button
       type="text"
@@ -39,6 +39,7 @@ export const DragHandle: React.FC = () => {
 interface DndRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   'data-row-key': string
 }
+
 const DndRow: React.FC<DndRowProps> = (props) => {
   const {
     attributes,
@@ -48,81 +49,72 @@ const DndRow: React.FC<DndRowProps> = (props) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: props['data-row-key'] })
+  } = useSortable({
+    id: props['data-row-key'],
+    animateLayoutChanges: () => false,
+  })
 
   const style: React.CSSProperties = {
     ...props.style,
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : undefined,
+    transform: CSS.Translate.toString(transform),
     transition,
-    ...(isDragging ? { position: 'relative', zIndex: 1 } : {}),
+    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+    willChange: 'transform',
   }
 
   return (
-    <RowContext.Provider value={{ setActivatorNodeRef, listeners }}>
+    <RowCtx.Provider value={{ setActivatorNodeRef, listeners }}>
       <tr {...props} ref={setNodeRef} style={style} {...attributes} />
-    </RowContext.Provider>
+    </RowCtx.Provider>
   )
 }
-
-export type KeyGetter<T> = (row: T) => string
 
 export interface TableDndProps<T extends object> {
   dataSource: T[]
   columns: TableColumnsType<T>
-  getRowId: KeyGetter<T>
+  getRowId: (row: T) => string
   onDragEnd?: (activeId: string, overId: string | null) => void
-  dragHandleColumn?: { width?: number; align?: 'left' | 'center' | 'right' }
   tableProps?: Omit<
     TableProps<T>,
     'dataSource' | 'columns' | 'rowKey' | 'components'
   >
 }
 
-function toItems<T extends object>(
-  rows: T[],
-  getRowId: KeyGetter<T>,
-): string[] {
-  return rows.map((r) => getRowId(r))
-}
-export default function TableDnd<T extends object>(
-  props: Readonly<TableDndProps<T>>,
-) {
-  const {
-    dataSource,
-    columns,
-    getRowId,
-    onDragEnd,
-    dragHandleColumn,
-    tableProps,
-  } = props
-
-  const items = useMemo(
-    () => toItems(dataSource, getRowId),
+export default function TableDnd<T extends object>({
+  dataSource,
+  columns,
+  getRowId,
+  onDragEnd,
+  tableProps,
+}: Readonly<TableDndProps<T>>) {
+  const items = useMemo<UniqueIdentifier[]>(
+    () => dataSource.map(getRowId),
     [dataSource, getRowId],
   )
 
   const injectedColumns: TableColumnsType<T> = useMemo(() => {
     const handleCol = {
       key: '__drag__',
-      width: dragHandleColumn?.width ?? 56,
-      align: dragHandleColumn?.align ?? 'center',
+      width: 56,
+      align: 'center' as const,
       render: () => <DragHandle />,
     }
     return [handleCol, ...columns]
-  }, [columns, dragHandleColumn])
+  }, [columns])
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
-    if (!over) return
-    const activeId = String(active.id)
-    const overId = String(over.id)
-    if (activeId === overId) return
-    onDragEnd?.(activeId, overId)
+    const a = String(active?.id ?? '')
+    const o = over ? String(over.id) : null
+    if (!o || a === o) return
+    onDragEnd?.(a, o)
   }
 
   return (
-    <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
+    <DndContext
+      modifiers={[restrictToVerticalAxis]}
+      onDragEnd={handleDragEnd}
+      measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
+    >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         <Table<T>
           components={{
@@ -136,6 +128,7 @@ export default function TableDnd<T extends object>(
                 <th
                   {...props}
                   style={{
+                    ...props.style,
                     backgroundColor: '#e6f7ff',
                     color: PRIMARY,
                   }}
@@ -143,14 +136,17 @@ export default function TableDnd<T extends object>(
               ),
             },
           }}
-          rowKey={(record) => getRowId(record)}
+          rowKey={getRowId}
           columns={injectedColumns}
           dataSource={dataSource}
           pagination={false}
+          tableLayout="fixed"
           scroll={{ x: 'max-content' }}
           {...tableProps}
         />
       </SortableContext>
+
+      <DragOverlay dropAnimation={null} />
     </DndContext>
   )
 }
