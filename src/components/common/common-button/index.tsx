@@ -17,7 +17,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
   onClick,
   disabled,
   style,
-  hideText,
+  // hideText,
 }) => {
   const t = useTranslate()
 
@@ -47,7 +47,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
     },
   }
 
-  const { label, type: btnType, danger, icon } = config[type]
+  const { type: btnType, danger, icon } = config[type]
 
   return (
     <Button
@@ -58,7 +58,7 @@ export const CommonButton: React.FC<CommonButtonProps> = ({
       style={style}
       icon={icon}
     >
-      {!hideText && label}
+      {/*{!hideText && label}*/}
     </Button>
   )
 }

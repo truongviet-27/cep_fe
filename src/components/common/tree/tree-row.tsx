@@ -76,7 +76,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
         )}
       </Space>
 
-      <Space size={12} className="text-zinc-400">
+      <Space size={12}>
         {isEditing ? (
           <>
             <Button

@@ -250,9 +250,7 @@ export default function Page() {
                   icon={null}
                   size="middle"
                   onClick={() => startEdit(index)}
-                >
-                  編集
-                </EditButton>
+                />
                 <DeleteButton
                   size="middle"
                   icon={null}
@@ -260,9 +258,7 @@ export default function Page() {
                   onClick={() =>
                     !dataSource[index]?.id && handleDeleteRow(index)
                   }
-                >
-                  削除
-                </DeleteButton>
+                />
               </>
             )}
           </Space>
@@ -315,7 +311,6 @@ export default function Page() {
         </Row>
       </Form>
 
-      {/* Replaced CommonTable with TableDnd */}
       <div className="mt-8">
         <TableDnd<RowVM>
           dataSource={dataSource}
