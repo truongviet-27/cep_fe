@@ -1243,6 +1243,130 @@
         ]
       }
     },
+    "/api/v1/departments/ordering": {
+      "post": {
+        "tags": ["Department"],
+        "summary": "Reorder departments",
+        "description": "Bulk update ordering (order) of departments",
+        "operationId": "DepartmentController_updateOrder",
+        "requestBody": {
+          "description": "Array of objects each containing department id and its target order (1 = lowest priority)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["data"],
+                "properties": {
+                  "data": {
+                    "description": "List of id/order pairs",
+                    "type": "array",
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "order": {
+                          "type": "integer",
+                          "example": 1
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "example": [
+                      {
+                        "id": 3,
+                        "order": 1
+                      },
+                      {
+                        "id": 1,
+                        "order": 2
+                      },
+                      {
+                        "id": 5,
+                        "order": 3
+                      }
+                    ]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "order": {
+                            "type": "integer"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "example": [
+                        {
+                          "id": 3,
+                          "order": 1
+                        },
+                        {
+                          "id": 1,
+                          "order": 2
+                        },
+                        {
+                          "id": 5,
+                          "order": 3
+                        }
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Department order updated successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/v1/employees": {
       "get": {
         "tags": ["Employee"],
@@ -4889,22 +5013,45 @@
             "type": "string",
             "example": "DPT001"
           },
+          "order": {
+            "description": "Display order (1 = lowest priority)",
+            "type": "integer",
+            "example": 3
+          },
           "tenant_id": {
             "description": "Tenant ID",
             "type": "string",
             "format": "uuid",
             "example": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
           },
-          "created_by": {
-            "description": "User ID who created",
-            "type": "integer",
-            "example": 1,
+          "author": {
+            "description": "User who created the department",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 5
+              },
+              "name": {
+                "type": "string",
+                "example": "Alice"
+              }
+            },
+            "type": "object",
             "nullable": true
           },
-          "updated_by": {
-            "description": "User ID who last updated",
-            "type": "integer",
-            "example": 1,
+          "editor": {
+            "description": "User who last edited the department",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 7
+              },
+              "name": {
+                "type": "string",
+                "example": "Bob"
+              }
+            },
+            "type": "object",
             "nullable": true
           },
           "created_at": {
@@ -4918,12 +5065,6 @@
             "type": "string",
             "format": "date-time",
             "example": "2025-08-02T02:19:38.000000Z"
-          },
-          "deleted_at": {
-            "description": "Soft delete timestamp",
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
           }
         },
         "type": "object"
@@ -5024,13 +5165,14 @@
             "description": "Department name",
             "type": "string",
             "maxLength": 100,
-            "example": "Finance"
+            "example": "FINANCE"
           },
           "code": {
-            "description": "Department code",
+            "description": "Department code (uppercase letters, digits, dashes; cannot start or end with dash)",
             "type": "string",
             "maxLength": 20,
-            "example": "FIN"
+            "pattern": "^(?!-)[A-Z0-9-]+(?<!-)$",
+            "example": "FIN-ACC"
           }
         },
         "type": "object"
@@ -5042,13 +5184,14 @@
             "description": "Department name",
             "type": "string",
             "maxLength": 100,
-            "example": "Finance"
+            "example": "FINANCE"
           },
           "code": {
-            "description": "Department code",
+            "description": "Department code (uppercase letters, digits, dashes; cannot start or end with dash)",
             "type": "string",
             "maxLength": 20,
-            "example": "FIN-NEW"
+            "pattern": "^(?!-)[A-Z0-9-]+(?<!-)$",
+            "example": "FIN-OPS"
           }
         },
         "type": "object"
@@ -5131,23 +5274,113 @@
       },
       "EmployeesPaginatedResponse": {
         "description": "Paginated response for employees",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PaginatedResponse"
-          },
-          {
+        "properties": {
+          "data": {
+            "description": "Data container for paginated response",
             "properties": {
-              "data": {
+              "items": {
                 "description": "Array of employees",
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/Employee"
                 }
+              },
+              "meta": {
+                "description": "Pagination metadata",
+                "properties": {
+                  "current_page": {
+                    "description": "Current page number",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "from": {
+                    "description": "Starting item number for current page",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "last_page": {
+                    "description": "Last page number",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "per_page": {
+                    "description": "Number of items per page",
+                    "type": "integer",
+                    "example": 10
+                  },
+                  "to": {
+                    "description": "Ending item number for current page",
+                    "type": "integer",
+                    "example": 3
+                  },
+                  "total": {
+                    "description": "Total number of items",
+                    "type": "integer",
+                    "example": 3
+                  }
+                },
+                "type": "object"
+              },
+              "links": {
+                "description": "Pagination links",
+                "properties": {
+                  "first": {
+                    "description": "URL to the first page",
+                    "type": "string",
+                    "example": "http://localhost:8001/api/v1/employees?_per_page=10&_page=1"
+                  },
+                  "last": {
+                    "description": "URL to the last page",
+                    "type": "string",
+                    "example": "http://localhost:8001/api/v1/employees?_per_page=10&_page=1"
+                  },
+                  "prev": {
+                    "description": "URL to the previous page",
+                    "type": "string",
+                    "example": null,
+                    "nullable": true
+                  },
+                  "next": {
+                    "description": "URL to the next page",
+                    "type": "string",
+                    "example": null,
+                    "nullable": true
+                  }
+                },
+                "type": "object"
               }
             },
             "type": "object"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Employees retrieved successfully"
           }
-        ]
+        },
+        "type": "object"
+      },
+      "UpdateEmployeeRequest": {
+        "description": "Payload for partially updating an employee",
+        "properties": {
+          "code": {
+            "description": "Employee code (unique per tenant)",
+            "type": "string",
+            "maxLength": 20,
+            "example": "EMP002"
+          },
+          "department_id": {
+            "description": "Department ID",
+            "type": "integer",
+            "example": 3
+          },
+          "role_id": {
+            "description": "Role ID",
+            "type": "integer",
+            "example": 2
+          }
+        },
+        "type": "object"
       },
       "UpdateEmployeeRequest": {
         "description": "Payload for partially updating an employee",

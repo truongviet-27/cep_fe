@@ -6,7 +6,9 @@ import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
 import {
+  useApiUrl,
   useCreate,
+  useCustomMutation,
   useDelete,
   useResource,
   useTranslate,
@@ -41,7 +43,7 @@ export default function Page() {
     syncWithLocation: true,
   })
 
-  // const apiUrl = useApiUrl()
+  const apiUrl = useApiUrl()
 
   const { control, getValues, resetField } = useForm<FormValues>({
     defaultValues: { rows: [] },
@@ -53,17 +55,35 @@ export default function Page() {
     keyName: '_key',
   })
 
-  // const { mutate: updateAll } = useCustomMutation()
-  //
-  // const handleUpdateAll = (values: SavePayloadNode[]) => {
-  //   updateAll({
-  //     url: `${apiUrl}/${resource}/upsert`,
-  //     method: 'post',
-  //     values: { data: { items: values } },
-  //   })
-  // }
+  const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
+
+  const handleUpdateOrdering = (
+    values: { id: string | number; order: number }[],
+  ) => {
+    updateAll({
+      url: `${apiUrl}/${resource?.name}/upsert`,
+      method: 'post',
+      values: { data: values },
+    })
+  }
 
   const watchedRows = useWatch({ control, name: 'rows' }) ?? []
+
+  const onSaveAll = () => {
+    const list = fields.map((_, idx) => watchedRows[idx] ?? {}) as UnitRow[]
+
+    const maxOrder = list.reduce((max, r) => Math.max(max, r?.order ?? 0), 0)
+
+    const values = list
+      .filter((r) => r?.id != null)
+      .map((r, index) => ({
+        id: r.id as string | number,
+        order: maxOrder - index,
+      }))
+
+    if (!values.length) return
+    handleUpdateOrdering(values)
+  }
 
   const originalRef = useRef<Record<string, UnitRow>>({})
 
@@ -138,7 +158,7 @@ export default function Page() {
     const row = getValues(`rows.${index}`)
     const name = (row.name ?? '').trim()
     const isActive = !!row.isActive
-    const order = fields?.[1]?.order ?? 0
+    const order = (fields?.[1]?.order ?? 0) + 1
     if (!name) return
 
     if (row._isNew) {
@@ -319,6 +339,18 @@ export default function Page() {
     <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+      footer={
+        <Col>
+          <Button
+            type="primary"
+            onClick={onSaveAll}
+            loading={savingAll}
+            disabled={savingAll}
+          >
+            {t('buttons.save_all', { defaultValue: '並び順を保存' })}
+          </Button>
+        </Col>
       }
     >
       <Form {...searchFormProps} layout="vertical" colon={false}>
