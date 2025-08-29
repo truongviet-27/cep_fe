@@ -59,10 +59,26 @@ export const resource: ResourceProps[] = [
   {
     name: 'departments',
     list: '/departments',
+    show: '/departments/show/:id',
+    create: '/departments/create',
+    edit: '/departments/edit/:id',
+    meta: {
+      canDelete: true,
+      canCreate: true,
+      canEdit: true,
+    },
   },
   {
     name: 'employees',
     list: '/employees',
+    edit: '/employees/edit/:id',
+    create: '/employees/create',
+    show: '/employees/show/:id',
+    meta: {
+      canDelete: true,
+      canCreate: true,
+      canEdit: true,
+    },
   },
   {
     name: 'system-config',
