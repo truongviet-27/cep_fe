@@ -13,10 +13,15 @@ import {
   ShowButton,
   useTable,
 } from '@refinedev/antd'
-import type { BaseRecord } from '@refinedev/core'
-import { useResource, useTranslate, useUpdate } from '@refinedev/core'
+import {
+  BaseRecord,
+  useApiUrl,
+  useCustomMutation,
+  useResource,
+  useTranslate,
+} from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Button, Col, Form, Input, message, Row, Space, Typography } from 'antd'
+import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -77,27 +82,32 @@ export default function Page() {
     return false
   }, [rows])
 
-  const { mutate: updateOne, isLoading: savingAll } = useUpdate()
-  const onSaveAll = () => {
-    const payload = rows.map((r, idx) => ({ id: r.id, order: idx }))
-    if (!payload.length) return
+  const apiUrl = useApiUrl()
+  const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
 
-    let done = 0
-    const total = payload.length
-    payload.forEach(({ id, order }) => {
-      updateOne(
-        { resource: resource?.name ?? 'departments', id, values: { order } },
-        {
-          onSettled: () => {
-            done += 1
-            if (done === total) {
-              originalOrderRef.current = rows.map((r) => String(r.id))
-              message.success('並び順を保存しました。')
-            }
-          },
-        },
-      )
+  const handleUpdateOrdering = (
+    values: {
+      id: string | number
+      order: number
+    }[],
+  ) => {
+    updateAll({
+      url: `${apiUrl}/${resource?.name}/ordering`,
+      method: 'post',
+      values: { data: values },
     })
+  }
+
+  const onSaveAll = () => {
+    const maxOrder = rows.reduce((max, r) => Math.max(max, r.order ?? 0), 0)
+
+    const values = rows.map((r, index) => ({
+      id: r.id,
+      order: maxOrder - index,
+    }))
+    if (!values.length) return
+
+    handleUpdateOrdering(values)
   }
 
   const columns: ColumnsType<RowVM> = [
