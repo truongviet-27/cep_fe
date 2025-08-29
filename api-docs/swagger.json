@@ -563,7 +563,7 @@
         }
       }
     },
-    "/api/v1/code-issue-setting": {
+    "/api/v1/code-issue-settings": {
       "get": {
         "tags": ["Code Issue Setting"],
         "summary": "Get list of code issue settings",
@@ -630,7 +630,7 @@
         ]
       }
     },
-    "/api/v1/code-issue-setting/{id}": {
+    "/api/v1/code-issue-settings/{id}": {
       "get": {
         "tags": ["Code Issue Setting"],
         "summary": "Get code issue setting detail",
@@ -706,11 +706,11 @@
           }
         ]
       },
-      "put": {
+      "patch": {
         "tags": ["Code Issue Setting"],
         "summary": "Update code issue setting",
         "description": "Update an existing code issue setting with new configuration values",
-        "operationId": "cade34322664382bd2b7971982208eb9",
+        "operationId": "eed87adddef6126fa051bd6cd2d733e6",
         "parameters": [
           {
             "name": "id",
@@ -1041,7 +1041,94 @@
           }
         ]
       },
-      "put": {
+      "delete": {
+        "tags": ["Department"],
+        "summary": "Delete a department",
+        "description": "Soft delete a department by ID.",
+        "operationId": "DepartmentController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Department ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Department deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Department deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid department ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Department not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Department not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
         "tags": ["Department"],
         "summary": "Update department",
         "description": "Update an existing department",
@@ -1146,83 +1233,96 @@
             "bearerAuth": []
           }
         ]
-      },
-      "delete": {
-        "tags": ["Department"],
-        "summary": "Delete a department",
-        "description": "Soft delete a department by ID.",
-        "operationId": "DepartmentController_destroy",
+      }
+    },
+    "/api/v1/employees": {
+      "get": {
+        "tags": ["Employee"],
+        "summary": "Get list of employees",
+        "operationId": "EmployeeController_index",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "Department ID. Must be a valid integer.",
-            "required": true,
+            "name": "_page",
+            "in": "query",
+            "description": "Page number (starting from 1)",
             "schema": {
               "type": "integer",
               "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "description": "Items per page (max 100)",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Partial search across code, name",
+            "schema": {
+              "type": "string",
+              "example": "DEP01"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Filter by email (exact match)",
+            "schema": {
+              "type": "string",
+              "example": "test1@gmaill.com"
+            }
+          },
+          {
+            "name": "department_id",
+            "in": "query",
+            "description": "Filter by department ID",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "role_id",
+            "in": "query",
+            "description": "Filter by role ID",
+            "schema": {
+              "type": "integer",
+              "example": 2
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Department deleted successfully",
+            "description": "Employees retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Department deleted successfully"
-                    }
-                  },
-                  "type": "object"
+                  "$ref": "#/components/schemas/EmployeesPaginatedResponse"
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid ID format",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid department ID format."
-                    }
-                  },
-                  "type": "object"
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
                 }
               }
             }
           },
-          "404": {
-            "description": "Department not found",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Department not found or already deleted"
-                    }
-                  },
-                  "type": "object"
+                  "$ref": "#/components/schemas/ForbiddenResponse"
                 }
               }
             }
@@ -1639,6 +1739,317 @@
         ]
       }
     },
+    "/api/v1/product-categories/update-tree": {
+      "post": {
+        "tags": ["Product Category Management"],
+        "summary": "Update category order and tree structure",
+        "description": "Updates the order of product categories based on a new tree structure. The API validates the tree's integrity and re-orders all categories sequentially, regardless of the 'order' values in the request body.",
+        "operationId": "ProductCategoryController_updateTree",
+        "requestBody": {
+          "description": "A nested JSON structure representing the new category tree. The 'order' values will be re-assigned sequentially by the API.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["data"],
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 3
+                            },
+                            "parent_id": {
+                              "type": "integer",
+                              "example": null,
+                              "nullable": true
+                            },
+                            "level": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "Home Appliances"
+                            },
+                            "children": {
+                              "description": "Nested children categories. This array is optional.",
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "example": [
+                          {
+                            "id": 3,
+                            "order": 1002,
+                            "parent_id": null,
+                            "level": 1,
+                            "name": "Home Appliances",
+                            "children": []
+                          },
+                          {
+                            "id": 1,
+                            "order": 9899,
+                            "parent_id": null,
+                            "level": 1,
+                            "name": "Electronics",
+                            "children": [
+                              {
+                                "id": 2,
+                                "order": 0,
+                                "parent_id": 1,
+                                "level": 2,
+                                "name": "Computers",
+                                "children": [
+                                  {
+                                    "id": 5,
+                                    "order": 5,
+                                    "parent_id": 2,
+                                    "level": 3,
+                                    "name": "Laptops",
+                                    "children": []
+                                  },
+                                  {
+                                    "id": 4,
+                                    "order": 99,
+                                    "parent_id": 2,
+                                    "level": 3,
+                                    "name": "Desktop PCs",
+                                    "children": []
+                                  },
+                                  {
+                                    "id": 6,
+                                    "order": 0,
+                                    "parent_id": 2,
+                                    "level": 3,
+                                    "name": "Monitors",
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "id": 7,
+                                "order": 88,
+                                "parent_id": 1,
+                                "level": 2,
+                                "name": "Mobile Devices",
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categories tree updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Categories tree updated successfully"
+                    },
+                    "data": {
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "example": 3
+                              },
+                              "order": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "parent_id": {
+                                "type": "integer",
+                                "example": null,
+                                "nullable": true
+                              },
+                              "level": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "Home Appliances"
+                              },
+                              "children": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                }
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "example": [
+                            {
+                              "id": 3,
+                              "order": 1,
+                              "parent_id": null,
+                              "level": 1,
+                              "name": "Home Appliances",
+                              "children": []
+                            },
+                            {
+                              "id": 1,
+                              "order": 2,
+                              "parent_id": null,
+                              "level": 1,
+                              "name": "Electronics",
+                              "children": [
+                                {
+                                  "id": 2,
+                                  "order": 3,
+                                  "parent_id": 1,
+                                  "level": 2,
+                                  "name": "Computers",
+                                  "children": [
+                                    {
+                                      "id": 5,
+                                      "order": 4,
+                                      "parent_id": 2,
+                                      "level": 3,
+                                      "name": "Laptops",
+                                      "children": []
+                                    },
+                                    {
+                                      "id": 4,
+                                      "order": 5,
+                                      "parent_id": 2,
+                                      "level": 3,
+                                      "name": "Desktop PCs",
+                                      "children": []
+                                    },
+                                    {
+                                      "id": 6,
+                                      "order": 6,
+                                      "parent_id": 2,
+                                      "level": 3,
+                                      "name": "Monitors",
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": 7,
+                                  "order": 7,
+                                  "parent_id": 1,
+                                  "level": 2,
+                                  "name": "Mobile Devices",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid input data."
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict with current data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid category tree structure. A child's parent_id must match its parent's id, and levels must be sequential."
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "An error occurred while updating the categories: Something went wrong"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/v1/product-categories": {
       "get": {
         "tags": ["Product Category Management"],
@@ -1657,82 +2068,72 @@
                       "example": "Categories tree retrieved successfully"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "properties": {
-                          "id": {
-                            "type": "integer",
-                            "example": 1
-                          },
-                          "parent_id": {
-                            "type": "integer",
-                            "example": null,
-                            "nullable": true
-                          },
-                          "level": {
-                            "type": "integer",
-                            "example": 1
-                          },
-                          "name": {
-                            "type": "string",
-                            "example": "Fashion & Accessories"
-                          },
-                          "children": {
-                            "type": "array",
-                            "items": {
-                              "type": "object"
-                            }
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "example": [
-                        {
-                          "id": 1,
-                          "parent_id": null,
-                          "level": 1,
-                          "name": "Fashion & Accessories",
-                          "children": [
-                            {
-                              "id": 2,
-                              "parent_id": 1,
-                              "level": 2,
-                              "name": "Women's Fashion",
-                              "children": []
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "parent_id": {
+                                "type": "integer",
+                                "example": null,
+                                "nullable": true
+                              },
+                              "level": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "Fashion & Accessories"
+                              },
+                              "children": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                }
+                              }
                             },
+                            "type": "object"
+                          },
+                          "example": [
                             {
-                              "id": 5,
-                              "parent_id": 1,
-                              "level": 2,
-                              "name": "Men's Fashion",
+                              "id": 1,
+                              "parent_id": null,
+                              "level": 1,
+                              "name": "Fashion & Accessories",
                               "children": [
                                 {
-                                  "id": 6,
-                                  "parent_id": 5,
-                                  "level": 3,
-                                  "name": "Men's Shirts",
+                                  "id": 2,
+                                  "parent_id": 1,
+                                  "level": 2,
+                                  "name": "Women's Fashion",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "id": 7,
+                              "parent_id": null,
+                              "level": 1,
+                              "name": "Electronics & Technology",
+                              "children": [
+                                {
+                                  "id": 8,
+                                  "parent_id": 7,
+                                  "level": 2,
+                                  "name": "Phones & Accessories",
                                   "children": []
                                 }
                               ]
                             }
                           ]
-                        },
-                        {
-                          "id": 7,
-                          "parent_id": null,
-                          "level": 1,
-                          "name": "Electronics & Technology",
-                          "children": [
-                            {
-                              "id": 8,
-                              "parent_id": 7,
-                              "level": 2,
-                              "name": "Phones & Accessories",
-                              "children": []
-                            }
-                          ]
                         }
-                      ]
+                      },
+                      "type": "object"
                     }
                   },
                   "type": "object"
@@ -1924,6 +2325,93 @@
         ]
       }
     },
+    "/api/v1/product-categories/suggestions": {
+      "get": {
+        "tags": ["Product Category Management"],
+        "summary": "Get suggestions for product category names",
+        "description": "Retrieve a list of product category names based on a partial name match and level for autocompletion and suggestions.",
+        "operationId": "ProductCategoryController_suggestions",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The partial name to search for suggestions. The search is case-insensitive.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "category"
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "Filter suggestions by category level.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product category suggestions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "description": "List of matching product category names.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "Đồ gia dụng"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Categories suggestions retrieved successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The level field must be an integer."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "level": ["The level field must be an integer."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/v1/product-categories/{id}": {
       "get": {
         "tags": ["Product Category Management"],
@@ -2038,7 +2526,140 @@
           }
         ]
       },
-      "put": {
+      "delete": {
+        "tags": ["Product Category Management"],
+        "summary": "Delete a product category",
+        "description": "Soft delete a product category by ID.",
+        "operationId": "ProductCategoryController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Category ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid category ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Category not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict due to existing child categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Cannot delete category with children."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
         "tags": ["Product Category Management"],
         "summary": "Update a product category",
         "description": "Update an existing product category.",
@@ -2192,139 +2813,6 @@
             "bearerAuth": []
           }
         ]
-      },
-      "delete": {
-        "tags": ["Product Category Management"],
-        "summary": "Delete a product category",
-        "description": "Soft delete a product category by ID.",
-        "operationId": "ProductCategoryController_destroy",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Product Category ID. Must be a valid integer.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Category deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Category deleted successfully"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid category ID format."
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product category not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Category not found or already deleted"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict due to existing child categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Cannot delete category with children."
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Something went wrong"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
       }
     },
     "/api/v1/product-units": {
@@ -2362,6 +2850,26 @@
             "schema": {
               "type": "integer",
               "example": 10
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Filter by a specific order number.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "is_disable",
+            "in": "query",
+            "description": "Filter by status (true for disabled, false for enabled).",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "example": false
             }
           }
         ],
@@ -2425,6 +2933,16 @@
                   "name": {
                     "type": "string",
                     "example": "Box"
+                  },
+                  "order": {
+                    "description": "Order number for sorting.",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "is_disable": {
+                    "description": "Set to true to disable the unit.",
+                    "type": "boolean",
+                    "example": false
                   }
                 },
                 "type": "object"
@@ -2454,6 +2972,83 @@
           },
           "422": {
             "description": "Validation error (name is required, invalid or already exists)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field is required."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name field is required."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/product-units/suggestions": {
+      "get": {
+        "tags": ["Product Unit Management"],
+        "summary": "Get suggestions for product unit names",
+        "description": "Retrieve a list of product unit names based on a partial name match for autocompletion and suggestions.",
+        "operationId": "ProductUnitController_suggestions",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The partial name to search for suggestions. The search is case-insensitive.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Existing Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product unit suggestions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "description": "List of matching product unit names.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "Existing Name 2"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Units suggestions retrieved successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input name",
             "content": {
               "application/json": {
                 "schema": {
@@ -2577,7 +3172,94 @@
           }
         ]
       },
-      "put": {
+      "delete": {
+        "tags": ["Product Unit Management"],
+        "summary": "Delete a product unit",
+        "description": "Soft delete a product unit by ID.",
+        "operationId": "ProductUnitController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product Unit ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product unit deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unit deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid unit ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product unit not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unit not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
         "tags": ["Product Unit Management"],
         "summary": "Update a product unit",
         "description": "Update an existing product unit.",
@@ -2603,6 +3285,16 @@
                   "name": {
                     "type": "string",
                     "example": "Case"
+                  },
+                  "order": {
+                    "description": "New order value.",
+                    "type": "integer",
+                    "example": 10
+                  },
+                  "is_disable": {
+                    "description": "Set to true/false to disable/enable.",
+                    "type": "boolean",
+                    "example": true
                   }
                 },
                 "type": "object"
@@ -2708,86 +3400,34 @@
             "bearerAuth": []
           }
         ]
-      },
-      "delete": {
-        "tags": ["Product Unit Management"],
-        "summary": "Delete a product unit",
-        "description": "Soft delete a product unit by ID.",
-        "operationId": "ProductUnitController_destroy",
+      }
+    },
+    "/api/v1/roles": {
+      "get": {
+        "tags": ["Role"],
+        "summary": "Get list of roles",
+        "operationId": "RoleController_index",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "Product Unit ID. Must be a valid integer.",
-            "required": true,
+            "name": "_page",
+            "in": "query",
             "schema": {
               "type": "integer",
               "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "example": 10
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Product unit deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Unit deleted successfully"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid unit ID format."
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product unit not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Unit not found or already deleted"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
+            "description": "Roles retrieved successfully"
           }
         },
         "security": [
@@ -2956,6 +3596,83 @@
         ]
       }
     },
+    "/api/v1/tags/suggestions": {
+      "get": {
+        "tags": ["Tag Management"],
+        "summary": "Get suggestions for tag names",
+        "description": "Retrieve a list of tag names based on a partial name match for autocompletion and suggestions.",
+        "operationId": "TagController_suggestions",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The partial name to search for suggestions. The search is case-insensitive.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "tag"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag suggestions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "description": "List of matching tag names.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "box 2"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tags suggestions retrieved successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The name field is required."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "name": ["The name field is required."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/v1/tags/{id}": {
       "get": {
         "tags": ["Tag Management"],
@@ -3047,7 +3764,94 @@
           }
         ]
       },
-      "put": {
+      "delete": {
+        "tags": ["Tag Management"],
+        "summary": "Delete a tag",
+        "description": "Soft delete a tag by ID.",
+        "operationId": "TagController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Tag ID. Must be a valid integer.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Tag deleted successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid tag ID format."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tag not found or already deleted"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
         "tags": ["Tag Management"],
         "summary": "Update a tag",
         "description": "Update an existing tag.",
@@ -3072,7 +3876,7 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "example": "PHP"
+                    "example": "Tag"
                   }
                 },
                 "type": "object"
@@ -3178,93 +3982,6 @@
             "bearerAuth": []
           }
         ]
-      },
-      "delete": {
-        "tags": ["Tag Management"],
-        "summary": "Delete a tag",
-        "description": "Soft delete a tag by ID.",
-        "operationId": "TagController_destroy",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Tag ID. Must be a valid integer.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tag deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Tag deleted successfully"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid tag ID format."
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tag not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": []
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tag not found or already deleted"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
       }
     }
   },
@@ -3312,8 +4029,8 @@
           "segment": {
             "description": "Segment for the code generation",
             "type": "string",
-            "enum": ["year_range", "month_range"],
-            "example": "year_range"
+            "enum": ["none", "year_month", "year_month_day_range"],
+            "example": "year_month"
           },
           "total": {
             "description": "Total number of codes to generate",
@@ -3353,6 +4070,18 @@
             "type": "string",
             "format": "date-time",
             "example": "2025-08-07T09:20:37.000000Z"
+          },
+          "author": {
+            "description": "User who created this setting",
+            "type": "object",
+            "example": null,
+            "nullable": true
+          },
+          "editor": {
+            "description": "User who last edited this setting",
+            "type": "object",
+            "example": null,
+            "nullable": true
           }
         },
         "type": "object"
@@ -3493,23 +4222,91 @@
       },
       "CodeIssueSettingsPaginatedResponse": {
         "description": "Paginated response for code issue settings",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PaginatedResponse"
-          },
-          {
+        "properties": {
+          "data": {
+            "description": "Data container for paginated response",
             "properties": {
-              "data": {
-                "description": "Array of posts",
+              "items": {
+                "description": "Array of code issue settings",
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/CodeIssueSetting"
                 }
+              },
+              "meta": {
+                "description": "Pagination metadata",
+                "properties": {
+                  "current_page": {
+                    "description": "Current page number",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "from": {
+                    "description": "Starting item number for current page",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "last_page": {
+                    "description": "Last page number",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "per_page": {
+                    "description": "Number of items per page",
+                    "type": "integer",
+                    "example": 10
+                  },
+                  "to": {
+                    "description": "Ending item number for current page",
+                    "type": "integer",
+                    "example": 3
+                  },
+                  "total": {
+                    "description": "Total number of items",
+                    "type": "integer",
+                    "example": 3
+                  }
+                },
+                "type": "object"
+              },
+              "links": {
+                "description": "Pagination links",
+                "properties": {
+                  "first": {
+                    "description": "URL to the first page",
+                    "type": "string",
+                    "example": "http://localhost:8001/api/v1/code-issue-setting?_per_page=10&_page=1"
+                  },
+                  "last": {
+                    "description": "URL to the last page",
+                    "type": "string",
+                    "example": "http://localhost:8001/api/v1/code-issue-setting?_per_page=10&_page=1"
+                  },
+                  "prev": {
+                    "description": "URL to the previous page",
+                    "type": "string",
+                    "example": null,
+                    "nullable": true
+                  },
+                  "next": {
+                    "description": "URL to the next page",
+                    "type": "string",
+                    "example": null,
+                    "nullable": true
+                  }
+                },
+                "type": "object"
               }
             },
             "type": "object"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Code Issue Settings retrieved successfully"
           }
-        ]
+        },
+        "type": "object"
       },
       "UpdateCodeIssueSettingRequest": {
         "description": "Request body for updating code issue setting",
@@ -3640,6 +4437,102 @@
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/Department"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "Employee": {
+        "description": "Employee model",
+        "properties": {
+          "id": {
+            "description": "Employee ID",
+            "type": "integer",
+            "example": 1
+          },
+          "code": {
+            "description": "Employee code",
+            "type": "string",
+            "example": "EMP001"
+          },
+          "name": {
+            "description": "Employee name",
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "description": "Employee email",
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "department": {
+            "description": "Department summary (present only when loaded)",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 10
+              },
+              "name": {
+                "type": "string",
+                "example": "Finance"
+              },
+              "code": {
+                "type": "string",
+                "example": "DPT001"
+              }
+            },
+            "type": "object",
+            "nullable": true
+          },
+          "role": {
+            "description": "Role summary (present only when loaded)",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 2
+              },
+              "name": {
+                "type": "string",
+                "example": "manager"
+              },
+              "display_name": {
+                "type": "string",
+                "example": "Manager"
+              }
+            },
+            "type": "object",
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Creation timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-02T02:19:38.000000Z"
+          },
+          "updated_at": {
+            "description": "Last update timestamp",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-02T02:19:38.000000Z"
+          }
+        },
+        "type": "object"
+      },
+      "EmployeesPaginatedResponse": {
+        "description": "Paginated response for employees",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaginatedResponse"
+          },
+          {
+            "properties": {
+              "data": {
+                "description": "Array of employees",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Employee"
                 }
               }
             },
@@ -3985,6 +4878,16 @@
             "description": "Unit name",
             "type": "string",
             "example": "Box"
+          },
+          "order": {
+            "description": "Order number for sorting",
+            "type": "integer",
+            "example": 1
+          },
+          "is_disable": {
+            "description": "Indicates if the unit is disabled",
+            "type": "boolean",
+            "example": false
           }
         },
         "type": "object"
@@ -4057,6 +4960,11 @@
             "description": "Tag name",
             "type": "string",
             "example": "Laravel"
+          },
+          "order": {
+            "description": "Order number for sorting",
+            "type": "integer",
+            "example": 1
           }
         },
         "type": "object"
@@ -4274,12 +5182,20 @@
       "description": "Department"
     },
     {
+      "name": "Employee",
+      "description": "Employee"
+    },
+    {
       "name": "Api Example",
       "description": "Api Example"
     },
     {
       "name": "Product Unit Management",
       "description": "Product Unit Management"
+    },
+    {
+      "name": "Role",
+      "description": "Role"
     },
     {
       "name": "Tag Management",

@@ -12,3 +12,14 @@ export type CatNode = ITree & {
   parent_id?: string | null
   level?: number
 }
+
+export type SavePayloadNode = {
+  id: string | number | null
+  name: string
+  parent_id: string | number | null
+  level: number
+  order: number
+  children?: SavePayloadNode[]
+}
+
+export type SaveFlatRow = SavePayloadNode & { path: string }
