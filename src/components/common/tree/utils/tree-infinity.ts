@@ -1,4 +1,9 @@
-import type { CatNode, ITree } from '@interfaces/tree'
+import type {
+  CatNode,
+  ITree,
+  SaveFlatRow,
+  SavePayloadNode,
+} from '@interfaces/tree'
 
 function toggleAll(arr: ITree[], open: boolean): ITree[] {
   return arr.map((c) => ({
@@ -260,6 +265,62 @@ const getParentId = (
   return null
 }
 
+const toSaveTree = (nodes: CatNode[], order: number = 0): SavePayloadNode[] => {
+  return (nodes ?? []).map((n) => {
+    return {
+      id: n.id,
+      name: (n.name ?? '').trim(),
+      parent_id: n.parent_id ?? null,
+      level: n.level ?? 1,
+      order: ++order,
+      children: n.children?.length ? toSaveTree(n.children, order) : undefined,
+    }
+  })
+}
+
+const toSaveFlat = (
+  nodes: CatNode[],
+  parentId: string | number | null = null,
+  path = '',
+): SaveFlatRow[] => {
+  const acc: SaveFlatRow[] = []
+  ;(nodes ?? []).forEach((n, i) => {
+    const order = i + 1
+    const curPath = path
+      ? `${path}.${String(order).padStart(3, '0')}`
+      : String(order).padStart(3, '0')
+    acc.push({
+      id: n.id,
+      name: (n.name ?? '').trim(),
+      parent_id: parentId,
+      level: n.level ?? 1,
+      order,
+      path: curPath,
+    })
+    if (n.children?.length) {
+      acc.push(...toSaveFlat(n.children, n.id, curPath))
+    }
+  })
+  return acc
+}
+const normalize = (s?: string) => (s ?? '').trim()
+
+const mergeEditingIntoTree = (
+  nodes: readonly CatNode[],
+  editing: Record<string, { name: string; original: string }>,
+): CatNode[] =>
+  (nodes as CatNode[]).map((n) => {
+    const eid = String(n.id)
+    const draft = editing[eid]
+    const name = normalize(draft?.name) || normalize(n.name)
+
+    const clone: CatNode = { ...n, name }
+    if (n.children?.length) {
+      clone.children = mergeEditingIntoTree(n.children as CatNode[], editing)
+    }
+    return clone
+  })
+
 export {
   deepClone,
   findById,
@@ -274,12 +335,15 @@ export {
   insertNode,
   isDescendant,
   maxDepthOf,
+  mergeEditingIntoTree,
   nextRootCode,
   removeById,
   removeNodeById,
   setChildrenOf,
   toggleAll,
   toggleOpen,
+  toSaveFlat,
+  toSaveTree,
   updateAt,
   updateDeep,
   updateLevelsRecursively,

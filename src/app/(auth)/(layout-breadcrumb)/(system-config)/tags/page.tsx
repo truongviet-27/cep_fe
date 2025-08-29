@@ -1,7 +1,7 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import CommonTable from '@components/common/table'
+import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
@@ -15,45 +15,51 @@ import {
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useEffect, useId, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 
 const { Title } = Typography
 
-type TagRow = {
+// --- Data types ---
+export type TagRow = {
   id?: number
   name: string
   _isNew?: boolean
   _isEditing?: boolean
-  __index: string
+  /** Injected by useFieldArray via keyName */
+  _key?: string
 }
 
 type FormValues = { rows: TagRow[] }
 
-const Page = () => {
+type RowVM = TagRow & { __index: string }
+
+export default function Page() {
   const t = useTranslate()
   const { resource } = useResource()
   const { tableProps, searchFormProps } = useTable<TagRow>({
     syncWithLocation: true,
   })
 
-  const __index = useId()
-
-  const { mutate: updateRow, isLoading: saving } = useUpdate()
-  const { mutate: createRow } = useCreate()
-  const { mutate: deleteRow } = useDelete()
-
   const { control, getValues, resetField } = useForm<FormValues>({
     defaultValues: { rows: [] },
   })
 
-  const { append, remove, update, replace } = useFieldArray({
+  const { append, remove, update, move, replace } = useFieldArray({
     control,
     name: 'rows',
+    keyName: '_key',
   })
 
   const watchedRows = useWatch({ control, name: 'rows' }) ?? []
 
+  // Keep a snapshot of original rows while editing, keyed by a stable key (id or _key)
+  const originalRef = useRef<Record<string, TagRow>>({})
+
+  const keyOf = (row: TagRow, idx: number): string =>
+    row.id?.toString() ?? row._key ?? `tmp-${idx}`
+
+  // Sync refine table data -> form array (once data loads / changes)
   useEffect(() => {
     const ds = (tableProps?.dataSource as TagRow[]) ?? []
     replace(ds.map((r) => ({ ...r, _isNew: false, _isEditing: false })))
@@ -74,16 +80,14 @@ const Page = () => {
     },
   ]
 
-  // Lưu snapshot để hoàn tác khi cancel
-  const originalRef = useRef<Record<number, TagRow>>({})
-
   const addNew = () => {
-    append({ name: '', _isNew: true, _isEditing: true, __index })
+    append({ name: '', _isNew: true, _isEditing: true })
   }
 
   const startEdit = (index: number) => {
     const current = getValues(`rows.${index}`)
-    originalRef.current[index] = { ...current }
+    const stableKey = keyOf(current, index)
+    originalRef.current[stableKey] = { ...current }
     update(index, { ...current, _isEditing: true })
   }
 
@@ -91,27 +95,32 @@ const Page = () => {
     const row = getValues(`rows.${index}`)
     if (row._isNew) {
       remove(index)
-    } else {
-      const orig = originalRef.current[index]
-      if (orig) {
-        update(index, { ...orig, _isNew: false, _isEditing: false })
-      } else {
-        // fallback nếu thiếu snapshot
-        resetField(`rows.${index}.name`)
-        update(index, { ...row, _isEditing: false })
-      }
+      return
     }
-    delete originalRef.current[index]
+    const stableKey = keyOf(row, index)
+    const orig = originalRef.current[stableKey]
+    if (orig) {
+      update(index, { ...orig, _isNew: false, _isEditing: false })
+    } else {
+      // Fallback if snapshot was missing
+      resetField(`rows.${index}.name`)
+      update(index, { ...row, _isEditing: false })
+    }
+    delete originalRef.current[stableKey]
   }
 
-  const saveRow = async (index: number) => {
+  const { mutate: createRow } = useCreate()
+  const { mutate: updateRow, isLoading: saving } = useUpdate()
+  const { mutate: deleteRow } = useDelete()
+
+  const saveRow = (index: number) => {
     const row = getValues(`rows.${index}`)
     const name = (row.name ?? '').trim()
     if (!name) return
 
     if (row._isNew) {
       createRow(
-        { resource: resource?.name, values: { name } },
+        { resource: resource?.name, values: { name, order: index } },
         {
           onSuccess: ({ data }) => {
             update(index, {
@@ -119,15 +128,15 @@ const Page = () => {
               name,
               _isNew: false,
               _isEditing: false,
-              __index,
             })
-            delete originalRef.current[index]
+            const stableKey = keyOf(row, index)
+            delete originalRef.current[stableKey]
           },
         },
       )
     } else if (row.id) {
       updateRow(
-        { resource: resource?.name, id: row.id, values: { name } },
+        { resource: resource?.name, id: row.id, values: { name, index } },
         {
           onSuccess: ({ data }) => {
             update(index, {
@@ -135,9 +144,9 @@ const Page = () => {
               name,
               _isNew: false,
               _isEditing: false,
-              __index,
             })
-            delete originalRef.current[index]
+            const stableKey = keyOf(row, index)
+            delete originalRef.current[stableKey]
           },
         },
       )
@@ -156,19 +165,38 @@ const Page = () => {
     )
   }
 
-  const dataSource = useMemo(
-    () => watchedRows.map((r, i) => ({ ...r, __index: String(i) })),
+  // View-model for table rendering (keeps stable index reference for Controller names)
+  const dataSource: RowVM[] = useMemo(
+    () =>
+      (watchedRows as TagRow[]).map((r, i) => ({ ...r, __index: String(i) })),
     [watchedRows],
   )
 
-  const columns: ColumnsType<(typeof dataSource)[number]> = [
+  const getRowIdForDnd = (r: RowVM): string => {
+    const idx = Number(r.__index)
+    return keyOf(watchedRows[idx] as TagRow, idx)
+  }
+
+  const onDragEnd = (activeId: string, overId: string | null) => {
+    if (!overId) return
+    const findIndexById = (id: string): number =>
+      dataSource.findIndex((r) => getRowIdForDnd(r) === id)
+
+    const from = findIndexById(activeId)
+    const to = findIndexById(overId)
+    if (from !== -1 && to !== -1 && from !== to) {
+      move(from, to) // updates useFieldArray order; Controllers re-bind via indices
+    }
+  }
+
+  const columns: ColumnsType<RowVM> = [
     {
       title: 'タグ名',
       dataIndex: 'name',
       key: 'name',
       render: (_val, record) => {
         const index = Number(record.__index)
-        const isEditing = watchedRows[index]?._isEditing
+        const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
         return isEditing ? (
           <Controller
             control={control}
@@ -178,7 +206,9 @@ const Page = () => {
             )}
           />
         ) : (
-          <Typography.Text>{watchedRows[index]?.name}</Typography.Text>
+          <Typography.Text>
+            {(watchedRows[index] as TagRow | undefined)?.name}
+          </Typography.Text>
         )
       },
     },
@@ -188,7 +218,7 @@ const Page = () => {
       width: 300,
       render: (_val, record) => {
         const index = Number(record.__index)
-        const isEditing = watchedRows[index]?._isEditing
+        const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
         return (
           <Space>
             {isEditing ? (
@@ -217,8 +247,10 @@ const Page = () => {
                 <DeleteButton
                   size="middle"
                   icon={null}
-                  recordItemId={record.id}
-                  onClick={() => !record?.id && handleDeleteRow(index)}
+                  recordItemId={dataSource[index]?.id}
+                  onClick={() =>
+                    !dataSource[index]?.id && handleDeleteRow(index)
+                  }
                 >
                   削除
                 </DeleteButton>
@@ -274,15 +306,16 @@ const Page = () => {
         </Row>
       </Form>
 
-      <CommonTable
-        className="mt-8"
-        {...tableProps}
-        rowKey={(r) => r.id ?? r.__index}
-        columns={columns}
-        dataSource={dataSource}
-      />
+      {/* Replaced CommonTable with TableDnd */}
+      <div className="mt-8">
+        <TableDnd<RowVM>
+          dataSource={dataSource}
+          columns={columns}
+          getRowId={getRowIdForDnd}
+          onDragEnd={onDragEnd}
+          tableProps={{}}
+        />
+      </div>
     </List>
   )
 }
-
-export default Page
