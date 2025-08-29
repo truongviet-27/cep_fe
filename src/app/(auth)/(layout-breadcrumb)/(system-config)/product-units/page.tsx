@@ -23,7 +23,7 @@ const { Title } = Typography
 export type UnitRow = {
   id?: number | string
   name: string
-  active: boolean
+  isActive: boolean
   order: number
   _isNew?: boolean
   _isEditing?: boolean
@@ -41,6 +41,8 @@ export default function Page() {
     syncWithLocation: true,
   })
 
+  // const apiUrl = useApiUrl()
+
   const { control, getValues, resetField } = useForm<FormValues>({
     defaultValues: { rows: [] },
   })
@@ -50,6 +52,16 @@ export default function Page() {
     name: 'rows',
     keyName: '_key',
   })
+
+  // const { mutate: updateAll } = useCustomMutation()
+  //
+  // const handleUpdateAll = (values: SavePayloadNode[]) => {
+  //   updateAll({
+  //     url: `${apiUrl}/${resource}/upsert`,
+  //     method: 'post',
+  //     values: { data: { items: values } },
+  //   })
+  // }
 
   const watchedRows = useWatch({ control, name: 'rows' }) ?? []
 
@@ -85,7 +97,7 @@ export default function Page() {
         id: crypto?.randomUUID?.(),
         name: '',
         order,
-        active: true,
+        isActive: true,
         _isNew: true,
         _isEditing: true,
       },
@@ -112,7 +124,7 @@ export default function Page() {
       update(index, { ...orig, _isNew: false, _isEditing: false })
     } else {
       resetField(`rows.${index}.name`)
-      resetField(`rows.${index}.active`)
+      resetField(`rows.${index}.isActive`)
       update(index, { ...row, _isEditing: false })
     }
     delete originalRef.current[stableKey]
@@ -125,23 +137,23 @@ export default function Page() {
   const saveRow = (index: number) => {
     const row = getValues(`rows.${index}`)
     const name = (row.name ?? '').trim()
-    const active = !!row.active
+    const isActive = !!row.isActive
     const order = fields?.[1]?.order ?? 0
     if (!name) return
 
     if (row._isNew) {
       createRow(
-        { resource: resource?.name, values: { name, active, order } },
+        { resource: resource?.name, values: { name, isActive, order } },
         {
-          onSuccess: () => {
-            // update(index, {
-            //   id: data?.id ?? row.id,
-            //   order,
-            //   name,
-            //   active,
-            //   _isNew: false,
-            //   _isEditing: false,
-            // })
+          onSuccess: ({ data }) => {
+            update(index, {
+              id: data?.id ?? row.id,
+              order,
+              name,
+              isActive,
+              _isNew: false,
+              _isEditing: false,
+            })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
           },
@@ -152,18 +164,18 @@ export default function Page() {
         {
           resource: resource?.name,
           id: row.id,
-          values: { name, active, order },
+          values: { name, isActive, order },
         },
         {
-          onSuccess: () => {
-            // update(index, {
-            //   id: data?.id ?? row.id,
-            //   name,
-            //   order,
-            //   active,
-            //   _isNew: false,
-            //   _isEditing: false,
-            // })
+          onSuccess: ({ data }) => {
+            update(index, {
+              id: data?.id ?? row.id,
+              name,
+              order,
+              isActive,
+              _isNew: false,
+              _isEditing: false,
+            })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
           },
@@ -186,13 +198,16 @@ export default function Page() {
 
   const dataSource: RowVM[] = useMemo(
     () =>
-      (watchedRows as UnitRow[]).map((r, i) => ({ ...r, __index: String(i) })),
-    [watchedRows],
+      fields.map((_, i) => {
+        const v = (watchedRows[i] as UnitRow | undefined) ?? ({} as UnitRow)
+        return { ...v, __index: String(i) } as RowVM
+      }),
+    [fields, watchedRows],
   )
 
   const getRowIdForDnd = (r: RowVM): string => {
     const idx = Number(r.__index)
-    return keyOf(watchedRows[idx] as UnitRow, idx)
+    return fields[idx]?._key as string
   }
 
   const onDragEnd = (activeId: string, overId: string | null) => {
@@ -232,18 +247,18 @@ export default function Page() {
     },
     {
       title: '有効・無効',
-      key: 'active',
+      key: 'isActive',
       width: 240,
       render: (_v, record) => {
         const index = Number(record.__index)
         const isEditing = (watchedRows[index] as UnitRow | undefined)
           ?._isEditing
         const value =
-          (watchedRows[index] as UnitRow | undefined)?.active ?? true
+          (watchedRows[index] as UnitRow | undefined)?.isActive ?? true
         return isEditing ? (
           <Controller
             control={control}
-            name={`rows.${index}.active`}
+            name={`rows.${index}.isActive`}
             render={({ field }) => (
               <Switch checked={field.value} onChange={field.onChange} />
             )}
@@ -280,22 +295,18 @@ export default function Page() {
             ) : (
               <>
                 <EditButton
-                  icon={null}
                   size="middle"
                   onClick={() => startEdit(index)}
-                >
-                  編集
-                </EditButton>
+                  hideText
+                />
                 <DeleteButton
+                  hideText
                   size="middle"
-                  icon={null}
                   recordItemId={dataSource[index]?.id}
                   onClick={() =>
                     !dataSource[index]?.id && handleDeleteRow(index)
                   }
-                >
-                  削除
-                </DeleteButton>
+                />
               </>
             )}
           </Space>
@@ -350,11 +361,11 @@ export default function Page() {
 
       <div className="mt-8">
         <TableDnd<RowVM>
+          {...tableProps}
           dataSource={dataSource}
           columns={columns}
           getRowId={getRowIdForDnd}
           onDragEnd={onDragEnd}
-          tableProps={{}}
         />
       </div>
     </List>

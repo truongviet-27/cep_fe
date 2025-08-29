@@ -33,7 +33,9 @@
     "create_new": "Create New",
     "save_all": "Save All",
     "confirm": "Confirm",
-    "add": "Add"
+    "add": "Add",
+    "search": "Search",
+    "clear": "Clear"
   },
   "notifications": {
     "success": "Success",
