@@ -136,7 +136,6 @@ export default function Page() {
   const addRootCategory = () => {
     const tmpId = `${TEMP_PREFIX}${crypto.randomUUID()}`
     setTree((prev) => [
-      ...prev,
       {
         id: tmpId,
         name: '',
@@ -146,6 +145,7 @@ export default function Page() {
         _isNew: true,
         children: [],
       } as CatNode,
+      ...prev,
     ])
     setEditing((prev) => ({ ...prev, [tmpId]: { name: '', original: '' } }))
     setDirty(true)
@@ -333,6 +333,7 @@ export default function Page() {
           key: String(n.id),
           title: (
             <TreeRow
+              isNew={n._isNew}
               cat={n}
               hasChildren={Boolean(n.children?.length)}
               onToggle={toggle}

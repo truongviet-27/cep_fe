@@ -62,8 +62,8 @@ export default function Page() {
       align: 'center',
     },
     {
-      title: t('system_config.employee'),
-      key: 'employee',
+      title: t('system_config.employeess'),
+      key: 'employeess',
       width: 200,
       align: 'center',
       render: () => <Checkbox />,

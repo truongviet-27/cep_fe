@@ -20,13 +20,12 @@ import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 
 const { Title } = Typography
 
-// --- Data types ---
 export type TagRow = {
-  id?: number
+  id?: number | string
   name: string
+  order: number
   _isNew?: boolean
   _isEditing?: boolean
-  /** Injected by useFieldArray via keyName */
   _key?: string
 }
 
@@ -45,7 +44,7 @@ export default function Page() {
     defaultValues: { rows: [] },
   })
 
-  const { append, remove, update, move, replace } = useFieldArray({
+  const { insert, remove, update, move, replace } = useFieldArray({
     control,
     name: 'rows',
     keyName: '_key',
@@ -53,13 +52,11 @@ export default function Page() {
 
   const watchedRows = useWatch({ control, name: 'rows' }) ?? []
 
-  // Keep a snapshot of original rows while editing, keyed by a stable key (id or _key)
   const originalRef = useRef<Record<string, TagRow>>({})
 
   const keyOf = (row: TagRow, idx: number): string =>
     row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
-  // Sync refine table data -> form array (once data loads / changes)
   useEffect(() => {
     const ds = (tableProps?.dataSource as TagRow[]) ?? []
     replace(ds.map((r) => ({ ...r, _isNew: false, _isEditing: false })))
@@ -81,7 +78,18 @@ export default function Page() {
   ]
 
   const addNew = () => {
-    append({ name: '', _isNew: true, _isEditing: true })
+    const order = getValues(`rows.0`)?.order ?? 0
+    insert(
+      0,
+      {
+        name: '',
+        _isNew: true,
+        _isEditing: true,
+        id: crypto?.randomUUID?.(),
+        order,
+      },
+      { shouldFocus: true },
+    )
   }
 
   const startEdit = (index: number) => {
@@ -102,7 +110,6 @@ export default function Page() {
     if (orig) {
       update(index, { ...orig, _isNew: false, _isEditing: false })
     } else {
-      // Fallback if snapshot was missing
       resetField(`rows.${index}.name`)
       update(index, { ...row, _isEditing: false })
     }
@@ -115,12 +122,13 @@ export default function Page() {
 
   const saveRow = (index: number) => {
     const row = getValues(`rows.${index}`)
+    const order = getValues(`rows.0`)?.order ?? index
     const name = (row.name ?? '').trim()
     if (!name) return
 
     if (row._isNew) {
       createRow(
-        { resource: resource?.name, values: { name, order: index } },
+        { resource: resource?.name, values: { name, order: order } },
         {
           onSuccess: ({ data }) => {
             update(index, {
@@ -128,6 +136,7 @@ export default function Page() {
               name,
               _isNew: false,
               _isEditing: false,
+              order,
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
@@ -144,6 +153,7 @@ export default function Page() {
               name,
               _isNew: false,
               _isEditing: false,
+              order,
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
@@ -165,7 +175,6 @@ export default function Page() {
     )
   }
 
-  // View-model for table rendering (keeps stable index reference for Controller names)
   const dataSource: RowVM[] = useMemo(
     () =>
       (watchedRows as TagRow[]).map((r, i) => ({ ...r, __index: String(i) })),
@@ -185,7 +194,7 @@ export default function Page() {
     const from = findIndexById(activeId)
     const to = findIndexById(overId)
     if (from !== -1 && to !== -1 && from !== to) {
-      move(from, to) // updates useFieldArray order; Controllers re-bind via indices
+      move(from, to)
     }
   }
 

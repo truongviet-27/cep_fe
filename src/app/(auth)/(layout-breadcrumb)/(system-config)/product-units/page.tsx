@@ -1,151 +1,69 @@
-/* eslint-disable */
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import CommonTable from '@components/common/table'
+import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { DeleteButton, useTable } from '@refinedev/antd'
+import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
 import {
   useCreate,
+  useDelete,
   useResource,
   useTranslate,
   useUpdate,
 } from '@refinedev/core'
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Row,
-  Space,
-  Switch,
-  Table,
-  Typography,
-} from 'antd'
-import React from 'react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { PRIMARY } from '@utility/color'
+import { Button, Col, Form, Input, Row, Space, Switch, Typography } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
+import React, { useEffect, useMemo, useRef } from 'react'
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 
 const { Title } = Typography
 
-type UnitRow = {
-  id?: string
+export type UnitRow = {
+  id?: number | string
   name: string
   active: boolean
+  order: number
+  _isNew?: boolean
+  _isEditing?: boolean
+  _key?: string
 }
 
-type FormValues = { tempRows: UnitRow[] }
+type FormValues = { rows: UnitRow[] }
+
+type RowVM = UnitRow & { __index: string }
 
 export default function Page() {
   const t = useTranslate()
   const { resource } = useResource()
-
-  // server table
-  const { tableProps, tableQueryResult, searchFormProps } = useTable<UnitRow>({
+  const { tableProps, searchFormProps } = useTable<UnitRow>({
     syncWithLocation: true,
   })
 
-  // local temp rows
-  const form = useForm<FormValues>({ defaultValues: { tempRows: [] } })
-  const { control, getValues } = form
-  const {
-    fields: tempRows,
-    append,
-    remove,
-  } = useFieldArray({
-    control,
-    name: 'tempRows',
-    keyName: '__key',
+  const { control, getValues, resetField } = useForm<FormValues>({
+    defaultValues: { rows: [] },
   })
 
-  const [savingDraftIndex, setSavingDraftIndex] = React.useState<number | null>(
-    null,
-  )
-  const [editingId, setEditingId] = React.useState<string | null>(null)
-  const [drafts, setDrafts] = React.useState<Record<string, Partial<UnitRow>>>(
-    {},
-  )
+  const { insert, remove, update, move, replace, fields } = useFieldArray({
+    control,
+    name: 'rows',
+    keyName: '_key',
+  })
 
-  const startEdit = (record: UnitRow) => {
-    const id = String(record.id)
-    setEditingId(id)
-    setDrafts((prev) => ({
-      ...prev,
-      [id]: { name: record.name, active: record.active },
-    }))
-  }
+  const watchedRows = useWatch({ control, name: 'rows' }) ?? []
 
-  const cancelEdit = () => setEditingId(null)
+  const originalRef = useRef<Record<string, UnitRow>>({})
 
-  const setDraftName = (id: string, name: string) =>
-    setDrafts((p) => ({ ...p, [id]: { ...(p[id] ?? {}), name } }))
+  const keyOf = (row: UnitRow, idx: number): string =>
+    row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
-  const setDraftActive = (id: string, active: boolean) =>
-    setDrafts((p) => ({ ...p, [id]: { ...(p[id] ?? {}), active } }))
+  useEffect(() => {
+    const ds = (tableProps?.dataSource as UnitRow[]) ?? []
+    // server rows come in as read-only
+    replace(ds.map((r) => ({ ...r, _isNew: false, _isEditing: false })))
+  }, [tableProps?.dataSource, replace])
 
-  // mutations
-  const { mutate: createMutate } = useCreate()
-  const { mutate: updateMutate, isLoading: updating } = useUpdate()
-
-  const refetch = () => tableQueryResult?.refetch()
-
-  const saveTempRow = (rowIndex: number) => {
-    const row = getValues(`tempRows.${rowIndex}`) as UnitRow | undefined
-    const name = row?.name?.trim()
-    const active = row?.active ?? true
-    if (!name) return
-
-    setSavingDraftIndex(rowIndex)
-
-    createMutate(
-      {
-        resource: resource?.name,
-        values: { name, active },
-      },
-      {
-        onSuccess: async () => {
-          await tableQueryResult?.refetch?.()
-          remove(rowIndex)
-          setSavingDraftIndex(null)
-        },
-        onError: () => {
-          setSavingDraftIndex(null)
-        },
-      },
-    )
-  }
-
-  // server row -> update
-  const saveServerRow = (record: UnitRow) => {
-    const id = String(record.id)
-    const draft = drafts[id] ?? {}
-    const values: Partial<UnitRow> = {
-      name: (draft.name ?? record.name)?.trim(),
-      active: draft.active ?? record.active,
-    }
-    if (!values.name) {
-      return
-    }
-    updateMutate(
-      { resource: resource?.name, id, values },
-      {
-        onSuccess: () => {
-          setEditingId(null)
-          refetch()
-        },
-      },
-    )
-  }
-
-  // dataSource: server rows + temp rows (nằm cuối)
-  const serverRows = (tableProps.dataSource ?? []) as UnitRow[]
-  const dataSource: UnitRow[] = React.useMemo(
-    () => [...serverRows, ...tempRows.map((r) => ({ ...r, id: undefined }))],
-    [serverRows, tempRows],
-  )
-
-  // UI
   const breadcrumbItems = [
     {
       title: (
@@ -154,17 +72,243 @@ export default function Page() {
         </Title>
       ),
     },
-    { title: <Title level={5}>{t('product_units.product_units')}</Title> },
+    {
+      title: <Title level={5}>{t('product_units.product_units')}</Title>,
+    },
   ]
 
-  const onAddDraft = () => append({ name: '', active: true })
+  const addNew = () => {
+    const order = fields?.[1]?.order ?? 0
+    insert(
+      0,
+      {
+        id: crypto?.randomUUID?.(),
+        name: '',
+        order,
+        active: true,
+        _isNew: true,
+        _isEditing: true,
+      },
+      { shouldFocus: true },
+    )
+  }
+
+  const startEdit = (index: number) => {
+    const current = getValues(`rows.${index}`)
+    const stableKey = keyOf(current, index)
+    originalRef.current[stableKey] = { ...current }
+    update(index, { ...current, _isEditing: true })
+  }
+
+  const cancelEdit = (index: number) => {
+    const row = getValues(`rows.${index}`)
+    if (row._isNew) {
+      remove(index)
+      return
+    }
+    const stableKey = keyOf(row, index)
+    const orig = originalRef.current[stableKey]
+    if (orig) {
+      update(index, { ...orig, _isNew: false, _isEditing: false })
+    } else {
+      resetField(`rows.${index}.name`)
+      resetField(`rows.${index}.active`)
+      update(index, { ...row, _isEditing: false })
+    }
+    delete originalRef.current[stableKey]
+  }
+
+  const { mutate: createRow } = useCreate()
+  const { mutate: updateRow, isLoading: saving } = useUpdate()
+  const { mutate: deleteRow } = useDelete()
+
+  const saveRow = (index: number) => {
+    const row = getValues(`rows.${index}`)
+    const name = (row.name ?? '').trim()
+    const active = !!row.active
+    const order = fields?.[1]?.order ?? 0
+    if (!name) return
+
+    if (row._isNew) {
+      createRow(
+        { resource: resource?.name, values: { name, active, order } },
+        {
+          onSuccess: () => {
+            // update(index, {
+            //   id: data?.id ?? row.id,
+            //   order,
+            //   name,
+            //   active,
+            //   _isNew: false,
+            //   _isEditing: false,
+            // })
+            const stableKey = keyOf(row, index)
+            delete originalRef.current[stableKey]
+          },
+        },
+      )
+    } else if (row.id) {
+      updateRow(
+        {
+          resource: resource?.name,
+          id: row.id,
+          values: { name, active, order },
+        },
+        {
+          onSuccess: () => {
+            // update(index, {
+            //   id: data?.id ?? row.id,
+            //   name,
+            //   order,
+            //   active,
+            //   _isNew: false,
+            //   _isEditing: false,
+            // })
+            const stableKey = keyOf(row, index)
+            delete originalRef.current[stableKey]
+          },
+        },
+      )
+    }
+  }
+
+  const handleDeleteRow = (index: number) => {
+    const row = getValues(`rows.${index}`)
+    if (row._isNew || !row.id) {
+      remove(index)
+      return
+    }
+    deleteRow(
+      { resource: resource?.name ?? 'product-units', id: row.id },
+      { onSuccess: () => remove(index) },
+    )
+  }
+
+  const dataSource: RowVM[] = useMemo(
+    () =>
+      (watchedRows as UnitRow[]).map((r, i) => ({ ...r, __index: String(i) })),
+    [watchedRows],
+  )
+
+  const getRowIdForDnd = (r: RowVM): string => {
+    const idx = Number(r.__index)
+    return keyOf(watchedRows[idx] as UnitRow, idx)
+  }
+
+  const onDragEnd = (activeId: string, overId: string | null) => {
+    if (!overId) return
+    const findIndexById = (id: string): number =>
+      dataSource.findIndex((r) => getRowIdForDnd(r) === id)
+    const from = findIndexById(activeId)
+    const to = findIndexById(overId)
+    if (from !== -1 && to !== -1 && from !== to) {
+      move(from, to)
+    }
+  }
+
+  const columns: ColumnsType<RowVM> = [
+    {
+      title: '単位名',
+      dataIndex: 'name',
+      key: 'name',
+      render: (_v, record) => {
+        const index = Number(record.__index)
+        const isEditing = (watchedRows[index] as UnitRow | undefined)
+          ?._isEditing
+        return isEditing ? (
+          <Controller
+            control={control}
+            name={`rows.${index}.name`}
+            render={({ field }) => (
+              <Input {...field} size="middle" autoFocus placeholder="単位名" />
+            )}
+          />
+        ) : (
+          <Typography.Text>
+            {(watchedRows[index] as UnitRow | undefined)?.name}
+          </Typography.Text>
+        )
+      },
+    },
+    {
+      title: '有効・無効',
+      key: 'active',
+      width: 240,
+      render: (_v, record) => {
+        const index = Number(record.__index)
+        const isEditing = (watchedRows[index] as UnitRow | undefined)
+          ?._isEditing
+        const value =
+          (watchedRows[index] as UnitRow | undefined)?.active ?? true
+        return isEditing ? (
+          <Controller
+            control={control}
+            name={`rows.${index}.active`}
+            render={({ field }) => (
+              <Switch checked={field.value} onChange={field.onChange} />
+            )}
+          />
+        ) : (
+          <Switch checked={value} disabled />
+        )
+      },
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      width: 300,
+      render: (_v, record) => {
+        const index = Number(record.__index)
+        const isEditing = (watchedRows[index] as UnitRow | undefined)
+          ?._isEditing
+        return (
+          <Space>
+            {isEditing ? (
+              <>
+                <Button
+                  type="primary"
+                  size="middle"
+                  loading={saving}
+                  onClick={() => saveRow(index)}
+                >
+                  保存
+                </Button>
+                <Button size="middle" onClick={() => cancelEdit(index)}>
+                  キャンセル
+                </Button>
+              </>
+            ) : (
+              <>
+                <EditButton
+                  icon={null}
+                  size="middle"
+                  onClick={() => startEdit(index)}
+                >
+                  編集
+                </EditButton>
+                <DeleteButton
+                  size="middle"
+                  icon={null}
+                  recordItemId={dataSource[index]?.id}
+                  onClick={() =>
+                    !dataSource[index]?.id && handleDeleteRow(index)
+                  }
+                >
+                  削除
+                </DeleteButton>
+              </>
+            )}
+          </Space>
+        )
+      },
+    },
+  ]
 
   return (
     <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      createButtonProps={{ style: { display: 'none' } }}
     >
       <Form {...searchFormProps} layout="vertical" colon={false}>
         <Row
@@ -181,154 +325,38 @@ export default function Page() {
               </Col>
               <Col flex="360px">
                 <Form.Item name="name" style={{ margin: 0 }}>
-                  <Input placeholder="部分一致" allowClear />
+                  <Input placeholder="部分一致" allowClear size="middle" />
                 </Form.Item>
               </Col>
               <Col>
                 <Space size="middle">
-                  <Button htmlType="submit" type="primary">
+                  <Button htmlType="submit" type="primary" size="middle">
                     検索
                   </Button>
-                  <Button htmlType="reset">クリア</Button>
+                  <Button htmlType="reset" size="middle" type="default">
+                    クリア
+                  </Button>
                 </Space>
               </Col>
             </Row>
           </Col>
-
           <Col>
-            <Button type="primary" onClick={onAddDraft}>
+            <Button type="primary" size="middle" onClick={addNew}>
               新規登録
             </Button>
           </Col>
         </Row>
       </Form>
 
-      {/* Table */}
-      <CommonTable
-        {...tableProps}
-        className="mt-6"
-        dataSource={dataSource}
-        rowKey={(r: any) => r.id ?? r.__key}
-      >
-        {/* 単位名 */}
-        <Table.Column<UnitRow>
-          title="単位名"
-          dataIndex="name"
-          render={(_, record: UnitRow, index: number) => {
-            // temp row (no id) → RHF controlled
-            if (!record.id) {
-              const tempIndex = index - serverRows.length
-              return (
-                <Controller
-                  control={control}
-                  name={`tempRows.${tempIndex}.name` as const}
-                  render={({ field }) => (
-                    <Input {...field} placeholder="名称を入力" />
-                  )}
-                />
-              )
-            }
-            // server row
-            const id = String(record.id)
-            if (editingId === id) {
-              const val = (drafts[id]?.name ?? record.name) as string
-              return (
-                <Input
-                  value={val}
-                  onChange={(e) => setDraftName(id, e.target.value)}
-                  placeholder="名称を入力"
-                />
-              )
-            }
-            return record.name
-          }}
+      <div className="mt-8">
+        <TableDnd<RowVM>
+          dataSource={dataSource}
+          columns={columns}
+          getRowId={getRowIdForDnd}
+          onDragEnd={onDragEnd}
+          tableProps={{}}
         />
-
-        {/* 有効・無効 */}
-        <Table.Column<UnitRow>
-          width={'40%'}
-          title="有効・無効"
-          render={(_, record: UnitRow, index: number) => {
-            if (!record.id) {
-              const tempIndex = index - serverRows.length
-              return (
-                <Controller
-                  control={control}
-                  name={`tempRows.${tempIndex}.active` as const}
-                  render={({ field }) => (
-                    <Switch checked={field.value} onChange={field.onChange} />
-                  )}
-                />
-              )
-            }
-            const id = String(record.id)
-            const checked = (drafts[id]?.active ??
-              record.active ??
-              true) as boolean
-            return (
-              <Switch
-                checked={checked}
-                onChange={(v) => setDraftActive(id, v)}
-                disabled={editingId !== id && editingId !== null}
-              />
-            )
-          }}
-        />
-
-        {/* 操作 */}
-        <Table.Column<UnitRow>
-          width={260}
-          title="操作"
-          render={(_, record: UnitRow, index: number) => {
-            if (!record.id) {
-              const tempIndex = index - serverRows.length
-              // const saving = creating // tạo đang chạy
-              return (
-                <Space>
-                  <Button
-                    type="primary"
-                    loading={savingDraftIndex === tempIndex}
-                    disabled={savingDraftIndex === tempIndex}
-                    onClick={() => saveTempRow(tempIndex)}
-                  >
-                    保存
-                  </Button>
-
-                  <Button onClick={() => remove(tempIndex)}>キャンセル</Button>
-                </Space>
-              )
-            }
-
-            // server row
-            const id = String(record.id)
-            const isEditing = editingId === id
-            if (isEditing) {
-              return (
-                <Space>
-                  <Button
-                    type="primary"
-                    loading={updating}
-                    onClick={() => saveServerRow(record)}
-                  >
-                    保存
-                  </Button>
-                  <Button onClick={cancelEdit}>キャンセル</Button>
-                </Space>
-              )
-            }
-            return (
-              <Space>
-                <Button type="default" onClick={() => startEdit(record)}>
-                  編集
-                </Button>
-                <DeleteButton icon={null} size="middle" recordItemId={id}>
-                  削除
-                </DeleteButton>
-              </Space>
-            )
-          }}
-        />
-      </CommonTable>
+      </div>
     </List>
   )
 }
