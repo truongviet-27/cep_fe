@@ -1,21 +1,22 @@
 import type { FormProps } from 'antd'
-import { Divider, Form, Input } from 'antd'
+import { Button, Divider, Form, Input, Space } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 
 function Tabs1({
   formProps,
   isEdit,
+  tags,
 }: {
   formProps: FormProps
   isEdit: boolean
+  tags: string[]
 }) {
-  console.log(isEdit, 'isEdit')
   return isEdit ? (
     <Form layout="vertical" {...formProps}>
       <Form.Item
         layout="vertical"
         label="件名"
-        name="title1"
+        name="title_1"
         rules={[
           {
             required: true,
@@ -25,29 +26,44 @@ function Tabs1({
         <Input />
       </Form.Item>
       <Form.Item
-        layout="vertical"
-        label="本文"
-        name="content1"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+        label={
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <span>本文</span>
+            <Space>
+              {tags.map((tag) => (
+                <Button
+                  key={tag}
+                  size="small"
+                  style={{
+                    border: '1px solid #91D5FF',
+                    backgroundColor: '#E6F7FF',
+                    color: '#1890FF',
+                  }}
+                  onClick={() => {}}
+                >
+                  {tag}
+                </Button>
+              ))}
+            </Space>
+          </div>
+        }
+        labelCol={{ span: 24 }}
+        name="content_2"
+        rules={[{ required: true }]}
       >
         <TextArea rows={8} />
       </Form.Item>
 
       <Divider />
 
-      <Form.Item layout="vertical" label="署名（自動挿入）" name="signature1">
-        <TextArea rows={4} disabled />
-      </Form.Item>
-      <Form.Item
-        layout="vertical"
-        label="テンプレート編集時の注意事項"
-        name="note1"
-      >
-        <TextArea rows={8} disabled />
+      <Form.Item layout="vertical" label="署名（自動挿入）" name="signature_1">
+        <TextArea rows={4} />
       </Form.Item>
     </Form>
   ) : (
