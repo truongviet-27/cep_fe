@@ -17,16 +17,12 @@ type ConvertTree = {
   icon?: React.ReactNode
 }
 
-const recursiveNestedMenu = (
-  menuItems: Tree[],
-  handleNavigation: (route: string) => void,
-  items: ConvertTree[] = [],
-) => {
+const recursiveNestedMenu = (menuItems: Tree[], items: ConvertTree[] = []) => {
   menuItems.forEach(({ route, label, children, name }, index) => {
     items.push({
-      key: name,
+      key: route || name,
       label: (
-        <span onClick={() => route && handleNavigation(route)}>
+        <span>
           {label}
           &nbsp;
           {children && children.length > 0 && (
@@ -38,7 +34,7 @@ const recursiveNestedMenu = (
     })
 
     if (children && items[index]?.children && children.length > 0) {
-      recursiveNestedMenu(children, handleNavigation, items[index].children)
+      recursiveNestedMenu(children, items[index].children)
     }
     if (items[index].children && items[index].children.length === 0) {
       items[index].children = null

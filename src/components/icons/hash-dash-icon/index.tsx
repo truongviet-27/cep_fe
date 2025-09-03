@@ -4,8 +4,8 @@ function HashDashIcon() {
   return (
     <div
       style={{
-        width: '16px',
-        height: '4px',
+        width: '12px',
+        height: '2px',
         backgroundColor: '#000',
         display: 'inline-block',
         borderRadius: '2px',
