@@ -4,6 +4,7 @@ import type {
   SaveFlatRow,
   SavePayloadNode,
 } from '@interfaces/tree'
+import { isNumber } from 'lodash'
 
 function toggleAll(arr: ITree[], open: boolean): ITree[] {
   return arr.map((c) => ({
@@ -13,33 +14,6 @@ function toggleAll(arr: ITree[], open: boolean): ITree[] {
   }))
 }
 
-function updateAt<T extends { id: string }>(
-  arr: T[],
-  id: string,
-  updater: (x: T) => T,
-): T[] {
-  return arr.map((it) => (it.id === id ? updater(it) : it))
-}
-
-function replaceChildren(arr: ITree[], id: string, children: ITree[]): ITree[] {
-  return arr.map((it) => (it.id === id ? { ...it, children } : it))
-}
-
-function getChildrenOf(arr: ITree[], parentId: string | null) {
-  if (parentId === null) return arr
-  const node = findById(arr, parentId)
-  return node?.children ?? null
-}
-
-function setChildrenOf(
-  arr: ITree[],
-  parentId: string | null,
-  children: ITree[],
-) {
-  if (parentId === null) return children
-  return replaceChildren(arr, parentId, children)
-}
-
 function findById(arr: ITree[], id: string): ITree | undefined {
   for (const c of arr) {
     if (c.id === id) return c
@@ -47,10 +21,6 @@ function findById(arr: ITree[], id: string): ITree | undefined {
     if (hit) return hit
   }
   return undefined
-}
-
-function findNameById(arr: ITree[], id: string): string {
-  return findById(arr, id)?.name ?? ''
 }
 
 function toggleOpen(arr: ITree[], id: string | number): ITree[] {
@@ -67,15 +37,6 @@ function removeById(arr: ITree[], id: string | number): ITree[] {
     .map((c) =>
       c.children ? { ...c, children: removeById(c.children, id) } : c,
     )
-}
-
-function nextRootCode(list: ITree[]): string {
-  const nums = list
-    .map((c) => c.code?.match(/^ct(\d+)$/)?.[1])
-    .filter(Boolean)
-    .map(Number)
-  const n = nums.length ? Math.max(...nums) + 1 : 1
-  return `ct${n}`
 }
 
 function updateDeep(
@@ -268,7 +229,7 @@ const getParentId = (
 const toSaveTree = (nodes: CatNode[], order: number = 0): SavePayloadNode[] => {
   return (nodes ?? []).map((n) => {
     return {
-      id: n.id,
+      id: isNumber(n.id) ? n.id : null,
       name: (n.name ?? '').trim(),
       parent_id: n.parent_id ?? null,
       level: n.level ?? 1,
@@ -321,14 +282,123 @@ const mergeEditingIntoTree = (
     return clone
   })
 
+type Id = string | number
+
+/**
+ * Tạo một Map để tra cứu nhanh parentId của một nodeId
+ */
+const createParentMap = (nodes: CatNode[]): Map<Id, Id> => {
+  const map = new Map<Id, Id>()
+  const walk = (nodesToWalk: CatNode[], parentId?: Id) => {
+    for (const node of nodesToWalk) {
+      if (parentId) {
+        map.set(node.id, parentId)
+      }
+      if (node.children?.length) {
+        walk(node.children as CatNode[], node.id)
+      }
+    }
+  }
+  walk(nodes)
+  return map
+}
+
+/**
+ * Lấy ID của một node và tất cả các con cháu của nó một cách đệ quy
+ */
+const getDescendantIds = (node: CatNode, idSet: Set<Id>) => {
+  idSet.add(node.id)
+  if (node.children?.length) {
+    for (const child of node.children as CatNode[]) {
+      getDescendantIds(child, idSet)
+    }
+  }
+}
+
+// --- Main Filter Function ---
+
+/**
+ * Lọc cây category dựa trên level và tên.
+ * Kết quả sẽ bao gồm các node khớp, toàn bộ cha và toàn bộ con của chúng.
+ * @param nodes - Mảng các node gốc của cây.
+ * @param filterLevel - Level cần lọc (ví dụ: 1, 2, 3).
+ * @param filterName - Tên category cần tìm (tìm kiếm không phân biệt hoa thường).
+ * @returns Một cây mới đã được lọc.
+ */
+const filterCategoryTree = (
+  nodes: CatNode[],
+  filterLevel?: number,
+  filterName?: string,
+): CatNode[] => {
+  const trimmedName = filterName?.trim().toLowerCase()
+
+  // Nếu không có điều kiện lọc, trả về cây gốc
+  if (!filterLevel && !trimmedName) {
+    return nodes
+  }
+
+  const initialMatches: CatNode[] = []
+  const requiredIds = new Set<Id>()
+  const parentMap = createParentMap(nodes)
+
+  // 1. Tìm tất cả các node ban đầu khớp với điều kiện
+  const findInitialMatches = (nodesToSearch: CatNode[]) => {
+    for (const node of nodesToSearch) {
+      let isMatch = false
+      if (filterLevel && node.level === filterLevel) {
+        isMatch = true
+      }
+      if (trimmedName && node.name.toLowerCase().includes(trimmedName)) {
+        isMatch = true
+      }
+
+      if (isMatch) {
+        initialMatches.push(node)
+      }
+
+      if (node.children?.length) {
+        findInitialMatches(node.children as CatNode[])
+      }
+    }
+  }
+  findInitialMatches(nodes)
+
+  // 2. Từ các node khớp, lấy ID của chúng, tất cả cha và tất cả con
+  for (const match of initialMatches) {
+    // Lấy ID của chính nó và tất cả con cháu
+    getDescendantIds(match, requiredIds)
+
+    // Lấy ID của tất cả cha ông
+    let currentId = match.id
+    while (parentMap.has(currentId)) {
+      const parentId = parentMap.get(currentId)!
+      requiredIds.add(parentId)
+      currentId = parentId
+    }
+  }
+
+  // 3. Xây dựng lại cây mới chỉ chứa các node có ID trong `requiredIds`
+  const buildFilteredTree = (nodesToBuild: CatNode[]): CatNode[] => {
+    return nodesToBuild
+      .filter((node) => requiredIds.has(node.id))
+      .map((node) => ({
+        ...node,
+        children: node.children
+          ? buildFilteredTree(node.children as CatNode[])
+          : [],
+      }))
+  }
+
+  return buildFilteredTree(nodes)
+}
+
 export {
   deepClone,
+  filterCategoryTree,
   findById,
-  findNameById,
   findNode,
   findNodeById,
   findParentAndIndex,
-  getChildrenOf,
   getParentId,
   getParentIdOf,
   indexInParent,
@@ -336,15 +406,12 @@ export {
   isDescendant,
   maxDepthOf,
   mergeEditingIntoTree,
-  nextRootCode,
   removeById,
   removeNodeById,
-  setChildrenOf,
   toggleAll,
   toggleOpen,
   toSaveFlat,
   toSaveTree,
-  updateAt,
   updateDeep,
   updateLevelsRecursively,
   updateNode,
