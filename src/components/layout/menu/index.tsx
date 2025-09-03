@@ -11,6 +11,7 @@ import React from 'react'
 
 function Menu() {
   const { menuItems, selectedKey } = useMenu()
+
   const go = useGo()
 
   // Xử lý sự kiện click cho toàn bộ Menu

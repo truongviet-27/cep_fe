@@ -135,4 +135,16 @@ export const resource: ResourceProps[] = [
       canCreate: true,
     },
   },
+  {
+    name: 'email-template',
+    list: '/email-template',
+    show: '/email-template/:id',
+    create: '/email-template/:id',
+    edit: '/email-template/:id',
+    meta: {
+      parent: 'system-config',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
 ]
