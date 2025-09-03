@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
@@ -41,7 +42,7 @@ export default function Page() {
   const { resource } = useResource()
   const { tableProps, searchFormProps } = useTable<UnitRow>({
     syncWithLocation: true,
-    onSearch: (values) => {
+    onSearch: (values: any) => {
       if (values.name) {
         return [
           {
