@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
@@ -25,7 +26,7 @@ const { Title } = Typography
 export type UnitRow = {
   id?: number | string
   name: string
-  isActive: boolean
+  is_disable: boolean
   order: number
   _isNew?: boolean
   _isEditing?: boolean
@@ -41,6 +42,18 @@ export default function Page() {
   const { resource } = useResource()
   const { tableProps, searchFormProps } = useTable<UnitRow>({
     syncWithLocation: true,
+    onSearch: (values: any) => {
+      if (values.name) {
+        return [
+          {
+            field: 'q',
+            operator: 'contains',
+            value: values.name,
+          },
+        ]
+      }
+      return []
+    },
   })
 
   const apiUrl = useApiUrl()
@@ -63,7 +76,7 @@ export default function Page() {
     updateAll({
       url: `${apiUrl}/${resource?.name}/upsert`,
       method: 'post',
-      values: { data: values },
+      values,
     })
   }
 
@@ -117,7 +130,7 @@ export default function Page() {
         id: crypto?.randomUUID?.(),
         name: '',
         order,
-        isActive: true,
+        is_disable: false,
         _isNew: true,
         _isEditing: true,
       },
@@ -144,7 +157,7 @@ export default function Page() {
       update(index, { ...orig, _isNew: false, _isEditing: false })
     } else {
       resetField(`rows.${index}.name`)
-      resetField(`rows.${index}.isActive`)
+      resetField(`rows.${index}.is_disable`) // Sửa tên field
       update(index, { ...row, _isEditing: false })
     }
     delete originalRef.current[stableKey]
@@ -157,20 +170,20 @@ export default function Page() {
   const saveRow = (index: number) => {
     const row = getValues(`rows.${index}`)
     const name = (row.name ?? '').trim()
-    const isActive = !!row.isActive
+    const is_disable = !!row.is_disable
     const order = (fields?.[1]?.order ?? 0) + 1
     if (!name) return
 
     if (row._isNew) {
       createRow(
-        { resource: resource?.name, values: { name, isActive, order } },
+        { resource: resource?.name, values: { name, is_disable, order } }, // Sửa tên field
         {
           onSuccess: ({ data }) => {
             update(index, {
               id: data?.id ?? row.id,
               order,
               name,
-              isActive,
+              is_disable,
               _isNew: false,
               _isEditing: false,
             })
@@ -184,7 +197,7 @@ export default function Page() {
         {
           resource: resource?.name,
           id: row.id,
-          values: { name, isActive, order },
+          values: { name, is_disable, order },
         },
         {
           onSuccess: ({ data }) => {
@@ -192,7 +205,7 @@ export default function Page() {
               id: data?.id ?? row.id,
               name,
               order,
-              isActive,
+              is_disable,
               _isNew: false,
               _isEditing: false,
             })
@@ -267,24 +280,27 @@ export default function Page() {
     },
     {
       title: '有効・無効',
-      key: 'isActive',
+      key: 'is_disable',
       width: 240,
       render: (_v, record) => {
         const index = Number(record.__index)
         const isEditing = (watchedRows[index] as UnitRow | undefined)
           ?._isEditing
         const value =
-          (watchedRows[index] as UnitRow | undefined)?.isActive ?? true
+          (watchedRows[index] as UnitRow | undefined)?.is_disable ?? false
         return isEditing ? (
           <Controller
             control={control}
-            name={`rows.${index}.isActive`}
+            name={`rows.${index}.is_disable`}
             render={({ field }) => (
-              <Switch checked={field.value} onChange={field.onChange} />
+              <Switch
+                checked={!field.value}
+                onChange={(checked) => field.onChange(!checked)}
+              />
             )}
           />
         ) : (
-          <Switch checked={value} disabled />
+          <Switch checked={!value} disabled />
         )
       },
     },

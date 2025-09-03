@@ -1,5 +1,3 @@
-'use client'
-
 import HashDashIcon from '@components/icons/hash-dash-icon'
 import { useForm } from '@refinedev/antd'
 import { type useModalReturnType, useTranslate } from '@refinedev/core'
@@ -29,34 +27,42 @@ type Props = {
 export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
   const t = useTranslate()
   const { close } = modalProps
-  const { formProps, saveButtonProps, formLoading, queryResult } = useForm({
-    id,
-    resource: 'code-issue-settings',
-    action: 'edit',
-  })
+  const { formProps, saveButtonProps, formLoading, queryResult, onFinish } =
+    useForm({
+      id,
+      resource: 'code-issue-settings',
+      action: 'edit',
+    })
 
   const record = queryResult?.data?.data
 
+  // Sử dụng form instance để theo dõi giá trị issue_method
+  const [form] = Form.useForm()
+  // Kết hợp form instance với formProps
+  const mergedFormProps = { ...formProps, form }
+
+  // Theo dõi giá trị issue_method
+  const issueMethod = Form.useWatch('issue_method', form)
+  const isManual = issueMethod === 'manual'
+
   return (
     <Edit
-      // footerButtons={
-      //   <Space>
-      //     <Button onClick={close}>{t('buttons.back')}</Button>
-      //     <Button {...saveButtonProps} type="primary">
-      //       {t('buttons.save_settings')}
-      //     </Button>
-      //   </Space>
-      // }
       saveButtonProps={saveButtonProps}
       isLoading={formLoading}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
     >
       <Form
-        {...formProps}
+        {...mergedFormProps}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
         colon={false}
+        onFinish={async (values) => {
+          const result = await onFinish(values)
+          if (result) {
+            close()
+          }
+        }}
       >
         <Form.Item
           label={t('code_issue_settings.fields.name')}
@@ -86,7 +92,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
           name="prefix"
           rules={[{ required: true }]}
         >
-          <Input placeholder="例: PD" />
+          <Input placeholder="例: PD" disabled={isManual} />
         </Form.Item>
 
         <Form.Item
@@ -94,7 +100,9 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
           valuePropName="checked"
           name="hash_dash"
         >
-          <Checkbox />
+          <Checkbox disabled={isManual} />
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <Typography.Text>(ハイフンを入れる)</Typography.Text>
         </Form.Item>
 
         <Form.Item
@@ -102,7 +110,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
           name="segment"
           rules={[{ required: true }]}
         >
-          <Select options={segmentOptions} />
+          <Select options={segmentOptions} disabled={isManual} />
         </Form.Item>
 
         <Form.Item
@@ -110,7 +118,13 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
           name="serial_length"
           rules={[{ required: true }]}
         >
-          <InputNumber min={1} max={10} />
+          <Select disabled={isManual}>
+            {[...Array(10)].map((_, i) => (
+              <Select.Option key={i + 1} value={i + 1}>
+                {i + 1}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item label={t('code_issue_settings.fields.total')} name="total">
@@ -154,7 +168,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
       <Space className={'flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
         <Button {...saveButtonProps} type="primary">
-          {t('buttons.save_settings')}
+          保存
         </Button>
       </Space>
     </Edit>

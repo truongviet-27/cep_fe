@@ -11,7 +11,7 @@ import type { BaseRecord } from '@refinedev/core'
 import { useModal } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
-import { Modal, Table, Typography } from 'antd'
+import { Modal, Table, Tag, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import type { SegmentedValue } from 'rc-segmented'
 import React from 'react'
@@ -62,12 +62,21 @@ export default function Page() {
           dataIndex="name"
           title={t('code_issue_settings.fields.name')}
         />
+
         <Table.Column
           dataIndex="issue_method"
           title={t('code_issue_settings.fields.issue_method')}
-          render={(value) =>
-            t(`code_issue_settings.fields.enum_issue.${value}`)
-          }
+          render={(value: 'manual' | 'automatic') => {
+            const colorMap: Record<'manual' | 'automatic', string> = {
+              automatic: '#9a2e2e',
+              manual: '#808080',
+            }
+
+            const text = t(`code_issue_settings.fields.enum_issue.${value}`)
+            const color = colorMap[value] || 'default'
+
+            return <Tag color={color}>{text}</Tag>
+          }}
         />
         <Table.Column
           dataIndex="prefix"

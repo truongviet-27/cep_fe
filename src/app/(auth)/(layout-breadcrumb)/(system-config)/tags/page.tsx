@@ -1,12 +1,15 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
+import type { UnitRow } from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/page'
 import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
 import {
+  useApiUrl,
   useCreate,
+  useCustomMutation,
   useDelete,
   useResource,
   useTranslate,
@@ -36,6 +39,7 @@ type RowVM = TagRow & { __index: string }
 export default function Page() {
   const t = useTranslate()
   const { resource } = useResource()
+  const apiUrl = useApiUrl()
   const { tableProps, searchFormProps } = useTable<TagRow>({
     syncWithLocation: true,
   })
@@ -44,7 +48,7 @@ export default function Page() {
     defaultValues: { rows: [] },
   })
 
-  const { insert, remove, update, move, replace } = useFieldArray({
+  const { insert, remove, update, move, replace, fields } = useFieldArray({
     control,
     name: 'rows',
     keyName: '_key',
@@ -78,7 +82,7 @@ export default function Page() {
   ]
 
   const addNew = () => {
-    const order = getValues(`rows.0`)?.order ?? 0
+    const order = (getValues(`rows.0`)?.order ?? 0) + 1
     insert(
       0,
       {
@@ -119,6 +123,33 @@ export default function Page() {
   const { mutate: createRow } = useCreate()
   const { mutate: updateRow, isLoading: saving } = useUpdate()
   const { mutate: deleteRow } = useDelete()
+
+  const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
+  const handleUpdateOrdering = (
+    values: { id: string | number; order: number }[],
+  ) => {
+    updateAll({
+      url: `${apiUrl}/${resource?.name}/upsert`,
+      method: 'post',
+      values,
+    })
+  }
+
+  const onSaveAll = () => {
+    const list = fields.map((_, idx) => watchedRows[idx] ?? {}) as UnitRow[]
+
+    const maxOrder = list.reduce((max, r) => Math.max(max, r?.order ?? 0), 0)
+
+    const values = list
+      .filter((r) => r?.id != null)
+      .map((r, index) => ({
+        id: r.id as string | number,
+        order: maxOrder - index,
+      }))
+
+    if (!values.length) return
+    handleUpdateOrdering(values)
+  }
 
   const saveRow = (index: number) => {
     const row = getValues(`rows.${index}`)
@@ -247,13 +278,13 @@ export default function Page() {
             ) : (
               <>
                 <EditButton
-                  icon={null}
+                  hideText
                   size="middle"
                   onClick={() => startEdit(index)}
                 />
                 <DeleteButton
                   size="middle"
-                  icon={null}
+                  hideText
                   recordItemId={dataSource[index]?.id}
                   onClick={() =>
                     !dataSource[index]?.id && handleDeleteRow(index)
@@ -271,6 +302,18 @@ export default function Page() {
     <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+      footer={
+        <Col>
+          <Button
+            type="primary"
+            onClick={onSaveAll}
+            loading={savingAll}
+            disabled={savingAll}
+          >
+            {t('buttons.save_all', { defaultValue: '並び順を保存' })}
+          </Button>
+        </Col>
       }
     >
       <Form {...searchFormProps} layout="vertical" colon={false}>
