@@ -9,7 +9,7 @@ export interface ITree {
 
 export type CatNode = ITree & {
   _isNew?: boolean
-  parent_id?: string | null
+  parent_id?: number | null
   level?: number
 }
 

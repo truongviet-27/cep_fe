@@ -53,13 +53,6 @@ const { Title } = Typography
 const TEMP_PREFIX = 'tmp-'
 const MAX_DEPTH = 3
 
-// const a = '[&_.ant-tree-draggable-icon]:opacity-0'
-// const b = ' [&_.ant-tree-indent]:hidden'
-const c = '[&_.ant-tree-list-holder-inner]:!w-full'
-// const d = ' [&_.ant-tree-node-content-wrapper]:!px-0'
-const e = '[&_.ant-tree-switcher]:hidden'
-// const f = '[&_.ant-tree-treenode]:!px-0'
-
 export default function Page() {
   const [tree, setTree] = useState<CatNode[]>([])
   const [dirty, setDirty] = useState(false)
@@ -101,7 +94,6 @@ export default function Page() {
         ...p,
         open: true,
         children: [
-          ...((p.children as CatNode[] | undefined) ?? []),
           {
             id: tmpId,
             name: '',
@@ -111,6 +103,7 @@ export default function Page() {
             _isNew: true,
             children: [],
           } as CatNode,
+          ...((p.children as CatNode[] | undefined) ?? []),
         ],
       })),
     )
@@ -312,7 +305,7 @@ export default function Page() {
       return
 
     // --- QUAN TRỌNG: cập nhật parentId trước khi tính level & chèn
-    dragNode.parent_id = targetParentId
+    dragNode.parent_id = Number(targetParentId)
 
     // Tính level mới theo parent
     const parentLevel = targetParentId
@@ -463,7 +456,7 @@ export default function Page() {
           className={`relative rounded-lg border border-zinc-200 bg-white transition-colors`}
         >
           <Tree
-            className={`draggable-tree ${e} ${c}`}
+            className={`draggable-tree [&_.ant-tree-list-holder-inner]:!w-full [&_.ant-tree-switcher]:hidden`}
             style={{
               backgroundColor: LAYOUT_BG,
               paddingTop: 4,

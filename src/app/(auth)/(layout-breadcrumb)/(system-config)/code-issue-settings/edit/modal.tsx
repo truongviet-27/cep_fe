@@ -118,7 +118,13 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
           name="serial_length"
           rules={[{ required: true }]}
         >
-          <InputNumber min={1} max={10} disabled={isManual} />
+          <Select disabled={isManual}>
+            {[...Array(10)].map((_, i) => (
+              <Select.Option key={i + 1} value={i + 1}>
+                {i + 1}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item label={t('code_issue_settings.fields.total')} name="total">

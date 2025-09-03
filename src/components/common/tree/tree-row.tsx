@@ -3,7 +3,7 @@ import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
 import { DeleteButton, EditButton } from '@refinedev/antd'
 import { Button, Input, Space, Tag, Typography } from 'antd'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const { Text } = Typography
 
@@ -46,6 +46,18 @@ const TreeRow: React.FC<TreeRowProps> = ({
 }) => {
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
+  const [localName, setLocalName] = useState(editingName || '')
+
+  useEffect(() => {
+    setLocalName(editingName || '')
+  }, [editingName])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value
+    setLocalName(newName)
+    onChangeName(cat.id, newName)
+  }
+
   return (
     <div className="flex items-center gap-3 rounded-md bg-white px-3 py-2">
       <Space size={8} className="min-w-0 flex-1">
@@ -57,13 +69,15 @@ const TreeRow: React.FC<TreeRowProps> = ({
         </Tag>
 
         {isEditing ? (
+          // THAY ĐỔI 3: Input giờ sẽ dùng state đệm
           <Input
             size="middle"
-            value={editingName}
-            onChange={(e) => onChangeName(cat.id, e.target.value)}
+            value={localName}
+            onChange={handleChange}
             onPressEnter={() => onSave(cat.id)}
             allowClear
             className="min-w-[320px]"
+            autoFocus
           />
         ) : (
           <Text className="truncate font-medium">{cat.name}</Text>
@@ -115,13 +129,17 @@ const TreeRow: React.FC<TreeRowProps> = ({
         )}
 
         <button
-          className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${hasChildren ? '' : 'pointer-events-none opacity-0'}`}
+          className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${
+            hasChildren ? '' : 'pointer-events-none opacity-0'
+          }`}
           onClick={() => onToggle(cat.id)}
           aria-label="toggle"
           type="button"
         >
           <DownOutlined
-            className={`transition-transform duration-200 ${cat.open ? 'rotate-0' : '-rotate-90'}`}
+            className={`transition-transform duration-200 ${
+              cat.open ? 'rotate-0' : '-rotate-90'
+            }`}
           />
         </button>
       </Space>
