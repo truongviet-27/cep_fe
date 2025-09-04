@@ -4,7 +4,7 @@
     "title": "Laravel API Documentation",
     "description": "API documentation for Laravel application with authentication and post management",
     "contact": {
-      "email": "admin@example.com"
+      "email": "manager@example.com"
     },
     "license": {
       "name": "Apache 2.0",
@@ -245,7 +245,7 @@
                             },
                             "email": {
                               "type": "string",
-                              "example": "admin@example.com"
+                              "example": "manager@example.com"
                             }
                           },
                           "type": "object"
@@ -5966,7 +5966,7 @@
           "role": {
             "description": "User role",
             "type": "string",
-            "example": "admin"
+            "example": "manager"
           },
           "created_by": {
             "description": "User ID who created this user",

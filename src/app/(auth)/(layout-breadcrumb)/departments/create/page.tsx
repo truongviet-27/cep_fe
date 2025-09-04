@@ -5,7 +5,7 @@ import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useCreate, useGo, useResource, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Button, Col, Form, Input, message, Row, Space, Typography } from 'antd'
+import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import Link from 'next/link'
 import { useMemo } from 'react'
@@ -43,7 +43,7 @@ export default function Page() {
 
   const handleAutoNumber = () => {
     // TODO: call your real API for next code (e.g. /code-issue/next?target=department)
-    const num = Math.floor(Math.random() * 900) + 100 // 100-999
+    const num = Math.floor(Math.random() * 900) + 100
     const next = `DEP${num}`
     form.setFieldsValue({ code: next })
   }
@@ -53,7 +53,6 @@ export default function Page() {
       { resource: resource?.name ?? 'departments', values },
       {
         onSuccess: () => {
-          message.success('登録しました。')
           go({
             to: { resource: resource?.name ?? 'departments', action: 'list' },
           })
@@ -99,15 +98,7 @@ export default function Page() {
         onFinish={onSubmit}
         autoComplete="off"
       >
-        {/* 部門コード */}
-        <Form.Item
-          label={
-            <span>
-              部門コード <Text type="danger">*</Text>
-            </span>
-          }
-          required
-        >
+        <Form.Item required label={<span>部門コード</span>}>
           <Row align="middle" gutter={12} wrap={false}>
             <Col flex="360px">
               <Form.Item
@@ -126,10 +117,7 @@ export default function Page() {
                 <Button size="middle" type="default" onClick={handleAutoNumber}>
                   自動採番
                 </Button>
-                <Link
-                  href="/system-config/code-issue-settings"
-                  className="text-blue-500"
-                >
+                <Link href="/code-issue-settings" className="text-blue-500">
                   コード採番設定はこちら
                 </Link>
               </Space>
@@ -137,13 +125,8 @@ export default function Page() {
           </Row>
         </Form.Item>
 
-        {/* 部門名（支社/部/課） */}
         <Form.Item
-          label={
-            <span>
-              部門名（支社/部/課） <Text type="danger">*</Text>
-            </span>
-          }
+          label={<span>部門名（支社/部/課）</span>}
           name="name"
           rules={nameRules}
         >

@@ -70,7 +70,19 @@
     "products": "商品"
   },
   "employees": {
-    "employees": "社員"
+    "employees": "社員",
+    "fields": {
+      "code": "社員コード",
+      "name": "社員名",
+      "department": "部門（支社/部/課）",
+      "email": "メールアドレス",
+      "role": "ロール",
+      "actions": "操作"
+    },
+    "roles": {
+      "employee": "一般",
+      "manager": "管理者"
+    }
   },
   "permission_settings": {
     "permission_settings": "権限設定"
@@ -230,7 +242,7 @@
         "create": "登録"
       },
       "filters": {
-        "search_placeholder": "部門コード・部門名で検索",
+        "search_placeholder": "部分一致",
         "clear": "クリア",
         "search": "検索"
       },
@@ -287,5 +299,11 @@
       "unit_name": "単位名",
       "actions": "操作"
     }
+  },
+  "common": {
+    "created_by": "登録者",
+    "updated_by": "更新者",
+    "created_at": "作成日",
+    "not_set": "未設定"
   }
 }

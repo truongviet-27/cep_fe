@@ -24,11 +24,15 @@ import {
   SaveButton,
   type SaveButtonProps,
 } from '@refinedev/antd'
-import { Card, Space, Spin } from 'antd'
+import { Button, Card, Space, Spin } from 'antd'
 import AutoHeading from '@components/common/auto-heading'
+import { PRIMARY } from '@utility/color'
 
 type CustomProps = {
   isAutoHeading?: boolean
+  i18nHeading?: string
+  hiddenButtonBack?: boolean
+  rightFooterButtons?: React.ReactNode
 }
 
 /**
@@ -57,6 +61,9 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
   footerButtonProps,
   footerButtons,
   isAutoHeading = true,
+  i18nHeading,
+  hiddenButtonBack = false,
+  rightFooterButtons,
   // goBack: goBackFromProps,
   autoSaveProps,
 }) => {
@@ -159,19 +166,19 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
         //       : back
         //     : undefined
         // }
-        // title={
-        //   title ??
-        //   translate(
-        //     `${identifier}.titles.edit`,
-        //     `Edit ${getUserFriendlyName(
-        //       resource?.meta?.label ??
-        //         resource?.options?.label ??
-        //         resource?.label ??
-        //         identifier,
-        //       'singular',
-        //     )}`,
-        //   )
-        // }
+        title={
+          title ??
+          translate(
+            `${identifier}.titles.edit`,
+            `Edit ${getUserFriendlyName(
+              resource?.meta?.label ??
+                resource?.options?.label ??
+                resource?.label ??
+                identifier,
+              'singular',
+            )}`,
+          )
+        }
         // extra={
         //   <Space wrap {...(headerButtonProps ?? {})}>
         //     {headerButtons
@@ -207,20 +214,48 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
                 }}
                 {...(footerButtonProps ?? {})}
               >
-                {footerButtons
-                  ? typeof footerButtons === 'function'
-                    ? footerButtons({
-                        defaultButtons: defaultFooterButtons,
-                        deleteButtonProps,
-                        saveButtonProps,
-                      })
-                    : footerButtons
-                  : defaultFooterButtons}
+                {footerButtons ? (
+                  typeof footerButtons === 'function' ? (
+                    footerButtons({
+                      defaultButtons: defaultFooterButtons,
+                      deleteButtonProps,
+                      saveButtonProps,
+                    })
+                  ) : (
+                    <>
+                      {footerButtons}
+                      {
+                        <Space
+                          size={4}
+                          style={{ paddingTop: footerButtons ? 60 : undefined }}
+                        >
+                          {rightFooterButtons}
+                          {!hiddenButtonBack && (
+                            <Button
+                              type="default"
+                              style={{
+                                background: '#fff',
+                                borderColor: PRIMARY,
+                                color: PRIMARY,
+                                fontWeight: 600,
+                              }}
+                            >
+                              戻る
+                            </Button>
+                          )}
+                        </Space>
+                      }
+                    </>
+                  )
+                ) : (
+                  defaultFooterButtons
+                )}
               </Space>,
             ]}
             {...(contentProps ?? {})}
+            className="min-h-[82vh]"
           >
-            {isAutoHeading && <AutoHeading />}
+            {isAutoHeading && <AutoHeading i18n={i18nHeading} />}
             {children}
           </Card>
         </Spin>
