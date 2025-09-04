@@ -6,11 +6,11 @@ import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import * as React from 'react'
 
-type H1Props = React.HTMLAttributes<HTMLHeadingElement> & {
+export type AutoHeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
   i18n?: string
 }
 
-export default function AutoHeading({ i18n, ...props }: H1Props) {
+export default function AutoHeading({ i18n, ...props }: AutoHeadingProps) {
   const t = useTranslations()
   const pathname = usePathname()
 

@@ -171,7 +171,7 @@ export default function Page() {
           <Col xs={12} sm={6} md={6}>
             <Form.Item name="q">
               <Input
-                placeholder={t('filters.searchPlaceholder')}
+                placeholder={t('departments.list.filters.search_placeholder')}
                 prefix={<SearchOutlined />}
               />
             </Form.Item>

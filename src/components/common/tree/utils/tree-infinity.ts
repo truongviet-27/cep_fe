@@ -327,9 +327,11 @@ const getDescendantIds = (node: CatNode, idSet: Set<Id>) => {
  */
 const filterCategoryTree = (
   nodes: CatNode[],
-  filterLevel?: number,
-  filterName?: string,
+  filterLevel?: number | null,
+  filterName?: string | null,
 ): CatNode[] => {
+  if (!filterLevel && !filterName) return nodes
+
   const trimmedName = filterName?.trim().toLowerCase()
 
   // Nếu không có điều kiện lọc, trả về cây gốc

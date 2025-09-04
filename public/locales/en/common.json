@@ -69,7 +69,22 @@
     "products": "Products"
   },
   "employees": {
-    "employees": "Employees"
+    "employees": "Employees",
+    "edit": {
+      "title": "Edit Employee"
+    },
+    "fields": {
+      "code": "Employee Code",
+      "name": "Employee Name",
+      "department": "Department (Branch/Division/Section)",
+      "email": "Email Address",
+      "role": "Role",
+      "actions": "Actions"
+    },
+    "roles": {
+      "employee": "General",
+      "manager": "Manager"
+    }
   },
   "permission_settings": {
     "permission_settings": "Permission Settings"
@@ -278,5 +293,11 @@
       "unit_name": "Unit Name",
       "actions": "Actions"
     }
+  },
+  "common": {
+    "created_by": "Created By",
+    "updated_by": "Updated By",
+    "created_at": "Created At",
+    "not_set": "Not Set"
   }
 }
