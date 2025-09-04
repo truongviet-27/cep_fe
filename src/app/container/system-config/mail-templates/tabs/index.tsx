@@ -1,26 +1,41 @@
 import { MailFilled } from '@ant-design/icons'
-import Tabs1 from '@app/container/system-config/email-template/tabs/content/tabs1'
-import Tabs2 from '@app/container/system-config/email-template/tabs/content/tabs2'
-import type { FormProps } from 'antd'
+import TabsContent from '@app/container/system-config/mail-templates/tabs/content'
 import { Card, Tabs } from 'antd'
 import { useMemo } from 'react'
 
 function TabsEmailTemplate({
-  formProps,
   isEdit,
+  onChange,
 }: {
-  formProps: FormProps
   isEdit: boolean
+  onChange: (value: string) => void
 }) {
   const tags = useMemo(() => {
     return [
-      '取引先会社名',
-      '取引先部署名',
-      '取引先担当者名',
-      '自社名',
-      '自社担当者名',
-      '自社担当者メールアドレス',
-      '自社担当者電話番号',
+      {
+        value: 1,
+        text: '取引先部署名',
+      },
+      {
+        value: 2,
+        text: '取引先担当者名',
+      },
+      {
+        value: 3,
+        text: '自社名',
+      },
+      {
+        value: 4,
+        text: '自社担当者名',
+      },
+      {
+        value: 5,
+        text: '自社担当者メールアドレス',
+      },
+      {
+        value: 6,
+        text: '自社担当者電話番号',
+      },
     ]
   }, [])
 
@@ -48,7 +63,7 @@ function TabsEmailTemplate({
               </div>
             }
           >
-            <Tabs1 formProps={formProps} isEdit={isEdit} tags={tags} />
+            <TabsContent index={1} isEdit={isEdit} tags={tags} />
           </Card>
         ),
       },
@@ -70,26 +85,18 @@ function TabsEmailTemplate({
                     color: '#1890FF',
                   }}
                 />
-                見積書送付メール
+                見積書パスワード送付メール
               </div>
             }
           >
-            <Tabs2 formProps={formProps} isEdit={isEdit} tags={tags} />
+            <TabsContent index={2} isEdit={isEdit} tags={tags} />
           </Card>
         ),
       },
     ]
   }, [isEdit])
 
-  return (
-    <Tabs
-      destroyOnHidden
-      items={items}
-      onChange={(value) => {
-        console.log(+value, 'xxxxxxxxx')
-      }}
-    />
-  )
+  return <Tabs destroyOnHidden items={items} onChange={onChange} />
 }
 
 export default TabsEmailTemplate
