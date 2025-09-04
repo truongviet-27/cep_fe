@@ -9,6 +9,7 @@ import { PRIMARY } from '@utility/color'
 type CustomProps = {
   isAutoHeading?: boolean
   footer?: React.ReactNode
+  i18nHeading?: string
 }
 
 /**
@@ -27,6 +28,7 @@ export const List: React.FC<ListProps & CustomProps> = ({
   contentProps,
   isAutoHeading = true,
   footer,
+  i18nHeading,
   // headerProps,
   // breadcrumb: breadcrumbFromProps,
   // headerButtonProps,
@@ -105,7 +107,7 @@ export const List: React.FC<ListProps & CustomProps> = ({
           {...(contentProps ?? {})}
         >
           <div className={'mb-4 flex items-center justify-between'}>
-            {isAutoHeading && <AutoHeading />}
+            {isAutoHeading && <AutoHeading i18n={i18nHeading} />}
             {/*{defaultExtra}*/}
           </div>
           {children}

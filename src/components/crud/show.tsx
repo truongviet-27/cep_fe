@@ -22,7 +22,16 @@ import {
   RefreshButton,
   type RefreshButtonProps,
 } from '@refinedev/antd'
-import { Card, Space, Spin } from 'antd'
+import { Button, Card, Space, Spin } from 'antd'
+import AutoHeading from '@components/common/auto-heading'
+import { PRIMARY } from '@utility/color'
+
+type CustomProps = {
+  isAutoHeading?: boolean
+  i18nHeading?: string
+  hiddenButtonBack?: boolean
+  rightFooterButtons?: React.ReactNode
+}
 
 /**
  * `<Show>` provides us a layout for displaying the page.
@@ -30,7 +39,7 @@ import { Card, Space, Spin } from 'antd'
  *
  * @see {@link https://refine.dev/docs/ui-frameworks/antd/components/basic-views/show} for more details.
  */
-export const Show: React.FC<ShowProps> = ({
+export const Show: React.FC<ShowProps & CustomProps> = ({
   title,
   canEdit,
   canDelete,
@@ -48,6 +57,10 @@ export const Show: React.FC<ShowProps> = ({
   footerButtons,
   footerButtonProps,
   headerButtonProps,
+  i18nHeading,
+  isAutoHeading = true,
+  rightFooterButtons,
+  hiddenButtonBack,
   goBack: goBackFromProps,
 }) => {
   const translate = useTranslate()
@@ -134,14 +147,14 @@ export const Show: React.FC<ShowProps> = ({
   return (
     <div {...(wrapperProps ?? {})}>
       <PageHeader
-        backIcon={goBackFromProps}
-        onBack={
-          action !== 'list' && typeof action !== 'undefined'
-            ? routerType === 'legacy'
-              ? goBack
-              : back
-            : undefined
-        }
+        // backIcon={goBackFromProps}
+        // onBack={
+        //   action !== 'list' && typeof action !== 'undefined'
+        //     ? routerType === 'legacy'
+        //       ? goBack
+        //       : back
+        //     : undefined
+        // }
         title={
           title ??
           translate(
@@ -191,17 +204,45 @@ export const Show: React.FC<ShowProps> = ({
                       wrap
                       {...footerButtonProps}
                     >
-                      {typeof footerButtons === 'function'
-                        ? footerButtons({
-                            defaultButtons: null,
-                          })
-                        : footerButtons}
+                      {typeof footerButtons === 'function' ? (
+                        footerButtons({
+                          defaultButtons: null,
+                        })
+                      ) : (
+                        <>
+                          {footerButtons}
+                          {
+                            <Space
+                              size={4}
+                              style={{
+                                paddingTop: footerButtons ? 60 : undefined,
+                              }}
+                            >
+                              {rightFooterButtons}
+                              {!hiddenButtonBack && (
+                                <Button
+                                  type="default"
+                                  style={{
+                                    background: '#fff',
+                                    borderColor: PRIMARY,
+                                    color: PRIMARY,
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  戻る
+                                </Button>
+                              )}
+                            </Space>
+                          }
+                        </>
+                      )}
                     </Space>,
                   ]
                 : undefined
             }
             {...(contentProps ?? {})}
           >
+            {isAutoHeading && <AutoHeading i18n={i18nHeading} />}
             {children}
           </Card>
         </Spin>
