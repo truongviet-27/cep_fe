@@ -3,13 +3,7 @@ import { RightOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import {
-  DateField,
-  EditButton,
-  EmailField,
-  ShowButton,
-  useTable,
-} from '@refinedev/antd'
+import { EditButton, EmailField, ShowButton, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
@@ -31,14 +25,17 @@ function Page() {
         </Title>
       ),
     },
+    { title: <Title level={5}>社員一覧</Title> },
   ]
   return (
     <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
+      i18nHeading={'社員一覧'}
     >
-      <CommonTable {...tableProps} rowKey="id">
+      <CommonTable className={'mt-6'} {...tableProps} rowKey="id">
+        <Table.Column dataIndex="code" title={t('employees.fields.code')} />
         <Table.Column dataIndex="name" title={t('employees.fields.name')} />
         <Table.Column
           dataIndex={['email']}
@@ -46,14 +43,12 @@ function Page() {
           render={(value) => <EmailField value={value} />}
         />
         <Table.Column
-          dataIndex={['created_at']}
-          title={t('employees.fields.created_at')}
-          render={(value) => <DateField value={value} />}
+          dataIndex={['department.name']}
+          title={t('employees.fields.department')}
         />
         <Table.Column
-          dataIndex={['updated_at']}
-          title={t('employees.fields.updated_at')}
-          render={(value) => <DateField value={value} />}
+          dataIndex={['role.display_name']}
+          title={t('employees.fields.role')}
         />
         <Table.Column
           title={t('table.actions')}

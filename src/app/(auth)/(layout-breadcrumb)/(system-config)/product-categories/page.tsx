@@ -3,6 +3,7 @@
 import { DownOutlined, RightOutlined, UpOutlined } from '@ant-design/icons'
 import TreeRow from '@components/common/tree/tree-row'
 import {
+  filterCategoryTree,
   findNode,
   findNodeById,
   getParentId,
@@ -59,6 +60,10 @@ export default function Page() {
   const [editing, setEditing] = useState<
     Record<string, { name: string; original: string }>
   >({})
+  const [level, setLevel] = useState<number | null>(null)
+  const [category, setCategory] = useState<string | null>(null)
+
+  const [form] = Form.useForm()
   const { resource: rs } = useResource()
   const resource = String(rs?.name)
 
@@ -362,6 +367,27 @@ export default function Page() {
     ],
   )
 
+  const handleSearch = (values: {
+    level: number | null
+    name: string | null
+  }) => {
+    setLevel(values.level)
+    setCategory(values.name || '')
+  }
+
+  const handleClear = () => {
+    form.resetFields()
+    setLevel(null)
+    setCategory(null)
+  }
+
+  const filteredTree = useMemo(
+    () => filterCategoryTree(tree, level, category),
+    [tree, level, category],
+  )
+
+  console.log(tree, 'filteredTree')
+
   return (
     <Create
       isLoading={!!tableProps.loading}
@@ -382,7 +408,7 @@ export default function Page() {
         </Space>
       }
     >
-      <Form layout="horizontal" colon={false}>
+      <Form layout="horizontal" colon={false} onFinish={handleSearch}>
         <Row
           align="middle"
           justify="space-between"
@@ -395,37 +421,41 @@ export default function Page() {
               <Col>
                 <div style={{ fontWeight: 600 }}>カテゴリレベル</div>
                 <div style={{ marginTop: 8 }}>
-                  <Select
-                    size="middle"
-                    placeholder="選択してください"
-                    style={{ width: 240 }}
-                    options={[
-                      { label: '大', value: 1 },
-                      { label: '中', value: 2 },
-                      { label: '小', value: 3 },
-                    ]}
-                  />
+                  <Form.Item name="level" noStyle>
+                    <Select
+                      size="middle"
+                      placeholder="選択してください"
+                      style={{ width: 240 }}
+                      options={[
+                        { label: '大', value: 1 },
+                        { label: '中', value: 2 },
+                        { label: '小', value: 3 },
+                      ]}
+                    />
+                  </Form.Item>
                 </div>
               </Col>
               <Col>
                 <div style={{ fontWeight: 600 }}>カテゴリ名</div>
                 <div style={{ marginTop: 8 }}>
-                  <Input
-                    size="middle"
-                    placeholder="部分一致"
-                    allowClear
-                    style={{ width: 360 }}
-                  />
+                  <Form.Item name="name" noStyle>
+                    <Input
+                      size="middle"
+                      placeholder="部分一致"
+                      allowClear
+                      style={{ width: 360 }}
+                    />
+                  </Form.Item>
                 </div>
               </Col>
               <Col>
                 <div style={{ height: 28 }} />
                 <div style={{ marginTop: 4 }}>
                   <Space size="middle">
-                    <Button type="primary" size="middle">
+                    <Button type="primary" size="middle" htmlType={'submit'}>
                       検索
                     </Button>
-                    <Button size="middle" type="default">
+                    <Button size="middle" type="default" onClick={handleClear}>
                       クリア
                     </Button>
                   </Space>
@@ -466,7 +496,7 @@ export default function Page() {
             selectable={false}
             expandedKeys={expandedKeys}
             onDrop={onDrop}
-            treeData={toTreeData(tree)}
+            treeData={toTreeData(filteredTree)}
             virtual={false}
             showLine
           />

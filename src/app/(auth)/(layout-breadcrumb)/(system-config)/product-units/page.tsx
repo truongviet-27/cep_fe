@@ -70,9 +70,7 @@ export default function Page() {
 
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
 
-  const handleUpdateOrdering = (
-    values: { id: string | number; order: number }[],
-  ) => {
+  const handleUpdateOrdering = (values: UnitRow[]) => {
     updateAll({
       url: `${apiUrl}/${resource?.name}/upsert`,
       method: 'post',
@@ -90,6 +88,7 @@ export default function Page() {
     const values = list
       .filter((r) => r?.id != null)
       .map((r, index) => ({
+        ...r,
         id: r.id as string | number,
         order: maxOrder - index,
       }))
