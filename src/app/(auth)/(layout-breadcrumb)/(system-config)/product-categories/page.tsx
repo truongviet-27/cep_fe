@@ -28,6 +28,7 @@ import {
   useApiUrl,
   useCreate,
   useCustomMutation,
+  useNavigation,
   useResource,
   useUpdate,
 } from '@refinedev/core'
@@ -59,6 +60,8 @@ export default function Page() {
   const [editing, setEditing] = useState<
     Record<string, { name: string; original: string }>
   >({})
+
+  const { push } = useNavigation()
   const { resource: rs } = useResource()
   const resource = String(rs?.name)
 
@@ -449,6 +452,15 @@ export default function Page() {
             icon={allOpen ? <UpOutlined /> : <DownOutlined />}
           >
             {allOpen ? 'すべて閉じる' : 'すべて開く'}
+          </Button>
+          <Button
+            type="link"
+            onClick={() => {
+              push('/product-categories/csv')
+            }}
+            // icon={allOpen ? <UpOutlined /> : <DownOutlined />}
+          >
+            CSV一括登録
           </Button>
         </div>
 

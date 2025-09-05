@@ -1,6 +1,6 @@
 .ant-form-item-label > label {
   width: 100%;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 .ant-form-item-label > label::after {
   display: none;

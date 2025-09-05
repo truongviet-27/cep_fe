@@ -1,7 +1,7 @@
 import './styleEmail.css'
 
 import type { InputRef } from 'antd'
-import { Button, Form, Input, Space } from 'antd'
+import { Button, Form, Input, Space, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -10,10 +10,12 @@ function TabsContent({
   index,
   isEdit,
   tags,
+  loading,
 }: {
   index: number
   isEdit: boolean
   tags: { value: number; text: string }[]
+  loading: boolean
 }) {
   const methods = useFormContext()
   const { control, getValues, setValue } = methods
@@ -38,9 +40,19 @@ function TabsContent({
       input.selectionStart = input.selectionEnd = start + text.length
     })
   }
-  return (
+
+  return loading ? (
+    <div className="text-center">
+      <Spin size={'large'} />
+    </div>
+  ) : (
     <Form layout="vertical" {...methods}>
-      <Form.Item layout="vertical" label="件名" name={`title_${index}`}>
+      <Form.Item
+        layout="vertical"
+        name={`title_${index}`}
+        label={<span style={{ fontWeight: 'bold' }}>件名</span>}
+        rules={[{ required: true }]}
+      >
         <Controller
           name={`title_${index}`}
           control={control}
@@ -56,15 +68,17 @@ function TabsContent({
         />
       </Form.Item>
       <Form.Item
+        name={`content_${index}`}
         label={
           <>
-            <span>本文</span>
+            <span style={{ fontWeight: 'bold' }}>本文</span>
             {isEdit && (
               <Space
                 style={{
                   flexWrap: 'wrap',
                   float: 'right',
                   marginRight: '0',
+                  marginLeft: 'auto',
                 }}
               >
                 {tags.map((tag) => (
@@ -87,6 +101,7 @@ function TabsContent({
             )}
           </>
         }
+        rules={[{ required: true }]}
       >
         <Controller
           name={`content_${index}`}
@@ -112,7 +127,10 @@ function TabsContent({
         />
       </Form.Item>
 
-      <Form.Item layout="vertical" label="署名（自動挿入）">
+      <Form.Item
+        layout="vertical"
+        label={<span style={{ fontWeight: 'bold' }}>署名（自動挿入）</span>}
+      >
         <Controller
           name={`signature_${index}`}
           control={control}

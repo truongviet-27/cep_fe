@@ -1,4 +1,4 @@
-import { useCreate, useList } from '@refinedev/core'
+import { useApiUrl, useCreate, useCustom } from '@refinedev/core'
 import { useForm } from '@refinedev/react-hook-form'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
@@ -24,32 +24,47 @@ TEL: 03-4431-1337`,
   const { handleSubmit, reset } = methods
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [indexTab, setIndexTab] = useState<number>(1)
+  const [codeTab, setCodeTab] = useState<string>('quota_mail')
+
   const [openReset, setOpenReset] = useState<boolean>(false)
   const [openCancel, setOpenCancel] = useState<boolean>(false)
 
-  const { mutate } = useCreate({
+  const { mutate, isPending } = useCreate({
     resource: 'mail-templates',
-  })
-
-  const { data } = useList({
-    resource: 'mail-templates',
-    pagination: {
-      mode: 'off',
+    mutationOptions: {
+      onSuccess: () => {
+        setIsEdit(false)
+      },
+      onError: (error) => {
+        console.log(error.response.data, 'error')
+        // setError(error)
+      },
     },
   })
 
+  const apiUrl = useApiUrl()
+
+  const { data, isLoading, isFetching } = useCustom({
+    url: `${apiUrl}/mail-templates/${codeTab}`,
+    method: 'get',
+  })
+
   const onChangeTabs = useCallback((value: string) => {
-    setIndexTab(+value)
+    setCodeTab(value)
+    if (value === 'quota_mail') {
+      setIndexTab(1)
+    } else {
+      setIndexTab(2)
+    }
   }, [])
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(indexTab, 'indexTab')
-
     if (indexTab === 1 || indexTab === 2) {
       mutate({
         values: {
+          code: codeTab,
           title: data[`title_${indexTab}`],
-          content: data[`content_${indexTab}`],
+          body: data[`content_${indexTab}`],
           signature: data[`signature_${indexTab}`],
         },
       })
@@ -59,15 +74,24 @@ TEL: 03-4431-1337`,
   useEffect(() => {
     if (data && (indexTab === 1 || indexTab === 2)) {
       reset({
-        [`title_${indexTab}`]: data.data[0].id,
-        [`content_${indexTab}`]: data.data[0].id,
-        [`signature_${indexTab}`]: data.data[0].id,
+        [`title_${indexTab}`]: data.data.title,
+        [`content_${indexTab}`]: data.data.body,
+        [`signature_${indexTab}`]: data.data.signature,
       })
     }
   }, [data, indexTab])
 
   return [
-    { methods, isEdit, openReset, openCancel, indexTab },
+    {
+      methods,
+      isEdit,
+      openReset,
+      openCancel,
+      indexTab,
+      isLoading,
+      isFetching,
+      isPending,
+    },
     { t, setIsEdit, onSubmit, onChangeTabs, setOpenReset, setOpenCancel },
   ] as const
 }

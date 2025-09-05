@@ -28,7 +28,7 @@ export default function AuthHeader({
   const modalProps = useModal()
 
   return (
-    <div className={cn(children && 'flex justify-center')}>
+    <div className={cn(children && 'sticky top-0 z-50 flex justify-center')}>
       <Header
         className={cn(
           'flex w-full items-center border-b',
@@ -36,6 +36,7 @@ export default function AuthHeader({
           'border',
           'shadow-sm',
           'px-6 py-4 pb-6',
+
           children ? 'justify-between' : 'justify-end',
         )}
         style={{
