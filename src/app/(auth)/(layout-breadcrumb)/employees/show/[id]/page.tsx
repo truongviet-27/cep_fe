@@ -1,32 +1,19 @@
 'use client'
 
 import { RightOutlined, WarningOutlined } from '@ant-design/icons'
+import { DetailItem } from '@components/common/detail-item'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { IEmployee } from '@interfaces/employee'
-import { DeleteButton, EditButton, useSelect } from '@refinedev/antd'
+import { EditButton, useSelect } from '@refinedev/antd'
 import { useResource, useShow, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Col, Row, Space, Tag, Typography } from 'antd'
+import { Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 const { Title, Text } = Typography
-
-const DetailItem: React.FC<{ label: string; children: React.ReactNode }> = ({
-  label,
-  children,
-}) => (
-  <Row align="middle" gutter={[16, 16]}>
-    <Col xs={24} md={6}>
-      <Text strong>{label}</Text>
-    </Col>
-    <Col xs={24} md={18}>
-      {children}
-    </Col>
-  </Row>
-)
 
 export default function EmployeeShow() {
   const t = useTranslate()
@@ -86,13 +73,6 @@ export default function EmployeeShow() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       i18nHeading={'社員編集'}
-      footerButtonProps={{
-        style: {
-          display: 'flex',
-          justifyContent: 'space-between',
-          padding: 24,
-        },
-      }}
       footerButtons={
         <ShowMoreInfo
           descriptions={[
@@ -115,8 +95,7 @@ export default function EmployeeShow() {
       }
       rightFooterButtons={
         <Space size={2} className="flex justify-end">
-          <DeleteButton recordItemId={id} />
-          <EditButton recordItemId={id} type="primary" />
+          <EditButton icon={null} recordItemId={id} type="primary" />
         </Space>
       }
     >

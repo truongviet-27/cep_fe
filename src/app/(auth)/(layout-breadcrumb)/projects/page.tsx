@@ -23,7 +23,7 @@ export default function Page() {
 
   const go = useGo()
 
-  const { tableProps, searchFormProps } = useTable<IProject>({
+  const { tableProps, searchFormProps, setFilters } = useTable<IProject>({
     syncWithLocation: true,
   })
 
@@ -73,7 +73,12 @@ export default function Page() {
               <Button htmlType="submit" type="primary">
                 {t('filters.search')}
               </Button>
-              <Button onClick={() => searchFormProps.form?.resetFields()}>
+              <Button
+                onClick={() => {
+                  searchFormProps.form?.resetFields()
+                  setFilters([], 'replace')
+                }}
+              >
                 {t('filters.clear')}
               </Button>
             </Space>

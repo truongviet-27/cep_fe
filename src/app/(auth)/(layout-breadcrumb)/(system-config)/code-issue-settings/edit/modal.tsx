@@ -8,10 +8,10 @@ import {
   Divider,
   Form,
   Input,
-  InputNumber,
   Radio,
   Select,
   Space,
+  Tag,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
@@ -36,12 +36,8 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
 
   const record = queryResult?.data?.data
 
-  // Sử dụng form instance để theo dõi giá trị issue_method
   const [form] = Form.useForm()
-  // Kết hợp form instance với formProps
-  const mergedFormProps = { ...formProps, form }
 
-  // Theo dõi giá trị issue_method
   const issueMethod = Form.useWatch('issue_method', form)
   const isManual = issueMethod === 'manual'
 
@@ -50,9 +46,10 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
       saveButtonProps={saveButtonProps}
       isLoading={formLoading}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
+      title={<></>}
     >
       <Form
-        {...mergedFormProps}
+        {...formProps}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
@@ -69,7 +66,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
           name="name"
           rules={[{ required: true }]}
         >
-          <Input disabled />
+          {record?.name}
         </Form.Item>
 
         <Form.Item
@@ -128,14 +125,14 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
         </Form.Item>
 
         <Form.Item label={t('code_issue_settings.fields.total')} name="total">
-          <InputNumber disabled />
+          {record?.total}
         </Form.Item>
 
         <Form.Item
           label={t('code_issue_settings.fields.preview_code')}
           name="preview_code"
         >
-          <Input disabled />
+          <Tag>{record?.preview_code}</Tag>
         </Form.Item>
 
         <Divider />

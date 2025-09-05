@@ -16,7 +16,6 @@ function Page() {
   const t = useTranslate()
 
   const { tableProps } = useTable()
-
   const breadcrumbItems = [
     {
       title: (
