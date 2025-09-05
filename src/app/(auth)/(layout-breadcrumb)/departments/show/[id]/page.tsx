@@ -1,62 +1,79 @@
 'use client'
 
+import { RightOutlined } from '@ant-design/icons'
+import { DetailItem } from '@components/common/detail-item'
+import ShowMoreInfo from '@components/common/show-more-info'
 import { Show } from '@components/crud/show'
-import { NumberField, TextField } from '@refinedev/antd'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import type { IDepartments } from '@interfaces/departments'
+import { DeleteButton, EditButton } from '@refinedev/antd'
 import { useShow, useTranslate } from '@refinedev/core'
-import { Col, Descriptions, Divider, Row, Space, Typography } from 'antd'
+import { PRIMARY } from '@utility/color'
+import { Typography } from 'antd'
 import dayjs from 'dayjs'
+import React from 'react'
 
-export default function DepartmentShow() {
+const { Title } = Typography
+
+export default function Page() {
   const t = useTranslate()
-  const { queryResult } = useShow({
-    resource: 'departments',
-  })
+  const { queryResult } = useShow<IDepartments>()
 
-  const { data, isLoading } = queryResult
-  const record = data?.data
-  const { Title, Text } = Typography
+  const departmentData = queryResult?.data?.data
+
+  const breadcrumbItems = [
+    {
+      title: (
+        <Title level={5} style={{ color: PRIMARY }}>
+          {t('system_config.system_config')}
+        </Title>
+      ),
+    },
+    { title: <Title level={5}>部門登録</Title> },
+  ]
 
   return (
     <Show
-      isLoading={isLoading}
-      title={<Title level={5}>{t('departments.show.title')}</Title>}
-      headerButtons={({ defaultButtons }) => <Space>{defaultButtons}</Space>}
+      title={
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
+      }
+      i18nHeading={'部門登録'}
+      footerButtons={
+        <div>
+          <ShowMoreInfo
+            descriptions={[
+              {
+                title: t('common.created_by'),
+                value: `${departmentData?.author?.name ?? '---'} ${dayjs(
+                  departmentData?.created_at,
+                ).format('YYYY/MM/DD HH:mm')}`,
+              },
+              {
+                title: t('common.updated_by'),
+                value: departmentData?.editor?.name
+                  ? `${departmentData.editor.name} ${dayjs(
+                      departmentData.updated_at,
+                    ).format('YYYY/MM/DD HH:mm')}`
+                  : '---',
+              },
+            ]}
+          />
+          <div className="mt-4 flex w-full justify-start pb-4">
+            <DeleteButton icon={null} size={'small'} />
+          </div>
+        </div>
+      }
+      rightFooterButtons={<EditButton icon={null} type={'primary'} />}
     >
-      <Descriptions bordered column={1} labelStyle={{ width: '200px' }}>
-        <Descriptions.Item label={t('departments.fields.code')}>
-          <TextField value={record?.code} />
-        </Descriptions.Item>
-        <Descriptions.Item label={t('departments.fields.name')}>
-          <Space>
-            <TextField value={record?.name} />
-          </Space>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('departments.fields.employee_count')}>
-          <NumberField value={record?.employee_count} />
-        </Descriptions.Item>
-      </Descriptions>
-
-      <Divider />
-
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
-          <Text type="secondary">
-            {`${t('departments.fields.created_by')}: `}
-            {record?.created_by?.name}{' '}
-            {record?.created_by?.date
-              ? dayjs(record.created_by.date).format('YYYY/MM/DD HH:mm')
-              : ''}
-          </Text>
-        </Col>
-        <Col span={24}>
-          <Text type="secondary">
-            {`${t('departments.fields.updated_by')}: `}
-            {record?.updated_by
-              ? `${record.updated_by.name} ${dayjs(record.updated_by.date).format('YYYY/MM/DD HH:mm')}`
-              : '---'}
-          </Text>
-        </Col>
-      </Row>
+      <div className="flex flex-col space-y-6">
+        <DetailItem label={'部門コード'}>{departmentData?.code}</DetailItem>
+        <DetailItem label={'部門名（支社/部/課）'}>
+          {departmentData?.name}
+        </DetailItem>
+        <DetailItem label={'部門コード'}>
+          {departmentData?.number_of_employee}
+        </DetailItem>
+      </div>
     </Show>
   )
 }

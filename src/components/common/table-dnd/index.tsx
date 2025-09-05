@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import { HolderOutlined } from '@ant-design/icons'
@@ -74,10 +75,7 @@ export interface TableDndProps<T extends object> {
   columns: TableColumnsType<T>
   getRowId: (row: T) => string
   onDragEnd?: (activeId: string, overId: string | null) => void
-  tableProps?: Omit<
-    TableProps<T>,
-    'dataSource' | 'columns' | 'rowKey' | 'components'
-  >
+  tableProps?: TableProps<any>
 }
 
 export default function TableDnd<T extends object>({
@@ -117,6 +115,7 @@ export default function TableDnd<T extends object>({
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         <Table<T>
+          {...tableProps}
           components={{
             body: { row: DndRow },
             header: {
@@ -139,10 +138,8 @@ export default function TableDnd<T extends object>({
           rowKey={getRowId}
           columns={injectedColumns}
           dataSource={dataSource}
-          pagination={false}
           tableLayout="fixed"
           scroll={{ x: 'max-content' }}
-          {...tableProps}
         />
       </SortableContext>
 

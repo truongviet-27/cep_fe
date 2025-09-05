@@ -25,15 +25,15 @@ export const customDataProvider = (
     const queryFilters = generateFilter(filters)
 
     const query: {
-      _start?: number
-      _end?: number
+      _page?: number
+      _per_page?: number
       _sort?: string
       _order?: string
     } = {}
 
     if (mode === 'server') {
-      query._start = (current - 1) * pageSize
-      query._end = current * pageSize
+      query._page = current
+      query._per_page = pageSize
     }
 
     const generatedSort = generateSort(sorters)
@@ -56,7 +56,7 @@ export const customDataProvider = (
 
     return {
       data: data?.data?.items || [],
-      total: (total || data?.meta?.total) ?? 0,
+      total: data?.data?.meta?.total ?? total,
     }
   },
 

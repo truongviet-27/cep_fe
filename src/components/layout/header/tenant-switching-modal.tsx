@@ -24,7 +24,7 @@ function TenantSwitchingModal({
 
   const { resource } = useResource()
 
-  const { searchFormProps, tableProps } = useTable({
+  const { searchFormProps, tableProps, setFilters } = useTable({
     syncWithLocation: true,
     resource: 'tenants',
   })
@@ -59,7 +59,12 @@ function TenantSwitchingModal({
               <Button htmlType="submit" type="primary">
                 {t('filters.search')}
               </Button>
-              <Button onClick={() => searchFormProps.form?.resetFields()}>
+              <Button
+                onClick={() => {
+                  searchFormProps.form?.resetFields()
+                  setFilters([], 'replace')
+                }}
+              >
                 {t('filters.clear')}
               </Button>
             </Space>

@@ -386,8 +386,6 @@ export default function Page() {
     [tree, level, category],
   )
 
-  console.log(tree, 'filteredTree')
-
   return (
     <Create
       isLoading={!!tableProps.loading}

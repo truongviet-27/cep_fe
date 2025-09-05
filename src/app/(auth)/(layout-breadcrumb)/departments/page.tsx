@@ -10,6 +10,7 @@ import {
   DateField,
   DeleteButton,
   EditButton,
+  RefreshButton,
   ShowButton,
   useTable,
 } from '@refinedev/antd'
@@ -45,8 +46,15 @@ export default function Page() {
   const t = useTranslate()
   const { resource } = useResource()
 
-  const { tableProps, searchFormProps } = useTable<Department>({
+  const { tableProps, searchFormProps, setFilters } = useTable<Department>({
     syncWithLocation: true,
+    onSearch: (values: any) => [
+      {
+        field: 'q',
+        operator: 'contains',
+        value: values?.q,
+      },
+    ],
   })
 
   const [rows, setRows] = useState<Department[]>([])
@@ -146,6 +154,9 @@ export default function Page() {
         </Title>
       ),
     },
+    {
+      title: <Title level={5}>部門編集</Title>,
+    },
   ]
 
   return (
@@ -153,6 +164,7 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
+      i18nHeading={'部門編集'}
       footer={
         <Col>
           <Button
@@ -181,9 +193,16 @@ export default function Page() {
               <Button htmlType="submit" type="primary">
                 {t('buttons.search')}
               </Button>
-              <Button onClick={() => searchFormProps.form?.resetFields()}>
+              <RefreshButton
+                size="middle"
+                icon={null}
+                onClick={() => {
+                  searchFormProps.form?.resetFields()
+                  setFilters([], 'replace')
+                }}
+              >
                 {t('buttons.clear')}
-              </Button>
+              </RefreshButton>
             </Space>
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
@@ -194,7 +213,7 @@ export default function Page() {
 
       <div className="mt-6">
         <TableDnd<RowVM>
-          {...tableProps}
+          tableProps={tableProps}
           dataSource={rows.map((r, i) => ({ ...r, __index: i }))}
           columns={columns}
           getRowId={(r) => getRowId(r)}
