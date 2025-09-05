@@ -186,16 +186,12 @@ export default function EmployeeEdit() {
         <Form.Item
           label={boldText(t('employees.fields.department'))}
           name="department_id"
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: 'このフィールドは必須です' }]}
         >
           <Select {...departmentSelectProps} />
         </Form.Item>
 
-        <Form.Item
-          label={boldText(t('employees.fields.role'))}
-          name="role_id"
-          rules={[{ required: true }]}
-        >
+        <Form.Item label={boldText(t('employees.fields.role'))} name="role_id">
           <Radio.Group>
             {isArray(roles?.data?.items) &&
               roles?.data?.items.map(({ id, name }) => (

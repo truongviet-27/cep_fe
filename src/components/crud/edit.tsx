@@ -229,10 +229,10 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
                           size={4}
                           style={{ paddingTop: footerButtons ? 60 : undefined }}
                         >
-                          {rightFooterButtons}
                           {!hiddenButtonBack && (
                             <Button
                               type="default"
+                              onClick={() => go({ to: goListPath })}
                               style={{
                                 background: '#fff',
                                 borderColor: PRIMARY,
@@ -243,6 +243,7 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
                               戻る
                             </Button>
                           )}
+                          {rightFooterButtons}
                         </Space>
                       }
                     </>
@@ -253,7 +254,6 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
               </Space>,
             ]}
             {...(contentProps ?? {})}
-            className="min-h-[82vh]"
           >
             {isAutoHeading && <AutoHeading i18n={i18nHeading} />}
             {children}
