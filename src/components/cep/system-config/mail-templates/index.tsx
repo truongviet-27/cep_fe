@@ -3,10 +3,9 @@ import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
 import PageContainer from '@components/organism/PageContainer'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Popconfirm, Typography } from 'antd'
+import { Breadcrumb, Button, Form, Popconfirm, Typography } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import Title from 'antd/es/typography/Title'
-import { FormProvider } from 'react-hook-form'
 
 function MailTemplate() {
   const [
@@ -15,14 +14,19 @@ function MailTemplate() {
       isEdit,
       openReset,
       openCancel,
-      // isLoading,
       isFetching,
-      isPending,
+      indexTab,
+      data,
+      isLoadingSubmit,
     },
     { t, setIsEdit, onSubmit, onChangeTabs, setOpenReset, setOpenCancel },
   ] = useMailTemplates()
 
-  const { reset, saveButtonProps } = methods
+  const { formProps, form, saveButtonProps } = methods
+  const { resetFields } = form
+
+  console.log(methods, 'methods')
+
   return (
     <PageContainer
       title={
@@ -41,7 +45,14 @@ function MailTemplate() {
         />
       }
     >
-      <FormProvider {...methods}>
+      <Form
+        {...formProps}
+        initialValues={{
+          [`title_${indexTab}`]: data?.title,
+          [`content_${indexTab}`]: data?.body,
+          [`signature_${indexTab}`]: data?.signature,
+        }}
+      >
         <Typography.Title
           level={5}
           style={{
@@ -64,7 +75,12 @@ function MailTemplate() {
                 description="データをリセットしてもよろしいですか?"
                 open={openReset}
                 onConfirm={() => {
-                  reset()
+                  // setFieldsValue({
+                  //   [`title_${indexTab}`]: data?.title,
+                  //   [`content_${indexTab}`]: data?.body,
+                  //   [`signature_${indexTab}`]: data?.signature,
+                  // })
+                  resetFields()
                   setOpenReset(!openReset)
                 }}
                 onCancel={() => {
@@ -93,7 +109,12 @@ function MailTemplate() {
                   description="本当に戻って来ますか？"
                   open={openCancel}
                   onConfirm={() => {
-                    reset()
+                    // setFieldsValue({
+                    //   [`title_${indexTab}`]: data?.title,
+                    //   [`content_${indexTab}`]: data?.body,
+                    //   [`signature_${indexTab}`]: data?.signature,
+                    // })
+                    resetFields()
                     setOpenCancel(!openCancel)
                     setIsEdit(false)
                   }}
@@ -122,7 +143,7 @@ function MailTemplate() {
                   {...saveButtonProps}
                   type="primary"
                   onClick={onSubmit}
-                  loading={isPending}
+                  loading={isLoadingSubmit}
                 >
                   保存
                 </Button>
@@ -149,11 +170,11 @@ function MailTemplate() {
           <TextArea
             rows={6}
             value={`タグは必ず[[]]で囲って入力してください。
-  ・署名は自動的に追加されるため、テンプレート内に記載する必要はありません。
-  ・変更したテンプレートは「更新」ボタンを押すまで保存されません。
-  ・テンプレートは見積書送付時に自動的に適用されます。
-  ・入力欄上部のボタンをクリックすると、テンプレート内の任意の位置にタグを埋め込むことができます。埋め込まれたタグは、メール送信実行時に登録して表示されます。
-  （例）[[取引先会社名]] → ○○商事株式会社`}
+    ・署名は自動的に追加されるため、テンプレート内に記載する必要はありません。
+    ・変更したテンプレートは「更新」ボタンを押すまで保存されません。
+    ・テンプレートは見積書送付時に自動的に適用されます。
+    ・入力欄上部のボタンをクリックすると、テンプレート内の任意の位置にタグを埋め込むことができます。埋め込まれたタグは、メール送信実行時に登録して表示されます。
+    （例）[[取引先会社名]] → ○○商事株式会社`}
             style={{
               marginTop: '10px',
               backgroundColor: '#F6F8FF',
@@ -162,7 +183,7 @@ function MailTemplate() {
             className="!resize-none"
           />
         )}
-      </FormProvider>
+      </Form>
     </PageContainer>
   )
 }

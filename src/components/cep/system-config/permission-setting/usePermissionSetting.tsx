@@ -99,8 +99,6 @@ function usePermissionSetting() {
         },
       ]
       for (const [key, value] of Object.entries(checkedValues)) {
-        console.log('key value:', key)
-        console.log('value:', value)
         if (value.employee) {
           assignments[0].permissions.push(Number(key))
         }

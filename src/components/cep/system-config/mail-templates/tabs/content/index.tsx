@@ -4,7 +4,6 @@ import type { InputRef } from 'antd'
 import { Button, Form, Input, Space, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useRef } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
 
 function TabsContent({
   index,
@@ -17,10 +16,15 @@ function TabsContent({
   tags: { value: number; text: string }[]
   loading: boolean
 }) {
-  const methods = useFormContext()
-  const { control, getValues, setValue } = methods
-
-  const inputRef = useRef<InputRef>(null)
+  const inputRef = useRef<
+    InputRef & {
+      resizableTextArea?: {
+        textArea: HTMLTextAreaElement
+      }
+    }
+  >(null)
+  const methods = Form.useFormInstance()
+  const { getFieldValue, setFieldValue } = methods
 
   const insertAtCursor = (field: string, text: string) => {
     const input = inputRef.current?.resizableTextArea?.textArea
@@ -28,12 +32,12 @@ function TabsContent({
 
     const start = input.selectionStart
     const end = input.selectionEnd
-    const currentValue = getValues(field) || ''
+    const currentValue = getFieldValue(field) || ''
 
     const newValue =
       currentValue.substring(0, start) + text + currentValue.substring(end)
 
-    setValue(field, newValue)
+    setFieldValue(field, newValue)
 
     setTimeout(() => {
       input.focus()
@@ -46,29 +50,30 @@ function TabsContent({
       <Spin size={'large'} />
     </div>
   ) : (
-    <Form layout="vertical" {...methods}>
+    <>
       <Form.Item
         layout="vertical"
         name={`title_${index}`}
         label={<span style={{ fontWeight: 'bold' }}>件名</span>}
-        rules={[{ required: true }]}
+        rules={[
+          { required: true, message: '必須項目です' },
+          { max: 255, message: '255文字以内で入力してください' },
+          {
+            pattern: /^(?!\s*$).+/,
+            message: '空白だけの入力はできません',
+          },
+        ]}
       >
-        <Controller
+        <Input
+          variant={isEdit ? 'outlined' : 'borderless'}
+          readOnly={!isEdit}
           name={`title_${index}`}
-          control={control}
-          render={({ field }) => {
-            return (
-              <Input
-                variant={isEdit ? 'outlined' : 'borderless'}
-                readOnly={!isEdit}
-                {...field}
-              />
-            )
-          }}
         />
       </Form.Item>
+
       <Form.Item
         name={`content_${index}`}
+        layout="vertical"
         label={
           <>
             <span style={{ fontWeight: 'bold' }}>本文</span>
@@ -101,56 +106,47 @@ function TabsContent({
             )}
           </>
         }
-        rules={[{ required: true }]}
+        rules={[
+          { required: true, message: '必須項目です' },
+          { max: 255, message: '255文字以内で入力してください' },
+          {
+            pattern: /^(?!\s*$).+/,
+            message: '空白だけの入力はできません',
+          },
+        ]}
       >
-        <Controller
+        <TextArea
+          rows={8}
           name={`content_${index}`}
-          control={control}
-          render={({ field }) => {
-            return (
-              <TextArea
-                rows={8}
-                variant={isEdit ? 'outlined' : 'borderless'}
-                className="!resize-none"
-                readOnly={!isEdit}
-                {...field}
-                ref={inputRef}
-              />
-            )
-          }}
-          rules={{
-            required: {
-              value: true,
-              message: 'hello anh em',
-            },
-          }}
+          variant={isEdit ? 'outlined' : 'borderless'}
+          className="!resize-none"
+          readOnly={!isEdit}
+          ref={inputRef}
         />
       </Form.Item>
 
       <Form.Item
         layout="vertical"
+        name={`signature_${index}`}
         label={<span style={{ fontWeight: 'bold' }}>署名（自動挿入）</span>}
+        rules={[
+          { required: true, message: '必須項目です' },
+          { max: 255, message: '255文字以内で入力してください' },
+          {
+            pattern: /^(?!\s*$).+/,
+            message: '空白だけの入力はできません',
+          },
+        ]}
       >
-        <Controller
+        <TextArea
+          rows={4}
           name={`signature_${index}`}
-          control={control}
-          render={({ field }) => {
-            return (
-              <TextArea
-                rows={4}
-                variant={isEdit ? 'outlined' : 'borderless'}
-                className="!resize-none"
-                readOnly={!isEdit}
-                {...field}
-              />
-            )
-          }}
-          rules={{
-            required: true,
-          }}
+          variant={isEdit ? 'outlined' : 'borderless'}
+          className="!resize-none"
+          readOnly={!isEdit}
         />
       </Form.Item>
-    </Form>
+    </>
   )
 }
 

@@ -107,8 +107,8 @@
   "estimate_form_settings": {
     "estimate_form_settings": "見積フォーム設定"
   },
-  "mail_template_settings": {
-    "mail_template_settings": "メールテンプレート設定"
+  "mail_templates": {
+    "mail_templates": "メールテンプレート設定"
   },
   "system_config": {
     "system_config": "システム設定",
