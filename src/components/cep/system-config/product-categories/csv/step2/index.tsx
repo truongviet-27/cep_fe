@@ -1,0 +1,7 @@
+import React from 'react'
+
+function Step2() {
+  return <div>2</div>
+}
+
+export default Step2
