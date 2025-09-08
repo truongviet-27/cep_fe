@@ -1,10 +1,9 @@
-import { useApiUrl, useCreate, useCustom } from '@refinedev/core'
+import { useApiUrl, useCreate, useCustom, useTranslate } from '@refinedev/core'
 import { useForm } from '@refinedev/react-hook-form'
 import { PRIMARY } from '@utility/color'
 import { Checkbox, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Title from 'antd/lib/typography/Title'
-import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
 type Permission = {
@@ -15,7 +14,7 @@ type Permission = {
   assigned_roles: string[]
 }
 function usePermissionSetting() {
-  const t = useTranslations()
+  const t = useTranslate()
   const methods = useForm({})
   const [loading, setLoading] = useState(false)
 
@@ -29,7 +28,11 @@ function usePermissionSetting() {
     resource: 'roles/permissions',
   })
 
-  const { data, isLoading: isLoadingPermission } = useCustom({
+  const {
+    data,
+    isLoading: isLoadingPermission,
+    refetch,
+  } = useCustom({
     url: `${apiUrl}/roles/permissions`,
     method: 'get',
   })
@@ -82,7 +85,21 @@ function usePermissionSetting() {
   ]
 
   const handleCancel = () => {
-    message.info(t('system_config.cancelMessage'))
+    setCheckedValues(
+      data?.data.permissions.reduce(
+        (
+          acc: Record<number, { employee: boolean; manager: boolean }>,
+          item: Permission,
+        ) => {
+          acc[item.id] = {
+            employee: item.assigned_roles.includes('employee'),
+            manager: item.assigned_roles.includes('manager'),
+          }
+          return acc
+        },
+        {} as Record<number, { employee: boolean; manager: boolean }>,
+      ),
+    )
   }
 
   const handleSave = async () => {
@@ -106,12 +123,18 @@ function usePermissionSetting() {
           assignments[1].permissions.push(Number(key))
         }
       }
-      mutate({
-        values: {
-          assignments: assignments,
+      mutate(
+        {
+          values: {
+            assignments: assignments,
+          },
         },
-      })
-      //   message.success(t('system_config.saveSuccessMessage'))
+        {
+          onSuccess: () => {
+            refetch()
+          },
+        },
+      )
     } catch (error) {
       message.error(t('system_config.saveErrorMessage'))
       console.error(error)
@@ -122,16 +145,14 @@ function usePermissionSetting() {
 
   const columns: ColumnsType = [
     {
-      // title: t('system_config.settingItem'),
-      title: '権限',
+      title: t('permission_settings.table.settingItem'),
       dataIndex: 'settingItem',
       key: 'settingItem',
       width: 300,
       align: 'center',
     },
     {
-      // title: t('system_config.employeess'),
-      title: '管理者',
+      title: t('permission_settings.table.employee'),
       dataIndex: 'employee',
       key: 'employee',
       width: 200,
@@ -176,53 +197,51 @@ function usePermissionSetting() {
   const dataSource = [
     {
       key: 1,
-      settingItem: '取引先マスタ',
-      purpose: '取引先をマスタ化して名寄せします。',
+      settingItem: t('permission_settings.dataSource.customerMaster'),
+      purpose: t('permission_settings.dataSource.customerMasterPurpose'),
     },
     {
       key: 2,
-      settingItem: '案件マスタ',
-      purpose: '案件をマスタ化して名寄せします。',
+      settingItem: t('permission_settings.dataSource.projectMaster'),
+      purpose: t('permission_settings.dataSource.projectMasterPurpose'),
     },
     {
       key: 3,
-      settingItem: '商品マスタ',
-      purpose: 'マスタをマスタ化して名寄せします。',
+      settingItem: t('permission_settings.dataSource.productMaster'),
+      purpose: t('permission_settings.dataSource.productMasterPurpose'),
     },
     {
       key: 4,
-      settingItem: '見積テンプレートマスタ',
-      purpose: '見積書のテンプレートを管理して効率化します。',
+      settingItem: t('permission_settings.dataSource.quoteTemplateMaster'),
+      purpose: t('permission_settings.dataSource.quoteTemplateMasterPurpose'),
     },
     {
       key: 5,
-      settingItem: '見積フォーム設定',
-      purpose: '見積入力フォームの項目をカスタマイズします。',
+      settingItem: t('permission_settings.dataSource.quoteFormSettings'),
+      purpose: t('permission_settings.dataSource.quoteFormSettingsPurpose'),
     },
     {
       key: 6,
-      settingItem: '見積書送付メールテンプレート',
-      purpose: '見積書送付時のメールテンプレートを管理します。',
+      settingItem: t('permission_settings.dataSource.quoteEmailTemplate'),
+      purpose: t('permission_settings.dataSource.quoteEmailTemplatePurpose'),
     },
     {
       key: 7,
-      settingItem: 'コード採番設定',
-      purpose: '見積番号の自動採番ルールを設定します。',
+      settingItem: t('permission_settings.dataSource.codeNumbering'),
+      purpose: t('permission_settings.dataSource.codeNumberingPurpose'),
     },
     {
       key: 8,
-      settingItem: '承認・差戻し',
-      purpose:
-        '送信前に見積承認を利用します。\n承認時に差戻し処理を利用します。',
+      settingItem: t('permission_settings.dataSource.approvalAndReturn'),
+      purpose: t('permission_settings.dataSource.approvalAndReturnPurpose'),
     },
     {
       key: 9,
-      settingItem: '原価明細',
-      purpose: '承認・粗利確認のため原価見積を利用します。',
+      settingItem: t('permission_settings.dataSource.costDetails'),
+      purpose: t('permission_settings.dataSource.costDetailsPurpose'),
     },
   ]
 
-  console.log(dataSource, 'dataSource')
   return [
     {
       methods,

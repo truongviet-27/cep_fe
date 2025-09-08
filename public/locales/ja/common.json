@@ -85,7 +85,36 @@
     }
   },
   "permission_settings": {
-    "permission_settings": "権限設定"
+    "permission_settings": "権限設定",
+    "table": {
+      "settingItem": "権限",
+      "employee": "管理者"
+    },
+    "dataSource": {
+      "customerMaster": "取引先マスタ",
+      "projectMaster": "案件マスタ",
+      "productMaster": "商品マスタ",
+      "quoteTemplateMaster": "見積テンプレートマスタ",
+      "quoteFormSettings": "見積フォーム設定",
+      "quoteEmailTemplate": "見積書送付メールテンプレート",
+      "codeNumbering": "コード採番設定",
+      "approvalAndReturn": "承認・差戻し",
+      "costDetails": "原価明細",
+
+      "customerMasterPurpose": "取引先をマスタ化して名寄せします。",
+      "projectMasterPurpose": "案件をマスタ化して名寄せします。",
+      "productMasterPurpose": "マスタをマスタ化して名寄せします。",
+      "quoteTemplateMasterPurpose": "見積書のテンプレートを管理して効率化します。",
+      "quoteFormSettingsPurpose": "見積入力フォームの項目をカスタマイズします。",
+      "quoteEmailTemplatePurpose": "見積書送付時のメールテンプレートを管理します。",
+      "codeNumberingPurpose": "見積番号の自動採番ルールを設定します。",
+      "approvalAndReturnPurpose": "送信前に見積承認を利用します。\n承認時に差戻し処理を利用します。",
+      "costDetailsPurpose": "承認・粗利確認のため原価見積を利用します。"
+    },
+    "buttons": {
+      "cancel": "戻る",
+      "save": "保存"
+    }
   },
   "code_issue_settings": {
     "code_issue_settings": "各種コード採番設定",
@@ -108,7 +137,43 @@
     }
   },
   "product_categories": {
-    "product_categories": "商品カテゴリ設定"
+    "product_categories": "商品カテゴリ設定",
+    "csv": {
+      "title": "商品カテゴリCSV一括登録",
+      "step_1": {
+        "title": "ファイル選択",
+        "alertTitle": "📋 CSVテンプレート",
+        "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
+        "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
+        "downloadButton": "CSVテンプレートをダウンロード",
+
+        "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
+        "orSelectFile": "または、下のボタンからファイルを選択してください",
+        "selectFileButton": "ファイルを選択",
+
+        "requiredError": "必須項目です",
+        "onlyCSVError": "CSVファイルのみアップロード可能です。",
+        "maxSizeError": "ファイルサイズは最大5MBです。",
+
+        "noteTitle": "CSV登録時の注意事項",
+        "noteItems": {
+          "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
+          "line2": "文字コードはUTF-8またはShift-JISで保存してください。",
+          "line3": "同じ項目コードが複数ある場合、上書きされます。",
+          "line4": "必須項目が不足する場合は取り込み不可です。",
+          "line5": "空白行があってもスキップされます。"
+        }
+      },
+      "step_2": {
+        "title": "登録完了"
+      },
+      "buttons": {
+        "back": "戻る",
+        "submit": "提出する",
+        "nextStep": "次へ",
+        "cancel": "キャンセル"
+      }
+    }
   },
   "tags": {
     "tags": "見積タグ設定"

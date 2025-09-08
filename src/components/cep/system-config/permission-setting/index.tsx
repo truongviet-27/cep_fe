@@ -26,21 +26,14 @@ function PermissionSetting() {
         size="middle"
         className="mt-6"
         loading={isLoadingPermission}
-        onRow={(record, rowIndex) => {
-          return {
-            onClick: () => {
-              console.log('Clicked row:', record, ' at index:', rowIndex)
-            },
-          }
-        }}
       />
       <div className="mt-4">
         <ActionButtons
           onCancel={handleCancel}
           onSave={handleSave}
           loading={isPending}
-          cancelText={t('戻る')}
-          saveText={t('保存')}
+          cancelText={t('permission_settings.buttons.cancel')}
+          saveText={t('permission_settings.buttons.save')}
         />
       </div>
     </PageContainer>
