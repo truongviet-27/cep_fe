@@ -114,7 +114,10 @@
     "tags": "見積タグ設定"
   },
   "parameter_settings": {
-    "parameter_settings": "見積タグ設定"
+    "parameter_settings": "見積タグ設定",
+    "description": "説明",
+    "is_manage": "管理する",
+    "not_manage": "管理しない"
   },
   "estimate_form_settings": {
     "estimate_form_settings": "見積フォーム設定"

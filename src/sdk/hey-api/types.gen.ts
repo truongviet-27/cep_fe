@@ -35,7 +35,7 @@ export type CodeIssueSetting = {
   /**
    * Segment for the code generation
    */
-  segment?: 'year_range' | 'month_range'
+  segment?: 'none' | 'year_month' | 'year_month_day_range'
   /**
    * Total number of codes to generate
    */
@@ -64,6 +64,18 @@ export type CodeIssueSetting = {
    * Timestamp when this setting was last updated
    */
   updated_at?: string
+  /**
+   * User who created this setting
+   */
+  author?: {
+    [key: string]: unknown
+  } | null
+  /**
+   * User who last edited this setting
+   */
+  editor?: {
+    [key: string]: unknown
+  } | null
 }
 
 /**
@@ -165,11 +177,70 @@ export type CodeIssueSettingResponse = {
 /**
  * Paginated response for code issue settings
  */
-export type CodeIssueSettingsPaginatedResponse = PaginatedResponse & {
+export type CodeIssueSettingsPaginatedResponse = {
   /**
-   * Array of posts
+   * Data container for paginated response
    */
-  data?: Array<CodeIssueSetting>
+  data?: {
+    /**
+     * Array of code issue settings
+     */
+    items?: Array<CodeIssueSetting>
+    /**
+     * Pagination metadata
+     */
+    meta?: {
+      /**
+       * Current page number
+       */
+      current_page?: number
+      /**
+       * Starting item number for current page
+       */
+      from?: number
+      /**
+       * Last page number
+       */
+      last_page?: number
+      /**
+       * Number of items per page
+       */
+      per_page?: number
+      /**
+       * Ending item number for current page
+       */
+      to?: number
+      /**
+       * Total number of items
+       */
+      total?: number
+    }
+    /**
+     * Pagination links
+     */
+    links?: {
+      /**
+       * URL to the first page
+       */
+      first?: string
+      /**
+       * URL to the last page
+       */
+      last?: string
+      /**
+       * URL to the previous page
+       */
+      prev?: string | null
+      /**
+       * URL to the next page
+       */
+      next?: string | null
+    }
+  }
+  /**
+   * Response message
+   */
+  message?: string
 }
 
 /**
@@ -217,6 +288,284 @@ export type UpdateCodeIssueSettingResponse = {
 }
 
 /**
+ * Department model
+ */
+export type Department = {
+  /**
+   * Department ID
+   */
+  id?: number
+  /**
+   * Department name
+   */
+  name?: string
+  /**
+   * Department code
+   */
+  code?: string
+  /**
+   * Display order (1 = lowest priority)
+   */
+  order?: number
+  /**
+   * Tenant ID
+   */
+  tenant_id?: string
+  /**
+   * User who created the department
+   */
+  author?: {
+    id?: number
+    name?: string
+  } | null
+  /**
+   * User who last edited the department
+   */
+  editor?: {
+    id?: number
+    name?: string
+  } | null
+  /**
+   * Creation timestamp
+   */
+  created_at?: string
+  /**
+   * Last update timestamp
+   */
+  updated_at?: string
+}
+
+/**
+ * Paginated response for departments
+ */
+export type DepartmentsPaginatedResponse = {
+  /**
+   * Data container for paginated response
+   */
+  data?: {
+    /**
+     * Array of departments
+     */
+    items?: Array<Department>
+    /**
+     * Pagination metadata
+     */
+    meta?: {
+      /**
+       * Current page number
+       */
+      current_page?: number
+      /**
+       * Starting item number for current page
+       */
+      from?: number
+      /**
+       * Last page number
+       */
+      last_page?: number
+      /**
+       * Number of items per page
+       */
+      per_page?: number
+      /**
+       * Ending item number for current page
+       */
+      to?: number
+      /**
+       * Total number of items
+       */
+      total?: number
+    }
+    /**
+     * Pagination links
+     */
+    links?: {
+      /**
+       * URL to the first page
+       */
+      first?: string
+      /**
+       * URL to the last page
+       */
+      last?: string
+      /**
+       * URL to the previous page
+       */
+      prev?: string | null
+      /**
+       * URL to the next page
+       */
+      next?: string | null
+    }
+  }
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * Payload to create a department
+ */
+export type StoreDepartmentRequest = {
+  /**
+   * Department name
+   */
+  name: string
+  /**
+   * Department code (uppercase letters, digits, dashes; cannot start or end with dash)
+   */
+  code: string
+}
+
+/**
+ * Payload to update a department (partial)
+ */
+export type UpdateDepartmentRequest = {
+  /**
+   * Department name
+   */
+  name?: string
+  /**
+   * Department code (uppercase letters, digits, dashes; cannot start or end with dash)
+   */
+  code?: string
+}
+
+/**
+ * Employee model
+ */
+export type Employee = {
+  /**
+   * Employee ID
+   */
+  id?: number
+  /**
+   * Employee code
+   */
+  code?: string
+  /**
+   * Employee name
+   */
+  name?: string
+  /**
+   * Employee email
+   */
+  email?: string
+  /**
+   * Department summary (present only when loaded)
+   */
+  department?: {
+    id?: number
+    name?: string
+    code?: string
+  } | null
+  /**
+   * Role summary (present only when loaded)
+   */
+  role?: {
+    id?: number
+    name?: string
+    display_name?: string
+  } | null
+  /**
+   * Creation timestamp
+   */
+  created_at?: string
+  /**
+   * Last update timestamp
+   */
+  updated_at?: string
+}
+
+/**
+ * Paginated response for employees
+ */
+export type EmployeesPaginatedResponse = {
+  /**
+   * Data container for paginated response
+   */
+  data?: {
+    /**
+     * Array of employees
+     */
+    items?: Array<Employee>
+    /**
+     * Pagination metadata
+     */
+    meta?: {
+      /**
+       * Current page number
+       */
+      current_page?: number
+      /**
+       * Starting item number for current page
+       */
+      from?: number
+      /**
+       * Last page number
+       */
+      last_page?: number
+      /**
+       * Number of items per page
+       */
+      per_page?: number
+      /**
+       * Ending item number for current page
+       */
+      to?: number
+      /**
+       * Total number of items
+       */
+      total?: number
+    }
+    /**
+     * Pagination links
+     */
+    links?: {
+      /**
+       * URL to the first page
+       */
+      first?: string
+      /**
+       * URL to the last page
+       */
+      last?: string
+      /**
+       * URL to the previous page
+       */
+      prev?: string | null
+      /**
+       * URL to the next page
+       */
+      next?: string | null
+    }
+  }
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * Payload for partially updating an employee
+ */
+export type UpdateEmployeeRequest = {
+  /**
+   * Employee code (unique per tenant)
+   */
+  code?: string
+  /**
+   * Department ID
+   */
+  department_id?: number
+  /**
+   * Role ID
+   */
+  role_id?: number
+}
+
+/**
  * Standard error response format
  */
 export type ErrorResponse = {
@@ -256,6 +605,44 @@ export type InternalServerErrorResponse = {
    * Internal server error message
    */
   message?: string
+}
+
+/**
+ * Mail Template model
+ */
+export type MailTemplate = {
+  /**
+   * Template ID
+   */
+  id?: number
+  /**
+   * Template code
+   */
+  code?: string
+  /**
+   * Template title
+   */
+  title?: string
+  /**
+   * Email body content
+   */
+  body?: string
+  /**
+   * Email signature
+   */
+  signature?: string
+}
+
+/**
+ * Pagination metadata
+ */
+export type Meta = {
+  current_page?: number
+  from?: number
+  last_page?: number
+  per_page?: number
+  to?: number
+  total?: number
 }
 
 /**
@@ -332,6 +719,49 @@ export type PaginatedResponse = {
      */
     next?: string | null
   }
+}
+
+export type BulkAssignPermissionsRequest = {
+  assignments: Array<{
+    role: string
+    permissions: Array<number>
+  }>
+}
+
+/**
+ * Permission entity describing a granular access capability
+ */
+export type Permission = {
+  /**
+   * Numeric identifier
+   */
+  id?: number
+  /**
+   * Unique permission key (lowercase, dot/underscore allowed)
+   */
+  name?: string
+  /**
+   * Human friendly permission label
+   */
+  display_name?: string | null
+  description?: string | null
+  /**
+   * Array of role names this permission is currently assigned to
+   */
+  assigned_roles?: Array<string>
+}
+
+/**
+ * Standard API response envelope for role-permission listing
+ */
+export type RolePermissionEnvelope = {
+  message?: string
+  data?: RolePermissionResponse
+}
+
+export type RolePermissionResponse = {
+  roles?: Array<Role>
+  permissions?: Array<Permission>
 }
 
 /**
@@ -413,6 +843,32 @@ export type PostsPaginatedResponse = PaginatedResponse & {
 }
 
 /**
+ * Product category model
+ */
+export type ProductCategory = {
+  /**
+   * Category ID
+   */
+  id?: number
+  /**
+   * Tenant ID to which the category belongs
+   */
+  tenant_id?: string | null
+  /**
+   * ID of the parent category
+   */
+  parent_id?: number | null
+  /**
+   * Level of the category in the hierarchy
+   */
+  level?: number
+  /**
+   * Category name
+   */
+  name?: string
+}
+
+/**
  * Product unit model
  */
 export type ProductUnit = {
@@ -425,23 +881,186 @@ export type ProductUnit = {
    */
   name?: string
   /**
-   * Creation timestamp
+   * Order number for sorting
    */
-  created_at?: string
+  order?: number
   /**
-   * Last update timestamp
+   * Indicates if the unit is disabled
    */
-  updated_at?: string
+  is_disable?: boolean
+}
+
+/**
+ * Pagination links
+ */
+export type UnitLinks = {
+  first?: string
+  last?: string
+  prev?: string | null
+  next?: string | null
 }
 
 /**
  * Paginated response for product units
  */
-export type ProductUnitsPaginatedResponse = PaginatedResponse & {
+export type ProductUnitsPaginatedResponse = {
   /**
-   * Array of product units
+   * Paginated data and links for product units
    */
-  data?: Array<ProductUnit>
+  data?: {
+    /**
+     * Array of product units
+     */
+    items?: Array<ProductUnit>
+    meta?: Meta
+    links?: UnitLinks
+  }
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * Rank resource (code: unique per tenant, max 20 alphanumeric chars; name: unique per tenant, max 50 chars; rate: non-negative integer; note: optional max 255 chars)
+ */
+export type Rank = {
+  id?: number
+  code?: string
+  name?: string
+  /**
+   * Non-negative; lower number means higher rank
+   */
+  rate?: number
+  note?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+/**
+ * Paginated ranks list envelope
+ */
+export type RanksPaginatedResponse = {
+  data?: {
+    items?: Array<Rank>
+    meta?: {
+      current_page?: number
+      from?: number | null
+      last_page?: number
+      per_page?: number
+      to?: number | null
+      total?: number
+    }
+    links?: {
+      first?: string
+      last?: string
+      prev?: string | null
+      next?: string | null
+    }
+  }
+  message?: string
+}
+
+export type StoreRankRequest = {
+  /**
+   * Unique alphanumeric code (max 20 chars) per tenant
+   */
+  code: string
+  /**
+   * Unique name (max 50 chars) per tenant
+   */
+  name: string
+  /**
+   * Non-negative integer rank order (lower = higher)
+   */
+  rate: number
+  note?: string | null
+}
+
+/**
+ * Payload to update a rank. All fields optional; only provided fields will be updated.
+ */
+export type UpdateRankRequest = {
+  /**
+   * Unique alphanumeric code (max 20 chars) per tenant
+   */
+  code?: string
+  /**
+   * Unique name (max 50 chars) per tenant
+   */
+  name?: string
+  /**
+   * Non-negative integer rank order (lower = higher)
+   */
+  rate?: number
+  note?: string | null
+}
+
+/**
+ * Role entity representing a system authorization role
+ */
+export type Role = {
+  /**
+   * Numeric identifier
+   */
+  id?: number
+  /**
+   * Name of the role
+   */
+  name?: string
+  /**
+   * Human friendly role name
+   */
+  display_name?: string | null
+}
+
+/**
+ * Tag model
+ */
+export type Tag = {
+  /**
+   * Tag ID
+   */
+  id?: number
+  /**
+   * Tag name
+   */
+  name?: string
+  /**
+   * Order number for sorting
+   */
+  order?: number
+}
+
+/**
+ * Pagination links
+ */
+export type Links = {
+  first?: string
+  last?: string
+  prev?: string | null
+  next?: string | null
+}
+
+/**
+ * Paginated response for tags
+ */
+export type TagsPaginatedResponse = {
+  /**
+   * Paginated data and links for tags
+   */
+  data?: {
+    /**
+     * Array of tags
+     */
+    items?: Array<Tag>
+    meta?: Meta
+    links?: Links
+  }
+  /**
+   * Response message
+   */
+  message?: string
 }
 
 /**
@@ -896,7 +1515,7 @@ export type CodeIssueSettingControllerShowResponses = {
 export type CodeIssueSettingControllerShowResponse =
   CodeIssueSettingControllerShowResponses[keyof CodeIssueSettingControllerShowResponses]
 
-export type Cade34322664382Bd2B7971982208Eb9Data = {
+export type Eed87Adddef6126Fa051Bd6Cd2D733E6Data = {
   /**
    * Code Issue Setting update data
    */
@@ -911,7 +1530,7 @@ export type Cade34322664382Bd2B7971982208Eb9Data = {
   url: '/api/v1/code-issue-settings/{id}'
 }
 
-export type Cade34322664382Bd2B7971982208Eb9Errors = {
+export type Eed87Adddef6126Fa051Bd6Cd2D733E6Errors = {
   /**
    * Validation error
    */
@@ -934,18 +1553,986 @@ export type Cade34322664382Bd2B7971982208Eb9Errors = {
   500: InternalServerErrorResponse
 }
 
-export type Cade34322664382Bd2B7971982208Eb9Error =
-  Cade34322664382Bd2B7971982208Eb9Errors[keyof Cade34322664382Bd2B7971982208Eb9Errors]
+export type Eed87Adddef6126Fa051Bd6Cd2D733E6Error =
+  Eed87Adddef6126Fa051Bd6Cd2D733E6Errors[keyof Eed87Adddef6126Fa051Bd6Cd2D733E6Errors]
 
-export type Cade34322664382Bd2B7971982208Eb9Responses = {
+export type Eed87Adddef6126Fa051Bd6Cd2D733E6Responses = {
   /**
    * Code Issue Setting updated successfully
    */
   200: UpdateCodeIssueSettingResponse
 }
 
-export type Cade34322664382Bd2B7971982208Eb9Response =
-  Cade34322664382Bd2B7971982208Eb9Responses[keyof Cade34322664382Bd2B7971982208Eb9Responses]
+export type Eed87Adddef6126Fa051Bd6Cd2D733E6Response =
+  Eed87Adddef6126Fa051Bd6Cd2D733E6Responses[keyof Eed87Adddef6126Fa051Bd6Cd2D733E6Responses]
+
+export type CodeIssueSettingControllerShowByCodeData = {
+  body?: never
+  path: {
+    /**
+     * Code Issue Setting code type
+     */
+    code: 'customers' | 'quotas' | 'products' | 'employees' | 'departments'
+  }
+  query?: never
+  url: '/api/v1/code-issue-settings/by-code/{code}'
+}
+
+export type CodeIssueSettingControllerShowByCodeErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Code Issue Setting not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type CodeIssueSettingControllerShowByCodeError =
+  CodeIssueSettingControllerShowByCodeErrors[keyof CodeIssueSettingControllerShowByCodeErrors]
+
+export type CodeIssueSettingControllerShowByCodeResponses = {
+  /**
+   * Code Issue Setting detail retrieved successfully
+   */
+  200: CodeIssueSettingDetailResponse
+}
+
+export type CodeIssueSettingControllerShowByCodeResponse =
+  CodeIssueSettingControllerShowByCodeResponses[keyof CodeIssueSettingControllerShowByCodeResponses]
+
+export type DepartmentControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Page number
+     */
+    _page?: number
+    /**
+     * Number of items per page
+     */
+    _per_page?: number
+    /**
+     * Search by name or code
+     */
+    q?: string
+  }
+  url: '/api/v1/departments'
+}
+
+export type DepartmentControllerIndexErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+}
+
+export type DepartmentControllerIndexError =
+  DepartmentControllerIndexErrors[keyof DepartmentControllerIndexErrors]
+
+export type DepartmentControllerIndexResponses = {
+  /**
+   * Departments retrieved successfully
+   */
+  200: DepartmentsPaginatedResponse
+}
+
+export type DepartmentControllerIndexResponse =
+  DepartmentControllerIndexResponses[keyof DepartmentControllerIndexResponses]
+
+export type DepartmentControllerStoreData = {
+  /**
+   * Department create data
+   */
+  body: StoreDepartmentRequest
+  path?: never
+  query?: never
+  url: '/api/v1/departments'
+}
+
+export type DepartmentControllerStoreErrors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type DepartmentControllerStoreError =
+  DepartmentControllerStoreErrors[keyof DepartmentControllerStoreErrors]
+
+export type DepartmentControllerStoreResponses = {
+  /**
+   * Department created successfully
+   */
+  201: Department
+}
+
+export type DepartmentControllerStoreResponse =
+  DepartmentControllerStoreResponses[keyof DepartmentControllerStoreResponses]
+
+export type DepartmentControllerDestroyData = {
+  body?: never
+  path: {
+    /**
+     * Department ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/departments/{id}'
+}
+
+export type DepartmentControllerDestroyErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Department not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Department has employees
+   */
+  409: {
+    data?: {
+      id?: number
+      number_of_employee?: number
+    }
+    message?: string
+  }
+}
+
+export type DepartmentControllerDestroyError =
+  DepartmentControllerDestroyErrors[keyof DepartmentControllerDestroyErrors]
+
+export type DepartmentControllerDestroyResponses = {
+  /**
+   * Department deleted successfully
+   */
+  200: {
+    message?: string
+  }
+}
+
+export type DepartmentControllerDestroyResponse =
+  DepartmentControllerDestroyResponses[keyof DepartmentControllerDestroyResponses]
+
+export type DepartmentControllerShowData = {
+  body?: never
+  path: {
+    /**
+     * Department ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/departments/{id}'
+}
+
+export type DepartmentControllerShowErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Department not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type DepartmentControllerShowError =
+  DepartmentControllerShowErrors[keyof DepartmentControllerShowErrors]
+
+export type DepartmentControllerShowResponses = {
+  /**
+   * Department detail retrieved successfully
+   */
+  200: Department
+}
+
+export type DepartmentControllerShowResponse =
+  DepartmentControllerShowResponses[keyof DepartmentControllerShowResponses]
+
+export type DepartmentControllerUpdateData = {
+  /**
+   * Department update data
+   */
+  body: UpdateDepartmentRequest
+  path: {
+    /**
+     * Department ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/departments/{id}'
+}
+
+export type DepartmentControllerUpdateErrors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Department not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type DepartmentControllerUpdateError =
+  DepartmentControllerUpdateErrors[keyof DepartmentControllerUpdateErrors]
+
+export type DepartmentControllerUpdateResponses = {
+  /**
+   * Department updated successfully
+   */
+  200: Department
+}
+
+export type DepartmentControllerUpdateResponse =
+  DepartmentControllerUpdateResponses[keyof DepartmentControllerUpdateResponses]
+
+export type DepartmentControllerUpdateOrderData = {
+  /**
+   * Array of objects each containing department id and its target order (1 = lowest priority)
+   */
+  body: {
+    /**
+     * List of id/order pairs
+     */
+    data: Array<{
+      id?: number
+      order?: number
+    }>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/departments/ordering'
+}
+
+export type DepartmentControllerUpdateOrderErrors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+}
+
+export type DepartmentControllerUpdateOrderError =
+  DepartmentControllerUpdateOrderErrors[keyof DepartmentControllerUpdateOrderErrors]
+
+export type DepartmentControllerUpdateOrderResponses = {
+  /**
+   * Order updated
+   */
+  200: {
+    data?: Array<{
+      id?: number
+      order?: number
+    }>
+    message?: string
+  }
+}
+
+export type DepartmentControllerUpdateOrderResponse =
+  DepartmentControllerUpdateOrderResponses[keyof DepartmentControllerUpdateOrderResponses]
+
+export type EmployeeControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Page number (starting from 1)
+     */
+    _page?: number
+    /**
+     * Items per page (max 100)
+     */
+    _per_page?: number
+    /**
+     * Partial search across code, name
+     */
+    q?: string
+    /**
+     * Filter by email (exact match)
+     */
+    email?: string
+    /**
+     * Filter by department ID
+     */
+    department_id?: number
+    /**
+     * Filter by role ID
+     */
+    role_id?: number
+  }
+  url: '/api/v1/employees'
+}
+
+export type EmployeeControllerIndexErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+}
+
+export type EmployeeControllerIndexError =
+  EmployeeControllerIndexErrors[keyof EmployeeControllerIndexErrors]
+
+export type EmployeeControllerIndexResponses = {
+  /**
+   * Employees retrieved successfully
+   */
+  200: EmployeesPaginatedResponse
+}
+
+export type EmployeeControllerIndexResponse =
+  EmployeeControllerIndexResponses[keyof EmployeeControllerIndexResponses]
+
+export type EmployeeControllerStoreData = {
+  /**
+   * Employee create data
+   */
+  body: {
+    code?: string
+    name: string
+    email: string
+    department_id?: number
+    role_id?: number
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/employees'
+}
+
+export type EmployeeControllerStoreErrors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+}
+
+export type EmployeeControllerStoreError =
+  EmployeeControllerStoreErrors[keyof EmployeeControllerStoreErrors]
+
+export type EmployeeControllerStoreResponses = {
+  /**
+   * Employee created successfully
+   */
+  201: Employee
+}
+
+export type EmployeeControllerStoreResponse =
+  EmployeeControllerStoreResponses[keyof EmployeeControllerStoreResponses]
+
+export type EmployeeControllerDestroyData = {
+  body?: never
+  path: {
+    /**
+     * Employee ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/employees/{id}'
+}
+
+export type EmployeeControllerDestroyErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Employee not found
+   */
+  404: NotFoundResponse
+}
+
+export type EmployeeControllerDestroyError =
+  EmployeeControllerDestroyErrors[keyof EmployeeControllerDestroyErrors]
+
+export type EmployeeControllerDestroyResponses = {
+  /**
+   * Employee deleted successfully
+   */
+  200: {
+    message?: string
+  }
+}
+
+export type EmployeeControllerDestroyResponse =
+  EmployeeControllerDestroyResponses[keyof EmployeeControllerDestroyResponses]
+
+export type EmployeeControllerShowData = {
+  body?: never
+  path: {
+    /**
+     * Employee ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/employees/{id}'
+}
+
+export type EmployeeControllerShowErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Employee not found
+   */
+  404: NotFoundResponse
+}
+
+export type EmployeeControllerShowError =
+  EmployeeControllerShowErrors[keyof EmployeeControllerShowErrors]
+
+export type EmployeeControllerShowResponses = {
+  /**
+   * Employee detail retrieved successfully
+   */
+  200: Employee
+}
+
+export type EmployeeControllerShowResponse =
+  EmployeeControllerShowResponses[keyof EmployeeControllerShowResponses]
+
+export type EmployeeControllerUpdateData = {
+  /**
+   * Employee partial update data
+   */
+  body: UpdateEmployeeRequest
+  path: {
+    /**
+     * Employee ID
+     */
+    employee: number
+  }
+  query?: never
+  url: '/api/v1/employees/{employee}'
+}
+
+export type EmployeeControllerUpdateErrors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Employee not found
+   */
+  404: NotFoundResponse
+}
+
+export type EmployeeControllerUpdateError =
+  EmployeeControllerUpdateErrors[keyof EmployeeControllerUpdateErrors]
+
+export type EmployeeControllerUpdateResponses = {
+  /**
+   * Employee updated successfully
+   */
+  200: Employee
+}
+
+export type EmployeeControllerUpdateResponse =
+  EmployeeControllerUpdateResponses[keyof EmployeeControllerUpdateResponses]
+
+export type ImportControllerValidateImportData = {
+  /**
+   * Import file validation data
+   */
+  body: {
+    /**
+     * CSV file to validate (max 5MB)
+     */
+    file: Blob | File
+    /**
+     * Type of import
+     */
+    type:
+      | 'products'
+      | 'product-categories'
+      | 'customers'
+      | 'employees'
+      | 'departments'
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/csv-imports/validate'
+}
+
+export type ImportControllerValidateImportErrors = {
+  /**
+   * Validation error - Invalid file or parameters
+   */
+  400: {
+    success?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Unauthorized
+   */
+  401: {
+    message?: string
+  }
+  /**
+   * File validation completed with errors
+   */
+  422: {
+    success?: boolean
+    message?: string
+    data?: {
+      total?: number
+      valid_rows?: number
+      invalid_rows?: number
+      errors?: Array<{
+        [key: string]: unknown
+      }>
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type ImportControllerValidateImportError =
+  ImportControllerValidateImportErrors[keyof ImportControllerValidateImportErrors]
+
+export type ImportControllerValidateImportResponses = {
+  /**
+   * File validation completed successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      /**
+       * Total number of rows in file
+       */
+      total?: number
+      /**
+       * Number of valid rows
+       */
+      valid_rows?: number
+      /**
+       * Number of invalid rows
+       */
+      invalid_rows?: number
+      /**
+       * List of validation errors for invalid rows
+       */
+      errors?: Array<{
+        /**
+         * Row number with error
+         */
+        row?: number
+        /**
+         * Original row data
+         */
+        data?: {
+          [key: string]: unknown
+        }
+        /**
+         * List of validation errors for this row
+         */
+        errors?: Array<string>
+      }>
+    }
+  }
+}
+
+export type ImportControllerValidateImportResponse =
+  ImportControllerValidateImportResponses[keyof ImportControllerValidateImportResponses]
+
+export type ImportControllerImportData = {
+  /**
+   * Import file data
+   */
+  body: {
+    /**
+     * CSV file to import
+     */
+    file: Blob | File
+    /**
+     * Type of import
+     */
+    type:
+      | 'products'
+      | 'product-categories'
+      | 'customers'
+      | 'employees'
+      | 'departments'
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/csv-imports/import'
+}
+
+export type ImportControllerImportErrors = {
+  /**
+   * Validation error - Invalid file or parameters
+   */
+  400: {
+    success?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Unauthorized
+   */
+  401: {
+    message?: string
+  }
+  /**
+   * Import completed with errors
+   */
+  422: {
+    success?: boolean
+    message?: string
+    data?: {
+      total?: number
+      success?: number
+      failed?: number
+      errors?: Array<string>
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type ImportControllerImportError =
+  ImportControllerImportErrors[keyof ImportControllerImportErrors]
+
+export type ImportControllerImportResponses = {
+  /**
+   * Import completed successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      /**
+       * Total number of rows processed
+       */
+      total?: number
+      /**
+       * Number of successfully imported rows
+       */
+      success?: number
+      /**
+       * Number of failed imports
+       */
+      failed?: number
+      /**
+       * List of import errors with detailed information
+       */
+      errors?: Array<{
+        /**
+         * Row number with error
+         */
+        row?: number
+        /**
+         * Original row data that failed to import
+         */
+        data?: {
+          [key: string]: unknown
+        }
+        /**
+         * List of error messages for this row
+         */
+        errors?: Array<string>
+      }>
+    }
+  }
+}
+
+export type ImportControllerImportResponse =
+  ImportControllerImportResponses[keyof ImportControllerImportResponses]
+
+export type MailTemplateControllerShowByCodeData = {
+  body?: never
+  path: {
+    /**
+     * Code of the mail template (e.g., 'quota_mail').
+     */
+    code: string
+  }
+  query?: never
+  url: '/api/v1/mail-templates/{code}'
+}
+
+export type MailTemplateControllerShowByCodeErrors = {
+  /**
+   * Mail template not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type MailTemplateControllerShowByCodeError =
+  MailTemplateControllerShowByCodeErrors[keyof MailTemplateControllerShowByCodeErrors]
+
+export type MailTemplateControllerShowByCodeResponses = {
+  /**
+   * Mail template retrieved successfully
+   */
+  200: {
+    message?: string
+    data?: MailTemplate
+  }
+}
+
+export type MailTemplateControllerShowByCodeResponse =
+  MailTemplateControllerShowByCodeResponses[keyof MailTemplateControllerShowByCodeResponses]
+
+export type MailTemplateControllerStoreData = {
+  body: {
+    code: string
+    title: string
+    body: string
+    signature: string
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/mail-templates'
+}
+
+export type MailTemplateControllerStoreErrors = {
+  /**
+   * Validation error
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type MailTemplateControllerStoreError =
+  MailTemplateControllerStoreErrors[keyof MailTemplateControllerStoreErrors]
+
+export type MailTemplateControllerStoreResponses = {
+  /**
+   * Mail template created/updated successfully
+   */
+  200: {
+    message?: string
+    data?: MailTemplate
+  }
+}
+
+export type MailTemplateControllerStoreResponse =
+  MailTemplateControllerStoreResponses[keyof MailTemplateControllerStoreResponses]
+
+export type ParameterSettingControllerIndexData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/parameter-settings'
+}
+
+export type ParameterSettingControllerIndexErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+}
+
+export type ParameterSettingControllerIndexResponses = {
+  /**
+   * List retrieved
+   */
+  200: {
+    data?: Array<{
+      parameter_id?: number
+      code?: string
+      name?: string
+      is_manage?: boolean
+    }>
+    message?: string
+  }
+}
+
+export type ParameterSettingControllerIndexResponse =
+  ParameterSettingControllerIndexResponses[keyof ParameterSettingControllerIndexResponses]
+
+export type ParameterSettingControllerUpdateManyData = {
+  body: Array<{
+    id?: number
+    is_manage?: boolean
+  }>
+  path?: never
+  query?: never
+  url: '/api/v1/parameter-settings'
+}
+
+export type ParameterSettingControllerUpdateManyErrors = {
+  /**
+   * Validation error
+   */
+  400: unknown
+  /**
+   * Unauthorized
+   */
+  401: unknown
+}
+
+export type ParameterSettingControllerUpdateManyResponses = {
+  /**
+   * Settings updated
+   */
+  200: {
+    data?: Array<{
+      id?: number
+      is_manage?: boolean
+    }>
+    message?: string
+  }
+}
+
+export type ParameterSettingControllerUpdateManyResponse =
+  ParameterSettingControllerUpdateManyResponses[keyof ParameterSettingControllerUpdateManyResponses]
+
+export type PermissionControllerIndexData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/roles/permissions'
+}
+
+export type PermissionControllerIndexResponses = {
+  /**
+   * OK
+   */
+  200: RolePermissionEnvelope
+}
+
+export type PermissionControllerIndexResponse =
+  PermissionControllerIndexResponses[keyof PermissionControllerIndexResponses]
+
+export type PermissionControllerBulkAssignData = {
+  body: BulkAssignPermissionsRequest
+  path?: never
+  query?: never
+  url: '/api/v1/roles/permissions'
+}
+
+export type PermissionControllerBulkAssignErrors = {
+  /**
+   * Bulk assign failed
+   */
+  500: unknown
+}
+
+export type PermissionControllerBulkAssignResponses = {
+  /**
+   * Bulk updated
+   */
+  200: unknown
+}
 
 export type D88E9Abc08D34E08B091737239DdfData = {
   body?: never
@@ -1134,6 +2721,413 @@ export type Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses = {
 export type Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Response =
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses[keyof Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses]
 
+export type ProductCategoryControllerUpdateTreeData = {
+  /**
+   * A nested JSON structure representing the new category tree. The 'order' values will be re-assigned sequentially by the API.
+   */
+  body: Array<{
+    id?: number
+    parent_id?: number | null
+    level?: number
+    name?: string
+    /**
+     * Nested children categories. This array is optional.
+     */
+    children?: Array<{
+      [key: string]: unknown
+    }>
+  }>
+  path?: never
+  query?: never
+  url: '/api/v1/product-categories/update-tree'
+}
+
+export type ProductCategoryControllerUpdateTreeErrors = {
+  /**
+   * Bad Request
+   */
+  400: {
+    message?: string
+    data?: Array<string>
+  }
+  /**
+   * Conflict with current data
+   */
+  409: {
+    message?: string
+    data?: Array<string>
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    message?: string
+    data?: Array<string>
+  }
+}
+
+export type ProductCategoryControllerUpdateTreeError =
+  ProductCategoryControllerUpdateTreeErrors[keyof ProductCategoryControllerUpdateTreeErrors]
+
+export type ProductCategoryControllerUpdateTreeResponses = {
+  /**
+   * Categories tree updated successfully
+   */
+  200: {
+    message?: string
+    data?: {
+      items?: Array<{
+        id?: number
+        order?: number
+        parent_id?: number | null
+        level?: number
+        name?: string
+        children?: Array<{
+          [key: string]: unknown
+        }>
+      }>
+    }
+  }
+}
+
+export type ProductCategoryControllerUpdateTreeResponse =
+  ProductCategoryControllerUpdateTreeResponses[keyof ProductCategoryControllerUpdateTreeResponses]
+
+export type ProductCategoryControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Filter by partial name match. Example: 'fash'
+     */
+    name_lk?: string
+    /**
+     * Filter by a specific category level (1-3).
+     */
+    level?: number
+  }
+  url: '/api/v1/product-categories'
+}
+
+export type ProductCategoryControllerIndexErrors = {
+  /**
+   * Internal server error
+   */
+  500: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerIndexError =
+  ProductCategoryControllerIndexErrors[keyof ProductCategoryControllerIndexErrors]
+
+export type ProductCategoryControllerIndexResponses = {
+  /**
+   * Categories tree retrieved successfully
+   */
+  200: {
+    message?: string
+    data?: {
+      items?: Array<{
+        id?: number
+        parent_id?: number | null
+        level?: number
+        name?: string
+        children?: Array<{
+          [key: string]: unknown
+        }>
+      }>
+    }
+  }
+}
+
+export type ProductCategoryControllerIndexResponse =
+  ProductCategoryControllerIndexResponses[keyof ProductCategoryControllerIndexResponses]
+
+export type ProductCategoryControllerStoreData = {
+  body: {
+    name: string
+    parent_id?: number | null
+    level: number
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/product-categories'
+}
+
+export type ProductCategoryControllerStoreErrors = {
+  /**
+   * Parent category not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Conflict with existing category data
+   */
+  409: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Validation error
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerStoreError =
+  ProductCategoryControllerStoreErrors[keyof ProductCategoryControllerStoreErrors]
+
+export type ProductCategoryControllerStoreResponses = {
+  /**
+   * Category created successfully
+   */
+  200: {
+    message?: string
+    data?: ProductCategory
+  }
+}
+
+export type ProductCategoryControllerStoreResponse =
+  ProductCategoryControllerStoreResponses[keyof ProductCategoryControllerStoreResponses]
+
+export type ProductCategoryControllerSuggestionsData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * The partial name to search for suggestions. The search is case-insensitive.
+     */
+    name?: string
+    /**
+     * Filter suggestions by category level.
+     */
+    level?: number
+  }
+  url: '/api/v1/product-categories/suggestions'
+}
+
+export type ProductCategoryControllerSuggestionsErrors = {
+  /**
+   * Invalid input parameters
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type ProductCategoryControllerSuggestionsError =
+  ProductCategoryControllerSuggestionsErrors[keyof ProductCategoryControllerSuggestionsErrors]
+
+export type ProductCategoryControllerSuggestionsResponses = {
+  /**
+   * Product category suggestions retrieved successfully
+   */
+  200: {
+    /**
+     * List of matching product category names.
+     */
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerSuggestionsResponse =
+  ProductCategoryControllerSuggestionsResponses[keyof ProductCategoryControllerSuggestionsResponses]
+
+export type ProductCategoryControllerDestroyData = {
+  body?: never
+  path: {
+    /**
+     * Product Category ID. Must be a valid integer.
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/product-categories/{id}'
+}
+
+export type ProductCategoryControllerDestroyErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Product category not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Conflict due to existing child categories
+   */
+  409: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerDestroyError =
+  ProductCategoryControllerDestroyErrors[keyof ProductCategoryControllerDestroyErrors]
+
+export type ProductCategoryControllerDestroyResponses = {
+  /**
+   * Category deleted successfully
+   */
+  200: {
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerDestroyResponse =
+  ProductCategoryControllerDestroyResponses[keyof ProductCategoryControllerDestroyResponses]
+
+export type ProductCategoryControllerShowData = {
+  body?: never
+  path: {
+    /**
+     * Product Category ID. Must be a valid integer.
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/product-categories/{id}'
+}
+
+export type ProductCategoryControllerShowErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Product category not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerShowError =
+  ProductCategoryControllerShowErrors[keyof ProductCategoryControllerShowErrors]
+
+export type ProductCategoryControllerShowResponses = {
+  /**
+   * Category retrieved successfully
+   */
+  200: {
+    message?: string
+    data?: ProductCategory
+  }
+}
+
+export type ProductCategoryControllerShowResponse =
+  ProductCategoryControllerShowResponses[keyof ProductCategoryControllerShowResponses]
+
+export type ProductCategoryControllerUpdateData = {
+  body: {
+    name?: string
+  }
+  path: {
+    /**
+     * Product Category ID. Must be a valid integer.
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/product-categories/{id}'
+}
+
+export type ProductCategoryControllerUpdateErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Product category not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Validation error
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerUpdateError =
+  ProductCategoryControllerUpdateErrors[keyof ProductCategoryControllerUpdateErrors]
+
+export type ProductCategoryControllerUpdateResponses = {
+  /**
+   * Category updated successfully
+   */
+  200: {
+    message?: string
+    data?: ProductCategory
+  }
+}
+
+export type ProductCategoryControllerUpdateResponse =
+  ProductCategoryControllerUpdateResponses[keyof ProductCategoryControllerUpdateResponses]
+
 export type ProductUnitControllerIndexData = {
   body?: never
   path?: never
@@ -1150,6 +3144,14 @@ export type ProductUnitControllerIndexData = {
      * Number of items per page. Defaults to 10.
      */
     _per_page?: number
+    /**
+     * Filter by a specific order number.
+     */
+    order?: number
+    /**
+     * Filter by status (true for disabled, false for enabled).
+     */
+    is_disable?: boolean
   }
   url: '/api/v1/product-units'
 }
@@ -1174,10 +3176,7 @@ export type ProductUnitControllerIndexResponses = {
   /**
    * Units retrieved successfully
    */
-  200: {
-    message?: string
-    data?: Array<ProductUnit>
-  }
+  200: ProductUnitsPaginatedResponse
 }
 
 export type ProductUnitControllerIndexResponse =
@@ -1186,6 +3185,14 @@ export type ProductUnitControllerIndexResponse =
 export type ProductUnitControllerStoreData = {
   body: {
     name: string
+    /**
+     * Order number for sorting.
+     */
+    order?: number
+    /**
+     * Set to true to disable the unit.
+     */
+    is_disable?: boolean
   }
   path?: never
   query?: never
@@ -1220,6 +3227,93 @@ export type ProductUnitControllerStoreResponses = {
 
 export type ProductUnitControllerStoreResponse =
   ProductUnitControllerStoreResponses[keyof ProductUnitControllerStoreResponses]
+
+export type ProductUnitControllerUpsertData = {
+  body: Array<{
+    id?: number | null
+    name: string
+    order: number
+  }>
+  path?: never
+  query?: never
+  url: '/api/v1/product-units/upsert'
+}
+
+export type ProductUnitControllerUpsertErrors = {
+  /**
+   * Validation error for input data
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type ProductUnitControllerUpsertError =
+  ProductUnitControllerUpsertErrors[keyof ProductUnitControllerUpsertErrors]
+
+export type ProductUnitControllerUpsertResponses = {
+  /**
+   * Product units processed successfully
+   */
+  200: {
+    message?: string
+    data?: {
+      created_count?: number
+      updated_count?: number
+    }
+  }
+}
+
+export type ProductUnitControllerUpsertResponse =
+  ProductUnitControllerUpsertResponses[keyof ProductUnitControllerUpsertResponses]
+
+export type ProductUnitControllerSuggestionsData = {
+  body?: never
+  path?: never
+  query: {
+    /**
+     * The partial name to search for suggestions. The search is case-insensitive.
+     */
+    name: string
+  }
+  url: '/api/v1/product-units/suggestions'
+}
+
+export type ProductUnitControllerSuggestionsErrors = {
+  /**
+   * Invalid input name
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type ProductUnitControllerSuggestionsError =
+  ProductUnitControllerSuggestionsErrors[keyof ProductUnitControllerSuggestionsErrors]
+
+export type ProductUnitControllerSuggestionsResponses = {
+  /**
+   * Product unit suggestions retrieved successfully
+   */
+  200: {
+    /**
+     * List of matching product unit names.
+     */
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductUnitControllerSuggestionsResponse =
+  ProductUnitControllerSuggestionsResponses[keyof ProductUnitControllerSuggestionsResponses]
 
 export type ProductUnitControllerDestroyData = {
   body?: never
@@ -1313,6 +3407,14 @@ export type ProductUnitControllerShowResponse =
 export type ProductUnitControllerUpdateData = {
   body: {
     name?: string
+    /**
+     * New order value.
+     */
+    order?: number
+    /**
+     * Set to true/false to disable/enable.
+     */
+    is_disable?: boolean
   }
   path: {
     /**
@@ -1366,6 +3468,470 @@ export type ProductUnitControllerUpdateResponses = {
 
 export type ProductUnitControllerUpdateResponse =
   ProductUnitControllerUpdateResponses[keyof ProductUnitControllerUpdateResponses]
+
+export type RankControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    _page?: number
+    _per_page?: number
+    /**
+     * Search by code or name
+     */
+    q?: string
+  }
+  url: '/api/v1/ranks'
+}
+
+export type RankControllerIndexErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+}
+
+export type RankControllerIndexResponses = {
+  /**
+   * Ranks retrieved
+   */
+  200: RanksPaginatedResponse
+}
+
+export type RankControllerIndexResponse =
+  RankControllerIndexResponses[keyof RankControllerIndexResponses]
+
+export type RankControllerStoreData = {
+  body: StoreRankRequest
+  path?: never
+  query?: never
+  url: '/api/v1/ranks'
+}
+
+export type RankControllerStoreErrors = {
+  /**
+   * Validation error
+   */
+  422: unknown
+}
+
+export type RankControllerStoreResponses = {
+  /**
+   * Rank created
+   */
+  201: Rank
+}
+
+export type RankControllerStoreResponse =
+  RankControllerStoreResponses[keyof RankControllerStoreResponses]
+
+export type RankControllerDestroyData = {
+  body?: never
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/ranks/{id}'
+}
+
+export type RankControllerDestroyErrors = {
+  /**
+   * Not found
+   */
+  404: unknown
+}
+
+export type RankControllerDestroyResponses = {
+  /**
+   * Rank soft deleted
+   */
+  200: unknown
+}
+
+export type RankControllerShowData = {
+  body?: never
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/ranks/{id}'
+}
+
+export type RankControllerShowErrors = {
+  /**
+   * Not found
+   */
+  404: unknown
+}
+
+export type RankControllerShowResponses = {
+  /**
+   * Rank detail
+   */
+  200: Rank
+}
+
+export type RankControllerShowResponse =
+  RankControllerShowResponses[keyof RankControllerShowResponses]
+
+export type RankControllerUpdateData = {
+  body: UpdateRankRequest
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/ranks/{id}'
+}
+
+export type RankControllerUpdateErrors = {
+  /**
+   * Not found
+   */
+  404: unknown
+}
+
+export type RankControllerUpdateResponses = {
+  /**
+   * Rank updated
+   */
+  200: Rank
+}
+
+export type RankControllerUpdateResponse =
+  RankControllerUpdateResponses[keyof RankControllerUpdateResponses]
+
+export type RoleControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    _page?: number
+    _per_page?: number
+  }
+  url: '/api/v1/roles'
+}
+
+export type RoleControllerIndexResponses = {
+  /**
+   * Roles retrieved successfully
+   */
+  200: unknown
+}
+
+export type TagControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Filter by partial name match. Trims leading/trailing spaces. Example: ' laravel ' becomes 'laravel'.
+     */
+    name_lk?: string
+    /**
+     * Page number. Defaults to 1.
+     */
+    _page?: number
+    /**
+     * Number of items per page. Defaults to 10.
+     */
+    _per_page?: number
+  }
+  url: '/api/v1/tags'
+}
+
+export type TagControllerIndexErrors = {
+  /**
+   * Invalid pagination parameters
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type TagControllerIndexError =
+  TagControllerIndexErrors[keyof TagControllerIndexErrors]
+
+export type TagControllerIndexResponses = {
+  /**
+   * Tags retrieved successfully
+   */
+  200: TagsPaginatedResponse
+}
+
+export type TagControllerIndexResponse =
+  TagControllerIndexResponses[keyof TagControllerIndexResponses]
+
+export type TagControllerStoreData = {
+  body: {
+    name: string
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/tags'
+}
+
+export type TagControllerStoreErrors = {
+  /**
+   * Validation error (name is required, invalid or already exists)
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type TagControllerStoreError =
+  TagControllerStoreErrors[keyof TagControllerStoreErrors]
+
+export type TagControllerStoreResponses = {
+  /**
+   * Tag created successfully
+   */
+  200: {
+    message?: string
+    data?: Tag
+  }
+}
+
+export type TagControllerStoreResponse =
+  TagControllerStoreResponses[keyof TagControllerStoreResponses]
+
+export type TagControllerSuggestionsData = {
+  body?: never
+  path?: never
+  query: {
+    /**
+     * The partial name to search for suggestions. The search is case-insensitive.
+     */
+    name: string
+  }
+  url: '/api/v1/tags/suggestions'
+}
+
+export type TagControllerSuggestionsErrors = {
+  /**
+   * Invalid input name
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type TagControllerSuggestionsError =
+  TagControllerSuggestionsErrors[keyof TagControllerSuggestionsErrors]
+
+export type TagControllerSuggestionsResponses = {
+  /**
+   * Tag suggestions retrieved successfully
+   */
+  200: {
+    /**
+     * List of matching tag names.
+     */
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type TagControllerSuggestionsResponse =
+  TagControllerSuggestionsResponses[keyof TagControllerSuggestionsResponses]
+
+export type TagControllerUpsertData = {
+  body: Array<{
+    id?: number | null
+    name: string
+    order: number
+  }>
+  path?: never
+  query?: never
+  url: '/api/v1/tags/upsert'
+}
+
+export type TagControllerUpsertErrors = {
+  /**
+   * Validation error for input tags
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type TagControllerUpsertError =
+  TagControllerUpsertErrors[keyof TagControllerUpsertErrors]
+
+export type TagControllerUpsertResponses = {
+  /**
+   * Tags processed successfully (created and/or updated)
+   */
+  200: {
+    message?: string
+    data?: {
+      created_count?: number
+      updated_count?: number
+    }
+  }
+}
+
+export type TagControllerUpsertResponse =
+  TagControllerUpsertResponses[keyof TagControllerUpsertResponses]
+
+export type TagControllerDestroyData = {
+  body?: never
+  path: {
+    /**
+     * Tag ID. Must be a valid integer.
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/tags/{id}'
+}
+
+export type TagControllerDestroyErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Tag not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type TagControllerDestroyError =
+  TagControllerDestroyErrors[keyof TagControllerDestroyErrors]
+
+export type TagControllerDestroyResponses = {
+  /**
+   * Tag deleted successfully
+   */
+  200: {
+    message?: string
+  }
+}
+
+export type TagControllerDestroyResponse =
+  TagControllerDestroyResponses[keyof TagControllerDestroyResponses]
+
+export type TagControllerShowData = {
+  body?: never
+  path: {
+    /**
+     * Tag ID. Must be a valid integer.
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/tags/{id}'
+}
+
+export type TagControllerShowErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Tag not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type TagControllerShowError =
+  TagControllerShowErrors[keyof TagControllerShowErrors]
+
+export type TagControllerShowResponses = {
+  /**
+   * Tag retrieved successfully
+   */
+  200: {
+    message?: string
+    data?: Tag
+  }
+}
+
+export type TagControllerShowResponse =
+  TagControllerShowResponses[keyof TagControllerShowResponses]
+
+export type TagControllerUpdateData = {
+  body: {
+    name?: string
+  }
+  path: {
+    /**
+     * Tag ID. Must be a valid integer.
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/tags/{id}'
+}
+
+export type TagControllerUpdateErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Tag not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Validation error (name already exists or invalid)
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type TagControllerUpdateError =
+  TagControllerUpdateErrors[keyof TagControllerUpdateErrors]
+
+export type TagControllerUpdateResponses = {
+  /**
+   * Tag updated successfully
+   */
+  200: {
+    message?: string
+    data?: Tag
+  }
+}
+
+export type TagControllerUpdateResponse =
+  TagControllerUpdateResponses[keyof TagControllerUpdateResponses]
 
 export type ClientOptions = {
   baseUrl: 'http://localhost:8001' | (string & {})

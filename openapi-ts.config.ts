@@ -9,7 +9,6 @@ export default defineConfig({
   },
   plugins: [
     `@hey-api/client-next`,
-    `@tanstack/react-query`,
     `zod`,
     {
       enums: `javascript`,
