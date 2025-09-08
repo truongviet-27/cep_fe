@@ -135,4 +135,11 @@ export const resource: ResourceProps[] = [
       canCreate: true,
     },
   },
+  {
+    name: 'mail-templates',
+    list: '/mail-templates',
+    meta: {
+      parent: 'system-config',
+    },
+  },
 ]
