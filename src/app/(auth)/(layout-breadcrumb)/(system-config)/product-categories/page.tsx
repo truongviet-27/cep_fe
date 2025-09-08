@@ -29,6 +29,7 @@ import {
   useApiUrl,
   useCreate,
   useCustomMutation,
+  useNavigation,
   useResource,
   useUpdate,
 } from '@refinedev/core'
@@ -64,6 +65,8 @@ export default function Page() {
   const [category, setCategory] = useState<string | null>(null)
 
   const [form] = Form.useForm()
+
+  const { push } = useNavigation()
   const { resource: rs } = useResource()
   const resource = String(rs?.name)
 
@@ -386,8 +389,6 @@ export default function Page() {
     [tree, level, category],
   )
 
-  console.log(tree, 'filteredTree')
-
   return (
     <Create
       isLoading={!!tableProps.loading}
@@ -479,6 +480,15 @@ export default function Page() {
             icon={allOpen ? <UpOutlined /> : <DownOutlined />}
           >
             {allOpen ? 'すべて閉じる' : 'すべて開く'}
+          </Button>
+          <Button
+            type="link"
+            onClick={() => {
+              push('/product-categories/csv')
+            }}
+            // icon={allOpen ? <UpOutlined /> : <DownOutlined />}
+          >
+            CSV一括登録
           </Button>
         </div>
 

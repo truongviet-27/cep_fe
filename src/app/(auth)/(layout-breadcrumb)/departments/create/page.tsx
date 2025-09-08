@@ -77,7 +77,7 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      footerButtons={
+      rightFooterButtons={
         <Col>
           <Button
             size="middle"
@@ -93,9 +93,11 @@ export default function Page() {
     >
       <Form<DepartmentPayload>
         form={form}
-        layout="vertical"
+        labelCol={{ xs: 24, md: 2 }}
+        wrapperCol={{ xs: 24, md: 8 }}
+        labelAlign={'left'}
+        layout="horizontal"
         colon={false}
-        onFinish={onSubmit}
         autoComplete="off"
       >
         <Form.Item required label={<span>部門コード</span>}>

@@ -13,7 +13,7 @@ export const zCodeIssueSetting = z.object({
   issue_method: z.optional(z.enum(['automatic', 'manual'])),
   hash_dash: z.optional(z.boolean()),
   prefix: z.optional(z.string()),
-  segment: z.optional(z.enum(['year_range', 'month_range'])),
+  segment: z.optional(z.enum(['none', 'year_month', 'year_month_day_range'])),
   total: z.optional(z.int()),
   preview_code: z.optional(z.string()),
   serial_length: z.optional(z.int()),
@@ -21,6 +21,8 @@ export const zCodeIssueSetting = z.object({
   updated_by: z.optional(z.union([z.int(), z.null()])),
   created_at: z.optional(z.iso.datetime()),
   updated_at: z.optional(z.iso.datetime()),
+  author: z.optional(z.union([z.object({}), z.null()])),
+  editor: z.optional(z.union([z.object({}), z.null()])),
 })
 
 /**
@@ -82,38 +84,34 @@ export const zCodeIssueSettingDetailResponse = z.object({
 })
 
 /**
- * Generic paginated response structure
- */
-export const zPaginatedResponse = z.object({
-  data: z.optional(z.array(z.object({}))),
-  meta: z.optional(
-    z.object({
-      current_page: z.optional(z.int()),
-      from: z.optional(z.int()),
-      last_page: z.optional(z.int()),
-      per_page: z.optional(z.int()),
-      to: z.optional(z.int()),
-      total: z.optional(z.int()),
-    }),
-  ),
-  links: z.optional(
-    z.object({
-      first: z.optional(z.string()),
-      last: z.optional(z.string()),
-      prev: z.optional(z.union([z.string(), z.null()])),
-      next: z.optional(z.union([z.string(), z.null()])),
-    }),
-  ),
-})
-
-/**
  * Paginated response for code issue settings
  */
-export const zCodeIssueSettingsPaginatedResponse = zPaginatedResponse.and(
-  z.object({
-    data: z.optional(z.array(zCodeIssueSetting)),
-  }),
-)
+export const zCodeIssueSettingsPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zCodeIssueSetting)),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.int()),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.union([z.string(), z.null()])),
+          next: z.optional(z.union([z.string(), z.null()])),
+        }),
+      ),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
 
 /**
  * Request body for updating code issue setting
@@ -143,6 +141,162 @@ export const zUpdateCodeIssueSettingResponse = z.object({
 })
 
 /**
+ * Department model
+ */
+export const zDepartment = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  code: z.optional(z.string()),
+  order: z.optional(z.int()),
+  tenant_id: z.optional(z.uuid()),
+  author: z.optional(
+    z.union([
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+      }),
+      z.null(),
+    ]),
+  ),
+  editor: z.optional(
+    z.union([
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+      }),
+      z.null(),
+    ]),
+  ),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Paginated response for departments
+ */
+export const zDepartmentsPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zDepartment)),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.int()),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.union([z.string(), z.null()])),
+          next: z.optional(z.union([z.string(), z.null()])),
+        }),
+      ),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Payload to create a department
+ */
+export const zStoreDepartmentRequest = z.object({
+  name: z.string().max(100),
+  code: z
+    .string()
+    .max(20)
+    .regex(/^(?!-)[A-Z0-9-]+(?<!-)$/),
+})
+
+/**
+ * Payload to update a department (partial)
+ */
+export const zUpdateDepartmentRequest = z.object({
+  name: z.optional(z.string().max(100)),
+  code: z.optional(
+    z
+      .string()
+      .max(20)
+      .regex(/^(?!-)[A-Z0-9-]+(?<!-)$/),
+  ),
+})
+
+/**
+ * Employee model
+ */
+export const zEmployee = z.object({
+  id: z.optional(z.int()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  email: z.optional(z.string()),
+  department: z.optional(
+    z.union([
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+        code: z.optional(z.string()),
+      }),
+      z.null(),
+    ]),
+  ),
+  role: z.optional(
+    z.union([
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+        display_name: z.optional(z.string()),
+      }),
+      z.null(),
+    ]),
+  ),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Paginated response for employees
+ */
+export const zEmployeesPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zEmployee)),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.int()),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.union([z.string(), z.null()])),
+          next: z.optional(z.union([z.string(), z.null()])),
+        }),
+      ),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Payload for partially updating an employee
+ */
+export const zUpdateEmployeeRequest = z.object({
+  code: z.optional(z.string().max(20)),
+  department_id: z.optional(z.int()),
+  role_id: z.optional(z.int()),
+})
+
+/**
  * Standard error response format
  */
 export const zErrorResponse = z.object({
@@ -167,11 +321,101 @@ export const zInternalServerErrorResponse = z.object({
 })
 
 /**
+ * Mail Template model
+ */
+export const zMailTemplate = z.object({
+  id: z.optional(z.int()),
+  code: z.optional(z.string()),
+  title: z.optional(z.string()),
+  body: z.optional(z.string()),
+  signature: z.optional(z.string()),
+})
+
+/**
+ * Pagination metadata
+ */
+export const zMeta = z.object({
+  current_page: z.optional(z.int()),
+  from: z.optional(z.int()),
+  last_page: z.optional(z.int()),
+  per_page: z.optional(z.int()),
+  to: z.optional(z.int()),
+  total: z.optional(z.int()),
+})
+
+/**
  * Resource not found response
  */
 export const zNotFoundResponse = z.object({
   status: z.optional(z.boolean()),
   message: z.optional(z.string()),
+})
+
+/**
+ * Generic paginated response structure
+ */
+export const zPaginatedResponse = z.object({
+  data: z.optional(z.array(z.object({}))),
+  meta: z.optional(
+    z.object({
+      current_page: z.optional(z.int()),
+      from: z.optional(z.int()),
+      last_page: z.optional(z.int()),
+      per_page: z.optional(z.int()),
+      to: z.optional(z.int()),
+      total: z.optional(z.int()),
+    }),
+  ),
+  links: z.optional(
+    z.object({
+      first: z.optional(z.string()),
+      last: z.optional(z.string()),
+      prev: z.optional(z.union([z.string(), z.null()])),
+      next: z.optional(z.union([z.string(), z.null()])),
+    }),
+  ),
+})
+
+export const zBulkAssignPermissionsRequest = z.object({
+  assignments: z.array(
+    z.object({
+      role: z.string(),
+      permissions: z.array(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Permission entity describing a granular access capability
+ */
+export const zPermission = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  display_name: z.optional(z.union([z.string(), z.null()])),
+  description: z.optional(z.union([z.string(), z.null()])),
+  assigned_roles: z.optional(z.array(z.string())),
+})
+
+/**
+ * Role entity representing a system authorization role
+ */
+export const zRole = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  display_name: z.optional(z.union([z.string(), z.null()])),
+})
+
+export const zRolePermissionResponse = z.object({
+  roles: z.optional(z.array(zRole)),
+  permissions: z.optional(z.array(zPermission)),
+})
+
+/**
+ * Standard API response envelope for role-permission listing
+ */
+export const zRolePermissionEnvelope = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zRolePermissionResponse),
 })
 
 /**
@@ -205,23 +449,155 @@ export const zPostsPaginatedResponse = zPaginatedResponse.and(
 )
 
 /**
+ * Product category model
+ */
+export const zProductCategory = z.object({
+  id: z.optional(z.int()),
+  tenant_id: z.optional(z.union([z.uuid(), z.null()])),
+  parent_id: z.optional(z.union([z.int(), z.null()])),
+  level: z.optional(z.int()),
+  name: z.optional(z.string()),
+})
+
+/**
  * Product unit model
  */
 export const zProductUnit = z.object({
   id: z.optional(z.int()),
   name: z.optional(z.string()),
-  created_at: z.optional(z.iso.datetime()),
-  updated_at: z.optional(z.iso.datetime()),
+  order: z.optional(z.int()),
+  is_disable: z.optional(z.boolean()),
+})
+
+/**
+ * Pagination links
+ */
+export const zUnitLinks = z.object({
+  first: z.optional(z.string()),
+  last: z.optional(z.string()),
+  prev: z.optional(z.union([z.string(), z.null()])),
+  next: z.optional(z.union([z.string(), z.null()])),
 })
 
 /**
  * Paginated response for product units
  */
-export const zProductUnitsPaginatedResponse = zPaginatedResponse.and(
-  z.object({
-    data: z.optional(z.array(zProductUnit)),
-  }),
-)
+export const zProductUnitsPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zProductUnit)),
+      meta: z.optional(zMeta),
+      links: z.optional(zUnitLinks),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Rank resource (code: unique per tenant, max 20 alphanumeric chars; name: unique per tenant, max 50 chars; rate: non-negative integer; note: optional max 255 chars)
+ */
+export const zRank = z.object({
+  id: z.optional(z.int()),
+  code: z.optional(
+    z
+      .string()
+      .max(20)
+      .regex(/^[A-Za-z0-9]+$/),
+  ),
+  name: z.optional(z.string().max(50)),
+  rate: z.optional(z.int().gte(0)),
+  note: z.optional(z.union([z.string().max(255), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Paginated ranks list envelope
+ */
+export const zRanksPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zRank)),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.union([z.int(), z.null()])),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.union([z.int(), z.null()])),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.union([z.string(), z.null()])),
+          next: z.optional(z.union([z.string(), z.null()])),
+        }),
+      ),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+export const zStoreRankRequest = z.object({
+  code: z
+    .string()
+    .max(20)
+    .regex(/^[A-Za-z0-9]+$/),
+  name: z.string().max(50),
+  rate: z.int().gte(0),
+  note: z.optional(z.union([z.string().max(255), z.null()])),
+})
+
+/**
+ * Payload to update a rank. All fields optional; only provided fields will be updated.
+ */
+export const zUpdateRankRequest = z.object({
+  code: z.optional(
+    z
+      .string()
+      .max(20)
+      .regex(/^[A-Za-z0-9]+$/),
+  ),
+  name: z.optional(z.string().max(50)),
+  rate: z.optional(z.int().gte(0)),
+  note: z.optional(z.union([z.string().max(255), z.null()])),
+})
+
+/**
+ * Tag model
+ */
+export const zTag = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  order: z.optional(z.int()),
+})
+
+/**
+ * Pagination links
+ */
+export const zLinks = z.object({
+  first: z.optional(z.string()),
+  last: z.optional(z.string()),
+  prev: z.optional(z.union([z.string(), z.null()])),
+  next: z.optional(z.union([z.string(), z.null()])),
+})
+
+/**
+ * Paginated response for tags
+ */
+export const zTagsPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zTag)),
+      meta: z.optional(zMeta),
+      links: z.optional(zLinks),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
 
 /**
  * Unauthorized access response
@@ -441,7 +817,7 @@ export const zCodeIssueSettingControllerShowData = z.object({
 export const zCodeIssueSettingControllerShowResponse =
   zCodeIssueSettingDetailResponse
 
-export const zCade34322664382Bd2B7971982208Eb9Data = z.object({
+export const zEed87Adddef6126Fa051Bd6Cd2D733E6Data = z.object({
   body: zUpdateCodeIssueSettingRequest,
   path: z.object({
     id: z.int(),
@@ -452,8 +828,382 @@ export const zCade34322664382Bd2B7971982208Eb9Data = z.object({
 /**
  * Code Issue Setting updated successfully
  */
-export const zCade34322664382Bd2B7971982208Eb9Response =
+export const zEed87Adddef6126Fa051Bd6Cd2D733E6Response =
   zUpdateCodeIssueSettingResponse
+
+export const zCodeIssueSettingControllerShowByCodeData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    code: z.enum([
+      'customers',
+      'quotas',
+      'products',
+      'employees',
+      'departments',
+    ]),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Code Issue Setting detail retrieved successfully
+ */
+export const zCodeIssueSettingControllerShowByCodeResponse =
+  zCodeIssueSettingDetailResponse
+
+export const zDepartmentControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+      q: z.optional(z.string()),
+    }),
+  ),
+})
+
+/**
+ * Departments retrieved successfully
+ */
+export const zDepartmentControllerIndexResponse = zDepartmentsPaginatedResponse
+
+export const zDepartmentControllerStoreData = z.object({
+  body: zStoreDepartmentRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Department created successfully
+ */
+export const zDepartmentControllerStoreResponse = zDepartment
+
+export const zDepartmentControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Department deleted successfully
+ */
+export const zDepartmentControllerDestroyResponse = z.object({
+  message: z.optional(z.string()),
+})
+
+export const zDepartmentControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Department detail retrieved successfully
+ */
+export const zDepartmentControllerShowResponse = zDepartment
+
+export const zDepartmentControllerUpdateData = z.object({
+  body: zUpdateDepartmentRequest,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Department updated successfully
+ */
+export const zDepartmentControllerUpdateResponse = zDepartment
+
+export const zDepartmentControllerUpdateOrderData = z.object({
+  body: z.object({
+    data: z.array(
+      z.object({
+        id: z.optional(z.int()),
+        order: z.optional(z.int()),
+      }),
+    ),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Order updated
+ */
+export const zDepartmentControllerUpdateOrderResponse = z.object({
+  data: z.optional(
+    z.array(
+      z.object({
+        id: z.optional(z.int()),
+        order: z.optional(z.int()),
+      }),
+    ),
+  ),
+  message: z.optional(z.string()),
+})
+
+export const zEmployeeControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+      q: z.optional(z.string()),
+      email: z.optional(z.string()),
+      department_id: z.optional(z.int()),
+      role_id: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Employees retrieved successfully
+ */
+export const zEmployeeControllerIndexResponse = zEmployeesPaginatedResponse
+
+export const zEmployeeControllerStoreData = z.object({
+  body: z.object({
+    code: z.optional(z.string()),
+    name: z.string(),
+    email: z.string(),
+    department_id: z.optional(z.int()),
+    role_id: z.optional(z.int()),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Employee created successfully
+ */
+export const zEmployeeControllerStoreResponse = zEmployee
+
+export const zEmployeeControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Employee deleted successfully
+ */
+export const zEmployeeControllerDestroyResponse = z.object({
+  message: z.optional(z.string()),
+})
+
+export const zEmployeeControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Employee detail retrieved successfully
+ */
+export const zEmployeeControllerShowResponse = zEmployee
+
+export const zEmployeeControllerUpdateData = z.object({
+  body: zUpdateEmployeeRequest,
+  path: z.object({
+    employee: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Employee updated successfully
+ */
+export const zEmployeeControllerUpdateResponse = zEmployee
+
+export const zImportControllerValidateImportData = z.object({
+  body: z.object({
+    file: z.string(),
+    type: z.enum([
+      'products',
+      'product-categories',
+      'customers',
+      'employees',
+      'departments',
+    ]),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * File validation completed successfully
+ */
+export const zImportControllerValidateImportResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      total: z.optional(z.int()),
+      valid_rows: z.optional(z.int()),
+      invalid_rows: z.optional(z.int()),
+      errors: z.optional(
+        z.array(
+          z.object({
+            row: z.optional(z.int()),
+            data: z.optional(z.object({})),
+            errors: z.optional(z.array(z.string())),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
+export const zImportControllerImportData = z.object({
+  body: z.object({
+    file: z.string(),
+    type: z.enum([
+      'products',
+      'product-categories',
+      'customers',
+      'employees',
+      'departments',
+    ]),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Import completed successfully
+ */
+export const zImportControllerImportResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      total: z.optional(z.int()),
+      success: z.optional(z.int()),
+      failed: z.optional(z.int()),
+      errors: z.optional(
+        z.array(
+          z.object({
+            row: z.optional(z.int()),
+            data: z.optional(z.object({})),
+            errors: z.optional(z.array(z.string())),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
+export const zMailTemplateControllerShowByCodeData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    code: z.string(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Mail template retrieved successfully
+ */
+export const zMailTemplateControllerShowByCodeResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zMailTemplate),
+})
+
+export const zMailTemplateControllerStoreData = z.object({
+  body: z.object({
+    code: z.string(),
+    title: z.string(),
+    body: z.string(),
+    signature: z.string(),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Mail template created/updated successfully
+ */
+export const zMailTemplateControllerStoreResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zMailTemplate),
+})
+
+export const zParameterSettingControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * List retrieved
+ */
+export const zParameterSettingControllerIndexResponse = z.object({
+  data: z.optional(
+    z.array(
+      z.object({
+        parameter_id: z.optional(z.int()),
+        code: z.optional(z.string()),
+        name: z.optional(z.string()),
+        is_manage: z.optional(z.boolean()),
+      }),
+    ),
+  ),
+  message: z.optional(z.string()),
+})
+
+export const zParameterSettingControllerUpdateManyData = z.object({
+  body: z.array(
+    z.object({
+      id: z.optional(z.int()),
+      is_manage: z.optional(z.boolean()),
+    }),
+  ),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Settings updated
+ */
+export const zParameterSettingControllerUpdateManyResponse = z.object({
+  data: z.optional(
+    z.array(
+      z.object({
+        id: z.optional(z.int()),
+        is_manage: z.optional(z.boolean()),
+      }),
+    ),
+  ),
+  message: z.optional(z.string()),
+})
+
+export const zPermissionControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * OK
+ */
+export const zPermissionControllerIndexResponse = zRolePermissionEnvelope
+
+export const zPermissionControllerBulkAssignData = z.object({
+  body: zBulkAssignPermissionsRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
 
 export const zD88E9Abc08D34E08B091737239DdfData = z.object({
   body: z.optional(z.never()),
@@ -546,6 +1296,162 @@ export const zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Response = z.object({
   data: z.optional(zPost),
 })
 
+export const zProductCategoryControllerUpdateTreeData = z.object({
+  body: z.array(
+    z.object({
+      id: z.optional(z.int()),
+      parent_id: z.optional(z.union([z.int(), z.null()])),
+      level: z.optional(z.int()),
+      name: z.optional(z.string()),
+      children: z.optional(z.array(z.object({}))),
+    }),
+  ),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Categories tree updated successfully
+ */
+export const zProductCategoryControllerUpdateTreeResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      items: z.optional(
+        z.array(
+          z.object({
+            id: z.optional(z.int()),
+            order: z.optional(z.int()),
+            parent_id: z.optional(z.union([z.int(), z.null()])),
+            level: z.optional(z.int()),
+            name: z.optional(z.string()),
+            children: z.optional(z.array(z.object({}))),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
+export const zProductCategoryControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      name_lk: z.optional(z.string()),
+      level: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Categories tree retrieved successfully
+ */
+export const zProductCategoryControllerIndexResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      items: z.optional(
+        z.array(
+          z.object({
+            id: z.optional(z.int()),
+            parent_id: z.optional(z.union([z.int(), z.null()])),
+            level: z.optional(z.int()),
+            name: z.optional(z.string()),
+            children: z.optional(z.array(z.object({}))),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
+export const zProductCategoryControllerStoreData = z.object({
+  body: z.object({
+    name: z.string(),
+    parent_id: z.optional(z.union([z.int(), z.null()])),
+    level: z.int(),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Category created successfully
+ */
+export const zProductCategoryControllerStoreResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zProductCategory),
+})
+
+export const zProductCategoryControllerSuggestionsData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      name: z.optional(z.string()),
+      level: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Product category suggestions retrieved successfully
+ */
+export const zProductCategoryControllerSuggestionsResponse = z.object({
+  data: z.optional(z.array(z.string())),
+  message: z.optional(z.string()),
+})
+
+export const zProductCategoryControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Category deleted successfully
+ */
+export const zProductCategoryControllerDestroyResponse = z.object({
+  message: z.optional(z.string()),
+})
+
+export const zProductCategoryControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Category retrieved successfully
+ */
+export const zProductCategoryControllerShowResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zProductCategory),
+})
+
+export const zProductCategoryControllerUpdateData = z.object({
+  body: z.object({
+    name: z.optional(z.string()),
+  }),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Category updated successfully
+ */
+export const zProductCategoryControllerUpdateResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zProductCategory),
+})
+
 export const zProductUnitControllerIndexData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -554,6 +1460,8 @@ export const zProductUnitControllerIndexData = z.object({
       name_lk: z.optional(z.string()),
       _page: z.optional(z.int()),
       _per_page: z.optional(z.int()),
+      order: z.optional(z.int()),
+      is_disable: z.optional(z.boolean()),
     }),
   ),
 })
@@ -561,14 +1469,14 @@ export const zProductUnitControllerIndexData = z.object({
 /**
  * Units retrieved successfully
  */
-export const zProductUnitControllerIndexResponse = z.object({
-  message: z.optional(z.string()),
-  data: z.optional(z.array(zProductUnit)),
-})
+export const zProductUnitControllerIndexResponse =
+  zProductUnitsPaginatedResponse
 
 export const zProductUnitControllerStoreData = z.object({
   body: z.object({
     name: z.string(),
+    order: z.optional(z.int()),
+    is_disable: z.optional(z.boolean()),
   }),
   path: z.optional(z.never()),
   query: z.optional(z.never()),
@@ -580,6 +1488,47 @@ export const zProductUnitControllerStoreData = z.object({
 export const zProductUnitControllerStoreResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zProductUnit),
+})
+
+export const zProductUnitControllerUpsertData = z.object({
+  body: z.array(
+    z.object({
+      id: z.optional(z.union([z.int(), z.null()])),
+      name: z.string(),
+      order: z.int(),
+    }),
+  ),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Product units processed successfully
+ */
+export const zProductUnitControllerUpsertResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      created_count: z.optional(z.int()),
+      updated_count: z.optional(z.int()),
+    }),
+  ),
+})
+
+export const zProductUnitControllerSuggestionsData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.object({
+    name: z.string(),
+  }),
+})
+
+/**
+ * Product unit suggestions retrieved successfully
+ */
+export const zProductUnitControllerSuggestionsResponse = z.object({
+  data: z.optional(z.array(z.string())),
+  message: z.optional(z.string()),
 })
 
 export const zProductUnitControllerDestroyData = z.object({
@@ -616,6 +1565,8 @@ export const zProductUnitControllerShowResponse = z.object({
 export const zProductUnitControllerUpdateData = z.object({
   body: z.object({
     name: z.optional(z.string()),
+    order: z.optional(z.int()),
+    is_disable: z.optional(z.boolean()),
   }),
   path: z.object({
     id: z.int(),
@@ -629,4 +1580,200 @@ export const zProductUnitControllerUpdateData = z.object({
 export const zProductUnitControllerUpdateResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zProductUnit),
+})
+
+export const zRankControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+      q: z.optional(z.string()),
+    }),
+  ),
+})
+
+/**
+ * Ranks retrieved
+ */
+export const zRankControllerIndexResponse = zRanksPaginatedResponse
+
+export const zRankControllerStoreData = z.object({
+  body: zStoreRankRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Rank created
+ */
+export const zRankControllerStoreResponse = zRank
+
+export const zRankControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+export const zRankControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Rank detail
+ */
+export const zRankControllerShowResponse = zRank
+
+export const zRankControllerUpdateData = z.object({
+  body: zUpdateRankRequest,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Rank updated
+ */
+export const zRankControllerUpdateResponse = zRank
+
+export const zRoleControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+    }),
+  ),
+})
+
+export const zTagControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      name_lk: z.optional(z.string()),
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Tags retrieved successfully
+ */
+export const zTagControllerIndexResponse = zTagsPaginatedResponse
+
+export const zTagControllerStoreData = z.object({
+  body: z.object({
+    name: z.string(),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Tag created successfully
+ */
+export const zTagControllerStoreResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zTag),
+})
+
+export const zTagControllerSuggestionsData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.object({
+    name: z.string(),
+  }),
+})
+
+/**
+ * Tag suggestions retrieved successfully
+ */
+export const zTagControllerSuggestionsResponse = z.object({
+  data: z.optional(z.array(z.string())),
+  message: z.optional(z.string()),
+})
+
+export const zTagControllerUpsertData = z.object({
+  body: z.array(
+    z.object({
+      id: z.optional(z.union([z.int(), z.null()])),
+      name: z.string(),
+      order: z.int(),
+    }),
+  ),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Tags processed successfully (created and/or updated)
+ */
+export const zTagControllerUpsertResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      created_count: z.optional(z.int()),
+      updated_count: z.optional(z.int()),
+    }),
+  ),
+})
+
+export const zTagControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Tag deleted successfully
+ */
+export const zTagControllerDestroyResponse = z.object({
+  message: z.optional(z.string()),
+})
+
+export const zTagControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Tag retrieved successfully
+ */
+export const zTagControllerShowResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zTag),
+})
+
+export const zTagControllerUpdateData = z.object({
+  body: z.object({
+    name: z.optional(z.string()),
+  }),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Tag updated successfully
+ */
+export const zTagControllerUpdateResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zTag),
 })

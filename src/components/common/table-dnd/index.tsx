@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import { HolderOutlined } from '@ant-design/icons'
@@ -9,11 +10,10 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { PRIMARY } from '@utility/color'
 import type { TableColumnsType, TableProps } from 'antd'
-import { Button, Table } from 'antd'
+import { Button } from 'antd'
 import React, { useContext, useMemo } from 'react'
+import CommonTable from '@components/common/table'
 
 type SortableListeners = ReturnType<typeof useSortable>['listeners']
 
@@ -36,48 +36,45 @@ const DragHandle: React.FC = () => {
   )
 }
 
-interface DndRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  'data-row-key': string
-}
+// interface DndRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+//   'data-row-key': string
+// }
 
-const DndRow: React.FC<DndRowProps> = (props) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props['data-row-key'],
-    animateLayoutChanges: () => false,
-  })
-
-  const style: React.CSSProperties = {
-    ...props.style,
-    transform: CSS.Translate.toString(transform),
-    transition,
-    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
-    willChange: 'transform',
-  }
-
-  return (
-    <RowCtx.Provider value={{ setActivatorNodeRef, listeners }}>
-      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
-    </RowCtx.Provider>
-  )
-}
+// const DndRow: React.FC<DndRowProps> = (props) => {
+//   const {
+//     attributes,
+//     listeners,
+//     setNodeRef,
+//     setActivatorNodeRef,
+//     transform,
+//     transition,
+//     isDragging,
+//   } = useSortable({
+//     id: props['data-row-key'],
+//     animateLayoutChanges: () => false,
+//   })
+//
+//   const style: React.CSSProperties = {
+//     ...props.style,
+//     transform: CSS.Translate.toString(transform),
+//     transition,
+//     ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+//     willChange: 'transform',
+//   }
+//
+//   return (
+//     <RowCtx.Provider value={{ setActivatorNodeRef, listeners }}>
+//       <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+//     </RowCtx.Provider>
+//   )
+// }
 
 export interface TableDndProps<T extends object> {
   dataSource: T[]
   columns: TableColumnsType<T>
   getRowId: (row: T) => string
   onDragEnd?: (activeId: string, overId: string | null) => void
-  tableProps?: Omit<
-    TableProps<T>,
-    'dataSource' | 'columns' | 'rowKey' | 'components'
-  >
+  tableProps?: TableProps<any>
 }
 
 export default function TableDnd<T extends object>({
@@ -116,33 +113,13 @@ export default function TableDnd<T extends object>({
       measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        <Table<T>
-          components={{
-            body: { row: DndRow },
-            header: {
-              cell: (
-                props: React.JSX.IntrinsicAttributes &
-                  React.ClassAttributes<HTMLTableHeaderCellElement> &
-                  React.ThHTMLAttributes<HTMLTableHeaderCellElement>,
-              ) => (
-                <th
-                  {...props}
-                  style={{
-                    ...props.style,
-                    backgroundColor: '#e6f7ff',
-                    color: PRIMARY,
-                  }}
-                />
-              ),
-            },
-          }}
+        <CommonTable<T>
+          {...tableProps}
           rowKey={getRowId}
           columns={injectedColumns}
           dataSource={dataSource}
-          pagination={false}
           tableLayout="fixed"
           scroll={{ x: 'max-content' }}
-          {...tableProps}
         />
       </SortableContext>
 

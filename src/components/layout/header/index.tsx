@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons'
 import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
 import { useModal } from '@refinedev/core'
+import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
 import { Avatar, Badge, Input, Layout, Modal, Space } from 'antd'
 import { useKBar } from 'kbar'
 import { useSession } from 'next-auth/react'
@@ -27,8 +28,11 @@ export default function AuthHeader({
   const session = useSession()
   const modalProps = useModal()
 
+  const isAdmin = isSupperAdmin(session.data?.accessToken)
+  const tenantName = getOrgFromToken(session.data?.accessToken)?.name
+
   return (
-    <div className={cn(children && 'flex justify-center')}>
+    <div className={cn(children && 'sticky top-0 z-50 flex justify-center')}>
       <Header
         className={cn(
           'flex w-full items-center border-b',
@@ -36,6 +40,7 @@ export default function AuthHeader({
           'border',
           'shadow-sm',
           'px-6 py-4 pb-6',
+
           children ? 'justify-between' : 'justify-end',
         )}
         style={{
@@ -51,13 +56,13 @@ export default function AuthHeader({
             <div className="text-right leading-tight">
               <Space
                 size={4}
-                className={'cursor-pointer'}
-                onClick={modalProps.show}
+                className={cn(isAdmin && 'cursor-pointer')}
+                onClick={isAdmin ? () => modalProps.show() : undefined}
               >
                 <div className="text-[12px] font-semibold text-[#74232A]">
-                  {session.data?.tenant?.name ?? '株式会社ピオネロ'}
+                  {tenantName ?? '株式会社ピオネロ'}
                 </div>
-                <DownOutlined style={{ fontSize: '10px' }} />
+                {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}
               </Space>
 
               <div className="flex items-center justify-end gap-1">

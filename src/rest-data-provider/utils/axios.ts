@@ -1,7 +1,7 @@
 import { getSessionOnce } from '@lib/get-session-once'
 import type { HttpError } from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
-import { getCepIdFromToken } from '@utility/decode-token'
+import { getOrgFromToken } from '@utility/decode-token'
 import axios from 'axios'
 
 const axiosInstance = axios.create()
@@ -10,7 +10,7 @@ axiosInstance.interceptors.request.use(
   async (request) => {
     const session = await getSessionOnce()
     const { tenantId } = useTenantStore.getState()
-    const cepId = getCepIdFromToken(session?.accessToken)
+    const cepId = getOrgFromToken(session?.accessToken)?.id
 
     if (session?.accessToken) {
       request.headers = request.headers ?? {}

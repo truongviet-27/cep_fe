@@ -190,56 +190,59 @@ export const Show: React.FC<ShowProps & CustomProps> = ({
         //     <Breadcrumb />
         //   )
         // }
-        // {...(headerProps ?? {})}
+        {...(headerProps ?? {})}
       >
         <Spin spinning={isLoading}>
           <Card
             bordered={false}
-            actions={
-              footerButtons
-                ? [
+            actions={[
+              <Space
+                key="footer-buttons"
+                wrap
+                style={
+                  footerButtons
+                    ? {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        paddingLeft: 24,
+                        paddingRight: 24,
+                      }
+                    : {
+                        float: 'right',
+                        marginRight: 24,
+                      }
+                }
+                {...footerButtonProps}
+              >
+                <>
+                  {footerButtons}
+                  {
                     <Space
-                      className={'w-full justify-end pr-4'}
-                      key="footer-buttons"
-                      wrap
-                      {...footerButtonProps}
+                      size={4}
+                      style={{
+                        paddingTop: footerButtons ? 40 : undefined,
+                      }}
                     >
-                      {typeof footerButtons === 'function' ? (
-                        footerButtons({
-                          defaultButtons: null,
-                        })
-                      ) : (
-                        <>
-                          {footerButtons}
-                          {
-                            <Space
-                              size={4}
-                              style={{
-                                paddingTop: footerButtons ? 60 : undefined,
-                              }}
-                            >
-                              {rightFooterButtons}
-                              {!hiddenButtonBack && (
-                                <Button
-                                  type="default"
-                                  style={{
-                                    background: '#fff',
-                                    borderColor: PRIMARY,
-                                    color: PRIMARY,
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  戻る
-                                </Button>
-                              )}
-                            </Space>
-                          }
-                        </>
+                      {!hiddenButtonBack && (
+                        <Button
+                          type="default"
+                          onClick={() => go({ to: goListPath })}
+                          style={{
+                            background: '#fff',
+                            borderColor: PRIMARY,
+                            color: PRIMARY,
+                            fontWeight: 600,
+                          }}
+                        >
+                          戻る
+                        </Button>
                       )}
-                    </Space>,
-                  ]
-                : undefined
-            }
+                      {rightFooterButtons}
+                    </Space>
+                  }
+                </>
+              </Space>,
+            ]}
             {...(contentProps ?? {})}
           >
             {isAutoHeading && <AutoHeading i18n={i18nHeading} />}

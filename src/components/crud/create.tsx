@@ -16,6 +16,9 @@ import { PRIMARY } from '@utility/color'
 
 type CustomProps = {
   isAutoHeading?: boolean
+  i18nHeading?: string
+  hiddenButtonBack?: boolean
+  rightFooterButtons?: React.ReactNode
 }
 
 /**
@@ -40,6 +43,8 @@ export const Create: React.FC<CreateProps & CustomProps> = ({
   footerButtons,
   // goBack: goBackFromProps,
   isAutoHeading = true,
+  rightFooterButtons,
+  hiddenButtonBack = false,
 }) => {
   const translate = useTranslate()
   const { options: { breadcrumb: globalBreadcrumb } = {} } = useRefineContext()
@@ -113,35 +118,36 @@ export const Create: React.FC<CreateProps & CustomProps> = ({
                 style={{ float: 'right', marginRight: 24 }}
                 {...(footerButtonProps ?? {})}
               >
-                {footerButtons ? (
-                  typeof footerButtons === 'function' ? (
-                    footerButtons({
-                      defaultButtons: defaultFooterButtons,
-                      saveButtonProps: saveButtonProps,
-                    })
-                  ) : (
-                    <>
-                      {footerButtons}
-                      <Button
-                        type="default"
-                        style={{
-                          background: '#fff',
-                          borderColor: PRIMARY,
-                          color: PRIMARY,
-                          fontWeight: 600,
-                        }}
-                      >
-                        戻る
-                      </Button>
-                    </>
-                  )
-                ) : (
-                  defaultFooterButtons
-                )}
+                <>
+                  {footerButtons}
+                  {
+                    <Space
+                      size={4}
+                      style={{
+                        paddingTop: footerButtons ? 60 : undefined,
+                      }}
+                    >
+                      {!hiddenButtonBack && (
+                        <Button
+                          type="default"
+                          onClick={goBack}
+                          style={{
+                            background: '#fff',
+                            borderColor: PRIMARY,
+                            color: PRIMARY,
+                            fontWeight: 600,
+                          }}
+                        >
+                          戻る
+                        </Button>
+                      )}
+                      {rightFooterButtons}
+                    </Space>
+                  }
+                </>
               </Space>,
             ]}
             {...(contentProps ?? {})}
-            className="min-h-[82vh]"
           >
             {isAutoHeading && <AutoHeading />}
             {children}

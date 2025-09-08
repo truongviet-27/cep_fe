@@ -1,15 +1,23 @@
 'use client'
 
-import type { ActionButtonsProps } from '@interfaces/config'
+import type { SaveButtonProps } from '@refinedev/antd'
 import { Button } from 'antd'
+
+type ActionButtonProps = {
+  onCancel: () => void
+  saveButtonProps: SaveButtonProps
+  cancelText: string
+  saveText: string
+  loading?: boolean
+}
 
 export default function ActionButtons({
   onCancel,
-  onSave,
+  saveButtonProps,
   cancelText,
   saveText,
   loading = false,
-}: Readonly<ActionButtonsProps>) {
+}: Readonly<ActionButtonProps>) {
   return (
     <div className="flex justify-end space-x-6">
       <Button
@@ -22,11 +30,10 @@ export default function ActionButtons({
       </Button>
       &nbsp;&nbsp;
       <Button
+        {...saveButtonProps}
         type="primary"
         size="middle"
         className="px-8"
-        onClick={onSave}
-        loading={loading}
       >
         {saveText}
       </Button>
