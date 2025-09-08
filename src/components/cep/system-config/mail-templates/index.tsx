@@ -25,8 +25,6 @@ function MailTemplate() {
   const { formProps, form, saveButtonProps } = methods
   const { resetFields } = form
 
-  console.log(methods, 'methods')
-
   return (
     <PageContainer
       title={
@@ -39,7 +37,11 @@ function MailTemplate() {
                 </Title>
               ),
             },
-            { title: <Title level={5}>メールテンプレート設定</Title> },
+            {
+              title: (
+                <Title level={5}>{t('mail_templates.mail_templates')}</Title>
+              ),
+            },
           ]}
           separator={<RightOutlined />}
         />
@@ -59,7 +61,7 @@ function MailTemplate() {
             color: '#1890FF',
           }}
         >
-          メールテンプレート設定
+          {t('mail_templates.mail_templates')}
         </Typography.Title>
         <TabsEmailTemplate
           isEdit={isEdit}
@@ -71,23 +73,18 @@ function MailTemplate() {
           {isEdit ? (
             <div className="flex items-center justify-between gap-4">
               <Popconfirm
-                title="確認する"
-                description="データをリセットしてもよろしいですか?"
+                title={t('mail_templates.popup.reset.title')}
+                description={t('mail_templates.popup.reset.message')}
                 open={openReset}
                 onConfirm={() => {
-                  // setFieldsValue({
-                  //   [`title_${indexTab}`]: data?.title,
-                  //   [`content_${indexTab}`]: data?.body,
-                  //   [`signature_${indexTab}`]: data?.signature,
-                  // })
                   resetFields()
                   setOpenReset(!openReset)
                 }}
                 onCancel={() => {
                   setOpenReset(!openReset)
                 }}
-                okText={'確認する'}
-                cancelText={'キャンセル'}
+                okText={t('mail_templates.popup.reset.okText')}
+                cancelText={t('mail_templates.popup.reset.cancelText')}
               >
                 <Button
                   style={{
@@ -99,21 +96,16 @@ function MailTemplate() {
                     setOpenReset(!openReset)
                   }}
                 >
-                  初期設定に戻す
+                  {t('mail_templates.buttons.resetDefault')}
                 </Button>
               </Popconfirm>
 
               <div className="flex items-center gap-4">
                 <Popconfirm
-                  title="確認する"
-                  description="本当に戻って来ますか？"
+                  title={t('mail_templates.popup.reset.okText')}
+                  description={t('mail_templates.popup.cancel.message')}
                   open={openCancel}
                   onConfirm={() => {
-                    // setFieldsValue({
-                    //   [`title_${indexTab}`]: data?.title,
-                    //   [`content_${indexTab}`]: data?.body,
-                    //   [`signature_${indexTab}`]: data?.signature,
-                    // })
                     resetFields()
                     setOpenCancel(!openCancel)
                     setIsEdit(false)
@@ -121,8 +113,8 @@ function MailTemplate() {
                   onCancel={() => {
                     setOpenCancel(!openCancel)
                   }}
-                  okText={'確認する'}
-                  cancelText={'キャンセル'}
+                  okText={t('mail_templates.popup.reset.okText')}
+                  cancelText={t('mail_templates.popup.reset.cancelText')}
                 >
                   <Button
                     style={{
@@ -136,7 +128,7 @@ function MailTemplate() {
                       setOpenCancel(!openCancel)
                     }}
                   >
-                    戻る
+                    {t('mail_templates.buttons.back')}
                   </Button>
                 </Popconfirm>
                 <Button
@@ -145,7 +137,7 @@ function MailTemplate() {
                   onClick={onSubmit}
                   loading={isLoadingSubmit}
                 >
-                  保存
+                  {t('buttons.save')}
                 </Button>
               </div>
             </div>
@@ -162,19 +154,14 @@ function MailTemplate() {
                 setIsEdit(true)
               }}
             >
-              編集
+              {t('mail_templates.buttons.edit')}
             </Button>
           )}
         </div>
         {isEdit && (
           <TextArea
             rows={6}
-            value={`タグは必ず[[]]で囲って入力してください。
-    ・署名は自動的に追加されるため、テンプレート内に記載する必要はありません。
-    ・変更したテンプレートは「更新」ボタンを押すまで保存されません。
-    ・テンプレートは見積書送付時に自動的に適用されます。
-    ・入力欄上部のボタンをクリックすると、テンプレート内の任意の位置にタグを埋め込むことができます。埋め込まれたタグは、メール送信実行時に登録して表示されます。
-    （例）[[取引先会社名]] → ○○商事株式会社`}
+            value={t('mail_templates.form.note')}
             style={{
               marginTop: '10px',
               backgroundColor: '#F6F8FF',

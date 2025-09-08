@@ -1,5 +1,6 @@
 import { MailFilled } from '@ant-design/icons'
 import TabsContent from '@components/cep/system-config/mail-templates/tabs/content'
+import { useTranslate } from '@refinedev/core'
 import { Card, Tabs } from 'antd'
 import { useMemo } from 'react'
 
@@ -12,32 +13,36 @@ function TabsEmailTemplate({
   onChange: (value: string) => void
   isLoading: boolean
 }) {
-  console.log(isLoading, 'isLoading')
+  const t = useTranslate()
   const tags = useMemo(() => {
     return [
       {
         value: 1,
-        text: '取引先部署名',
+        text: t('mail_templates.tags.customerCompany'),
       },
       {
         value: 2,
-        text: '取引先担当者名',
+        text: t('mail_templates.tags.customerDepartment'),
       },
       {
         value: 3,
-        text: '自社名',
+        text: t('mail_templates.tags.customerName'),
       },
       {
         value: 4,
-        text: '自社担当者名',
+        text: t('mail_templates.tags.selfCompany'),
       },
       {
         value: 5,
-        text: '自社担当者メールアドレス',
+        text: t('mail_templates.tags.selfDepartment'),
       },
       {
         value: 6,
-        text: '自社担当者電話番号',
+        text: t('mail_templates.tags.selfEmail'),
+      },
+      {
+        value: 7,
+        text: t('mail_templates.tags.selfTel'),
       },
     ]
   }, [])
@@ -46,7 +51,7 @@ function TabsEmailTemplate({
     return [
       {
         key: 'quota_mail',
-        label: '見積書送付メール',
+        label: t('mail_templates.tab.quotation'),
         children: (
           <Card
             styles={{
@@ -62,7 +67,7 @@ function TabsEmailTemplate({
                     color: '#1890FF',
                   }}
                 />
-                見積書送付メール
+                {t('mail_templates.tab.quotation')}
               </div>
             }
           >
@@ -77,7 +82,7 @@ function TabsEmailTemplate({
       },
       {
         key: 'quota_file_password',
-        label: '見積書パスワード送付メール',
+        label: t('mail_templates.tab.password'),
         children: (
           <Card
             styles={{
@@ -93,7 +98,7 @@ function TabsEmailTemplate({
                     color: '#1890FF',
                   }}
                 />
-                見積書パスワード送付メール
+                {t('mail_templates.tab.password')}
               </div>
             }
           >

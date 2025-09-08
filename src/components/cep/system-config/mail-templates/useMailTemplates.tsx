@@ -1,6 +1,5 @@
 import { useForm } from '@refinedev/antd'
-import { useApiUrl, useCreate, useCustom } from '@refinedev/core'
-import { useTranslations } from 'next-intl'
+import { useApiUrl, useCreate, useCustom, useTranslate } from '@refinedev/core'
 import { useCallback, useEffect, useState } from 'react'
 
 type Form = {
@@ -13,21 +12,16 @@ type Form = {
 }
 
 function useMailTemplates() {
-  const t = useTranslations()
+  const t = useTranslate()
+
   const methods = useForm<Form>({
     defaultFormValues: {
       title_1: '',
       content_1: '',
-      signature_1: `─ Commerce Robotics Inc 株式会社コマースロボティクス─
-Sales Team mail: info@commerce-robotics.com
-【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F
-TEL: 03-4431-1337`,
+      signature_1: t('mail_templates.form.signature.content'),
       title_2: '',
       content_2: '',
-      signature_2: `─ Commerce Robotics Inc 株式会社コマースロボティクス─
-Sales Team mail: info@commerce-robotics.com
-【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F
-TEL: 03-4431-1337`,
+      signature_2: t('mail_templates.form.signature.content'),
     },
   })
   const {

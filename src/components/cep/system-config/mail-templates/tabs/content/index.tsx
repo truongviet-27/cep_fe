@@ -1,9 +1,10 @@
-import './styleEmail.css'
-
+/* eslint-disable simple-import-sort/imports */
+import { useTranslate } from '@refinedev/core'
 import type { InputRef } from 'antd'
 import { Button, Form, Input, Space, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useRef } from 'react'
+import './style-email.css'
 
 function TabsContent({
   index,
@@ -23,6 +24,8 @@ function TabsContent({
       }
     }
   >(null)
+  const t = useTranslate()
+
   const methods = Form.useFormInstance()
   const { getFieldValue, setFieldValue } = methods
 
@@ -54,13 +57,17 @@ function TabsContent({
       <Form.Item
         layout="vertical"
         name={`title_${index}`}
-        label={<span style={{ fontWeight: 'bold' }}>件名</span>}
+        label={
+          <span style={{ fontWeight: 'bold' }}>
+            {t('mail_templates.form.subject')}
+          </span>
+        }
         rules={[
-          { required: true, message: '必須項目です' },
-          { max: 255, message: '255文字以内で入力してください' },
+          { required: true, message: t('mail_templates.validation.required') },
+          { max: 255, message: t('mail_templates.validation.max255') },
           {
             pattern: /^(?!\s*$).+/,
-            message: '空白だけの入力はできません',
+            message: t('mail_templates.validation.notBlank'),
           },
         ]}
       >
@@ -76,7 +83,9 @@ function TabsContent({
         layout="vertical"
         label={
           <>
-            <span style={{ fontWeight: 'bold' }}>本文</span>
+            <span style={{ fontWeight: 'bold' }}>
+              {t('mail_templates.form.body')}
+            </span>
             {isEdit && (
               <Space
                 style={{
@@ -107,11 +116,11 @@ function TabsContent({
           </>
         }
         rules={[
-          { required: true, message: '必須項目です' },
-          { max: 255, message: '255文字以内で入力してください' },
+          { required: true, message: t('mail_templates.validation.required') },
+          { max: 255, message: t('mail_templates.validation.max255') },
           {
             pattern: /^(?!\s*$).+/,
-            message: '空白だけの入力はできません',
+            message: t('mail_templates.validation.notBlank'),
           },
         ]}
       >
@@ -128,13 +137,17 @@ function TabsContent({
       <Form.Item
         layout="vertical"
         name={`signature_${index}`}
-        label={<span style={{ fontWeight: 'bold' }}>署名（自動挿入）</span>}
+        label={
+          <span style={{ fontWeight: 'bold' }}>
+            {t('mail_templates.form.signature.label')}
+          </span>
+        }
         rules={[
-          { required: true, message: '必須項目です' },
-          { max: 255, message: '255文字以内で入力してください' },
+          { required: true, message: t('mail_templates.validation.required') },
+          { max: 255, message: t('mail_templates.validation.max255') },
           {
             pattern: /^(?!\s*$).+/,
-            message: '空白だけの入力はできません',
+            message: t('mail_templates.validation.notBlank'),
           },
         ]}
       >
