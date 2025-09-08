@@ -1,27 +1,53 @@
 import Step1 from '@components/cep/system-config/product-categories/csv/step1'
-import Step2 from '@components/cep/system-config/product-categories/csv/step2'
-import Step3 from '@components/cep/system-config/product-categories/csv/step3'
 import Step4 from '@components/cep/system-config/product-categories/csv/step4'
-import { useForm } from '@refinedev/react-hook-form'
+import { useForm } from '@refinedev/antd'
+import { useCreate } from '@refinedev/core'
+import type { RcFile } from 'antd/es/upload'
 import { useTranslations } from 'next-intl'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
+type Form = {
+  type: string
+  file: RcFile
+}
 function useCSVContainer() {
   const t = useTranslations()
-  const methods = useForm({})
+  const methods = useForm<Form>({
+    defaultFormValues: {
+      type: '',
+      file: '',
+      data: [],
+    },
+  })
+
+  const { form } = methods
+
+  const { getFieldsValue } = form
   const [currentStep, setCurrentStep] = useState(0)
+
+  const {} = useCreate({
+    resource: 'csv-imports/validate',
+  })
+
+  const onSubmit = () => {
+    console.log(getFieldsValue(), 'xxxxxxxxxxxxxxxx')
+  }
+
+  const onChangeStep = (step: number) => {
+    setCurrentStep(step)
+  }
 
   const steps = useMemo(() => {
     return [
-      { title: 'ファイル選択', content: <Step1 /> },
-      { title: 'データ確認', content: <Step2 /> },
-      { title: 'バリデーション', content: <Step3 /> },
-      { title: '登録完了', content: <Step4 /> },
+      { title: t('product_categories.csv.step_1.title'), content: <Step1 /> },
+      // { title: 'データ確認', content: <Step2 /> },
+      // { title: 'バリデーション', content: <Step3 /> },
+      { title: t('product_categories.csv.step_2.title'), content: <Step4 /> },
     ]
   }, [])
   return [
     { methods, steps, currentStep },
-    { t, setCurrentStep },
+    { t, setCurrentStep, onSubmit, onChangeStep },
   ] as const
 }
 

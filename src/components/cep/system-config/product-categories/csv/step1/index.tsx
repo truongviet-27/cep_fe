@@ -1,65 +1,118 @@
-import { DownloadOutlined, FileAddOutlined } from '@ant-design/icons'
-import { Button } from 'antd'
-import React from 'react'
+import {
+  DownloadOutlined,
+  FileAddOutlined,
+  UploadOutlined,
+} from '@ant-design/icons'
+import useStep1 from '@components/cep/system-config/product-categories/csv/step1/useStep1'
+import {
+  Alert,
+  Button,
+  Card,
+  Form,
+  List,
+  message,
+  Space,
+  Typography,
+  Upload,
+} from 'antd'
+
+const { Text, Paragraph } = Typography
 
 function Step1() {
+  const [{ dataSource }, { t, handleUpload }] = useStep1()
+
   return (
-    <div className="space-y-6">
-      <div className="rounded border border-[#FFD591] bg-[#E6F7FF] p-4">
-        <div className="flex items-start gap-2">
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Alert
+        type="info"
+        message={
           <div>
-            <p className="font-medium text-[#FA8C16]">📋 CSVテンプレート</p>
-            <p className="text-sm text-[#666]">
-              正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。
-            </p>
-            <p className="text-sm text-[#666]">
-              テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。
-            </p>
-            <a
-              href="#"
-              className="mt-2 inline-block text-[#1890FF] hover:underline"
+            <Text strong style={{ color: '#FA8C16' }}>
+              {t('product_categories.csv.step_1.alertTitle')}
+            </Text>
+            <Paragraph style={{ margin: '8px 0 0' }}>
+              {t('product_categories.csv.step_1.alertDesc1')}
+            </Paragraph>
+            <Paragraph style={{ margin: 0 }}>
+              {t('product_categories.csv.step_1.alertDesc2')}
+            </Paragraph>
+            <Button
+              type="link"
+              icon={<DownloadOutlined />}
+              style={{ paddingLeft: 0 }}
             >
-              <DownloadOutlined className="mr-1" />
-              CSVテンプレートをダウンロード
-            </a>
+              {t('product_categories.csv.step_1.downloadButton')}
+            </Button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      <div className="rounded border-2 border-dashed border-gray-300 bg-gray-50 p-10 text-center">
-        <FileAddOutlined className="mb-3 text-4xl text-gray-400" />
-        <p className="mb-2 text-gray-600">
-          CSVファイルをここにドラッグ＆ドロップ
-        </p>
-        <p className="mb-4 text-sm text-gray-400">
-          または、下のボタンからファイルを選択してください
-        </p>
-        <Button
-          type="primary"
-          style={{
-            padding: '20px 20px',
-          }}
+      <Card
+        style={{ border: '2px dashed #d9d9d9', textAlign: 'center' }}
+        bodyStyle={{ padding: '40px 20px' }}
+      >
+        <FileAddOutlined
+          style={{ fontSize: 40, color: '#999', marginBottom: 12 }}
+        />
+        <Paragraph style={{ marginBottom: 8, color: '#555' }}>
+          {t('product_categories.csv.step_1.dragDrop')}
+        </Paragraph>
+        <Paragraph type="secondary" style={{ marginBottom: 20 }}>
+          {t('product_categories.csv.step_1.orSelectFile')}
+        </Paragraph>
+        <Form.Item
+          layout="vertical"
+          name={'file'}
+          rules={[
+            {
+              required: true,
+              message: t('product_categories.csv.step_1.requiredError'),
+            },
+          ]}
         >
-          ファイルを選択
-        </Button>
-      </div>
+          <Upload
+            accept=".csv"
+            name="file"
+            method="post"
+            maxCount={1}
+            showUploadList={true}
+            beforeUpload={(file) => {
+              const isCSV =
+                file.type === 'text/csv' || file.name.endsWith('.csv')
+              if (!isCSV) {
+                message.error(t('product_categories.csv.step_1.onlyCSVError'))
+                return Upload.LIST_IGNORE
+              }
+              if (file.size / 1024 / 1024 > 10) {
+                message.error(t('product_categories.csv.step_1.maxSizeError'))
+                return Upload.LIST_IGNORE
+              }
 
-      <div className="rounded border bg-gray-50 p-4 text-sm text-gray-600">
-        <p className="font-medium">CSV登録時の注意事項</p>
-        <ul className="list-disc pl-5">
-          <li>CSVファイルの1行目がヘッダー行として扱われます。</li>
-          <li>文字コードはUTF-8またはShift-JISで保存してください。</li>
-          <li>同じ項目コードが複数ある場合、上書きされます。</li>
-          <li>必須項目が不足する場合は取り込み不可です。</li>
-          <li>空白行があってもスキップされます。</li>
-        </ul>
-      </div>
+              handleUpload(file)
 
-      <div className="flex justify-end gap-2">
-        <Button>戻る</Button>
-        <Button type="primary">次へ</Button>
-      </div>
-    </div>
+              return true
+            }}
+          >
+            <Button icon={<UploadOutlined />} type="primary" size="large">
+              {t('product_categories.csv.step_1.selectFileButton')}
+            </Button>
+          </Upload>
+        </Form.Item>
+      </Card>
+
+      <Card
+        size="small"
+        title={t('product_categories.csv.step_1.noteTitle')}
+        headStyle={{ borderBottom: 'none' }}
+      >
+        <List
+          size="small"
+          split={false}
+          dataSource={dataSource}
+          renderItem={(item) => <List.Item>・{item}</List.Item>}
+        />
+      </Card>
+    </Space>
   )
 }
 
