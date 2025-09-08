@@ -1,7 +1,7 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import useTags from '@app/(auth)/(layout-breadcrumb)/(system-config)/tags/useTags'
+import useTags from '@app/(auth)/(layout-breadcrumb)/(system-config)/tags/use-tags'
 import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'

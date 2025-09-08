@@ -6,11 +6,11 @@ export const resource: ResourceProps[] = [
     list: '/estimates',
   },
   {
-    name: 'estimate',
-    list: '/estimate',
-    show: '/estimate/:id',
-    create: '/estimate/:id',
-    edit: '/estimate/:id',
+    name: 'estimates',
+    list: '/estimates',
+    show: '/estimates/:id',
+    create: '/estimates/:id',
+    edit: '/estimates/:id',
     meta: {
       parent: 'estimates',
       canDelete: true,
@@ -84,8 +84,8 @@ export const resource: ResourceProps[] = [
     name: 'system-config',
   },
   {
-    name: 'permission-settings',
-    list: '/permission-settings',
+    name: 'parameter-settings',
+    list: '/parameter-settings',
     meta: {
       parent: 'system-config',
     },
@@ -133,6 +133,13 @@ export const resource: ResourceProps[] = [
       parent: 'system-config',
       canDelete: true,
       canCreate: true,
+    },
+  },
+  {
+    name: 'mail-templates',
+    list: '/mail-templates',
+    meta: {
+      parent: 'system-config',
     },
   },
 ]

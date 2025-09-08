@@ -4,7 +4,7 @@
     "title": "Laravel API Documentation",
     "description": "API documentation for Laravel application with authentication and post management",
     "contact": {
-      "email": "manager@example.com"
+      "email": "admin@example.com"
     },
     "license": {
       "name": "Apache 2.0",
@@ -245,7 +245,7 @@
                             },
                             "email": {
                               "type": "string",
-                              "example": "manager@example.com"
+                              "example": "admin@example.com"
                             }
                           },
                           "type": "object"
@@ -751,6 +751,90 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Code Issue Setting not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/code-issue-settings/by-code/{code}": {
+      "get": {
+        "tags": ["Code Issue Setting"],
+        "summary": "Get code issue setting by code type",
+        "description": "Retrieve a specific code issue setting by its code type (customers, quotas, products, employees, departments)",
+        "operationId": "CodeIssueSettingController_showByCode",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "Code Issue Setting code type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "customers",
+                "quotas",
+                "products",
+                "employees",
+                "departments"
+              ],
+              "example": "customers"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Code Issue Setting detail retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeIssueSettingDetailResponse"
                 }
               }
             }
@@ -1776,6 +1860,799 @@
         ]
       }
     },
+    "/api/v1/csv-imports/validate": {
+      "post": {
+        "tags": ["Import CSV"],
+        "summary": "Validate import file",
+        "description": "Validate CSV import file and return detailed validation errors for each row without performing actual import",
+        "operationId": "ImportController_validateImport",
+        "requestBody": {
+          "description": "Import file validation data",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": ["file", "type"],
+                "properties": {
+                  "file": {
+                    "description": "CSV file to validate (max 5MB)",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "type": {
+                    "description": "Type of import",
+                    "type": "string",
+                    "enum": [
+                      "products",
+                      "product-categories",
+                      "customers",
+                      "employees",
+                      "departments"
+                    ],
+                    "example": "product-categories"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File validation completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "File validation completed successfully"
+                    },
+                    "data": {
+                      "properties": {
+                        "total": {
+                          "description": "Total number of rows in file",
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "valid_rows": {
+                          "description": "Number of valid rows",
+                          "type": "integer",
+                          "example": 8
+                        },
+                        "invalid_rows": {
+                          "description": "Number of invalid rows",
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "errors": {
+                          "description": "List of validation errors for invalid rows",
+                          "type": "array",
+                          "items": {
+                            "properties": {
+                              "row": {
+                                "description": "Row number with error",
+                                "type": "integer",
+                                "example": 3
+                              },
+                              "data": {
+                                "description": "Original row data",
+                                "type": "object",
+                                "example": {
+                                  "name": "Electronics",
+                                  "parent_name": "",
+                                  "level": "1"
+                                }
+                              },
+                              "errors": {
+                                "description": "List of validation errors for this row",
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "example": [
+                                  "Missing required columns: name",
+                                  "Invalid level value"
+                                ]
+                              }
+                            },
+                            "type": "object"
+                          }
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "File validation completed with errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "File validation completed with errors"
+                    },
+                    "data": {
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "valid_rows": {
+                          "type": "integer",
+                          "example": 8
+                        },
+                        "invalid_rows": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - Invalid file or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The file must be a file of type: csv."
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthenticated."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "File validation failed: [error details]"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/csv-imports/import": {
+      "post": {
+        "tags": ["Import CSV"],
+        "summary": "Import file data",
+        "description": "Import CSV file data and perform actual insert/update operations. File should be validated first using validate endpoint",
+        "operationId": "ImportController_import",
+        "requestBody": {
+          "description": "Import file data",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": ["file", "type"],
+                "properties": {
+                  "file": {
+                    "description": "CSV file to import",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "type": {
+                    "description": "Type of import",
+                    "type": "string",
+                    "enum": [
+                      "products",
+                      "product-categories",
+                      "customers",
+                      "employees",
+                      "departments"
+                    ],
+                    "example": "product-categories"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Import completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Import completed successfully"
+                    },
+                    "data": {
+                      "properties": {
+                        "total": {
+                          "description": "Total number of rows processed",
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "success": {
+                          "description": "Number of successfully imported rows",
+                          "type": "integer",
+                          "example": 9
+                        },
+                        "failed": {
+                          "description": "Number of failed imports",
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "errors": {
+                          "description": "List of import errors with detailed information",
+                          "type": "array",
+                          "items": {
+                            "properties": {
+                              "row": {
+                                "description": "Row number with error",
+                                "type": "integer",
+                                "example": 6
+                              },
+                              "data": {
+                                "description": "Original row data that failed to import",
+                                "type": "object",
+                                "example": {
+                                  "name": "Gaming Laptops",
+                                  "parent_name": "NonExistentParent",
+                                  "level": "4"
+                                }
+                              },
+                              "errors": {
+                                "description": "List of error messages for this row",
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "example": [
+                                  "Undefined array key \"NonExistentParent\""
+                                ]
+                              }
+                            },
+                            "type": "object"
+                          }
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Import completed with errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Import completed with errors"
+                    },
+                    "data": {
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "success": {
+                          "type": "integer",
+                          "example": 8
+                        },
+                        "failed": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - Invalid file or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The file must be a file of type: csv."
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthenticated."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Import failed: [error details]"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/mail-templates/{code}": {
+      "get": {
+        "tags": ["Mail Template"],
+        "summary": "Get a mail template by code",
+        "description": "Retrieve a specific mail template by its code.",
+        "operationId": "MailTemplateController_showByCode",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "Code of the mail template (e.g., 'quota_mail').",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "quota_mail"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mail template retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Mail template retrieved successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/MailTemplate"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mail template not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mail template not found."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/mail-templates": {
+      "post": {
+        "tags": ["Mail Template"],
+        "summary": "Create or update a mail template by code",
+        "description": "Create a new mail template with the provided data.",
+        "operationId": "MailTemplateController_store",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["code", "title", "body", "signature"],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": "quota_mail"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Invoice Sent"
+                  },
+                  "body": {
+                    "type": "string",
+                    "example": "Dear Customer,\n\n..."
+                  },
+                  "signature": {
+                    "type": "string",
+                    "example": "Regards,\nSales Team"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mail template created/updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Mail template processed successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/MailTemplate"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The code field is required."
+                    },
+                    "errors": {
+                      "type": "object",
+                      "example": {
+                        "code": ["The code field is required."]
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/parameter-settings": {
+      "get": {
+        "tags": ["ParameterSetting"],
+        "summary": "List parameter settings",
+        "description": "List parameter settings for current tenant",
+        "operationId": "ParameterSettingController_index",
+        "responses": {
+          "200": {
+            "description": "List retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "parameter_id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "code": {
+                            "type": "string",
+                            "example": "FEATURE_X"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Feature X"
+                          },
+                          "is_manage": {
+                            "type": "boolean",
+                            "example": true
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "List retrieved successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["ParameterSetting"],
+        "summary": "Bulk update parameter settings",
+        "description": "Bulk update is_manage flags for parameter settings by parameter id",
+        "operationId": "ParameterSettingController_updateMany",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 3
+                    },
+                    "is_manage": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "example": [
+                {
+                  "id": 1,
+                  "is_manage": true
+                },
+                {
+                  "id": 2,
+                  "is_manage": false
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_manage": {
+                            "type": "boolean"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Parameter settings updated successfully"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/roles/permissions": {
+      "get": {
+        "tags": ["Role_Permission"],
+        "summary": "List roles and permissions with assignments",
+        "operationId": "PermissionController_index",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RolePermissionEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Role_Permission"],
+        "summary": "Bulk assign permissions to multiple roles",
+        "operationId": "PermissionController_bulkAssign",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkAssignPermissionsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bulk updated"
+          },
+          "500": {
+            "description": "Bulk assign failed"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/v1/posts": {
       "get": {
         "tags": ["Api Example"],
@@ -2486,6 +3363,28 @@
         "summary": "Get a list of product categories in a tree structure",
         "description": "Retrieve a tree-like list of product categories.",
         "operationId": "ProductCategoryController_index",
+        "parameters": [
+          {
+            "name": "name_lk",
+            "in": "query",
+            "description": "Filter by partial name match. Example: 'fash'",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "fash"
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "Filter by a specific category level (1-3).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Categories tree retrieved successfully",
@@ -3922,6 +4821,210 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ranks": {
+      "get": {
+        "tags": ["Rank"],
+        "summary": "Get list of ranks",
+        "description": "Retrieve paginated list of ranks",
+        "operationId": "RankController_index",
+        "parameters": [
+          {
+            "name": "_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "_per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search by code or name",
+            "schema": {
+              "type": "string",
+              "example": "Senior"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ranks retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RanksPaginatedResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Rank"],
+        "summary": "Create rank",
+        "operationId": "RankController_store",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreRankRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Rank created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rank"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ranks/{id}": {
+      "get": {
+        "tags": ["Rank"],
+        "summary": "Get rank detail",
+        "operationId": "RankController_show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rank detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rank"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Rank"],
+        "summary": "Soft delete rank",
+        "description": "Performs a soft delete. The record can be restored later if needed.",
+        "operationId": "RankController_destroy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rank soft deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["Rank"],
+        "summary": "Update rank",
+        "operationId": "RankController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRankRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rank updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rank"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
           }
         },
         "security": [
@@ -5382,28 +6485,6 @@
         },
         "type": "object"
       },
-      "UpdateEmployeeRequest": {
-        "description": "Payload for partially updating an employee",
-        "properties": {
-          "code": {
-            "description": "Employee code (unique per tenant)",
-            "type": "string",
-            "maxLength": 20,
-            "example": "EMP002"
-          },
-          "department_id": {
-            "description": "Department ID",
-            "type": "integer",
-            "example": 3
-          },
-          "role_id": {
-            "description": "Role ID",
-            "type": "integer",
-            "example": 2
-          }
-        },
-        "type": "object"
-      },
       "ErrorResponse": {
         "description": "Standard error response format",
         "properties": {
@@ -5448,6 +6529,37 @@
             "description": "Internal server error message",
             "type": "string",
             "example": "Internal server error occurred"
+          }
+        },
+        "type": "object"
+      },
+      "MailTemplate": {
+        "description": "Mail Template model",
+        "properties": {
+          "id": {
+            "description": "Template ID",
+            "type": "integer",
+            "example": 1
+          },
+          "code": {
+            "description": "Template code",
+            "type": "string",
+            "example": "quota_mail"
+          },
+          "title": {
+            "description": "Template title",
+            "type": "string",
+            "example": "お見積書送付のご案内"
+          },
+          "body": {
+            "description": "Email body content",
+            "type": "string",
+            "example": "[[取引先会社名]]..."
+          },
+          "signature": {
+            "description": "Email signature",
+            "type": "string",
+            "example": "─ Commerce Robotics Inc..."
           }
         },
         "type": "object"
@@ -5572,6 +6684,107 @@
               }
             },
             "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "BulkAssignPermissionsRequest": {
+        "required": ["assignments"],
+        "properties": {
+          "assignments": {
+            "type": "array",
+            "items": {
+              "required": ["role", "permissions"],
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "example": "employee"
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "example": [1, 2, 3]
+                }
+              },
+              "type": "object"
+            },
+            "example": [
+              {
+                "role": "employee",
+                "permissions": [1, 2, 3, 5]
+              },
+              {
+                "role": "manager",
+                "permissions": [1, 2]
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "Permission": {
+        "description": "Permission entity describing a granular access capability",
+        "properties": {
+          "id": {
+            "description": "Numeric identifier",
+            "type": "integer",
+            "example": 12
+          },
+          "name": {
+            "description": "Unique permission key (lowercase, dot/underscore allowed)",
+            "type": "string",
+            "example": "department.edit"
+          },
+          "display_name": {
+            "description": "Human friendly permission label",
+            "type": "string",
+            "example": "Create Department",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "example": "Allow creating new departments",
+            "nullable": true
+          },
+          "assigned_roles": {
+            "description": "Array of role names this permission is currently assigned to",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["manager", "employee"]
+          }
+        },
+        "type": "object"
+      },
+      "RolePermissionEnvelope": {
+        "description": "Standard API response envelope for role-permission listing",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Permissions retrieved"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RolePermissionResponse"
+          }
+        },
+        "type": "object"
+      },
+      "RolePermissionResponse": {
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Role"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            }
           }
         },
         "type": "object"
@@ -5812,6 +7025,217 @@
         },
         "type": "object"
       },
+      "Rank": {
+        "description": "Rank resource (code: unique per tenant, max 20 alphanumeric chars; name: unique per tenant, max 50 chars; rate: non-negative integer; note: optional max 255 chars)",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 20,
+            "pattern": "^[A-Za-z0-9]+$",
+            "example": "RANKA"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 50,
+            "example": "Senior"
+          },
+          "rate": {
+            "description": "Non-negative; lower number means higher rank",
+            "type": "integer",
+            "minimum": 0,
+            "example": 1
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "Top management level",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "type": "object"
+      },
+      "RanksPaginatedResponse": {
+        "description": "Paginated ranks list envelope",
+        "properties": {
+          "data": {
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Rank"
+                }
+              },
+              "meta": {
+                "properties": {
+                  "current_page": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "from": {
+                    "type": "integer",
+                    "example": 1,
+                    "nullable": true
+                  },
+                  "last_page": {
+                    "type": "integer",
+                    "example": 3
+                  },
+                  "per_page": {
+                    "type": "integer",
+                    "example": 10
+                  },
+                  "to": {
+                    "type": "integer",
+                    "example": 10,
+                    "nullable": true
+                  },
+                  "total": {
+                    "type": "integer",
+                    "example": 25
+                  }
+                },
+                "type": "object"
+              },
+              "links": {
+                "properties": {
+                  "first": {
+                    "type": "string",
+                    "example": "https://api.example.com/api/v1/ranks?_page=1"
+                  },
+                  "last": {
+                    "type": "string",
+                    "example": "https://api.example.com/api/v1/ranks?_page=3"
+                  },
+                  "prev": {
+                    "type": "string",
+                    "example": null,
+                    "nullable": true
+                  },
+                  "next": {
+                    "type": "string",
+                    "example": "https://api.example.com/api/v1/ranks?_page=2",
+                    "nullable": true
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "message": {
+            "type": "string",
+            "example": "Ranks retrieved successfully"
+          }
+        },
+        "type": "object"
+      },
+      "StoreRankRequest": {
+        "required": ["code", "name", "rate"],
+        "properties": {
+          "code": {
+            "description": "Unique alphanumeric code (max 20 chars) per tenant",
+            "type": "string",
+            "maxLength": 20,
+            "pattern": "^[A-Za-z0-9]+$",
+            "example": "RANKA"
+          },
+          "name": {
+            "description": "Unique name (max 50 chars) per tenant",
+            "type": "string",
+            "maxLength": 50,
+            "example": "Senior"
+          },
+          "rate": {
+            "description": "Non-negative integer rank order (lower = higher)",
+            "type": "integer",
+            "minimum": 0,
+            "example": 1
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "Optional note about this rank",
+            "nullable": true
+          }
+        },
+        "type": "object",
+        "example": {
+          "code": "RANKA",
+          "name": "Senior",
+          "rate": 1,
+          "note": "Top management level"
+        }
+      },
+      "UpdateRankRequest": {
+        "description": "Payload to update a rank. All fields optional; only provided fields will be updated.",
+        "properties": {
+          "code": {
+            "description": "Unique alphanumeric code (max 20 chars) per tenant",
+            "type": "string",
+            "maxLength": 20,
+            "pattern": "^[A-Za-z0-9]+$",
+            "example": "RANKA1"
+          },
+          "name": {
+            "description": "Unique name (max 50 chars) per tenant",
+            "type": "string",
+            "maxLength": 50,
+            "example": "Senior Plus"
+          },
+          "rate": {
+            "description": "Non-negative integer rank order (lower = higher)",
+            "type": "integer",
+            "minimum": 0,
+            "example": 2
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "Updated note for this rank",
+            "nullable": true
+          }
+        },
+        "type": "object",
+        "example": {
+          "name": "Senior Updated",
+          "rate": 2,
+          "note": "Updated note"
+        }
+      },
+      "Role": {
+        "description": "Role entity representing a system authorization role",
+        "properties": {
+          "id": {
+            "description": "Numeric identifier",
+            "type": "integer",
+            "example": 3
+          },
+          "name": {
+            "description": "Name of the role",
+            "type": "string",
+            "example": "manager"
+          },
+          "display_name": {
+            "description": "Human friendly role name",
+            "type": "string",
+            "example": "Manager",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
       "Tag": {
         "description": "Tag model",
         "properties": {
@@ -5966,7 +7390,7 @@
           "role": {
             "description": "User role",
             "type": "string",
-            "example": "manager"
+            "example": "admin"
           },
           "created_by": {
             "description": "User ID who created this user",
@@ -6050,12 +7474,32 @@
       "description": "Employee"
     },
     {
+      "name": "Import CSV",
+      "description": "Import CSV"
+    },
+    {
+      "name": "Mail Template",
+      "description": "Mail Template"
+    },
+    {
+      "name": "ParameterSetting",
+      "description": "ParameterSetting"
+    },
+    {
+      "name": "Role_Permission",
+      "description": "Role_Permission"
+    },
+    {
       "name": "Api Example",
       "description": "Api Example"
     },
     {
       "name": "Product Unit Management",
       "description": "Product Unit Management"
+    },
+    {
+      "name": "Rank",
+      "description": "Rank"
     },
     {
       "name": "Role",
