@@ -122,14 +122,16 @@ function usePermissionSetting() {
 
   const columns: ColumnsType = [
     {
-      title: t('system_config.settingItem'),
+      // title: t('system_config.settingItem'),
+      title: '権限',
       dataIndex: 'settingItem',
       key: 'settingItem',
       width: 300,
       align: 'center',
     },
     {
-      title: t('system_config.employeess'),
+      // title: t('system_config.employeess'),
+      title: '管理者',
       dataIndex: 'employee',
       key: 'employee',
       width: 200,
