@@ -1,10 +1,9 @@
 import { RightOutlined } from '@ant-design/icons'
 import usePermissionSetting from '@components/cep/system-config/permission-setting/usePermissionSetting'
-import ActionButtons from '@components/common/action-button'
 import AutoHeading from '@components/common/auto-heading'
 import CommonTable from '@components/common/table'
 import PageContainer from '@components/organism/PageContainer'
-import { Breadcrumb } from 'antd'
+import { Breadcrumb, Button } from 'antd'
 
 function PermissionSetting() {
   const [
@@ -27,14 +26,13 @@ function PermissionSetting() {
         className="mt-6"
         loading={isLoadingPermission}
       />
-      <div className="mt-4">
-        <ActionButtons
-          onCancel={handleCancel}
-          onSave={handleSave}
-          loading={isPending}
-          cancelText={t('permission_settings.buttons.cancel')}
-          saveText={t('permission_settings.buttons.save')}
-        />
+      <div className="mt-4 flex justify-end gap-4">
+        <Button type="primary" onClick={handleCancel}>
+          {t('permission_settings.buttons.cancel')}
+        </Button>
+        <Button type="primary" onClick={handleSave} loading={isPending}>
+          {t('permission_settings.buttons.save')}
+        </Button>
       </div>
     </PageContainer>
   )
