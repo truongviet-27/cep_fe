@@ -4,7 +4,7 @@ import { RightOutlined } from '@ant-design/icons'
 import { Create } from '@components/crud/create'
 import { useForm } from '@refinedev/antd'
 import { useGo } from '@refinedev/core'
-import { Button, Form, Input, message, Select, Space, Typography } from 'antd'
+import { Button, Form, Input, Select, Space, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
@@ -24,12 +24,7 @@ export default function Page() {
   const go = useGo()
 
   const { formProps, saveButtonProps, formLoading } = useForm<IProjectCreate>({
-    createMutationOptions: {
-      onSuccess: () => {
-        message.success(t('notifications.createSuccess'))
-        go({ to: '/projects', type: 'push' })
-      },
-    },
+    redirect: 'list',
   })
 
   const breadcrumbItems = [

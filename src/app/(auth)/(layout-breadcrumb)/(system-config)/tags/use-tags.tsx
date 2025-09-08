@@ -1,7 +1,7 @@
 /* eslint-disable */
 'use client'
 
-import type { UnitRow } from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/useProductUnits'
+import type { UnitRow } from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/use-product-units'
 import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
 import {
   useApiUrl,

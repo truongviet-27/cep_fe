@@ -9,7 +9,7 @@ import { Button, Col, Form, Input, Row, Space } from 'antd'
 import React from 'react'
 import useProductUnits, {
   RowVM,
-} from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/useProductUnits'
+} from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/use-product-units'
 
 export default function Page() {
   const {
