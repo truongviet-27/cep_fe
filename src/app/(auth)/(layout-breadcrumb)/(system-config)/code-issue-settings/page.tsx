@@ -8,8 +8,8 @@ import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
-import { BaseRecord, useResource } from '@refinedev/core'
-import { DARK_RED, GREY, PRIMARY } from '@utility/color'
+import type { BaseRecord } from '@refinedev/core'
+import { PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
 import { Modal, Table, Tag, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
@@ -24,16 +24,11 @@ export default function Page() {
     syncWithLocation: true,
   })
 
-  const { resource } = useResource()
-
   const modalFormProps = useModalForm({
     action: 'edit',
-    resource: resource?.name,
+    resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
-    defaultFormValues: {
-      hash_dash: true,
-    },
   })
 
   const { show, close, open } = modalFormProps
@@ -86,8 +81,8 @@ export default function Page() {
           title={t('code_issue_settings.fields.issue_method')}
           render={(value: 'manual' | 'automatic') => {
             const colorMap: Record<'manual' | 'automatic', string> = {
-              automatic: DARK_RED,
-              manual: GREY,
+              automatic: '#9a2e2e',
+              manual: '#808080',
             }
 
             const text = t(`code_issue_settings.fields.enum_issue.${value}`)

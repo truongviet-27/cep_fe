@@ -69,7 +69,7 @@ function useProductCategories() {
     updateAll({
       url: `${apiUrl}/${resource}/update-tree`,
       method: 'post',
-      values,
+      values: { data: { items: values } },
     })
   }
   const { mutate: updateRow, isLoading: saving } = useUpdate({
@@ -179,14 +179,13 @@ function useProductCategories() {
     const draft = editing[id]
     const name = (draft?.name ?? '').trim()
     if (!name) {
-      message.warning(t('product_categories.validate.name_required'))
-      return
+      message.warning('名前を入力してください。')
       return
     }
 
     const parentId = getParentId(tree, id)
     if (node._isNew && (parentId?.startsWith?.(TEMP_PREFIX) ?? false)) {
-      message.warning(t('product_categories.validate.save_parent_first'))
+      message.warning('先に親カテゴリを保存してください。')
       return
     }
 
@@ -392,7 +391,6 @@ function useProductCategories() {
     addRootCategory,
     openAll,
     form,
-    t,
   }
 }
 
