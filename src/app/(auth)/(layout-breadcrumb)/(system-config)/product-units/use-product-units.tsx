@@ -72,18 +72,11 @@ function useProductUnits() {
       url: `${apiUrl}/${resource?.name}/upsert`,
       method: 'post',
       values,
-      successNotification: (data, values) => {
+      successNotification: (data) => {
         return {
           message: data?.data?.message,
           description: data?.data?.message,
           type: 'success',
-        }
-      },
-      errorNotification: (error, values) => {
-        return {
-          message: 'Failed to update ordering',
-          description: error?.message,
-          type: 'error',
         }
       },
     })
