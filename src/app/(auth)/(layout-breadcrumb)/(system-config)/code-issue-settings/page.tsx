@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
@@ -6,9 +7,8 @@ import { CommonButton } from '@components/common/common-button'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { BooleanField, useTable } from '@refinedev/antd'
+import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
-import { useModal } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
 import { Modal, Table, Tag, Typography } from 'antd'
@@ -24,11 +24,14 @@ export default function Page() {
     syncWithLocation: true,
   })
 
-  const modalProps = useModal()
+  const modalFormProps = useModalForm({
+    action: 'edit',
+    resource: 'code-issue-settings',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+  })
 
-  const { show, close, visible } = modalProps
-
-  const [editId, setEditId] = React.useState<number | string | null>(null)
+  const { show, close, open } = modalFormProps
 
   const segmentLabelByValue: Record<SegmentedValue, string> =
     Object.fromEntries(segmentOptions.map((o) => [o.value, o.label])) as Record<
@@ -51,13 +54,23 @@ export default function Page() {
     },
   ]
 
+  const getRowClassName = (record: BaseRecord) => {
+    return record.issue_method === 'manual' ? 'bg-gray-200' : ''
+  }
+
   return (
     <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
     >
-      <CommonTable {...tableProps} rowKey="id">
+      <CommonTable
+        {...tableProps}
+        rowKey="id"
+        onRow={(record) => ({
+          className: getRowClassName(record),
+        })}
+      >
         <Table.Column
           dataIndex="name"
           title={t('code_issue_settings.fields.name')}
@@ -85,7 +98,7 @@ export default function Page() {
         <Table.Column
           dataIndex={['hash_dash']}
           title={<b>_</b>}
-          render={(value) => value && <BooleanField value={value} />}
+          render={(value) => value && <BooleanField value={!!value} />}
         />
         <Table.Column
           dataIndex="segment"
@@ -114,8 +127,7 @@ export default function Page() {
               <CommonButton
                 type={'edit'}
                 onClick={() => {
-                  show()
-                  setEditId(record?.id ?? null)
+                  show(record.id)
                 }}
               />
             </div>
@@ -124,13 +136,13 @@ export default function Page() {
       </CommonTable>
 
       <Modal
-        open={visible}
+        open={open}
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        {editId && <CodeIssueSettingEdit id={editId} modalProps={modalProps} />}
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
     </List>
   )

@@ -330,8 +330,6 @@ const filterCategoryTree = (
   filterLevel?: number | null,
   filterName?: string | null,
 ): CatNode[] => {
-  if (!filterLevel && !filterName) return nodes
-
   const trimmedName = filterName?.trim().toLowerCase()
 
   // Nếu không có điều kiện lọc, trả về cây gốc
@@ -346,12 +344,19 @@ const filterCategoryTree = (
   // 1. Tìm tất cả các node ban đầu khớp với điều kiện
   const findInitialMatches = (nodesToSearch: CatNode[]) => {
     for (const node of nodesToSearch) {
+      const levelMatches = filterLevel ? node.level === filterLevel : false
+      const nameMatches = trimmedName
+        ? node.name.toLowerCase().includes(trimmedName)
+        : false
+
       let isMatch = false
-      if (filterLevel && node.level === filterLevel) {
-        isMatch = true
+      // Nếu cả hai bộ lọc cùng tồn tại, áp dụng logic AND
+      if (filterLevel && trimmedName) {
+        isMatch = levelMatches && nameMatches
       }
-      if (trimmedName && node.name.toLowerCase().includes(trimmedName)) {
-        isMatch = true
+      // Ngược lại, nếu chỉ có một bộ lọc, áp dụng logic OR
+      else {
+        isMatch = levelMatches || nameMatches
       }
 
       if (isMatch) {
