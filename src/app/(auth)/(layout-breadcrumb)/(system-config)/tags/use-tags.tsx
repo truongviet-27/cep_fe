@@ -17,6 +17,7 @@ import { Button, Input, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { isString } from 'lodash'
 
 const { Title } = Typography
 
@@ -134,6 +135,14 @@ function useTags() {
       url: `${apiUrl}/${resource?.name}/upsert`,
       method: 'post',
       values,
+      successNotification: (data) => {
+        console.log(data, 'data')
+        return {
+          message: 'success',
+          description: 'success',
+          type: 'success',
+        }
+      },
     })
   }
 
@@ -146,12 +155,12 @@ function useTags() {
       .filter((r) => r?.id != null)
       .map((r, index) => ({
         ...r,
-        id: r.id as string | number,
+        id: isString(r.id) ? null : r.id,
         order: maxOrder - index,
       }))
 
     if (!values.length) return
-    handleUpdateOrdering(values)
+    handleUpdateOrdering(values as TagRow[])
   }
 
   const saveRow = (index: number) => {
