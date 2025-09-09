@@ -1,6 +1,6 @@
+/* eslint-disable */
 import HashDashIcon from '@components/icons/hash-dash-icon'
-import { useForm } from '@refinedev/antd'
-import { type useModalReturnType, useTranslate } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
 import { segmentOptions } from '@utility/options'
 import {
   Button,
@@ -20,46 +20,46 @@ import React from 'react'
 import { Edit } from '@/components/crud/edit'
 
 type Props = {
-  modalProps: useModalReturnType
-  id: string | number
+  modalProps: any
 }
 
-export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps, id }) => {
+export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
   const t = useTranslate()
-  const { close } = modalProps
-  const { formProps, saveButtonProps, formLoading, queryResult, onFinish } =
-    useForm({
-      id,
-      resource: 'code-issue-settings',
-      action: 'edit',
-    })
+  const { close, formProps, queryResult, saveButtonProps, formLoading } =
+    modalProps
 
   const record = queryResult?.data?.data
 
-  const [form] = Form.useForm()
-
-  const issueMethod = Form.useWatch('issue_method', form)
+  const issueMethod = Form.useWatch('issue_method', formProps.form)
+  const hashDashVal = Form.useWatch('hash_dash', formProps.form)
   const isManual = issueMethod === 'manual'
+
+  console.log(record, 'hashDashVal')
 
   return (
     <Edit
+      {...formProps}
       saveButtonProps={saveButtonProps}
       isLoading={formLoading}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
       title={<></>}
     >
       <Form
+        initialValues={{
+          hash_dash: false,
+          ...record,
+        }}
         {...formProps}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
         colon={false}
-        onFinish={async (values) => {
-          const result = await onFinish(values)
-          if (result) {
-            close()
-          }
-        }}
+        // onFinish={async (values) => {
+        //   const result = await onFinish(values)
+        //   if (result) {
+        //     close()
+        //   }
+        // }}
       >
         <Form.Item
           label={t('code_issue_settings.fields.name')}
