@@ -20,7 +20,6 @@ import React from 'react'
 import { Edit } from '@/components/crud/edit'
 import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 
 type Props = {
   modalProps: any
@@ -139,7 +138,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.author?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+                  dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
             },
             {
               title: t('common.updated_by'),
@@ -147,7 +146,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.editor?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
+                  dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
             },
           ]}
         />
@@ -156,7 +155,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
       <Space className={'flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
         <Button {...saveButtonProps} type="primary">
-          保存
+          {t('buttons.save')}
         </Button>
       </Space>
     </Edit>
