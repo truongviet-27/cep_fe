@@ -233,6 +233,9 @@
       "notBlank": "空白だけの入力はできません"
     }
   },
+  "import_history": {
+    "import_history": "import_history"
+  },
   "system_config": {
     "system_config": "システム設定",
     "permission_settings": "権限設定",
