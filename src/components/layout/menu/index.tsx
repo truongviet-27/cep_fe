@@ -26,7 +26,7 @@ function Menu() {
     }
   }
 
-  const selectedKeys = [last(selectedKey.split('/')) ?? '/']
+  const selectedKeys = [`/${last(selectedKey.split('/'))}`]
 
   const items = recursiveNestedMenu(menuItems)
 

@@ -131,10 +131,10 @@ export default function EmployeeEdit() {
                 <Input placeholder="DEP001" size="middle" />
               </Form.Item>
             </Col>
-            <Col>
+            <Col flex="90px">
               <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
-            <Col>
+            <Col flex="300px">
               <Space direction="vertical" size={2}>
                 <Button size="middle" type="default" onClick={handleAutoNumber}>
                   自動採番
