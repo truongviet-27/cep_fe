@@ -14,6 +14,7 @@ import type { TableColumnsType, TableProps } from 'antd'
 import { Button } from 'antd'
 import React, { useContext, useMemo } from 'react'
 import CommonTable from '@components/common/table'
+import { CSS } from '@dnd-kit/utilities'
 
 type SortableListeners = ReturnType<typeof useSortable>['listeners']
 
@@ -36,38 +37,38 @@ const DragHandle: React.FC = () => {
   )
 }
 
-// interface DndRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-//   'data-row-key': string
-// }
+interface DndRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  'data-row-key': string
+}
 
-// const DndRow: React.FC<DndRowProps> = (props) => {
-//   const {
-//     attributes,
-//     listeners,
-//     setNodeRef,
-//     setActivatorNodeRef,
-//     transform,
-//     transition,
-//     isDragging,
-//   } = useSortable({
-//     id: props['data-row-key'],
-//     animateLayoutChanges: () => false,
-//   })
-//
-//   const style: React.CSSProperties = {
-//     ...props.style,
-//     transform: CSS.Translate.toString(transform),
-//     transition,
-//     ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
-//     willChange: 'transform',
-//   }
-//
-//   return (
-//     <RowCtx.Provider value={{ setActivatorNodeRef, listeners }}>
-//       <tr {...props} ref={setNodeRef} style={style} {...attributes} />
-//     </RowCtx.Provider>
-//   )
-// }
+const DndRow: React.FC<DndRowProps> = (props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props['data-row-key'],
+    animateLayoutChanges: () => false,
+  })
+
+  const style: React.CSSProperties = {
+    ...props.style,
+    transform: CSS.Translate.toString(transform),
+    transition,
+    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+    willChange: 'transform',
+  }
+
+  return (
+    <RowCtx.Provider value={{ setActivatorNodeRef, listeners }}>
+      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+    </RowCtx.Provider>
+  )
+}
 
 export interface TableDndProps<T extends object> {
   dataSource: T[]
@@ -115,6 +116,11 @@ export default function TableDnd<T extends object>({
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         <CommonTable<T>
           {...tableProps}
+          components={{
+            body: {
+              row: DndRow,
+            },
+          }}
           rowKey={getRowId}
           columns={injectedColumns}
           dataSource={dataSource}

@@ -40,8 +40,6 @@ function useCSVContainer() {
   const steps = useMemo(() => {
     return [
       { title: t('product_categories.csv.step_1.title'), content: <Step1 /> },
-      // { title: 'データ確認', content: <Step2 /> },
-      // { title: 'バリデーション', content: <Step3 /> },
       { title: t('product_categories.csv.step_2.title'), content: <Step4 /> },
     ]
   }, [])

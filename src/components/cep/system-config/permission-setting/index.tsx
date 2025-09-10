@@ -27,7 +27,7 @@ function PermissionSetting() {
         loading={isLoadingPermission}
       />
       <div className="mt-4 flex justify-end gap-4">
-        <Button type="primary" onClick={handleCancel}>
+        <Button type="default" onClick={handleCancel}>
           {t('permission_settings.buttons.cancel')}
         </Button>
         <Button type="primary" onClick={handleSave} loading={isPending}>

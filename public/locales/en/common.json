@@ -98,6 +98,7 @@
         "manual": "Manual",
         "automatic": "Auto"
       },
+      "hash_dash_hint": "(Insert Hyphen)",
       "prefix": "Prefix",
       "segment": "Segment",
       "serial_length": "Serial Length",
@@ -110,7 +111,11 @@
     }
   },
   "product_categories": {
-    "product_categories": "Product Category"
+    "product_categories": "Product Category",
+    "validate": {
+      "save_parent_first": "Please Save The Parent Category First",
+      "name_required": "Please Enter Your Name"
+    }
   },
   "tags": {
     "tags": "Tags"

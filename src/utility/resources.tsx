@@ -91,6 +91,13 @@ export const resource: ResourceProps[] = [
     },
   },
   {
+    name: 'permission-settings',
+    list: '/permission-settings',
+    meta: {
+      parent: 'system-config',
+    },
+  },
+  {
     name: 'code-issue-settings',
     list: '/code-issue-settings',
     show: '/code-issue-settings/show/:id',
