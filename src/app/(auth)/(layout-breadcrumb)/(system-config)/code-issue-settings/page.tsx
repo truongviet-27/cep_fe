@@ -8,7 +8,7 @@ import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
-import type { BaseRecord } from '@refinedev/core'
+import { BaseRecord, useResource } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
 import { Modal, Table, Tag, Typography } from 'antd'
@@ -24,11 +24,16 @@ export default function Page() {
     syncWithLocation: true,
   })
 
+  const { resource } = useResource()
+
   const modalFormProps = useModalForm({
     action: 'edit',
-    resource: 'code-issue-settings',
+    resource: resource?.name,
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
+    defaultFormValues: {
+      hash_dash: true,
+    },
   })
 
   const { show, close, open } = modalFormProps

@@ -27,6 +27,7 @@ export default function Page() {
     allOpen,
     expandedKeys,
     form,
+    t,
   } = useProductCategories()
 
   return (
@@ -124,7 +125,9 @@ export default function Page() {
             onClick={() => openAll(!allOpen)}
             icon={allOpen ? <UpOutlined /> : <DownOutlined />}
           >
-            {allOpen ? 'すべて閉じる' : 'すべて開く'}
+            {allOpen
+              ? t('product_categories.all_open')
+              : t('product_categories.all_close')}
           </Button>
           <Button
             type="link"
@@ -132,7 +135,7 @@ export default function Page() {
               push('/product-categories/csv')
             }}
           >
-            CSV一括登録
+            {t('projects.csv_upload.title')}
           </Button>
         </div>
 
