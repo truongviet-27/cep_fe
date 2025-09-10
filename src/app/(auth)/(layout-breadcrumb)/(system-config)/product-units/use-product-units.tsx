@@ -16,6 +16,7 @@ import { Button, Input, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { isString } from 'lodash'
 
 const { Title } = Typography
 
@@ -71,6 +72,13 @@ function useProductUnits() {
       url: `${apiUrl}/${resource?.name}/upsert`,
       method: 'post',
       values,
+      successNotification: (data) => {
+        return {
+          message: data?.data?.message,
+          description: data?.data?.message,
+          type: 'success',
+        }
+      },
     })
   }
 
@@ -85,12 +93,12 @@ function useProductUnits() {
       .filter((r) => r?.id != null)
       .map((r, index) => ({
         ...r,
-        id: r.id as string | number,
+        id: isString(r.id) ? null : r.id,
         order: maxOrder - index,
       }))
 
     if (!values.length) return
-    handleUpdateOrdering(values)
+    handleUpdateOrdering(values as UnitRow[])
   }
 
   const originalRef = useRef<Record<string, UnitRow>>({})
