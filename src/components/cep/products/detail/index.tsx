@@ -34,6 +34,7 @@ function ProductDetailContainer() {
       columnsPackagePrice,
       dataSourcePackagePrice,
       isAppend,
+      fields,
     },
     { t, append, onSubmit, setIsAppend },
   ] = useProductDetail()
@@ -83,8 +84,8 @@ function ProductDetailContainer() {
               label: <span className="font-bold">{t('基本情報')}</span>,
               children: (
                 <div className="px-2">
-                  <Row>
-                    <Col>
+                  <Row gutter={[16, 16]}>
+                    <Col xs={12} lg={8}>
                       <Controller
                         name="code"
                         control={control}
@@ -107,7 +108,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    <Col xs={12} lg={10}>
                       <Controller
                         name="name"
                         control={control}
@@ -128,7 +129,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    <Col xs={12} lg={10}>
                       <Controller
                         name="shortName"
                         control={control}
@@ -151,7 +152,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    <Col xs={12} lg={8}>
                       <Controller
                         name="barcode"
                         control={control}
@@ -173,47 +174,45 @@ function ProductDetailContainer() {
                       />
                     </Col>
                   </Row>
+
                   <Row>
-                    <Col>
-                      <Form.Item>
-                        <Form.Item
-                          name={''}
-                          label={
-                            <span className="w-[200px] text-left font-bold">
-                              {t('カテゴリ')}
-                            </span>
-                          }
-                          colon={false}
-                        >
-                          <AutoComplete
-                            options={[
-                              {
-                                label: 'tes1',
-                                value: '123',
-                              },
-                              {
-                                label: 'tes2',
-                                value: '1234',
-                              },
-                            ]}
-                            placeholder="サブカテゴリーを選択"
-                            filterOption={(inputValue, option) => {
-                              return (
-                                option!.value
-                                  .toUpperCase()
-                                  .indexOf(inputValue.toUpperCase()) !== -1
-                              )
-                            }}
-                            maxCount={1}
-                            suffixIcon={<CaretDownOutlined />}
-                            style={{ width: '200px' }}
-                          />
-                        </Form.Item>
+                    <Col xs={12} md={12} xxl={6}>
+                      <Form.Item
+                        label={
+                          <span className="w-[200px] text-left font-bold">
+                            {t('カテゴリ')}
+                          </span>
+                        }
+                        colon={false}
+                      >
+                        <AutoComplete
+                          options={[
+                            {
+                              label: 'tes1',
+                              value: '123',
+                            },
+                            {
+                              label: 'tes2',
+                              value: '1234',
+                            },
+                          ]}
+                          placeholder="サブカテゴリーを選択"
+                          filterOption={(inputValue, option) => {
+                            return (
+                              option!.value
+                                .toUpperCase()
+                                .indexOf(inputValue.toUpperCase()) !== -1
+                            )
+                          }}
+                          maxCount={1}
+                          suffixIcon={<CaretDownOutlined />}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
+
                   <Row>
-                    <Col>
+                    <Col xs={12} md={12} xxl={6}>
                       <Form.Item
                         label={
                           <span className="w-[200px] text-left font-bold">
@@ -243,13 +242,12 @@ function ProductDetailContainer() {
                           }}
                           maxCount={1}
                           suffixIcon={<CaretDownOutlined />}
-                          style={{ width: '200px' }}
                         />
                       </Form.Item>
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    <Col xs={12} lg={6}>
                       <Controller
                         name="costPrice"
                         control={control}
@@ -266,6 +264,9 @@ function ProductDetailContainer() {
                               layout="horizontal"
                               type="number"
                               {...field}
+                              style={{
+                                width: '225px',
+                              }}
                             />
                           )
                         }}
@@ -273,7 +274,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    <Col xs={12} lg={6}>
                       <Controller
                         name="sellingPrice"
                         control={control}
@@ -290,6 +291,9 @@ function ProductDetailContainer() {
                               layout="horizontal"
                               type="number"
                               {...field}
+                              style={{
+                                width: '225px',
+                              }}
                             />
                           )
                         }}
@@ -331,7 +335,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    <Col xs={12} lg={10}>
                       <Controller
                         name="note"
                         control={control}
@@ -380,19 +384,26 @@ function ProductDetailContainer() {
                     dataSource={dataSourcePackageInfo}
                     bordered
                     pagination={false}
+                    rowClassName={(_, index) => {
+                      return getValues(`info.${index}.status`) === 'inactive'
+                        ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
+                        : ''
+                    }}
                   />
                   <div className="mt-4 text-right">
                     <Button
                       type="primary"
+                      disabled={fields.length < 1}
                       onClick={() => {
                         append({
-                          packageCode: `${getValues('code')}-${dataSourcePackagePrice.length - 1}`,
+                          packageCode: `${getValues('code')}-${fields.length}`,
                           packageName: '',
                           status: 'active',
-                          quantity: 0,
+                          quantity: 1,
                           unit: '',
-                          standardPrice: 0,
-                          salesPrice: 0,
+                          standardPrice: getValues(`sellingPrice`),
+                          salesPrice: getValues(`sellingPrice`),
+                          standardPrint: true,
                         })
                       }}
                     >
@@ -428,6 +439,11 @@ function ProductDetailContainer() {
                     dataSource={dataSourcePackagePrice}
                     bordered
                     pagination={false}
+                    rowClassName={(_, index) => {
+                      return getValues(`info.${index}.status`) === 'inactive'
+                        ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
+                        : ''
+                    }}
                   />
                 </div>
               ),

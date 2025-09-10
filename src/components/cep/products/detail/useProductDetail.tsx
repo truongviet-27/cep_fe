@@ -1,9 +1,8 @@
 import { useTranslate } from '@refinedev/core'
-import { useForm } from '@refinedev/react-hook-form'
 import { Button, Checkbox, Input, InputNumber, Radio } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
-import { Controller, useFieldArray } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
 export type FormType = {
   code: string
@@ -11,7 +10,7 @@ export type FormType = {
   shortName: string
   barcode: string
   category: string
-  nit: string
+  unit: string
   costPrice: number
   sellingPrice: number
   note: string
@@ -26,7 +25,7 @@ type Info = {
   unit: string
   standardPrice: number
   salesPrice: number
-  standardPrint: string // hoặc "あり" | "なし"
+  standardPrint: boolean // hoặc "あり" | "なし"
 }
 function useProductDetail() {
   const t = useTranslate()
@@ -37,7 +36,7 @@ function useProductDetail() {
       shortName: '',
       barcode: '',
       category: '',
-      nit: '',
+      unit: '',
       costPrice: 0,
       sellingPrice: 0,
       note: '',
@@ -46,7 +45,7 @@ function useProductDetail() {
     },
   })
 
-  const { control, handleSubmit } = methods
+  const { control, handleSubmit, getValues, watch, setValue } = methods
 
   const [isAppend, setIsAppend] = useState(false)
 
@@ -124,6 +123,73 @@ function useProductDetail() {
 
   const dataSourcePackageInfo = fields.map((item, index) => {
     const index0 = index === 0
+    if (index0 && isAppend) {
+      return {
+        ...item,
+        packageCode: getValues('code'),
+        packageName: getValues('name'),
+        status: '有効',
+        quantity: 1,
+        unit: getValues('unit'),
+        standardPrice: getValues('sellingPrice'),
+        salesPrice: getValues('sellingPrice'),
+        standardPrint: true,
+      }
+    } else if (watch(`info.${index}.status`) === 'inactive') {
+      return {
+        ...item,
+        packageCode: getValues(`info.${index}.packageCode`),
+        packageName: getValues(`info.${index}.packageName`),
+        status: (
+          <Controller
+            name={`info.${index}.status`}
+            control={control}
+            render={({ field }) => {
+              return (
+                <Radio.Group
+                  options={[
+                    {
+                      value: 'active',
+                      label: t('有効'),
+                    },
+                    {
+                      value: 'inactive',
+                      label: t('無効'),
+                    },
+                  ]}
+                  {...field}
+                />
+              )
+            }}
+          />
+        ),
+        quantity: getValues(`info.${index}.quantity`),
+        unit: getValues(`info.${index}.unit`),
+        standardPrice:
+          watch(`info.${index}.quantity`) * getValues(`sellingPrice`),
+        salesPrice: watch(`info.${index}.quantity`) * getValues(`sellingPrice`),
+        standardPrint: (
+          <Checkbox
+            style={{ transform: 'scale(1.3)' }}
+            checked={getValues(`info.${index}.standardPrint`)}
+          />
+        ),
+        action: index > 0 && (
+          <Button
+            onClick={() => {
+              remove(index)
+            }}
+            style={{
+              backgroundColor: '#721C24',
+              borderColor: '#721C24',
+              color: '#fff',
+            }}
+          >
+            {t('削除')}
+          </Button>
+        ),
+      }
+    }
     return {
       ...item,
       packageName: (
@@ -179,10 +245,10 @@ function useProductDetail() {
         <Controller
           name={`info.${index}.quantity`}
           control={control}
-          render={({ field }) => {
+          render={({ field: { onChange, ...rest } }) => {
             return (
               <InputNumber
-                {...field}
+                {...rest}
                 controls={false}
                 readOnly={index0}
                 style={{
@@ -197,11 +263,20 @@ function useProductDetail() {
                       }
                     : {}),
                 }}
+                onChange={(e) => {
+                  onChange(e)
+                  setValue(
+                    `info.${index}.salesPrice`,
+                    watch(`info.${index}.quantity`) * getValues(`sellingPrice`),
+                  )
+                }}
               />
             )
           }}
         />
       ),
+      standardPrice:
+        watch(`info.${index}.quantity`) * getValues(`sellingPrice`),
       salesPrice: (
         <Controller
           name={`info.${index}.salesPrice`}
@@ -234,7 +309,13 @@ function useProductDetail() {
           name={`info.${index}.standardPrint`}
           control={control}
           render={({ field }) => {
-            return <Checkbox style={{ transform: 'scale(1.3)' }} {...field} />
+            return (
+              <Checkbox
+                style={{ transform: 'scale(1.3)' }}
+                {...field}
+                checked={field.value}
+              />
+            )
           }}
         />
       ),
@@ -277,9 +358,9 @@ function useProductDetail() {
       },
       {
         title: '設定方式',
-        dataIndex: 'settingMethod',
+        dataIndex: 'status',
         align: 'center',
-        key: 'settingMethod',
+        key: 'status',
       },
       {
         title: 'S 80%(円)',
@@ -320,21 +401,95 @@ function useProductDetail() {
     ] as ColumnsType
   }, [t])
 
-  const dataSourcePackagePrice = [
-    {
-      key: '1',
-      packageCode: 'PKG002',
-      packageName: 'パレット',
-      salesPrice: 5000,
-      settingMethod: '自動',
-      sPrice: 4000,
-      aPrice: 4250,
-      bPrice: 4500,
-      cPrice: 4750,
-      dPrice: 5000,
-      ePrice: 5250,
-    },
-  ]
+  const dataSourcePackagePrice = fields.map((item, index) => {
+    const index0 = index === 0
+    if (index0 && isAppend) {
+      return {
+        ...item,
+        packageCode: getValues('code'),
+        packageName: getValues('name'),
+        salesPrice: getValues(`sellingPrice`),
+        status: '有効',
+        sPrice: (getValues(`sellingPrice`) * 0.8).toFixed(3),
+        aPrice: (getValues(`sellingPrice`) * 0.85).toFixed(3),
+        bPrice: (getValues(`sellingPrice`) * 0.9).toFixed(3),
+        cPrice: (getValues(`sellingPrice`) * 0.95).toFixed(3),
+        dPrice: (getValues(`sellingPrice`) * 1).toFixed(3),
+        ePrice: (getValues(`sellingPrice`) * 1.05).toFixed(3),
+      }
+    } else if (watch(`info.${index}.status`) === 'inactive') {
+      return {
+        ...item,
+        packageCode: watch(`info.${index}.packageCode`),
+        packageName: watch(`info.${index}.packageName`),
+        salesPrice: getValues(`info.${index}.salesPrice`),
+        status: (
+          <Controller
+            name={`info.${index}.status`}
+            control={control}
+            render={({ field }) => {
+              return (
+                <Radio.Group
+                  options={[
+                    {
+                      value: 'active',
+                      label: t('有効'),
+                    },
+                    {
+                      value: 'inactive',
+                      label: t('無効'),
+                    },
+                  ]}
+                  {...field}
+                />
+              )
+            }}
+          />
+        ),
+        sPrice: (getValues(`info.${index}.salesPrice`) * 0.8).toFixed(3),
+        aPrice: (getValues(`info.${index}.salesPrice`) * 0.85).toFixed(3),
+        bPrice: (getValues(`info.${index}.salesPrice`) * 0.9).toFixed(3),
+        cPrice: (getValues(`info.${index}.salesPrice`) * 0.95).toFixed(3),
+        dPrice: (getValues(`info.${index}.salesPrice`) * 1).toFixed(3),
+        ePrice: (getValues(`info.${index}.salesPrice`) * 1.05).toFixed(3),
+      }
+    }
+    return {
+      ...item,
+      packageCode: watch(`info.${index}.packageCode`),
+      packageName: watch(`info.${index}.packageName`),
+      salesPrice: watch(`info.${index}.salesPrice`),
+      status: (
+        <Controller
+          name={`info.${index}.status`}
+          control={control}
+          render={({ field }) => {
+            return (
+              <Radio.Group
+                options={[
+                  {
+                    value: 'active',
+                    label: t('有効'),
+                  },
+                  {
+                    value: 'inactive',
+                    label: t('無効'),
+                  },
+                ]}
+                {...field}
+              />
+            )
+          }}
+        />
+      ),
+      sPrice: (getValues(`info.${index}.salesPrice`) * 0.8).toFixed(3),
+      aPrice: (getValues(`info.${index}.salesPrice`) * 0.85).toFixed(3),
+      bPrice: (getValues(`info.${index}.salesPrice`) * 0.9).toFixed(3),
+      cPrice: (getValues(`info.${index}.salesPrice`) * 0.95).toFixed(3),
+      dPrice: (getValues(`info.${index}.salesPrice`) * 1).toFixed(3),
+      ePrice: (getValues(`info.${index}.salesPrice`) * 1.05).toFixed(3),
+    }
+  })
 
   const onSubmit = handleSubmit((data) => {
     console.log(data, 'xxxxxxxxxxxxxxx')
