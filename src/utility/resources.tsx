@@ -60,9 +60,9 @@ export const resource: ResourceProps[] = [
   {
     name: 'products',
     list: '/products',
-    show: '/products/:id',
-    create: '/products/:id',
-    edit: '/products/:id',
+    show: '/products/:code',
+    create: '/products/create',
+    edit: '/products/:code',
     meta: {
       parent: 'products',
       canDelete: true,
