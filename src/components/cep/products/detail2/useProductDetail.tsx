@@ -32,8 +32,8 @@ type Info = {
   status: string
   quantity: number
   unit: string
-  standardPrice: number
-  salesPrice: number
+  standardPrice: number | null
+  salesPrice: number | null
   standardPrint: boolean
 }
 function useProductDetail() {
@@ -46,8 +46,8 @@ function useProductDetail() {
       barcode: '',
       category: '',
       unit: '',
-      costPrice: 0,
-      sellingPrice: 0,
+      costPrice: '',
+      sellingPrice: '',
       note: '',
       info: [],
       price: [],

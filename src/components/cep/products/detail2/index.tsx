@@ -21,7 +21,6 @@ import {
   Collapse,
   Dropdown,
   Form,
-  Input,
   Radio,
   Row,
   Typography,
@@ -34,14 +33,7 @@ const { Title } = Typography
 
 function ProductDetailContainer() {
   const [
-    {
-      methods,
-      dataSourcePackageInfo,
-      columnsPackagePrice,
-      dataSourcePackagePrice,
-      isAppend,
-      dataProductCategories,
-    },
+    { methods, dataSourcePackageInfo, isAppend, dataProductCategories },
     { t, setIsAppend, handleChooseCategory },
   ] = useProductDetail()
   const { form, formProps, saveButtonProps } = methods
@@ -294,10 +286,11 @@ function ProductDetailContainer() {
                                     packageCode: getFieldValue('code'),
                                     packageName: getFieldValue('name'),
                                     status: 'active',
-                                    quantity: 0,
+                                    quantity: 1,
                                     unit: getFieldValue('unit'),
-                                    standardPrice: 0,
-                                    salesPrice: 0,
+                                    standardPrice:
+                                      getFieldValue('sellingPrice') * 1,
+                                    salesPrice: getFieldValue('sellingPrice'),
                                     standardPrint: true,
                                   })
                                 }
@@ -348,25 +341,21 @@ function ProductDetailContainer() {
                   <Form.List name={'info'}>
                     {(fields, { add, remove }) => {
                       addRef.current = add
-                      const columnsPackageInfo = [
+                      const columns = [
                         {
                           title: '荷姿コード',
                           dataIndex: 'packageCode',
                           render: (_, __, index) => (
                             <CoreInput
                               name={[index, 'packageCode']}
-                              readOnly={index === 0}
+                              readOnly={true}
                               style={{
-                                ...(index === 0
-                                  ? {
-                                      background: 'transparent',
-                                      paddingLeft: 0,
-                                      color: 'inherit',
-                                      border: 'none',
-                                      boxShadow: 'none',
-                                      cursor: 'default',
-                                    }
-                                  : {}),
+                                background: 'transparent',
+                                paddingLeft: 0,
+                                color: 'inherit',
+                                border: 'none',
+                                boxShadow: 'none',
+                                cursor: 'default',
                               }}
                             />
                           ),
@@ -396,71 +385,129 @@ function ProductDetailContainer() {
                         {
                           title: 'ステータス',
                           dataIndex: 'status',
-                          render: (_, __, index) => (
-                            <Form.Item
-                              name={[index, 'status']}
-                              noStyle
-                              style={{
-                                display: 'flex',
-                              }}
-                            >
-                              <Radio.Group
-                                options={[
-                                  { value: 'active', label: '有効' },
-                                  { value: 'inactive', label: '無効' },
-                                ]}
-                              />
-                            </Form.Item>
-                          ),
+                          render: (_, __, index) =>
+                            index === 0 ? (
+                              <div>有効</div>
+                            ) : (
+                              <Form.Item name={[index, 'status']}>
+                                <Radio.Group
+                                  options={[
+                                    {
+                                      value: 'active',
+                                      label: t('有効'),
+                                    },
+                                    {
+                                      value: 'inactive',
+                                      label: t('無効'),
+                                    },
+                                  ]}
+                                />
+                              </Form.Item>
+                            ),
                         },
                         {
                           title: '入数',
                           dataIndex: 'quantity',
                           render: (_, __, index) => (
-                            <Form.Item name={[index, 'quantity']} noStyle>
-                              <Input type="number" readOnly={index === 0} />
-                            </Form.Item>
+                            <CoreInput
+                              name={[index, 'quantity']}
+                              readOnly={index === 0}
+                              style={{
+                                ...(index === 0
+                                  ? {
+                                      background: 'transparent',
+                                      paddingLeft: 0,
+                                      color: 'inherit',
+                                      border: 'none',
+                                      boxShadow: 'none',
+                                      cursor: 'default',
+                                    }
+                                  : {}),
+                              }}
+                            />
                           ),
                         },
                         {
                           title: '単位',
                           dataIndex: 'unit',
                           render: (_, __, index) => (
-                            <Form.Item name={[index, 'quantity']} noStyle>
-                              <Input type="number" readOnly={index === 0} />
-                            </Form.Item>
+                            <CoreInput
+                              name={[index, 'unit']}
+                              readOnly={true}
+                              style={{
+                                background: 'transparent',
+                                paddingLeft: 0,
+                                color: 'inherit',
+                                border: 'none',
+                                boxShadow: 'none',
+                                cursor: 'default',
+                              }}
+                            />
                           ),
                         },
                         {
                           title: '標準価格(円)',
-                          dataIndex: 'salesPrice',
-                          render: (_, __, index) => (
-                            <Form.Item name={[index, 'salesPrice']} noStyle>
-                              <Input readOnly={index === 0} />
-                            </Form.Item>
-                          ),
+                          dataIndex: 'standardPrice',
+                          render: (_, __, index) => {
+                            return (
+                              <CoreInput
+                                name={[index, 'standardPrice']}
+                                readOnly={true}
+                                style={{
+                                  background: 'transparent',
+                                  paddingLeft: 0,
+                                  color: 'inherit',
+                                  border: 'none',
+                                  boxShadow: 'none',
+                                  cursor: 'default',
+                                }}
+                              />
+                            )
+                          },
                         },
                         {
                           title: '販売価格(円)',
                           dataIndex: 'salesPrice',
-                          render: (_, __, index) => (
-                            <Form.Item name={[index, 'salesPrice']} noStyle>
-                              <Input readOnly={index === 0} />
-                            </Form.Item>
-                          ),
+                          render: (_, __, index) => {
+                            return (
+                              <CoreInput
+                                name={[index, 'salesPrice']}
+                                readOnly={index === 0}
+                                style={{
+                                  ...(index === 0
+                                    ? {
+                                        background: 'transparent',
+                                        paddingLeft: 0,
+                                        color: 'inherit',
+                                        border: 'none',
+                                        boxShadow: 'none',
+                                        cursor: 'default',
+                                      }
+                                    : {}),
+                                }}
+                              />
+                            )
+                          },
                         },
                         {
                           title: '標準印刷',
                           dataIndex: 'standardPrint',
-                          render: (_, __, index) => (
-                            <Form.Item
-                              name={[index, 'standardPrint']}
-                              valuePropName="checked"
-                              noStyle
-                            >
-                              <Checkbox />
-                            </Form.Item>
-                          ),
+                          render: (_, __, index) =>
+                            index !== 0 && (
+                              <Form.Item
+                                name={[index, 'standardPrint']}
+                                valuePropName="checked"
+                                noStyle
+                              >
+                                <Checkbox
+                                  style={{ transform: 'scale(1.3)' }}
+                                  checked={getFieldValue([
+                                    index,
+                                    'standardPrint',
+                                  ])}
+                                />
+                              </Form.Item>
+                            ),
                         },
                         {
                           title: '操作',
@@ -484,40 +531,44 @@ function ProductDetailContainer() {
                       ] as ColumnsType
 
                       return (
-                        <>
-                          <CommonTable
-                            columns={columnsPackageInfo}
-                            dataSource={fields}
-                            bordered
-                            pagination={false}
-                            rowClassName={(_, index) => {
-                              return getFieldValue(`info.${index}.status`) ===
-                                'inactive'
-                                ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
-                                : ''
-                            }}
-                          />
-                          <div className="mt-4 text-right">
-                            <Button
-                              type="primary"
-                              // disabled={[].length < 1}
-                              onClick={() => {
-                                add({
-                                  packageCode: `${getFieldValue('code')}-${fields.length}`,
-                                  packageName: '',
-                                  status: 'active',
-                                  quantity: 1,
-                                  unit: '',
-                                  standardPrice: getFieldValue(`sellingPrice`),
-                                  salesPrice: getFieldValue(`sellingPrice`),
-                                  standardPrint: true,
-                                })
-                              }}
-                            >
-                              行を追加
-                            </Button>
-                          </div>
-                        </>
+                        <Form.Item shouldUpdate noStyle>
+                          {({ getFieldValue }) => (
+                            <>
+                              <CommonTable
+                                columns={columns}
+                                dataSource={fields}
+                                pagination={false}
+                                rowClassName={(_, index) =>
+                                  getFieldValue(['info', index, 'status']) ===
+                                  'inactive'
+                                    ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
+                                    : ''
+                                }
+                              />
+                              <div className="mt-4 text-right">
+                                <Button
+                                  type="primary"
+                                  // disabled={[].length < 1}
+                                  onClick={() => {
+                                    add({
+                                      packageCode: `${getFieldValue('code')}-${fields.length}`,
+                                      packageName: '',
+                                      status: 'active',
+                                      quantity: 1,
+                                      unit: getFieldValue('unit'),
+                                      standardPrice:
+                                        getFieldValue(`sellingPrice`),
+                                      salesPrice: getFieldValue(`sellingPrice`),
+                                      standardPrint: true,
+                                    })
+                                  }}
+                                >
+                                  行を追加
+                                </Button>
+                              </div>
+                            </>
+                          )}
+                        </Form.Item>
                       )
                     }}
                   </Form.List>
@@ -545,18 +596,217 @@ function ProductDetailContainer() {
               label: <span className="font-bold">{t('基本情報')}</span>,
               children: (
                 <div className="px-2">
-                  <CommonTable
-                    columns={columnsPackagePrice}
-                    dataSource={dataSourcePackagePrice}
-                    bordered
-                    pagination={false}
-                    rowClassName={(_, index) => {
-                      return getFieldValue(`info.${index}.status`) ===
-                        'inactive'
-                        ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
-                        : ''
+                  <Form.List name={'info'}>
+                    {(fields) => {
+                      const columns = [
+                        {
+                          title: '荷姿コード',
+                          dataIndex: 'packageCode',
+                          key: 'packageCode',
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  getFieldValue(['info', index, 'packageCode'])
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: '荷姿名',
+                          dataIndex: 'packageName',
+                          key: 'packageName',
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  getFieldValue(['info', index, 'packageName'])
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: '販売価格(円)',
+                          dataIndex: 'salesPrice',
+                          key: 'salesPrice',
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  getFieldValue(['info', index, 'salesPrice'])
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: '設定方式',
+                          dataIndex: 'status',
+                          key: 'status',
+                          render: (_, __, index) =>
+                            index === 0 ? (
+                              <div>有効</div>
+                            ) : (
+                              <Form.Item name={[index, 'status']}>
+                                <Radio.Group
+                                  options={[
+                                    {
+                                      value: 'active',
+                                      label: t('有効'),
+                                    },
+                                    {
+                                      value: 'inactive',
+                                      label: t('無効'),
+                                    },
+                                  ]}
+                                />
+                              </Form.Item>
+                            ),
+                        },
+                        {
+                          title: 'S 80%(円)',
+                          dataIndex: 'sPrice',
+                          key: 'sPrice',
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  (
+                                    getFieldValue([
+                                      'info',
+                                      index,
+                                      'salesPrice',
+                                    ]) * 0.8
+                                  ).toFixed(2)
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: 'A 85%(円)',
+                          dataIndex: 'aPrice',
+                          key: 'aPrice',
+
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  (
+                                    getFieldValue([
+                                      'info',
+                                      index,
+                                      'salesPrice',
+                                    ]) * 0.85
+                                  ).toFixed(2)
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: 'B 90%(円)',
+                          dataIndex: 'bPrice',
+                          key: 'bPrice',
+
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  (
+                                    getFieldValue([
+                                      'info',
+                                      index,
+                                      'salesPrice',
+                                    ]) * 0.9
+                                  ).toFixed(2)
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: 'C 95%(円)',
+                          dataIndex: 'cPrice',
+                          key: 'cPrice',
+
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  (
+                                    getFieldValue([
+                                      'info',
+                                      index,
+                                      'salesPrice',
+                                    ]) * 0.95
+                                  ).toFixed(2)
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: 'D 100%(円)',
+                          dataIndex: 'dPrice',
+                          key: 'dPrice',
+
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  (
+                                    getFieldValue([
+                                      'info',
+                                      index,
+                                      'salesPrice',
+                                    ]) * 1
+                                  ).toFixed(2)
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                        {
+                          title: 'E 105%(円)',
+                          dataIndex: 'ePrice',
+                          key: 'ePrice',
+
+                          render: (_, __, index) => {
+                            return (
+                              <Form.Item shouldUpdate noStyle>
+                                {() =>
+                                  (
+                                    getFieldValue([
+                                      'info',
+                                      index,
+                                      'salesPrice',
+                                    ]) * 1.05
+                                  ).toFixed(2)
+                                }
+                              </Form.Item>
+                            )
+                          },
+                        },
+                      ] as ColumnsType
+                      return (
+                        <CommonTable
+                          columns={columns}
+                          dataSource={fields}
+                          bordered
+                          pagination={false}
+                          rowClassName={(_, index) => {
+                            return getFieldValue(`info.${index}.status`) ===
+                              'inactive'
+                              ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
+                              : ''
+                          }}
+                        />
+                      )
                     }}
-                  />
+                  </Form.List>
                 </div>
               ),
             },
