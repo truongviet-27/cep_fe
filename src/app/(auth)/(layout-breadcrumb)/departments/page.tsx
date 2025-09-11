@@ -25,9 +25,20 @@ import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Department } from '@sdk/hey-api'
 
 const { Title, Text } = Typography
+
+type Department = {
+  id: string | number
+  name: string
+  code: string
+  created_by?: string
+  updated_by?: string
+  created_at?: string
+  updated_at?: string
+  number_of_employee?: number
+  order?: number
+}
 
 type RowVM = Department & { __index: number }
 
@@ -84,7 +95,7 @@ export default function Page() {
 
   const handleUpdateOrdering = (
     values: {
-      id?: string | number
+      id: string | number
       order: number
     }[],
   ) => {
@@ -127,8 +138,8 @@ export default function Page() {
       dataIndex: 'actions',
       render: (_: any, record: BaseRecord) => (
         <Space>
-          <ShowButton hideText size="small" recordItemId={record.id} />
           <EditButton hideText size="small" recordItemId={record.id} />
+          <ShowButton hideText size="small" recordItemId={record.id} />
           <DeleteButton hideText size="small" recordItemId={record.id} />
         </Space>
       ),
