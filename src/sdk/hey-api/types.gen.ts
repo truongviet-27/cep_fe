@@ -483,6 +483,14 @@ export type Employee = {
    * Last update timestamp
    */
   updated_at?: string
+  created_by?: {
+    name: string
+    date: string
+  }
+  updated_by?: {
+    name: string
+    date: string
+  }
 }
 
 /**

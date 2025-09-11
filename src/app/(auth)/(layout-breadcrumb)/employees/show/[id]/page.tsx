@@ -5,9 +5,9 @@ import { DetailItem } from '@components/common/detail-item'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import type { IEmployee } from '@interfaces/employee'
 import { EditButton, useSelect } from '@refinedev/antd'
 import { useResource, useShow, useTranslate } from '@refinedev/core'
+import type { Employee } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
 import { Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -18,36 +18,35 @@ const { Title, Text } = Typography
 export default function EmployeeShow() {
   const t = useTranslate()
   const { id } = useResource()
-  const { queryResult } = useShow<IEmployee>()
+  const { queryResult } = useShow<Employee>()
   const employeeData = queryResult?.data?.data
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
-    defaultValue: employeeData?.department_id,
   })
 
   const departmentName = String(
     departmentSelectProps.options?.find(
-      (option) => option.value === employeeData?.department_id,
+      (option) => option.value === employeeData?.department?.id,
     )?.label ?? '---',
   )
 
-  const colorMap: Record<'manual' | 'automatic', string> = {
-    automatic: '#9a2e2e',
-    manual: '#808080',
+  const colorMap: Record<'employee' | 'manager', string> = {
+    manager: '#9a2e2e',
+    employee: '#808080',
   }
 
   const roleColor = employeeData?.role
-    ? colorMap[employeeData?.role as 'manual' | 'automatic']
+    ? colorMap[employeeData?.role?.name as 'employee' | 'manager']
     : 'default'
 
   const renderValue = (value: string | undefined | null) => {
     if (!value || value === '---') {
       return (
         <Space>
-          <Text>{t('common.not_set')}</Text>
+          D<Text>{t('common.not_set')}</Text>
           <WarningOutlined style={{ color: '#AC3C00' }} />
         </Space>
       )
@@ -63,7 +62,7 @@ export default function EmployeeShow() {
         </Title>
       ),
     },
-    { title: <Title level={5}>社員編集</Title> },
+    { title: <Title level={5}>{t('employees.show.show')}</Title> },
   ]
 
   return (
@@ -72,7 +71,7 @@ export default function EmployeeShow() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={'社員編集'}
+      i18nHeading={t('employees.show.show')}
       footerButtons={
         <ShowMoreInfo
           descriptions={[
@@ -115,7 +114,7 @@ export default function EmployeeShow() {
         <DetailItem label={t('employees.fields.role')}>
           {employeeData?.role ? (
             <Tag color={roleColor}>
-              {t(`employees.roles.${employeeData.role}`)}
+              {t(`employees.roles.${employeeData.role?.name}`)}
             </Tag>
           ) : (
             renderValue(undefined)
