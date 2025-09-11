@@ -69,7 +69,7 @@ function useProductCategories() {
     updateAll({
       url: `${apiUrl}/${resource}/update-tree`,
       method: 'post',
-      values: { data: { items: values } },
+      values,
     })
   }
   const { mutate: updateRow, isLoading: saving } = useUpdate({
