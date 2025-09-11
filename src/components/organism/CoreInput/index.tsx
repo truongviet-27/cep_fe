@@ -20,7 +20,7 @@ function CoreInput({
   readOnly = false,
   ...field
 }: {
-  name?: string
+  name?: string | (string | number)[]
   label?: ReactNode | string
   layout?: 'vertical' | 'horizontal'
   placeholder?: string

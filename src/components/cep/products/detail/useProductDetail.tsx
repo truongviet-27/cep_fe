@@ -28,12 +28,12 @@ export type FormType = {
 type Info = {
   packageCode: string
   packageName: string
-  status: string // hoặc "有効" | "無効"
+  status: string
   quantity: number
   unit: string
   standardPrice: number
   salesPrice: number
-  standardPrint: boolean // hoặc "あり" | "なし"
+  standardPrint: boolean
 }
 function useProductDetail() {
   const t = useTranslate()

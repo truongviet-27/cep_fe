@@ -42,12 +42,18 @@ function ProductDetailContainer() {
     },
     { t, append, onSubmit, setIsAppend, handleChooseCategory },
   ] = useProductDetail()
-  const { getValues, control } = methods
+  const {
+    getValues,
+    control,
+    formState: { errors },
+  } = methods
   const { params } = useParsed()
 
   const id = params?.id
   const actionType = params?.actionType
   const isView = actionType === 'VIEW'
+
+  console.log(errors, 'errors')
 
   const go = useGo()
 
@@ -91,7 +97,7 @@ function ProductDetailContainer() {
               children: (
                 <div className="px-2">
                   <Row gutter={[16, 16]}>
-                    <Col xs={12} lg={8}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={8}>
                       <Controller
                         name="code"
                         control={control}
@@ -110,11 +116,17 @@ function ProductDetailContainer() {
                             />
                           )
                         }}
+                        rules={{
+                          required: {
+                            value: true,
+                            message: 'hello anh em',
+                          },
+                        }}
                       />
                     </Col>
                   </Row>
                   <Row>
-                    <Col xs={12} lg={10}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <Controller
                         name="name"
                         control={control}
@@ -135,7 +147,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col xs={12} lg={10}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <Controller
                         name="short_name"
                         control={control}
@@ -158,7 +170,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col xs={12} lg={8}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={8}>
                       <Controller
                         name="barcode"
                         control={control}
@@ -182,16 +194,11 @@ function ProductDetailContainer() {
                   </Row>
 
                   <Row>
-                    <Col xs={12} md={10} xxl={6}>
-                      <Form.Item
-                        label={
-                          <span className="w-[200px] text-left font-bold">
-                            {t('カテゴリ')}
-                          </span>
-                        }
-                        colon={false}
-                        layout="horizontal"
-                      >
+                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
+                      <div className="flex">
+                        <label className="w-[214px] text-left font-bold">
+                          {t('カテゴリ')}
+                        </label>
                         <Dropdown
                           trigger={['click']}
                           popupRender={() => (
@@ -236,12 +243,12 @@ function ProductDetailContainer() {
                         >
                           <CoreInput icon={<DownOutlined />} readOnly={true} />
                         </Dropdown>
-                      </Form.Item>
+                      </div>
                     </Col>
                   </Row>
 
                   <Row>
-                    <Col xs={12} md={10} xxl={6}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
                       <Controller
                         name="unit"
                         control={control}
@@ -285,7 +292,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col xs={12} lg={6}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
                       <Controller
                         name="costPrice"
                         control={control}
@@ -312,7 +319,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col xs={12} lg={6}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
                       <Controller
                         name="sellingPrice"
                         control={control}
@@ -373,7 +380,7 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col xs={12} lg={10}>
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <Controller
                         name="note"
                         control={control}
