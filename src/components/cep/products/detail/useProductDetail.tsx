@@ -1,13 +1,15 @@
-import { useTranslate } from '@refinedev/core'
+import { useDebounce } from '@hook/use-debounce'
+import { useList, useShow, useTranslate } from '@refinedev/core'
+import type { Category } from '@utility/renderCategories'
 import { Button, Checkbox, Input, InputNumber, Radio } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
 export type FormType = {
   code: string
   name: string
-  shortName: string
+  short_name: string
   barcode: string
   category: string
   unit: string
@@ -16,6 +18,12 @@ export type FormType = {
   note: string
   info: Info[]
   price: []
+
+  // add field new
+  name_lk?: string
+  category_level_1?: number
+  category_level_2?: number
+  category_level_3?: number
 }
 type Info = {
   packageCode: string
@@ -33,7 +41,7 @@ function useProductDetail() {
     defaultValues: {
       code: '',
       name: '',
-      shortName: '',
+      short_name: '',
       barcode: '',
       category: '',
       unit: '',
@@ -54,6 +62,51 @@ function useProductDetail() {
     name: 'info',
     keyName: 'key',
   })
+
+  const {} = useShow({
+    resource: 'products',
+    id: 1,
+    queryOptions: {
+      enabled: false,
+    },
+  })
+
+  const name_lk_value = useDebounce(watch('name_lk'), 500)
+
+  const { data: dataProductCategories } = useList<Category>({
+    resource: 'product-categories',
+    filters: [
+      {
+        field: 'name_lk',
+        operator: 'eq',
+        value: name_lk_value,
+      },
+    ],
+    queryOptions: {
+      enabled: !!name_lk_value,
+    },
+  })
+
+  const handleChooseCategory = useCallback(
+    (level: number, currentPath: string[], currentCat: Category[]) => {
+      const fullPath = currentPath.join(' > ')
+      setValue('category', fullPath)
+      if (level == 1) {
+        setValue('category_level_1', currentCat[0].id)
+        setValue('category_level_2', undefined)
+        setValue('category_level_3', undefined)
+      } else if (level === 2) {
+        setValue('category_level_1', currentCat[0].id)
+        setValue('category_level_2', currentCat[1].id)
+        setValue('category_level_3', undefined)
+      } else {
+        setValue('category_level_1', currentCat[0].id)
+        setValue('category_level_2', currentCat[1].id)
+        setValue('category_level_3', currentCat[2].id)
+      }
+    },
+    [dataProductCategories],
+  )
 
   const columnsPackageInfo = useMemo(() => {
     return [
@@ -504,8 +557,9 @@ function useProductDetail() {
       dataSourcePackagePrice,
       fields,
       isAppend,
+      dataProductCategories,
     },
-    { t, append, onSubmit, setIsAppend },
+    { t, append, onSubmit, setIsAppend, handleChooseCategory },
   ] as const
 }
 

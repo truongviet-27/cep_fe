@@ -1,28 +1,39 @@
-import { CaretDownOutlined, RightOutlined } from '@ant-design/icons'
+import { DownOutlined, RightOutlined, SearchOutlined } from '@ant-design/icons'
 import useProduct from '@components/cep/products/useProduct'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
 import { PRIMARY } from '@utility/color'
+import renderCategories from '@utility/renderCategories'
 import {
   AutoComplete,
   Breadcrumb,
   Button,
   Col,
+  Dropdown,
   Form,
   Row,
   Typography,
 } from 'antd'
 import Link from 'next/link'
-import React from 'react'
 
 const { Title } = Typography
 
 function ProductContainer() {
   const [
-    { dataSource, columns, page, pageSize, total },
-    { t, onChangePageSize },
+    {
+      methods,
+      dataSource,
+      columns,
+      page,
+      pageSize,
+      total,
+      dataProductCategories,
+    },
+    { t, onSubmit, onReset, onChangePageSize, handleChooseCategory },
   ] = useProduct()
+
+  const { formProps } = methods
   return (
     <PageContainer
       title={
@@ -43,7 +54,7 @@ function ProductContainer() {
         />
       }
     >
-      <Form>
+      <Form {...formProps}>
         <Title
           level={5}
           style={{
@@ -63,39 +74,64 @@ function ProductContainer() {
 
           <Col sm={12} md={6} lg={4}>
             <Form.Item
-              name="subCategory"
               label={<span className="font-bold">{t('カテゴリ')}</span>}
               layout="vertical"
             >
-              <AutoComplete
-                options={[
-                  {
-                    label: 'tes1',
-                    value: '123',
-                  },
-                  {
-                    label: 'tes2',
-                    value: '1234',
-                  },
-                ]}
-                placeholder="サブカテゴリーを選択"
-                filterOption={(inputValue, option) => {
-                  return (
-                    option!.value
-                      .toUpperCase()
-                      .indexOf(inputValue.toUpperCase()) !== -1
-                  )
-                }}
-                maxCount={1}
-                suffixIcon={<CaretDownOutlined />}
-              />
+              <Dropdown
+                trigger={['click']}
+                popupRender={() => (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      padding: 10,
+                      border: '1px solid #ccc',
+                      borderRadius: '8px',
+                      background: '#fff',
+                    }}
+                  >
+                    <Form.Item name={'name_lk'}>
+                      <AutoComplete
+                        style={{ width: '100%' }}
+                        options={dataProductCategories?.data.map((item) => ({
+                          value: item.name,
+                          label: item.name,
+                        }))}
+                        placeholder="検索..."
+                        suffixIcon={<SearchOutlined />}
+                        popupRender={() => {
+                          return (
+                            <div className="my-2 max-h-[300px] overflow-y-auto px-2">
+                              {renderCategories(
+                                dataProductCategories?.data || [],
+                                1,
+                                [],
+                                [],
+                                handleChooseCategory,
+                              )}
+                            </div>
+                          )
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                )}
+              >
+                <CoreInput
+                  icon={<DownOutlined />}
+                  name="category"
+                  readOnly={true}
+                />
+              </Dropdown>
             </Form.Item>
           </Col>
 
           <div className="mx-3 mt-[29px] mb-2 flex flex-1 flex-wrap justify-between gap-4">
             <div className="mr-auto flex flex-1 gap-4">
-              <Button type="primary">{t('buttons.search')}</Button>
-              <Button color="primary" variant="outlined">
+              <Button type="primary" onClick={onSubmit}>
+                {t('buttons.search')}
+              </Button>
+              <Button onClick={onReset} color="primary" variant="outlined">
                 {t('クリア')}
               </Button>
             </div>

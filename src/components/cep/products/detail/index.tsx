@@ -3,19 +3,22 @@ import {
   DownOutlined,
   EditFilled,
   RightOutlined,
+  SearchOutlined,
 } from '@ant-design/icons'
 import useProductDetail from '@components/cep/products/detail/useProductDetail'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
-import { useParsed } from '@refinedev/core'
+import { useGo, useParsed } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
+import renderCategories from '@utility/renderCategories'
 import {
   AutoComplete,
   Breadcrumb,
   Button,
   Col,
   Collapse,
+  Dropdown,
   Form,
   Row,
   Typography,
@@ -35,15 +38,18 @@ function ProductDetailContainer() {
       dataSourcePackagePrice,
       isAppend,
       fields,
+      dataProductCategories,
     },
-    { t, append, onSubmit, setIsAppend },
+    { t, append, onSubmit, setIsAppend, handleChooseCategory },
   ] = useProductDetail()
   const { getValues, control } = methods
   const { params } = useParsed()
 
-  const code = params?.code
+  const id = params?.id
   const actionType = params?.actionType
   const isView = actionType === 'VIEW'
+
+  const go = useGo()
 
   return (
     <PageContainer
@@ -67,7 +73,7 @@ function ProductDetailContainer() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {code}
+                  {id}
                 </Title>
               ),
             },
@@ -131,7 +137,7 @@ function ProductDetailContainer() {
                   <Row>
                     <Col xs={12} lg={10}>
                       <Controller
-                        name="shortName"
+                        name="short_name"
                         control={control}
                         render={({ field }) => {
                           return (
@@ -176,7 +182,7 @@ function ProductDetailContainer() {
                   </Row>
 
                   <Row>
-                    <Col xs={12} md={12} xxl={6}>
+                    <Col xs={12} md={10} xxl={6}>
                       <Form.Item
                         label={
                           <span className="w-[200px] text-left font-bold">
@@ -184,66 +190,98 @@ function ProductDetailContainer() {
                           </span>
                         }
                         colon={false}
+                        layout="horizontal"
                       >
-                        <AutoComplete
-                          options={[
-                            {
-                              label: 'tes1',
-                              value: '123',
-                            },
-                            {
-                              label: 'tes2',
-                              value: '1234',
-                            },
-                          ]}
-                          placeholder="サブカテゴリーを選択"
-                          filterOption={(inputValue, option) => {
-                            return (
-                              option!.value
-                                .toUpperCase()
-                                .indexOf(inputValue.toUpperCase()) !== -1
-                            )
-                          }}
-                          maxCount={1}
-                          suffixIcon={<CaretDownOutlined />}
-                        />
+                        <Dropdown
+                          trigger={['click']}
+                          popupRender={() => (
+                            <div
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                padding: 10,
+                                border: '1px solid #ccc',
+                                borderRadius: '8px',
+                                background: '#fff',
+                              }}
+                            >
+                              <Form.Item name={'name_lk'}>
+                                <AutoComplete
+                                  style={{ width: '100%' }}
+                                  options={dataProductCategories?.data.map(
+                                    (item) => ({
+                                      value: item.name,
+                                      label: item.name,
+                                    }),
+                                  )}
+                                  placeholder="検索..."
+                                  suffixIcon={<SearchOutlined />}
+                                  popupRender={() => {
+                                    return (
+                                      <div className="my-2 max-h-[300px] overflow-y-auto px-2">
+                                        {renderCategories(
+                                          dataProductCategories?.data || [],
+                                          1,
+                                          [],
+                                          [],
+                                          handleChooseCategory,
+                                        )}
+                                      </div>
+                                    )
+                                  }}
+                                />
+                              </Form.Item>
+                            </div>
+                          )}
+                        >
+                          <CoreInput icon={<DownOutlined />} readOnly={true} />
+                        </Dropdown>
                       </Form.Item>
                     </Col>
                   </Row>
 
                   <Row>
-                    <Col xs={12} md={12} xxl={6}>
-                      <Form.Item
-                        label={
-                          <span className="w-[200px] text-left font-bold">
-                            {t('単位')}
-                          </span>
-                        }
-                        colon={false}
-                      >
-                        <AutoComplete
-                          options={[
-                            {
-                              label: 'tes1',
-                              value: '123',
-                            },
-                            {
-                              label: 'tes2',
-                              value: '1234',
-                            },
-                          ]}
-                          placeholder="サブカテゴリーを選択"
-                          filterOption={(inputValue, option) => {
-                            return (
-                              option!.value
-                                .toUpperCase()
-                                .indexOf(inputValue.toUpperCase()) !== -1
-                            )
-                          }}
-                          maxCount={1}
-                          suffixIcon={<CaretDownOutlined />}
-                        />
-                      </Form.Item>
+                    <Col xs={12} md={10} xxl={6}>
+                      <Controller
+                        name="unit"
+                        control={control}
+                        render={({ field }) => {
+                          return (
+                            <Form.Item
+                              label={
+                                <span className="w-[200px] text-left font-bold">
+                                  {t('単位')}
+                                </span>
+                              }
+                              colon={false}
+                            >
+                              <AutoComplete
+                                options={[
+                                  {
+                                    label: 'tes1',
+                                    value: '123',
+                                  },
+                                  {
+                                    label: 'tes2',
+                                    value: '1234',
+                                  },
+                                ]}
+                                placeholder="サブカテゴリーを選択"
+                                filterOption={(inputValue, option) => {
+                                  return (
+                                    option!.value
+                                      .toUpperCase()
+                                      .indexOf(inputValue.toUpperCase()) !== -1
+                                  )
+                                }}
+                                maxCount={1}
+                                suffixIcon={<CaretDownOutlined />}
+                                {...field}
+                              />
+                            </Form.Item>
+                          )
+                        }}
+                      />
                     </Col>
                   </Row>
                   <Row>
@@ -462,12 +500,35 @@ function ProductDetailContainer() {
         <div className="mt-10 flex justify-between">
           <div></div>
           <div className="flex items-center gap-4">
-            <Button color="primary" variant="outlined">
-              123
+            <Button
+              color="primary"
+              variant="outlined"
+              size="large"
+              onClick={() => {
+                go({
+                  to: '/products',
+                })
+              }}
+            >
+              戻る
             </Button>
-            <Button type="primary" onClick={onSubmit}>
-              456
-            </Button>
+            {isView ? (
+              <Button
+                type="primary"
+                onClick={() => {
+                  go({
+                    to: `/products/edit/${1}`,
+                  })
+                }}
+                size="large"
+              >
+                {t('buttons.edit')}
+              </Button>
+            ) : (
+              <Button type="primary" onClick={onSubmit} size="large">
+                {t('buttons.confirm')}
+              </Button>
+            )}
           </div>
         </div>
       </form>

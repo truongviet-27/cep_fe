@@ -16,6 +16,8 @@ function CoreInput({
   classNameLabel,
   colon = false,
   type = 'text',
+  icon,
+  readOnly = false,
   ...field
 }: {
   name?: string
@@ -30,6 +32,8 @@ function CoreInput({
   classNameLabel?: string
   type?: 'number' | 'text'
   colon?: boolean
+  icon?: ReactNode
+  readOnly?: boolean
 }) {
   const Component = type === 'number' ? InputNumber : Input
 
@@ -52,7 +56,7 @@ function CoreInput({
     >
       <Component
         placeholder={placeholder}
-        readOnly={isView}
+        readOnly={isView ?? readOnly}
         style={{
           ...style,
           ...(isView
@@ -67,6 +71,7 @@ function CoreInput({
             : {}),
         }}
         controls={false}
+        suffix={icon}
         {...field}
       />
     </Form.Item>
