@@ -74,8 +74,8 @@ function useProductUnits() {
       values,
       successNotification: (data) => {
         return {
-          message: data?.data?.message,
-          description: data?.data?.message,
+          message: t('notifications.editSuccess'),
+          description: t('notifications.editSuccess'),
           type: 'success',
         }
       },

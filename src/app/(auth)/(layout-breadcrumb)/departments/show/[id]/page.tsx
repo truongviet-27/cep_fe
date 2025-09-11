@@ -25,11 +25,11 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
+          {t('departments.departments')}
         </Title>
       ),
     },
-    { title: <Title level={5}>部門登録</Title> },
+    { title: <Title level={5}>{t('departments.show.show')}</Title> },
   ]
 
   return (
@@ -37,7 +37,7 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={'部門登録'}
+      i18nHeading={t('departments.show.show')}
       footerButtons={
         <div>
           <ShowMoreInfo
@@ -66,11 +66,13 @@ export default function Page() {
       rightFooterButtons={<EditButton icon={null} type={'primary'} />}
     >
       <div className="flex flex-col space-y-6">
-        <DetailItem label={'部門コード'}>{departmentData?.code}</DetailItem>
-        <DetailItem label={'部門名（支社/部/課）'}>
+        <DetailItem label={t('departments.fields.code')}>
+          {departmentData?.code}
+        </DetailItem>
+        <DetailItem label={t('departments.fields.name')}>
           {departmentData?.name}
         </DetailItem>
-        <DetailItem label={'部門コード'}>
+        <DetailItem label={t('departments.fields.number_of_employee')}>
           {departmentData?.number_of_employee}
         </DetailItem>
       </div>

@@ -34,9 +34,6 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
   const issueMethod = Form.useWatch('issue_method', formProps.form)
   const isManual = issueMethod === 'manual'
 
-  console.log(form.getFieldValue('hash_dash'), 'hash_dash')
-  console.log(record, 'hash_dash')
-
   return (
     <Edit
       {...formProps}
@@ -44,6 +41,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
       isLoading={formLoading}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
       title={<></>}
+      i18nHeading={'code_issue_settings.edit.edit'}
     >
       <Form
         {...formProps}
