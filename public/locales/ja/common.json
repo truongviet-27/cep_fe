@@ -184,6 +184,9 @@
   "approve": {
     "approve": "承認する"
   },
+  "rank": {
+    "rank": "単価ランク一覧"
+  },
   "employees": {
     "employees": "社員",
     "edit": {
