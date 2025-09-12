@@ -17,6 +17,19 @@ export const resource: ResourceProps[] = [
       canCreate: true,
     },
   },
+
+  {
+    name: 'approve',
+    list: '/estimates/approve',
+    show: '/estimates/approve/:id',
+    create: '/estimates/approve/:id',
+    edit: '/estimates/approve/:id',
+    meta: {
+      parent: 'estimates',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
   {
     name: 'customers',
     list: '/customers',
@@ -48,18 +61,19 @@ export const resource: ResourceProps[] = [
     name: 'products',
     list: '/products',
     show: '/products/:id',
-    create: '/products/:id',
+    create: '/products',
     edit: '/products/:id',
     meta: {
       parent: 'products',
       canDelete: true,
       canCreate: true,
+      canEdit: true,
     },
   },
   {
     name: 'departments',
     list: '/departments',
-    show: '/departments/show/:id',
+    show: '/departments/:id',
     create: '/departments/create',
     edit: '/departments/edit/:id',
     meta: {
@@ -79,6 +93,10 @@ export const resource: ResourceProps[] = [
       canCreate: true,
       canEdit: true,
     },
+  },
+  {
+    name: 'import-history',
+    list: '/import-history',
   },
   {
     name: 'system-config',
