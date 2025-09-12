@@ -89,6 +89,7 @@ function useProduct() {
         title: t('カテゴリ(小)'), // Category small
         dataIndex: 'category_level_1',
         key: 'category_level_1',
+        align: 'center',
       },
       {
         title: t('単位'), // Unit
@@ -99,7 +100,7 @@ function useProduct() {
         title: t('原価 (円)'), // cost_price (JPY)
         dataIndex: 'cost_price',
         key: 'cost_price',
-        align: 'right',
+        align: 'center',
       },
       {
         title: t('販売価格 (円)'), // sale_price (JPY)

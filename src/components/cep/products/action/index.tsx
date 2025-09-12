@@ -48,6 +48,8 @@ function ProductDetailContainer() {
 
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
 
+  const infoValues = Form.useWatch('info', form)
+
   return (
     <PageContainer
       title={
@@ -200,6 +202,10 @@ function ProductDetailContainer() {
                           )}
                         >
                           <CoreInput
+                            name={'category'}
+                            readOnly={true}
+                            placeholder="選択してください"
+                            isView={isView || isAppend}
                             icon={
                               <CaretDownOutlined
                                 style={{
@@ -208,9 +214,12 @@ function ProductDetailContainer() {
                                 }}
                               />
                             }
-                            readOnly={true}
-                            placeholder="選択してください"
-                            // isView={isView || isAppend}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: 'helo anhe em',
+                            //   },
+                            // ]}
                           />
                         </Dropdown>
                       </div>
@@ -501,6 +510,7 @@ function ProductDetailContainer() {
                                 getFieldValue(['info', index, 'status']) ===
                                   'inactive'
                               }
+                              type="number"
                               style={{
                                 ...(index === 0 ||
                                 getFieldValue(['info', index, 'status']) ===
@@ -561,6 +571,10 @@ function ProductDetailContainer() {
                                 styleForm={{
                                   marginBottom: '0px',
                                 }}
+                                value={
+                                  infoValues?.[index]?.quantity *
+                                  getFieldValue('sellingPrice')
+                                }
                               />
                             )
                           },
@@ -577,6 +591,7 @@ function ProductDetailContainer() {
                                   getFieldValue(['info', index, 'status']) ===
                                     'inactive'
                                 }
+                                type="number"
                                 style={{
                                   ...(index === 0 ||
                                   getFieldValue(['info', index, 'status']) ===
@@ -647,44 +662,39 @@ function ProductDetailContainer() {
                       ] as ColumnsType
 
                       return (
-                        <Form.Item shouldUpdate noStyle>
-                          {({ getFieldValue }) => (
-                            <>
-                              <CommonTable
-                                columns={columns}
-                                dataSource={fields}
-                                pagination={false}
-                                rowClassName={(_, index) =>
-                                  getFieldValue(['info', index, 'status']) ===
-                                  'inactive'
-                                    ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
-                                    : ''
-                                }
-                              />
-                              <div className="mt-4 text-right">
-                                <Button
-                                  type="primary"
-                                  // disabled={[].length < 1}
-                                  onClick={() => {
-                                    add({
-                                      packageCode: `${getFieldValue('code')}-${fields.length}`,
-                                      packageName: '',
-                                      status: 'active',
-                                      quantity: 1,
-                                      unit: getFieldValue('unit'),
-                                      standardPrice:
-                                        getFieldValue(`sellingPrice`),
-                                      salesPrice: getFieldValue(`sellingPrice`),
-                                      standardPrint: true,
-                                    })
-                                  }}
-                                >
-                                  行を追加
-                                </Button>
-                              </div>
-                            </>
-                          )}
-                        </Form.Item>
+                        <>
+                          <CommonTable
+                            columns={columns}
+                            dataSource={fields}
+                            pagination={false}
+                            bordered={true}
+                            rowClassName={(_, index) =>
+                              infoValues?.[index]?.status === 'inactive'
+                                ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
+                                : ''
+                            }
+                          />
+                          <div className="mt-4 text-right">
+                            <Button
+                              type="primary"
+                              disabled={fields.length < 1}
+                              onClick={() => {
+                                add({
+                                  packageCode: `${getFieldValue('code')}-${fields.length}`,
+                                  packageName: '',
+                                  status: 'active',
+                                  quantity: 1,
+                                  unit: getFieldValue('unit'),
+                                  standardPrice: getFieldValue(`sellingPrice`),
+                                  salesPrice: getFieldValue(`sellingPrice`),
+                                  standardPrint: true,
+                                })
+                              }}
+                            >
+                              行を追加
+                            </Button>
+                          </div>
+                        </>
                       )
                     }}
                   </Form.List>
@@ -721,7 +731,12 @@ function ProductDetailContainer() {
                           key: 'packageCode',
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   getFieldValue(['info', index, 'packageCode'])
                                 }
@@ -735,7 +750,12 @@ function ProductDetailContainer() {
                           key: 'packageName',
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   getFieldValue(['info', index, 'packageName'])
                                 }
@@ -749,7 +769,12 @@ function ProductDetailContainer() {
                           key: 'salesPrice',
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   getFieldValue(['info', index, 'salesPrice'])
                                 }
