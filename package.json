@@ -42,6 +42,7 @@
     "@tailwindcss/cli": "^4.1.11",
     "@tailwindcss/postcss": "^4.1.11",
     "antd": "^5.17.0",
+    "antd-zod": "^7.0.0",
     "axios": "^1.6.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.18",

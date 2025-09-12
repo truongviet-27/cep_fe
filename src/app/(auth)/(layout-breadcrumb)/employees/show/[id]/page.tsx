@@ -8,7 +8,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import { EditButton, useSelect } from '@refinedev/antd'
 import { useResource, useShow, useTranslate } from '@refinedev/core'
 import type { Employee } from '@sdk/hey-api'
-import { PRIMARY } from '@utility/color'
+import { DARK_RED, GREY, PRIMARY, WARNING } from '@utility/color'
 import { Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -34,8 +34,8 @@ export default function EmployeeShow() {
   )
 
   const colorMap: Record<'employee' | 'manager', string> = {
-    manager: '#9a2e2e',
-    employee: '#808080',
+    manager: DARK_RED,
+    employee: GREY,
   }
 
   const roleColor = employeeData?.role
@@ -46,8 +46,8 @@ export default function EmployeeShow() {
     if (!value || value === '---') {
       return (
         <Space>
-          D<Text>{t('common.not_set')}</Text>
-          <WarningOutlined style={{ color: '#AC3C00' }} />
+          <Text>{t('common.not_set')}</Text>
+          <WarningOutlined style={{ color: WARNING }} />
         </Space>
       )
     }
