@@ -1,6 +1,6 @@
 'use client'
 
-import ProductDetailContainer from '@components/cep/products/detail'
+import ProductDetailContainer from '@components/cep/products/action'
 
 function Page() {
   return <ProductDetailContainer />

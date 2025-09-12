@@ -48,6 +48,7 @@ function CoreInput({
           </span>
         )
       }
+      shouldUpdate
       layout={layout}
       rules={rules}
       required={false}

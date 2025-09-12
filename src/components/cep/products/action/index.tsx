@@ -5,7 +5,7 @@ import {
   RightOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
-import useProductDetail from '@components/cep/products/detail2/useProductDetail'
+import useProductDetail from '@components/cep/products/action/useProductDetail'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
@@ -33,11 +33,11 @@ const { Title } = Typography
 
 function ProductDetailContainer() {
   const [
-    { methods, dataSourcePackageInfo, isAppend, dataProductCategories },
+    { methods, isAppend, dataProductCategories },
     { t, setIsAppend, handleChooseCategory },
   ] = useProductDetail()
   const { form, formProps, saveButtonProps } = methods
-  const { getFieldValue } = form
+  const { getFieldValue, setFieldsValue } = form
   const { params } = useParsed()
 
   const id = params?.id
@@ -91,12 +91,18 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={8}>
                       <CoreInput
                         name="code"
-                        isView={isView}
+                        isView={isView || isAppend}
                         label={
                           <span className="font-bold">{t('商品コード')}</span>
                         }
                         required={true}
                         layout="horizontal"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'helo anhe em',
+                          },
+                        ]}
                       />
                     </Col>
                   </Row>
@@ -104,10 +110,16 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="name"
-                        isView={isView}
+                        isView={isView || isAppend}
                         label={<span className="font-bold">{t('商品名')}</span>}
                         required={true}
                         layout="horizontal"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'helo anhe em',
+                          },
+                        ]}
                       />
                     </Col>
                   </Row>
@@ -115,13 +127,12 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="short_name"
-                        isView={isView}
+                        isView={isView || isAppend}
                         label={
                           <span className="font-bold">
                             {t('商品名（略称）')}
                           </span>
                         }
-                        required={true}
                         layout="horizontal"
                       />
                     </Col>
@@ -130,11 +141,10 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={8}>
                       <CoreInput
                         name="barcode"
-                        isView={isView}
+                        isView={isView || isAppend}
                         label={
                           <span className="font-bold">{t('バーコード')}</span>
                         }
-                        required={true}
                         layout="horizontal"
                       />
                     </Col>
@@ -143,9 +153,10 @@ function ProductDetailContainer() {
                   <Row>
                     <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
                       <div className="flex">
-                        <label className="w-[214px] text-left font-bold">
+                        <div className="w-[214px] text-left font-bold">
                           {t('カテゴリ')}
-                        </label>
+                          <span style={{ color: 'red', marginLeft: 4 }}>*</span>
+                        </div>
                         <Dropdown
                           trigger={['click']}
                           popupRender={() => (
@@ -188,7 +199,19 @@ function ProductDetailContainer() {
                             </div>
                           )}
                         >
-                          <CoreInput icon={<DownOutlined />} readOnly={true} />
+                          <CoreInput
+                            icon={
+                              <CaretDownOutlined
+                                style={{
+                                  color: '#00000040',
+                                  fontSize: '12px',
+                                }}
+                              />
+                            }
+                            readOnly={true}
+                            placeholder="選択してください"
+                            // isView={isView || isAppend}
+                          />
                         </Dropdown>
                       </div>
                     </Col>
@@ -199,11 +222,21 @@ function ProductDetailContainer() {
                       <Form.Item
                         name="unit"
                         label={
-                          <span className="w-[200px] text-left font-bold">
+                          <div className="w-[200px] text-left font-bold">
                             {t('単位')}
-                          </span>
+                            <span style={{ color: 'red', marginLeft: 4 }}>
+                              *
+                            </span>
+                          </div>
                         }
                         colon={false}
+                        required={false}
+                        rules={[
+                          {
+                            required: true,
+                            message: 'helo anhe em',
+                          },
+                        ]}
                       >
                         <AutoComplete
                           options={[
@@ -216,7 +249,7 @@ function ProductDetailContainer() {
                               value: '1234',
                             },
                           ]}
-                          placeholder="サブカテゴリーを選択"
+                          placeholder="選択してください"
                           filterOption={(inputValue, option) => {
                             return (
                               option!.value
@@ -234,7 +267,7 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
                       <CoreInput
                         name="costPrice"
-                        isView={isView}
+                        isView={isView || isAppend}
                         label={
                           <span className="font-bold">{t('原価（円）')}</span>
                         }
@@ -244,6 +277,12 @@ function ProductDetailContainer() {
                         style={{
                           width: '225px',
                         }}
+                        rules={[
+                          {
+                            required: true,
+                            message: 'helo anhe em',
+                          },
+                        ]}
                       />
                     </Col>
                   </Row>
@@ -251,7 +290,7 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
                       <CoreInput
                         name="sellingPrice"
-                        isView={isView}
+                        isView={isView || isAppend}
                         label={
                           <span className="font-bold">
                             {t('販売単価（円）')}
@@ -263,6 +302,12 @@ function ProductDetailContainer() {
                         style={{
                           width: '225px',
                         }}
+                        rules={[
+                          {
+                            required: true,
+                            message: 'helo anhe em',
+                          },
+                        ]}
                       />
                     </Col>
                     <Col>
@@ -278,9 +323,10 @@ function ProductDetailContainer() {
                             size="small"
                             color="blue"
                             variant="outlined"
-                            onClick={() => {
+                            onClick={async () => {
+                              await form.validateFields()
                               setIsAppend(true)
-                              if (dataSourcePackageInfo.length === 0) {
+                              if (getFieldValue(['info']).length === 0) {
                                 if (addRef.current) {
                                   addRef.current({
                                     packageCode: getFieldValue('code'),
@@ -294,7 +340,29 @@ function ProductDetailContainer() {
                                     standardPrint: true,
                                   })
                                 }
+                                return
                               }
+
+                              setFieldsValue({
+                                info: getFieldValue('info').map(
+                                  (item: object, index: number) => {
+                                    return index === 0
+                                      ? {
+                                          packageCode: getFieldValue('code'),
+                                          packageName: getFieldValue('name'),
+                                          status: 'active',
+                                          quantity: 1,
+                                          unit: getFieldValue('unit'),
+                                          standardPrice:
+                                            getFieldValue('sellingPrice') * 1,
+                                          salesPrice:
+                                            getFieldValue('sellingPrice'),
+                                          standardPrint: true,
+                                        }
+                                      : item
+                                  },
+                                ),
+                              })
                             }}
                           >
                             {t('更新')}
@@ -307,7 +375,7 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="note"
-                        isView={isView}
+                        isView={isView || isAppend}
                         label={<span className="font-bold">{t('備考')}</span>}
                         required={true}
                         layout="horizontal"
@@ -357,6 +425,9 @@ function ProductDetailContainer() {
                                 boxShadow: 'none',
                                 cursor: 'default',
                               }}
+                              styleForm={{
+                                marginBottom: '0px',
+                              }}
                             />
                           ),
                         },
@@ -366,9 +437,15 @@ function ProductDetailContainer() {
                           render: (_, __, index) => (
                             <CoreInput
                               name={[index, 'packageName']}
-                              readOnly={index === 0}
+                              readOnly={
+                                index === 0 ||
+                                getFieldValue(['info', index, 'status']) ===
+                                  'inactive'
+                              }
                               style={{
-                                ...(index === 0
+                                ...(index === 0 ||
+                                getFieldValue(['info', index, 'status']) ===
+                                  'inactive'
                                   ? {
                                       background: 'transparent',
                                       paddingLeft: 0,
@@ -378,6 +455,9 @@ function ProductDetailContainer() {
                                       cursor: 'default',
                                     }
                                   : {}),
+                              }}
+                              styleForm={{
+                                marginBottom: '0px',
                               }}
                             />
                           ),
@@ -389,7 +469,12 @@ function ProductDetailContainer() {
                             index === 0 ? (
                               <div>有効</div>
                             ) : (
-                              <Form.Item name={[index, 'status']}>
+                              <Form.Item
+                                name={[index, 'status']}
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 <Radio.Group
                                   options={[
                                     {
@@ -411,9 +496,15 @@ function ProductDetailContainer() {
                           render: (_, __, index) => (
                             <CoreInput
                               name={[index, 'quantity']}
-                              readOnly={index === 0}
+                              readOnly={
+                                index === 0 ||
+                                getFieldValue(['info', index, 'status']) ===
+                                  'inactive'
+                              }
                               style={{
-                                ...(index === 0
+                                ...(index === 0 ||
+                                getFieldValue(['info', index, 'status']) ===
+                                  'inactive'
                                   ? {
                                       background: 'transparent',
                                       paddingLeft: 0,
@@ -423,6 +514,9 @@ function ProductDetailContainer() {
                                       cursor: 'default',
                                     }
                                   : {}),
+                              }}
+                              styleForm={{
+                                marginBottom: '0px',
                               }}
                             />
                           ),
@@ -441,6 +535,9 @@ function ProductDetailContainer() {
                                 border: 'none',
                                 boxShadow: 'none',
                                 cursor: 'default',
+                              }}
+                              styleForm={{
+                                marginBottom: '0px',
                               }}
                             />
                           ),
@@ -461,6 +558,9 @@ function ProductDetailContainer() {
                                   boxShadow: 'none',
                                   cursor: 'default',
                                 }}
+                                styleForm={{
+                                  marginBottom: '0px',
+                                }}
                               />
                             )
                           },
@@ -472,9 +572,15 @@ function ProductDetailContainer() {
                             return (
                               <CoreInput
                                 name={[index, 'salesPrice']}
-                                readOnly={index === 0}
+                                readOnly={
+                                  index === 0 ||
+                                  getFieldValue(['info', index, 'status']) ===
+                                    'inactive'
+                                }
                                 style={{
-                                  ...(index === 0
+                                  ...(index === 0 ||
+                                  getFieldValue(['info', index, 'status']) ===
+                                    'inactive'
                                     ? {
                                         background: 'transparent',
                                         paddingLeft: 0,
@@ -484,6 +590,9 @@ function ProductDetailContainer() {
                                         cursor: 'default',
                                       }
                                     : {}),
+                                }}
+                                styleForm={{
+                                  marginBottom: '0px',
                                 }}
                               />
                             )
@@ -500,11 +609,18 @@ function ProductDetailContainer() {
                                 noStyle
                               >
                                 <Checkbox
-                                  style={{ transform: 'scale(1.3)' }}
+                                  style={{
+                                    transform: 'scale(1.3)',
+                                    marginBottom: 0,
+                                  }}
                                   checked={getFieldValue([
                                     index,
                                     'standardPrint',
                                   ])}
+                                  disabled={
+                                    getFieldValue(['info', index, 'status']) ===
+                                    'inactive'
+                                  }
                                 />
                               </Form.Item>
                             ),
@@ -619,7 +735,7 @@ function ProductDetailContainer() {
                           key: 'packageName',
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item shouldUpdate>
                                 {() =>
                                   getFieldValue(['info', index, 'packageName'])
                                 }
