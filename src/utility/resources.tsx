@@ -71,6 +71,18 @@ export const resource: ResourceProps[] = [
     },
   },
   {
+    name: 'rank',
+    list: '/rank',
+    show: '/rank/:id',
+    create: '/rank/:id',
+    edit: '/rank/:id',
+    meta: {
+      parent: 'products',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
     name: 'departments',
     list: '/departments',
     show: '/departments/:id',

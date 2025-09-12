@@ -69,6 +69,9 @@
   "products": {
     "products": "商品"
   },
+  "rank": {
+    "rank": "単価ランク一覧"
+  },
   "employees": {
     "employees": "社員",
     "edit": {
