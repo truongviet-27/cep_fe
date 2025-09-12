@@ -66,7 +66,6 @@
   "customers": {
     "customers": "取引先"
   },
-
   "products": {
     "products": "商品一覧",
     "sections": {
@@ -184,8 +183,28 @@
   "approve": {
     "approve": "承認する"
   },
-  "rank": {
-    "rank": "単価ランク一覧"
+  "ranks": {
+    "ranks": "単価ランク一覧",
+    "list": {
+      "list": "単価ランク一覧",
+      "filters": {
+        "search_label": "単価ランクコード・単価ランク名",
+        "search_placeholder": "部分一致"
+      }
+    },
+    "create": {
+      "create": "新しい単価ランクを追加"
+    },
+    "edit": {
+      "edit": "単価ランク編集"
+    },
+    "fields": {
+      "code": "単価ランクコード",
+      "name": "単価ランク名",
+      "rate": "掛け率（％)",
+      "customer": "顧客数",
+      "remarks": "備考"
+    }
   },
   "employees": {
     "employees": "社員",
@@ -224,6 +243,7 @@
       "codeNumbering": "コード採番設定",
       "approvalAndReturn": "承認・差戻し",
       "costDetails": "原価明細",
+
       "customerMasterPurpose": "取引先をマスタ化して名寄せします。",
       "projectMasterPurpose": "案件をマスタ化して名寄せします。",
       "productMasterPurpose": "マスタをマスタ化して名寄せします。",
@@ -279,12 +299,15 @@
         "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
         "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
         "downloadButton": "CSVテンプレートをダウンロード",
+
         "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
         "orSelectFile": "または、下のボタンからファイルを選択してください",
         "selectFileButton": "ファイルを選択",
+
         "requiredError": "必須項目です",
         "onlyCSVError": "CSVファイルのみアップロード可能です。",
         "maxSizeError": "ファイルサイズは最大5MBです。",
+
         "noteTitle": "CSV登録時の注意事項",
         "noteItems": {
           "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
