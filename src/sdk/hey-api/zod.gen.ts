@@ -13,7 +13,17 @@ export const zCodeIssueSetting = z.object({
   issue_method: z.optional(z.enum(['automatic', 'manual'])),
   hash_dash: z.optional(z.boolean()),
   prefix: z.optional(z.string()),
-  segment: z.optional(z.enum(['none', 'year_month', 'year_month_day_range'])),
+  segment: z.optional(
+    z.enum([
+      'none',
+      'year',
+      'year_range',
+      'year_month',
+      'year_month_range',
+      'year_month_day',
+      'year_month_day_range',
+    ]),
+  ),
   total: z.optional(z.int()),
   preview_code: z.optional(z.string()),
   serial_length: z.optional(z.int()),

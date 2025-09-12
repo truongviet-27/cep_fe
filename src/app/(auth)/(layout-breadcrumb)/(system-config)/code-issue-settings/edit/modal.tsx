@@ -18,6 +18,7 @@ import dayjs from 'dayjs'
 import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
+import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
 
 type Props = {
   modalProps: any
@@ -25,16 +26,13 @@ type Props = {
 
 export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
   const t = useTranslate()
-  const { close, formProps, queryResult, saveButtonProps, formLoading } =
+  const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
     modalProps
 
   const record = queryResult?.data?.data
 
   const issueMethod = Form.useWatch('issue_method', formProps.form)
-  const hashDashVal = Form.useWatch('hash_dash', formProps.form)
   const isManual = issueMethod === 'manual'
-
-  console.log(record, 'hashDashVal')
 
   return (
     <Edit
@@ -43,23 +41,15 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
       isLoading={formLoading}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
       title={<></>}
+      i18nHeading={'code_issue_settings.edit.edit'}
     >
       <Form
-        initialValues={{
-          hash_dash: false,
-          ...record,
-        }}
         {...formProps}
+        initialValues={record}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
         colon={false}
-        // onFinish={async (values) => {
-        //   const result = await onFinish(values)
-        //   if (result) {
-        //     close()
-        //   }
-        // }}
       >
         <Form.Item
           label={t('code_issue_settings.fields.name')}
@@ -97,9 +87,11 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
           valuePropName="checked"
           name="hash_dash"
         >
-          <Checkbox disabled={isManual} />
-          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-          <Typography.Text>(ハイフンを入れる)</Typography.Text>
+          <Checkbox disabled={isManual}>
+            <Typography.Text>
+              {t('code_issue_settings.fields.hash_dash_hint')}
+            </Typography.Text>
+          </Checkbox>
         </Form.Item>
 
         <Form.Item
@@ -132,7 +124,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
           label={t('code_issue_settings.fields.preview_code')}
           name="preview_code"
         >
-          <Tag>{record?.preview_code}</Tag>
+          <Tag>{buildCodePreviewFromSetting(form.getFieldsValue())}</Tag>
         </Form.Item>
 
         <Divider />

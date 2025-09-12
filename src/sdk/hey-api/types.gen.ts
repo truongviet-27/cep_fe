@@ -35,7 +35,14 @@ export type CodeIssueSetting = {
   /**
    * Segment for the code generation
    */
-  segment?: 'none' | 'year_month' | 'year_month_day_range'
+  segment?:
+    | 'none'
+    | 'year'
+    | 'year_range'
+    | 'year_month'
+    | 'year_month_range'
+    | 'year_month_day'
+    | 'year_month_day_range'
   /**
    * Total number of codes to generate
    */
@@ -476,6 +483,14 @@ export type Employee = {
    * Last update timestamp
    */
   updated_at?: string
+  created_by?: {
+    name: string
+    date: string
+  }
+  updated_by?: {
+    name: string
+    date: string
+  }
 }
 
 /**

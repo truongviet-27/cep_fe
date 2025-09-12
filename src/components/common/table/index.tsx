@@ -8,8 +8,6 @@ function CommonTable<T extends object>(
 ): React.ReactElement {
   const { components, ...restTableProps } = tableProps
 
-  console.log(tableProps, 'tableProps')
-
   return (
     <Table<T>
       {...restTableProps}

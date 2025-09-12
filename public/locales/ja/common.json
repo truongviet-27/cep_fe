@@ -71,6 +71,9 @@
   },
   "employees": {
     "employees": "社員",
+    "edit": {
+      "title": "社員編集"
+    },
     "fields": {
       "code": "社員コード",
       "name": "社員名",
@@ -82,6 +85,9 @@
     "roles": {
       "employee": "一般",
       "manager": "管理者"
+    },
+    "show": {
+      "show": "社員詳細"
     }
   },
   "permission_settings": {
@@ -118,6 +124,9 @@
   },
   "code_issue_settings": {
     "code_issue_settings": "各種コード採番設定",
+    "edit": {
+      "edit": "コード採番編集"
+    },
     "fields": {
       "name": "コード名",
       "issue_method": "採番方法",
@@ -125,6 +134,7 @@
         "manual": "手動",
         "automatic": "自動"
       },
+      "hash_dash_hint": "(ハイフンを入れる)",
       "prefix": "接続詞",
       "segment": "区分",
       "serial_length": "連番桁数",
@@ -138,6 +148,12 @@
   },
   "product_categories": {
     "product_categories": "商品カテゴリ設定",
+    "all_open": "すべて閉じる",
+    "all_close": "すべて開く",
+    "validate": {
+      "save_parent_first": "先に親カテゴリを保存してください",
+      "name_required": "名前を入力してください。"
+    },
     "csv": {
       "title": "商品カテゴリCSV一括登録",
       "step_1": {
@@ -348,14 +364,15 @@
   "departments": {
     "departments": "部門",
     "list": {
-      "title": "部門一覧",
+      "list": "部門一覧",
       "buttons": {
         "create": "登録"
       },
       "filters": {
         "search_placeholder": "部分一致",
         "clear": "クリア",
-        "search": "検索"
+        "search": "検索",
+        "search_label": "部門コード・部門名"
       },
       "columns": {
         "department_code": "部門コード",
@@ -365,11 +382,20 @@
       }
     },
     "create": {
-      "create": "部門登録"
+      "create": "部門登録",
+      "auto_number": "自動採番",
+      "popup_number_setting": "コード採番設定はこちら",
+      "name_placeholder": "例）営業本部 / 営業部 / 第一課"
+    },
+    "edit": {
+      "edit": "部門登録"
+    },
+    "show": {
+      "show": "部門詳細"
     },
     "fields": {
       "id": "ID",
-      "name": "部門名（支社/部/課）",
+      "name": "部門名（支社/部/課)",
       "code": "部門コード",
       "created_by": "登録者",
       "updated_by": "更新者",

@@ -34,6 +34,7 @@
     "save_all": "Save All",
     "confirm": "Confirm",
     "add": "Add",
+    "save": "Save",
     "search": "Search",
     "clear": "Clear"
   },
@@ -84,6 +85,9 @@
     "roles": {
       "employee": "General",
       "manager": "Manager"
+    },
+    "show": {
+      "show": "Show Employee"
     }
   },
   "permission_settings": {
@@ -91,6 +95,9 @@
   },
   "code_issue_settings": {
     "code_issue_settings": "Code Issue Setting",
+    "edit": {
+      "edit": "Edit Code Issue Setting"
+    },
     "fields": {
       "name": "Name",
       "issue_method": "Issue Method",
@@ -98,6 +105,7 @@
         "manual": "Manual",
         "automatic": "Auto"
       },
+      "hash_dash_hint": "(Insert Hyphen)",
       "prefix": "Prefix",
       "segment": "Segment",
       "serial_length": "Serial Length",
@@ -110,7 +118,13 @@
     }
   },
   "product_categories": {
-    "product_categories": "Product Category"
+    "product_categories": "Product Category",
+    "all_open": "All Close",
+    "all_close": "All Open",
+    "validate": {
+      "save_parent_first": "Please Save The Parent Category First",
+      "name_required": "Please Enter Your Name"
+    }
   },
   "tags": {
     "tags": "Tags"
@@ -231,7 +245,7 @@
   "departments": {
     "departments": "Departments",
     "list": {
-      "title": "Department List",
+      "list": "Department List",
       "buttons": {
         "create": "Register"
       },
@@ -248,7 +262,9 @@
       }
     },
     "create": {
-      "create": "Create Department"
+      "create": "Create Department",
+      "auto_number": "Automatic Numbering",
+      "popup_number_setting": "Code Numbering Settings Are Here"
     },
     "fields": {
       "id": "ID",
