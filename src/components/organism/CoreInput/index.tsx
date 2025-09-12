@@ -18,7 +18,7 @@ function CoreInput({
   type = 'text',
   icon,
   readOnly = false,
-  ...field
+  value,
 }: {
   name?: string | (string | number)[]
   label?: ReactNode | string
@@ -34,8 +34,11 @@ function CoreInput({
   colon?: boolean
   icon?: ReactNode
   readOnly?: boolean
+  value?: string | number
 }) {
   const Component = type === 'number' ? InputNumber : Input
+
+  console.log(value, name, 'yyyyyyyyyyyy')
 
   return (
     <Form.Item
@@ -73,7 +76,7 @@ function CoreInput({
         }}
         controls={false}
         suffix={icon}
-        {...field}
+        value={value}
       />
     </Form.Item>
   )

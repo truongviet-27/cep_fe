@@ -31,6 +31,10 @@ function CommonTable<T extends object>(
           ),
         },
       }}
+      pagination={{
+        ...restTableProps.pagination,
+        showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}件`,
+      }}
     />
   )
 }
