@@ -1,9 +1,9 @@
 import { useDebounce } from '@hook/use-debounce'
 import { useForm } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
-import { useList, useTable, useTranslate } from '@refinedev/core'
+import { useGo, useList, useTable, useTranslate } from '@refinedev/core'
 import type { Category } from '@utility/renderCategories'
-import { Form } from 'antd'
+import { Button, Form } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
 import { useCallback, useMemo } from 'react'
@@ -34,6 +34,8 @@ function useProduct() {
   const { setFieldValue, getFieldValue, resetFields } = form
 
   const name_lk_value = useDebounce(Form.useWatch('name_lk', form), 500)
+
+  const go = useGo()
 
   const { current, setCurrent, pageSize, setPageSize, pageCount } = useTable<
     Form,
@@ -74,6 +76,7 @@ function useProduct() {
         title: t('商品名'), // Product Name
         dataIndex: 'name',
         key: 'name',
+        align: 'left',
       },
       {
         title: t('受渡数'), // packaging_count
@@ -89,7 +92,7 @@ function useProduct() {
         title: t('カテゴリ(小)'), // Category small
         dataIndex: 'category_level_1',
         key: 'category_level_1',
-        align: 'center',
+        align: 'left',
       },
       {
         title: t('単位'), // Unit
@@ -106,7 +109,11 @@ function useProduct() {
         title: t('販売価格 (円)'), // sale_price (JPY)
         dataIndex: 'sale_price',
         key: 'sale_price',
-        align: 'right',
+      },
+      {
+        title: t('table.actions'),
+        dataIndex: 'action',
+        key: 'action',
       },
     ] as ColumnsType
   }, [t])
@@ -129,6 +136,25 @@ function useProduct() {
       unit: '人日',
       cost_price: '600,000',
       sale_price: '800,000',
+      action: (
+        <div className="flex justify-center gap-2">
+          <Button
+            color="primary"
+            variant="outlined"
+            size="small"
+            onClick={() => {
+              go({
+                to: `/products/edit/${1}`,
+              })
+            }}
+          >
+            {t('buttons.edit')}
+          </Button>
+          <Button color="danger" variant="solid" size="small">
+            {t('buttons.delete')}
+          </Button>
+        </div>
+      ),
     },
   ]
 

@@ -1,5 +1,9 @@
-import { DownOutlined, RightOutlined, SearchOutlined } from '@ant-design/icons'
-import useProduct from '@components/cep/products/useProduct'
+import {
+  CaretDownOutlined,
+  RightOutlined,
+  SearchOutlined,
+} from '@ant-design/icons'
+import useProduct from '@components/cep/merchandise/products/use-product'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
@@ -118,9 +122,17 @@ function ProductContainer() {
                 )}
               >
                 <CoreInput
-                  icon={<DownOutlined />}
+                  icon={
+                    <CaretDownOutlined
+                      style={{
+                        color: '#00000040',
+                        fontSize: '12px',
+                      }}
+                    />
+                  }
                   name="category"
                   readOnly={true}
+                  placeholder="選択してください"
                 />
               </Dropdown>
             </Form.Item>
@@ -149,7 +161,6 @@ function ProductContainer() {
         </Row>
 
         <CommonTable
-          bordered
           columns={columns}
           dataSource={dataSource}
           loading={false}
@@ -161,6 +172,7 @@ function ProductContainer() {
             onChange: onChangePageSize,
             showSizeChanger: true,
           }}
+          isPagination
         />
 
         <div className="mt-4 text-right">

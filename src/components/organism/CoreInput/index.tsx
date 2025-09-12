@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cn } from '@utility/cn'
 import { Form, Input, InputNumber } from 'antd'
 import type { Rule } from 'antd/es/form'
@@ -18,7 +19,8 @@ function CoreInput({
   type = 'text',
   icon,
   readOnly = false,
-  value,
+  onChangeValue,
+  ...field
 }: {
   name?: string | (string | number)[]
   label?: ReactNode | string
@@ -34,11 +36,9 @@ function CoreInput({
   colon?: boolean
   icon?: ReactNode
   readOnly?: boolean
-  value?: string | number
+  onChangeValue?: (value: any) => void
 }) {
   const Component = type === 'number' ? InputNumber : Input
-
-  console.log(value, name, 'yyyyyyyyyyyy')
 
   return (
     <Form.Item
@@ -76,7 +76,13 @@ function CoreInput({
         }}
         controls={false}
         suffix={icon}
-        value={value}
+        {...field}
+        onChange={(value) => {
+          if (onChangeValue) {
+            console.log('xxxxxxxxxxxxxxxxxx')
+            onChangeValue(value as object)
+          }
+        }}
       />
     </Form.Item>
   )

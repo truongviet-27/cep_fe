@@ -66,8 +66,63 @@
   "customers": {
     "customers": "顧客"
   },
+
   "products": {
-    "products": "商品一覧"
+    "products": "商品一覧",
+    "sections": {
+      "basicInfo": "基本情報",
+      "packagingPrice": "荷姿単価",
+      "unitPriceGroup": "単価グループ"
+    },
+    "fields": {
+      "productCode": "商品コード",
+      "productName": "商品名",
+      "productNameAbbr": "商品名 (略称)",
+      "barcode": "バーコード",
+      "category": "カテゴリ",
+      "unit": "単位",
+      "costPrice": "原価 (円)",
+      "sellingPrice": "販売単価 (円)",
+      "remarks": "備考",
+      "packagingCode": "荷姿コード",
+      "packagingName": "荷姿名",
+      "status": "ステータス",
+      "quantity": "入数",
+      "standardPrice": "標準価格 (円)",
+      "isStandard": "標準同額",
+      "actions": "操作"
+    },
+    "unitPriceGroup": {
+      "tableTitle": "単価グループ",
+      "sellingPrice": "販売価格 (円)",
+      "settingMethod": "設定方式",
+      "rankS": "S 80% (円)",
+      "rankA": "A 85% (円)",
+      "rankB": "B 90% (円)",
+      "rankC": "C 95% (円)",
+      "rankD": "D 100% (円)",
+      "rankE": "E 105% (円)"
+    },
+    "buttons": {
+      "autoNumbering": "自動採番",
+      "createNewCategory": "新規作成",
+      "update": "更新",
+      "addRow": "行を追加"
+    },
+    "links": {
+      "csvUpload": "CSV一括登録"
+    },
+    "messages": {
+      "noData": "データがありません。",
+      "codeHint": "コード体系の定義はこちら"
+    },
+    "validation": {
+      "codeFormat": "(A-Z, 0-9, .-)"
+    },
+    "text": {
+      "active": "有効",
+      "inactive": "無効"
+    }
   },
   "ranks": {
     "ranks": "単価ランク一覧",
@@ -94,6 +149,9 @@
   },
   "merchandise": {
     "merchandise": "商品"
+  },
+  "approve": {
+    "approve": "承認する"
   },
   "employees": {
     "employees": "社員",
@@ -272,7 +330,7 @@
     }
   },
   "import_history": {
-    "import_history": "import_history"
+    "import_history": "インポート履歴"
   },
   "system_config": {
     "system_config": "システム設定",

@@ -5,7 +5,7 @@ import {
   RightOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
-import useProductDetail from '@components/cep/products/action/useProductDetail'
+import useProductDetail from '@components/cep/merchandise/products/action/use-product-detail'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
@@ -19,6 +19,7 @@ import {
   Checkbox,
   Col,
   Collapse,
+  Divider,
   Dropdown,
   Form,
   Radio,
@@ -37,7 +38,7 @@ function ProductDetailContainer() {
     { t, setIsAppend, handleChooseCategory },
   ] = useProductDetail()
   const { form, formProps, saveButtonProps } = methods
-  const { getFieldValue, setFieldsValue } = form
+  const { getFieldValue, setFieldsValue, setFieldValue } = form
   const { params } = useParsed()
 
   const id = params?.id
@@ -48,13 +49,14 @@ function ProductDetailContainer() {
 
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
 
-  const infoValues = Form.useWatch('info', form)
-
   return (
     <PageContainer
       title={
         <Breadcrumb
           items={[
+            {
+              title: <Title level={5}>{t('merchandise.merchandise')}</Title>,
+            },
             {
               title: (
                 <Link href="/products">
@@ -64,15 +66,8 @@ function ProductDetailContainer() {
             },
             {
               title: (
-                <Link href="/products">
-                  <Title level={5}>{t('商品一覧')}</Title>
-                </Link>
-              ),
-            },
-            {
-              title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {id}
+                  {isView ? id : !!id ? t('buttons.edit') : t('buttons.create')}
                 </Title>
               ),
             },
@@ -86,7 +81,11 @@ function ProductDetailContainer() {
           items={[
             {
               key: 1,
-              label: <span className="font-bold">{t('基本情報')}</span>,
+              label: (
+                <span className="font-bold">
+                  {t('products.sections.basicInfo')}
+                </span>
+              ),
               children: (
                 <div className="px-2">
                   <Row gutter={[16, 16]}>
@@ -95,7 +94,9 @@ function ProductDetailContainer() {
                         name="code"
                         isView={isView || isAppend}
                         label={
-                          <span className="font-bold">{t('商品コード')}</span>
+                          <span className="font-bold">
+                            {t('products.fields.productCode')}
+                          </span>
                         }
                         required={true}
                         layout="horizontal"
@@ -113,7 +114,11 @@ function ProductDetailContainer() {
                       <CoreInput
                         name="name"
                         isView={isView || isAppend}
-                        label={<span className="font-bold">{t('商品名')}</span>}
+                        label={
+                          <span className="font-bold">
+                            {t('products.fields.productName')}
+                          </span>
+                        }
                         required={true}
                         layout="horizontal"
                         rules={[
@@ -132,7 +137,7 @@ function ProductDetailContainer() {
                         isView={isView || isAppend}
                         label={
                           <span className="font-bold">
-                            {t('商品名（略称）')}
+                            {t('products.fields.productNameAbbr')}
                           </span>
                         }
                         layout="horizontal"
@@ -145,7 +150,9 @@ function ProductDetailContainer() {
                         name="barcode"
                         isView={isView || isAppend}
                         label={
-                          <span className="font-bold">{t('バーコード')}</span>
+                          <span className="font-bold">
+                            {t('products.fields.barcode')}
+                          </span>
                         }
                         layout="horizontal"
                       />
@@ -156,7 +163,7 @@ function ProductDetailContainer() {
                     <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
                       <div className="flex">
                         <div className="w-[214px] text-left font-bold">
-                          {t('カテゴリ')}
+                          {t('products.fields.category')}
                           <span style={{ color: 'red', marginLeft: 4 }}>*</span>
                         </div>
                         <Dropdown
@@ -232,7 +239,7 @@ function ProductDetailContainer() {
                         name="unit"
                         label={
                           <div className="w-[200px] text-left font-bold">
-                            {t('単位')}
+                            {t('products.fields.unit')}
                             <span style={{ color: 'red', marginLeft: 4 }}>
                               *
                             </span>
@@ -278,7 +285,9 @@ function ProductDetailContainer() {
                         name="costPrice"
                         isView={isView || isAppend}
                         label={
-                          <span className="font-bold">{t('原価（円）')}</span>
+                          <span className="font-bold">
+                            {t('products.fields.costPrice')}
+                          </span>
                         }
                         required={true}
                         layout="horizontal"
@@ -302,7 +311,7 @@ function ProductDetailContainer() {
                         isView={isView || isAppend}
                         label={
                           <span className="font-bold">
-                            {t('販売単価（円）')}
+                            {t('products.fields.sellingPrice')}
                           </span>
                         }
                         required={true}
@@ -368,7 +377,29 @@ function ProductDetailContainer() {
                                             getFieldValue('sellingPrice'),
                                           standardPrint: true,
                                         }
-                                      : item
+                                      : {
+                                          ...item,
+                                          packageCode: `${getFieldValue('code')}-${index + 1}`,
+                                          standardPrice:
+                                            getFieldValue('sellingPrice') *
+                                            getFieldValue([
+                                              'info',
+                                              index,
+                                              'quantity',
+                                            ]),
+                                          quantity: getFieldValue([
+                                            'info',
+                                            index,
+                                            'quantity',
+                                          ]),
+                                          salesPrice:
+                                            getFieldValue('sellingPrice') *
+                                            getFieldValue([
+                                              'info',
+                                              index,
+                                              'quantity',
+                                            ]),
+                                        }
                                   },
                                 ),
                               })
@@ -385,7 +416,11 @@ function ProductDetailContainer() {
                       <CoreInput
                         name="note"
                         isView={isView || isAppend}
-                        label={<span className="font-bold">{t('備考')}</span>}
+                        label={
+                          <span className="font-bold">
+                            {t('products.fields.remarks')}
+                          </span>
+                        }
                         required={true}
                         layout="horizontal"
                       />
@@ -412,15 +447,20 @@ function ProductDetailContainer() {
           items={[
             {
               key: 1,
-              label: <span className="font-bold">{t('基本情報')}</span>,
+              label: (
+                <span className="font-bold">
+                  {t('products.sections.packagingPrice')}
+                </span>
+              ),
               children: (
                 <div className="px-2">
                   <Form.List name={'info'}>
                     {(fields, { add, remove }) => {
                       addRef.current = add
+
                       const columns = [
                         {
-                          title: '荷姿コード',
+                          title: t('products.fields.packagingCode'),
                           dataIndex: 'packageCode',
                           render: (_, __, index) => (
                             <CoreInput
@@ -441,7 +481,7 @@ function ProductDetailContainer() {
                           ),
                         },
                         {
-                          title: '荷姿名',
+                          title: t('products.fields.packagingName'),
                           dataIndex: 'packageName',
                           render: (_, __, index) => (
                             <CoreInput
@@ -472,11 +512,11 @@ function ProductDetailContainer() {
                           ),
                         },
                         {
-                          title: 'ステータス',
+                          title: t('products.fields.status'),
                           dataIndex: 'status',
                           render: (_, __, index) =>
                             index === 0 ? (
-                              <div>有効</div>
+                              <div>{t('products.text.active')}</div>
                             ) : (
                               <Form.Item
                                 name={[index, 'status']}
@@ -488,11 +528,11 @@ function ProductDetailContainer() {
                                   options={[
                                     {
                                       value: 'active',
-                                      label: t('有効'),
+                                      label: t('products.text.active'),
                                     },
                                     {
                                       value: 'inactive',
-                                      label: t('無効'),
+                                      label: t('products.text.inactive'),
                                     },
                                   ]}
                                 />
@@ -500,7 +540,7 @@ function ProductDetailContainer() {
                             ),
                         },
                         {
-                          title: '入数',
+                          title: t('products.fields.quantity'),
                           dataIndex: 'quantity',
                           render: (_, __, index) => (
                             <CoreInput
@@ -528,11 +568,23 @@ function ProductDetailContainer() {
                               styleForm={{
                                 marginBottom: '0px',
                               }}
+                              onChangeValue={(value) => {
+                                setFieldValue(
+                                  ['info', index, 'standardPrice'],
+                                  (value as number) *
+                                    getFieldValue('sellingPrice'),
+                                )
+                                setFieldValue(
+                                  ['info', index, 'salesPrice'],
+                                  (value as number) *
+                                    getFieldValue('sellingPrice'),
+                                )
+                              }}
                             />
                           ),
                         },
                         {
-                          title: '単位',
+                          title: t('products.fields.unit'),
                           dataIndex: 'unit',
                           render: (_, __, index) => (
                             <CoreInput
@@ -553,7 +605,7 @@ function ProductDetailContainer() {
                           ),
                         },
                         {
-                          title: '標準価格(円)',
+                          title: t('products.fields.standardPrice'),
                           dataIndex: 'standardPrice',
                           render: (_, __, index) => {
                             return (
@@ -571,16 +623,12 @@ function ProductDetailContainer() {
                                 styleForm={{
                                   marginBottom: '0px',
                                 }}
-                                value={
-                                  infoValues?.[index]?.quantity *
-                                  getFieldValue('sellingPrice')
-                                }
                               />
                             )
                           },
                         },
                         {
-                          title: '販売価格(円)',
+                          title: t('products.fields.sellingPrice'),
                           dataIndex: 'salesPrice',
                           render: (_, __, index) => {
                             return (
@@ -589,13 +637,13 @@ function ProductDetailContainer() {
                                 readOnly={
                                   index === 0 ||
                                   getFieldValue(['info', index, 'status']) ===
-                                    'inactive'
+                                    t('products.text.inactive')
                                 }
                                 type="number"
                                 style={{
                                   ...(index === 0 ||
                                   getFieldValue(['info', index, 'status']) ===
-                                    'inactive'
+                                    t('products.text.inactive')
                                     ? {
                                         background: 'transparent',
                                         paddingLeft: 0,
@@ -614,7 +662,7 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: '標準印刷',
+                          title: t('products.fields.isStandard'),
                           dataIndex: 'standardPrint',
                           render: (_, __, index) =>
                             index !== 0 && (
@@ -641,7 +689,7 @@ function ProductDetailContainer() {
                             ),
                         },
                         {
-                          title: '操作',
+                          title: t('products.fields.actions'),
                           dataIndex: 'action',
                           render: (_, __, index) =>
                             index > 0 && (
@@ -655,7 +703,7 @@ function ProductDetailContainer() {
                                   color: '#fff',
                                 }}
                               >
-                                {t('削除')}
+                                {t('buttons.delete')}
                               </Button>
                             ),
                         },
@@ -663,17 +711,19 @@ function ProductDetailContainer() {
 
                       return (
                         <>
-                          <CommonTable
-                            columns={columns}
-                            dataSource={fields}
-                            pagination={false}
-                            bordered={true}
-                            rowClassName={(_, index) =>
-                              infoValues?.[index]?.status === 'inactive'
-                                ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
-                                : ''
-                            }
-                          />
+                          <Form.Item shouldUpdate>
+                            <CommonTable
+                              columns={columns}
+                              dataSource={fields}
+                              pagination={false}
+                              rowClassName={(_, index) =>
+                                getFieldValue(['info', index, 'status']) ===
+                                'inactive'
+                                  ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
+                                  : ''
+                              }
+                            />
+                          </Form.Item>
                           <div className="mt-4 text-right">
                             <Button
                               type="primary"
@@ -691,7 +741,7 @@ function ProductDetailContainer() {
                                 })
                               }}
                             >
-                              行を追加
+                              {t('products.buttons.addRow')}
                             </Button>
                           </div>
                         </>
@@ -719,14 +769,18 @@ function ProductDetailContainer() {
           items={[
             {
               key: 1,
-              label: <span className="font-bold">{t('基本情報')}</span>,
+              label: (
+                <span className="font-bold">
+                  {t('products.unitPriceGroup.tableTitle')}
+                </span>
+              ),
               children: (
                 <div className="px-2">
                   <Form.List name={'info'}>
                     {(fields) => {
                       const columns = [
                         {
-                          title: '荷姿コード',
+                          title: t('products.fields.productCode'),
                           dataIndex: 'packageCode',
                           key: 'packageCode',
                           render: (_, __, index) => {
@@ -745,7 +799,7 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: '荷姿名',
+                          title: t('products.fields.productName'),
                           dataIndex: 'packageName',
                           key: 'packageName',
                           render: (_, __, index) => {
@@ -764,7 +818,7 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: '販売価格(円)',
+                          title: t('products.unitPriceGroup.sellingPrice'),
                           dataIndex: 'salesPrice',
                           key: 'salesPrice',
                           render: (_, __, index) => {
@@ -783,23 +837,23 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: '設定方式',
+                          title: t('products.unitPriceGroup.settingMethod'),
                           dataIndex: 'status',
                           key: 'status',
                           render: (_, __, index) =>
                             index === 0 ? (
-                              <div>有効</div>
+                              <div>{t('products.text.active')}</div>
                             ) : (
                               <Form.Item name={[index, 'status']}>
                                 <Radio.Group
                                   options={[
                                     {
                                       value: 'active',
-                                      label: t('有効'),
+                                      label: t('products.text.active'),
                                     },
                                     {
                                       value: 'inactive',
-                                      label: t('無効'),
+                                      label: t('products.text.inactive'),
                                     },
                                   ]}
                                 />
@@ -807,12 +861,17 @@ function ProductDetailContainer() {
                             ),
                         },
                         {
-                          title: 'S 80%(円)',
+                          title: t('products.unitPriceGroup.rankS'),
                           dataIndex: 'sPrice',
                           key: 'sPrice',
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   (
                                     getFieldValue([
@@ -827,13 +886,18 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: 'A 85%(円)',
+                          title: t('products.unitPriceGroup.rankA'),
                           dataIndex: 'aPrice',
                           key: 'aPrice',
 
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   (
                                     getFieldValue([
@@ -848,13 +912,18 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: 'B 90%(円)',
+                          title: t('products.unitPriceGroup.rankB'),
                           dataIndex: 'bPrice',
                           key: 'bPrice',
 
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   (
                                     getFieldValue([
@@ -869,13 +938,18 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: 'C 95%(円)',
+                          title: t('products.unitPriceGroup.rankC'),
                           dataIndex: 'cPrice',
                           key: 'cPrice',
 
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   (
                                     getFieldValue([
@@ -890,13 +964,18 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: 'D 100%(円)',
+                          title: t('products.unitPriceGroup.rankD'),
                           dataIndex: 'dPrice',
                           key: 'dPrice',
 
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   (
                                     getFieldValue([
@@ -911,13 +990,18 @@ function ProductDetailContainer() {
                           },
                         },
                         {
-                          title: 'E 105%(円)',
+                          title: t('products.unitPriceGroup.rankE'),
                           dataIndex: 'ePrice',
                           key: 'ePrice',
 
                           render: (_, __, index) => {
                             return (
-                              <Form.Item shouldUpdate noStyle>
+                              <Form.Item
+                                shouldUpdate
+                                style={{
+                                  marginBottom: 0,
+                                }}
+                              >
                                 {() =>
                                   (
                                     getFieldValue([
@@ -933,18 +1017,25 @@ function ProductDetailContainer() {
                         },
                       ] as ColumnsType
                       return (
-                        <CommonTable
-                          columns={columns}
-                          dataSource={fields}
-                          bordered
-                          pagination={false}
-                          rowClassName={(_, index) => {
-                            return getFieldValue(`info.${index}.status`) ===
-                              'inactive'
-                              ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
-                              : ''
+                        <Form.Item shouldUpdate>
+                          {({ getFieldValue }) => {
+                            return (
+                              <CommonTable
+                                columns={columns}
+                                dataSource={fields}
+                                bordered
+                                pagination={false}
+                                rowClassName={(_, index) => {
+                                  return getFieldValue(
+                                    `info.${index}.status`,
+                                  ) === t('products.text.inactive')
+                                    ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
+                                    : ''
+                                }}
+                              />
+                            )
                           }}
-                        />
+                        </Form.Item>
                       )
                     }}
                   </Form.List>
@@ -962,38 +1053,71 @@ function ProductDetailContainer() {
           )}
         />
 
-        <div className="mt-10 flex justify-between">
-          <div></div>
-          <div className="flex items-center gap-4">
-            <Button
-              color="primary"
-              variant="outlined"
-              size="large"
-              onClick={() => {
-                go({
-                  to: '/products',
-                })
-              }}
-            >
-              戻る
-            </Button>
-            {isView ? (
+        <Divider />
+
+        <div className="flex flex-col justify-between">
+          {isView && (
+            <div className="space-y-2">
+              <div className="flex gap-4">
+                <span className="font-bold">作成者:</span>
+                <div>
+                  <span>伊藤太郎</span>
+                  <span>2025/08/05 14:33</span>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <span className="font-bold">更新者:</span>
+                <div>
+                  <span>伊藤太郎</span>
+                  <span>2025/08/05 14:33</span>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="mt-4 flex items-center justify-between">
+            <div>
+              {isView && (
+                <Button
+                  color="danger"
+                  variant="filled"
+                  size="small"
+                  onClick={() => {}}
+                >
+                  {t('buttons.delete')}
+                </Button>
+              )}
+            </div>
+            <div className="flex gap-4">
               <Button
-                type="primary"
+                color="primary"
+                variant="outlined"
+                size="large"
                 onClick={() => {
                   go({
-                    to: `/products/edit/${1}`,
+                    to: '/products',
                   })
                 }}
-                size="large"
               >
-                {t('buttons.edit')}
+                戻る
               </Button>
-            ) : (
-              <Button type="primary" {...saveButtonProps} size="large">
-                {t('buttons.confirm')}
-              </Button>
-            )}
+              {isView ? (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    go({
+                      to: `/products/edit/${1}`,
+                    })
+                  }}
+                  size="large"
+                >
+                  {t('buttons.edit')}
+                </Button>
+              ) : (
+                <Button type="primary" {...saveButtonProps} size="large">
+                  {t('buttons.confirm')}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </Form>

@@ -1,8 +1,9 @@
 'use client'
+import Approve from '@components/cep/merchandise/approve'
 import React from 'react'
 
 function Page() {
-  return <div>Approve</div>
+  return <Approve />
 }
 
 export default Page
