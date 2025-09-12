@@ -944,7 +944,7 @@ export type Rank = {
   code?: string
   name?: string
   /**
-   * Non-negative; lower number means higher rank
+   * Non-negative; lower number means higher ranks
    */
   rate?: number
   note?: string | null
@@ -986,14 +986,14 @@ export type StoreRankRequest = {
    */
   name: string
   /**
-   * Non-negative integer rank order (lower = higher)
+   * Non-negative integer ranks order (lower = higher)
    */
   rate: number
   note?: string | null
 }
 
 /**
- * Payload to update a rank. All fields optional; only provided fields will be updated.
+ * Payload to update a ranks. All fields optional; only provided fields will be updated.
  */
 export type UpdateRankRequest = {
   /**
@@ -1005,7 +1005,7 @@ export type UpdateRankRequest = {
    */
   name?: string
   /**
-   * Non-negative integer rank order (lower = higher)
+   * Non-negative integer ranks order (lower = higher)
    */
   rate?: number
   note?: string | null
