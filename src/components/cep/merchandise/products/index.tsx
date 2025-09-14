@@ -1,22 +1,17 @@
-import {
-  CaretDownOutlined,
-  RightOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
+import { CaretDownOutlined, RightOutlined } from '@ant-design/icons'
 import useProduct from '@components/cep/merchandise/products/use-product'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
 import { PRIMARY } from '@utility/color'
-import renderCategories from '@utility/renderCategories'
 import {
-  AutoComplete,
   Breadcrumb,
   Button,
   Col,
   Dropdown,
   Form,
   Row,
+  Select,
   Typography,
 } from 'antd'
 import Link from 'next/link'
@@ -32,9 +27,15 @@ function ProductContainer() {
       page,
       pageSize,
       total,
-      dataProductCategories,
+      // dataProductCategories,
     },
-    { t, onSubmit, onReset, onChangePageSize, handleChooseCategory },
+    {
+      t,
+      onSubmit,
+      onReset,
+      onChangePageSize,
+      // handleChooseCategory
+    },
   ] = useProduct()
 
   const { formProps } = methods
@@ -51,7 +52,7 @@ function ProductContainer() {
               ),
             },
             {
-              title: <Title level={5}>{t('商品一覧')}</Title>,
+              title: <Title level={5}>{t('products.list.title')}</Title>,
             },
           ]}
           separator={<RightOutlined />}
@@ -65,20 +66,30 @@ function ProductContainer() {
             color: '#1890FF',
           }}
         >
-          {t('商品一覧')}
+          {t('title')}
         </Title>
         <Row gutter={16}>
           <Col sm={12} md={6} lg={4}>
             <CoreInput
               name="search"
-              label={<span className="font-bold">{t('商品名')}</span>}
-              placeholder={t('検索キーワード')}
+              label={
+                <span className="font-bold">
+                  {t('products.list.searchArea.productInputLabel')}
+                </span>
+              }
+              placeholder={t(
+                'products.list.searchArea.productInputPlaceholder',
+              )}
             />
           </Col>
 
           <Col sm={12} md={6} lg={4}>
             <Form.Item
-              label={<span className="font-bold">{t('カテゴリ')}</span>}
+              label={
+                <span className="font-bold">
+                  {t('products.list.searchArea.categoryLabel')}
+                </span>
+              }
               layout="vertical"
             >
               <Dropdown
@@ -95,7 +106,7 @@ function ProductContainer() {
                     }}
                   >
                     <Form.Item name={'name_lk'}>
-                      <AutoComplete
+                      {/* <AutoComplete
                         style={{ width: '100%' }}
                         options={dataProductCategories?.data.map((item) => ({
                           value: item.name,
@@ -116,7 +127,8 @@ function ProductContainer() {
                             </div>
                           )
                         }}
-                      />
+                      /> */}
+                      <Select />
                     </Form.Item>
                   </div>
                 )}
@@ -132,7 +144,9 @@ function ProductContainer() {
                   }
                   name="category"
                   readOnly={true}
-                  placeholder="選択してください"
+                  placeholder={t(
+                    'products.list.searchArea.categoryPlaceholder',
+                  )}
                 />
               </Dropdown>
             </Form.Item>
@@ -144,16 +158,18 @@ function ProductContainer() {
                 {t('buttons.search')}
               </Button>
               <Button onClick={onReset} color="primary" variant="outlined">
-                {t('クリア')}
+                {t('products.list.searchArea.clearButton')}
               </Button>
             </div>
             <div className="flex flex-col items-start">
               <Link href={'products/create'}>
-                <Button type="primary">{t('新規作成')}</Button>
+                <Button type="primary">
+                  {t('products.list.actions.createNewButton')}
+                </Button>
               </Link>
               <Link href={'products/csv'}>
                 <Button className="!px-0" type="link">
-                  {t('CSV一括登録')}
+                  {t('products.list.actions.csvBulkUploadLink')}
                 </Button>
               </Link>
             </div>
@@ -167,7 +183,8 @@ function ProductContainer() {
           pagination={{
             pageSize,
             current: page,
-            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}件`,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} / ${total}${t('products.list.table.text.pieces')}`,
             total: total,
             onChange: onChangePageSize,
             showSizeChanger: true,

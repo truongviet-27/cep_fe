@@ -122,6 +122,37 @@
     "text": {
       "active": "有効",
       "inactive": "無効"
+    },
+
+    "list": {
+      "title": "商品一覧",
+      "searchArea": {
+        "productInputLabel": "商品コード・商品名",
+        "productInputPlaceholder": "部分一致",
+        "categoryLabel": "カテゴリ",
+        "categoryPlaceholder": "選択してください",
+        "clearButton": "クリア"
+      },
+      "actions": {
+        "createNewButton": "新規作成",
+        "csvBulkUploadLink": "CSV一括登録"
+      },
+      "table": {
+        "headers": {
+          "productCode": "商品コード",
+          "productName": "商品名",
+          "packagingQuantity": "荷姿数",
+          "barcode": "バーコード",
+          "subcategory": "カテゴリ(小)",
+          "unit": "単位",
+          "costPrice": "原価(円)",
+          "sellingPrice": "販売単価(円)",
+          "actions": "操作"
+        },
+        "text": {
+          "pieces": "件"
+        }
+      }
     }
   },
   "ranks": {

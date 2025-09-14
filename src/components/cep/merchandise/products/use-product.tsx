@@ -1,9 +1,10 @@
+import { Action } from '@components/common/action'
 import { useDebounce } from '@hook/use-debounce'
 import { useForm } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
 import { useGo, useList, useTable, useTranslate } from '@refinedev/core'
 import type { Category } from '@utility/renderCategories'
-import { Button, Form } from 'antd'
+import { Form } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
 import { useCallback, useMemo } from 'react'
@@ -68,45 +69,45 @@ function useProduct() {
   const columns = useMemo(() => {
     return [
       {
-        title: t('商品コード'), // Product Code
+        title: t('products.list.table.headers.productCode'), // Product Code
         dataIndex: 'code',
         key: 'code',
       },
       {
-        title: t('商品名'), // Product Name
+        title: t('products.list.table.headers.productName'), // Product Name
         dataIndex: 'name',
         key: 'name',
         align: 'left',
       },
       {
-        title: t('受渡数'), // packaging_count
+        title: t('products.list.table.headers.packagingQuantity'), // packaging_count
         dataIndex: 'packaging_count',
         key: 'packaging_count',
       },
       {
-        title: t('バーコード'), // barcode
+        title: t('products.list.table.headers.barcode'), // barcode
         dataIndex: 'barcode',
         key: 'barcode',
       },
       {
-        title: t('カテゴリ(小)'), // Category small
+        title: t('products.list.table.headers.subcategory'), // Category small
         dataIndex: 'category_level_1',
         key: 'category_level_1',
         align: 'left',
       },
       {
-        title: t('単位'), // Unit
+        title: t('products.list.table.headers.unit'), // Unit
         dataIndex: 'unit',
         key: 'unit',
       },
       {
-        title: t('原価 (円)'), // cost_price (JPY)
+        title: t('products.list.table.headers.costPrice'), // cost_price (JPY)
         dataIndex: 'cost_price',
         key: 'cost_price',
         align: 'center',
       },
       {
-        title: t('販売価格 (円)'), // sale_price (JPY)
+        title: t('products.list.table.headers.sellingPrice'), // sale_price (JPY)
         dataIndex: 'sale_price',
         key: 'sale_price',
       },
@@ -137,23 +138,20 @@ function useProduct() {
       cost_price: '600,000',
       sale_price: '800,000',
       action: (
-        <div className="flex justify-center gap-2">
-          <Button
-            color="primary"
-            variant="outlined"
-            size="small"
-            onClick={() => {
-              go({
-                to: `/products/edit/${1}`,
-              })
-            }}
-          >
-            {t('buttons.edit')}
-          </Button>
-          <Button color="danger" variant="solid" size="small">
-            {t('buttons.delete')}
-          </Button>
-        </div>
+        <Action
+          actionList={['view', 'edit', 'delete']}
+          onViewAction={() => {
+            go({
+              to: `/products/show/${1}`,
+            })
+          }}
+          onEditAction={() => {
+            go({
+              to: `/products/edit/${1}`,
+            })
+          }}
+          onRemoveAction={() => {}}
+        />
       ),
     },
   ]
@@ -178,48 +176,6 @@ function useProduct() {
     },
     [dataProductCategories],
   )
-
-  // const renderCategories = (
-  //   categories: Category[],
-  //   level = 1,
-  //   parents: string[] = [],
-  //   parentsCat: Category[] = [],
-  // ) => {
-  //   return (
-  //     <>
-  //       {categories.map((cat) => {
-  //         const hasChildren = cat.children && cat.children.length > 0
-  //         const currentPath = [...parents, cat.name]
-  //         const currentCat = [...parentsCat, cat]
-
-  //         return (
-  //           <div
-  //             key={cat.id}
-  //             style={{
-  //               padding: '4px 8px',
-  //               paddingLeft: `${level * 8}px`,
-  //               cursor: 'pointer',
-  //               width: '100%',
-  //             }}
-  //             onClick={(e) => {
-  //               e.stopPropagation()
-  //               handleChooseCategory(level, currentPath, currentCat)
-  //             }}
-  //           >
-  //             {cat.name}
-  //             {hasChildren &&
-  //               renderCategories(
-  //                 cat.children,
-  //                 level + 1,
-  //                 currentPath,
-  //                 currentCat,
-  //               )}
-  //           </div>
-  //         )
-  //       })}
-  //     </>
-  //   )
-  // }
 
   const onSubmit = () => {
     console.log(
