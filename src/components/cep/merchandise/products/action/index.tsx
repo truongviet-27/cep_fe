@@ -6,6 +6,7 @@ import {
   SearchOutlined,
 } from '@ant-design/icons'
 import useProductDetail from '@components/cep/merchandise/products/action/use-product-detail'
+import { Action } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
@@ -693,18 +694,12 @@ function ProductDetailContainer() {
                           dataIndex: 'action',
                           render: (_, __, index) =>
                             index > 0 && (
-                              <Button
-                                onClick={() => {
+                              <Action
+                                actionList={['delete']}
+                                onRemoveAction={() => {
                                   remove(index)
                                 }}
-                                style={{
-                                  backgroundColor: '#721C24',
-                                  borderColor: '#721C24',
-                                  color: '#fff',
-                                }}
-                              >
-                                {t('buttons.delete')}
-                              </Button>
+                              />
                             ),
                         },
                       ] as ColumnsType
