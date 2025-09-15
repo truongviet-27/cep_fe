@@ -562,7 +562,7 @@ export const zStoreRankRequest = z.object({
 })
 
 /**
- * Payload to update a rank. All fields optional; only provided fields will be updated.
+ * Payload to update a ranks. All fields optional; only provided fields will be updated.
  */
 export const zUpdateRankRequest = z.object({
   code: z.optional(

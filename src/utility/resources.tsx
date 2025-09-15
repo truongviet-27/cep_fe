@@ -17,6 +17,19 @@ export const resource: ResourceProps[] = [
       canCreate: true,
     },
   },
+
+  {
+    name: 'approve',
+    list: '/estimates/approve',
+    show: '/estimates/approve/:id',
+    create: '/estimates/approve/:id',
+    edit: '/estimates/approve/:id',
+    meta: {
+      parent: 'estimates',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
   {
     name: 'customers',
     list: '/customers',
@@ -41,17 +54,43 @@ export const resource: ResourceProps[] = [
   //   show: '/projects/show/:id',
   // },
   {
-    name: 'products',
-    list: '/products',
+    name: 'merchandise',
+    list: '/merchandise',
   },
   {
     name: 'products',
     list: '/products',
-    show: '/products/:id',
-    create: '/products/:id',
-    edit: '/products/:id',
+    show: '/products/show/:id',
+    create: '/products/create',
+    edit: '/products/edit/:id',
     meta: {
-      parent: 'products',
+      parent: 'merchandise',
+      canDelete: true,
+      canCreate: true,
+      canEdit: true,
+    },
+  },
+  {
+    name: 'approve',
+    list: '/approve',
+    show: '/approve/show/:id',
+    create: '/approve/create',
+    edit: '/approve/edit/:id',
+    meta: {
+      parent: 'merchandise',
+      canDelete: true,
+      canCreate: true,
+      canEdit: true,
+    },
+  },
+  {
+    name: 'ranks',
+    list: '/ranks',
+    show: '/ranks/:id',
+    create: '/ranks/:id',
+    edit: '/ranks/:id',
+    meta: {
+      parent: 'merchandise',
       canDelete: true,
       canCreate: true,
     },
@@ -59,7 +98,7 @@ export const resource: ResourceProps[] = [
   {
     name: 'departments',
     list: '/departments',
-    show: '/departments/show/:id',
+    show: '/departments/:id',
     create: '/departments/create',
     edit: '/departments/edit/:id',
     meta: {
@@ -79,6 +118,10 @@ export const resource: ResourceProps[] = [
       canCreate: true,
       canEdit: true,
     },
+  },
+  {
+    name: 'import-history',
+    list: '/import-history',
   },
   {
     name: 'system-config',

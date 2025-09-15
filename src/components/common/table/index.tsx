@@ -3,12 +3,14 @@ import type { TableProps } from 'antd'
 import { Table } from 'antd'
 import React from 'react'
 
+type CustomTableProps<T> = TableProps<T> & {
+  isPagination?: boolean
+}
+
 function CommonTable<T extends object>(
-  tableProps: Readonly<TableProps<T>>,
+  tableProps: Readonly<CustomTableProps<T>>,
 ): React.ReactElement {
   const { components, ...restTableProps } = tableProps
-
-  console.log(tableProps, 'tableProps')
 
   return (
     <Table<T>
@@ -28,11 +30,38 @@ function CommonTable<T extends object>(
                 ...props.style,
                 backgroundColor: '#e6f7ff',
                 color: PRIMARY,
+                textAlign: 'center',
+              }}
+            />
+          ),
+        },
+        body: {
+          ...components?.body,
+          cell: (
+            props: React.JSX.IntrinsicAttributes &
+              React.ClassAttributes<HTMLTableDataCellElement> &
+              React.TdHTMLAttributes<HTMLTableDataCellElement>,
+          ) => (
+            <td
+              {...props}
+              style={{
+                textAlign: 'center',
+                ...props.style,
               }}
             />
           ),
         },
       }}
+      bordered
+      pagination={
+        restTableProps.isPagination
+          ? {
+              ...restTableProps.pagination,
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} / ${total}件`,
+            }
+          : false
+      }
     />
   )
 }

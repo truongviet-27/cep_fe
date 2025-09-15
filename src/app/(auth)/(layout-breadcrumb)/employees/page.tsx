@@ -36,6 +36,11 @@ function Page() {
     },
     { title: <Title level={5}>社員一覧</Title> },
   ]
+
+  const getRowClassName = (record: BaseRecord) => {
+    return !record.email || !record.code ? 'bg-gray-200' : ''
+  }
+
   return (
     <List
       title={
@@ -43,7 +48,14 @@ function Page() {
       }
       i18nHeading={'社員一覧'}
     >
-      <CommonTable className={'mt-6'} {...tableProps} rowKey="id">
+      <CommonTable
+        className={'mt-6'}
+        {...tableProps}
+        rowKey="id"
+        onRow={(record) => ({
+          className: getRowClassName(record),
+        })}
+      >
         <Table.Column
           dataIndex="code"
           title={t('employees.fields.code')}

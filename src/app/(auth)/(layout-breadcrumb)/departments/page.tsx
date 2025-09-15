@@ -25,20 +25,9 @@ import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Department } from '@sdk/hey-api'
 
-const { Title } = Typography
-
-type Department = {
-  id: string | number
-  name: string
-  code: string
-  created_by?: string
-  updated_by?: string
-  created_at?: string
-  updated_at?: string
-  number_of_employee?: number
-  order?: number
-}
+const { Title, Text } = Typography
 
 type RowVM = Department & { __index: number }
 
@@ -95,7 +84,7 @@ export default function Page() {
 
   const handleUpdateOrdering = (
     values: {
-      id: string | number
+      id?: string | number
       order: number
     }[],
   ) => {
@@ -138,8 +127,8 @@ export default function Page() {
       dataIndex: 'actions',
       render: (_: any, record: BaseRecord) => (
         <Space>
-          <EditButton hideText size="small" recordItemId={record.id} />
           <ShowButton hideText size="small" recordItemId={record.id} />
+          <EditButton hideText size="small" recordItemId={record.id} />
           <DeleteButton hideText size="small" recordItemId={record.id} />
         </Space>
       ),
@@ -155,7 +144,7 @@ export default function Page() {
       ),
     },
     {
-      title: <Title level={5}>部門編集</Title>,
+      title: <Title level={5}>{t('departments.list.list')}</Title>,
     },
   ]
 
@@ -164,7 +153,7 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={'部門編集'}
+      i18nHeading={t('departments.list.list')}
       footer={
         <Col>
           <Button
@@ -181,15 +170,17 @@ export default function Page() {
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
+            <Text strong>{t('departments.list.filters.search_label')}</Text>
             <Form.Item name="q">
               <Input
+                className={'mt-2'}
                 placeholder={t('departments.list.filters.search_placeholder')}
                 prefix={<SearchOutlined />}
               />
             </Form.Item>
           </Col>
           <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
-            <Space>
+            <Space className={'mt-[30px]'}>
               <Button htmlType="submit" type="primary">
                 {t('buttons.search')}
               </Button>
@@ -206,7 +197,8 @@ export default function Page() {
             </Space>
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
-            <CreateButton>{t('buttons.create_new')}</CreateButton>
+            <div className={'h-[32px]'} />
+            <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
           </Col>
         </Row>
       </Form>
