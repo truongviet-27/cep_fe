@@ -36,7 +36,10 @@
     "add": "Add",
     "save": "Save",
     "search": "Search",
-    "clear": "Clear"
+    "clear": "Clear",
+    "csv_bulk_register": "CSV Bulk Register",
+    "suspend": "Suspend",
+    "resume": "Resume"
   },
   "notifications": {
     "success": "Success",
@@ -64,7 +67,23 @@
     "estimates": "Estimates"
   },
   "customers": {
-    "customers": "Customers"
+    "customers": "Customers",
+    "fields": {
+      "code": "Customer Code",
+      "name": "Customer Name",
+      "country": "Country",
+      "department": "Department",
+      "unit_price_rank": "Unit Price Rank",
+      "credit_rank": "Credit Rank",
+      "anti_social_check_date": "Anti-Social Check Date",
+      "registration_date": "Registration Date",
+      "suspension_date": "Suspension Date",
+      "actions": "Actions"
+    },
+    "filters": {
+      "code_name": "Customer Code / Name",
+      "date_range": "Date"
+    }
   },
   "products": {
     "products": "Products"
