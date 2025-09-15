@@ -1,9 +1,21 @@
 import { useForm } from '@refinedev/antd'
 import { useCustom, useParsed, useTranslate } from '@refinedev/core'
 
+type Form = {
+  code: string
+  name: string
+  department: { id: number; name: string; code: string }[]
+  status: boolean
+  steps: {
+    name: number
+    step_order: number
+    is_multi_appover: boolean
+    employees: { id: number; department: object }[]
+  }[]
+}
 function useApproveAction() {
   const t = useTranslate()
-  const methods = useForm()
+  const methods = useForm<Form>()
 
   const { params } = useParsed()
 

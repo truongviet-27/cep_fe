@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CaretDownOutlined,
   DownOutlined,
@@ -800,7 +801,7 @@ function ProductDetailContainer() {
                               pagination={false}
                               rowClassName={(_, index) =>
                                 getFieldValue(['info', index, 'status']) ===
-                                'inactive'
+                                t('products.text.inactive')
                                   ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
                                   : ''
                               }
@@ -945,161 +946,184 @@ function ProductDetailContainer() {
                               </Form.Item>
                             ),
                         },
-                        {
-                          title: t('products.unitPriceGroup.rankS'),
-                          dataIndex: 'sPrice',
-                          key: 'sPrice',
-                          render: (_, __, index) => {
-                            return (
-                              <Form.Item
-                                shouldUpdate
-                                style={{
-                                  marginBottom: 0,
-                                }}
-                              >
-                                {() =>
-                                  (
-                                    getFieldValue([
-                                      'info',
-                                      index,
-                                      'salesPrice',
-                                    ]) * 0.8
-                                  ).toFixed(2)
-                                }
-                              </Form.Item>
-                            )
-                          },
-                        },
-                        {
-                          title: t('products.unitPriceGroup.rankA'),
-                          dataIndex: 'aPrice',
-                          key: 'aPrice',
+                        // {
+                        //   title: t('products.unitPriceGroup.rankS'),
+                        //   dataIndex: 'sPrice',
+                        //   key: 'sPrice',
+                        //   render: (_, __, index) => {
+                        //     return (
+                        //       <Form.Item
+                        //         shouldUpdate
+                        //         style={{
+                        //           marginBottom: 0,
+                        //         }}
+                        //       >
+                        //         {() =>
+                        //           (
+                        //             getFieldValue([
+                        //               'info',
+                        //               index,
+                        //               'salesPrice',
+                        //             ]) * 0.8
+                        //           ).toFixed(2)
+                        //         }
+                        //       </Form.Item>
+                        //     )
+                        //   },
+                        // },
+                        // {
+                        //   title: t('products.unitPriceGroup.rankA'),
+                        //   dataIndex: 'aPrice',
+                        //   key: 'aPrice',
 
-                          render: (_, __, index) => {
-                            return (
-                              <Form.Item
-                                shouldUpdate
-                                style={{
-                                  marginBottom: 0,
-                                }}
-                              >
-                                {() =>
-                                  (
-                                    getFieldValue([
-                                      'info',
-                                      index,
-                                      'salesPrice',
-                                    ]) * 0.85
-                                  ).toFixed(2)
-                                }
-                              </Form.Item>
-                            )
-                          },
-                        },
-                        {
-                          title: t('products.unitPriceGroup.rankB'),
-                          dataIndex: 'bPrice',
-                          key: 'bPrice',
+                        //   render: (_, __, index) => {
+                        //     return (
+                        //       <Form.Item
+                        //         shouldUpdate
+                        //         style={{
+                        //           marginBottom: 0,
+                        //         }}
+                        //       >
+                        //         {() =>
+                        //           (
+                        //             getFieldValue([
+                        //               'info',
+                        //               index,
+                        //               'salesPrice',
+                        //             ]) * 0.85
+                        //           ).toFixed(2)
+                        //         }
+                        //       </Form.Item>
+                        //     )
+                        //   },
+                        // },
+                        // {
+                        //   title: t('products.unitPriceGroup.rankB'),
+                        //   dataIndex: 'bPrice',
+                        //   key: 'bPrice',
 
-                          render: (_, __, index) => {
-                            return (
-                              <Form.Item
-                                shouldUpdate
-                                style={{
-                                  marginBottom: 0,
-                                }}
-                              >
-                                {() =>
-                                  (
-                                    getFieldValue([
-                                      'info',
-                                      index,
-                                      'salesPrice',
-                                    ]) * 0.9
-                                  ).toFixed(2)
-                                }
-                              </Form.Item>
-                            )
-                          },
-                        },
-                        {
-                          title: t('products.unitPriceGroup.rankC'),
-                          dataIndex: 'cPrice',
-                          key: 'cPrice',
+                        //   render: (_, __, index) => {
+                        //     return (
+                        //       <Form.Item
+                        //         shouldUpdate
+                        //         style={{
+                        //           marginBottom: 0,
+                        //         }}
+                        //       >
+                        //         {() =>
+                        //           (
+                        //             getFieldValue([
+                        //               'info',
+                        //               index,
+                        //               'salesPrice',
+                        //             ]) * 0.9
+                        //           ).toFixed(2)
+                        //         }
+                        //       </Form.Item>
+                        //     )
+                        //   },
+                        // },
+                        // {
+                        //   title: t('products.unitPriceGroup.rankC'),
+                        //   dataIndex: 'cPrice',
+                        //   key: 'cPrice',
 
-                          render: (_, __, index) => {
-                            return (
-                              <Form.Item
-                                shouldUpdate
-                                style={{
-                                  marginBottom: 0,
-                                }}
-                              >
-                                {() =>
-                                  (
-                                    getFieldValue([
-                                      'info',
-                                      index,
-                                      'salesPrice',
-                                    ]) * 0.95
-                                  ).toFixed(2)
-                                }
-                              </Form.Item>
-                            )
-                          },
-                        },
-                        {
-                          title: t('products.unitPriceGroup.rankD'),
-                          dataIndex: 'dPrice',
-                          key: 'dPrice',
+                        //   render: (_, __, index) => {
+                        //     return (
+                        //       <Form.Item
+                        //         shouldUpdate
+                        //         style={{
+                        //           marginBottom: 0,
+                        //         }}
+                        //       >
+                        //         {() =>
+                        //           (
+                        //             getFieldValue([
+                        //               'info',
+                        //               index,
+                        //               'salesPrice',
+                        //             ]) * 0.95
+                        //           ).toFixed(2)
+                        //         }
+                        //       </Form.Item>
+                        //     )
+                        //   },
+                        // },
+                        // {
+                        //   title: t('products.unitPriceGroup.rankD'),
+                        //   dataIndex: 'dPrice',
+                        //   key: 'dPrice',
 
-                          render: (_, __, index) => {
-                            return (
-                              <Form.Item
-                                shouldUpdate
-                                style={{
-                                  marginBottom: 0,
-                                }}
-                              >
-                                {() =>
-                                  (
-                                    getFieldValue([
-                                      'info',
-                                      index,
-                                      'salesPrice',
-                                    ]) * 1
-                                  ).toFixed(2)
-                                }
-                              </Form.Item>
-                            )
-                          },
-                        },
-                        {
-                          title: t('products.unitPriceGroup.rankE'),
-                          dataIndex: 'ePrice',
-                          key: 'ePrice',
+                        //   render: (_, __, index) => {
+                        //     return (
+                        //       <Form.Item
+                        //         shouldUpdate
+                        //         style={{
+                        //           marginBottom: 0,
+                        //         }}
+                        //       >
+                        //         {() =>
+                        //           (
+                        //             getFieldValue([
+                        //               'info',
+                        //               index,
+                        //               'salesPrice',
+                        //             ]) * 1
+                        //           ).toFixed(2)
+                        //         }
+                        //       </Form.Item>
+                        //     )
+                        //   },
+                        // },
+                        // {
+                        //   title: t('products.unitPriceGroup.rankE'),
+                        //   dataIndex: 'ePrice',
+                        //   key: 'ePrice',
 
-                          render: (_, __, index) => {
-                            return (
-                              <Form.Item
-                                shouldUpdate
-                                style={{
-                                  marginBottom: 0,
-                                }}
-                              >
-                                {() =>
-                                  (
-                                    getFieldValue([
-                                      'info',
-                                      index,
-                                      'salesPrice',
-                                    ]) * 1.05
-                                  ).toFixed(2)
-                                }
-                              </Form.Item>
-                            )
-                          },
-                        },
+                        //   render: (_, __, index) => {
+                        //     return (
+                        //       <Form.Item
+                        //         shouldUpdate
+                        //         style={{
+                        //           marginBottom: 0,
+                        //         }}
+                        //       >
+                        //         {() =>
+                        //           (
+                        //             getFieldValue([
+                        //               'info',
+                        //               index,
+                        //               'salesPrice',
+                        //             ]) * 1.05
+                        //           ).toFixed(2)
+                        //         }
+                        //       </Form.Item>
+                        //     )
+                        //   },
+                        // },
+
+                        // ...(dataRanks ?? [])?.map((rank) => ({
+                        //   title: t(`products.unitPriceGroup.rank${rank.name}`),
+                        //   dataIndex: `${rank?.name.toLowerCase()}Price`,
+                        //   key: `${rank?.name.toLowerCase()}Price`,
+                        //   render: (_: any, __: any, index: number) => (
+                        //     <Form.Item
+                        //       key={rank.id}
+                        //       shouldUpdate
+                        //       style={{ marginBottom: 0 }}
+                        //     >
+                        //       {() => {
+                        //         const basePrice =
+                        //           getFieldValue([
+                        //             'info',
+                        //             index,
+                        //             'salesPrice',
+                        //           ]) || 0
+                        //         return (basePrice * rank.rate).toFixed(2)
+                        //       }}
+                        //     </Form.Item>
+                        //   ),
+                        // })),
                       ] as ColumnsType
                       return (
                         <Form.Item shouldUpdate>
@@ -1111,9 +1135,11 @@ function ProductDetailContainer() {
                                 bordered
                                 pagination={false}
                                 rowClassName={(_, index) => {
-                                  return getFieldValue(
-                                    `info.${index}.status`,
-                                  ) === t('products.text.inactive')
+                                  return getFieldValue([
+                                    'info',
+                                    index,
+                                    'status',
+                                  ]) === t('products.text.inactive')
                                     ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
                                     : ''
                                 }}

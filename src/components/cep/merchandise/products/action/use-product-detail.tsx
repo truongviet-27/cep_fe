@@ -1,6 +1,7 @@
 import { useDebounce } from '@hook/use-debounce'
 import { useForm } from '@refinedev/antd'
-import { useList, useShow, useTranslate } from '@refinedev/core'
+import { useList, useShow, useTable, useTranslate } from '@refinedev/core'
+import type { Rank } from '@sdk/hey-api'
 import type { Category } from '@utility/renderCategories'
 import { useCallback, useState } from 'react'
 
@@ -65,6 +66,11 @@ function useProductDetail() {
     },
   })
 
+  const { tableQuery } = useTable<Rank>({
+    resource: 'ranks',
+  })
+
+  console.log(tableQuery.data?.data, 'dataRanks')
   const name_lk_value = useDebounce(getFieldValue('name_lk'), 500)
 
   const { data: dataProductCategories } = useList<Category>({
@@ -111,6 +117,7 @@ function useProductDetail() {
       methods,
       isAppend,
       dataProductCategories,
+      dataRanks: tableQuery?.data?.data ?? [],
     },
     { t, onSubmit, setIsAppend, handleChooseCategory },
   ] as const
