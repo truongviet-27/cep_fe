@@ -36,7 +36,15 @@
     "add": "追加",
     "save": "登録",
     "search": "検索",
-    "clear": "クリア"
+    "clear": "クリア",
+    "new_create": "新規作成",
+    "csv_bulk_register": "CSV一括登録",
+    "suspend": "停止",
+    "resume": "開始"
+  },
+  "placeholders": {
+    "partial_match": "部分一致",
+    "select": "選択してください"
   },
   "notifications": {
     "success": "成功しました",
@@ -64,7 +72,34 @@
     "estimates": "見積"
   },
   "customers": {
-    "customers": "取引先"
+    "customers": "取引先",
+    "list": {
+      "list": "取引先一覧"
+    },
+    "show": {
+      "show": "取引先編集",
+      "basic_info": "基本情報",
+      "address_contact": "住所・連絡先"
+    },
+    "fields": {
+      "code": "取引先コード",
+      "name": "取引先名",
+      "country": "国",
+      "department": "担当部署",
+      "unit_price_rank": "単価ランク",
+      "credit_rank": "与信ランク",
+      "anti_social_rank": "反社ランク",
+      "anti_social_check_date": "反社チェック更新日",
+      "registration_date": "登録日",
+      "suspension_date": "停止日",
+      "actions": "操作",
+      "name_kana": "取引先名（カナ)",
+      "corporate_number": "法人番号"
+    },
+    "filters": {
+      "code_name": "取引先コード・取引先名",
+      "date_range": "日付"
+    }
   },
   "products": {
     "products": "商品一覧"

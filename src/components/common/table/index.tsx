@@ -35,6 +35,7 @@ function CommonTable<T extends object>(
         ...restTableProps.pagination,
         showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}件`,
       }}
+      scroll={{ x: 'max-content' }}
     />
   )
 }
