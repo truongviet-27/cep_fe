@@ -145,7 +145,7 @@ export default function Page() {
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'70vh'}
+        width={'60v'}
       >
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
