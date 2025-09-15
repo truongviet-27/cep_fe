@@ -1,11 +1,13 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
+import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useForm, useSelect } from '@refinedev/antd'
+import { useForm, useModalForm, useSelect } from '@refinedev/antd'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -13,6 +15,7 @@ import {
   Col,
   Form,
   Input,
+  Modal,
   Radio,
   Row,
   Select,
@@ -22,27 +25,9 @@ import {
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import { isArray } from 'lodash'
-import Link from 'next/link'
 import React, { useMemo } from 'react'
 
 const { Text, Title } = Typography
-
-interface IEmployee {
-  id: number
-  code: string
-  name: string
-  email: string
-  department_id: number
-  role: 'employee' | 'manager'
-  created_by: {
-    name: string
-    date: string
-  }
-  updated_by: {
-    name: string
-    date: string
-  } | null
-}
 
 export default function EmployeeEdit() {
   const t = useTranslate()
@@ -51,9 +36,10 @@ export default function EmployeeEdit() {
 
   const { data: roles } = useCustom({ method: 'get', url: `${apiUrl}/roles` })
 
-  const { formProps, saveButtonProps, queryResult, form } = useForm<IEmployee>({
-    redirect: 'show',
-  })
+  const { formProps, saveButtonProps, queryResult, form, formLoading } =
+    useForm<Employee>({
+      redirect: 'show',
+    })
   const employeeData = queryResult?.data?.data
 
   const { selectProps: departmentSelectProps } = useSelect({
@@ -71,11 +57,30 @@ export default function EmployeeEdit() {
     [],
   )
 
+  const {
+    data,
+    refetch,
+    isLoading: loadingEm,
+  } = useCustom<CodeIssueSetting>({
+    url: `${apiUrl}/code-issue-settings/by-code/employees`,
+    method: 'get',
+  })
+
+  const modalFormProps = useModalForm({
+    action: 'edit',
+    resource: 'code-issue-settings',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+    defaultFormValues: {
+      hash_dash: true,
+    },
+  })
+
+  const { show, close, open } = modalFormProps
+
   const handleAutoNumber = () => {
-    // TODO: call your real API for next code
-    const num = Math.floor(Math.random() * 900) + 100
-    const next = `EMP${num}`
-    formProps.form?.setFieldsValue({ code: next })
+    const codeGen = data?.data
+    form?.setFieldsValue({ code: codeGen?.preview_code, name: codeGen?.name })
   }
 
   const breadcrumbItems = [
@@ -132,7 +137,7 @@ export default function EmployeeEdit() {
       }
       rightFooterButtons={
         <Space size={2} className={'flex justify-end'}>
-          <Button {...saveButtonProps} type="primary">
+          <Button {...saveButtonProps} type="primary" loading={formLoading}>
             {t('buttons.save')}
           </Button>
         </Space>
@@ -141,16 +146,21 @@ export default function EmployeeEdit() {
     >
       <Form
         {...formProps}
-        labelCol={{ xs: 24, md: 2 }}
-        wrapperCol={{ xs: 24, md: 8 }}
+        initialValues={{
+          ...employeeData,
+          department_id: employeeData?.department?.id,
+          role_id: employeeData?.role?.id,
+        }}
+        labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
+        wrapperCol={{ xs: 24, sm: 16, md: 14, lg: 12, xl: 10 }}
         labelAlign={'left'}
         layout="horizontal"
         colon={false}
         autoComplete="off"
       >
         <Form.Item label={boldText(t('employees.fields.code'))} required>
-          <Row align="middle" gutter={12} wrap={false}>
-            <Col flex="360px">
+          <Row align="middle" gutter={[8, 8]}>
+            <Col flex="none">
               <Form.Item
                 name="code"
                 rules={codeRules}
@@ -159,17 +169,30 @@ export default function EmployeeEdit() {
                 <Input placeholder="EMP001" size="middle" />
               </Form.Item>
             </Col>
-            <Col>
+            <Col flex="none">
               <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
-            <Col>
+            <Col xs={24} sm="auto" flex="none">
               <Space direction="vertical" size={2}>
-                <Button size="middle" type="default" onClick={handleAutoNumber}>
-                  自動採番
+                <Button
+                  size="middle"
+                  type="default"
+                  onClick={() => {
+                    refetch().then(() => {
+                      handleAutoNumber()
+                    })
+                  }}
+                  loading={loadingEm}
+                >
+                  {t('departments.create.auto_number')}
                 </Button>
-                <Link href="/code-issue-settings" className="text-blue-500">
-                  コード採番設定はこちら
-                </Link>
+                <Button
+                  type="link"
+                  onClick={() => show(data?.data?.id)}
+                  className="text-blue-500"
+                >
+                  {t('departments.create.popup_number_setting')}
+                </Button>
               </Space>
             </Col>
           </Row>
@@ -192,9 +215,9 @@ export default function EmployeeEdit() {
         </Form.Item>
 
         <Form.Item label={boldText(t('employees.fields.role'))} name="role_id">
-          <Radio.Group>
-            {isArray(roles?.data?.items) &&
-              roles?.data?.items.map(({ id, name }) => (
+          <Radio.Group buttonStyle="solid">
+            {isArray(roles?.data) &&
+              roles?.data.map(({ id, name }) => (
                 <Radio key={name} value={id}>
                   {t(`employees.roles.${name}`)}
                 </Radio>
@@ -202,6 +225,15 @@ export default function EmployeeEdit() {
           </Radio.Group>
         </Form.Item>
       </Form>
+      <Modal
+        open={open}
+        onCancel={close}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        width={'70vh'}
+      >
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
+      </Modal>
     </Edit>
   )
 }
