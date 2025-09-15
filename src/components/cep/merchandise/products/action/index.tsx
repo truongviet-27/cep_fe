@@ -5,13 +5,18 @@ import {
   RightOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
+import { CategoryModal } from '@components/cep/merchandise/products/action/modal/code-issue'
+import { ProductCategoryModal } from '@components/cep/merchandise/products/action/modal/product-category'
 import useProductDetail from '@components/cep/merchandise/products/action/use-product-detail'
 import { Action } from '@components/common/action'
+import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
-import { useGo, useParsed } from '@refinedev/core'
-import { PRIMARY } from '@utility/color'
+import { useModalForm } from '@refinedev/antd'
+import { useApiUrl, useCustom, useParsed } from '@refinedev/core'
+import type { CodeIssueSetting } from '@sdk/hey-api'
+import { PRIMARY, WHITE } from '@utility/color'
 import renderCategories from '@utility/renderCategories'
 import {
   AutoComplete,
@@ -23,6 +28,7 @@ import {
   Divider,
   Dropdown,
   Form,
+  Modal,
   Radio,
   Row,
   Typography,
@@ -38,21 +44,59 @@ function ProductDetailContainer() {
     { methods, isAppend, dataProductCategories },
     { t, setIsAppend, handleChooseCategory },
   ] = useProductDetail()
-  const { form, formProps, saveButtonProps } = methods
+  const { form, formProps } = methods
   const { getFieldValue, setFieldsValue, setFieldValue } = form
   const { params } = useParsed()
 
-  const id = params?.id
+  const isUpdate = !!params?.id
   const actionType = params?.actionType
   const isView = actionType === 'VIEW'
 
-  const go = useGo()
-
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
+
+  const apiUrl = useApiUrl()
+
+  const {
+    data,
+    refetch,
+    isLoading: loadingPd,
+  } = useCustom<CodeIssueSetting>({
+    url: `${apiUrl}/code-issue-settings/by-code/products`,
+    method: 'get',
+  })
+
+  const modalFormProps = useModalForm({
+    action: 'edit',
+    resource: 'code-issue-settings',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+    defaultFormValues: {
+      hash_dash: true,
+    },
+  })
+
+  const { show, close, open } = modalFormProps
+
+  const handleAutoNumber = () => {
+    const codeGen = data?.data
+    form?.setFieldsValue({ code: codeGen?.preview_code, name: codeGen?.name })
+  }
+
+  const modalFormProps2 = useModalForm({
+    action: 'create',
+    resource: 'product-categories',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+    defaultFormValues: {
+      hash_dash: true,
+    },
+  })
+
+  const { show: show2, close: close2, open: open2 } = modalFormProps2
 
   return (
     <PageContainer
-      title={
+      breadcrumbs={
         <Breadcrumb
           items={[
             {
@@ -68,7 +112,11 @@ function ProductDetailContainer() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {isView ? id : !!id ? t('buttons.edit') : t('buttons.create')}
+                  {isView
+                    ? t('buttons.detail')
+                    : isUpdate
+                      ? t('buttons.edit')
+                      : t('buttons.create')}
                 </Title>
               ),
             },
@@ -76,8 +124,22 @@ function ProductDetailContainer() {
           separator={<RightOutlined />}
         />
       }
+      title={
+        <Title level={5} style={{ color: PRIMARY }}>
+          {isView
+            ? t('buttons.detail')
+            : isUpdate
+              ? t('buttons.edit')
+              : t('buttons.create')}
+        </Title>
+      }
     >
-      <Form {...formProps}>
+      <Form
+        {...formProps}
+        labelCol={{ span: 6 }}
+        labelAlign="left"
+        className="mb-[24px]"
+      >
         <Collapse
           items={[
             {
@@ -89,16 +151,12 @@ function ProductDetailContainer() {
               ),
               children: (
                 <div className="px-2">
-                  <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={8}>
+                  <Row className="my-4">
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="code"
                         isView={isView || isAppend}
-                        label={
-                          <span className="font-bold">
-                            {t('products.fields.productCode')}
-                          </span>
-                        }
+                        label={t('products.fields.productCode')}
                         required={true}
                         layout="horizontal"
                         rules={[
@@ -109,17 +167,46 @@ function ProductDetailContainer() {
                         ]}
                       />
                     </Col>
+                    {!isView && (
+                      <Col xs={24} lg={8}>
+                        <div className="mt-1 flex">
+                          <Typography>（A-Z, 0-9, -）</Typography>
+                          <div className="flex flex-col items-center">
+                            <Button
+                              color="primary"
+                              variant="outlined"
+                              size="small"
+                              onClick={() => {
+                                refetch().then(() => {
+                                  handleAutoNumber()
+                                })
+                              }}
+                              loading={loadingPd}
+                            >
+                              自動採番
+                            </Button>
+
+                            <Button
+                              color="primary"
+                              variant="link"
+                              size="small"
+                              onClick={() => {
+                                show(data?.data.id)
+                              }}
+                            >
+                              コード採番設定はこちら
+                            </Button>
+                          </div>
+                        </div>
+                      </Col>
+                    )}
                   </Row>
-                  <Row>
+                  <Row className="mb-4">
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="name"
                         isView={isView || isAppend}
-                        label={
-                          <span className="font-bold">
-                            {t('products.fields.productName')}
-                          </span>
-                        }
+                        label={t('products.fields.productName')}
                         required={true}
                         layout="horizontal"
                         rules={[
@@ -131,7 +218,7 @@ function ProductDetailContainer() {
                       />
                     </Col>
                   </Row>
-                  <Row>
+                  <Row className="mb-4">
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="short_name"
@@ -145,8 +232,8 @@ function ProductDetailContainer() {
                       />
                     </Col>
                   </Row>
-                  <Row>
-                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={8}>
+                  <Row className="mb-4">
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="barcode"
                         isView={isView || isAppend}
@@ -160,94 +247,105 @@ function ProductDetailContainer() {
                     </Col>
                   </Row>
 
-                  <Row>
-                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
-                      <div className="flex">
-                        <div className="w-[214px] text-left font-bold">
-                          {t('products.fields.category')}
-                          <span style={{ color: 'red', marginLeft: 4 }}>*</span>
-                        </div>
-                        <Dropdown
-                          trigger={['click']}
-                          popupRender={() => (
-                            <div
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                padding: 10,
-                                border: '1px solid #ccc',
-                                borderRadius: '8px',
-                                background: '#fff',
-                              }}
-                            >
-                              <Form.Item name={'name_lk'}>
-                                <AutoComplete
-                                  style={{ width: '100%' }}
-                                  options={dataProductCategories?.data.map(
-                                    (item) => ({
-                                      value: item.name,
-                                      label: item.name,
-                                    }),
-                                  )}
-                                  placeholder="検索..."
-                                  suffixIcon={<SearchOutlined />}
-                                  popupRender={() => {
-                                    return (
-                                      <div className="my-2 max-h-[300px] overflow-y-auto px-2">
-                                        {renderCategories(
-                                          dataProductCategories?.data || [],
-                                          1,
-                                          [],
-                                          [],
-                                          handleChooseCategory,
-                                        )}
-                                      </div>
-                                    )
-                                  }}
-                                />
-                              </Form.Item>
-                            </div>
-                          )}
-                        >
-                          <CoreInput
-                            name={'category'}
-                            readOnly={true}
-                            placeholder="選択してください"
-                            isView={isView || isAppend}
-                            icon={
-                              <CaretDownOutlined
-                                style={{
-                                  color: '#00000040',
-                                  fontSize: '12px',
+                  <Row className="mb-4">
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
+                      <Dropdown
+                        trigger={['click']}
+                        placement="bottomRight"
+                        popupRender={() => (
+                          <div
+                            style={{
+                              width: '80%',
+                              height: '100%',
+                              padding: 10,
+                              border: '1px solid #ccc',
+                              borderRadius: '8px',
+                              background: WHITE,
+                            }}
+                          >
+                            <Form.Item name={'name_lk'}>
+                              <AutoComplete
+                                options={dataProductCategories?.data.map(
+                                  (item) => ({
+                                    value: item.name,
+                                    label: item.name,
+                                  }),
+                                )}
+                                placeholder="検索..."
+                                suffixIcon={<SearchOutlined />}
+                                popupRender={() => {
+                                  return (
+                                    <div className="my-2 max-h-[300px] overflow-y-auto px-2">
+                                      {renderCategories(
+                                        dataProductCategories?.data || [],
+                                        1,
+                                        [],
+                                        [],
+                                        handleChooseCategory,
+                                      )}
+                                    </div>
+                                  )
                                 }}
                               />
-                            }
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: 'helo anhe em',
-                            //   },
-                            // ]}
-                          />
-                        </Dropdown>
-                      </div>
+                            </Form.Item>
+                          </div>
+                        )}
+                      >
+                        <CoreInput
+                          name={'category'}
+                          readOnly={true}
+                          placeholder="選択してください"
+                          isView={isView || isAppend}
+                          layout="horizontal"
+                          icon={
+                            <CaretDownOutlined
+                              style={{
+                                color: '#00000040',
+                                fontSize: '12px',
+                              }}
+                            />
+                          }
+                          required
+                          label={t('products.fields.category')}
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: 'helo anhe em',
+                          //   },
+                          // ]}
+                        />
+                      </Dropdown>
                     </Col>
+                    {!isView && (
+                      <Col>
+                        <Button
+                          color="primary"
+                          variant="outlined"
+                          size="small"
+                          onClick={() => {
+                            show2()
+                          }}
+                          style={{
+                            margin: '4px 0 0 40px',
+                          }}
+                        >
+                          新規登録
+                        </Button>
+                      </Col>
+                    )}
                   </Row>
 
-                  <Row>
-                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
+                  <Row className="mb-4">
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <Form.Item
                         name="unit"
                         label={
-                          <div className="w-[200px] text-left font-bold">
+                          <span className="text-left font-bold">
                             {t('products.fields.unit')}
-                            <span style={{ color: 'red', marginLeft: 4 }}>
-                              *
-                            </span>
-                          </div>
+                          </span>
                         }
                         colon={false}
-                        required={false}
+                        required={true}
                         rules={[
                           {
                             required: true,
@@ -280,149 +378,138 @@ function ProductDetailContainer() {
                       </Form.Item>
                     </Col>
                   </Row>
-                  <Row>
-                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
+                  <Row className="mb-4">
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="costPrice"
                         isView={isView || isAppend}
-                        label={
-                          <span className="font-bold">
-                            {t('products.fields.costPrice')}
-                          </span>
-                        }
+                        label={t('products.fields.costPrice')}
                         required={true}
                         layout="horizontal"
                         type="number"
-                        style={{
-                          width: '225px',
-                        }}
                         rules={[
                           {
                             required: true,
                             message: 'helo anhe em',
                           },
                         ]}
+                        style={{
+                          width: '100%',
+                        }}
                       />
                     </Col>
                   </Row>
-                  <Row>
-                    <Col xs={24} sm={22} md={20} lg={16} xl={10} xxl={6}>
+                  <Row className="mb-4">
+                    <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="sellingPrice"
                         isView={isView || isAppend}
-                        label={
-                          <span className="font-bold">
-                            {t('products.fields.sellingPrice')}
-                          </span>
-                        }
+                        label={t('products.fields.sellingPrice')}
                         required={true}
                         layout="horizontal"
                         type="number"
-                        style={{
-                          width: '225px',
-                        }}
                         rules={[
                           {
                             required: true,
                             message: 'helo anhe em',
                           },
                         ]}
+                        style={{
+                          width: '100%',
+                        }}
                       />
                     </Col>
-                    <Col>
-                      <div className="mt-1 ml-10">
-                        {isAppend ? (
-                          <EditFilled
-                            onClick={() => {
-                              setIsAppend(false)
-                            }}
-                          />
-                        ) : (
-                          <Button
-                            size="small"
-                            color="blue"
-                            variant="outlined"
-                            onClick={async () => {
-                              await form.validateFields()
-                              setIsAppend(true)
-                              if (getFieldValue(['info']).length === 0) {
-                                if (addRef.current) {
-                                  addRef.current({
-                                    packageCode: getFieldValue('code'),
-                                    packageName: getFieldValue('name'),
-                                    status: 'active',
-                                    quantity: 1,
-                                    unit: getFieldValue('unit'),
-                                    standardPrice:
-                                      getFieldValue('sellingPrice') * 1,
-                                    salesPrice: getFieldValue('sellingPrice'),
-                                    standardPrint: true,
-                                  })
+                    {!isView && (
+                      <Col>
+                        <div className="mt-1 ml-10">
+                          {isAppend ? (
+                            <EditFilled
+                              onClick={() => {
+                                setIsAppend(false)
+                              }}
+                            />
+                          ) : (
+                            <Button
+                              size="small"
+                              color="blue"
+                              variant="outlined"
+                              onClick={async () => {
+                                await form.validateFields()
+                                setIsAppend(true)
+                                if (getFieldValue(['info']).length === 0) {
+                                  if (addRef.current) {
+                                    addRef.current({
+                                      packageCode: getFieldValue('code'),
+                                      packageName: getFieldValue('name'),
+                                      status: 'active',
+                                      quantity: 1,
+                                      unit: getFieldValue('unit'),
+                                      standardPrice:
+                                        getFieldValue('sellingPrice') * 1,
+                                      salesPrice: getFieldValue('sellingPrice'),
+                                      standardPrint: true,
+                                    })
+                                  }
+                                  return
                                 }
-                                return
-                              }
 
-                              setFieldsValue({
-                                info: getFieldValue('info').map(
-                                  (item: object, index: number) => {
-                                    return index === 0
-                                      ? {
-                                          packageCode: getFieldValue('code'),
-                                          packageName: getFieldValue('name'),
-                                          status: 'active',
-                                          quantity: 1,
-                                          unit: getFieldValue('unit'),
-                                          standardPrice:
-                                            getFieldValue('sellingPrice') * 1,
-                                          salesPrice:
-                                            getFieldValue('sellingPrice'),
-                                          standardPrint: true,
-                                        }
-                                      : {
-                                          ...item,
-                                          packageCode: `${getFieldValue('code')}-${index + 1}`,
-                                          standardPrice:
-                                            getFieldValue('sellingPrice') *
-                                            getFieldValue([
+                                setFieldsValue({
+                                  info: getFieldValue('info').map(
+                                    (item: object, index: number) => {
+                                      return index === 0
+                                        ? {
+                                            packageCode: getFieldValue('code'),
+                                            packageName: getFieldValue('name'),
+                                            status: 'active',
+                                            quantity: 1,
+                                            unit: getFieldValue('unit'),
+                                            standardPrice:
+                                              getFieldValue('sellingPrice') * 1,
+                                            salesPrice:
+                                              getFieldValue('sellingPrice'),
+                                            standardPrint: true,
+                                          }
+                                        : {
+                                            ...item,
+                                            packageCode: `${getFieldValue('code')}-${index + 1}`,
+                                            standardPrice:
+                                              getFieldValue('sellingPrice') *
+                                              getFieldValue([
+                                                'info',
+                                                index,
+                                                'quantity',
+                                              ]),
+                                            quantity: getFieldValue([
                                               'info',
                                               index,
                                               'quantity',
                                             ]),
-                                          quantity: getFieldValue([
-                                            'info',
-                                            index,
-                                            'quantity',
-                                          ]),
-                                          salesPrice:
-                                            getFieldValue('sellingPrice') *
-                                            getFieldValue([
-                                              'info',
-                                              index,
-                                              'quantity',
-                                            ]),
-                                        }
-                                  },
-                                ),
-                              })
-                            }}
-                          >
-                            {t('更新')}
-                          </Button>
-                        )}
-                      </div>
-                    </Col>
+                                            salesPrice:
+                                              getFieldValue('sellingPrice') *
+                                              getFieldValue([
+                                                'info',
+                                                index,
+                                                'quantity',
+                                              ]),
+                                          }
+                                    },
+                                  ),
+                                })
+                              }}
+                            >
+                              {t('更新')}
+                            </Button>
+                          )}
+                        </div>
+                      </Col>
+                    )}
                   </Row>
                   <Row>
                     <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                       <CoreInput
                         name="note"
                         isView={isView || isAppend}
-                        label={
-                          <span className="font-bold">
-                            {t('products.fields.remarks')}
-                          </span>
-                        }
-                        required={true}
+                        label={t('products.fields.remarks')}
                         layout="horizontal"
                       />
                     </Col>
@@ -695,7 +782,7 @@ function ProductDetailContainer() {
                           render: (_, __, index) =>
                             index > 0 && (
                               <Action
-                                actionList={['delete']}
+                                actionList={['remove']}
                                 onRemoveAction={() => {
                                   remove(index)
                                 }}
@@ -719,26 +806,29 @@ function ProductDetailContainer() {
                               }
                             />
                           </Form.Item>
-                          <div className="mt-4 text-right">
-                            <Button
-                              type="primary"
-                              disabled={fields.length < 1}
-                              onClick={() => {
-                                add({
-                                  packageCode: `${getFieldValue('code')}-${fields.length}`,
-                                  packageName: '',
-                                  status: 'active',
-                                  quantity: 1,
-                                  unit: getFieldValue('unit'),
-                                  standardPrice: getFieldValue(`sellingPrice`),
-                                  salesPrice: getFieldValue(`sellingPrice`),
-                                  standardPrint: true,
-                                })
-                              }}
-                            >
-                              {t('products.buttons.addRow')}
-                            </Button>
-                          </div>
+                          {!isView && (
+                            <div className="mt-4 text-right">
+                              <Button
+                                type="primary"
+                                disabled={fields.length < 1}
+                                onClick={() => {
+                                  add({
+                                    packageCode: `${getFieldValue('code')}-${fields.length}`,
+                                    packageName: '',
+                                    status: 'active',
+                                    quantity: 1,
+                                    unit: getFieldValue('unit'),
+                                    standardPrice:
+                                      getFieldValue(`sellingPrice`),
+                                    salesPrice: getFieldValue(`sellingPrice`),
+                                    standardPrint: true,
+                                  })
+                                }}
+                              >
+                                {t('products.buttons.addRow')}
+                              </Button>
+                            </div>
+                          )}
                         </>
                       )
                     }}
@@ -1048,74 +1138,53 @@ function ProductDetailContainer() {
           )}
         />
 
-        <Divider />
+        {isUpdate && (
+          <>
+            <Divider />
 
-        <div className="flex flex-col justify-between">
-          {isView && (
-            <div className="space-y-2">
-              <div className="flex gap-4">
-                <span className="font-bold">作成者:</span>
-                <div>
-                  <span>伊藤太郎</span>
-                  <span>2025/08/05 14:33</span>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <span className="font-bold">更新者:</span>
-                <div>
-                  <span>伊藤太郎</span>
-                  <span>2025/08/05 14:33</span>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="mt-4 flex items-center justify-between">
-            <div>
-              {isView && (
-                <Button
-                  color="danger"
-                  variant="filled"
-                  size="small"
-                  onClick={() => {}}
-                >
-                  {t('buttons.delete')}
-                </Button>
-              )}
-            </div>
-            <div className="flex gap-4">
-              <Button
-                color="primary"
-                variant="outlined"
-                size="large"
-                onClick={() => {
-                  go({
-                    to: '/products',
-                  })
-                }}
-              >
-                戻る
-              </Button>
-              {isView ? (
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    go({
-                      to: `/products/edit/${1}`,
-                    })
-                  }}
-                  size="large"
-                >
-                  {t('buttons.edit')}
-                </Button>
-              ) : (
-                <Button type="primary" {...saveButtonProps} size="large">
-                  {t('buttons.confirm')}
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
+            <ShowMoreInfo
+              descriptions={[
+                {
+                  title: t('common.created_by'),
+                  value: '',
+                  // data?.author?.name ??
+                  // '---' +
+                  //   ' ' +
+                  //   dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
+                },
+                {
+                  title: t('common.updated_by'),
+                  value: '',
+                  // data?.editor?.name ??
+                  // '---' +
+                  //   ' ' +
+                  //   dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                },
+              ]}
+            />
+          </>
+        )}
       </Form>
+
+      <Modal
+        open={open}
+        onCancel={close}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        width={'70vh'}
+      >
+        <CategoryModal modalProps={modalFormProps} />
+      </Modal>
+
+      <Modal
+        open={open2}
+        onCancel={close2}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        width={'40vh'}
+      >
+        <ProductCategoryModal modalProps={modalFormProps2} />
+      </Modal>
     </PageContainer>
   )
 }

@@ -45,7 +45,7 @@ export const Action = ({
   onImportAction,
 }: Props) => {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center justify-center gap-4">
       {actionList.includes('view') && (
         <Button
           className="cursor-pointer"
@@ -68,11 +68,13 @@ export const Action = ({
 
       {actionList.includes('delete') && (
         <Button
-          className="cursor-pointer"
-          color="red"
-          variant="outlined"
           onClick={onDeleteAction}
           icon={<DeleteOutlined />}
+          style={{
+            color: '#721c24',
+            border: '1px solid #721c24',
+          }}
+          className="cursor-pointer hover:!opacity-70"
         />
       )}
 

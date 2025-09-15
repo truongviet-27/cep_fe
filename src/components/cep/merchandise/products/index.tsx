@@ -1,17 +1,22 @@
-import { CaretDownOutlined, RightOutlined } from '@ant-design/icons'
+import {
+  CaretDownOutlined,
+  RightOutlined,
+  SearchOutlined,
+} from '@ant-design/icons'
 import useProduct from '@components/cep/merchandise/products/use-product'
 import CommonTable from '@components/common/table'
 import CoreInput from '@components/organism/CoreInput'
 import PageContainer from '@components/organism/PageContainer'
 import { PRIMARY } from '@utility/color'
+import renderCategories from '@utility/renderCategories'
 import {
+  AutoComplete,
   Breadcrumb,
   Button,
   Col,
   Dropdown,
   Form,
   Row,
-  Select,
   Typography,
 } from 'antd'
 import Link from 'next/link'
@@ -27,21 +32,15 @@ function ProductContainer() {
       page,
       pageSize,
       total,
-      // dataProductCategories,
+      dataProductCategories,
     },
-    {
-      t,
-      onSubmit,
-      onReset,
-      onChangePageSize,
-      // handleChooseCategory
-    },
+    { t, onSubmit, onReset, onChangePageSize, handleChooseCategory },
   ] = useProduct()
 
   const { formProps } = methods
   return (
     <PageContainer
-      title={
+      breadcrumbs={
         <Breadcrumb
           items={[
             {
@@ -58,6 +57,7 @@ function ProductContainer() {
           separator={<RightOutlined />}
         />
       }
+      title={<Title level={5}>{t('products.list.title')}</Title>}
     >
       <Form {...formProps}>
         <Title
@@ -66,7 +66,7 @@ function ProductContainer() {
             color: '#1890FF',
           }}
         >
-          {t('title')}
+          {t('products.title')}
         </Title>
         <Row gutter={16}>
           <Col sm={12} md={6} lg={4}>
@@ -106,7 +106,7 @@ function ProductContainer() {
                     }}
                   >
                     <Form.Item name={'name_lk'}>
-                      {/* <AutoComplete
+                      <AutoComplete
                         style={{ width: '100%' }}
                         options={dataProductCategories?.data.map((item) => ({
                           value: item.name,
@@ -127,8 +127,7 @@ function ProductContainer() {
                             </div>
                           )
                         }}
-                      /> */}
-                      <Select />
+                      />
                     </Form.Item>
                   </div>
                 )}

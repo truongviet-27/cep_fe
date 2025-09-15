@@ -2,6 +2,7 @@ import { RightOutlined } from '@ant-design/icons'
 import useApprove from '@components/cep/merchandise/approve/use-approve'
 import CommonTable from '@components/common/table'
 import PageContainer from '@components/organism/PageContainer'
+import { useGo } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -19,6 +20,8 @@ const { Title } = Typography
 
 function Approve() {
   const [{ methods }, { t }] = useApprove()
+
+  const go = useGo()
 
   const { formProps } = methods
 
@@ -49,6 +52,14 @@ function Approve() {
           marginBottom: '10px',
         }}
       >
+        <Title
+          level={5}
+          style={{
+            color: PRIMARY,
+          }}
+        >
+          {t('approve.title')}
+        </Title>
         <Row gutter={[16, 16]}>
           <Col md={24} xl={4}>
             <Form.Item label="ルートコード・ルート名" name="q">
@@ -57,7 +68,7 @@ function Approve() {
           </Col>
           <Col md={24} xl={4}>
             <Form.Item label="部門 (支社/部/課)" name="department">
-              <Select placeholder="選択してください">
+              <Select showSearch allowClear placeholder="選択してください">
                 <Select.Option value="gijutsu">技術部</Select.Option>
                 <Select.Option value="marketing">
                   マーケティング部
@@ -69,7 +80,7 @@ function Approve() {
           </Col>
           <Col md={24} xl={4}>
             <Form.Item label="ステータス" name="status">
-              <Select placeholder="選択してください">
+              <Select showSearch placeholder="選択してください">
                 <Select.Option value="valid">有効</Select.Option>
                 <Select.Option value="invalid">無効</Select.Option>
               </Select>
@@ -92,7 +103,15 @@ function Approve() {
             </Space>
 
             <Space className="mt-[3px]">
-              <Button type="primary" size="large">
+              <Button
+                type="primary"
+                size="middle"
+                onClick={() => {
+                  go({
+                    to: '/approve/create',
+                  })
+                }}
+              >
                 新規作成
               </Button>
             </Space>
@@ -100,7 +119,7 @@ function Approve() {
         </Row>
       </Form>
 
-      <CommonTable />
+      <CommonTable columns={[]} dataSource={[]} />
     </PageContainer>
   )
 }

@@ -56,9 +56,6 @@ function useProduct() {
         value: name_lk_value,
       },
     ],
-    queryOptions: {
-      enabled: !!name_lk_value,
-    },
   })
 
   const onChangePageSize = (page: number, pageSize: number) => {

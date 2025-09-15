@@ -2,16 +2,18 @@ import { RightOutlined } from '@ant-design/icons'
 import useApproveAction from '@components/cep/merchandise/approve/action/use-approve-action'
 import PageContainer from '@components/organism/PageContainer'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Form, Typography } from 'antd'
-import React from 'react'
+import { Breadcrumb, Col, Form, Row, Typography } from 'antd'
 
 const { Title } = Typography
 
 function ApproveAction() {
-  const [{}, { t }] = useApproveAction()
+  const [{ methods }, { t }] = useApproveAction()
+
+  const { formProps } = methods
+
   return (
     <PageContainer
-      title={
+      breadcrumbs={
         <Breadcrumb
           items={[
             {
@@ -28,8 +30,26 @@ function ApproveAction() {
           separator={<RightOutlined />}
         />
       }
+      title={<Title level={5}>{t('approve.approve')}</Title>}
     >
-      <Form></Form>
+      <Form {...formProps}>
+        <Row>
+          <Col></Col>
+          <Col></Col>
+        </Row>
+        <Row>
+          <Col></Col>
+          <Col></Col>
+        </Row>
+        <Row>
+          <Col></Col>
+          <Col></Col>
+        </Row>
+        <Row>
+          <Col></Col>
+          <Col></Col>
+        </Row>
+      </Form>
     </PageContainer>
   )
 }
