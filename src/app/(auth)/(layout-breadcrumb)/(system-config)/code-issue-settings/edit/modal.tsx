@@ -19,6 +19,7 @@ import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
+import ShowMoreInfo from '@components/common/show-more-info'
 
 type Props = {
   modalProps: any
@@ -129,29 +130,26 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
 
         <Divider />
 
-        <Form.Item
-          label={t('code_issue_settings.fields.created_by')}
-          colon={false}
-        >
-          <Typography.Text type="secondary">
-            {record?.author} {record?.author && '---'}
-            {record?.created_at
-              ? dayjs(record.created_at).format('DD/MM/YYYY HH:mm')
-              : ''}
-          </Typography.Text>
-        </Form.Item>
-
-        <Form.Item
-          label={t('code_issue_settings.fields.updated_by')}
-          colon={false}
-        >
-          <Typography.Text type="secondary">
-            {record?.editor} {record?.editor && '---'}
-            {record?.updated_at
-              ? dayjs(record.updated_at).format('DD/MM/YYYY HH:mm')
-              : ''}
-          </Typography.Text>
-        </Form.Item>
+        <ShowMoreInfo
+          descriptions={[
+            {
+              title: t('common.created_by'),
+              value:
+                record?.author?.name ??
+                '---' +
+                  ' ' +
+                  dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
+            },
+            {
+              title: t('common.updated_by'),
+              value:
+                record?.editor?.name ??
+                '---' +
+                  ' ' +
+                  dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
+            },
+          ]}
+        />
       </Form>
 
       <Space className={'flex w-full justify-end'}>

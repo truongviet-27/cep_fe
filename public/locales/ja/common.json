@@ -66,8 +66,123 @@
   "customers": {
     "customers": "顧客"
   },
+
   "products": {
-    "products": "商品"
+    "products": "商品一覧",
+    "sections": {
+      "basicInfo": "基本情報",
+      "packagingPrice": "荷姿単価",
+      "unitPriceGroup": "単価グループ"
+    },
+    "fields": {
+      "productCode": "商品コード",
+      "productName": "商品名",
+      "productNameAbbr": "商品名 (略称)",
+      "barcode": "バーコード",
+      "category": "カテゴリ",
+      "unit": "単位",
+      "costPrice": "原価 (円)",
+      "sellingPrice": "販売単価 (円)",
+      "remarks": "備考",
+      "packagingCode": "荷姿コード",
+      "packagingName": "荷姿名",
+      "status": "ステータス",
+      "quantity": "入数",
+      "standardPrice": "標準価格 (円)",
+      "isStandard": "標準同額",
+      "actions": "操作"
+    },
+    "unitPriceGroup": {
+      "tableTitle": "単価グループ",
+      "sellingPrice": "販売価格 (円)",
+      "settingMethod": "設定方式",
+      "rankS": "S 80% (円)",
+      "rankA": "A 85% (円)",
+      "rankB": "B 90% (円)",
+      "rankC": "C 95% (円)",
+      "rankD": "D 100% (円)",
+      "rankE": "E 105% (円)"
+    },
+    "buttons": {
+      "autoNumbering": "自動採番",
+      "createNewCategory": "新規作成",
+      "update": "更新",
+      "addRow": "行を追加"
+    },
+    "links": {
+      "csvUpload": "CSV一括登録"
+    },
+    "messages": {
+      "noData": "データがありません。",
+      "codeHint": "コード体系の定義はこちら"
+    },
+    "validation": {
+      "codeFormat": "(A-Z, 0-9, .-)"
+    },
+    "text": {
+      "active": "有効",
+      "inactive": "無効"
+    },
+
+    "list": {
+      "title": "商品一覧",
+      "searchArea": {
+        "productInputLabel": "商品コード・商品名",
+        "productInputPlaceholder": "部分一致",
+        "categoryLabel": "カテゴリ",
+        "categoryPlaceholder": "選択してください",
+        "clearButton": "クリア"
+      },
+      "actions": {
+        "createNewButton": "新規作成",
+        "csvBulkUploadLink": "CSV一括登録"
+      },
+      "table": {
+        "headers": {
+          "productCode": "商品コード",
+          "productName": "商品名",
+          "packagingQuantity": "荷姿数",
+          "barcode": "バーコード",
+          "subcategory": "カテゴリ(小)",
+          "unit": "単位",
+          "costPrice": "原価(円)",
+          "sellingPrice": "販売単価(円)",
+          "actions": "操作"
+        },
+        "text": {
+          "pieces": "件"
+        }
+      }
+    }
+  },
+  "ranks": {
+    "ranks": "単価ランク一覧",
+    "list": {
+      "list": "単価ランク一覧",
+      "filters": {
+        "search_label": "単価ランクコード・単価ランク名",
+        "search_placeholder": "部分一致"
+      }
+    },
+    "create": {
+      "create": "新しい単価ランクを追加"
+    },
+    "edit": {
+      "edit": "単価ランク編集"
+    },
+    "fields": {
+      "code": "単価ランクコード",
+      "name": "単価ランク名",
+      "rate": "掛け率（％)",
+      "customer": "顧客数",
+      "remarks": "備考"
+    }
+  },
+  "merchandise": {
+    "merchandise": "商品"
+  },
+  "approve": {
+    "approve": "承認する"
   },
   "employees": {
     "employees": "社員",
@@ -106,7 +221,6 @@
       "codeNumbering": "コード採番設定",
       "approvalAndReturn": "承認・差戻し",
       "costDetails": "原価明細",
-
       "customerMasterPurpose": "取引先をマスタ化して名寄せします。",
       "projectMasterPurpose": "案件をマスタ化して名寄せします。",
       "productMasterPurpose": "マスタをマスタ化して名寄せします。",
@@ -162,15 +276,12 @@
         "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
         "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
         "downloadButton": "CSVテンプレートをダウンロード",
-
         "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
         "orSelectFile": "または、下のボタンからファイルを選択してください",
         "selectFileButton": "ファイルを選択",
-
         "requiredError": "必須項目です",
         "onlyCSVError": "CSVファイルのみアップロード可能です。",
         "maxSizeError": "ファイルサイズは最大5MBです。",
-
         "noteTitle": "CSV登録時の注意事項",
         "noteItems": {
           "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
@@ -248,6 +359,9 @@
       "max255": "255文字以内で入力してください",
       "notBlank": "空白だけの入力はできません"
     }
+  },
+  "import_history": {
+    "import_history": "インポート履歴"
   },
   "system_config": {
     "system_config": "システム設定",

@@ -1,8 +1,4 @@
-import {
-  DownloadOutlined,
-  FileAddOutlined,
-  UploadOutlined,
-} from '@ant-design/icons'
+import { DownloadOutlined, FileAddOutlined } from '@ant-design/icons'
 import useStep1 from '@components/cep/system-config/product-categories/csv/step1/useStep1'
 import {
   Alert,
@@ -10,16 +6,16 @@ import {
   Card,
   Form,
   List,
-  message,
   Space,
   Typography,
   Upload,
 } from 'antd'
+import Dragger from 'antd/es/upload/Dragger'
 
 const { Text, Paragraph } = Typography
 
 function Step1() {
-  const [{ dataSource }, { t, handleUpload }] = useStep1()
+  const [{ dataSource }, { t, mutate }] = useStep1()
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -47,58 +43,72 @@ function Step1() {
         }
       />
 
-      <Card
-        style={{ border: '2px dashed #d9d9d9', textAlign: 'center' }}
-        bodyStyle={{ padding: '40px 20px' }}
+      <Form.Item
+        layout="vertical"
+        name={'file'}
+        rules={[
+          {
+            required: true,
+            message: t('product_categories.csv.step_1.requiredError'),
+          },
+        ]}
       >
-        <FileAddOutlined
-          style={{ fontSize: 40, color: '#999', marginBottom: 12 }}
-        />
-        <Paragraph style={{ marginBottom: 8, color: '#555' }}>
-          {t('product_categories.csv.step_1.dragDrop')}
-        </Paragraph>
-        <Paragraph type="secondary" style={{ marginBottom: 20 }}>
-          {t('product_categories.csv.step_1.orSelectFile')}
-        </Paragraph>
-        <Form.Item
-          layout="vertical"
-          name={'file'}
-          rules={[
-            {
-              required: true,
-              message: t('product_categories.csv.step_1.requiredError'),
-            },
-          ]}
-        >
-          <Upload
+        <Card>
+          <Dragger
+            style={{ border: '2px dashed #d9d9d9', textAlign: 'center' }}
             accept=".csv"
             name="file"
-            method="post"
             maxCount={1}
             showUploadList={true}
             beforeUpload={(file) => {
               const isCSV =
                 file.type === 'text/csv' || file.name.endsWith('.csv')
               if (!isCSV) {
-                message.error(t('product_categories.csv.step_1.onlyCSVError'))
                 return Upload.LIST_IGNORE
               }
               if (file.size / 1024 / 1024 > 10) {
-                message.error(t('product_categories.csv.step_1.maxSizeError'))
                 return Upload.LIST_IGNORE
               }
 
-              handleUpload(file)
-
               return true
             }}
+            customRequest={({ file, onSuccess }) => {
+              const formData = new FormData()
+              formData.append('file', file)
+              formData.append('type', 'product-categories')
+              mutate(
+                {
+                  resource: 'csv-imports/validate',
+                  values: formData,
+                  meta: {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                  },
+                },
+                {
+                  onSuccess: () => {
+                    onSuccess?.('ok')
+                  },
+                },
+              )
+            }}
           >
-            <Button icon={<UploadOutlined />} type="primary" size="large">
+            <FileAddOutlined
+              style={{ fontSize: 40, color: '#999', marginBottom: 12 }}
+            />
+            <Paragraph style={{ marginBottom: 8, color: '#555' }}>
+              {t('product_categories.csv.step_1.dragDrop')}
+            </Paragraph>
+            <Paragraph type="secondary" style={{ marginBottom: 20 }}>
+              {t('product_categories.csv.step_1.orSelectFile')}
+            </Paragraph>
+            <Button type="primary" size="large">
               {t('product_categories.csv.step_1.selectFileButton')}
             </Button>
-          </Upload>
-        </Form.Item>
-      </Card>
+          </Dragger>
+        </Card>
+      </Form.Item>
 
       <Card
         size="small"
