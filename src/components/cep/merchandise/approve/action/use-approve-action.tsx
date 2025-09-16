@@ -1,5 +1,6 @@
 import { useForm } from '@refinedev/antd'
 import { useCustom, useParsed, useTranslate } from '@refinedev/core'
+import { useState } from 'react'
 
 type Form = {
   code: string
@@ -21,6 +22,8 @@ function useApproveAction() {
 
   const isUpdate = !!params?.id
 
+  const [isMultiAppover, setIsMultiApprove] = useState(false)
+
   const {} = useCustom({
     method: 'get',
     url: 'approve',
@@ -29,7 +32,10 @@ function useApproveAction() {
     },
   })
 
-  return [{ methods }, { t }] as const
+  return [
+    { methods, isMultiAppover, isUpdate },
+    { t, setIsMultiApprove },
+  ] as const
 }
 
 export default useApproveAction
