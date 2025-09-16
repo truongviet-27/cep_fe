@@ -62,6 +62,7 @@ function CommonTable<T extends object>(
             }
           : false
       }
+      scroll={{ x: 'max-content' }}
     />
   )
 }
