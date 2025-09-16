@@ -4,9 +4,9 @@ import {
   SearchOutlined,
 } from '@ant-design/icons'
 import useProduct from '@components/cep/merchandise/products/use-product'
+import CoreInput from '@components/common/core-input'
+import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
-import CoreInput from '@components/organism/CoreInput'
-import PageContainer from '@components/organism/PageContainer'
 import { PRIMARY } from '@utility/color'
 import renderCategories from '@utility/renderCategories'
 import {

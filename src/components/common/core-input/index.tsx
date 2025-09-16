@@ -2,6 +2,7 @@
 import { cn } from '@utility/cn'
 import { Form, Input, InputNumber } from 'antd'
 import type { Rule } from 'antd/es/form'
+import type { ColProps } from 'antd/lib'
 import type { CSSProperties, ReactNode } from 'react'
 
 function CoreInput({
@@ -21,6 +22,8 @@ function CoreInput({
   readOnly = false,
   onChangeValue,
   children,
+  labelCol,
+  wrapperCol,
   ...field
 }: {
   name?: string | (string | number)[]
@@ -39,6 +42,8 @@ function CoreInput({
   readOnly?: boolean
   onChangeValue?: (value: any) => void
   children?: ReactNode
+  labelCol?: ColProps
+  wrapperCol?: ColProps
 }) {
   const Component = type === 'number' ? InputNumber : Input
 
@@ -52,6 +57,8 @@ function CoreInput({
           </span>
         )
       }
+      labelCol={labelCol}
+      wrapperCol={wrapperCol}
       shouldUpdate
       layout={layout}
       rules={rules}
