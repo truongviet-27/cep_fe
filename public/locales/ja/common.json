@@ -243,6 +243,9 @@
   },
   "employees": {
     "employees": "社員",
+    "list": {
+      "list": "社員一覧"
+    },
     "edit": {
       "title": "社員編集"
     },
