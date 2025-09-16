@@ -1,19 +1,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm } from '@refinedev/antd'
-import { useTranslate } from '@refinedev/core'
+import {
+  DeleteButton,
+  EditButton,
+  ShowButton,
+  useForm,
+  useSelect,
+} from '@refinedev/antd'
+import type { BaseRecord } from '@refinedev/core'
+import { Link, useTable, useTranslate } from '@refinedev/core'
+import { GREY, PRIMARY } from '@utility/color'
+import { Space, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo } from 'react'
 
 function useApprove() {
   const t = useTranslate()
   const methods = useForm()
+
+  const {} = useTable({})
+
+  const { selectProps } = useSelect({
+    resource: 'departments',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'off',
+    },
+  })
+
   const columns = useMemo(() => {
     return [
       {
         key: 'code',
         dataIndex: 'code',
         title: 'ルートコード',
-        render: () => {},
+        render: (value, record) => {
+          return <Link to={`/approve/show/${record.id}`}>{value}</Link>
+        },
       },
       {
         key: 'name',
@@ -29,11 +52,15 @@ function useApprove() {
         key: 'status',
         dataIndex: 'status',
         title: 'ステータス',
-        render: () => {},
+        render: (value) => {
+          if (value === 'active')
+            return <Tag color={PRIMARY}>{t('products.text.active')}</Tag>
+          return <Tag color={GREY}>{t('products.text.inactive')}</Tag>
+        },
       },
       {
-        key: 'count',
-        dataIndex: 'count',
+        key: 'steps',
+        dataIndex: 'steps',
         title: '承認ステップ数',
       },
       {
@@ -50,7 +77,15 @@ function useApprove() {
         key: 'action',
         dataIndex: 'action',
         title: '操作',
-        render: () => {},
+        render: (_: any, record: BaseRecord) => {
+          return (
+            <Space>
+              <ShowButton hideText size="small" recordItemId={record.id} />
+              <EditButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton hideText size="small" recordItemId={record.id} />
+            </Space>
+          )
+        },
       },
     ] as ColumnsType
   }, [t])
@@ -98,7 +133,7 @@ function useApprove() {
     },
   ]
 
-  return [{ methods, columns, dataSource }, { t }] as const
+  return [{ methods, columns, dataSource, selectProps }, { t }] as const
 }
 
 export default useApprove

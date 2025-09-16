@@ -78,9 +78,9 @@ export const resource: ResourceProps[] = [
     edit: '/approve/edit/:id',
     meta: {
       parent: 'merchandise',
-      canDelete: true,
-      canCreate: true,
-      canEdit: true,
+      canDelete: false,
+      canCreate: false,
+      canEdit: false,
     },
   },
   {

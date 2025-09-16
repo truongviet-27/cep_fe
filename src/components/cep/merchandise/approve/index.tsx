@@ -19,7 +19,7 @@ import {
 const { Title } = Typography
 
 function Approve() {
-  const [{ methods, columns, dataSource }, { t }] = useApprove()
+  const [{ methods, columns, dataSource, selectProps }, { t }] = useApprove()
 
   const go = useGo()
 
@@ -27,7 +27,7 @@ function Approve() {
 
   return (
     <PageContainer
-      title={
+      breadcrumbs={
         <Breadcrumb
           items={[
             {
@@ -44,6 +44,7 @@ function Approve() {
           separator={<RightOutlined />}
         />
       }
+      title={t('approve.approve')}
     >
       <Form
         layout="vertical"
@@ -52,33 +53,18 @@ function Approve() {
           marginBottom: '10px',
         }}
       >
-        <Title
-          level={5}
-          style={{
-            color: PRIMARY,
-          }}
-        >
-          {t('approve.title')}
-        </Title>
         <Row gutter={[16, 16]}>
-          <Col md={24} xl={4}>
+          <Col md={8} xl={4}>
             <Form.Item label="ルートコード・ルート名" name="q">
               <CoreAutoComplete name="q" resource="departments" />
             </Form.Item>
           </Col>
-          <Col md={24} xl={4}>
+          <Col md={8} xl={4}>
             <Form.Item label="部門 (支社/部/課)" name="department">
-              <Select showSearch allowClear placeholder="選択してください">
-                <Select.Option value="gijutsu">技術部</Select.Option>
-                <Select.Option value="marketing">
-                  マーケティング部
-                </Select.Option>
-                <Select.Option value="kaikei">会計部</Select.Option>
-                <Select.Option value="koubai">購買部</Select.Option>
-              </Select>
+              <Select placeholder="選択してください" {...selectProps} />
             </Form.Item>
           </Col>
-          <Col md={24} xl={4}>
+          <Col md={8} xl={4}>
             <Form.Item label="ステータス" name="status">
               <Select showSearch placeholder="選択してください">
                 <Select.Option value="valid">有効</Select.Option>
@@ -104,7 +90,7 @@ function Approve() {
               </Button>
             </Space>
 
-            <Space className="mt-[3px]">
+            <Space className="mt-[3px] ml-2">
               <Button
                 type="primary"
                 size="middle"

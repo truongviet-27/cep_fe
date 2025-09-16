@@ -258,6 +258,9 @@ function ApproveAction() {
                                             <CoreAutoComplete
                                               name="q"
                                               resource="departments"
+                                              style={{
+                                                width: 300,
+                                              }}
                                             />
                                           </Form.Item>
                                         </Col>
@@ -273,6 +276,9 @@ function ApproveAction() {
                                             <CoreAutoComplete
                                               name="q"
                                               resource="departments"
+                                              style={{
+                                                width: 300,
+                                              }}
                                             />
                                           </Form.Item>
                                         </Col>

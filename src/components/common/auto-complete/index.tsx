@@ -9,11 +9,13 @@ function CoreAutoComplete({
   resource,
   value,
   onChange,
+  style,
 }: {
   name: string
   resource: string
   value?: any
   onChange?: (val: any) => void
+  style?: React.CSSProperties
 }) {
   const t = useTranslate()
   const [searchValue, setSearchValue] = useState<string>()
@@ -42,7 +44,7 @@ function CoreAutoComplete({
 
   return (
     <Select
-      style={{ width: 300 }}
+      style={style}
       showSearch
       placeholder={t('buttons.search')}
       labelInValue

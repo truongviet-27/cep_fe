@@ -1,6 +1,8 @@
-import { WHITE } from '@utility/color'
-import { Card } from 'antd'
+import { PRIMARY, WHITE } from '@utility/color'
+import { Card, Typography } from 'antd'
 import type { ReactNode } from 'react'
+
+const { Title } = Typography
 
 const PageContainer = ({
   title,
@@ -23,7 +25,14 @@ const PageContainer = ({
         }}
       >
         <div>
-          {title}
+          <Title
+            style={{
+              color: PRIMARY,
+            }}
+            level={5}
+          >
+            {title}
+          </Title>
           {children}
         </div>
       </Card>
