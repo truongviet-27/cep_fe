@@ -20,6 +20,7 @@ function CoreInput({
   icon,
   readOnly = false,
   onChangeValue,
+  children,
   ...field
 }: {
   name?: string | (string | number)[]
@@ -37,6 +38,7 @@ function CoreInput({
   icon?: ReactNode
   readOnly?: boolean
   onChangeValue?: (value: any) => void
+  children?: ReactNode
 }) {
   const Component = type === 'number' ? InputNumber : Input
 
@@ -45,16 +47,15 @@ function CoreInput({
       name={name}
       label={
         label && (
-          <span className={cn('w-[200px] text-left', classNameLabel)}>
+          <span className={cn('text-left font-bold', classNameLabel)}>
             {label}
-            {required && <span style={{ color: 'red', marginLeft: 4 }}>*</span>}
           </span>
         )
       }
       shouldUpdate
       layout={layout}
       rules={rules}
-      required={false}
+      required={required}
       colon={colon}
       style={styleForm}
     >
@@ -79,11 +80,12 @@ function CoreInput({
         {...field}
         onChange={(value) => {
           if (onChangeValue) {
-            console.log('xxxxxxxxxxxxxxxxxx')
             onChangeValue(value as object)
           }
         }}
       />
+
+      {children}
     </Form.Item>
   )
 }
