@@ -8,8 +8,19 @@ import { EditButton, EmailField, ShowButton, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Space, Table, Typography } from 'antd'
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Table,
+  Typography,
+} from 'antd'
 import React from 'react'
+import boldText from '@utility/bold-text'
 
 const { Title, Text } = Typography
 
@@ -25,7 +36,7 @@ function Page() {
     )
   }
 
-  const { tableProps } = useTable()
+  const { tableProps, searchFormProps, setFilters } = useTable()
   const breadcrumbItems = [
     {
       title: (
@@ -34,11 +45,24 @@ function Page() {
         </Title>
       ),
     },
-    { title: <Title level={5}>社員一覧</Title> },
+    { title: <Title level={5}>{t('employees.list.list')}</Title> },
   ]
 
   const getRowClassName = (record: BaseRecord) => {
     return !record.email || !record.code ? 'bg-gray-200' : ''
+  }
+
+  const handleSearch = (values: any) => {
+    console.log('Search values:', values)
+    setFilters([
+      { field: 'code', operator: 'contains', value: values.code },
+      { field: 'name', operator: 'contains', value: values.name },
+    ])
+  }
+
+  const handleClear = () => {
+    searchFormProps.form?.resetFields()
+    setFilters([], 'replace')
   }
 
   return (
@@ -46,8 +70,61 @@ function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={'employee.list.list'}
+      i18nHeading={'employees.list.list'}
     >
+      <Form
+        colon={false}
+        {...searchFormProps}
+        layout="vertical"
+        onFinish={handleSearch}
+      >
+        <Row gutter={[16, 16]}>
+          <Col xs={24} md={4}>
+            <Form.Item
+              label={boldText(t('employees.filters.code_name'))}
+              name="code_name"
+            >
+              <Input placeholder={t('placeholders.partial_match')} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={4}>
+            <Form.Item
+              label={boldText(t('employees.filters.email'))}
+              name="email"
+            >
+              <Input placeholder={t('placeholders.partial_match')} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={4}>
+            <Form.Item
+              label={boldText(t('departments.departments'))}
+              name="department"
+            >
+              <Select placeholder={t('placeholders.partial_match')} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={4}>
+            <Form.Item
+              label={boldText(t('employees.fields.role'))}
+              name="unit_price_rank"
+            >
+              <Select placeholder={t('placeholders.select')} />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={4}>
+            <Form.Item label={<></>}>
+              <Space>
+                <Button type="primary" htmlType="submit">
+                  {t('buttons.search')}
+                </Button>
+                <Button onClick={handleClear}>{t('buttons.clear')}</Button>
+              </Space>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+
       <CommonTable
         className={'mt-6'}
         {...tableProps}
