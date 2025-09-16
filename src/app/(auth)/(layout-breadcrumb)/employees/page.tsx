@@ -46,7 +46,7 @@ function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={'社員一覧'}
+      i18nHeading={'employee.list.list'}
     >
       <CommonTable
         className={'mt-6'}
