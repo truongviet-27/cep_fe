@@ -6,7 +6,7 @@ type Form = {
   code: string
   name: string
   department: { id: number; name: string; code: string }[]
-  status: boolean
+  status: 'active' | 'inactive'
   steps: {
     name: number
     step_order: number
@@ -22,7 +22,9 @@ function useApproveAction() {
 
   const isUpdate = !!params?.id
 
-  const [isMultiAppover, setIsMultiApprove] = useState(false)
+  const [isMultiAppover, setIsMultiApprove] = useState<{
+    [index: number]: boolean
+  }>({})
 
   const {} = useCustom({
     method: 'get',
