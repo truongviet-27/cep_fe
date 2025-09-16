@@ -263,6 +263,10 @@
     },
     "show": {
       "show": "社員詳細"
+    },
+    "filters": {
+      "code_name": "社員コード・社員名",
+      "email": "メール"
     }
   },
   "permission_settings": {
@@ -370,7 +374,7 @@
     "tags": "見積タグ設定"
   },
   "parameter_settings": {
-    "parameter_settings": "見積タグ設定",
+    "parameter_settings": "パラメーター設定",
     "description": "説明",
     "is_manage": "管理する",
     "not_manage": "管理しない"

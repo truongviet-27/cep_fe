@@ -47,7 +47,6 @@ interface ICustomer {
 export default function CustomerListPage() {
   const t = useTranslate()
   const go = useGo()
-  const [form] = Form.useForm()
 
   const { tableProps, setFilters, searchFormProps } = useTable<ICustomer>({
     syncWithLocation: true,
@@ -146,8 +145,8 @@ export default function CustomerListPage() {
   }
 
   const handleClear = () => {
-    form.resetFields()
-    setFilters([])
+    searchFormProps.form?.resetFields()
+    setFilters([], 'replace')
   }
 
   const breadcrumbItems = [

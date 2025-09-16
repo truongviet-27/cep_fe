@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDebounce } from '@hook/use-debounce'
-import { useList, useTranslate } from '@refinedev/core'
+import type { BaseRecord } from '@refinedev/core'
+import { useSelect, useTranslate } from '@refinedev/core'
 import { Select } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -9,58 +9,63 @@ function CoreAutoComplete({
   resource,
   value,
   onChange,
+  debounce = 400,
+  placeholder,
 }: {
   name: string
   resource: string
+  placeholder?: string
+  debounce?: number
   value?: any
   onChange?: (val: any) => void
 }) {
   const t = useTranslate()
-  const [searchValue, setSearchValue] = useState<string>()
-  const [options, setOptions] = useState<any>([])
+  const [options, setOptions] = useState<
+    | {
+        label: BaseRecord
+        value: BaseRecord
+      }[]
+    | []
+  >([])
 
-  const searchDebounce = useDebounce(searchValue, 500)
-
-  const { data } = useList({
-    resource: resource,
-    filters: [{ field: name, operator: 'contains', value: searchDebounce }],
-    queryOptions: {
-      enabled: !!searchDebounce,
-    },
-    pagination: {
-      mode: 'off',
-    },
+  const { queryResult, onSearch } = useSelect({
+    resource,
+    debounce,
+    onSearch: name
+      ? (val) => [{ field: name, operator: 'null', value: val }]
+      : undefined,
   })
 
   useEffect(() => {
-    if (searchDebounce) {
-      setOptions(data?.data)
+    if (queryResult?.data?.data) {
+      const result =
+        queryResult?.data?.data.map((item) => {
+          return {
+            label: item,
+            value: item,
+          }
+        }) ?? []
+      setOptions(result)
     } else {
-      setOptions([] as any[])
+      setOptions([])
     }
-  }, [data, searchDebounce])
+  }, [queryResult?.data?.data])
 
   return (
     <Select
-      style={{ width: 300 }}
       showSearch
-      placeholder={t('buttons.search')}
+      placeholder={placeholder ?? t('placeholders.partial_match')}
       labelInValue
       filterOption={false}
-      onSearch={(value) => {
-        setSearchValue(value)
-      }}
+      onSearch={(value) => value && onSearch(value)}
       autoClearSearchValue
       value={value}
       onChange={onChange}
       allowClear
       onClear={() => {
-        setOptions([] as any[])
+        setOptions([])
       }}
-      options={(options ?? []).map((item: any) => ({
-        value: item.id,
-        label: item.name,
-      }))}
+      options={options}
     />
   )
 }

@@ -5,11 +5,12 @@ import { RightOutlined } from '@ant-design/icons'
 import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { Button, Col, Form, Input, Row, Space } from 'antd'
+import { Button, Col, Form, Row, Space } from 'antd'
 import React from 'react'
 import useProductUnits, {
   RowVM,
 } from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/use-product-units'
+import CoreAutoComplete from '@components/common/auto-complete'
 
 export default function Page() {
   const {
@@ -55,31 +56,37 @@ export default function Page() {
         >
           <Col flex="auto">
             <Row align="middle" gutter={16} wrap={false}>
-              <Col>
-                <div style={{ fontWeight: 600 }}>単位名</div>
-              </Col>
               <Col flex="360px">
-                <Form.Item name="name_lk" style={{ margin: 0 }}>
-                  <Input placeholder="部分一致" allowClear size="middle" />
+                <Form.Item
+                  name="name_lk"
+                  style={{ margin: 0 }}
+                  label={t('product_units.filters.label')}
+                >
+                  <CoreAutoComplete
+                    name={'name_lk'}
+                    resource={'product-units/suggestions'}
+                  />
                 </Form.Item>
               </Col>
               <Col>
-                <Space size="middle">
-                  <Button htmlType="submit" type="primary" size="middle">
-                    検索
-                  </Button>
-                  <Button
-                    htmlType="reset"
-                    onClick={() => {
-                      searchFormProps.form?.resetFields()
-                      setFilters([], 'replace')
-                    }}
-                    size="middle"
-                    type="default"
-                  >
-                    クリア
-                  </Button>
-                </Space>
+                <Form.Item label={<></>}>
+                  <Space size="middle">
+                    <Button htmlType="submit" type="primary" size="middle">
+                      {t('buttons.search')}
+                    </Button>
+                    <Button
+                      htmlType="reset"
+                      onClick={() => {
+                        searchFormProps.form?.resetFields()
+                        setFilters([], 'replace')
+                      }}
+                      size="middle"
+                      type="default"
+                    >
+                      {t('buttons.clear')}
+                    </Button>
+                  </Space>
+                </Form.Item>
               </Col>
             </Row>
           </Col>
