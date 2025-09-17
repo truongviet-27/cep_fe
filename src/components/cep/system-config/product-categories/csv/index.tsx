@@ -24,7 +24,11 @@ import { useMemo, useState } from 'react'
 
 const { Text, Paragraph } = Typography
 
-function CSVContainer({ name }: { name: string }) {
+function CSVContainer({
+  name,
+}: {
+  name: 'products' | 'category-products' | 'customers' | 'department'
+}) {
   const t = useTranslate()
   const methods = useForm()
   const { formProps } = methods

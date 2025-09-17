@@ -30,7 +30,9 @@ function ApproveDetail() {
               ),
             },
             {
-              title: <Title level={5}>{t('approve.approve')}</Title>,
+              title: (
+                <Title level={5}>{t('approve_routes.approve_routes')}</Title>
+              ),
             },
           ]}
           separator={<RightOutlined />}

@@ -1,5 +1,5 @@
 'use client'
-import ApproveAction from '@components/cep/merchandise/approve/action'
+import ApproveAction from '@components/cep/merchandise/approve-routes/action'
 import React from 'react'
 
 function Page() {

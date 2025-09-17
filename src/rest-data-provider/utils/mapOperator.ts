@@ -7,7 +7,7 @@ export const mapOperator = (operator: CrudOperators): string => {
     case 'lte':
       return `_${operator}`
     case 'contains':
-      return '_like'
+      return '_lk'
     default:
       return ''
   }

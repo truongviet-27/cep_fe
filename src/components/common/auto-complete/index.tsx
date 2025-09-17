@@ -1,68 +1,70 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDebounce } from '@hook/use-debounce'
-import { useList, useTranslate } from '@refinedev/core'
-import { Select } from 'antd'
-import { useEffect, useState } from 'react'
+import { useSelect } from '@refinedev/antd'
+import { useTranslate } from '@refinedev/core'
+import { Form, Select } from 'antd'
+import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 
 function CoreAutoComplete({
   name,
+  nameFilter,
+  filterPath,
   resource,
-  value,
   onChange,
   style,
+  labelPath = 'id',
+  valuePath = 'name',
 }: {
-  name: string
+  name: any
+  nameFilter: string
   resource: string
-  value?: any
   onChange?: (val: any) => void
   style?: React.CSSProperties
+  filterPath: any
+  labelPath: any
+  valuePath: any
 }) {
   const t = useTranslate()
-  const [searchValue, setSearchValue] = useState<string>()
-  const [options, setOptions] = useState<any>([])
 
-  const searchDebounce = useDebounce(searchValue, 500)
+  const form = useFormInstance()
 
-  const { data } = useList({
+  const filter = Form.useWatch(filterPath, form)
+
+  const { selectProps } = useSelect({
     resource: resource,
-    filters: [{ field: name, operator: 'contains', value: searchDebounce }],
+    optionValue: valuePath,
+    optionLabel: labelPath,
+    // filters: [{ field: nameFilter, operator: 'eq', value: filter }],
     queryOptions: {
-      enabled: !!searchDebounce,
+      enabled: !!filter,
     },
     pagination: {
       mode: 'off',
     },
+    onSearch: (value) => {
+      return [
+        {
+          field: 'q',
+          operator: 'null',
+          value,
+        },
+      ]
+    },
   })
 
-  useEffect(() => {
-    if (searchDebounce) {
-      setOptions(data?.data)
-    } else {
-      setOptions([] as any[])
-    }
-  }, [data, searchDebounce])
+  console.log(form.getFieldsValue(), selectProps.options, 'options')
 
   return (
     <Select
       style={style}
       showSearch
       placeholder={t('buttons.search')}
-      labelInValue
       filterOption={false}
-      onSearch={(value) => {
-        setSearchValue(value)
-      }}
       autoClearSearchValue
-      value={value}
-      onChange={onChange}
       allowClear
-      onClear={() => {
-        setOptions([] as any[])
-      }}
-      options={(options ?? []).map((item: any) => ({
-        value: item.id,
-        label: item.name,
-      }))}
+      onChange={onChange}
+      disabled={!filter}
+      {...selectProps}
     />
   )
 }
