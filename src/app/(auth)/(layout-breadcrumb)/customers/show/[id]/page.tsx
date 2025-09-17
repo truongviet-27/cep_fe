@@ -134,154 +134,144 @@ export default function CustomerShowPage() {
         </div>
       }
     >
-      <Collapse
-        defaultActiveKey={['1', '2', '3', '4']}
-        expandIconPosition="end"
-      >
-        <Panel
-          header={<Title level={5}>{t('customers.show.basic_info')}</Title>}
-          key="1"
-        >
-          <div className={'space-y-6'}>
-            <DetailItem label={t('customers.fields.code')}>
-              {record?.code}
-            </DetailItem>
+      <Space direction="vertical" size={20} style={{ width: '100%' }}>
+        <Collapse defaultActiveKey={['1']} expandIconPosition="end">
+          <Panel
+            header={<Title level={5}>{t('customers.show.basic_info')}</Title>}
+            key="1"
+          >
+            <div className={'space-y-6'}>
+              <DetailItem label={t('customers.fields.code')}>
+                {record?.code}
+              </DetailItem>
 
-            <DetailItem label={t('customers.fields.name')}>
-              {record?.name}
-            </DetailItem>
+              <DetailItem label={t('customers.fields.name')}>
+                {record?.name}
+              </DetailItem>
 
-            <DetailItem label={t('customers.fields.name_kana')}>
-              {record?.name_kana}
-            </DetailItem>
+              <DetailItem label={t('customers.fields.name_kana')}>
+                {record?.name_kana}
+              </DetailItem>
 
-            <DetailItem label={t('customers.fields.country')}>
-              {record?.country}
-            </DetailItem>
+              <DetailItem label={t('customers.fields.country')}>
+                {record?.country}
+              </DetailItem>
 
-            <DetailItem label={t('customers.fields.corporate_number')}>
-              {record?.corporate_number}
-            </DetailItem>
+              <DetailItem label={t('customers.fields.corporate_number')}>
+                {record?.corporate_number}
+              </DetailItem>
 
-            <DetailItem label={t('customers.fields.unit_price_rank')}>
-              {record?.unit_price_rank.rank}
-              <Text className="ml-4 text-gray-500">
-                {t('customers.show.last_confirmed_date')}:{' '}
-                {record?.unit_price_rank.date}
-              </Text>
-            </DetailItem>
+              <DetailItem label={t('customers.fields.unit_price_rank')}>
+                {record?.unit_price_rank.rank}
+                <Text className="ml-4 text-gray-500">
+                  {t('customers.show.last_confirmed_date')}:{' '}
+                  {record?.unit_price_rank.date}
+                </Text>
+              </DetailItem>
 
-            <DetailItem label={t('customers.fields.credit_rank')}>
-              {record?.credit_rank.rank}
-              <Text className="ml-4 text-gray-500">
-                {t('customers.show.last_confirmed_date')}:{' '}
-                {record?.credit_rank.date}
-              </Text>
-            </DetailItem>
+              <DetailItem label={t('customers.fields.credit_rank')}>
+                {record?.credit_rank.rank}
+                <Text className="ml-4 text-gray-500">
+                  {t('customers.show.last_confirmed_date')}:{' '}
+                  {record?.credit_rank.date}
+                </Text>
+              </DetailItem>
 
-            <DetailItem label={t('customers.fields.anti_social_rank')}>
-              {record?.anti_social_rank.rank}
-              <Text className="ml-4 text-gray-500">
-                {t('customers.show.last_confirmed_date')}:{' '}
-                {record?.anti_social_rank.date}
-              </Text>
-            </DetailItem>
-          </div>
-        </Panel>
-      </Collapse>
+              <DetailItem label={t('customers.fields.anti_social_rank')}>
+                {record?.anti_social_rank.rank}
+                <Text className="ml-4 text-gray-500">
+                  {t('customers.show.last_confirmed_date')}:{' '}
+                  {record?.anti_social_rank.date}
+                </Text>
+              </DetailItem>
+            </div>
+          </Panel>
+        </Collapse>
 
-      <Collapse
-        defaultActiveKey={['1', '2', '3', '4']}
-        expandIconPosition="end"
-      >
-        <Panel
-          header={
-            <Title level={5}>{t('customers.show.address_contact')}</Title>
-          }
-          key="2"
-        >
-          <Descriptions bordered column={2}>
-            <Descriptions.Item label={t('customers.show.postal_code')}>
-              {record?.postal_code}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.address')}>
-              {record?.address}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.building_name')}>
-              {record?.building_name}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.phone')}>
-              {record?.phone}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.fax')}>
-              {record?.fax}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.email')}>
-              {record?.email}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.listing_status')}>
-              {record?.listing_status}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.industry')}>
-              {record?.industry}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.establishment_date')}>
-              {record?.establishment_date}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.fields.department')}>
-              {record?.departments.map((dep) => (
-                <Tag key={dep}>{dep}</Tag>
-              ))}
-            </Descriptions.Item>
-          </Descriptions>
-        </Panel>
-      </Collapse>
+        <Collapse defaultActiveKey={['1']} expandIconPosition="end">
+          <Panel
+            header={
+              <Title level={5}>{t('customers.show.address_contact')}</Title>
+            }
+            key="1"
+          >
+            <Descriptions bordered column={2}>
+              <Descriptions.Item label={t('customers.show.postal_code')}>
+                {record?.postal_code}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.address')}>
+                {record?.address}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.building_name')}>
+                {record?.building_name}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.phone')}>
+                {record?.phone}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.fax')}>
+                {record?.fax}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.email')}>
+                {record?.email}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.listing_status')}>
+                {record?.listing_status}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.industry')}>
+                {record?.industry}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.establishment_date')}>
+                {record?.establishment_date}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.fields.department')}>
+                {record?.departments.map((dep) => (
+                  <Tag key={dep}>{dep}</Tag>
+                ))}
+              </Descriptions.Item>
+            </Descriptions>
+          </Panel>
+        </Collapse>
 
-      <Collapse
-        defaultActiveKey={['1', '2', '3', '4']}
-        expandIconPosition="end"
-      >
-        <Panel
-          header={
-            <Title level={5}>{t('customers.show.accounting_contact')}</Title>
-          }
-          key="3"
-        >
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label={t('customers.show.contact_name')}>
-              {record?.accounting_contact.name}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.contact_department')}>
-              {record?.accounting_contact.department}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.contact_email')}>
-              {record?.accounting_contact.email}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('customers.show.contact_phone')}>
-              {record?.accounting_contact.phone}
-            </Descriptions.Item>
-          </Descriptions>
-        </Panel>
-      </Collapse>
+        <Collapse defaultActiveKey={['1']} expandIconPosition="end">
+          <Panel
+            header={
+              <Title level={5}>{t('customers.show.accounting_contact')}</Title>
+            }
+            key="1"
+          >
+            <Descriptions bordered column={1}>
+              <Descriptions.Item label={t('customers.show.contact_name')}>
+                {record?.accounting_contact.name}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.contact_department')}>
+                {record?.accounting_contact.department}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.contact_email')}>
+                {record?.accounting_contact.email}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('customers.show.contact_phone')}>
+                {record?.accounting_contact.phone}
+              </Descriptions.Item>
+            </Descriptions>
+          </Panel>
+        </Collapse>
 
-      <Collapse
-        defaultActiveKey={['1', '2', '3', '4']}
-        expandIconPosition="end"
-      >
-        <Panel
-          header={
-            <Title level={5}>{t('customers.show.corporate_research')}</Title>
-          }
-          key="4"
-        >
-          <CommonTable
-            dataSource={record?.corporate_research}
-            columns={researchColumns}
-            pagination={false}
-            rowKey="key"
-          />
-        </Panel>
-      </Collapse>
+        <Collapse defaultActiveKey={['1']} expandIconPosition="end">
+          <Panel
+            header={
+              <Title level={5}>{t('customers.show.corporate_research')}</Title>
+            }
+            key="1"
+          >
+            <CommonTable
+              dataSource={record?.corporate_research}
+              columns={researchColumns}
+              pagination={false}
+              rowKey="key"
+            />
+          </Panel>
+        </Collapse>
+      </Space>
     </Show>
   )
 }

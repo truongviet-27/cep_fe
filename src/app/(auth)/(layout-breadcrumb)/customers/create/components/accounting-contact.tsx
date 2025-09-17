@@ -1,0 +1,73 @@
+import { DownOutlined } from '@ant-design/icons'
+import styles from '@app/(auth)/(layout-breadcrumb)/customers/create/styles.module.css'
+import type { useCustomerCreateForm } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer'
+import boldText from '@utility/bold-text'
+import { Button, Collapse, Form, Input, Typography } from 'antd'
+import React from 'react'
+
+const { Title } = Typography
+const { Panel } = Collapse
+
+function AccountingContact(props: ReturnType<typeof useCustomerCreateForm>) {
+  const { t, rule, handleCopyContact } = props
+
+  return (
+    <Collapse
+      expandIconPosition="end"
+      defaultActiveKey={['1']}
+      className={`mb-4 ${styles.formPanel}`}
+      expandIcon={({ isActive }) => (
+        <DownOutlined
+          style={{ transition: '0.3s' }}
+          rotate={isActive ? 0 : 180}
+        />
+      )}
+    >
+      <Panel
+        header={
+          <Title level={5}>{t('customers.show.accounting_contact')}</Title>
+        }
+        key="1"
+        extra={
+          <Button type="link" onClick={handleCopyContact}>
+            {t('buttons.copy_contact_info')}
+          </Button>
+        }
+      >
+        <Form.Item
+          label={boldText(t('customers.show.contact_name'))}
+          name="person_in_charge_name"
+          rules={[rule]}
+          required
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+        <Form.Item
+          label={boldText(t('customers.show.contact_department'))}
+          name="person_in_charge_department"
+          rules={[rule]}
+          required
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>{' '}
+        <Form.Item
+          label={boldText(t('customers.show.contact_email'))}
+          name="person_in_charge_mail"
+          rules={[rule]}
+          required
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+        <Form.Item
+          label={boldText(t('customers.show.contact_phone'))}
+          name="person_in_charge_phone"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+      </Panel>
+    </Collapse>
+  )
+}
+
+export default AccountingContact
