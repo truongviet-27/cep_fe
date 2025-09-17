@@ -9,6 +9,7 @@ export default function boldText(text: string, color: string = BLACK) {
       strong
       style={{
         color: color,
+        fontWeight: 900,
       }}
     >
       {text}

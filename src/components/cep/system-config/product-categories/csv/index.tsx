@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import { useForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Alert,
@@ -20,32 +20,56 @@ import {
 } from 'antd'
 import Dragger from 'antd/es/upload/Dragger'
 import Title from 'antd/lib/typography/Title'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const { Text, Paragraph } = Typography
 
 function CSVContainer({
   name,
 }: {
-  name: 'products' | 'category-products' | 'customers' | 'department'
+  name: 'PRODUCTS' | 'CATEGORY-PRODUCTS' | 'CUSTOMERS' | 'DEPARTMENTS'
 }) {
   const t = useTranslate()
   const methods = useForm()
-  const { formProps } = methods
+  const { formProps, form } = methods
 
   const [isResult, setIsResult] = useState(false)
 
   const apiUrl = useApiUrl()
 
-  const { data } = useCustom({
-    method: 'get',
-    url: `${apiUrl}/${name}/presigned-url`,
-    queryOptions: {
-      enabled: isResult,
-    },
-  })
+  const { mutate } = useCustomMutation()
+  const { mutate: mutate2 } = useCustomMutation()
 
-  console.log(data?.data, 'xxxxxxxxxxxx')
+  useEffect(() => {
+    if (isResult) {
+      mutate(
+        {
+          method: 'post',
+          url: `${apiUrl}/${name}/presigned-url`,
+          values: {
+            file_name: form.getFieldValue('file')?.file?.name,
+            content_type: form.getFieldValue('file')?.file?.type,
+            prefix: 'imports',
+            expiration_minutes: 60,
+          },
+        },
+        {
+          onSuccess: (data) => {
+            mutate2({
+              method: 'post',
+              url: `${data.data.presigned_url}`,
+              values: {
+                file_name: form.getFieldValue('file')?.file,
+                content_type: form.getFieldValue('file')?.file?.type,
+                prefix: 'imports',
+                expiration_minutes: 60,
+              },
+            })
+          },
+        },
+      )
+    }
+  }, [isResult])
 
   const dataSource = useMemo(() => {
     return [
@@ -161,6 +185,9 @@ function CSVContainer({
                 name="file"
                 maxCount={1}
                 beforeUpload={() => false}
+                onRemove={() => {
+                  form.setFields([{ name: 'file', errors: [], value: [] }])
+                }}
               >
                 <FileAddOutlined
                   style={{ fontSize: 40, color: '#999', marginBottom: 12 }}
@@ -209,6 +236,9 @@ function CSVContainer({
                 onClick={() => {
                   setIsResult(true)
                 }}
+                disabled={form
+                  .getFieldsError()
+                  .some(({ errors }) => errors.length > 0)}
               >
                 {t('product_categories.csv.buttons.nextStep')}
               </Button>

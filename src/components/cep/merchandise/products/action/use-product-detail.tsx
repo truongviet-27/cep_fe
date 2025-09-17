@@ -70,7 +70,6 @@ function useProductDetail() {
     resource: 'ranks',
   })
 
-  console.log(tableQuery.data?.data, 'dataRanks')
   const name_lk_value = useDebounce(getFieldValue('name_lk'), 500)
 
   const { data: dataProductCategories } = useList<Category>({
@@ -108,10 +107,7 @@ function useProductDetail() {
     [dataProductCategories],
   )
 
-  const onSubmit = () => {
-    console.log('xxxxxxxxxxxxxxx')
-  }
-
+  const onSubmit = () => {}
   return [
     {
       methods,

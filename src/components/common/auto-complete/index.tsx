@@ -6,23 +6,22 @@ import { Form, Select } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 
 function CoreAutoComplete({
-  name,
   nameFilter,
   filterPath,
   resource,
   onChange,
   style,
-  labelPath = 'id',
-  valuePath = 'name',
+  labelPath = 'name',
+  valuePath = 'id',
+  ...rest
 }: {
-  name: any
   nameFilter: string
   resource: string
   onChange?: (val: any) => void
   style?: React.CSSProperties
   filterPath: any
-  labelPath: any
-  valuePath: any
+  labelPath?: any
+  valuePath?: any
 }) {
   const t = useTranslate()
 
@@ -34,7 +33,9 @@ function CoreAutoComplete({
     resource: resource,
     optionValue: valuePath,
     optionLabel: labelPath,
-    // filters: [{ field: nameFilter, operator: 'eq', value: filter }],
+    // filters: filter
+    //   ? [{ field: nameFilter, operator: 'eq', value: filter }]
+    //   : [],
     queryOptions: {
       enabled: !!filter,
     },
@@ -45,14 +46,12 @@ function CoreAutoComplete({
       return [
         {
           field: 'q',
-          operator: 'null',
+          operator: 'eq',
           value,
         },
       ]
     },
   })
-
-  console.log(form.getFieldsValue(), selectProps.options, 'options')
 
   return (
     <Select
@@ -65,6 +64,7 @@ function CoreAutoComplete({
       onChange={onChange}
       disabled={!filter}
       {...selectProps}
+      {...rest}
     />
   )
 }

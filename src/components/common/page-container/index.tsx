@@ -28,6 +28,7 @@ const PageContainer = ({
           <Title
             style={{
               color: PRIMARY,
+              margin: '10px 0 20px 0',
             }}
             level={5}
           >

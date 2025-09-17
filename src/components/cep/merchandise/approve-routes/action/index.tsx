@@ -40,15 +40,18 @@ type Form = {
   id: number
   code: string
   name: string
-  department: { label: string; value: number }
+  department: number
   status: 'active' | 'inactive'
   steps: {
     name: string
     step_order: number
     is_multi_appover: boolean
     employees: {
-      department_id: number
-      employee_id: number
+      employee_id: number | null
+      code: string
+      name: string
+      department_id: number | null
+      department: string
     }[]
   }[]
 }
@@ -63,8 +66,6 @@ function ApproveAction() {
   const go = useGo()
 
   const isUpdate = !!params?.id
-
-  console.log(params?.id, 'params?.id')
 
   const methods = useForm<Form>({
     resource: 'approve-routes',
@@ -121,26 +122,7 @@ function ApproveAction() {
     if (query?.data?.data) {
       setFieldsValue({
         ...query?.data?.data,
-        department_id: {
-          value: query.data.data.department?.id,
-          label: query.data.data.department?.name,
-        },
-        steps: query?.data?.data.steps.map((item: any, index: number) => ({
-          ...item,
-          employees: item.employees.map((item: any) => ({
-            ...item,
-            // employee: {
-            //   value: item.employee_id,
-            //   label: item.name,
-            // },
-            // department: {
-            //   value: item.department_id,
-            //   label: item.department,
-            // },
-            employee: item.employee_id,
-            department: item.department_id,
-          })),
-        })),
+        department: query.data.data.department?.id,
       })
     }
   }, [query?.data?.data])
@@ -151,16 +133,13 @@ function ApproveAction() {
         {
           resource: resource?.name,
           values: {
-            id: values.id,
-            code: values.code,
-            name: values.name,
-            status: values.status,
+            ...values,
             department_id: values.department,
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
-                department_id: item.department,
-                id: item.employee,
+                department_id: item.department_id,
+                id: item.employee_id,
               })),
               step_order: index + 1,
             })),
@@ -180,16 +159,13 @@ function ApproveAction() {
         {
           resource: resource?.name,
           values: {
-            id: values.id,
-            code: values.code,
-            name: values.name,
-            status: values.status,
+            ...values,
             department_id: values.department,
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
-                department_id: item.department,
-                id: item.employee,
+                department_id: item.department_id,
+                id: item.employee_id,
               })),
               step_order: index + 1,
             })),
@@ -241,7 +217,7 @@ function ApproveAction() {
           initialValues={{
             code: '',
             name: '',
-            department: null,
+            department_id: null,
             status: 'active',
             steps: [
               {
@@ -499,10 +475,7 @@ function ApproveAction() {
                                               required
                                             >
                                               <CoreAutoComplete
-                                                name={[item2.name, 'employee']}
                                                 nameFilter="department_id"
-                                                labelPath="name"
-                                                valuePath="id"
                                                 filterPath={[
                                                   'steps',
                                                   item.name,
@@ -511,9 +484,7 @@ function ApproveAction() {
                                                   'department_id',
                                                 ]}
                                                 resource="employees"
-                                                style={{
-                                                  width: 200,
-                                                }}
+                                                style={{ width: 200 }}
                                               />
                                             </Form.Item>
                                           </Col>
@@ -592,8 +563,24 @@ function ApproveAction() {
           {isUpdate && (
             <ShowMoreInfo
               descriptions={[
-                { title: '作成者', value: '1231' },
-                { title: '更新者', value: '1231' },
+                {
+                  title: '作成者',
+                  value: (
+                    <Space>
+                      {query.data?.data?.author?.name}
+                      {query.data?.data?.create_at}
+                    </Space>
+                  ),
+                },
+                {
+                  title: '更新者',
+                  value: (
+                    <Space>
+                      {query.data?.data?.editor?.name}
+                      {query.data?.data?.update_at}
+                    </Space>
+                  ),
+                },
               ]}
             />
           )}
