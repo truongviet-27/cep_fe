@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import { RightOutlined, WarningOutlined } from '@ant-design/icons'
@@ -9,6 +10,7 @@ import { EditButton, useSelect } from '@refinedev/antd'
 import { useResource, useShow, useTranslate } from '@refinedev/core'
 import type { Employee } from '@sdk/hey-api'
 import { DARK_RED, GREY, PRIMARY, WARNING } from '@utility/color'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -77,16 +79,16 @@ export default function EmployeeShow() {
           descriptions={[
             {
               title: t('common.created_by'),
-              value: `${employeeData?.created_by?.name ?? '---'} ${dayjs(
-                employeeData?.created_by?.date,
-              ).format('YYYY/MM/DD HH:mm')}`,
+              value: `${(employeeData as any)?.created_by?.name ?? '---'} ${dayjs(
+                (employeeData as any)?.created_by?.date,
+              ).format(FORMAT_DATE_TIME)}`,
             },
             {
               title: t('common.updated_by'),
-              value: employeeData?.updated_by
-                ? `${employeeData.updated_by.name} ${dayjs(
-                    employeeData.updated_by.date,
-                  ).format('YYYY/MM/DD HH:mm')}`
+              value: (employeeData as any)?.updated_by
+                ? `${(employeeData as any).updated_by.name} ${dayjs(
+                    (employeeData as any).updated_by.date,
+                  ).format(FORMAT_DATE_TIME)}`
                 : '---',
             },
           ]}

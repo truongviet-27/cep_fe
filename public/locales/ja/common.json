@@ -40,11 +40,14 @@
     "new_create": "新規作成",
     "csv_bulk_register": "CSV一括登録",
     "suspend": "停止",
-    "resume": "開始"
+    "resume": "開始",
+    "add_delivery_destination": "納品先追加",
+    "copy_contact_info": "取引先情報をコピーする"
   },
   "placeholders": {
     "partial_match": "部分一致",
-    "select": "選択してください"
+    "select": "選択してください",
+    "file_url": "ファイルのURLを入力"
   },
   "notifications": {
     "success": "成功しました",
@@ -76,10 +79,44 @@
     "list": {
       "list": "取引先一覧"
     },
+    "create": {
+      "create": "取引先新規作成"
+    },
+    "edit": {
+      "edit": "取引先編集"
+    },
+    "modal": {
+      "title": "法人番号取得",
+      "name": "名称",
+      "address": "所在地",
+      "corporate_number": "法人番号"
+    },
     "show": {
       "show": "取引先編集",
       "basic_info": "基本情報",
-      "address_contact": "住所・連絡先"
+      "address_contact": "住所・連絡先",
+      "delivery_destinations": "納品先情報",
+      "postal_code": "郵便番号",
+      "address": "住所",
+      "building_name": "建物名",
+      "phone": "電話番号",
+      "fax": "FAX番号",
+      "listing_classification": "上場区分",
+      "industry": "業種",
+      "date_of_establishment": "設立年月日",
+      "department_in_charge": "担当部署",
+      "contact_name": "担当者名",
+      "contact_department": "担当者部署",
+      "contact_email": "担当者メール",
+      "contact_phone": "担当者電話番号",
+      "accounting_contact": "経理者情報"
+    },
+    "research": {
+      "document_name": "資料名",
+      "judgement": "判定",
+      "file": "ファイル",
+      "updated_by": "登録者",
+      "last_updated": "最終更新日"
     },
     "fields": {
       "code": "取引先コード",
@@ -94,7 +131,20 @@
       "suspension_date": "停止日",
       "actions": "操作",
       "name_kana": "取引先名（カナ)",
-      "corporate_number": "法人番号"
+      "corporate_number": "法人番号",
+      "company_classification": "会社分類"
+    },
+    "delivery": {
+      "code": "納品先コード",
+      "name": "納品先名",
+      "address": "住所",
+      "contact_person": "担当者",
+      "phone": "電話番号",
+      "email": "メールアドレス"
+    },
+    "enums": {
+      "corporation": "法人",
+      "individual": "個人"
     },
     "filters": {
       "code_name": "取引先コード・取引先名",
@@ -217,29 +267,6 @@
   },
   "approve": {
     "approve": "承認する"
-  },
-  "ranks": {
-    "ranks": "単価ランク一覧",
-    "list": {
-      "list": "単価ランク一覧",
-      "filters": {
-        "search_label": "単価ランクコード・単価ランク名",
-        "search_placeholder": "部分一致"
-      }
-    },
-    "create": {
-      "create": "新しい単価ランクを追加"
-    },
-    "edit": {
-      "edit": "単価ランク編集"
-    },
-    "fields": {
-      "code": "単価ランクコード",
-      "name": "単価ランク名",
-      "rate": "掛け率（％)",
-      "customer": "顧客数",
-      "remarks": "備考"
-    }
   },
   "employees": {
     "employees": "社員",
@@ -612,7 +639,8 @@
       "create_new": "新規登録",
       "back": "戻る",
       "edit": "編集",
-      "delete": "削除"
+      "delete": "削除",
+      "clear_all_research": "調査情報クリア"
     },
     "columns": {
       "unit_name": "単位名",
