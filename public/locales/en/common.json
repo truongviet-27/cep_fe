@@ -168,7 +168,7 @@
       "columns": {
         "project_code": "Project Code",
         "project_name": "Project Name",
-        "customer": "Customer",
+        "customers": "Customer",
         "registrant": "Registrant",
         "last_updated": "Last Updated"
       }
@@ -189,10 +189,10 @@
           "required": "Please enter the project name!",
           "placeholder": "Enter project name"
         },
-        "customer": {
+        "customers": {
           "label": "Customer",
-          "required": "Please select a customer!",
-          "placeholder": "Search by customer code or name"
+          "required": "Please select a customers!",
+          "placeholder": "Search by customers code or name"
         },
         "remarks": {
           "label": "Remarks",
@@ -207,7 +207,7 @@
       "fields": {
         "project_code": "Project Code",
         "project_name": "Project Name",
-        "customer": "Customer",
+        "customers": "Customer",
         "estimate_number": "Estimate Number",
         "remarks": "Remarks",
         "registrant": "Registrant",
