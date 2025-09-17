@@ -47,7 +47,7 @@ function TenantSwitchingModal({
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[24, 24]} style={{ width: '100%' }}>
           <Col md={16}>
-            <Form.Item name="customers" label={t('filters.label')}>
+            <Form.Item name="customer" label={t('filters.label')}>
               <Input
                 placeholder={t('filters.placeholder')}
                 prefix={<SearchOutlined />}

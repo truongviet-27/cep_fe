@@ -9,7 +9,6 @@ import type { IDepartments } from '@interfaces/departments'
 import { DeleteButton, EditButton } from '@refinedev/antd'
 import { useShow, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -47,14 +46,14 @@ export default function Page() {
                 title: t('common.created_by'),
                 value: `${departmentData?.author?.name ?? '---'} ${dayjs(
                   departmentData?.created_at,
-                ).format(FORMAT_DATE_TIME)}`,
+                ).format('YYYY/MM/DD HH:mm')}`,
               },
               {
                 title: t('common.updated_by'),
                 value: departmentData?.editor?.name
                   ? `${departmentData.editor.name} ${dayjs(
                       departmentData.updated_at,
-                    ).format(FORMAT_DATE_TIME)}`
+                    ).format('YYYY/MM/DD HH:mm')}`
                   : '---',
               },
             ]}

@@ -10,7 +10,6 @@ import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 import {
   Button,
   Col,
@@ -120,7 +119,7 @@ export default function EmployeeEdit() {
                 '---' +
                   ' ' +
                   dayjs(employeeData?.created_by?.date).format(
-                    FORMAT_DATE_TIME,
+                    'YYYY/MM/DD HH:mm',
                   ),
             },
             {
@@ -130,7 +129,7 @@ export default function EmployeeEdit() {
                 '---' +
                   ' ' +
                   dayjs(employeeData?.updated_by?.date).format(
-                    FORMAT_DATE_TIME,
+                    'YYYY/MM/DD HH:mm',
                   ),
             },
           ]}

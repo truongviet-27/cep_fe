@@ -9,7 +9,6 @@ import { DeleteButton, useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
@@ -104,7 +103,7 @@ export default function EmployeeEdit() {
                   employeeData?.author?.name ??
                   '---' +
                     ' ' +
-                    dayjs(employeeData?.created_at).format(FORMAT_DATE_TIME),
+                    dayjs(employeeData?.created_at).format('YYYY/MM/DD HH:mm'),
               },
               {
                 title: t('common.updated_by'),
@@ -112,7 +111,7 @@ export default function EmployeeEdit() {
                   employeeData?.editor?.name ??
                   '---' +
                     ' ' +
-                    dayjs(employeeData?.updated_at).format(FORMAT_DATE_TIME),
+                    dayjs(employeeData?.updated_at).format('YYYY/MM/DD HH:mm'),
               },
             ]}
           />
@@ -200,7 +199,7 @@ export default function EmployeeEdit() {
           rules={nameRules}
         >
           <Input
-            placeholder={t('departments.create.name_placeholder')}
+            placeholder="例）営業本部 / 営業部 / 第一課"
             size="middle"
             style={{ maxWidth: 560 }}
           />
