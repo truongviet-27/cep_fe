@@ -9,6 +9,7 @@ import {
   DeleteButton,
   EditButton,
   RefreshButton,
+  ShowButton,
   useModalForm,
   useTable,
 } from '@refinedev/antd'
@@ -20,6 +21,8 @@ import React from 'react'
 import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
+import { CreateModal } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
+import { RankModalView } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/show/modal'
 
 const { Title, Text } = Typography
 
@@ -40,14 +43,26 @@ export default function Page() {
     { dataIndex: 'code', title: t('ranks.fields.code') },
     { dataIndex: 'name', title: t('ranks.fields.name') },
     { dataIndex: 'rate', title: t('ranks.fields.rate') },
-    { dataIndex: 'customer', title: t('ranks.fields.customer') },
+    {
+      dataIndex: 'number_of_customers',
+      title: t('ranks.fields.number_of_customers'),
+    },
     { dataIndex: 'note', title: t('ranks.fields.remarks') },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
       render: (_: any, record: BaseRecord) => (
         <Space>
-          <EditButton hideText size="small" onClick={() => show(record.id)} />
+          <ShowButton
+            hideText
+            size="small"
+            onClick={() => modalShow.show(record.id)}
+          />
+          <EditButton
+            hideText
+            size="small"
+            onClick={() => modalEdit.show(record.id)}
+          />
           <DeleteButton hideText size="small" recordItemId={record.id} />
         </Space>
       ),
@@ -69,17 +84,26 @@ export default function Page() {
 
   const { resource } = useResource()
 
-  const modalFormProps = useModalForm({
+  const modalShow = useModalForm({
+    action: 'clone',
+    resource: resource?.name,
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+  })
+
+  const modalEdit = useModalForm({
     action: 'edit',
     resource: resource?.name,
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
-    defaultFormValues: {
-      hash_dash: true,
-    },
   })
 
-  const { show, close, open } = modalFormProps
+  const modalCreate = useModalForm({
+    action: 'create',
+    resource: resource?.name,
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+  })
 
   return (
     <List
@@ -119,7 +143,9 @@ export default function Page() {
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
-            <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
+            <CreateButton icon={null} onClick={() => modalCreate.show()}>
+              {t('buttons.create_new')}
+            </CreateButton>
           </Col>
         </Row>
       </Form>
@@ -129,13 +155,27 @@ export default function Page() {
       </div>
 
       <Modal
-        open={open}
-        onCancel={close}
+        {...modalEdit}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'70vh'}
       >
-        <RankModalEdit modalProps={modalFormProps} />
+        <RankModalEdit modalProps={modalEdit} />
+      </Modal>
+
+      <Modal
+        {...modalCreate}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+      >
+        <CreateModal modalProps={modalCreate} />
+      </Modal>
+
+      <Modal
+        {...modalShow}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+      >
+        <RankModalView modalProps={modalShow} />
       </Modal>
     </List>
   )

@@ -1,12 +1,12 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Divider, Form, Input, Select, Space, Tag } from 'antd'
+import { Button, Divider, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
-import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
 import ShowMoreInfo from '@components/common/show-more-info'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 
 type Props = {
   modalProps: any
@@ -14,13 +14,10 @@ type Props = {
 
 export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
   const t = useTranslate()
-  const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
+  const { close, formProps, queryResult, saveButtonProps, formLoading } =
     modalProps
 
   const record = queryResult?.data?.data
-
-  const issueMethod = Form.useWatch('issue_method', formProps.form)
-  const isManual = issueMethod === 'manual'
 
   return (
     <Edit
@@ -35,7 +32,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
         {...formProps}
         initialValues={record}
         layout="horizontal"
-        labelCol={{ span: 6 }}
+        labelCol={{ span: 10 }}
         labelAlign="left"
         colon={false}
       >
@@ -65,32 +62,10 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
 
         <Form.Item
           label={t('ranks.fields.remarks')}
-          name="remarks"
+          name="note"
           rules={[{ required: true }]}
         >
           <Input multiple />
-        </Form.Item>
-
-        <Form.Item
-          label={t('ranks.fields.serial_length')}
-          name="serial_length"
-          rules={[{ required: true }]}
-        >
-          <Select disabled={isManual}>
-            {[...Array(10)].map((_, i) => (
-              <Select.Option key={i + 1} value={i + 1}>
-                {i + 1}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label={t('ranks.fields.total')} name="total">
-          {record?.total}
-        </Form.Item>
-
-        <Form.Item label={t('ranks.fields.preview_code')} name="preview_code">
-          <Tag>{buildCodePreviewFromSetting(form.getFieldsValue())}</Tag>
         </Form.Item>
 
         <Divider />
@@ -103,7 +78,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.author?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
+                  dayjs(record?.created_at).format(FORMAT_DATE_TIME),
             },
             {
               title: t('common.updated_by'),
@@ -111,7 +86,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.editor?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
+                  dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
             },
           ]}
         />
@@ -120,7 +95,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
       <Space className={'flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
         <Button {...saveButtonProps} type="primary">
-          保存
+          {t('buttons.save')}
         </Button>
       </Space>
     </Edit>

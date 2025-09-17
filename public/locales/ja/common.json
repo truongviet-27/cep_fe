@@ -64,7 +64,7 @@
     "estimates": "見積"
   },
   "customers": {
-    "customers": "顧客"
+    "customers": "取引先"
   },
 
   "products": {
@@ -174,7 +174,7 @@
       "code": "単価ランクコード",
       "name": "単価ランク名",
       "rate": "掛け率（％)",
-      "customer": "顧客数",
+      "number_of_customers": "顧客数",
       "remarks": "備考"
     }
   },
@@ -401,7 +401,7 @@
       "columns": {
         "project_code": "案件コード",
         "project_name": "案件名",
-        "customer": "取引先",
+        "customers": "取引先",
         "registrant": "登録者",
         "last_updated": "最終更新日"
       }
@@ -422,7 +422,7 @@
           "required": "案件名を入力してください！",
           "placeholder": "案件名を入力"
         },
-        "customer": {
+        "customers": {
           "label": "取引先",
           "required": "取引先を選択してください！",
           "placeholder": "取引先コード・取引先名で検索"
@@ -440,7 +440,7 @@
       "fields": {
         "project_code": "案件コード",
         "project_name": "案件名",
-        "customer": "取引先",
+        "customers": "取引先",
         "estimate_number": "見積番号",
         "remarks": "備考",
         "registrant": "登録者",
