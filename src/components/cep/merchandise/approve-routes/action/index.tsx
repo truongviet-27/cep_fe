@@ -654,8 +654,10 @@ function ApproveAction() {
               marginTop: 40,
             }}
           >
-            <DeleteButton icon={null} size={'small'} />
             <Space>
+              {isUpdate && <DeleteButton icon={null} size={'small'} />}
+            </Space>
+            <Space className="items-end">
               <Button
                 type="default"
                 onClick={() => {
