@@ -658,6 +658,55 @@ export type CustomerUpdateRequest = {
 }
 
 /**
+ * Customer details with rank information
+ */
+export type SimpleCustomer = {
+  id?: number
+  customer_code?: string
+  name?: string
+  country?: string
+  person_in_charge_department?: string
+  price_rank_code?: string
+  credit_rank?: string | null
+  credit_rank_update_at?: string | null
+  anti_social_rank?: string | null
+  anti_social_rank_update_at?: string | null
+  created_at?: string
+  deleted_at?: string | null
+}
+
+/**
+ * Pagination links
+ */
+export type CustomerLinks = {
+  first?: string
+  last?: string
+  prev?: string | null
+  next?: string | null
+}
+
+/**
+ * Paginated response for customers
+ */
+export type CustomersPaginatedResponse = {
+  /**
+   * Paginated data and links for customers
+   */
+  data?: {
+    /**
+     * Array of customers
+     */
+    items?: Array<SimpleCustomer>
+    meta?: Meta
+    links?: CustomerLinks
+  }
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
  * User Model
  * Represents a user with ID and name.
  */
@@ -2466,6 +2515,71 @@ export type CodeIssueSettingControllerShowByCodeResponses = {
 export type CodeIssueSettingControllerShowByCodeResponse =
   CodeIssueSettingControllerShowByCodeResponses[keyof CodeIssueSettingControllerShowByCodeResponses]
 
+export type CustomerControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Page number
+     */
+    _page?: number
+    /**
+     * Number of items per page (max 100)
+     */
+    _per_page?: number
+    /**
+     * Search by customer name or code
+     */
+    q?: string
+    /**
+     * Filter by country
+     */
+    country?: string
+    /**
+     * Search by person in charge department
+     */
+    person_in_charge_department_lk?: string
+    /**
+     * Filter by price rank ID
+     */
+    price_rank_id?: number
+    /**
+     * Filter by credit rank
+     */
+    credit_rank?: 'A' | 'B' | 'C' | 'D' | 'E'
+    /**
+     * Filter by anti-social rank
+     */
+    anti_social_rank?: 'O' | 'T' | 'X'
+    /**
+     * Type of date to filter
+     */
+    search_date_type?:
+      | 'created_at'
+      | 'credit_rank_updated_at'
+      | 'anti_social_rank_updated_at'
+    /**
+     * Start date for filtering (e.g., Y-m-d)
+     */
+    date_start?: string
+    /**
+     * End date for filtering (e.g., Y-m-d)
+     */
+    date_end?: string
+  }
+  url: '/api/v1/customers'
+}
+
+export type CustomerControllerIndexResponses = {
+  /**
+   * Customers retrieved successfully
+   */
+  200: CustomersPaginatedResponse
+}
+
+export type CustomerControllerIndexResponse =
+  CustomerControllerIndexResponses[keyof CustomerControllerIndexResponses]
+
 export type CustomerControllerStoreData = {
   body: CustomerStoreRequest
   path?: never
@@ -2500,6 +2614,48 @@ export type CustomerControllerStoreResponses = {
 
 export type CustomerControllerStoreResponse =
   CustomerControllerStoreResponses[keyof CustomerControllerStoreResponses]
+
+export type CustomerControllerDestroyData = {
+  body?: never
+  path: {
+    /**
+     * Customer ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/customers/{id}'
+}
+
+export type CustomerControllerDestroyErrors = {
+  /**
+   * Invalid ID format or value
+   */
+  400: {
+    message?: string
+  }
+  /**
+   * Customer not found
+   */
+  404: {
+    message?: string
+  }
+}
+
+export type CustomerControllerDestroyError =
+  CustomerControllerDestroyErrors[keyof CustomerControllerDestroyErrors]
+
+export type CustomerControllerDestroyResponses = {
+  /**
+   * Customer deleted successfully
+   */
+  200: {
+    message?: string
+  }
+}
+
+export type CustomerControllerDestroyResponse =
+  CustomerControllerDestroyResponses[keyof CustomerControllerDestroyResponses]
 
 export type CustomerControllerShowData = {
   body?: never
@@ -2589,6 +2745,51 @@ export type CustomerControllerUpdateResponses = {
 
 export type CustomerControllerUpdateResponse =
   CustomerControllerUpdateResponses[keyof CustomerControllerUpdateResponses]
+
+export type CustomerControllerRestoreData = {
+  body?: never
+  path: {
+    /**
+     * Customer ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/customers/{id}/restore'
+}
+
+export type CustomerControllerRestoreErrors = {
+  /**
+   * Invalid ID format or value
+   */
+  400: {
+    message?: string
+  }
+  /**
+   * Customer not found or not soft deleted
+   */
+  404: {
+    message?: string
+  }
+}
+
+export type CustomerControllerRestoreError =
+  CustomerControllerRestoreErrors[keyof CustomerControllerRestoreErrors]
+
+export type CustomerControllerRestoreResponses = {
+  /**
+   * Customer restored successfully
+   */
+  200: {
+    message?: string
+    data?: {
+      [key: string]: unknown
+    } | null
+  }
+}
+
+export type CustomerControllerRestoreResponse =
+  CustomerControllerRestoreResponses[keyof CustomerControllerRestoreResponses]
 
 export type DepartmentControllerIndexData = {
   body?: never
