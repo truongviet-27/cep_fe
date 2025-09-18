@@ -81,7 +81,7 @@ function Approve() {
       {
         key: 'code',
         dataIndex: 'code',
-        title: 'ルートコード',
+        title: t('approve_routes.table.routeCode'),
         render: (value, record) => {
           return <Link to={`/approve-routes/show/${record.id}`}>{value}</Link>
         },
@@ -89,17 +89,17 @@ function Approve() {
       {
         key: 'name',
         dataIndex: 'name',
-        title: 'ルート名',
+        title: t('approve_routes.table.routeName'),
       },
       {
         key: 'department_name',
         dataIndex: 'department_name',
-        title: '部門（支社/部/課）',
+        title: t('approve_routes.table.department'),
       },
       {
         key: 'status',
         dataIndex: 'status',
-        title: 'ステータス',
+        title: t('approve_routes.table.status'),
         render: (value) => {
           if (value === 'active')
             return <Tag color={PRIMARY}>{t('products.text.active')}</Tag>
@@ -109,22 +109,22 @@ function Approve() {
       {
         key: 'total_steps',
         dataIndex: 'total_steps',
-        title: '承認ステップ数',
+        title: t('approve_routes.table.totalSteps'),
       },
       {
         key: 'author',
         dataIndex: 'author',
-        title: '作成者',
+        title: t('approve_routes.table.creator'),
       },
       {
         key: 'updated_at',
         dataIndex: 'updated_at',
-        title: '最終更新日',
+        title: t('approve_routes.table.updatedAt'),
       },
       {
         key: 'action',
         dataIndex: 'action',
-        title: '操作',
+        title: t('approve_routes.table.action'),
         render: (_: any, record: BaseRecord) => {
           return (
             <Space>
@@ -172,7 +172,7 @@ function Approve() {
       >
         <Row gutter={[16, 16]}>
           <Col md={8} xl={4}>
-            <Form.Item label="ルートコード・ルート名" name="q">
+            <Form.Item label={t('approve_routes.filters.searchLabel')} name="q">
               <Input
                 className={'mt-2'}
                 placeholder={t('departments.list.filters.search_placeholder')}
@@ -180,15 +180,32 @@ function Approve() {
             </Form.Item>
           </Col>
           <Col md={8} xl={4}>
-            <Form.Item label="部門 (支社/部/課)" name="department">
-              <Select placeholder="選択してください" {...selectProps} />
+            <Form.Item
+              label={t('approve_routes.filters.departmentLabel')}
+              name="department"
+            >
+              <Select
+                placeholder={t('approve_routes.filters.selectPlaceholder')}
+                {...selectProps}
+                allowClear
+              />
             </Form.Item>
           </Col>
           <Col md={8} xl={4}>
-            <Form.Item label="ステータス" name="status">
-              <Select showSearch placeholder="選択してください">
-                <Select.Option value="active">有効</Select.Option>
-                <Select.Option value="inactive">無効</Select.Option>
+            <Form.Item
+              label={t('approve_routes.filters.statusLabel')}
+              name="status"
+            >
+              <Select
+                showSearch
+                placeholder={t('approve_routes.filters.selectPlaceholder')}
+              >
+                <Select.Option value="active">
+                  {t('approve_routes.status.active')}
+                </Select.Option>
+                <Select.Option value="inactive">
+                  {t('approve_routes.status.inactive')}
+                </Select.Option>
               </Select>
             </Form.Item>
           </Col>

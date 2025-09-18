@@ -182,7 +182,55 @@
     "merchandise": "商品"
   },
   "approve_routes": {
-    "approve_routes": "承認する"
+    "approve_routes": "承認する",
+    "labels": {
+      "routeCode": "ルートコード",
+      "routeName": "ルート名",
+      "department": "部門（支社/部/課）",
+      "status": "ステータス",
+      "stepName": "ステップ名",
+      "approverDesignation": "承認者の指定",
+      "approver": "承認者"
+    },
+    "buttons": {
+      "addApprover": "承認者を追加",
+      "addStep": "＋ ステップを追加"
+    },
+    "steps": {
+      "step": "ステップ"
+    },
+    "show": {
+      "creator": "作成者",
+      "updater": "更新者",
+      "employeeNameExample": "伊藤太郎"
+    },
+    "table": {
+      "routeCode": "ルートコード",
+      "routeName": "ルート名",
+      "department": "部門（支社/部/課）",
+      "status": "ステータス",
+      "totalSteps": "承認ステップ数",
+      "creator": "作成者",
+      "updatedAt": "最終更新日",
+      "action": "操作"
+    },
+    "filters": {
+      "searchLabel": "ルートコード・ルート名",
+      "departmentLabel": "部門 (支社/部/課)",
+      "statusLabel": "ステータス",
+      "selectPlaceholder": "選択してください"
+    },
+    "status": {
+      "active": "有効",
+      "inactive": "無効"
+    },
+    "validation": {
+      "route_code": {
+        "required": "ルートコードは必須です。",
+        "invalid_whitespace": "ルートコードは空白のみにできません。",
+        "invalid_format": "ルートコードには大文字の英字、数字、ハイフンのみ使用できます。"
+      }
+    }
   },
   "employees": {
     "employees": "社員",
