@@ -3,6 +3,111 @@
 import { z } from 'zod'
 
 /**
+ * Approve route list item resource
+ */
+export const zApproveRouteListResource = z.object({
+  id: z.optional(z.int()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  department_id: z.optional(z.int()),
+  department_name: z.optional(z.string()),
+  status: z.optional(z.enum(['active', 'inactive'])),
+  total_steps: z.optional(z.int()),
+  author: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+    }),
+  ),
+  created_at: z.optional(z.iso.datetime()),
+  editor: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+    }),
+  ),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Approve route collection with pagination
+ */
+export const zApproveRouteCollection = z.object({
+  items: z.optional(z.array(zApproveRouteListResource)),
+  meta: z.optional(
+    z.object({
+      current_page: z.optional(z.int()),
+      from: z.optional(z.int()),
+      last_page: z.optional(z.int()),
+      per_page: z.optional(z.int()),
+      to: z.optional(z.int()),
+      total: z.optional(z.int()),
+    }),
+  ),
+  links: z.optional(
+    z.object({
+      first: z.optional(z.string()),
+      last: z.optional(z.string()),
+      prev: z.optional(z.union([z.string(), z.null()])),
+      next: z.optional(z.string()),
+    }),
+  ),
+})
+
+/**
+ * Approve Route Employee
+ */
+export const zApproveRouteEmployee = z.object({
+  employee_id: z.optional(z.int()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  department_id: z.optional(z.int()),
+  department: z.optional(z.string()),
+})
+
+/**
+ * Approve Route Step
+ */
+export const zApproveRouteStep = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  step_order: z.optional(z.int()),
+  is_multi_appover: z.optional(z.boolean()),
+  employees: z.optional(z.array(zApproveRouteEmployee)),
+})
+
+/**
+ * Approve Route Resource
+ */
+export const zApproveRouteResource = z.object({
+  id: z.optional(z.int()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  department: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+    }),
+  ),
+  status: z.optional(z.enum(['active', 'inactive'])),
+  author: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+    }),
+  ),
+  create_at: z.optional(z.iso.datetime()),
+  editor: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+    }),
+  ),
+  update_at: z.optional(z.iso.datetime()),
+  steps: z.optional(z.array(zApproveRouteStep)),
+})
+
+/**
  * Code Issue Setting model
  */
 export const zCodeIssueSetting = z.object({
@@ -148,6 +253,205 @@ export const zUpdateCodeIssueSettingRequest = z.object({
 export const zUpdateCodeIssueSettingResponse = z.object({
   data: z.optional(zCodeIssueSettingResponse),
   message: z.optional(z.string()),
+})
+
+/**
+ * User Model
+ * Represents a user with ID and name.
+ */
+export const zSimpleUser = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+})
+
+/**
+ * Company Research Information File
+ * Represents a file related to company research information.
+ */
+export const zCompanyResearchInformationFile = z.object({
+  id: z.optional(z.union([z.int(), z.null()])),
+  name: z.optional(z.string()),
+  url: z.optional(z.string()),
+})
+
+/**
+ * Company Research Information
+ * Represents research information related to a customer.
+ */
+export const zCompanyResearchInformation = z.object({
+  id: z.optional(z.union([z.int(), z.null()])),
+  material_name: z.optional(z.string()),
+  judgement: z.optional(
+    z.enum(['A', 'B', 'C', 'D', 'E', 'O', 'T', 'X', '未定']),
+  ),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+  author: z.optional(zSimpleUser),
+  editor: z.optional(zSimpleUser),
+  files: z.optional(z.array(zCompanyResearchInformationFile)),
+})
+
+/**
+ * Company Research Information File Store Request
+ * Represents a file for a new research record.
+ */
+export const zCompanyResearchInformationFileStoreRequest = z.object({
+  name: z.string().max(255),
+  url: z.string().max(1024),
+})
+
+/**
+ * Company Research Information File Update Request
+ * Represents a file for an existing research record.
+ */
+export const zCompanyResearchInformationFileUpdateRequest = z.object({
+  id: z.optional(z.union([z.int(), z.null()])),
+  name: z.string().max(255),
+  url: z.string().max(1024),
+})
+
+/**
+ * Company Research Information Store Request
+ * Represents research information for a new customer.
+ */
+export const zCompanyResearchInformationStoreRequest = z.object({
+  material_name: z.string().max(50),
+  judgement: z.enum(['A', 'B', 'C', 'D', 'E', 'O', 'T', 'X', '未定']),
+  files: z.optional(z.array(zCompanyResearchInformationFileStoreRequest)),
+})
+
+/**
+ * Company Research Information Update Request
+ * Represents research information for an existing customer.
+ */
+export const zCompanyResearchInformationUpdateRequest = z.object({
+  id: z.optional(z.union([z.int(), z.null()])),
+  material_name: z.string().max(50),
+  judgement: z.enum(['A', 'B', 'C', 'D', 'E', 'O', 'T', 'X', '未定']),
+  files: z.optional(z.array(zCompanyResearchInformationFileUpdateRequest)),
+})
+
+/**
+ * Rank resource (code: unique per tenant, max 20 alphanumeric chars; name: unique per tenant, max 50 chars; rate: non-negative integer; note: optional max 255 chars)
+ */
+export const zRank = z.object({
+  id: z.optional(z.int()),
+  code: z.optional(
+    z
+      .string()
+      .max(20)
+      .regex(/^[A-Za-z0-9]+$/),
+  ),
+  name: z.optional(z.string().max(50)),
+  rate: z.optional(z.int().gte(0)),
+  note: z.optional(z.union([z.string().max(255), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Customer Model
+ * Represents a customer record.
+ */
+export const zCustomer = z.object({
+  id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  customer_code: z.optional(z.string()),
+  customer_name_by_kana: z.optional(z.union([z.string(), z.null()])),
+  corporate_number: z.optional(z.string()),
+  price_rank_id: z.optional(z.int()),
+  country: z.optional(z.union([z.string(), z.null()])),
+  post_code: z.optional(z.union([z.string(), z.null()])),
+  address: z.optional(z.union([z.string(), z.null()])),
+  building: z.optional(z.union([z.string(), z.null()])),
+  phone: z.optional(z.union([z.string(), z.null()])),
+  fax: z.optional(z.union([z.string(), z.null()])),
+  mail: z.optional(z.union([z.string(), z.null()])),
+  listing_classification: z.optional(
+    z.enum(['未上場', 'プライム', 'スタンダード', 'グロース']),
+  ),
+  industry: z.optional(z.union([z.string(), z.null()])),
+  date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
+  department_in_charge: z.optional(z.union([z.string(), z.null()])),
+  person_in_charge_name: z.optional(z.string()),
+  person_in_charge_department: z.optional(z.string()),
+  person_in_charge_mail: z.optional(z.string()),
+  person_in_charge_phone: z.optional(z.union([z.string(), z.null()])),
+  is_deleted: z.optional(z.union([z.boolean(), z.null()])),
+  created_by: z.optional(z.union([z.int(), z.null()])),
+  updated_by: z.optional(z.union([z.int(), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+  rank: z.optional(zRank),
+  author: z.optional(zSimpleUser),
+  editor: z.optional(zSimpleUser),
+  company_research_information: z.optional(
+    z.array(zCompanyResearchInformation),
+  ),
+})
+
+/**
+ * Customer Store Request
+ * Fields to create a new customer. Nested IDs are not required as they are created automatically.
+ */
+export const zCustomerStoreRequest = z.object({
+  customer_code: z.string().max(50),
+  name: z.string().max(255),
+  customer_name_by_kana: z.optional(z.union([z.string().max(50), z.null()])),
+  corporate_number: z.string().max(50),
+  price_rank_id: z.int(),
+  country: z.optional(z.union([z.string().max(50), z.null()])),
+  post_code: z.optional(z.union([z.string().max(50), z.null()])),
+  address: z.optional(z.union([z.string().max(100), z.null()])),
+  building: z.optional(z.union([z.string().max(100), z.null()])),
+  phone: z.optional(z.union([z.string().max(20), z.null()])),
+  fax: z.optional(z.union([z.string().max(50), z.null()])),
+  mail: z.optional(z.union([z.email().max(100), z.null()])),
+  listing_classification: z.optional(
+    z.enum(['未上場', 'プライム', 'スタンダード', 'グロース']),
+  ),
+  industry: z.optional(z.union([z.string().max(50), z.null()])),
+  date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
+  department_in_charge: z.optional(z.union([z.string().max(100), z.null()])),
+  person_in_charge_name: z.string().max(50),
+  person_in_charge_department: z.string().max(100),
+  person_in_charge_mail: z.email().max(100),
+  person_in_charge_phone: z.optional(z.union([z.string().max(20), z.null()])),
+  company_research_information: z.optional(
+    z.array(zCompanyResearchInformationStoreRequest),
+  ),
+})
+
+/**
+ * Customer Update Request
+ * Fields to update an existing customer. All fields are optional.
+ */
+export const zCustomerUpdateRequest = z.object({
+  customer_code: z.union([z.string().max(50), z.null()]),
+  name: z.union([z.string().max(50), z.null()]),
+  customer_name_by_kana: z.optional(z.union([z.string().max(50), z.null()])),
+  corporate_number: z.union([z.string().max(50), z.null()]),
+  price_rank_id: z.union([z.int(), z.null()]),
+  country: z.optional(z.union([z.string().max(50), z.null()])),
+  post_code: z.optional(z.union([z.string().max(50), z.null()])),
+  address: z.optional(z.union([z.string().max(100), z.null()])),
+  building: z.optional(z.union([z.string().max(100), z.null()])),
+  phone: z.optional(z.union([z.string().max(20), z.null()])),
+  fax: z.optional(z.union([z.string().max(50), z.null()])),
+  mail: z.optional(z.union([z.email().max(100), z.null()])),
+  listing_classification: z.optional(
+    z.enum(['未上場', 'プライム', 'スタンダード', 'グロース']),
+  ),
+  industry: z.optional(z.union([z.string().max(50), z.null()])),
+  date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
+  department_in_charge: z.optional(z.union([z.string().max(100), z.null()])),
+  person_in_charge_name: z.union([z.string().max(50), z.null()]),
+  person_in_charge_department: z.union([z.string().max(100), z.null()]),
+  person_in_charge_mail: z.union([z.email().max(100), z.null()]),
+  person_in_charge_phone: z.optional(z.union([z.string().max(20), z.null()])),
+  company_research_information: z.optional(
+    z.array(zCompanyResearchInformationUpdateRequest),
+  ),
 })
 
 /**
@@ -459,6 +763,81 @@ export const zPostsPaginatedResponse = zPaginatedResponse.and(
 )
 
 /**
+ * Rank price item for a packaging (manual mode)
+ */
+export const zProductPackagingRankPriceInput = z.object({
+  rank_id: z.int(),
+  price: z.number(),
+})
+
+/**
+ * Packaging data (non-default). Default packaging is derived from product base info
+ */
+export const zProductPackagingInput = z.object({
+  id: z.optional(z.union([z.int(), z.null()])),
+  code: z.string().max(20),
+  name: z.string().max(100),
+  quantity_in_package: z.int().gte(1),
+  unit_id: z.int(),
+  is_standard_price: z.boolean(),
+  is_active: z.boolean(),
+  is_rate_based: z.boolean(),
+  selling_price: z.optional(z.union([z.int(), z.null()])),
+  rank_prices: z.optional(
+    z.union([z.array(zProductPackagingRankPriceInput), z.null()]),
+  ),
+})
+
+/**
+ * Payload to create a product
+ */
+export const zStoreProductInput = z.object({
+  category_id: z.int(),
+  code: z.string().max(20),
+  name: z.string().max(100),
+  short_name: z.optional(z.union([z.string(), z.null()])),
+  barcode: z.optional(z.union([z.string(), z.null()])),
+  unit_id: z.int(),
+  cost_price: z.int(),
+  selling_price: z.int(),
+  note: z.optional(z.union([z.string(), z.null()])),
+  packagings: z.optional(z.union([z.array(zProductPackagingInput), z.null()])),
+})
+
+/**
+ * Payload to update a product (partial allowed)
+ */
+export const zUpdateProductInput = z.object({
+  category_id: z.optional(z.union([z.int(), z.null()])),
+  code: z.optional(z.union([z.string(), z.null()])),
+  name: z.optional(z.union([z.string(), z.null()])),
+  short_name: z.optional(z.union([z.string(), z.null()])),
+  barcode: z.optional(z.union([z.string(), z.null()])),
+  unit_id: z.optional(z.union([z.int(), z.null()])),
+  cost_price: z.optional(z.union([z.int(), z.null()])),
+  selling_price: z.optional(z.union([z.int(), z.null()])),
+  note: z.optional(z.union([z.string(), z.null()])),
+  packagings: z.optional(z.union([z.array(zProductPackagingInput), z.null()])),
+})
+
+/**
+ * Product model response (simplified)
+ */
+export const zProduct = z.object({
+  id: z.optional(z.int()),
+  category_id: z.optional(z.int()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  short_name: z.optional(z.union([z.string(), z.null()])),
+  barcode: z.optional(z.union([z.string(), z.null()])),
+  unit_id: z.optional(z.int()),
+  cost_price: z.optional(z.int()),
+  selling_price: z.optional(z.int()),
+  note: z.optional(z.union([z.string(), z.null()])),
+  packagings: z.optional(z.array(zProductPackagingInput)),
+})
+
+/**
  * Product category model
  */
 export const zProductCategory = z.object({
@@ -504,24 +883,6 @@ export const zProductUnitsPaginatedResponse = z.object({
 })
 
 /**
- * Rank resource (code: unique per tenant, max 20 alphanumeric chars; name: unique per tenant, max 50 chars; rate: non-negative integer; note: optional max 255 chars)
- */
-export const zRank = z.object({
-  id: z.optional(z.int()),
-  code: z.optional(
-    z
-      .string()
-      .max(20)
-      .regex(/^[A-Za-z0-9]+$/),
-  ),
-  name: z.optional(z.string().max(50)),
-  rate: z.optional(z.int().gte(0)),
-  note: z.optional(z.union([z.string().max(255), z.null()])),
-  created_at: z.optional(z.iso.datetime()),
-  updated_at: z.optional(z.iso.datetime()),
-})
-
-/**
  * Paginated ranks list envelope
  */
 export const zRanksPaginatedResponse = z.object({
@@ -562,7 +923,7 @@ export const zStoreRankRequest = z.object({
 })
 
 /**
- * Payload to update a ranks. All fields optional; only provided fields will be updated.
+ * Payload to update a rank. All fields optional; only provided fields will be updated.
  */
 export const zUpdateRankRequest = z.object({
   code: z.optional(
@@ -693,6 +1054,139 @@ export const zBc8F1062847Db698Daf69F22426Dd8eResponse = z.object({
       memory_usage: z.optional(z.string()),
     }),
   ),
+})
+
+export const zApproveRouteControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+      q: z.optional(z.string()),
+      department_id: z.optional(z.int()),
+      status: z.optional(z.enum(['active', 'inactive'])),
+    }),
+  ),
+})
+
+/**
+ * Approve routes list retrieved successfully
+ */
+export const zApproveRouteControllerIndexResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(zApproveRouteCollection),
+})
+
+export const zApproveRouteControllerStoreData = z.object({
+  body: z.object({
+    department_id: z.int(),
+    code: z.string(),
+    name: z.string(),
+    status: z.optional(z.enum(['active', 'inactive'])),
+    steps: z.optional(
+      z.array(
+        z.object({
+          name: z.optional(z.string()),
+          step_order: z.optional(z.int()),
+          is_multi_appover: z.optional(z.boolean()),
+          employees: z.optional(
+            z.array(
+              z.object({
+                id: z.optional(z.int()),
+                department_id: z.optional(z.int()),
+              }),
+            ),
+          ),
+        }),
+      ),
+    ),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Approve route created successfully
+ */
+export const zApproveRouteControllerStoreResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(zApproveRouteResource),
+})
+
+export const zApproveRouteControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Approve route deleted successfully
+ */
+export const zApproveRouteControllerDestroyResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(z.unknown()),
+})
+
+export const zApproveRouteControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Approve route details retrieved successfully
+ */
+export const zApproveRouteControllerShowResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(zApproveRouteResource),
+})
+
+export const zApproveRouteControllerUpdateData = z.object({
+  body: z.object({
+    department_id: z.optional(z.int()),
+    code: z.optional(z.string()),
+    name: z.optional(z.string()),
+    status: z.optional(z.enum(['active', 'inactive'])),
+    steps: z.optional(
+      z.array(
+        z.object({
+          name: z.optional(z.string()),
+          step_order: z.optional(z.int()),
+          is_multi_appover: z.optional(z.boolean()),
+          employees: z.optional(
+            z.array(
+              z.object({
+                id: z.optional(z.int()),
+                department_id: z.optional(z.int()),
+              }),
+            ),
+          ),
+        }),
+      ),
+    ),
+  }),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Approve route updated successfully
+ */
+export const zApproveRouteControllerUpdateResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(zApproveRouteResource),
 })
 
 export const zB03Eb66E9Fc14Dbed91D82E3A240A06Data = z.object({
@@ -861,6 +1355,52 @@ export const zCodeIssueSettingControllerShowByCodeData = z.object({
 export const zCodeIssueSettingControllerShowByCodeResponse =
   zCodeIssueSettingDetailResponse
 
+export const zCustomerControllerStoreData = z.object({
+  body: zCustomerStoreRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer created successfully
+ */
+export const zCustomerControllerStoreResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zCustomer),
+})
+
+export const zCustomerControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer retrieved successfully
+ */
+export const zCustomerControllerShowResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zCustomer),
+})
+
+export const zCustomerControllerUpdateData = z.object({
+  body: zCustomerUpdateRequest,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer updated successfully
+ */
+export const zCustomerControllerUpdateResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zCustomer),
+})
+
 export const zDepartmentControllerIndexData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -869,6 +1409,7 @@ export const zDepartmentControllerIndexData = z.object({
       _page: z.optional(z.int()),
       _per_page: z.optional(z.int()),
       q: z.optional(z.string()),
+      without_approve_route: z.optional(z.enum(['true', 'false'])),
     }),
   ),
 })
@@ -1036,54 +1577,51 @@ export const zEmployeeControllerUpdateData = z.object({
  */
 export const zEmployeeControllerUpdateResponse = zEmployee
 
-export const zImportControllerValidateImportData = z.object({
+export const zE821554Cdf9A1C547Bbe990Db9Dc76Data = z.object({
   body: z.object({
-    file: z.string(),
-    type: z.enum([
+    file_name: z.string(),
+    content_type: z.string(),
+    prefix: z.optional(z.string()),
+    expiration_minutes: z.optional(z.int()),
+  }),
+  path: z.object({
+    common_name: z.enum([
       'products',
-      'product-categories',
+      'category-products',
       'customers',
-      'employees',
-      'departments',
+      'department',
+      'other',
     ]),
   }),
-  path: z.optional(z.never()),
   query: z.optional(z.never()),
 })
 
 /**
- * File validation completed successfully
+ * Presigned URL generated successfully
  */
-export const zImportControllerValidateImportResponse = z.object({
-  success: z.optional(z.boolean()),
-  message: z.optional(z.string()),
+export const zE821554Cdf9A1C547Bbe990Db9Dc76Response = z.object({
   data: z.optional(
     z.object({
-      total: z.optional(z.int()),
-      valid_rows: z.optional(z.int()),
-      invalid_rows: z.optional(z.int()),
-      errors: z.optional(
-        z.array(
-          z.object({
-            row: z.optional(z.int()),
-            data: z.optional(z.object({})),
-            errors: z.optional(z.array(z.string())),
-          }),
-        ),
-      ),
+      presigned_url: z.optional(z.string()),
+      file_key: z.optional(z.string()),
+      file_name: z.optional(z.string()),
+      original_name: z.optional(z.string()),
+      content_type: z.optional(z.string()),
+      expires_at: z.optional(z.iso.datetime()),
     }),
   ),
+  message: z.optional(z.string()),
 })
 
 export const zImportControllerImportData = z.object({
   body: z.object({
-    file: z.string(),
-    type: z.enum([
-      'products',
-      'product-categories',
-      'customers',
-      'employees',
-      'departments',
+    file_key: z.string(),
+    common_name: z.enum([
+      'PRODUCTS',
+      'CATEGORY_PRODUCTS',
+      'CUSTOMERS',
+      'DEPARTMENTS',
+      'OTHER',
     ]),
   }),
   path: z.optional(z.never()),
@@ -1305,6 +1843,30 @@ export const zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Response = z.object({
   message: z.optional(z.string()),
   data: z.optional(zPost),
 })
+
+export const zE475E7Ead1848Aa17C399Ba311C51Data = z.object({
+  body: zStoreProductInput,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Created
+ */
+export const zE475E7Ead1848Aa17C399Ba311C51Response = zProduct
+
+export const zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data = z.object({
+  body: zUpdateProductInput,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * OK
+ */
+export const zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Response = zProduct
 
 export const zProductCategoryControllerUpdateTreeData = z.object({
   body: z.array(

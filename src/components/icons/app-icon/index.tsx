@@ -2,7 +2,7 @@
 
 import { PRIMARY } from '@utility/color'
 import { Grid, Typography } from 'antd'
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 
 const { Title } = Typography
 const { useBreakpoint } = Grid
@@ -19,7 +19,21 @@ export const AppIcon: React.FC<AppIconProps> = ({
   smallText = 'e',
 }) => {
   const screens = useBreakpoint()
-  const text = screens.xs ? smallText : fullText
+  const [text, setText] = React.useState<string>(fullText)
+
+  function countFalse<T extends Record<string, boolean>>(obj: T): number {
+    let n = 0
+    for (const v of Object.values(obj)) if (!v) n++
+    return n
+  }
+
+  useLayoutEffect(() => {
+    if (countFalse(screens) > 2) {
+      setText(smallText)
+    } else {
+      setText(fullText)
+    }
+  }, [screens])
 
   return (
     <Title

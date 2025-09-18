@@ -36,7 +36,18 @@
     "add": "追加",
     "save": "登録",
     "search": "検索",
-    "clear": "クリア"
+    "clear": "クリア",
+    "new_create": "新規作成",
+    "csv_bulk_register": "CSV一括登録",
+    "suspend": "停止",
+    "resume": "開始",
+    "add_delivery_destination": "納品先追加",
+    "copy_contact_info": "取引先情報をコピーする"
+  },
+  "placeholders": {
+    "partial_match": "部分一致",
+    "select": "選択してください",
+    "file_url": "ファイルのURLを入力"
   },
   "notifications": {
     "success": "成功しました",
@@ -64,10 +75,169 @@
     "estimates": "見積"
   },
   "customers": {
-    "customers": "顧客"
+    "customers": "取引先",
+    "list": {
+      "list": "取引先一覧"
+    },
+    "create": {
+      "create": "取引先新規作成"
+    },
+    "edit": {
+      "edit": "取引先編集"
+    },
+    "modal": {
+      "title": "法人番号取得",
+      "name": "名称",
+      "address": "所在地",
+      "corporate_number": "法人番号"
+    },
+    "show": {
+      "show": "取引先編集",
+      "basic_info": "基本情報",
+      "address_contact": "住所・連絡先",
+      "delivery_destinations": "納品先情報",
+      "postal_code": "郵便番号",
+      "address": "住所",
+      "building_name": "建物名",
+      "phone": "電話番号",
+      "fax": "FAX番号",
+      "listing_classification": "上場区分",
+      "industry": "業種",
+      "date_of_establishment": "設立年月日",
+      "department_in_charge": "担当部署",
+      "contact_name": "担当者名",
+      "contact_department": "担当者部署",
+      "contact_email": "担当者メール",
+      "contact_phone": "担当者電話番号",
+      "accounting_contact": "経理者情報"
+    },
+    "research": {
+      "document_name": "資料名",
+      "judgement": "判定",
+      "file": "ファイル",
+      "updated_by": "登録者",
+      "last_updated": "最終更新日"
+    },
+    "fields": {
+      "code": "取引先コード",
+      "name": "取引先名",
+      "country": "国",
+      "department": "担当部署",
+      "unit_price_rank": "単価ランク",
+      "credit_rank": "与信ランク",
+      "anti_social_rank": "反社ランク",
+      "anti_social_check_date": "反社チェック更新日",
+      "registration_date": "登録日",
+      "suspension_date": "停止日",
+      "actions": "操作",
+      "name_kana": "取引先名（カナ)",
+      "corporate_number": "法人番号",
+      "company_classification": "会社分類"
+    },
+    "delivery": {
+      "code": "納品先コード",
+      "name": "納品先名",
+      "address": "住所",
+      "contact_person": "担当者",
+      "phone": "電話番号",
+      "email": "メールアドレス"
+    },
+    "enums": {
+      "corporation": "法人",
+      "individual": "個人"
+    },
+    "filters": {
+      "code_name": "取引先コード・取引先名",
+      "date_range": "日付"
+    }
   },
   "products": {
-    "products": "商品一覧"
+    "products": "商品一覧",
+    "sections": {
+      "basicInfo": "基本情報",
+      "packagingPrice": "荷姿単価",
+      "unitPriceGroup": "単価グループ"
+    },
+    "fields": {
+      "productCode": "商品コード",
+      "productName": "商品名",
+      "productNameAbbr": "商品名 (略称)",
+      "barcode": "バーコード",
+      "category": "カテゴリ",
+      "unit": "単位",
+      "costPrice": "原価 (円)",
+      "sellingPrice": "販売単価 (円)",
+      "remarks": "備考",
+      "packagingCode": "荷姿コード",
+      "packagingName": "荷姿名",
+      "status": "ステータス",
+      "quantity": "入数",
+      "standardPrice": "標準価格 (円)",
+      "isStandard": "標準同額",
+      "actions": "操作"
+    },
+    "unitPriceGroup": {
+      "tableTitle": "単価グループ",
+      "sellingPrice": "販売価格 (円)",
+      "settingMethod": "設定方式",
+      "rankS": "S 80% (円)",
+      "rankA": "A 85% (円)",
+      "rankB": "B 90% (円)",
+      "rankC": "C 95% (円)",
+      "rankD": "D 100% (円)",
+      "rankE": "E 105% (円)"
+    },
+    "buttons": {
+      "autoNumbering": "自動採番",
+      "createNewCategory": "新規作成",
+      "update": "更新",
+      "addRow": "行を追加"
+    },
+    "links": {
+      "csvUpload": "CSV一括登録"
+    },
+    "messages": {
+      "noData": "データがありません。",
+      "codeHint": "コード体系の定義はこちら"
+    },
+    "validation": {
+      "codeFormat": "(A-Z, 0-9, .-)"
+    },
+    "text": {
+      "active": "有効",
+      "inactive": "無効"
+    },
+
+    "list": {
+      "title": "商品一覧",
+      "searchArea": {
+        "productInputLabel": "商品コード・商品名",
+        "productInputPlaceholder": "部分一致",
+        "categoryLabel": "カテゴリ",
+        "categoryPlaceholder": "選択してください",
+        "clearButton": "クリア"
+      },
+      "actions": {
+        "createNewButton": "新規作成",
+        "csvBulkUploadLink": "CSV一括登録"
+      },
+      "table": {
+        "headers": {
+          "productCode": "商品コード",
+          "productName": "商品名",
+          "packagingQuantity": "荷姿数",
+          "barcode": "バーコード",
+          "subcategory": "カテゴリ(小)",
+          "unit": "単位",
+          "costPrice": "原価(円)",
+          "sellingPrice": "販売単価(円)",
+          "actions": "操作"
+        },
+        "text": {
+          "pieces": "件"
+        }
+      }
+    }
   },
   "ranks": {
     "ranks": "単価ランク一覧",
@@ -88,15 +258,21 @@
       "code": "単価ランクコード",
       "name": "単価ランク名",
       "rate": "掛け率（％)",
-      "customer": "顧客数",
+      "number_of_customers": "顧客数",
       "remarks": "備考"
     }
   },
   "merchandise": {
     "merchandise": "商品"
   },
+  "approve": {
+    "approve": "承認する"
+  },
   "employees": {
     "employees": "社員",
+    "list": {
+      "list": "社員一覧"
+    },
     "edit": {
       "title": "社員編集"
     },
@@ -114,6 +290,10 @@
     },
     "show": {
       "show": "社員詳細"
+    },
+    "filters": {
+      "code_name": "社員コード・社員名",
+      "email": "メール"
     }
   },
   "permission_settings": {
@@ -132,6 +312,7 @@
       "codeNumbering": "コード採番設定",
       "approvalAndReturn": "承認・差戻し",
       "costDetails": "原価明細",
+
       "customerMasterPurpose": "取引先をマスタ化して名寄せします。",
       "projectMasterPurpose": "案件をマスタ化して名寄せします。",
       "productMasterPurpose": "マスタをマスタ化して名寄せします。",
@@ -187,12 +368,15 @@
         "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
         "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
         "downloadButton": "CSVテンプレートをダウンロード",
+
         "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
         "orSelectFile": "または、下のボタンからファイルを選択してください",
         "selectFileButton": "ファイルを選択",
+
         "requiredError": "必須項目です",
         "onlyCSVError": "CSVファイルのみアップロード可能です。",
         "maxSizeError": "ファイルサイズは最大5MBです。",
+
         "noteTitle": "CSV登録時の注意事項",
         "noteItems": {
           "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
@@ -217,7 +401,7 @@
     "tags": "見積タグ設定"
   },
   "parameter_settings": {
-    "parameter_settings": "見積タグ設定",
+    "parameter_settings": "パラメーター設定",
     "description": "説明",
     "is_manage": "管理する",
     "not_manage": "管理しない"
@@ -272,7 +456,7 @@
     }
   },
   "import_history": {
-    "import_history": "import_history"
+    "import_history": "インポート履歴"
   },
   "system_config": {
     "system_config": "システム設定",
@@ -312,7 +496,7 @@
       "columns": {
         "project_code": "案件コード",
         "project_name": "案件名",
-        "customer": "取引先",
+        "customers": "取引先",
         "registrant": "登録者",
         "last_updated": "最終更新日"
       }
@@ -333,7 +517,7 @@
           "required": "案件名を入力してください！",
           "placeholder": "案件名を入力"
         },
-        "customer": {
+        "customers": {
           "label": "取引先",
           "required": "取引先を選択してください！",
           "placeholder": "取引先コード・取引先名で検索"
@@ -351,7 +535,7 @@
       "fields": {
         "project_code": "案件コード",
         "project_name": "案件名",
-        "customer": "取引先",
+        "customers": "取引先",
         "estimate_number": "見積番号",
         "remarks": "備考",
         "registrant": "登録者",
@@ -455,7 +639,8 @@
       "create_new": "新規登録",
       "back": "戻る",
       "edit": "編集",
-      "delete": "削除"
+      "delete": "削除",
+      "clear_all_research": "調査情報クリア"
     },
     "columns": {
       "unit_name": "単位名",

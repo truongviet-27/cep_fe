@@ -1,5 +1,5 @@
 'use client'
-import ProductContainer from '@components/cep/products'
+import ProductContainer from '@components/cep/merchandise/products'
 import React from 'react'
 
 function Page() {
