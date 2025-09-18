@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import { useForm } from '@refinedev/antd'
-import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
+import { useCustomMutation, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Alert,
@@ -27,7 +27,7 @@ const { Text, Paragraph } = Typography
 function CSVContainer({
   name,
 }: {
-  name: 'PRODUCTS' | 'CATEGORY-PRODUCTS' | 'CUSTOMERS' | 'DEPARTMENTS'
+  name: 'PRODUCTS' | 'CATEGORY_PRODUCTS' | 'CUSTOMERS' | 'DEPARTMENTS'
 }) {
   const t = useTranslate()
   const methods = useForm()
@@ -35,17 +35,17 @@ function CSVContainer({
 
   const [isResult, setIsResult] = useState(false)
 
-  const apiUrl = useApiUrl()
-
   const { mutate } = useCustomMutation()
   const { mutate: mutate2 } = useCustomMutation()
+
+  console.log(form.getFieldValue('file'), 'xxxxxxxxxxxxy')
 
   useEffect(() => {
     if (isResult) {
       mutate(
         {
           method: 'post',
-          url: `${apiUrl}/${name}/presigned-url`,
+          url: `http://172.16.0.31:8001/api/v1/${name}/presigned-url`,
           values: {
             file_name: form.getFieldValue('file')?.file?.name,
             content_type: form.getFieldValue('file')?.file?.type,
@@ -56,14 +56,14 @@ function CSVContainer({
         {
           onSuccess: (data) => {
             mutate2({
-              method: 'post',
-              url: `${data.data.presigned_url}`,
-              values: {
-                file_name: form.getFieldValue('file')?.file,
-                content_type: form.getFieldValue('file')?.file?.type,
-                prefix: 'imports',
-                expiration_minutes: 60,
+              method: 'put',
+              url: data.data.presigned_url,
+              config: {
+                headers: {
+                  'Content-Type': data.data.content_type,
+                },
               },
+              values: form.getFieldValue('file')?.file,
             })
           },
         },

@@ -284,7 +284,6 @@ function ApproveAction() {
               <Form.Item
                 name={'status'}
                 label={boldText('ステータス')}
-                required
                 layout="horizontal"
               >
                 <Radio.Group

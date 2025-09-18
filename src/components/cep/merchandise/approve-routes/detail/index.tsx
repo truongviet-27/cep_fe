@@ -1,39 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CloseOutlined, RightOutlined } from '@ant-design/icons'
-import { Action } from '@components/common/action'
-import CoreAutoComplete from '@components/common/auto-complete'
-import CoreInput from '@components/common/core-input'
+import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton, useForm, useSelect } from '@refinedev/antd'
-import {
-  useGo,
-  useParsed,
-  useResource,
-  useShow,
-  useTranslate,
-} from '@refinedev/core'
+import { DeleteButton, useForm } from '@refinedev/antd'
+import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
   Card,
-  Checkbox,
   Col,
   Divider,
   Flex,
   Form,
-  Radio,
   Row,
-  Select,
   Space,
   Spin,
   Typography,
 } from 'antd'
-import { color } from 'framer-motion'
-import { useEffect, useState } from 'react'
 
 const { Title } = Typography
 
@@ -75,6 +61,7 @@ function ApproveDetail() {
     queryOptions: { enabled: isUpdate },
   })
 
+  console.log(form.getFieldsValue(), 'getFieldsValue')
   return (
     <PageContainer
       breadcrumbs={
@@ -101,7 +88,7 @@ function ApproveDetail() {
       <Spin spinning={query.isLoading}>
         <Form
           {...formProps}
-          initialValues={query?.data?.data}
+          initialValues={{ ...query?.data?.data }}
           labelCol={{ span: 10 }}
           wrapperCol={{ span: 14 }}
           labelAlign="left"
@@ -116,7 +103,7 @@ function ApproveDetail() {
                 layout="horizontal"
                 colon={false}
               >
-                {form.getFieldValue('name')}
+                {form.getFieldValue('code')}
               </Form.Item>
             </Col>
           </Row>

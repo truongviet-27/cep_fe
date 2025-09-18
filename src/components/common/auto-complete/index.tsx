@@ -33,9 +33,9 @@ function CoreAutoComplete({
     resource: resource,
     optionValue: valuePath,
     optionLabel: labelPath,
-    // filters: filter
-    //   ? [{ field: nameFilter, operator: 'eq', value: filter }]
-    //   : [],
+    filters: filter
+      ? [{ field: nameFilter, operator: 'eq', value: filter }]
+      : [],
     queryOptions: {
       enabled: !!filter,
     },
