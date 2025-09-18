@@ -40,7 +40,7 @@ type Form = {
   id: number
   code: string
   name: string
-  department: number
+  departments: number
   status: 'active' | 'inactive'
   steps: {
     name: string
@@ -122,7 +122,7 @@ function ApproveAction() {
     if (query?.data?.data) {
       setFieldsValue({
         ...query?.data?.data,
-        department: query.data.data.department?.id,
+        departments: query.data.data.department?.id,
       })
     }
   }, [query?.data?.data])
@@ -134,7 +134,7 @@ function ApproveAction() {
           resource: resource?.name,
           values: {
             ...values,
-            department_id: values.department,
+            department_id: values.departments,
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
@@ -160,7 +160,7 @@ function ApproveAction() {
           resource: resource?.name,
           values: {
             ...values,
-            department_id: values.department,
+            department_id: values.departments[0],
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
@@ -217,7 +217,7 @@ function ApproveAction() {
           initialValues={{
             code: '',
             name: '',
-            department_id: null,
+            department: null,
             status: 'active',
             steps: [
               {
@@ -294,7 +294,7 @@ function ApproveAction() {
           <Row>
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
-                name={'department'}
+                name={'departments'}
                 label={boldText(t('approve_routes.labels.department'))}
                 required
                 layout="horizontal"
@@ -308,11 +308,12 @@ function ApproveAction() {
               >
                 <Select
                   {...selectPropsDp}
+                  mode="multiple"
                   maxTagCount={'responsive'}
                   allowClear
                   options={(() => {
                     const optionFromDp2 = selectPropsDp2?.options?.find(
-                      (opt) => opt.value === form.getFieldValue('department'),
+                      (opt) => form.getFieldValue('departments') === opt.value,
                     )
 
                     const optionsFromDp = selectPropsDp?.options || []
@@ -654,8 +655,10 @@ function ApproveAction() {
               marginTop: 40,
             }}
           >
-            <DeleteButton icon={null} size={'small'} />
             <Space>
+              {isUpdate && <DeleteButton icon={null} size={'small'} />}
+            </Space>
+            <Space className="items-end">
               <Button
                 type="default"
                 onClick={() => {

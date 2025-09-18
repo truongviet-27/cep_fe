@@ -62,10 +62,10 @@ export default function Page() {
                   style={{ margin: 0 }}
                   label={t('product_units.filters.label')}
                 >
-                  <CoreAutoComplete
+                  {/* <CoreAutoComplete
                     name={'name_lk'}
                     resource={'product-units/suggestions'}
-                  />
+                  /> */}
                 </Form.Item>
               </Col>
               <Col>
