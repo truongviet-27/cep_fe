@@ -9,7 +9,7 @@ import {
 import Step1 from '@components/common/csv-view-editor/step1'
 import { Show } from '@components/crud/show'
 import { useGo } from '@refinedev/core'
-import { ENC_IN } from '@utility/instance'
+import { ENC_IN } from '@utility/instances'
 import type { UploadFile, UploadProps } from 'antd'
 import { Alert, Button, Card, Space, Steps, Typography, Upload } from 'antd'
 import { useTranslations } from 'next-intl'

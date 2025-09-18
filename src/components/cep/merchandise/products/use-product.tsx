@@ -1,10 +1,9 @@
-import { Action } from '@components/common/action'
 import { useDebounce } from '@hook/use-debounce'
-import { useForm } from '@refinedev/antd'
+import { DeleteButton, EditButton, ShowButton, useForm } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
-import { useGo, useList, useTable, useTranslate } from '@refinedev/core'
+import { useList, useTable, useTranslate } from '@refinedev/core'
 import type { Category } from '@utility/renderCategories'
-import { Form } from 'antd'
+import { Form, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
 import { useCallback, useMemo } from 'react'
@@ -35,8 +34,6 @@ function useProduct() {
   const { setFieldValue, getFieldValue, resetFields } = form
 
   const name_lk_value = useDebounce(Form.useWatch('name_lk', form), 500)
-
-  const go = useGo()
 
   const { current, setCurrent, pageSize, setPageSize, pageCount } = useTable<
     Form,
@@ -112,6 +109,15 @@ function useProduct() {
         title: t('table.actions'),
         dataIndex: 'action',
         key: 'action',
+        render(_, record) {
+          return (
+            <Space>
+              <ShowButton hideText size="small" recordItemId={record.id} />
+              <EditButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton hideText size="small" recordItemId={record.id} />
+            </Space>
+          )
+        },
       },
     ] as ColumnsType
   }, [t])
@@ -134,22 +140,6 @@ function useProduct() {
       unit: '人日',
       cost_price: '600,000',
       sale_price: '800,000',
-      action: (
-        <Action
-          actionList={['view', 'edit', 'delete']}
-          onViewAction={() => {
-            go({
-              to: `/products/show/${1}`,
-            })
-          }}
-          onEditAction={() => {
-            go({
-              to: `/products/edit/${1}`,
-            })
-          }}
-          onRemoveAction={() => {}}
-        />
-      ),
     },
   ]
 

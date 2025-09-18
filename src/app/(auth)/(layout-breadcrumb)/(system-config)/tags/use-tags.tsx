@@ -136,7 +136,6 @@ function useTags() {
       method: 'post',
       values,
       successNotification: (data) => {
-        console.log(data, 'data')
         return {
           message: 'success',
           description: 'success',

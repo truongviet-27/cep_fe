@@ -1,7 +1,7 @@
 import { RightOutlined } from '@ant-design/icons'
 import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs'
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
-import PageContainer from '@components/organism/PageContainer'
+import PageContainer from '@components/common/page-container'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Form, Popconfirm, Typography } from 'antd'
 import TextArea from 'antd/es/input/TextArea'

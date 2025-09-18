@@ -2,7 +2,7 @@ export interface IProject {
   id: number
   projectCode: string
   projectName: string
-  customer: string
+  customers: string
   author: string
   updatedDate: string
   createdAt?: string
