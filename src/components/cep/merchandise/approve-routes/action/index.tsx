@@ -32,6 +32,7 @@ import {
   Spin,
   Typography,
 } from 'antd'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 const { Title } = Typography
@@ -81,7 +82,7 @@ function ApproveAction() {
     queryOptions: { enabled: isUpdate },
   })
 
-  const { selectProps: selectPropsDp } = useSelect({
+  const { selectProps: selectPropsDp, query: querySelectDp1 } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
@@ -103,7 +104,7 @@ function ApproveAction() {
     },
   })
 
-  const { selectProps: selectPropsDp2 } = useSelect({
+  const { selectProps: selectPropsDp2, query: querySelectDp2 } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
@@ -118,14 +119,33 @@ function ApproveAction() {
     },
   })
 
+  const { selectProps: selectPropsEp, query: querySelectEp } = useSelect({
+    resource: 'employees',
+    optionLabel: 'name',
+    optionValue: 'id',
+    queryOptions: {
+      enabled: isUpdate,
+    },
+  })
+
   useEffect(() => {
-    if (query?.data?.data) {
+    if (
+      query?.data?.data &&
+      querySelectDp1.isLoading &&
+      querySelectDp2.isLoading &&
+      querySelectEp.isLoading
+    ) {
       setFieldsValue({
         ...query?.data?.data,
         departments: query.data.data.department?.id,
       })
     }
-  }, [query?.data?.data])
+  }, [
+    query?.data?.data,
+    querySelectDp1.isLoading,
+    querySelectDp2.isLoading,
+    querySelectEp.isLoading,
+  ])
 
   const onFinish = (values: any) => {
     if (isUpdate) {
@@ -134,7 +154,7 @@ function ApproveAction() {
           resource: resource?.name,
           values: {
             ...values,
-            department_id: values.departments,
+            department_ids: values.departments,
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
@@ -160,7 +180,7 @@ function ApproveAction() {
           resource: resource?.name,
           values: {
             ...values,
-            department_id: values.departments[0],
+            department_ids: values.departments,
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
@@ -208,34 +228,43 @@ function ApproveAction() {
       <Spin
         spinning={
           isUpdate
-            ? query.isLoading || selectPropsDp.loading || selectPropsDp2.loading
+            ? query.isLoading ||
+              querySelectDp1.isLoading ||
+              querySelectDp2.isLoading ||
+              querySelectEp.isLoading
             : false
         }
       >
         <Form
           {...formProps}
-          initialValues={{
-            code: '',
-            name: '',
-            department: null,
-            status: 'active',
-            steps: [
-              {
-                name: '',
-                step_order: null,
-                is_multi_appover: false,
-                employees: [
-                  {
-                    employee_id: null,
-                    code: '',
-                    name: '',
-                    department_id: null,
-                    department: '',
-                  },
-                ],
-              },
-            ],
-          }}
+          initialValues={
+            isUpdate
+              ? {
+                  ...query.data?.data,
+                }
+              : {
+                  code: '',
+                  name: '',
+                  department: null,
+                  status: 'active',
+                  steps: [
+                    {
+                      name: '',
+                      step_order: null,
+                      is_multi_appover: false,
+                      employees: [
+                        {
+                          employee_id: null,
+                          code: '',
+                          name: '',
+                          department_id: null,
+                          department: '',
+                        },
+                      ],
+                    },
+                  ],
+                }
+          }
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           onFinish={onFinish}
@@ -547,6 +576,7 @@ function ApproveAction() {
                                                 ]}
                                                 resource="employees"
                                                 style={{ width: 200 }}
+                                                options={selectPropsEp.options}
                                               />
                                             </Form.Item>
                                           </Col>
@@ -629,21 +659,21 @@ function ApproveAction() {
               descriptions={[
                 {
                   title: t('approve_routes.show.creator'),
-                  value: (
-                    <Space>
-                      {query.data?.data?.author?.name}
-                      {query.data?.data?.create_at}
-                    </Space>
-                  ),
+                  value:
+                    (query.data?.data?.author?.name ?? '---') +
+                    ' ' +
+                    dayjs(query.data?.data?.create_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
                 {
                   title: t('approve_routes.show.updater'),
-                  value: (
-                    <Space>
-                      {query.data?.data?.editor?.name}
-                      {query.data?.data?.update_at}
-                    </Space>
-                  ),
+                  value:
+                    (query.data?.data?.editor?.name ?? '---') +
+                    ' ' +
+                    dayjs(query.data?.data?.update_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
               ]}
             />

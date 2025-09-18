@@ -1,8 +1,6 @@
 import {
-  CheckCircleTwoTone,
   DownloadOutlined,
   FileAddOutlined,
-  Loading3QuartersOutlined,
   RightOutlined,
 } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
@@ -13,22 +11,16 @@ import {
   useCustomMutation,
   useTranslate,
 } from '@refinedev/core'
-import { PRIMARY } from '@utility/color'
-import {
-  Alert,
-  Breadcrumb,
-  Button,
-  Card,
-  Form,
-  List,
-  Space,
-  Spin,
-  Typography,
-} from 'antd'
+import { cn } from '@utility/cn'
+import { BLACK, GREY, PRIMARY } from '@utility/color'
+import { Breadcrumb, Button, Card, Form, List, Space, Typography } from 'antd'
 import Dragger from 'antd/es/upload/Dragger'
 import Title from 'antd/lib/typography/Title'
 import axios from 'axios'
+import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
+
+import LoadingImport from '@/assets/svg/loading.svg'
 
 const { Text, Paragraph } = Typography
 
@@ -42,8 +34,7 @@ function CSVContainer({
   const { formProps, form } = methods
 
   const [isResult, setIsResult] = useState(false)
-
-  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
 
   const { mutate } = useCustomMutation()
   const { mutate: mutate2 } = useCustomMutation()
@@ -51,7 +42,6 @@ function CSVContainer({
   const apiUrl = useApiUrl()
 
   useEffect(() => {
-    setIsLoading(true)
     if (isResult) {
       mutate(
         {
@@ -73,20 +63,13 @@ function CSVContainer({
                 },
               })
               .then(() => {
-                mutate2(
-                  {
-                    method: 'post',
-                    url: `${apiUrl}/${name}/import`,
-                    values: {
-                      file_key: data.data.file_key,
-                    },
+                mutate2({
+                  method: 'post',
+                  url: `${apiUrl}/csv-imports/${name}/import`,
+                  values: {
+                    file_key: data.data.file_key,
                   },
-                  {
-                    onSuccess() {
-                      setIsLoading(false)
-                    },
-                  },
-                )
+                })
               })
               .catch((error) => {
                 console.log(error)
@@ -129,80 +112,65 @@ function CSVContainer({
     >
       <Form {...formProps}>
         {isResult ? (
-          <Card style={{ border: '1px dashed #d9d9d9', padding: '40px 0' }}>
-            {isLoading ? (
-              <div>
-                <div style={{ textAlign: 'center', marginBottom: 30 }}>
-                  <Spin
-                    size="large"
-                    indicator={
-                      <Loading3QuartersOutlined
-                        style={{ fontSize: 40, color: '#00B998' }}
-                        spin
-                      />
-                    }
-                  />
-                </div>
-                <Text
-                  strong
-                  style={{
-                    color: '#00B998',
-                    display: 'block',
-                    textAlign: 'center',
-                    marginBottom: 30,
-                    marginTop: 20,
-                  }}
-                >
-                  CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。
-                </Text>
+          <Card style={{ border: '1px dashed #d9d9d9', padding: '20px 0' }}>
+            <div>
+              <div className="flex justify-center">
+                <Image
+                  src={LoadingImport}
+                  alt="loading"
+                  height={40}
+                  width={40}
+                />
               </div>
-            ) : (
-              <div>
-                <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                  <CheckCircleTwoTone
-                    twoToneColor="#52c41a"
-                    style={{ fontSize: 32 }}
-                  />
+              <Text
+                strong
+                style={{
+                  color: '#00B998',
+                  display: 'block',
+                  textAlign: 'center',
+                  marginBottom: 30,
+                  marginTop: 20,
+                }}
+              >
+                CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。
+              </Text>
 
-                  <Link
-                    to="/import-history"
-                    style={{
-                      display: 'block',
-                      textAlign: 'center',
-                      marginBottom: 24,
-                    }}
-                  >
-                    CSVタスク履歴画面
-                  </Link>
-                </div>
-              </div>
-            )}
+              <Link
+                to="/import-history"
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  marginBottom: 24,
+                }}
+              >
+                CSVタスク履歴画面
+              </Link>
+            </div>
           </Card>
         ) : (
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <Alert
-              type="info"
-              message={
-                <div>
-                  <Text strong style={{ color: '#FA8C16' }}>
-                    {t('csv.step_1.alertTitle')}
-                  </Text>
-                  <Paragraph style={{ margin: '8px 0 0' }}>
-                    {t('csv.step_1.alertDesc1')}
-                  </Paragraph>
-                  <Paragraph style={{ margin: 0 }}>
-                    {t('csv.step_1.alertDesc2')}
-                  </Paragraph>
-                  <Button
-                    type="link"
-                    icon={<DownloadOutlined />}
-                    style={{ paddingLeft: 0 }}
-                  >
-                    {t('csv.step_1.downloadButton')}
-                  </Button>
-                </div>
-              }
-            />
+            <div
+              className={cn(
+                'rounded-[8px] border-[1px] border-solid border-[#FFD591] bg-[#E6F7FF] p-6',
+              )}
+            >
+              <Text strong style={{ color: '#FA8C16' }}>
+                {t('csv.step_1.alertTitle')}
+              </Text>
+              <Paragraph style={{ margin: '8px 0 0', color: GREY }}>
+                {t('csv.step_1.alertDesc1')}
+              </Paragraph>
+              <Paragraph style={{ margin: 0, color: GREY }}>
+                {t('csv.step_1.alertDesc2')}
+              </Paragraph>
+              <Button
+                type="link"
+                icon={<DownloadOutlined />}
+                style={{ paddingLeft: 0 }}
+              >
+                {t('csv.step_1.downloadButton')}
+              </Button>
+            </div>
 
             <Form.Item
               layout="vertical"
@@ -214,15 +182,18 @@ function CSVContainer({
                 },
                 {
                   validator: (_, fileList) => {
+                    setIsError(false)
                     const file = fileList.file
                     const isCSV = file.name.toLowerCase().endsWith('.csv')
                     const isSize = file.size / 1024 / 1024 > 5
                     if (isSize) {
+                      setIsError(true)
                       return Promise.reject(
                         '5MB以下のファイルのみアップロードできます',
                       )
                     }
                     if (!isCSV) {
+                      setIsError(true)
                       return Promise.reject(
                         'CSVファイルのみアップロードできます',
                       )
@@ -234,34 +205,40 @@ function CSVContainer({
               ]}
             >
               <Dragger
-                style={{ border: '1px dashed #d9d9d9', textAlign: 'center' }}
+                style={{
+                  border: '1px dashed #d9d9d9',
+                  textAlign: 'center',
+                }}
                 accept=".csv"
                 name="file"
                 maxCount={1}
                 beforeUpload={() => false}
                 onRemove={() => {
+                  console.log('xxxxxxxxxxxxxxx')
                   form.setFields([{ name: 'file', errors: [], value: [] }])
                 }}
               >
-                <FileAddOutlined
-                  style={{ fontSize: 40, color: '#999', marginBottom: 12 }}
-                />
-                <Paragraph style={{ marginBottom: 8, color: '#555' }}>
-                  {t('csv.step_1.dragDrop')}
-                </Paragraph>
-                <Paragraph type="secondary" style={{ marginBottom: 20 }}>
-                  {t('csv.step_1.orSelectFile')}
-                </Paragraph>
-                <Button type="primary" size="large">
-                  {t('csv.step_1.selectFileButton')}
-                </Button>
+                <div className="m-6 flex flex-col items-center gap-3">
+                  <FileAddOutlined
+                    style={{ fontSize: 40, color: BLACK, marginBottom: 12 }}
+                  />
+                  <Paragraph style={{ marginBottom: 8, color: BLACK }}>
+                    {t('csv.step_1.dragDrop')}
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 20, color: GREY }}>
+                    {t('csv.step_1.orSelectFile')}
+                  </Paragraph>
+                  <Button type="primary" size="large">
+                    {t('csv.step_1.selectFileButton')}
+                  </Button>
+                </div>
               </Dragger>
             </Form.Item>
 
             <Card
               size="small"
               title={t('csv.step_1.noteTitle')}
-              headStyle={{ borderBottom: 'none' }}
+              headStyle={{ borderBottom: 'none', margin: '10px 0 0 10px' }}
             >
               <List
                 size="small"
@@ -290,9 +267,7 @@ function CSVContainer({
                 onClick={() => {
                   setIsResult(true)
                 }}
-                disabled={form
-                  .getFieldsError()
-                  .some(({ errors }) => errors.length > 0)}
+                disabled={isError}
               >
                 {t('csv.buttons.nextStep')}
               </Button>
