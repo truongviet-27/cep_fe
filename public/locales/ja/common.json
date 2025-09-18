@@ -412,42 +412,6 @@
     "validate": {
       "save_parent_first": "先に親カテゴリを保存してください",
       "name_required": "名前を入力してください。"
-    },
-    "csv": {
-      "title": "商品カテゴリCSV一括登録",
-      "step_1": {
-        "title": "ファイル選択",
-        "alertTitle": "📋 CSVテンプレート",
-        "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
-        "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
-        "downloadButton": "CSVテンプレートをダウンロード",
-
-        "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
-        "orSelectFile": "または、下のボタンからファイルを選択してください",
-        "selectFileButton": "ファイルを選択",
-
-        "requiredError": "必須項目です",
-        "onlyCSVError": "CSVファイルのみアップロード可能です。",
-        "maxSizeError": "ファイルサイズは最大5MBです。",
-
-        "noteTitle": "CSV登録時の注意事項",
-        "noteItems": {
-          "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
-          "line2": "文字コードはUTF-8またはShift-JISで保存してください。",
-          "line3": "同じ項目コードが複数ある場合、上書きされます。",
-          "line4": "必須項目が不足する場合は取り込み不可です。",
-          "line5": "空白行があってもスキップされます。"
-        }
-      },
-      "step_2": {
-        "title": "登録完了"
-      },
-      "buttons": {
-        "back": "戻る",
-        "submit": "提出する",
-        "nextStep": "次へ",
-        "cancel": "キャンセル"
-      }
     }
   },
   "tags": {
@@ -705,5 +669,41 @@
     "updated_by": "更新者",
     "created_at": "作成日",
     "not_set": "未設定"
+  },
+  "csv": {
+    "title": "[マスタ名] CSV一括登録",
+    "step_1": {
+      "title": "ファイル選択",
+      "alertTitle": "📋 CSVテンプレート",
+      "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
+      "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
+      "downloadButton": "CSVテンプレートをダウンロード",
+
+      "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
+      "orSelectFile": "または、下のボタンからファイルを選択してください",
+      "selectFileButton": "ファイルを選択",
+
+      "requiredError": "必須項目です",
+      "onlyCSVError": "CSVファイルのみアップロード可能です。",
+      "maxSizeError": "ファイルサイズは最大5MBです。",
+
+      "noteTitle": "CSV登録時の注意事項",
+      "noteItems": {
+        "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
+        "line2": "文字コードはUTF-8またはShift-JISで保存してください。",
+        "line3": "同じ項目コードが複数ある場合、上書きされます。",
+        "line4": "必須項目が不足する場合は取り込み不可です。",
+        "line5": "空白行があってもスキップされます。"
+      }
+    },
+    "step_2": {
+      "title": "登録完了"
+    },
+    "buttons": {
+      "back": "戻る",
+      "submit": "提出する",
+      "nextStep": "次へ",
+      "cancel": "キャンセル"
+    }
   }
 }
