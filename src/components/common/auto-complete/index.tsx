@@ -1,71 +1,70 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { BaseRecord } from '@refinedev/core'
-import { useSelect, useTranslate } from '@refinedev/core'
-import { Select } from 'antd'
-import { useEffect, useState } from 'react'
+import { useSelect } from '@refinedev/antd'
+import { useTranslate } from '@refinedev/core'
+import { Form, Select } from 'antd'
+import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 
 function CoreAutoComplete({
-  name,
+  nameFilter,
+  filterPath,
   resource,
-  value,
   onChange,
-  debounce = 400,
-  placeholder,
+  style,
+  labelPath = 'name',
+  valuePath = 'id',
+  ...rest
 }: {
-  name: string
+  nameFilter: string
   resource: string
-  placeholder?: string
-  debounce?: number
-  value?: any
   onChange?: (val: any) => void
+  style?: React.CSSProperties
+  filterPath: any
+  labelPath?: any
+  valuePath?: any
 }) {
   const t = useTranslate()
-  const [options, setOptions] = useState<
-    | {
-        label: BaseRecord
-        value: BaseRecord
-      }[]
-    | []
-  >([])
 
-  const { queryResult, onSearch } = useSelect({
-    resource,
-    debounce,
-    onSearch: name
-      ? (val) => [{ field: name, operator: 'null', value: val }]
-      : undefined,
+  const form = useFormInstance()
+
+  const filter = Form.useWatch(filterPath, form)
+
+  const { selectProps } = useSelect({
+    resource: resource,
+    optionValue: valuePath,
+    optionLabel: labelPath,
+    filters: filter
+      ? [{ field: nameFilter, operator: 'eq', value: filter }]
+      : [],
+    queryOptions: {
+      enabled: !!filter,
+    },
+    pagination: {
+      mode: 'off',
+    },
+    onSearch: (value) => {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
-
-  useEffect(() => {
-    if (queryResult?.data?.data) {
-      const result =
-        queryResult?.data?.data.map((item) => {
-          return {
-            label: item,
-            value: item,
-          }
-        }) ?? []
-      setOptions(result)
-    } else {
-      setOptions([])
-    }
-  }, [queryResult?.data?.data])
 
   return (
     <Select
+      style={style}
       showSearch
-      placeholder={placeholder ?? t('placeholders.partial_match')}
-      labelInValue
+      placeholder={t('buttons.search')}
       filterOption={false}
-      onSearch={(value) => value && onSearch(value)}
       autoClearSearchValue
-      value={value}
-      onChange={onChange}
       allowClear
-      onClear={() => {
-        setOptions([])
-      }}
-      options={options}
+      onChange={onChange}
+      disabled={!filter}
+      {...selectProps}
+      {...rest}
     />
   )
 }

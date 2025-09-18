@@ -66,11 +66,11 @@ export const resource: ResourceProps[] = [
     },
   },
   {
-    name: 'approve',
-    list: '/approve',
-    show: '/approve/show/:id',
-    create: '/approve/create',
-    edit: '/approve/edit/:id',
+    name: 'approve-routes',
+    list: '/approve-routes',
+    show: '/approve-routes/show/:id',
+    create: '/approve-routes/create',
+    edit: '/approve-routes/edit/:id',
     meta: {
       parent: 'merchandise',
       canDelete: true,

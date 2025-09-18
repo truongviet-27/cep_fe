@@ -265,8 +265,8 @@
   "merchandise": {
     "merchandise": "商品"
   },
-  "approve": {
-    "approve": "承認する"
+  "approve_routes": {
+    "approve_routes": "承認する"
   },
   "employees": {
     "employees": "社員",

@@ -57,17 +57,9 @@ function ProductContainer() {
           separator={<RightOutlined />}
         />
       }
-      title={<Title level={5}>{t('products.list.title')}</Title>}
+      title={t('products.list.title')}
     >
       <Form {...formProps}>
-        <Title
-          level={5}
-          style={{
-            color: '#1890FF',
-          }}
-        >
-          {t('products.title')}
-        </Title>
         <Row gutter={16}>
           <Col sm={12} md={6} lg={4}>
             <CoreInput
