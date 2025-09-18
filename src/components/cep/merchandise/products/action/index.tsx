@@ -524,7 +524,7 @@ function ProductDetailContainer() {
           expandIcon={({ isActive }) => (
             <DownOutlined
               style={{ transition: '0.3s' }}
-              rotate={isActive ? 0 : 180}
+              rotate={isActive ? 180 : 0}
             />
           )}
         />
@@ -843,7 +843,7 @@ function ProductDetailContainer() {
           expandIcon={({ isActive }) => (
             <DownOutlined
               style={{ transition: '0.3s' }}
-              rotate={isActive ? 0 : 180}
+              rotate={isActive ? 180 : 0}
             />
           )}
         />
@@ -1159,7 +1159,7 @@ function ProductDetailContainer() {
           expandIcon={({ isActive }) => (
             <DownOutlined
               style={{ transition: '0.3s' }}
-              rotate={isActive ? 0 : 180}
+              rotate={isActive ? 180 : 0}
             />
           )}
         />

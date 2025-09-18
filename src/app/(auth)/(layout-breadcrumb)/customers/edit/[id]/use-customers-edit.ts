@@ -1,16 +1,19 @@
-import { useModalForm } from '@refinedev/antd'
+import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCreate, useCustom, useTranslate } from '@refinedev/core'
 import type {
   CodeIssueSetting,
   CustomerStoreRequest,
+  Department,
 } from '@sdk/hey-api/types.gen'
 import { zCustomerStoreRequest } from '@sdk/hey-api/zod.gen'
-import { Form } from 'antd'
 import { createSchemaFieldRule } from 'antd-zod'
 
-export const useCustomerCreateForm = () => {
+export const useCustomerEdit = () => {
   const t = useTranslate()
-  const [form] = Form.useForm<CustomerStoreRequest>()
+  const { formProps, saveButtonProps, form } = useForm<Department>({
+    redirect: 'show',
+  })
+
   const { mutate, isLoading } = useCreate<CustomerStoreRequest>()
 
   const apiUrl = useApiUrl()
@@ -74,5 +77,7 @@ export const useCustomerCreateForm = () => {
     isCodeGenLoading,
     codeGenData,
     refetchCodeGen,
+    formProps,
+    saveButtonProps,
   }
 }
