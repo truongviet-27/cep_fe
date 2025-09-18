@@ -1228,6 +1228,53 @@ export type PostsPaginatedResponse = PaginatedResponse & {
 }
 
 /**
+ * Rank price information for a packaging
+ */
+export type PackagingRankPrice = {
+  rank_id?: number
+  rank_code?: string
+  rank_name?: string
+  rate?: number
+  price?: number
+}
+
+/**
+ * Detailed product information
+ */
+export type ProductDetail = {
+  category?: string
+  code?: string
+  name?: string
+  short_name?: string
+  barcode?: string
+  unit?: string
+  cost_price?: number
+  selling_price?: number
+  packagings?: Array<ProductPackaging>
+}
+
+export type ProductDetailResponse = {
+  data?: ProductDetail
+  message?: string
+}
+
+/**
+ * Product packaging with rank based prices
+ */
+export type ProductPackaging = {
+  code?: string
+  name?: string
+  quantity_in_package?: number
+  unit?: string
+  standard_price?: number
+  sale_price?: number
+  is_active?: boolean
+  is_rate_based?: boolean
+  is_standard_price?: boolean
+  rank_prices?: Array<PackagingRankPrice>
+}
+
+/**
  * Rank price item for a packaging (manual mode)
  */
 export type ProductPackagingRankPriceInput = {
@@ -1361,6 +1408,33 @@ export type Product = {
   selling_price?: number
   note?: string | null
   packagings?: Array<ProductPackagingInput>
+}
+
+/**
+ * Simplified product list item
+ */
+export type ProductListItem = {
+  id?: number
+  code?: string
+  name?: string
+  barcode?: string
+  category?: string
+  unit?: string
+  packaging_count?: number
+  cost_price?: number
+  sale_price?: number
+}
+
+/**
+ * Paginated product list response
+ */
+export type ProductsListResponse = {
+  data?: {
+    items?: Array<ProductListItem>
+    meta?: Meta
+    links?: Links
+  }
+  message?: string
 }
 
 /**
@@ -3056,11 +3130,11 @@ export type E821554Cdf9A1C547Bbe990Db9Dc76Data = {
      * Function name for import
      */
     common_name:
-      | 'products'
-      | 'category-products'
-      | 'customers'
-      | 'department'
-      | 'other'
+      | 'PRODUCTS'
+      | 'CATEGORY_PRODUCTS'
+      | 'CUSTOMERS'
+      | 'DEPARTMENTS'
+      | 'OTHER'
   }
   query?: never
   url: '/api/v1/{common_name}/presigned-url'
@@ -3129,9 +3203,8 @@ export type ImportControllerImportData = {
       | 'DEPARTMENTS'
       | 'OTHER'
   }
-  path?: never
   query?: never
-  url: '/api/v1/csv-imports/import'
+  url: '/api/v1/csv-imports/{common_name}/import'
 }
 
 export type ImportControllerImportErrors = {
@@ -3139,11 +3212,7 @@ export type ImportControllerImportErrors = {
    * Validation error - Invalid file_key or parameters
    */
   400: {
-    success?: boolean
     message?: string
-    errors?: {
-      [key: string]: unknown
-    }
   }
   /**
    * Unauthorized
@@ -3155,20 +3224,12 @@ export type ImportControllerImportErrors = {
    * Import completed with errors
    */
   422: {
-    success?: boolean
     message?: string
-    data?: {
-      total?: number
-      success?: number
-      failed?: number
-      errors?: Array<string>
-    }
   }
   /**
    * Internal server error
    */
   500: {
-    success?: boolean
     message?: string
   }
 }
@@ -3181,40 +3242,20 @@ export type ImportControllerImportResponses = {
    * Import completed successfully
    */
   200: {
-    success?: boolean
     message?: string
     data?: {
       /**
-       * Total number of rows processed
+       * Import history id
        */
-      total?: number
+      import_history_id?: number
       /**
-       * Number of successfully imported rows
+       * Status
        */
-      success?: number
+      status?: string
       /**
-       * Number of failed imports
+       * Message
        */
-      failed?: number
-      /**
-       * List of import errors with detailed information
-       */
-      errors?: Array<{
-        /**
-         * Row number with error
-         */
-        row?: number
-        /**
-         * Original row data that failed to import
-         */
-        data?: {
-          [key: string]: unknown
-        }
-        /**
-         * List of error messages for this row
-         */
-        errors?: Array<string>
-      }>
+      message?: string
     }
   }
 }
@@ -3633,6 +3674,91 @@ export type E475E7Ead1848Aa17C399Ba311C51Responses = {
 
 export type E475E7Ead1848Aa17C399Ba311C51Response =
   E475E7Ead1848Aa17C399Ba311C51Responses[keyof E475E7Ead1848Aa17C399Ba311C51Responses]
+
+export type ProductControllerDestroyData = {
+  body?: never
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/products/{id}'
+}
+
+export type ProductControllerDestroyErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductControllerDestroyError =
+  ProductControllerDestroyErrors[keyof ProductControllerDestroyErrors]
+
+export type ProductControllerDestroyResponses = {
+  /**
+   * Soft deleted
+   */
+  200: {
+    data?: unknown | null
+    message?: string
+  }
+}
+
+export type ProductControllerDestroyResponse =
+  ProductControllerDestroyResponses[keyof ProductControllerDestroyResponses]
+
+export type ProductControllerShowData = {
+  body?: never
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/products/{id}'
+}
+
+export type ProductControllerShowErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductControllerShowError =
+  ProductControllerShowErrors[keyof ProductControllerShowErrors]
+
+export type ProductControllerShowResponses = {
+  /**
+   * Product detail retrieved
+   */
+  200: ProductDetailResponse
+}
+
+export type ProductControllerShowResponse =
+  ProductControllerShowResponses[keyof ProductControllerShowResponses]
 
 export type Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data = {
   body: UpdateProductInput

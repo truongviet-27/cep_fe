@@ -1192,7 +1192,7 @@ export const importControllerImport = <ThrowOnError extends boolean = false>(
         type: 'http',
       },
     ],
-    url: '/api/v1/csv-imports/import',
+    url: '/api/v1/csv-imports/{common_name}/import',
     ...options,
     headers: {
       'Content-Type': 'application/json',

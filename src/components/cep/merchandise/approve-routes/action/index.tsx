@@ -245,9 +245,27 @@ function ApproveAction() {
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <CoreInput
                 name={'code'}
-                label={'ルートコード'}
+                label={t('approve_routes.labels.routeCode')}
                 required
                 layout="horizontal"
+                rules={[
+                  {
+                    required: true,
+                    message: t('approve_routes.validation.route_code.required'),
+                  },
+                  {
+                    whitespace: true,
+                    message: t(
+                      'approve_routes.validation.route_code.invalid_whitespace',
+                    ),
+                  },
+                  {
+                    pattern: /^[A-Z0-9-]+$/,
+                    message: t(
+                      'approve_routes.validation.route_code.invalid_format',
+                    ),
+                  },
+                ]}
               />
             </Col>
           </Row>
@@ -255,9 +273,21 @@ function ApproveAction() {
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <CoreInput
                 name={'name'}
-                label={'ルート名'}
+                label={t('approve_routes.labels.routeName')}
                 required
                 layout="horizontal"
+                rules={[
+                  {
+                    required: true,
+                    message: t('approve_routes.validation.route_code.required'),
+                  },
+                  {
+                    whitespace: true,
+                    message: t(
+                      'approve_routes.validation.route_code.invalid_whitespace',
+                    ),
+                  },
+                ]}
               />
             </Col>
           </Row>
@@ -265,16 +295,35 @@ function ApproveAction() {
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
                 name={'department'}
-                label={boldText('部門（支社/部/課）')}
+                label={boldText(t('approve_routes.labels.department'))}
                 required
                 layout="horizontal"
                 colon={false}
+                rules={[
+                  {
+                    required: true,
+                    message: t('approve_routes.validation.route_code.required'),
+                  },
+                ]}
               >
                 <Select
                   {...selectPropsDp}
-                  // mode="multiple"
                   maxTagCount={'responsive'}
                   allowClear
+                  options={(() => {
+                    const optionFromDp2 = selectPropsDp2?.options?.find(
+                      (opt) => opt.value === form.getFieldValue('department'),
+                    )
+
+                    const optionsFromDp = selectPropsDp?.options || []
+
+                    const newOptions = [
+                      ...(optionFromDp2 ? [optionFromDp2] : []),
+                      ...optionsFromDp,
+                    ]
+
+                    return newOptions
+                  })()}
                 />
               </Form.Item>
             </Col>
@@ -283,7 +332,7 @@ function ApproveAction() {
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
                 name={'status'}
-                label={boldText('ステータス')}
+                label={boldText(t('approve_routes.labels.status'))}
                 layout="horizontal"
               >
                 <Radio.Group
@@ -312,9 +361,7 @@ function ApproveAction() {
                         style={{
                           marginBottom: '10px',
                         }}
-                        headStyle={{
-                          borderBottom: 'none',
-                        }}
+                        headStyle={{ borderBottom: 'none', minHeight: 'auto' }}
                         title={
                           <Space className="w-full justify-between">
                             <Space
@@ -322,13 +369,12 @@ function ApproveAction() {
                                 background: PRIMARY,
                                 color: WHITE,
                                 padding: '4px 16px',
-                                borderRadius: '4px',
                                 fontSize: 12,
                                 fontWeight: 700,
-                                zIndex: 99,
+                                borderRadius: '0 0px 4px 4px',
                               }}
                             >
-                              ステップ1
+                              {t('approve_routes.steps.step')} {index + 1}
                             </Space>
                             {fields.length > 1 && (
                               <Space
@@ -364,7 +410,7 @@ function ApproveAction() {
                             >
                               <CoreInput
                                 name={[item.name, 'name']}
-                                label={'ステップ名'}
+                                label={t('approve_routes.labels.stepName')}
                                 required
                                 layout="horizontal"
                               />
@@ -383,11 +429,11 @@ function ApproveAction() {
                               <Form.Item
                                 name={[item.name, 'is_multi_appover']}
                                 layout="horizontal"
-                                label={
-                                  <span className="font-bold">
-                                    承認者の指定
-                                  </span>
-                                }
+                                label={boldText(
+                                  t(
+                                    'approve_routes.labels.approverDesignation',
+                                  ),
+                                )}
                                 colon={false}
                                 valuePropName="checked"
                               >
@@ -430,12 +476,18 @@ function ApproveAction() {
                                       >
                                         <Row gutter={[12, 12]}>
                                           <Col xs={24} md={4}>
-                                            {boldText('承認者')}
+                                            {boldText(
+                                              t(
+                                                'approve_routes.labels.approver',
+                                              ),
+                                            )}
                                           </Col>
                                           <Col xs={10} md={8}>
                                             <Form.Item
                                               label={boldText(
-                                                '部門（支社/部/課）',
+                                                t(
+                                                  'approve_routes.labels.department',
+                                                ),
                                               )}
                                               name={[
                                                 item2.name,
@@ -467,11 +519,21 @@ function ApproveAction() {
                                           <Col xs={10} md={8}>
                                             <Form.Item
                                               label={boldText(
-                                                '部門（支社/部/課）',
+                                                t(
+                                                  'approve_routes.labels.department',
+                                                ),
                                               )}
                                               name={[item2.name, 'employee_id']}
                                               labelCol={{ span: 24 }}
                                               required
+                                              rules={[
+                                                {
+                                                  required: true,
+                                                  message: t(
+                                                    'approve_routes.validation.route_code.required',
+                                                  ),
+                                                },
+                                              ]}
                                             >
                                               <CoreAutoComplete
                                                 nameFilter="department_id"
@@ -521,7 +583,9 @@ function ApproveAction() {
                                             add({})
                                           }}
                                         >
-                                          承認者を追加
+                                          {t(
+                                            'approve_routes.buttons.addApprover',
+                                          )}
                                         </Button>
                                       </Col>
                                     </Row>
@@ -551,7 +615,7 @@ function ApproveAction() {
                       })
                     }}
                   >
-                    ＋ ステップを追加
+                    {t('approve_routes.buttons.addStep')}
                   </Button>
                 </div>
               )
@@ -563,7 +627,7 @@ function ApproveAction() {
             <ShowMoreInfo
               descriptions={[
                 {
-                  title: '作成者',
+                  title: t('approve_routes.show.creator'),
                   value: (
                     <Space>
                       {query.data?.data?.author?.name}
@@ -572,7 +636,7 @@ function ApproveAction() {
                   ),
                 },
                 {
-                  title: '更新者',
+                  title: t('approve_routes.show.updater'),
                   value: (
                     <Space>
                       {query.data?.data?.editor?.name}

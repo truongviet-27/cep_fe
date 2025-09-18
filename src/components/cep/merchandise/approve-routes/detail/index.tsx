@@ -99,7 +99,7 @@ function ApproveDetail() {
           <Row>
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
-                label={boldText('ルートコード')}
+                label={boldText(t('approve_routes.labels.routeCode'))}
                 layout="horizontal"
                 colon={false}
               >
@@ -110,7 +110,7 @@ function ApproveDetail() {
           <Row>
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
-                label={boldText('ルート名')}
+                label={boldText(t('approve_routes.labels.routeName'))}
                 layout="horizontal"
                 colon={false}
               >
@@ -121,7 +121,7 @@ function ApproveDetail() {
           <Row>
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
-                label={boldText('部門（支社/部/課）')}
+                label={boldText(t('approve_routes.labels.department'))}
                 layout="horizontal"
                 colon={false}
               >
@@ -132,7 +132,7 @@ function ApproveDetail() {
           <Row>
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
-                label={boldText('ステータス')}
+                label={boldText(t('approve_routes.labels.status'))}
                 layout="horizontal"
                 colon={false}
               >
@@ -161,7 +161,8 @@ function ApproveDetail() {
                           borderRadius: '0 0px 4px 4px',
                         }}
                       >
-                        ステップ{index + 1}
+                        {t('approve_routes.steps.step')}
+                        {index + 1}
                       </Space>
                     }
                   >
@@ -169,7 +170,9 @@ function ApproveDetail() {
                       <Row>
                         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
                           <Form.Item
-                            label={boldText('ステップ名')}
+                            label={boldText(
+                              t('approve_routes.labels.stepName'),
+                            )}
                             name={[item.name, 'name']}
                             layout="horizontal"
                             colon={false}
@@ -184,7 +187,9 @@ function ApproveDetail() {
 
                       <Row>
                         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
-                          {boldText('承認者の指定')}
+                          {boldText(
+                            t('approve_routes.labels.approverDesignation'),
+                          )}
                         </Col>
                       </Row>
 
@@ -196,7 +201,11 @@ function ApproveDetail() {
                                 return (
                                   <Row key={item2.key}>
                                     <Col xs={24} md={4}>
-                                      {boldText('伊藤太郎')}
+                                      {boldText(
+                                        t(
+                                          'approve_routes.show.employeeNameExample',
+                                        ),
+                                      )}
                                     </Col>
                                     <Col xs={24} md={20}>
                                       <Space>
@@ -235,7 +244,7 @@ function ApproveDetail() {
           <ShowMoreInfo
             descriptions={[
               {
-                title: '作成者',
+                title: t('approve_routes.show.creator'),
                 value: (
                   <Space>
                     {query.data?.data?.author?.name}
@@ -244,7 +253,7 @@ function ApproveDetail() {
                 ),
               },
               {
-                title: '更新者',
+                title: t('approve_routes.show.updater'),
                 value: (
                   <Space>
                     {query.data?.data?.editor?.name}

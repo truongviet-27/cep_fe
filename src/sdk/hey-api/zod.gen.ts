@@ -763,6 +763,53 @@ export const zPostsPaginatedResponse = zPaginatedResponse.and(
 )
 
 /**
+ * Rank price information for a packaging
+ */
+export const zPackagingRankPrice = z.object({
+  rank_id: z.optional(z.int()),
+  rank_code: z.optional(z.string()),
+  rank_name: z.optional(z.string()),
+  rate: z.optional(z.int()),
+  price: z.optional(z.int()),
+})
+
+/**
+ * Product packaging with rank based prices
+ */
+export const zProductPackaging = z.object({
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  quantity_in_package: z.optional(z.int()),
+  unit: z.optional(z.string()),
+  standard_price: z.optional(z.int()),
+  sale_price: z.optional(z.int()),
+  is_active: z.optional(z.boolean()),
+  is_rate_based: z.optional(z.boolean()),
+  is_standard_price: z.optional(z.boolean()),
+  rank_prices: z.optional(z.array(zPackagingRankPrice)),
+})
+
+/**
+ * Detailed product information
+ */
+export const zProductDetail = z.object({
+  category: z.optional(z.string()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  short_name: z.optional(z.string()),
+  barcode: z.optional(z.string()),
+  unit: z.optional(z.string()),
+  cost_price: z.optional(z.int()),
+  selling_price: z.optional(z.int()),
+  packagings: z.optional(z.array(zProductPackaging)),
+})
+
+export const zProductDetailResponse = z.object({
+  data: z.optional(zProductDetail),
+  message: z.optional(z.string()),
+})
+
+/**
  * Rank price item for a packaging (manual mode)
  */
 export const zProductPackagingRankPriceInput = z.object({
@@ -835,6 +882,45 @@ export const zProduct = z.object({
   selling_price: z.optional(z.int()),
   note: z.optional(z.union([z.string(), z.null()])),
   packagings: z.optional(z.array(zProductPackagingInput)),
+})
+
+/**
+ * Simplified product list item
+ */
+export const zProductListItem = z.object({
+  id: z.optional(z.int()),
+  code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  barcode: z.optional(z.string()),
+  category: z.optional(z.string()),
+  unit: z.optional(z.string()),
+  packaging_count: z.optional(z.int()),
+  cost_price: z.optional(z.int()),
+  sale_price: z.optional(z.int()),
+})
+
+/**
+ * Pagination links
+ */
+export const zLinks = z.object({
+  first: z.optional(z.string()),
+  last: z.optional(z.string()),
+  prev: z.optional(z.union([z.string(), z.null()])),
+  next: z.optional(z.union([z.string(), z.null()])),
+})
+
+/**
+ * Paginated product list response
+ */
+export const zProductsListResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zProductListItem)),
+      meta: z.optional(zMeta),
+      links: z.optional(zLinks),
+    }),
+  ),
+  message: z.optional(z.string()),
 })
 
 /**
@@ -944,16 +1030,6 @@ export const zTag = z.object({
   id: z.optional(z.int()),
   name: z.optional(z.string()),
   order: z.optional(z.int()),
-})
-
-/**
- * Pagination links
- */
-export const zLinks = z.object({
-  first: z.optional(z.string()),
-  last: z.optional(z.string()),
-  prev: z.optional(z.union([z.string(), z.null()])),
-  next: z.optional(z.union([z.string(), z.null()])),
 })
 
 /**
@@ -1586,11 +1662,11 @@ export const zE821554Cdf9A1C547Bbe990Db9Dc76Data = z.object({
   }),
   path: z.object({
     common_name: z.enum([
-      'products',
-      'category-products',
-      'customers',
-      'department',
-      'other',
+      'PRODUCTS',
+      'CATEGORY_PRODUCTS',
+      'CUSTOMERS',
+      'DEPARTMENTS',
+      'OTHER',
     ]),
   }),
   query: z.optional(z.never()),
@@ -1616,6 +1692,8 @@ export const zE821554Cdf9A1C547Bbe990Db9Dc76Response = z.object({
 export const zImportControllerImportData = z.object({
   body: z.object({
     file_key: z.string(),
+  }),
+  path: z.object({
     common_name: z.enum([
       'PRODUCTS',
       'CATEGORY_PRODUCTS',
@@ -1624,7 +1702,6 @@ export const zImportControllerImportData = z.object({
       'OTHER',
     ]),
   }),
-  path: z.optional(z.never()),
   query: z.optional(z.never()),
 })
 
@@ -1632,22 +1709,12 @@ export const zImportControllerImportData = z.object({
  * Import completed successfully
  */
 export const zImportControllerImportResponse = z.object({
-  success: z.optional(z.boolean()),
   message: z.optional(z.string()),
   data: z.optional(
     z.object({
-      total: z.optional(z.int()),
-      success: z.optional(z.int()),
-      failed: z.optional(z.int()),
-      errors: z.optional(
-        z.array(
-          z.object({
-            row: z.optional(z.int()),
-            data: z.optional(z.object({})),
-            errors: z.optional(z.array(z.string())),
-          }),
-        ),
-      ),
+      import_history_id: z.optional(z.int()),
+      status: z.optional(z.string()),
+      message: z.optional(z.string()),
     }),
   ),
 })
@@ -1844,6 +1911,24 @@ export const zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Response = z.object({
   data: z.optional(zPost),
 })
 
+export const zProductControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      q: z.optional(z.string()),
+      _page: z.optional(z.int()).default(1),
+      _per_page: z.optional(z.int()).default(10),
+      category_id: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Products retrieved successfully
+ */
+export const zProductControllerIndexResponse = zProductsListResponse
+
 export const zE475E7Ead1848Aa17C399Ba311C51Data = z.object({
   body: zStoreProductInput,
   path: z.optional(z.never()),
@@ -1854,6 +1939,35 @@ export const zE475E7Ead1848Aa17C399Ba311C51Data = z.object({
  * Created
  */
 export const zE475E7Ead1848Aa17C399Ba311C51Response = zProduct
+
+export const zProductControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Soft deleted
+ */
+export const zProductControllerDestroyResponse = z.object({
+  data: z.optional(z.union([z.unknown(), z.null()])),
+  message: z.optional(z.string()),
+})
+
+export const zProductControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Product detail retrieved
+ */
+export const zProductControllerShowResponse = zProductDetailResponse
 
 export const zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data = z.object({
   body: zUpdateProductInput,

@@ -2,11 +2,17 @@ import {
   CheckCircleTwoTone,
   DownloadOutlined,
   FileAddOutlined,
+  Loading3QuartersOutlined,
   RightOutlined,
 } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import { useForm } from '@refinedev/antd'
-import { useCustomMutation, useTranslate } from '@refinedev/core'
+import {
+  Link,
+  useApiUrl,
+  useCustomMutation,
+  useTranslate,
+} from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Alert,
@@ -16,10 +22,12 @@ import {
   Form,
   List,
   Space,
+  Spin,
   Typography,
 } from 'antd'
 import Dragger from 'antd/es/upload/Dragger'
 import Title from 'antd/lib/typography/Title'
+import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
 
 const { Text, Paragraph } = Typography
@@ -35,17 +43,20 @@ function CSVContainer({
 
   const [isResult, setIsResult] = useState(false)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const { mutate } = useCustomMutation()
   const { mutate: mutate2 } = useCustomMutation()
 
-  console.log(form.getFieldValue('file'), 'xxxxxxxxxxxxy')
+  const apiUrl = useApiUrl()
 
   useEffect(() => {
+    setIsLoading(true)
     if (isResult) {
       mutate(
         {
           method: 'post',
-          url: `http://172.16.0.31:8001/api/v1/${name}/presigned-url`,
+          url: `${apiUrl}/${name}/presigned-url`,
           values: {
             file_name: form.getFieldValue('file')?.file?.name,
             content_type: form.getFieldValue('file')?.file?.type,
@@ -55,16 +66,31 @@ function CSVContainer({
         },
         {
           onSuccess: (data) => {
-            mutate2({
-              method: 'put',
-              url: data.data.presigned_url,
-              config: {
+            axios
+              .put(data.data.presigned_url, form.getFieldValue('file')?.file, {
                 headers: {
-                  'Content-Type': data.data.content_type,
+                  'Content-Type': data.data.content_type || 'text/csv',
                 },
-              },
-              values: form.getFieldValue('file')?.file,
-            })
+              })
+              .then(() => {
+                mutate2(
+                  {
+                    method: 'post',
+                    url: `${apiUrl}/${name}/import`,
+                    values: {
+                      file_key: data.data.file_key,
+                    },
+                  },
+                  {
+                    onSuccess() {
+                      setIsLoading(false)
+                    },
+                  },
+                )
+              })
+              .catch((error) => {
+                console.log(error)
+              })
           },
         },
       )
@@ -105,24 +131,54 @@ function CSVContainer({
     >
       <Form {...formProps}>
         {isResult ? (
-          <Card bordered>
-            <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <CheckCircleTwoTone
-                twoToneColor="#52c41a"
-                style={{ fontSize: 32 }}
-              />
-            </div>
-            <Text
-              type="success"
-              strong
-              style={{
-                display: 'block',
-                textAlign: 'center',
-                marginBottom: 24,
-              }}
-            ></Text>
+          <Card style={{ border: '1px dashed #d9d9d9', padding: '40px 0' }}>
+            {isLoading ? (
+              <div>
+                <div style={{ textAlign: 'center', marginBottom: 30 }}>
+                  <Spin
+                    size="large"
+                    indicator={
+                      <Loading3QuartersOutlined
+                        style={{ fontSize: 40, color: '#00B998' }}
+                        spin
+                      />
+                    }
+                  />
+                </div>
+                <Text
+                  strong
+                  style={{
+                    color: '#00B998',
+                    display: 'block',
+                    textAlign: 'center',
+                    marginBottom: 30,
+                    marginTop: 20,
+                  }}
+                >
+                  CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。
+                </Text>
+              </div>
+            ) : (
+              <div>
+                <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                  <CheckCircleTwoTone
+                    twoToneColor="#52c41a"
+                    style={{ fontSize: 32 }}
+                  />
 
-            <div></div>
+                  <Link
+                    to="/import-history"
+                    style={{
+                      display: 'block',
+                      textAlign: 'center',
+                      marginBottom: 24,
+                    }}
+                  >
+                    CSVタスク履歴画面
+                  </Link>
+                </div>
+              </div>
+            )}
           </Card>
         ) : (
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -180,7 +236,7 @@ function CSVContainer({
               ]}
             >
               <Dragger
-                style={{ border: '2px dashed #d9d9d9', textAlign: 'center' }}
+                style={{ border: '1px dashed #d9d9d9', textAlign: 'center' }}
                 accept=".csv"
                 name="file"
                 maxCount={1}
