@@ -41,7 +41,9 @@ export default function Page() {
       ),
     },
     {
-      title: <Title level={5}>{t('system_config.permission_settings')}</Title>,
+      title: (
+        <Title level={5}>{t('parameter_settings.parameter_settings')}</Title>
+      ),
     },
   ]
 
@@ -59,7 +61,7 @@ export default function Page() {
       align: 'center',
     },
     {
-      title: t('system_config.manager'),
+      title: t('system_config.initial_setting'),
       key: 'is_manage',
       width: 400,
       align: 'center',

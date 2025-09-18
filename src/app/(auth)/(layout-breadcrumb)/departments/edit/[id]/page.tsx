@@ -185,6 +185,7 @@ export default function EmployeeEdit() {
                   type="link"
                   onClick={() => show(data?.data?.id)}
                   className="text-blue-500"
+                  disabled={!data?.data?.id}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>

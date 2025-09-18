@@ -1,8 +1,8 @@
 import { RightOutlined } from '@ant-design/icons'
 import usePermissionSetting from '@components/cep/system-config/permission-setting/usePermissionSetting'
 import AutoHeading from '@components/common/auto-heading'
+import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
-import PageContainer from '@components/organism/PageContainer'
 import { Breadcrumb, Button } from 'antd'
 
 function PermissionSetting() {

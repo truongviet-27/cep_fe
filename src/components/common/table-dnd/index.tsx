@@ -121,6 +121,10 @@ export default function TableDnd<T extends object>({
               row: DndRow,
             },
           }}
+          pagination={{
+            ...tableProps?.pagination,
+            showSizeChanger: true,
+          }}
           rowKey={getRowId}
           columns={injectedColumns}
           dataSource={dataSource}

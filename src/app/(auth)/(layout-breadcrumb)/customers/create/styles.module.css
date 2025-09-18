@@ -1,0 +1,15 @@
+.formPanel .ant-collapse-content-box {
+  padding: 24px 32px !important;
+  background-color: #ffffff !important;
+}
+
+.formPanel .ant-form-item-label > label {
+  font-weight: 600;
+  color: #333;
+}
+
+.tableTitle {
+  color: #007bff;
+  font-weight: bold;
+  font-size: 14px;
+}
