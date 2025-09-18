@@ -351,25 +351,30 @@
       "employee": "管理者"
     },
     "dataSource": {
-      "customerMaster": "取引先マスタ",
-      "projectMaster": "案件マスタ",
-      "productMaster": "商品マスタ",
-      "quoteTemplateMaster": "見積テンプレートマスタ",
-      "quoteFormSettings": "見積フォーム設定",
-      "quoteEmailTemplate": "見積書送付メールテンプレート",
-      "codeNumbering": "コード採番設定",
-      "approvalAndReturn": "承認・差戻し",
-      "costDetails": "原価明細",
-
-      "customerMasterPurpose": "取引先をマスタ化して名寄せします。",
-      "projectMasterPurpose": "案件をマスタ化して名寄せします。",
-      "productMasterPurpose": "マスタをマスタ化して名寄せします。",
-      "quoteTemplateMasterPurpose": "見積書のテンプレートを管理して効率化します。",
-      "quoteFormSettingsPurpose": "見積入力フォームの項目をカスタマイズします。",
-      "quoteEmailTemplatePurpose": "見積書送付時のメールテンプレートを管理します。",
-      "codeNumberingPurpose": "見積番号の自動採番ルールを設定します。",
-      "approvalAndReturnPurpose": "送信前に見積承認を利用します。\n承認時に差戻し処理を利用します。",
-      "costDetailsPurpose": "承認・粗利確認のため原価見積を利用します。"
+      "clientMaster": {
+        "title": "取引先マスタ",
+        "description": "取引先の登録や編集を行うための権限です。"
+      },
+      "productMaster": {
+        "title": "商品マスタ",
+        "description": "商品・サービスの登録や編集を行うための権限です。"
+      },
+      "productUnitMaster": {
+        "title": "商品単位マスタ",
+        "description": "商品単位の登録や編集を行うための権限です。"
+      },
+      "productCategoryMaster": {
+        "title": "商品カテゴリマスタ",
+        "description": "商品カテゴリの登録や編集を行うための権限です。"
+      },
+      "departmentMaster": {
+        "title": "部門マスタ",
+        "description": "部門の登録や編集を行うための権限です。"
+      },
+      "employeeMaster": {
+        "title": "社員マスタ",
+        "description": "社員の登録や編集を行うための権限です。"
+      }
     },
     "buttons": {
       "cancel": "戻る",
