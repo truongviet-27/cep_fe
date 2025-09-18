@@ -2,8 +2,8 @@
 import { DownOutlined, RightOutlined } from '@ant-design/icons'
 import type { ProductFormType } from '@components/cep/merchandise/products/action/use-product-detail'
 import useProductDetail from '@components/cep/merchandise/products/action/use-product-detail'
+import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import PageContainer from '@components/organism/PageContainer'
 import { useParsed } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {

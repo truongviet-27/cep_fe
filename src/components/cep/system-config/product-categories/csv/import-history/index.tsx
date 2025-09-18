@@ -1,8 +1,8 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import useImportHistory from '@components/cep/system-config/product-categories/csv/import-history/useImportHistory'
+import CoreInput from '@components/common/core-input'
+import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
-import CoreInput from '@components/organism/CoreInput'
-import PageContainer from '@components/organism/PageContainer'
 import { PRIMARY } from '@utility/color'
 import {
   AutoComplete,

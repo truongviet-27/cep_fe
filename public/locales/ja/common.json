@@ -36,7 +36,18 @@
     "add": "追加",
     "save": "登録",
     "search": "検索",
-    "clear": "クリア"
+    "clear": "クリア",
+    "new_create": "新規作成",
+    "csv_bulk_register": "CSV一括登録",
+    "suspend": "停止",
+    "resume": "開始",
+    "add_delivery_destination": "納品先追加",
+    "copy_contact_info": "取引先情報をコピーする"
+  },
+  "placeholders": {
+    "partial_match": "部分一致",
+    "select": "選択してください",
+    "file_url": "ファイルのURLを入力"
   },
   "notifications": {
     "success": "成功しました",
@@ -64,9 +75,82 @@
     "estimates": "見積"
   },
   "customers": {
-    "customers": "顧客"
+    "customers": "取引先",
+    "list": {
+      "list": "取引先一覧"
+    },
+    "create": {
+      "create": "取引先新規作成"
+    },
+    "edit": {
+      "edit": "取引先編集"
+    },
+    "modal": {
+      "title": "法人番号取得",
+      "name": "名称",
+      "address": "所在地",
+      "corporate_number": "法人番号"
+    },
+    "show": {
+      "show": "取引先編集",
+      "basic_info": "基本情報",
+      "address_contact": "住所・連絡先",
+      "delivery_destinations": "納品先情報",
+      "postal_code": "郵便番号",
+      "address": "住所",
+      "building_name": "建物名",
+      "phone": "電話番号",
+      "fax": "FAX番号",
+      "listing_classification": "上場区分",
+      "industry": "業種",
+      "date_of_establishment": "設立年月日",
+      "department_in_charge": "担当部署",
+      "contact_name": "担当者名",
+      "contact_department": "担当者部署",
+      "contact_email": "担当者メール",
+      "contact_phone": "担当者電話番号",
+      "accounting_contact": "経理者情報"
+    },
+    "research": {
+      "document_name": "資料名",
+      "judgement": "判定",
+      "file": "ファイル",
+      "updated_by": "登録者",
+      "last_updated": "最終更新日"
+    },
+    "fields": {
+      "code": "取引先コード",
+      "name": "取引先名",
+      "country": "国",
+      "department": "担当部署",
+      "unit_price_rank": "単価ランク",
+      "credit_rank": "与信ランク",
+      "anti_social_rank": "反社ランク",
+      "anti_social_check_date": "反社チェック更新日",
+      "registration_date": "登録日",
+      "suspension_date": "停止日",
+      "actions": "操作",
+      "name_kana": "取引先名（カナ)",
+      "corporate_number": "法人番号",
+      "company_classification": "会社分類"
+    },
+    "delivery": {
+      "code": "納品先コード",
+      "name": "納品先名",
+      "address": "住所",
+      "contact_person": "担当者",
+      "phone": "電話番号",
+      "email": "メールアドレス"
+    },
+    "enums": {
+      "corporation": "法人",
+      "individual": "個人"
+    },
+    "filters": {
+      "code_name": "取引先コード・取引先名",
+      "date_range": "日付"
+    }
   },
-
   "products": {
     "products": "商品一覧",
     "sections": {
@@ -178,18 +262,69 @@
       "code": "単価ランクコード",
       "name": "単価ランク名",
       "rate": "掛け率（％)",
-      "customer": "顧客数",
+      "number_of_customers": "顧客数",
       "remarks": "備考"
     }
   },
   "merchandise": {
     "merchandise": "商品"
   },
-  "approve": {
-    "approve": "承認する"
+  "approve_routes": {
+    "approve_routes": "承認する",
+    "labels": {
+      "routeCode": "ルートコード",
+      "routeName": "ルート名",
+      "department": "部門（支社/部/課）",
+      "status": "ステータス",
+      "stepName": "ステップ名",
+      "approverDesignation": "承認者の指定",
+      "approver": "承認者"
+    },
+    "buttons": {
+      "addApprover": "承認者を追加",
+      "addStep": "＋ ステップを追加"
+    },
+    "steps": {
+      "step": "ステップ"
+    },
+    "show": {
+      "creator": "作成者",
+      "updater": "更新者",
+      "employeeNameExample": "伊藤太郎"
+    },
+    "table": {
+      "routeCode": "ルートコード",
+      "routeName": "ルート名",
+      "department": "部門（支社/部/課）",
+      "status": "ステータス",
+      "totalSteps": "承認ステップ数",
+      "creator": "作成者",
+      "updatedAt": "最終更新日",
+      "action": "操作"
+    },
+    "filters": {
+      "searchLabel": "ルートコード・ルート名",
+      "departmentLabel": "部門 (支社/部/課)",
+      "statusLabel": "ステータス",
+      "selectPlaceholder": "選択してください"
+    },
+    "status": {
+      "active": "有効",
+      "inactive": "無効"
+    },
+    "validation": {
+      "route_code": {
+        "required": "ルートコードは必須です。",
+        "invalid_whitespace": "ルートコードは空白のみにできません。",
+        "invalid_format": "ルートコードには大文字の英字、数字、ハイフンのみ使用できます。"
+      }
+    }
   },
   "employees": {
     "employees": "社員",
+    "list": {
+      "list": "社員一覧"
+    },
     "edit": {
       "title": "社員編集"
     },
@@ -207,6 +342,10 @@
     },
     "show": {
       "show": "社員詳細"
+    },
+    "filters": {
+      "code_name": "社員コード・社員名",
+      "email": "メール"
     }
   },
   "permission_settings": {
@@ -216,24 +355,30 @@
       "employee": "管理者"
     },
     "dataSource": {
-      "customerMaster": "取引先マスタ",
-      "projectMaster": "案件マスタ",
-      "productMaster": "商品マスタ",
-      "quoteTemplateMaster": "見積テンプレートマスタ",
-      "quoteFormSettings": "見積フォーム設定",
-      "quoteEmailTemplate": "見積書送付メールテンプレート",
-      "codeNumbering": "コード採番設定",
-      "approvalAndReturn": "承認・差戻し",
-      "costDetails": "原価明細",
-      "customerMasterPurpose": "取引先をマスタ化して名寄せします。",
-      "projectMasterPurpose": "案件をマスタ化して名寄せします。",
-      "productMasterPurpose": "マスタをマスタ化して名寄せします。",
-      "quoteTemplateMasterPurpose": "見積書のテンプレートを管理して効率化します。",
-      "quoteFormSettingsPurpose": "見積入力フォームの項目をカスタマイズします。",
-      "quoteEmailTemplatePurpose": "見積書送付時のメールテンプレートを管理します。",
-      "codeNumberingPurpose": "見積番号の自動採番ルールを設定します。",
-      "approvalAndReturnPurpose": "送信前に見積承認を利用します。\n承認時に差戻し処理を利用します。",
-      "costDetailsPurpose": "承認・粗利確認のため原価見積を利用します。"
+      "clientMaster": {
+        "title": "取引先マスタ",
+        "description": "取引先の登録や編集を行うための権限です。"
+      },
+      "productMaster": {
+        "title": "商品マスタ",
+        "description": "商品・サービスの登録や編集を行うための権限です。"
+      },
+      "productUnitMaster": {
+        "title": "商品単位マスタ",
+        "description": "商品単位の登録や編集を行うための権限です。"
+      },
+      "productCategoryMaster": {
+        "title": "商品カテゴリマスタ",
+        "description": "商品カテゴリの登録や編集を行うための権限です。"
+      },
+      "departmentMaster": {
+        "title": "部門マスタ",
+        "description": "部門の登録や編集を行うための権限です。"
+      },
+      "employeeMaster": {
+        "title": "社員マスタ",
+        "description": "社員の登録や編集を行うための権限です。"
+      }
     },
     "buttons": {
       "cancel": "戻る",
@@ -271,46 +416,13 @@
     "validate": {
       "save_parent_first": "先に親カテゴリを保存してください",
       "name_required": "名前を入力してください。"
-    },
-    "csv": {
-      "title": "商品カテゴリCSV一括登録",
-      "step_1": {
-        "title": "ファイル選択",
-        "alertTitle": "📋 CSVテンプレート",
-        "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
-        "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
-        "downloadButton": "CSVテンプレートをダウンロード",
-        "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
-        "orSelectFile": "または、下のボタンからファイルを選択してください",
-        "selectFileButton": "ファイルを選択",
-        "requiredError": "必須項目です",
-        "onlyCSVError": "CSVファイルのみアップロード可能です。",
-        "maxSizeError": "ファイルサイズは最大5MBです。",
-        "noteTitle": "CSV登録時の注意事項",
-        "noteItems": {
-          "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
-          "line2": "文字コードはUTF-8またはShift-JISで保存してください。",
-          "line3": "同じ項目コードが複数ある場合、上書きされます。",
-          "line4": "必須項目が不足する場合は取り込み不可です。",
-          "line5": "空白行があってもスキップされます。"
-        }
-      },
-      "step_2": {
-        "title": "登録完了"
-      },
-      "buttons": {
-        "back": "戻る",
-        "submit": "提出する",
-        "nextStep": "次へ",
-        "cancel": "キャンセル"
-      }
     }
   },
   "tags": {
     "tags": "見積タグ設定"
   },
   "parameter_settings": {
-    "parameter_settings": "見積タグ設定",
+    "parameter_settings": "パラメーター設定",
     "description": "説明",
     "is_manage": "管理する",
     "not_manage": "管理しない"
@@ -405,7 +517,7 @@
       "columns": {
         "project_code": "案件コード",
         "project_name": "案件名",
-        "customer": "取引先",
+        "customers": "取引先",
         "registrant": "登録者",
         "last_updated": "最終更新日"
       }
@@ -426,7 +538,7 @@
           "required": "案件名を入力してください！",
           "placeholder": "案件名を入力"
         },
-        "customer": {
+        "customers": {
           "label": "取引先",
           "required": "取引先を選択してください！",
           "placeholder": "取引先コード・取引先名で検索"
@@ -444,7 +556,7 @@
       "fields": {
         "project_code": "案件コード",
         "project_name": "案件名",
-        "customer": "取引先",
+        "customers": "取引先",
         "estimate_number": "見積番号",
         "remarks": "備考",
         "registrant": "登録者",
@@ -548,7 +660,8 @@
       "create_new": "新規登録",
       "back": "戻る",
       "edit": "編集",
-      "delete": "削除"
+      "delete": "削除",
+      "clear_all_research": "調査情報クリア"
     },
     "columns": {
       "unit_name": "単位名",
@@ -560,5 +673,41 @@
     "updated_by": "更新者",
     "created_at": "作成日",
     "not_set": "未設定"
+  },
+  "csv": {
+    "title": "[マスタ名] CSV一括登録",
+    "step_1": {
+      "title": "ファイル選択",
+      "alertTitle": "📋 CSVテンプレート",
+      "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
+      "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
+      "downloadButton": "CSVテンプレートをダウンロード",
+
+      "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
+      "orSelectFile": "または、下のボタンからファイルを選択してください",
+      "selectFileButton": "ファイルを選択",
+
+      "requiredError": "必須項目です",
+      "onlyCSVError": "CSVファイルのみアップロード可能です。",
+      "maxSizeError": "ファイルサイズは最大5MBです。",
+
+      "noteTitle": "CSV登録時の注意事項",
+      "noteItems": {
+        "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
+        "line2": "文字コードはUTF-8またはShift-JISで保存してください。",
+        "line3": "同じ項目コードが複数ある場合、上書きされます。",
+        "line4": "必須項目が不足する場合は取り込み不可です。",
+        "line5": "空白行があってもスキップされます。"
+      }
+    },
+    "step_2": {
+      "title": "登録完了"
+    },
+    "buttons": {
+      "back": "戻る",
+      "submit": "提出する",
+      "nextStep": "次へ",
+      "cancel": "キャンセル"
+    }
   }
 }

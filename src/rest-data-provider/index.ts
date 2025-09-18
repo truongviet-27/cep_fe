@@ -1,5 +1,6 @@
 import type { DataProvider } from '@refinedev/core'
 import type { AxiosInstance } from 'axios'
+import { isArray } from 'lodash'
 import { stringify } from 'query-string'
 
 import { axiosInstance, generateFilter, generateSort } from './utils'
@@ -55,7 +56,7 @@ export const customDataProvider = (
     const total = +headers['x-total-count']
 
     return {
-      data: data?.data?.items || [],
+      data: isArray(data?.data) ? data?.data : data?.data?.items || [],
       ...data?.data?.meta,
       total: data?.data?.meta?.total ?? total,
     }

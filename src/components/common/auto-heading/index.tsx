@@ -1,8 +1,8 @@
 'use client'
 
+import { useParsed } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { last } from 'lodash'
-import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import * as React from 'react'
 
@@ -12,9 +12,15 @@ export type AutoHeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
 
 export default function AutoHeading({ i18n, ...props }: AutoHeadingProps) {
   const t = useTranslations()
-  const pathname = usePathname()
 
-  const slugs = pathname.split('/')
+  const { pathname, id } = useParsed()
+
+  const basePath =
+    id && pathname?.endsWith(`/${id}`)
+      ? pathname.slice(0, pathname.length - `/${id}`.length)
+      : pathname
+
+  const slugs = basePath ? basePath.split('/') : []
 
   const slug = slugs.filter(Boolean).join('.')?.replace(/-/g, '_') ?? ''
   const defaultKey =

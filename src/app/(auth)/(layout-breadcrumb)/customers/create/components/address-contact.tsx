@@ -1,0 +1,120 @@
+'use client'
+
+import { DownOutlined } from '@ant-design/icons'
+import type { useCustomerCreateForm } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer'
+import boldText from '@utility/bold-text'
+import { Collapse, DatePicker, Form, Input, Select, Typography } from 'antd'
+import React from 'react'
+
+import styles from '../styles.module.css'
+
+const { Title } = Typography
+const { Panel } = Collapse
+
+function AddressContact(props: ReturnType<typeof useCustomerCreateForm>) {
+  const { t, rule } = props
+
+  return (
+    <Collapse
+      expandIconPosition="end"
+      defaultActiveKey={['1']}
+      className={`mb-4 ${styles.formPanel}`}
+      expandIcon={({ isActive }) => (
+        <DownOutlined
+          style={{ transition: '0.3s' }}
+          rotate={isActive ? 0 : 180}
+        />
+      )}
+    >
+      <Panel
+        header={<Title level={5}>{t('customers.show.address_contact')}</Title>}
+        key="1"
+      >
+        <Form.Item
+          label={boldText(t('customers.show.postal_code'))}
+          name="post_code"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.address'))}
+          name="address"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.building_name'))}
+          name="building"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.phone'))}
+          name="phone"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.fax'))}
+          name="fax"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.delivery.email'))}
+          name="mail"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.listing_classification'))}
+          name="listing_classification"
+          rules={[rule]}
+        >
+          <Select
+            options={[{ value: '未上場', label: '未上場' }]}
+            style={{ maxWidth: 560 }}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.industry'))}
+          name="industry"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.date_of_establishment'))}
+          name="date_of_establishment"
+          rules={[rule]}
+        >
+          <DatePicker style={{ width: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.department_in_charge'))}
+          name="department_in_charge"
+          rules={[rule]}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+      </Panel>
+    </Collapse>
+  )
+}
+
+export default AddressContact
