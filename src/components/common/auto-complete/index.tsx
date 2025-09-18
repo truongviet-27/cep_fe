@@ -55,6 +55,8 @@ function CoreAutoComplete({
 
   return (
     <Select
+      {...selectProps}
+      {...rest}
       style={style}
       showSearch
       placeholder={t('buttons.search')}
@@ -63,8 +65,6 @@ function CoreAutoComplete({
       allowClear
       onChange={onChange}
       disabled={!filter}
-      {...selectProps}
-      {...rest}
     />
   )
 }

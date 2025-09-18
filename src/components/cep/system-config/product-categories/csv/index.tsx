@@ -99,11 +99,11 @@ function CSVContainer({
 
   const dataSource = useMemo(() => {
     return [
-      t('product_categories.csv.step_1.noteItems.line1'),
-      t('product_categories.csv.step_1.noteItems.line2'),
-      t('product_categories.csv.step_1.noteItems.line3'),
-      t('product_categories.csv.step_1.noteItems.line4'),
-      t('product_categories.csv.step_1.noteItems.line5'),
+      t('csv.step_1.noteItems.line1'),
+      t('csv.step_1.noteItems.line2'),
+      t('csv.step_1.noteItems.line3'),
+      t('csv.step_1.noteItems.line4'),
+      t('csv.step_1.noteItems.line5'),
     ]
   }, [t])
   return (
@@ -119,15 +119,13 @@ function CSVContainer({
               ),
             },
             {
-              title: (
-                <Title level={5}>{t('product_categories.csv.title')}</Title>
-              ),
+              title: <Title level={5}>{t('csv.title')}</Title>,
             },
           ]}
           separator={<RightOutlined />}
         />
       }
-      title={t('product_categories.csv.title')}
+      title={t('csv.title')}
     >
       <Form {...formProps}>
         {isResult ? (
@@ -187,20 +185,20 @@ function CSVContainer({
               message={
                 <div>
                   <Text strong style={{ color: '#FA8C16' }}>
-                    {t('product_categories.csv.step_1.alertTitle')}
+                    {t('csv.step_1.alertTitle')}
                   </Text>
                   <Paragraph style={{ margin: '8px 0 0' }}>
-                    {t('product_categories.csv.step_1.alertDesc1')}
+                    {t('csv.step_1.alertDesc1')}
                   </Paragraph>
                   <Paragraph style={{ margin: 0 }}>
-                    {t('product_categories.csv.step_1.alertDesc2')}
+                    {t('csv.step_1.alertDesc2')}
                   </Paragraph>
                   <Button
                     type="link"
                     icon={<DownloadOutlined />}
                     style={{ paddingLeft: 0 }}
                   >
-                    {t('product_categories.csv.step_1.downloadButton')}
+                    {t('csv.step_1.downloadButton')}
                   </Button>
                 </div>
               }
@@ -249,20 +247,20 @@ function CSVContainer({
                   style={{ fontSize: 40, color: '#999', marginBottom: 12 }}
                 />
                 <Paragraph style={{ marginBottom: 8, color: '#555' }}>
-                  {t('product_categories.csv.step_1.dragDrop')}
+                  {t('csv.step_1.dragDrop')}
                 </Paragraph>
                 <Paragraph type="secondary" style={{ marginBottom: 20 }}>
-                  {t('product_categories.csv.step_1.orSelectFile')}
+                  {t('csv.step_1.orSelectFile')}
                 </Paragraph>
                 <Button type="primary" size="large">
-                  {t('product_categories.csv.step_1.selectFileButton')}
+                  {t('csv.step_1.selectFileButton')}
                 </Button>
               </Dragger>
             </Form.Item>
 
             <Card
               size="small"
-              title={t('product_categories.csv.step_1.noteTitle')}
+              title={t('csv.step_1.noteTitle')}
               headStyle={{ borderBottom: 'none' }}
             >
               <List
@@ -284,7 +282,7 @@ function CSVContainer({
                   setIsResult(false)
                 }}
               >
-                {t('product_categories.csv.buttons.back')}
+                {t('csv.buttons.back')}
               </Button>
             ) : (
               <Button
@@ -296,7 +294,7 @@ function CSVContainer({
                   .getFieldsError()
                   .some(({ errors }) => errors.length > 0)}
               >
-                {t('product_categories.csv.buttons.nextStep')}
+                {t('csv.buttons.nextStep')}
               </Button>
             )}
           </div>
