@@ -197,48 +197,39 @@ function usePermissionSetting() {
   const dataSource = [
     {
       key: 1,
-      settingItem: t('permission_settings.dataSource.customerMaster'),
-      purpose: t('permission_settings.dataSource.customerMasterPurpose'),
+      settingItem: t('permission_settings.dataSource.clientMaster.title'),
+      purpose: t('permission_settings.dataSource.clientMaster.description'),
     },
     {
       key: 2,
-      settingItem: t('permission_settings.dataSource.projectMaster'),
-      purpose: t('permission_settings.dataSource.projectMasterPurpose'),
+      settingItem: t('permission_settings.dataSource.productMaster.title'),
+      purpose: t('permission_settings.dataSource.productMaster.description'),
     },
     {
       key: 3,
-      settingItem: t('permission_settings.dataSource.productMaster'),
-      purpose: t('permission_settings.dataSource.productMasterPurpose'),
+      settingItem: t('permission_settings.dataSource.productUnitMaster.title'),
+      purpose: t(
+        'permission_settings.dataSource.productUnitMaster.description',
+      ),
     },
     {
       key: 4,
-      settingItem: t('permission_settings.dataSource.quoteTemplateMaster'),
-      purpose: t('permission_settings.dataSource.quoteTemplateMasterPurpose'),
+      settingItem: t(
+        'permission_settings.dataSource.productCategoryMaster.title',
+      ),
+      purpose: t(
+        'permission_settings.dataSource.productCategoryMaster.description',
+      ),
     },
     {
       key: 5,
-      settingItem: t('permission_settings.dataSource.quoteFormSettings'),
-      purpose: t('permission_settings.dataSource.quoteFormSettingsPurpose'),
+      settingItem: t('permission_settings.dataSource.departmentMaster.title'),
+      purpose: t('permission_settings.dataSource.departmentMaster.description'),
     },
     {
       key: 6,
-      settingItem: t('permission_settings.dataSource.quoteEmailTemplate'),
-      purpose: t('permission_settings.dataSource.quoteEmailTemplatePurpose'),
-    },
-    {
-      key: 7,
-      settingItem: t('permission_settings.dataSource.codeNumbering'),
-      purpose: t('permission_settings.dataSource.codeNumberingPurpose'),
-    },
-    {
-      key: 8,
-      settingItem: t('permission_settings.dataSource.approvalAndReturn'),
-      purpose: t('permission_settings.dataSource.approvalAndReturnPurpose'),
-    },
-    {
-      key: 9,
-      settingItem: t('permission_settings.dataSource.costDetails'),
-      purpose: t('permission_settings.dataSource.costDetailsPurpose'),
+      settingItem: t('permission_settings.dataSource.employeeMaster.title'),
+      purpose: t('permission_settings.dataSource.employeeMaster.description'),
     },
   ]
 
