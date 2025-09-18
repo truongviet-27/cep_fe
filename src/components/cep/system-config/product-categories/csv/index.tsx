@@ -34,7 +34,7 @@ function CSVContainer({
   const { formProps, form } = methods
 
   const [isResult, setIsResult] = useState(false)
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState(true)
 
   const { mutate } = useCustomMutation()
   const { mutate: mutate2 } = useCustomMutation()
