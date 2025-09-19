@@ -20,6 +20,7 @@ function CoreInput({
   type = 'text',
   icon,
   readOnly = false,
+  hidden = false,
   onChangeValue,
   children,
   labelCol,
@@ -40,6 +41,7 @@ function CoreInput({
   colon?: boolean
   icon?: ReactNode
   readOnly?: boolean
+  hidden?: boolean
   onChangeValue?: (value: any) => void
   children?: ReactNode
   labelCol?: ColProps
@@ -65,6 +67,7 @@ function CoreInput({
       required={required}
       colon={colon}
       style={styleForm}
+      hidden={hidden}
     >
       <Component
         placeholder={placeholder}

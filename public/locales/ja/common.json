@@ -191,7 +191,11 @@
       "autoNumbering": "自動採番",
       "createNewCategory": "新規作成",
       "update": "更新",
-      "addRow": "行を追加"
+      "addRow": "行を追加",
+      "register": "登録",
+      "edit": "編集",
+      "save": "保存",
+      "back": "戻る"
     },
     "links": {
       "csvUpload": "CSV一括登録"
