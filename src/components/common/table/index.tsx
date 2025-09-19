@@ -31,6 +31,7 @@ function CommonTable<T extends object>(
                 backgroundColor: '#e6f7ff',
                 color: PRIMARY,
                 textAlign: 'center',
+                padding: 11,
               }}
             />
           ),
@@ -47,6 +48,7 @@ function CommonTable<T extends object>(
               style={{
                 textAlign: 'center',
                 ...props.style,
+                padding: 11,
               }}
             />
           ),

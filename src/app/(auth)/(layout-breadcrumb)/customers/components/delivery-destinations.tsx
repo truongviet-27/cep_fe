@@ -1,7 +1,8 @@
 'use client'
 
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreateForm } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
 import { Button, Collapse, Form, Input, Space, Typography } from 'antd'
 import React from 'react'
@@ -11,7 +12,9 @@ import styles from '../styles.module.css'
 const { Title } = Typography
 const { Panel } = Collapse
 
-function DeliveryDestinations(props: ReturnType<typeof useCustomerCreateForm>) {
+function DeliveryDestinations(
+  props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
+) {
   const { t, rule } = props
 
   return (
@@ -22,7 +25,7 @@ function DeliveryDestinations(props: ReturnType<typeof useCustomerCreateForm>) {
       expandIcon={({ isActive }) => (
         <DownOutlined
           style={{ transition: '0.3s' }}
-          rotate={isActive ? 0 : 180}
+          rotate={isActive ? 180 : 0}
         />
       )}
     >
