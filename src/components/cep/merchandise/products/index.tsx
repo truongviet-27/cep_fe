@@ -106,7 +106,6 @@ function ProductContainer() {
               ...tableProps.pagination,
               showSizeChanger: true,
             }}
-            isPagination
           />
         </div>
 

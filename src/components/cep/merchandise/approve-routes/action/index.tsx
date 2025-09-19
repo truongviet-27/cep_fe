@@ -32,6 +32,7 @@ import {
   Spin,
   Typography,
 } from 'antd'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 const { Title } = Typography
@@ -81,7 +82,7 @@ function ApproveAction() {
     queryOptions: { enabled: isUpdate },
   })
 
-  const { selectProps: selectPropsDp } = useSelect({
+  const { selectProps: selectPropsDp, query: querySelectDp1 } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
@@ -103,7 +104,7 @@ function ApproveAction() {
     },
   })
 
-  const { selectProps: selectPropsDp2 } = useSelect({
+  const { selectProps: selectPropsDp2, query: querySelectDp2 } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
@@ -118,14 +119,14 @@ function ApproveAction() {
     },
   })
 
-  useEffect(() => {
-    if (query?.data?.data) {
-      setFieldsValue({
-        ...query?.data?.data,
-        departments: query.data.data.department?.id,
-      })
-    }
-  }, [query?.data?.data])
+  const { selectProps: selectPropsEp, query: querySelectEp } = useSelect({
+    resource: 'employees',
+    optionLabel: 'name',
+    optionValue: 'id',
+    queryOptions: {
+      enabled: isUpdate,
+    },
+  })
 
   const onFinish = (values: any) => {
     if (isUpdate) {
@@ -134,7 +135,7 @@ function ApproveAction() {
           resource: resource?.name,
           values: {
             ...values,
-            department_id: values.departments,
+            department_ids: values.departments,
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
@@ -160,7 +161,7 @@ function ApproveAction() {
           resource: resource?.name,
           values: {
             ...values,
-            department_id: values.departments[0],
+            department_ids: values.departments,
             steps: values.steps.map((item: any, index: number) => ({
               ...item,
               employees: item.employees.map((item: any) => ({
@@ -181,6 +182,8 @@ function ApproveAction() {
       )
     }
   }
+
+  console.log(form.getFieldsValue(), 'getFieldsValue')
 
   return (
     <PageContainer
@@ -208,34 +211,46 @@ function ApproveAction() {
       <Spin
         spinning={
           isUpdate
-            ? query.isLoading || selectPropsDp.loading || selectPropsDp2.loading
+            ? query.isFetching ||
+              querySelectDp1.isLoading ||
+              querySelectDp2.isLoading ||
+              querySelectEp.isLoading
             : false
         }
       >
         <Form
           {...formProps}
-          initialValues={{
-            code: '',
-            name: '',
-            department: null,
-            status: 'active',
-            steps: [
-              {
-                name: '',
-                step_order: null,
-                is_multi_appover: false,
-                employees: [
-                  {
-                    employee_id: null,
-                    code: '',
-                    name: '',
-                    department_id: null,
-                    department: '',
-                  },
-                ],
-              },
-            ],
-          }}
+          initialValues={
+            isUpdate
+              ? {
+                  ...query.data?.data,
+                  departments: query?.data?.data.departments?.map(
+                    (item: any) => item.id,
+                  ),
+                }
+              : {
+                  code: '',
+                  name: '',
+                  departments: [],
+                  status: 'active',
+                  steps: [
+                    {
+                      name: '',
+                      step_order: null,
+                      is_multi_appover: false,
+                      employees: [
+                        {
+                          employee_id: null,
+                          code: '',
+                          name: '',
+                          department_id: null,
+                          department: '',
+                        },
+                      ],
+                    },
+                  ],
+                }
+          }
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           onFinish={onFinish}
@@ -311,17 +326,23 @@ function ApproveAction() {
                   mode="multiple"
                   maxTagCount={'responsive'}
                   allowClear
+                  placeholder={t('placeholders.select')}
                   options={(() => {
-                    const optionFromDp2 = selectPropsDp2?.options?.find(
-                      (opt) => form.getFieldValue('departments') === opt.value,
+                    const optionFromDp2 = selectPropsDp2?.options?.filter(
+                      (opt) =>
+                        query.data?.data.departments
+                          ?.map((item: any) => item.id)
+                          ?.includes(opt.value),
                     )
 
                     const optionsFromDp = selectPropsDp?.options || []
 
                     const newOptions = [
-                      ...(optionFromDp2 ? [optionFromDp2] : []),
+                      ...(optionFromDp2 ?? []),
                       ...optionsFromDp,
                     ]
+
+                    console.log(newOptions, 'newOptions')
 
                     return newOptions
                   })()}
@@ -502,6 +523,9 @@ function ApproveAction() {
                                                 style={{
                                                   width: 200,
                                                 }}
+                                                placeholder={t(
+                                                  'placeholders.select',
+                                                )}
                                                 onClear={() => {
                                                   setFieldValue(
                                                     [
@@ -547,6 +571,7 @@ function ApproveAction() {
                                                 ]}
                                                 resource="employees"
                                                 style={{ width: 200 }}
+                                                options={selectPropsEp.options}
                                               />
                                             </Form.Item>
                                           </Col>
@@ -629,21 +654,21 @@ function ApproveAction() {
               descriptions={[
                 {
                   title: t('approve_routes.show.creator'),
-                  value: (
-                    <Space>
-                      {query.data?.data?.author?.name}
-                      {query.data?.data?.create_at}
-                    </Space>
-                  ),
+                  value:
+                    (query.data?.data?.author?.name ?? '---') +
+                    ' ' +
+                    dayjs(query.data?.data?.create_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
                 {
                   title: t('approve_routes.show.updater'),
-                  value: (
-                    <Space>
-                      {query.data?.data?.editor?.name}
-                      {query.data?.data?.update_at}
-                    </Space>
-                  ),
+                  value:
+                    (query.data?.data?.editor?.name ?? '---') +
+                    ' ' +
+                    dayjs(query.data?.data?.update_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
               ]}
             />
@@ -656,7 +681,17 @@ function ApproveAction() {
             }}
           >
             <Space>
-              {isUpdate && <DeleteButton icon={null} size={'small'} />}
+              {isUpdate && (
+                <DeleteButton
+                  icon={null}
+                  size={'small'}
+                  onSuccess={() => {
+                    go({
+                      to: '/approve-routes',
+                    })
+                  }}
+                />
+              )}
             </Space>
             <Space className="items-end">
               <Button

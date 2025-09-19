@@ -18,11 +18,12 @@ import {
   BaseRecord,
   useApiUrl,
   useCustomMutation,
+  useGo,
   useResource,
   useTranslate,
 } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
+import { Button, Col, Flex, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Department } from '@sdk/hey-api'
@@ -45,6 +46,8 @@ export default function Page() {
       },
     ],
   })
+
+  const go = useGo()
 
   const [rows, setRows] = useState<Department[]>([])
   const originalOrderRef = useRef<string[]>([])
@@ -198,7 +201,20 @@ export default function Page() {
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
-            <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
+            <div className="flex flex-col items-end">
+              <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
+              <Button
+                type="link"
+                onClick={() => {
+                  go({
+                    to: '/departments/csv',
+                  })
+                }}
+                style={{ padding: 0 }}
+              >
+                {t('projects.csv_upload.title')}
+              </Button>
+            </div>
           </Col>
         </Row>
       </Form>

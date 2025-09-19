@@ -3,9 +3,7 @@ import type { TableProps } from 'antd'
 import { Table } from 'antd'
 import React from 'react'
 
-type CustomTableProps<T> = TableProps<T> & {
-  isPagination?: boolean
-}
+type CustomTableProps<T> = TableProps<T>
 
 function CommonTable<T extends object>(
   tableProps: Readonly<CustomTableProps<T>>,
@@ -31,6 +29,7 @@ function CommonTable<T extends object>(
                 backgroundColor: '#e6f7ff',
                 color: PRIMARY,
                 textAlign: 'center',
+                padding: 11,
               }}
             />
           ),
@@ -47,21 +46,17 @@ function CommonTable<T extends object>(
               style={{
                 textAlign: 'center',
                 ...props.style,
+                padding: 11,
               }}
             />
           ),
         },
       }}
       bordered
-      pagination={
-        restTableProps.isPagination
-          ? {
-              ...restTableProps.pagination,
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} / ${total}件`,
-            }
-          : false
-      }
+      pagination={{
+        ...restTableProps.pagination,
+        showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}件`,
+      }}
       scroll={{ x: 'max-content' }}
     />
   )

@@ -13,15 +13,17 @@ function CoreAutoComplete({
   style,
   labelPath = 'name',
   valuePath = 'id',
+  options,
   ...rest
 }: {
   nameFilter: string
   resource: string
   onChange?: (val: any) => void
   style?: React.CSSProperties
-  filterPath: any
+  filterPath?: any
   labelPath?: any
   valuePath?: any
+  options?: any[]
 }) {
   const t = useTranslate()
 
@@ -59,12 +61,15 @@ function CoreAutoComplete({
       {...rest}
       style={style}
       showSearch
-      placeholder={t('buttons.search')}
+      placeholder={t('placeholders.select')}
       filterOption={false}
       autoClearSearchValue
       allowClear
       onChange={onChange}
       disabled={!filter}
+      options={
+        Number(selectProps?.options?.length) > 0 ? selectProps.options : options
+      }
     />
   )
 }

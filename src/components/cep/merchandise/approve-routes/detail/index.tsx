@@ -20,6 +20,8 @@ import {
   Spin,
   Typography,
 } from 'antd'
+import dayjs from 'dayjs'
+import { useEffect } from 'react'
 
 const { Title } = Typography
 
@@ -27,7 +29,7 @@ type Form = {
   id: number
   code: string
   name: string
-  department: number
+  departments: any
   status: 'active' | 'inactive'
   steps: {
     name: string
@@ -57,11 +59,18 @@ function ApproveDetail() {
 
   const { formProps, saveButtonProps, form } = methods
 
+  const { setFieldsValue } = form
+
   const { query } = useShow({
     queryOptions: { enabled: isUpdate },
   })
 
-  console.log(form.getFieldsValue(), 'getFieldsValue')
+  useEffect(() => {
+    if (query?.data?.data) {
+      setFieldsValue({ ...query?.data?.data })
+    }
+  }, [query])
+
   return (
     <PageContainer
       breadcrumbs={
@@ -88,7 +97,28 @@ function ApproveDetail() {
       <Spin spinning={query.isLoading}>
         <Form
           {...formProps}
-          initialValues={{ ...query?.data?.data }}
+          initialValues={{
+            code: '',
+            name: '',
+            department: null,
+            status: '',
+            steps: [
+              {
+                name: '',
+                step_order: null,
+                is_multi_appover: false,
+                employees: [
+                  {
+                    employee_id: null,
+                    code: '',
+                    name: '',
+                    department_id: null,
+                    department: '',
+                  },
+                ],
+              },
+            ],
+          }}
           labelCol={{ span: 10 }}
           wrapperCol={{ span: 14 }}
           labelAlign="left"
@@ -102,8 +132,9 @@ function ApproveDetail() {
                 label={boldText(t('approve_routes.labels.routeCode'))}
                 layout="horizontal"
                 colon={false}
+                name={'code'}
               >
-                {form.getFieldValue('code')}
+                {query.data?.data.name}
               </Form.Item>
             </Col>
           </Row>
@@ -113,8 +144,9 @@ function ApproveDetail() {
                 label={boldText(t('approve_routes.labels.routeName'))}
                 layout="horizontal"
                 colon={false}
+                name={'name'}
               >
-                {form.getFieldValue('name')}
+                {query.data?.data.code}
               </Form.Item>
             </Col>
           </Row>
@@ -124,8 +156,11 @@ function ApproveDetail() {
                 label={boldText(t('approve_routes.labels.department'))}
                 layout="horizontal"
                 colon={false}
+                name={'departments'}
               >
-                {form.getFieldValue('department')?.name}
+                {query.data?.data.departments?.map(
+                  (item: any) => item.name + ' , ',
+                )}
               </Form.Item>
             </Col>
           </Row>
@@ -135,8 +170,11 @@ function ApproveDetail() {
                 label={boldText(t('approve_routes.labels.status'))}
                 layout="horizontal"
                 colon={false}
+                name={'status'}
               >
-                {form.getFieldValue('status')}
+                {query.data?.data.status === 'active'
+                  ? t('products.text.active')
+                  : t('products.text.inactive')}
               </Form.Item>
             </Col>
           </Row>
@@ -245,21 +283,17 @@ function ApproveDetail() {
             descriptions={[
               {
                 title: t('approve_routes.show.creator'),
-                value: (
-                  <Space>
-                    {query.data?.data?.author?.name}
-                    {query.data?.data?.create_at}
-                  </Space>
-                ),
+                value:
+                  (query.data?.data?.editor?.name ?? '--') +
+                  ' ' +
+                  dayjs(query.data?.data?.create_at).format('YYYY/MM/DD HH:mm'),
               },
               {
                 title: t('approve_routes.show.updater'),
-                value: (
-                  <Space>
-                    {query.data?.data?.editor?.name}
-                    {query.data?.data?.update_at}
-                  </Space>
-                ),
+                value:
+                  (query.data?.data?.editor?.name ?? '--') +
+                  ' ' +
+                  dayjs(query.data?.data?.update_at).format('YYYY/MM/DD HH:mm'),
               },
             ]}
           />
@@ -270,7 +304,15 @@ function ApproveDetail() {
               marginTop: 40,
             }}
           >
-            <DeleteButton icon={null} size={'small'} />
+            <DeleteButton
+              icon={null}
+              size={'small'}
+              onSuccess={() => {
+                go({
+                  to: '/approve-routes',
+                })
+              }}
+            />
             <Space>
               <Button
                 type="default"
@@ -283,8 +325,15 @@ function ApproveDetail() {
                 {t('buttons.back')}
               </Button>
 
-              <Button {...saveButtonProps} type="primary">
-                {isUpdate ? t('buttons.edit') : t('buttons.create')}
+              <Button
+                type="primary"
+                onClick={() => {
+                  go({
+                    to: `/approve-routes/edit/${params?.id}`,
+                  })
+                }}
+              >
+                {t('buttons.edit')}
               </Button>
             </Space>
           </Flex>
