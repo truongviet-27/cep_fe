@@ -4,6 +4,7 @@ import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import boldText from '@utility/bold-text'
+import { countryOptions, typesCompanyOptions } from '@utility/options'
 import {
   Button,
   Col,
@@ -75,17 +76,50 @@ function BasicInformation(
 
         <Form.Item
           label={boldText(t('customers.fields.company_classification'))}
-          name="company_classification"
-          rules={[rule]}
-          initialValue="corporation"
           required
         >
-          <Radio.Group>
-            <Radio value="corporation">
-              {t('customers.enums.corporation')}
-            </Radio>
-            <Radio value="individual">{t('customers.enums.individual')}</Radio>
-          </Radio.Group>
+          <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
+            <Col>
+              <Form.Item
+                name="company_classification"
+                rules={[rule]}
+                initialValue="corporation"
+                required
+              >
+                <Radio.Group>
+                  <Radio value="corporation">
+                    {t('customers.enums.corporation')}
+                  </Radio>
+                  <Radio value="individual">
+                    {t('customers.enums.individual')}
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+
+            <Col>
+              <Form.Item name="company_classification.judgement" rules={[rule]}>
+                <Select
+                  placeholder={t('placeholders.select')}
+                  options={typesCompanyOptions}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col>
+              <Form.Item
+                name="company_classification"
+                rules={[rule]}
+                initialValue="corporation"
+                required
+              >
+                <Radio.Group>
+                  <Radio value="corporation">前</Radio>
+                  <Radio value="individual">後</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form.Item>
 
         <Form.Item
@@ -105,24 +139,28 @@ function BasicInformation(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
 
-        <Form.Item
-          label={boldText(t('customers.fields.country'))}
-          name="country"
-          rules={[rule]}
-        >
-          <Select
-            placeholder={t('placeholders.select')}
-            options={[{ value: 'JP', label: '日本' }]}
-            style={{ maxWidth: 560 }}
-          />
-        </Form.Item>
+        <Form.Item label={boldText(t('customers.fields.country'))}>
+          <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
+            <Col>
+              <Form.Item name="country" rules={[rule]}>
+                <Select
+                  placeholder={t('placeholders.select')}
+                  options={countryOptions}
+                  showSearch
+                  filterOption={true}
+                  optionFilterProp="label"
+                />
+              </Form.Item>
+            </Col>
 
-        <Form.Item
-          label={boldText(t('customers.fields.corporate_number'))}
-          name="corporate_number"
-          rules={[rule]}
-        >
-          <Input style={{ maxWidth: 560 }} />
+            <Col>
+              <Form.Item>
+                <Typography.Text>
+                  {t('customers.fields.corporate_number')}
+                </Typography.Text>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form.Item>
 
         <Form.Item

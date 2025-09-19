@@ -68,9 +68,9 @@ export const resource: ResourceProps[] = [
   {
     name: 'ranks',
     list: '/ranks',
-    show: '/ranks/:id',
-    create: '/ranks/:id',
-    edit: '/ranks/:id',
+    show: '/ranks/show:id',
+    create: '/ranks/create',
+    edit: '/ranks/edit:id',
     meta: {
       parent: 'merchandise',
       canDelete: true,

@@ -21,6 +21,8 @@ import React from 'react'
 import styles from '../styles.module.css'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import { useModal } from '@refinedev/core'
+import { antiSocialCheckOptions } from '@utility/options'
+import { DeleteButton, EditButton } from '@refinedev/antd'
 
 const { Title } = Typography
 const { Panel } = Collapse
@@ -30,7 +32,10 @@ export const CorporateResearchFormSection = (
 ) => {
   const { t, form, rule } = props
 
-  const [currentIndex, setCurrentIndex] = React.useState<number>(0)
+  const [currentType, setCurrentType] = React.useState<{
+    index: number
+    type: 'credit' | 'anti-social' | 'certified'
+  } | null>()
 
   const modalForm = useModal()
 
@@ -106,12 +111,20 @@ export const CorporateResearchFormSection = (
       align: 'center' as const,
       render: (_: any, record: any, index: number) => (
         <Space>
-          <Button type="primary" size="small">
-            {t('buttons.edit')}
-          </Button>
-          <Button danger size="small">
-            {t('buttons.clear')}
-          </Button>
+          <EditButton
+            size="small"
+            hideText
+            onClick={() => {
+              let type: 'credit' | 'anti-social' | 'certified' = 'credit'
+              if (index === 1) {
+                type = 'anti-social'
+              } else if (index === 2) {
+                type = 'certified'
+              }
+              setCurrentType({ index, type })
+            }}
+          />
+          <DeleteButton hideText danger size="small" />
         </Space>
       ),
     },
@@ -135,7 +148,7 @@ export const CorporateResearchFormSection = (
     >
       <Panel
         header={
-          <Title level={5}>{t('customers.show.delivery_destinations')}</Title>
+          <Title level={5}>{t('customers.show.corporate_research')}</Title>
         }
         key="1"
       >
@@ -166,17 +179,17 @@ export const CorporateResearchFormSection = (
           onCancel={close}
           okText={t('buttons.save')}
           cancelText={t('buttons.cancel')}
-          destroyOnClose
           width={600}
         >
           <Form layout="vertical" className="mt-4">
             <Form.Item label={t('customers.research.document_name')}>
               <Typography.Text>
-                {form.getFieldValue([
-                  'company_research_information',
-                  currentIndex,
-                  'material_name',
-                ])}
+                {currentType &&
+                  form.getFieldValue([
+                    'company_research_information',
+                    currentType.index,
+                    'material_name',
+                  ])}
               </Typography.Text>
             </Form.Item>
             <Form.Item
@@ -185,16 +198,18 @@ export const CorporateResearchFormSection = (
               rules={rule as any}
             >
               <Select
-                options={[
-                  { value: 'O', label: 'O' },
-                  { value: '△', label: '△' },
-                  { value: 'X', label: 'X' },
-                ]}
+                placeholder={t('placeholders.select')}
+                options={antiSocialCheckOptions}
                 onSelect={(value) => {
-                  form.setFieldValue(
-                    ['company_research_information', currentIndex, 'judgement'],
-                    value,
-                  )
+                  currentType &&
+                    form.setFieldValue(
+                      [
+                        'company_research_information',
+                        currentType.index,
+                        'judgement',
+                      ],
+                      value,
+                    )
                 }}
               />
             </Form.Item>
