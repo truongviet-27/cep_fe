@@ -3,7 +3,7 @@ import {
   EditFilled,
   SearchOutlined,
 } from '@ant-design/icons'
-import CoreInput from '@components/organism/CoreInput'
+import CoreInput from '@components/common/core-input'
 import { useTranslate } from '@refinedev/core'
 import { WHITE } from '@utility/color'
 import renderCategories from '@utility/renderCategories'

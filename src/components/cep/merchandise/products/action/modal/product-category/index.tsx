@@ -1,10 +1,11 @@
 /* eslint-disable */
-import ProductCategorySearch from '@components/common/product-category-search'
-import CoreInput from '@components/organism/CoreInput'
 import { useCreate, useTranslate } from '@refinedev/core'
 import { Category } from '@utility/renderCategories'
 import { Button, Divider, Flex, Form } from 'antd'
 import React from 'react'
+
+import CoreInput from '@components/common/core-input'
+import ProductCategorySearch from '@components/common/product-category-search'
 
 type Props = {
   modalProps: any

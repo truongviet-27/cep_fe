@@ -1,6 +1,6 @@
 import { Action } from '@components/common/action'
+import CoreInput from '@components/common/core-input'
 import CommonTable from '@components/common/table'
-import CoreInput from '@components/organism/CoreInput'
 import { useTranslate } from '@refinedev/core'
 import type { FormInstance } from 'antd'
 import { Button, Checkbox, Form, Radio } from 'antd'
@@ -32,7 +32,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.packagingCode'),
               dataIndex: 'code',
-              render: (_, __, index) => (
+              render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'code']}
                   readOnly={true}
@@ -53,7 +53,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.packagingName'),
               dataIndex: 'name',
-              render: (_, __, index) => (
+              render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'name']}
                   readOnly={
@@ -84,7 +84,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.status'),
               dataIndex: 'is_active',
-              render: (_, __, index) =>
+              render: (_: unknown, __: unknown, index: number) =>
                 index === 0 ? (
                   <div>{t('products.text.active')}</div>
                 ) : (
@@ -112,7 +112,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.quantity'),
               dataIndex: 'quantity_in_package',
-              render: (_, __, index) => (
+              render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'quantity_in_package']}
                   readOnly={
@@ -140,7 +140,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   }}
                   onChangeValue={(value) => {
                     setFieldValue(
-                      ['packagings', index, 'cost_price'],
+                      ['packagings', index, 'cost_price' as keyof object],
                       (value as number) * getFieldValue('selling_price'),
                     )
                     setFieldValue(
@@ -154,7 +154,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.unit'),
               dataIndex: 'unit_id',
-              render: (_, __, index) => (
+              render: (_: unknown, __: unknown, index: number) => (
                 <>
                   <CoreInput name={[index, 'unit_id']} readOnly={true} hidden />
                   {form.getFieldValue('unit')}
@@ -164,7 +164,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.standardPrice'),
               dataIndex: 'cost_price',
-              render: (_, __, index) => {
+              render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <CoreInput
                     name={[index, 'cost_price']}
@@ -187,7 +187,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.sellingPrice'),
               dataIndex: 'selling_price',
-              render: (_, __, index) => {
+              render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <CoreInput
                     name={[index, 'selling_price']}
@@ -221,7 +221,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.isStandard'),
               dataIndex: 'is_standard_price',
-              render: (_, __, index) =>
+              render: (_: unknown, __: unknown, index: number) =>
                 index !== 0 && (
                   <Form.Item
                     name={[index, 'is_standard_price']}
@@ -249,7 +249,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.actions'),
               dataIndex: 'action',
-              render: (_, __, index) =>
+              render: (_: unknown, __: unknown, index: number) =>
                 index > 0 && (
                   <Action
                     actionList={['remove']}

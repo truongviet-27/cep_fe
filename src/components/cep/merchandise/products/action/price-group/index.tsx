@@ -35,7 +35,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
         ),
         dataIndex: `rank_${rank.id}`,
         key: `rank_${rank.id}`,
-        render: (_, __, index: number) => {
+        render: (_: unknown, __: unknown, index: number) => {
           return (
             <Form.Item
               shouldUpdate
@@ -65,7 +65,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.fields.productCode'),
               dataIndex: 'code',
               key: 'code',
-              render: (_, __, index) => {
+              render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
                     shouldUpdate
@@ -82,7 +82,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.fields.productName'),
               dataIndex: 'name',
               key: 'name',
-              render: (_, __, index) => {
+              render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
                     shouldUpdate
@@ -99,7 +99,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.unitPriceGroup.sellingPrice'),
               dataIndex: 'selling_price',
               key: 'selling_price',
-              render: (_, __, index) => {
+              render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
                     shouldUpdate
@@ -118,7 +118,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.unitPriceGroup.settingMethod'),
               dataIndex: 'is_active',
               key: 'is_active',
-              render: (_, __, index: number) =>
+              render: (_: unknown, __: unknown, index: number) =>
                 index === 0 ? (
                   <div>{t('products.text.active')}</div>
                 ) : (

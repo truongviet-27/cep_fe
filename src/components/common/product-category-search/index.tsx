@@ -1,10 +1,10 @@
 import { CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
-import CoreInput from '@components/organism/CoreInput'
 import { WHITE } from '@utility/color'
 import type { Category } from '@utility/renderCategories'
 import renderCategories from '@utility/renderCategories'
 import { AutoComplete, Dropdown } from 'antd'
 
+import CoreInput from '../core-input'
 import { useProductCategorySearchController } from './controller'
 
 interface Props {
