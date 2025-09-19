@@ -42,6 +42,7 @@ function useProduct() {
         title: t('products.list.table.headers.productCode'), // Product Code
         dataIndex: 'code',
         key: 'code',
+        width: 200,
         render: (_: unknown, record: ProductListItem) => (
           <Link
             href={`/products/show/${record.id}?actionType=VIEW`}
@@ -56,22 +57,26 @@ function useProduct() {
         dataIndex: 'name',
         key: 'name',
         align: 'left',
+        width: '20%',
       },
       {
         title: t('products.list.table.headers.packagingQuantity'), // packaging_count
         dataIndex: 'packaging_count',
         key: 'packaging_count',
+        width: 120,
       },
       {
         title: t('products.list.table.headers.barcode'), // barcode
         dataIndex: 'barcode',
         key: 'barcode',
+        width: '10%',
       },
       {
         title: t('products.list.table.headers.subcategory'), // Category small
         dataIndex: 'category',
         key: 'category',
         align: 'left',
+        width: '20%',
       },
       {
         title: t('products.list.table.headers.unit'), // Unit
@@ -95,6 +100,7 @@ function useProduct() {
         title: t('table.actions'),
         dataIndex: 'action',
         key: 'action',
+        width: 120,
         render(_, record) {
           return (
             <Space>
