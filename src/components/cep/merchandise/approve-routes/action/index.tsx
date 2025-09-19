@@ -681,7 +681,17 @@ function ApproveAction() {
             }}
           >
             <Space>
-              {isUpdate && <DeleteButton icon={null} size={'small'} />}
+              {isUpdate && (
+                <DeleteButton
+                  icon={null}
+                  size={'small'}
+                  onSuccess={() => {
+                    go({
+                      to: '/approve-routes',
+                    })
+                  }}
+                />
+              )}
             </Space>
             <Space>
               {isUpdate && <DeleteButton icon={null} size={'small'} />}
