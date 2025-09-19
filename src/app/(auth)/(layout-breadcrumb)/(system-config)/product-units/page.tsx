@@ -5,12 +5,11 @@ import { RightOutlined } from '@ant-design/icons'
 import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { Button, Col, Form, Row, Space } from 'antd'
+import { Button, Col, Form, Input, Row, Space } from 'antd'
 import React from 'react'
 import useProductUnits, {
   RowVM,
 } from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/use-product-units'
-import CoreAutoComplete from '@components/common/auto-complete'
 
 export default function Page() {
   const {
@@ -56,15 +55,17 @@ export default function Page() {
         >
           <Col flex="auto">
             <Row align="middle" gutter={16} wrap={false}>
+              <Col>
+                <div style={{ fontWeight: 600 }}>
+                  {t('product_units.columns.unit_name')}
+                </div>
+              </Col>
               <Col flex="360px">
-                <Form.Item
-                  name="name_lk"
-                  style={{ margin: 0 }}
-                  label={t('product_units.filters.label')}
-                >
-                  <CoreAutoComplete
-                    nameFilter={'name_lk'}
-                    resource={'product-units/suggestions'}
+                <Form.Item name="name_lk" style={{ margin: 0 }}>
+                  <Input
+                    placeholder={t('placeholders.partial_match')}
+                    allowClear
+                    size="middle"
                   />
                 </Form.Item>
               </Col>
