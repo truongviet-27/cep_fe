@@ -17,6 +17,7 @@ const renderCategories = (
     level: number,
     currentPath: string[],
     currentCat: Category[],
+    categoryId?: number,
   ) => void,
 ) => {
   return (
@@ -38,7 +39,7 @@ const renderCategories = (
             onClick={(e) => {
               e.stopPropagation()
               if (handleChooseCategory) {
-                handleChooseCategory(level, currentPath, currentCat)
+                handleChooseCategory(level, currentPath, currentCat, cat.id)
               }
             }}
           >

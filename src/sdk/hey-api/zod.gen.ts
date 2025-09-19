@@ -455,6 +455,60 @@ export const zCustomerUpdateRequest = z.object({
 })
 
 /**
+ * Customer details with rank information
+ */
+export const zSimpleCustomer = z.object({
+  id: z.optional(z.int()),
+  customer_code: z.optional(z.string()),
+  name: z.optional(z.string()),
+  country: z.optional(z.string()),
+  person_in_charge_department: z.optional(z.string()),
+  price_rank_code: z.optional(z.string()),
+  credit_rank: z.optional(z.union([z.string(), z.null()])),
+  credit_rank_update_at: z.optional(z.union([z.iso.date(), z.null()])),
+  anti_social_rank: z.optional(z.union([z.string(), z.null()])),
+  anti_social_rank_update_at: z.optional(z.union([z.iso.date(), z.null()])),
+  created_at: z.optional(z.iso.date()),
+  deleted_at: z.optional(z.union([z.iso.date(), z.null()])),
+})
+
+/**
+ * Pagination links
+ */
+export const zCustomerLinks = z.object({
+  first: z.optional(z.string()),
+  last: z.optional(z.string()),
+  prev: z.optional(z.union([z.string(), z.null()])),
+  next: z.optional(z.union([z.string(), z.null()])),
+})
+
+/**
+ * Pagination metadata
+ */
+export const zMeta = z.object({
+  current_page: z.optional(z.int()),
+  from: z.optional(z.int()),
+  last_page: z.optional(z.int()),
+  per_page: z.optional(z.int()),
+  to: z.optional(z.int()),
+  total: z.optional(z.int()),
+})
+
+/**
+ * Paginated response for customers
+ */
+export const zCustomersPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zSimpleCustomer)),
+      meta: z.optional(zMeta),
+      links: z.optional(zCustomerLinks),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
  * Department model
  */
 export const zDepartment = z.object({
@@ -643,18 +697,6 @@ export const zMailTemplate = z.object({
   title: z.optional(z.string()),
   body: z.optional(z.string()),
   signature: z.optional(z.string()),
-})
-
-/**
- * Pagination metadata
- */
-export const zMeta = z.object({
-  current_page: z.optional(z.int()),
-  from: z.optional(z.int()),
-  last_page: z.optional(z.int()),
-  per_page: z.optional(z.int()),
-  to: z.optional(z.int()),
-  total: z.optional(z.int()),
 })
 
 /**
@@ -1431,6 +1473,37 @@ export const zCodeIssueSettingControllerShowByCodeData = z.object({
 export const zCodeIssueSettingControllerShowByCodeResponse =
   zCodeIssueSettingDetailResponse
 
+export const zCustomerControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()).default(1),
+      _per_page: z.optional(z.int()).default(10),
+      q: z.optional(z.string()),
+      country: z.optional(z.string()),
+      person_in_charge_department_lk: z.optional(z.string()),
+      price_rank_id: z.optional(z.int()),
+      credit_rank: z.optional(z.enum(['A', 'B', 'C', 'D', 'E'])),
+      anti_social_rank: z.optional(z.enum(['O', 'T', 'X'])),
+      search_date_type: z.optional(
+        z.enum([
+          'created_at',
+          'credit_rank_updated_at',
+          'anti_social_rank_updated_at',
+        ]),
+      ),
+      date_start: z.optional(z.iso.date()),
+      date_end: z.optional(z.iso.date()),
+    }),
+  ),
+})
+
+/**
+ * Customers retrieved successfully
+ */
+export const zCustomerControllerIndexResponse = zCustomersPaginatedResponse
+
 export const zCustomerControllerStoreData = z.object({
   body: zCustomerStoreRequest,
   path: z.optional(z.never()),
@@ -1443,6 +1516,21 @@ export const zCustomerControllerStoreData = z.object({
 export const zCustomerControllerStoreResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zCustomer),
+})
+
+export const zCustomerControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer deleted successfully
+ */
+export const zCustomerControllerDestroyResponse = z.object({
+  message: z.optional(z.string()),
 })
 
 export const zCustomerControllerShowData = z.object({
@@ -1475,6 +1563,22 @@ export const zCustomerControllerUpdateData = z.object({
 export const zCustomerControllerUpdateResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zCustomer),
+})
+
+export const zCustomerControllerRestoreData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer restored successfully
+ */
+export const zCustomerControllerRestoreResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(z.union([z.object({}), z.null()])),
 })
 
 export const zDepartmentControllerIndexData = z.object({

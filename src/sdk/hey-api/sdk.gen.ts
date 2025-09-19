@@ -49,15 +49,23 @@ import type {
   CodeIssueSettingControllerShowByCodeData,
   CodeIssueSettingControllerShowByCodeResponses,
   CodeIssueSettingControllerShowByCodeErrors,
+  CustomerControllerIndexData,
+  CustomerControllerIndexResponses,
   CustomerControllerStoreData,
   CustomerControllerStoreResponses,
   CustomerControllerStoreErrors,
+  CustomerControllerDestroyData,
+  CustomerControllerDestroyResponses,
+  CustomerControllerDestroyErrors,
   CustomerControllerShowData,
   CustomerControllerShowResponses,
   CustomerControllerShowErrors,
   CustomerControllerUpdateData,
   CustomerControllerUpdateResponses,
   CustomerControllerUpdateErrors,
+  CustomerControllerRestoreData,
+  CustomerControllerRestoreResponses,
+  CustomerControllerRestoreErrors,
   DepartmentControllerIndexData,
   DepartmentControllerIndexResponses,
   DepartmentControllerIndexErrors,
@@ -125,9 +133,18 @@ import type {
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Errors,
+  ProductControllerIndexData,
+  ProductControllerIndexResponses,
+  ProductControllerIndexErrors,
   E475E7Ead1848Aa17C399Ba311C51Data,
   E475E7Ead1848Aa17C399Ba311C51Responses,
   E475E7Ead1848Aa17C399Ba311C51Errors,
+  ProductControllerDestroyData,
+  ProductControllerDestroyResponses,
+  ProductControllerDestroyErrors,
+  ProductControllerShowData,
+  ProductControllerShowResponses,
+  ProductControllerShowErrors,
   Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data,
   Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Responses,
   Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Errors,
@@ -229,9 +246,12 @@ import {
   zCodeIssueSettingControllerShowData,
   zEed87Adddef6126Fa051Bd6Cd2D733E6Data,
   zCodeIssueSettingControllerShowByCodeData,
+  zCustomerControllerIndexData,
   zCustomerControllerStoreData,
+  zCustomerControllerDestroyData,
   zCustomerControllerShowData,
   zCustomerControllerUpdateData,
+  zCustomerControllerRestoreData,
   zDepartmentControllerIndexData,
   zDepartmentControllerStoreData,
   zDepartmentControllerDestroyData,
@@ -255,7 +275,10 @@ import {
   zAcb89614Ac12565Ecf7396Ba321Eb3Data,
   zDdb2E25Ff33D718A9Addfb6Da6D01259Data,
   zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
+  zProductControllerIndexData,
   zE475E7Ead1848Aa17C399Ba311C51Data,
+  zProductControllerDestroyData,
+  zProductControllerShowData,
   zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data,
   zProductCategoryControllerUpdateTreeData,
   zProductCategoryControllerIndexData,
@@ -747,6 +770,32 @@ export const codeIssueSettingControllerShowByCode = <
 }
 
 /**
+ * Get all customers
+ * Get a list of customers with pagination and advanced filters.
+ */
+export const customerControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<CustomerControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    CustomerControllerIndexResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers',
+    ...options,
+  })
+}
+
+/**
  * Create a new customer
  * Create a new customer with nested company research information and files.
  */
@@ -773,6 +822,32 @@ export const customerControllerStore = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Delete a customer
+ * Soft delete a customer by ID.
+ */
+export const customerControllerDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<CustomerControllerDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    CustomerControllerDestroyResponses,
+    CustomerControllerDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers/{id}',
+    ...options,
   })
 }
 
@@ -829,6 +904,32 @@ export const customerControllerUpdate = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Restore a customer
+ * Restore a soft deleted customer by ID.
+ */
+export const customerControllerRestore = <ThrowOnError extends boolean = false>(
+  options: Options<CustomerControllerRestoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    CustomerControllerRestoreResponses,
+    CustomerControllerRestoreErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerRestoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers/{id}/restore',
+    ...options,
   })
 }
 
@@ -1498,6 +1599,31 @@ export const ddd0B8D0A4Fbdc804Fe40999F5Eb58E8 = <
 }
 
 /**
+ * Get list of products
+ */
+export const productControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<ProductControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ProductControllerIndexResponses,
+    ProductControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/products',
+    ...options,
+  })
+}
+
+/**
  * Create product
  */
 export const e475E7Ead1848Aa17C399Ba311C51 = <
@@ -1519,6 +1645,56 @@ export const e475E7Ead1848Aa17C399Ba311C51 = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Soft delete product (and related packagings & rank prices)
+ */
+export const productControllerDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<ProductControllerDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    ProductControllerDestroyResponses,
+    ProductControllerDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductControllerDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/products/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Get product detail
+ */
+export const productControllerShow = <ThrowOnError extends boolean = false>(
+  options: Options<ProductControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ProductControllerShowResponses,
+    ProductControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/products/{id}',
+    ...options,
   })
 }
 
