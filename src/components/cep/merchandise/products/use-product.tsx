@@ -1,64 +1,40 @@
-import { useDebounce } from '@hook/use-debounce'
-import { DeleteButton, EditButton, ShowButton, useForm } from '@refinedev/antd'
+import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
-import { useList, useTable, useTranslate } from '@refinedev/core'
-import type { Category } from '@utility/renderCategories'
-import { Form, Space } from 'antd'
+import { useTranslate } from '@refinedev/core'
+import type { ProductListItem } from '@sdk/hey-api'
+import { Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
-type Form = {
-  search?: string
-  category?: string
-  name_lk?: string
-  category_level_1?: number
-  category_level_2?: number
-  category_level_3?: number
-  id: number
-  code: string
-  name: string
-  barcode: string
-  unit: string
-  packaging_count: number
-  cost_price: number
-  sale_price: number
+interface ISearch {
+  search: string
+  category_id: string
 }
 
 function useProduct() {
   const t = useTranslate()
-  const methods = useForm()
 
-  const { form } = methods
-
-  const { setFieldValue, getFieldValue, resetFields } = form
-
-  const name_lk_value = useDebounce(Form.useWatch('name_lk', form), 500)
-
-  const { current, setCurrent, pageSize, setPageSize, pageCount } = useTable<
-    Form,
-    HttpError
+  const { tableProps, searchFormProps } = useTable<
+    ProductListItem,
+    HttpError,
+    ISearch
   >({
-    queryOptions: {
-      enabled: false,
-    },
-  })
-
-  const { data: dataProductCategories } = useList<Category>({
-    resource: 'product-categories',
-    filters: [
+    resource: 'products',
+    filters: {},
+    onSearch: (params) => [
       {
-        field: 'name_lk',
+        field: 'category_id',
         operator: 'eq',
-        value: name_lk_value,
+        value: params.category_id ?? null,
+      },
+      {
+        field: 'q',
+        operator: 'eq',
+        value: params.search ?? null,
       },
     ],
   })
-
-  const onChangePageSize = (page: number, pageSize: number) => {
-    setCurrent(page)
-    setPageSize(pageSize)
-  }
 
   const columns = useMemo(() => {
     return [
@@ -66,28 +42,41 @@ function useProduct() {
         title: t('products.list.table.headers.productCode'), // Product Code
         dataIndex: 'code',
         key: 'code',
+        width: 200,
+        render: (_: unknown, record: ProductListItem) => (
+          <Link
+            href={`/products/show/${record.id}?actionType=VIEW`}
+            className="!underline"
+          >
+            {record.code}
+          </Link>
+        ),
       },
       {
         title: t('products.list.table.headers.productName'), // Product Name
         dataIndex: 'name',
         key: 'name',
         align: 'left',
+        width: '20%',
       },
       {
         title: t('products.list.table.headers.packagingQuantity'), // packaging_count
         dataIndex: 'packaging_count',
         key: 'packaging_count',
+        width: 120,
       },
       {
         title: t('products.list.table.headers.barcode'), // barcode
         dataIndex: 'barcode',
         key: 'barcode',
+        width: '10%',
       },
       {
         title: t('products.list.table.headers.subcategory'), // Category small
-        dataIndex: 'category_level_1',
-        key: 'category_level_1',
+        dataIndex: 'category',
+        key: 'category',
         align: 'left',
+        width: '20%',
       },
       {
         title: t('products.list.table.headers.unit'), // Unit
@@ -99,16 +88,19 @@ function useProduct() {
         dataIndex: 'cost_price',
         key: 'cost_price',
         align: 'center',
+        render: (item: number) => item.toLocaleString(),
       },
       {
         title: t('products.list.table.headers.sellingPrice'), // sale_price (JPY)
         dataIndex: 'sale_price',
         key: 'sale_price',
+        render: (item: number) => item.toLocaleString(),
       },
       {
         title: t('table.actions'),
         dataIndex: 'action',
         key: 'action',
+        width: 120,
         render(_, record) {
           return (
             <Space>
@@ -122,73 +114,13 @@ function useProduct() {
     ] as ColumnsType
   }, [t])
 
-  const dataSource = [
-    {
-      id: 1,
-      code: (
-        <Link
-          href={`/products/show/${1}?actionType=VIEW`}
-          className="!underline"
-        >
-          PROD001
-        </Link>
-      ),
-      name: 'システム設計・開発',
-      packaging_count: '-',
-      barcode: '1001930006191',
-      category_level_1: 'ソフトウェア開発',
-      unit: '人日',
-      cost_price: '600,000',
-      sale_price: '800,000',
-    },
-  ]
-
-  const handleChooseCategory = useCallback(
-    (level: number, currentPath: string[], currentCat: Category[]) => {
-      const fullPath = currentPath.join(' > ')
-      setFieldValue('category', fullPath)
-      if (level == 1) {
-        setFieldValue('category_level_1', currentCat[0].id)
-        setFieldValue('category_level_2', undefined)
-        setFieldValue('category_level_3', undefined)
-      } else if (level === 2) {
-        setFieldValue('category_level_1', currentCat[0].id)
-        setFieldValue('category_level_2', currentCat[1].id)
-        setFieldValue('category_level_3', undefined)
-      } else {
-        setFieldValue('category_level_1', currentCat[0].id)
-        setFieldValue('category_level_2', currentCat[1].id)
-        setFieldValue('category_level_3', currentCat[2].id)
-      }
-    },
-    [dataProductCategories],
-  )
-
-  const onSubmit = () => {
-    console.log(
-      getFieldValue('category_level_1'),
-      getFieldValue('category_level_2'),
-      getFieldValue('category_level_3'),
-      getFieldValue('search'),
-      'sdasdasdf',
-    )
-  }
-
-  const onReset = () => {
-    resetFields()
-  }
-
   return [
     {
-      methods,
-      dataSource,
       columns,
-      page: current,
-      pageSize,
-      total: pageCount,
-      dataProductCategories,
+      tableProps,
+      searchFormProps,
     },
-    { t, onChangePageSize, onSubmit, onReset, handleChooseCategory },
+    { t },
   ] as const
 }
 

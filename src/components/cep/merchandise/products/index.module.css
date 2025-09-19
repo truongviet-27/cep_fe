@@ -1,0 +1,3 @@
+.tableContainer :global(.ant-pagination-total-text) {
+  flex: 1;
+}
