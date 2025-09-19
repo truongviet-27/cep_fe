@@ -263,7 +263,6 @@ function Approve() {
       <CommonTable
         columns={columns}
         {...tableProps}
-        isPagination
         onRow={(record) => ({
           className: record.status === 'inactive' ? 'bg-gray-200' : 'none',
         })}

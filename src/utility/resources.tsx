@@ -17,19 +17,6 @@ export const resource: ResourceProps[] = [
       canCreate: true,
     },
   },
-
-  {
-    name: 'approve',
-    list: '/estimates/approve',
-    show: '/estimates/approve/:id',
-    create: '/estimates/approve/:id',
-    edit: '/estimates/approve/:id',
-    meta: {
-      parent: 'estimates',
-      canDelete: true,
-      canCreate: true,
-    },
-  },
   {
     name: 'customers',
     list: '/customers',

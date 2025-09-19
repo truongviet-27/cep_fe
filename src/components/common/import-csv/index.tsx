@@ -24,7 +24,7 @@ import LoadingImport from '@/assets/svg/loading.svg'
 
 const { Text, Paragraph } = Typography
 
-function CSVContainer({
+function ImportCsv({
   name,
 }: {
   name: 'PRODUCTS' | 'CATEGORY_PRODUCTS' | 'CUSTOMERS' | 'DEPARTMENTS'
@@ -279,4 +279,4 @@ function CSVContainer({
   )
 }
 
-export default CSVContainer
+export default ImportCsv

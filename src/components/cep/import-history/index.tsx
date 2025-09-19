@@ -1,5 +1,5 @@
 import { CaretDownOutlined } from '@ant-design/icons'
-import useImportHistory from '@components/cep/system-config/product-categories/csv/import-history/useImportHistory'
+import useImportHistory from '@components/cep/import-history/useImportHistory'
 import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
@@ -20,8 +20,8 @@ const { Title } = Typography
 
 function ImportHistory() {
   const [
-    { methods, columns, dataSource, isLoading, page, pageSize, total },
-    { t, onSubmit, onChangePageSize, onReset },
+    { methods, columns, isLoading, tableProps },
+    { t, onSubmit, onReset },
   ] = useImportHistory()
   const { formProps } = methods
 
@@ -42,8 +42,8 @@ function ImportHistory() {
       }
     >
       <Form {...formProps}>
-        <Row gutter={16}>
-          <Col span={4}>
+        <Row gutter={[16, 0]}>
+          <Col xs={12} sm={6}>
             <CoreInput
               name="search"
               label={<span className="font-bold">{t('タスクコード')}</span>}
@@ -51,7 +51,7 @@ function ImportHistory() {
             />
           </Col>
 
-          <Col span={4}>
+          <Col xs={12} sm={6}>
             <Form.Item
               name="category"
               label={<span className="font-bold">{t('ステータス')}</span>}
@@ -80,7 +80,7 @@ function ImportHistory() {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          <Col xs={12} sm={6}>
             <Form.Item
               name="subCategory"
               label={<span className="font-bold">種別</span>}
@@ -111,7 +111,7 @@ function ImportHistory() {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          <Col xs={12} sm={6}>
             <Form.Item
               name="code"
               label={<span className="font-bold">処理ID</span>}
@@ -122,58 +122,64 @@ function ImportHistory() {
           </Col>
         </Row>
 
-        <Row gutter={20}>
-          <Col span={5}>
-            <Form.Item
-              name="dateFrom"
-              label={<span className="font-bold">登録日時</span>}
-            >
-              <DatePicker
-                showTime
-                style={{ width: '100%' }}
-                format="DD/MM/YY HH:mm:ss"
-                placeholder="DD/MM/YY hh:mm:ss"
-              />
-            </Form.Item>
+        <Row gutter={[16, 0]}>
+          <Col xs={24} md={12} lg={10}>
+            <Row gutter={[16, 0]}>
+              <Col xs={24} lg={4} style={{ marginTop: 4 }}>
+                <span className="font-bold">登録日時</span>
+              </Col>
+              <Col xs={12} lg={10}>
+                <Form.Item name="dateFrom">
+                  <DatePicker
+                    showTime
+                    style={{ width: '100%' }}
+                    format="DD/MM/YY HH:mm:ss"
+                    placeholder="DD/MM/YY hh:mm:ss"
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={12} lg={10}>
+                <Form.Item name="dateTo">
+                  <DatePicker
+                    showTime
+                    style={{ width: '100%' }}
+                    format="DD/MM/YY HH:mm:ss"
+                    placeholder="DD/MM/YY hh:mm:ss"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+          <Col xs={24} md={12} lg={10}>
+            <Row gutter={[16, 0]}>
+              <Col xs={24} lg={4} style={{ marginTop: 4 }}>
+                <span className="font-bold">完了日時</span>
+              </Col>
+              <Col xs={12} lg={10}>
+                <Form.Item name="updatedFrom">
+                  <DatePicker
+                    showTime
+                    style={{ width: '100%' }}
+                    format="DD/MM/YY HH:mm:ss"
+                    placeholder="DD/MM/YY hh:mm:ss"
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={12} lg={10}>
+                <Form.Item name="updatedTo">
+                  <DatePicker
+                    showTime
+                    style={{ width: '100%' }}
+                    format="DD/MM/YY HH:mm:ss"
+                    placeholder="DD/MM/YY hh:mm:ss"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
           </Col>
 
-          <Col span={4}>
-            <Form.Item name="dateTo">
-              <DatePicker
-                showTime
-                style={{ width: '100%' }}
-                format="DD/MM/YY HH:mm:ss"
-                placeholder="DD/MM/YY hh:mm:ss"
-              />
-            </Form.Item>
-          </Col>
-
-          <Col span={5}>
-            <Form.Item
-              name="updatedFrom"
-              label={<span className="font-bold">完了日時</span>}
-            >
-              <DatePicker
-                showTime
-                style={{ width: '100%' }}
-                format="DD/MM/YY HH:mm:ss"
-                placeholder="DD/MM/YY hh:mm:ss"
-              />
-            </Form.Item>
-          </Col>
-
-          <Col span={4}>
-            <Form.Item name="updatedTo">
-              <DatePicker
-                showTime
-                style={{ width: '100%' }}
-                format="DD/MM/YY HH:mm:ss"
-                placeholder="DD/MM/YY hh:mm:ss"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <div className="flex items-center gap-4">
+          <Col xs={12} md={4}>
+            <div className="mb-4 flex items-center gap-4">
               <Button type="primary" onClick={onSubmit}>
                 {t('buttons.search')}
               </Button>
@@ -185,16 +191,8 @@ function ImportHistory() {
         <CommonTable
           bordered
           columns={columns}
-          dataSource={dataSource}
           loading={isLoading}
-          pagination={{
-            pageSize,
-            current: page,
-            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}件`,
-            total: total,
-            onChange: onChangePageSize,
-            showSizeChanger: true,
-          }}
+          {...tableProps}
         />
       </Form>
     </PageContainer>
