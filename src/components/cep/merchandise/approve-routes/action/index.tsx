@@ -693,9 +693,6 @@ function ApproveAction() {
                 />
               )}
             </Space>
-            <Space>
-              {isUpdate && <DeleteButton icon={null} size={'small'} />}
-            </Space>
             <Space className="items-end">
               <Button
                 type="default"
