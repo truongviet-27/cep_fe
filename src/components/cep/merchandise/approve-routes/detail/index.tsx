@@ -304,7 +304,15 @@ function ApproveDetail() {
               marginTop: 40,
             }}
           >
-            <DeleteButton icon={null} size={'small'} />
+            <DeleteButton
+              icon={null}
+              size={'small'}
+              onSuccess={() => {
+                go({
+                  to: '/approve-routes',
+                })
+              }}
+            />
             <Space>
               <Button
                 type="default"

@@ -4,14 +4,11 @@ import { DownOutlined, RightOutlined, UpOutlined } from '@ant-design/icons'
 import useProductCategories from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-categories/use-product-categories'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useNavigation } from '@refinedev/core'
+import { useGo } from '@refinedev/core'
 import { LAYOUT_BG } from '@utility/color'
 import { Button, Col, Form, Input, Row, Select, Space, Tree } from 'antd'
-import React from 'react'
 
 export default function Page() {
-  const { push } = useNavigation()
-
   const {
     breadcrumbItems,
     filteredTree,
@@ -29,6 +26,8 @@ export default function Page() {
     form,
     t,
   } = useProductCategories()
+
+  const go = useGo()
 
   return (
     <Create
@@ -132,7 +131,9 @@ export default function Page() {
           <Button
             type="link"
             onClick={() => {
-              push('/product-categories/csv')
+              go({
+                to: '/product-categories/csv',
+              })
             }}
           >
             {t('projects.csv_upload.title')}

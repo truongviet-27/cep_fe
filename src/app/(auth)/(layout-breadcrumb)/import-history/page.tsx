@@ -1,5 +1,5 @@
 'use client'
-import ImportHistory from '@components/cep/system-config/product-categories/csv/import-history'
+import ImportHistory from '@components/cep/import-history'
 import React from 'react'
 
 function Page() {
