@@ -261,7 +261,15 @@ export default function CustomerListPage() {
           >
             {t('buttons.new_create')}
           </Button>
-          <Button>{t('buttons.csv_bulk_register')}</Button>
+          <Button
+            onClick={() => {
+              go({
+                to: '/customers/csv',
+              })
+            }}
+          >
+            {t('buttons.csv_bulk_register')}
+          </Button>
         </Space>
       </Row>
 

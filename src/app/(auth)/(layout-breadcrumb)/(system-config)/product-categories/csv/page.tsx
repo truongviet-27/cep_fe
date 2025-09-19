@@ -1,9 +1,9 @@
 'use client'
-import CSVContainer from '@components/cep/system-config/product-categories/csv'
+import ImportCsv from '@components/common/import-csv'
 import React from 'react'
 
-function page() {
-  return <CSVContainer name={'CATEGORY_PRODUCTS'} />
+function Page() {
+  return <ImportCsv name={'CATEGORY_PRODUCTS'} />
 }
 
-export default page
+export default Page

@@ -61,7 +61,7 @@ function CoreAutoComplete({
       {...rest}
       style={style}
       showSearch
-      placeholder={t('buttons.search')}
+      placeholder={t('placeholders.select')}
       filterOption={false}
       autoClearSearchValue
       allowClear

@@ -180,7 +180,6 @@ function ProductContainer() {
             onChange: onChangePageSize,
             showSizeChanger: true,
           }}
-          isPagination
         />
 
         <div className="mt-4 text-right">

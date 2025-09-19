@@ -128,25 +128,6 @@ function ApproveAction() {
     },
   })
 
-  useEffect(() => {
-    if (
-      query?.data?.data &&
-      querySelectDp1.isLoading &&
-      querySelectDp2.isLoading &&
-      querySelectEp.isLoading
-    ) {
-      setFieldsValue({
-        ...query?.data?.data,
-        departments: query.data.data.department?.id,
-      })
-    }
-  }, [
-    query?.data?.data,
-    querySelectDp1.isLoading,
-    querySelectDp2.isLoading,
-    querySelectEp.isLoading,
-  ])
-
   const onFinish = (values: any) => {
     if (isUpdate) {
       mutation.mutate(
@@ -202,6 +183,8 @@ function ApproveAction() {
     }
   }
 
+  console.log(form.getFieldsValue(), 'getFieldsValue')
+
   return (
     <PageContainer
       breadcrumbs={
@@ -228,7 +211,7 @@ function ApproveAction() {
       <Spin
         spinning={
           isUpdate
-            ? query.isLoading ||
+            ? query.isFetching ||
               querySelectDp1.isLoading ||
               querySelectDp2.isLoading ||
               querySelectEp.isLoading
@@ -241,11 +224,14 @@ function ApproveAction() {
             isUpdate
               ? {
                   ...query.data?.data,
+                  departments: query?.data?.data.departments?.map(
+                    (item: any) => item.id,
+                  ),
                 }
               : {
                   code: '',
                   name: '',
-                  department: null,
+                  departments: [],
                   status: 'active',
                   steps: [
                     {
@@ -340,17 +326,23 @@ function ApproveAction() {
                   mode="multiple"
                   maxTagCount={'responsive'}
                   allowClear
+                  placeholder={t('placeholders.select')}
                   options={(() => {
-                    const optionFromDp2 = selectPropsDp2?.options?.find(
-                      (opt) => form.getFieldValue('departments') === opt.value,
+                    const optionFromDp2 = selectPropsDp2?.options?.filter(
+                      (opt) =>
+                        query.data?.data.departments
+                          ?.map((item: any) => item.id)
+                          ?.includes(opt.value),
                     )
 
                     const optionsFromDp = selectPropsDp?.options || []
 
                     const newOptions = [
-                      ...(optionFromDp2 ? [optionFromDp2] : []),
+                      ...(optionFromDp2 ?? []),
                       ...optionsFromDp,
                     ]
+
+                    console.log(newOptions, 'newOptions')
 
                     return newOptions
                   })()}
@@ -531,6 +523,9 @@ function ApproveAction() {
                                                 style={{
                                                   width: 200,
                                                 }}
+                                                placeholder={t(
+                                                  'placeholders.select',
+                                                )}
                                                 onClear={() => {
                                                   setFieldValue(
                                                     [
@@ -686,7 +681,17 @@ function ApproveAction() {
             }}
           >
             <Space>
-              {isUpdate && <DeleteButton icon={null} size={'small'} />}
+              {isUpdate && (
+                <DeleteButton
+                  icon={null}
+                  size={'small'}
+                  onSuccess={() => {
+                    go({
+                      to: '/approve-routes',
+                    })
+                  }}
+                />
+              )}
             </Space>
             <Space className="items-end">
               <Button
