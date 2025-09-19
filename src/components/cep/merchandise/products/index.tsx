@@ -1,43 +1,20 @@
-import {
-  CaretDownOutlined,
-  RightOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
+import { RightOutlined } from '@ant-design/icons'
 import useProduct from '@components/cep/merchandise/products/use-product'
 import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
+import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
 import { PRIMARY } from '@utility/color'
-import renderCategories from '@utility/renderCategories'
-import {
-  AutoComplete,
-  Breadcrumb,
-  Button,
-  Col,
-  Dropdown,
-  Form,
-  Row,
-  Typography,
-} from 'antd'
+import { Breadcrumb, Button, Col, Form, Row, Typography } from 'antd'
 import Link from 'next/link'
+
+import styles from './index.module.css'
 
 const { Title } = Typography
 
 function ProductContainer() {
-  const [
-    {
-      methods,
-      dataSource,
-      columns,
-      page,
-      pageSize,
-      total,
-      dataProductCategories,
-    },
-    { t, onSubmit, onReset, onChangePageSize, handleChooseCategory },
-  ] = useProduct()
+  const [{ columns, tableProps, searchFormProps }, { t }] = useProduct()
 
-  const { formProps } = methods
   return (
     <PageContainer
       breadcrumbs={
@@ -59,7 +36,7 @@ function ProductContainer() {
       }
       title={t('products.list.title')}
     >
-      <Form {...formProps}>
+      <Form {...searchFormProps}>
         <Row gutter={16}>
           <Col sm={12} md={6} lg={4}>
             <CoreInput
@@ -83,72 +60,27 @@ function ProductContainer() {
                 </span>
               }
               layout="vertical"
+              name="category_id"
             >
-              <Dropdown
-                trigger={['click']}
-                popupRender={() => (
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      padding: 10,
-                      border: '1px solid #ccc',
-                      borderRadius: '8px',
-                      background: '#fff',
-                    }}
-                  >
-                    <Form.Item name={'name_lk'}>
-                      <AutoComplete
-                        style={{ width: '100%' }}
-                        options={dataProductCategories?.data.map((item) => ({
-                          value: item.name,
-                          label: item.name,
-                        }))}
-                        placeholder="検索..."
-                        suffixIcon={<SearchOutlined />}
-                        popupRender={() => {
-                          return (
-                            <div className="my-2 max-h-[300px] overflow-y-auto px-2">
-                              {renderCategories(
-                                dataProductCategories?.data || [],
-                                1,
-                                [],
-                                [],
-                                handleChooseCategory,
-                              )}
-                            </div>
-                          )
-                        }}
-                      />
-                    </Form.Item>
-                  </div>
-                )}
-              >
-                <CoreInput
-                  icon={
-                    <CaretDownOutlined
-                      style={{
-                        color: '#00000040',
-                        fontSize: '12px',
-                      }}
-                    />
-                  }
-                  name="category"
-                  readOnly={true}
-                  placeholder={t(
-                    'products.list.searchArea.categoryPlaceholder',
-                  )}
-                />
-              </Dropdown>
+              <ProductCategoryDropdown
+                placeholder={t('products.list.searchArea.categoryPlaceholder')}
+                onSelect={(_, __, ___, categoryId) => {
+                  searchFormProps.form?.setFieldValue('category_id', categoryId)
+                }}
+              />
             </Form.Item>
           </Col>
 
           <div className="mx-3 mt-[29px] mb-2 flex flex-1 flex-wrap justify-between gap-4">
             <div className="mr-auto flex flex-1 gap-4">
-              <Button type="primary" onClick={onSubmit}>
+              <Button type="primary" onClick={searchFormProps.form?.submit}>
                 {t('buttons.search')}
               </Button>
-              <Button onClick={onReset} color="primary" variant="outlined">
+              <Button
+                onClick={() => searchFormProps.form?.resetFields?.()}
+                color="primary"
+                variant="outlined"
+              >
                 {t('products.list.searchArea.clearButton')}
               </Button>
             </div>
@@ -166,22 +98,17 @@ function ProductContainer() {
             </div>
           </div>
         </Row>
-
-        <CommonTable
-          columns={columns}
-          dataSource={dataSource}
-          loading={false}
-          pagination={{
-            pageSize,
-            current: page,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} / ${total}${t('products.list.table.text.pieces')}`,
-            total: total,
-            onChange: onChangePageSize,
-            showSizeChanger: true,
-          }}
-          isPagination
-        />
+        <div className={styles.tableContainer}>
+          <CommonTable
+            {...tableProps}
+            columns={columns}
+            pagination={{
+              ...tableProps.pagination,
+              showSizeChanger: true,
+            }}
+            isPagination
+          />
+        </div>
 
         <div className="mt-4 text-right">
           <Link href={''}>
