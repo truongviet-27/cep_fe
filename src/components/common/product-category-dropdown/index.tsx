@@ -10,6 +10,8 @@ import styles from './index.module.css'
 
 interface Props {
   placeholder?: string
+  hidden?: boolean
+  valueOnly?: boolean
   onSelect?: (
     level: number,
     currentPath: string[],
@@ -19,7 +21,7 @@ interface Props {
 }
 
 const ProductCategoryDropdown: React.FC<Props> = (props) => {
-  const { placeholder, onSelect } = props
+  const { placeholder, hidden, valueOnly, onSelect } = props
   const [
     { options, debounceFetcher, isLoading, categories },
     { setSearchText, setAllowFetchData },
@@ -91,19 +93,24 @@ const ProductCategoryDropdown: React.FC<Props> = (props) => {
         </div>
       )}
     >
-      <Input
-        value={value}
-        placeholder={placeholder}
-        readOnly
-        suffix={
-          <CaretDownOutlined
-            style={{
-              color: '#00000040',
-              fontSize: '12px',
-            }}
-          />
-        }
-      />
+      {valueOnly ? (
+        value
+      ) : (
+        <Input
+          hidden={hidden}
+          value={value}
+          placeholder={placeholder}
+          readOnly
+          suffix={
+            <CaretDownOutlined
+              style={{
+                color: '#00000040',
+                fontSize: '12px',
+              }}
+            />
+          }
+        />
+      )}
     </Dropdown>
   )
 }

@@ -1,9 +1,8 @@
 'use client'
-import ProductDetailContainer from '@components/cep/merchandise/products/action'
-import React from 'react'
+import ProductFormContainer from '@components/cep/merchandise/products/form-edit'
 
 function Page() {
-  return <ProductDetailContainer />
+  return <ProductFormContainer />
 }
 
 export default Page
