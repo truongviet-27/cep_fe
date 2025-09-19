@@ -1,7 +1,8 @@
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreateForm } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import boldText from '@utility/bold-text'
 import {
   Button,
@@ -21,7 +22,9 @@ import styles from '../styles.module.css'
 const { Title } = Typography
 const { Panel } = Collapse
 
-function BasicInformation(props: ReturnType<typeof useCustomerCreateForm>) {
+function BasicInformation(
+  props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
+) {
   const {
     t,
     rule,
@@ -39,7 +42,7 @@ function BasicInformation(props: ReturnType<typeof useCustomerCreateForm>) {
       expandIcon={({ isActive }) => (
         <DownOutlined
           style={{ transition: '0.3s' }}
-          rotate={isActive ? 0 : 180}
+          rotate={isActive ? 180 : 0}
         />
       )}
     >
@@ -75,6 +78,7 @@ function BasicInformation(props: ReturnType<typeof useCustomerCreateForm>) {
           name="company_classification"
           rules={[rule]}
           initialValue="corporation"
+          required
         >
           <Radio.Group>
             <Radio value="corporation">
@@ -122,7 +126,7 @@ function BasicInformation(props: ReturnType<typeof useCustomerCreateForm>) {
         </Form.Item>
 
         <Form.Item
-          label={boldText(t('customers.fields.unit_price_rank'))}
+          label={boldText(t('ranks.fields.code'))}
           name="price_rank_id"
           rules={[rule]}
           required

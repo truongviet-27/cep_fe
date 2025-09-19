@@ -1,6 +1,7 @@
 import { DownOutlined } from '@ant-design/icons'
-import styles from '@app/(auth)/(layout-breadcrumb)/customers/create/styles.module.css'
-import type { useCustomerCreateForm } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
 import boldText from '@utility/bold-text'
 import { Button, Collapse, Form, Input, Typography } from 'antd'
 import React from 'react'
@@ -8,7 +9,9 @@ import React from 'react'
 const { Title } = Typography
 const { Panel } = Collapse
 
-function AccountingContact(props: ReturnType<typeof useCustomerCreateForm>) {
+function AccountingContact(
+  props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
+) {
   const { t, rule, handleCopyContact } = props
 
   return (
@@ -19,7 +22,7 @@ function AccountingContact(props: ReturnType<typeof useCustomerCreateForm>) {
       expandIcon={({ isActive }) => (
         <DownOutlined
           style={{ transition: '0.3s' }}
-          rotate={isActive ? 0 : 180}
+          rotate={isActive ? 180 : 0}
         />
       )}
     >
