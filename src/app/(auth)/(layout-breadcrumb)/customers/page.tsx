@@ -2,7 +2,7 @@
 'use client'
 
 import { List } from '@components/crud/list'
-import { EditButton, useTable } from '@refinedev/antd'
+import { CreateButton, EditButton, useTable } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import {
   Button,
@@ -27,6 +27,7 @@ import {
 } from '@ant-design/icons'
 import { PRIMARY } from '@utility/color'
 import { mockCustomers } from '@mockApi/customer'
+import { SimpleCustomer } from '@sdk/hey-api'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -52,12 +53,12 @@ export default function CustomerListPage() {
     syncWithLocation: true,
   })
 
-  const columns: TableColumnsType<ICustomer> = useMemo(
+  const columns: TableColumnsType<SimpleCustomer> = useMemo(
     () => [
       {
         title: t('customers.fields.code'),
-        dataIndex: 'code',
-        key: 'code',
+        dataIndex: 'customer_code',
+        key: 'customer_code',
         render: (text, record) => (
           <Button
             type="link"
@@ -79,13 +80,13 @@ export default function CustomerListPage() {
       },
       {
         title: t('customers.fields.department'),
-        dataIndex: 'department',
-        key: 'department',
+        dataIndex: 'person_in_charge_department',
+        key: 'person_in_charge_department',
       },
       {
         title: t('customers.fields.unit_price_rank'),
-        dataIndex: 'unit_price_rank',
-        key: 'unit_price_rank',
+        dataIndex: 'price_rank_code',
+        key: 'price_rank_code',
         render: (text) => <Button type="link">{text}</Button>,
       },
       {
@@ -95,19 +96,19 @@ export default function CustomerListPage() {
       },
       {
         title: t('customers.fields.anti_social_check_date'),
-        dataIndex: 'anti_social_check_date',
-        key: 'anti_social_check_date',
+        dataIndex: 'anti_social_rank_update_at',
+        key: 'anti_social_rank_update_at',
         width: 150,
       },
       {
         title: t('customers.fields.registration_date'),
-        dataIndex: 'registration_date',
-        key: 'registration_date',
+        dataIndex: 'created_at',
+        key: 'created_at',
       },
       {
         title: t('customers.fields.suspension_date'),
-        dataIndex: 'suspension_date',
-        key: 'suspension_date',
+        dataIndex: 'deleted_at',
+        key: 'deleted_at',
       },
       {
         title: t('customers.fields.actions'),
@@ -119,10 +120,10 @@ export default function CustomerListPage() {
             <EditButton hideText size="small" recordItemId={record.id} />
             <Button
               size="small"
-              danger={!record.suspension_date}
-              type={record.suspension_date ? 'default' : 'primary'}
+              danger={!record.deleted_at}
+              type={record.deleted_at ? 'default' : 'primary'}
               icon={
-                record.suspension_date ? (
+                record.deleted_at ? (
                   <PlayCircleOutlined />
                 ) : (
                   <PauseCircleOutlined />
@@ -255,21 +256,8 @@ export default function CustomerListPage() {
 
       <Row justify="end" className="mb-4">
         <Space>
-          <Button
-            type="primary"
-            onClick={() => go({ to: '/customers/create' })}
-          >
-            {t('buttons.new_create')}
-          </Button>
-          <Button
-            onClick={() => {
-              go({
-                to: '/customers/csv',
-              })
-            }}
-          >
-            {t('buttons.csv_bulk_register')}
-          </Button>
+          <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
+          <Button>{t('buttons.csv_bulk_register')}</Button>
         </Space>
       </Row>
 
