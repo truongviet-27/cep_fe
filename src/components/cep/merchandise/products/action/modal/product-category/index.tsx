@@ -1,7 +1,11 @@
 /* eslint-disable */
-import { useTranslate } from '@refinedev/core'
-import { Form, Input, Select } from 'antd'
+import { useCreate, useTranslate } from '@refinedev/core'
+import { Category } from '@utility/renderCategories'
+import { Button, Divider, Flex, Form } from 'antd'
 import React from 'react'
+
+import CoreInput from '@components/common/core-input'
+import ProductCategorySearch from '@components/common/product-category-search'
 
 type Props = {
   modalProps: any
@@ -10,27 +14,75 @@ type Props = {
 export const ProductCategoryModal: React.FC<Props> = ({ modalProps }) => {
   const t = useTranslate()
   const { close, formProps, saveButtonProps, formLoading, form } = modalProps
+  const { mutate: onCreateProductCategory, isPending: isLoadingSubmit } =
+    useCreate({
+      resource: 'product-categories',
+    })
+
+  const handleCreateCategory = (values: Category) => {
+    onCreateProductCategory(
+      {
+        values: {
+          name: values.name,
+          parent_id: values?.parent_id,
+          level: values?.parent_id ? (values?.level ?? 1) + 1 : 1,
+        },
+      },
+      {
+        onSuccess: () => {
+          close()
+        },
+      },
+    )
+  }
 
   return (
-    <Form {...formProps} layout="vertical">
-      <Form.Item
+    <Form
+      {...formProps}
+      layout="horizontal"
+      style={{ maxWidth: 600 }}
+      form={form}
+      labelAlign="left"
+      labelCol={{ span: 6 }}
+      onFinish={handleCreateCategory}
+    >
+      <CoreInput
         label="分類名"
         name="name"
-        rules={[{ required: true, message: '必須項目です' }]}
-      >
-        <Input placeholder="例: A34 消しゴム" />
-      </Form.Item>
-
-      <Form.Item label="親カテゴリ" name={['parent', 'id']}>
-        <Select
-          showSearch
-          placeholder="親カテゴリを選択"
-          options={[
-            { label: '文房具', value: 1 },
-            { label: '雑貨', value: 2 },
-          ]}
+        required={true}
+        layout="horizontal"
+        placeholder="例: A34 消しゴム"
+        rules={[
+          {
+            required: true,
+            message: 'This field is required',
+          },
+        ]}
+      />
+      <CoreInput name="parent_id" hidden />
+      <CoreInput name="level" hidden />
+      <div style={{ width: '100%', position: 'relative' }}>
+        <ProductCategorySearch
+          label="親カテゴリ"
+          name="parent"
+          layout="horizontal"
+          placeholder="例: 文房具 > 筆記用具"
+          onSelect={(level, currentPath, currentCat, categoryId) => {
+            form.setFieldValue('level', level)
+            form.setFieldValue('parent_id', categoryId)
+            form.setFieldValue('parent', currentPath.join(' > '))
+          }}
         />
-      </Form.Item>
+      </div>
+      <Divider />
+      <Flex justify="end" gap="small">
+        <Button onClick={close} color="primary" variant="outlined">
+          {t('buttons.cancel')}
+        </Button>
+        <Button type="primary" htmlType="submit">
+          {t('products.buttons.save')}
+        </Button>
+      </Flex>
     </Form>
   )
 }

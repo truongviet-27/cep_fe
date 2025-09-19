@@ -12,7 +12,7 @@ import {
 } from '@refinedev/antd'
 import type { BaseRecord, CrudFilters } from '@refinedev/core'
 import { Link, useGo, useTranslate } from '@refinedev/core'
-import { GREY, PRIMARY } from '@utility/color'
+import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -26,6 +26,7 @@ import {
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
 import { useMemo } from 'react'
 
 const { Title } = Typography
@@ -92,9 +93,13 @@ function Approve() {
         title: t('approve_routes.table.routeName'),
       },
       {
-        key: 'department_name',
-        dataIndex: 'department_name',
+        key: 'departments',
+        dataIndex: 'departments',
         title: t('approve_routes.table.department'),
+        render: (value) => {
+          console.log(value, 'value')
+          return value?.map((item: any) => item?.name + ' , ')
+        },
       },
       {
         key: 'status',
@@ -102,8 +107,8 @@ function Approve() {
         title: t('approve_routes.table.status'),
         render: (value) => {
           if (value === 'active')
-            return <Tag color={PRIMARY}>{t('products.text.active')}</Tag>
-          return <Tag color={GREY}>{t('products.text.inactive')}</Tag>
+            return <Tag color={GREEN}>{t('products.text.active')}</Tag>
+          return <Tag color={GREY_TAG}>{t('products.text.inactive')}</Tag>
         },
       },
       {
@@ -115,11 +120,17 @@ function Approve() {
         key: 'author',
         dataIndex: 'author',
         title: t('approve_routes.table.creator'),
+        render(value) {
+          return value?.name
+        },
       },
       {
         key: 'updated_at',
         dataIndex: 'updated_at',
         title: t('approve_routes.table.updatedAt'),
+        render(value) {
+          return dayjs(value).format('YYYY/MM/DD HH:mm')
+        },
       },
       {
         key: 'action',
@@ -249,7 +260,14 @@ function Approve() {
           </Col>
         </Row>
       </Form>
-      <CommonTable columns={columns} {...tableProps} isPagination={true} />
+      <CommonTable
+        columns={columns}
+        {...tableProps}
+        isPagination
+        onRow={(record) => ({
+          className: record.status === 'inactive' ? 'bg-gray-200' : 'none',
+        })}
+      />
     </PageContainer>
   )
 }

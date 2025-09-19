@@ -1,42 +1,26 @@
-import { useDebounce } from '@hook/use-debounce'
 import { useForm } from '@refinedev/antd'
-import { useList, useShow, useTable, useTranslate } from '@refinedev/core'
-import type { Rank } from '@sdk/hey-api'
-import type { Category } from '@utility/renderCategories'
-import { useCallback, useState } from 'react'
+import {
+  useCreate,
+  useGo,
+  useShow,
+  useTable,
+  useTranslate,
+} from '@refinedev/core'
+import type { Rank, StoreProductInput } from '@sdk/hey-api'
 
-export type FormType = {
-  code: string
-  name: string
-  short_name: string
-  barcode: string
-  category: string
+export type ProductFormType = {
   unit: string
-  costPrice: number
-  sellingPrice: number
-  note: string
-  info: Info[]
-  price: []
-
-  // add field new
+  category: string
   name_lk?: string
   category_level_1?: number
   category_level_2?: number
   category_level_3?: number
-}
-type Info = {
-  packageCode: string
-  packageName: string
-  status: string
-  quantity: number
-  unit: string
-  standardPrice: number | null
-  salesPrice: number | null
-  standardPrint: boolean
-}
+} & StoreProductInput
+
 function useProductDetail() {
   const t = useTranslate()
-  const methods = useForm({
+  const go = useGo()
+  const methods = useForm<ProductFormType>({
     defaultFormValues: {
       code: '',
       name: '',
@@ -47,16 +31,10 @@ function useProductDetail() {
       costPrice: '',
       sellingPrice: '',
       note: '',
-      info: [],
+      packagings: [],
       price: [],
     },
   })
-
-  const { form } = methods
-
-  const { getFieldValue, setFieldValue } = form
-
-  const [isAppend, setIsAppend] = useState(false)
 
   const {} = useShow({
     resource: 'products',
@@ -70,52 +48,30 @@ function useProductDetail() {
     resource: 'ranks',
   })
 
-  const name_lk_value = useDebounce(getFieldValue('name_lk'), 500)
-
-  const { data: dataProductCategories } = useList<Category>({
-    resource: 'product-categories',
-    filters: [
-      {
-        field: 'name_lk',
-        operator: 'eq',
-        value: name_lk_value,
-      },
-    ],
-    queryOptions: {
-      enabled: !!name_lk_value,
-    },
+  const { mutate: onCreateProduct, isPending: isLoadingSubmit } = useCreate({
+    resource: 'products',
   })
 
-  const handleChooseCategory = useCallback(
-    (level: number, currentPath: string[], currentCat: Category[]) => {
-      const fullPath = currentPath.join(' > ')
-      setFieldValue('category', fullPath)
-      if (level == 1) {
-        setFieldValue('category_level_1', currentCat[0].id)
-        setFieldValue('category_level_2', undefined)
-        setFieldValue('category_level_3', undefined)
-      } else if (level === 2) {
-        setFieldValue('category_level_1', currentCat[0].id)
-        setFieldValue('category_level_2', currentCat[1].id)
-        setFieldValue('category_level_3', undefined)
-      } else {
-        setFieldValue('category_level_1', currentCat[0].id)
-        setFieldValue('category_level_2', currentCat[1].id)
-        setFieldValue('category_level_3', currentCat[2].id)
-      }
-    },
-    [dataProductCategories],
-  )
+  const onSubmit = (values: ProductFormType) => {
+    onCreateProduct(
+      {
+        values,
+      },
+      {
+        onSuccess: () => {
+          go({ to: '/products' })
+        },
+      },
+    )
+  }
 
-  const onSubmit = () => {}
   return [
     {
       methods,
-      isAppend,
-      dataProductCategories,
       dataRanks: tableQuery?.data?.data ?? [],
+      isLoadingSubmit,
     },
-    { t, onSubmit, setIsAppend, handleChooseCategory },
+    { t, onSubmit },
   ] as const
 }
 
