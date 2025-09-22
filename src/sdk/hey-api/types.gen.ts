@@ -3032,9 +3032,9 @@ export type CustomerControllerIndexData = {
      */
     country?: string
     /**
-     * Search by person in charge department
+     * Search by department in charge
      */
-    person_in_charge_department_lk?: string
+    department_in_charge?: string
     /**
      * Filter by price rank ID
      */
@@ -3881,6 +3881,51 @@ export type E821554Cdf9A1C547Bbe990Db9Dc76Responses = {
 export type E821554Cdf9A1C547Bbe990Db9Dc76Response =
   E821554Cdf9A1C547Bbe990Db9Dc76Responses[keyof E821554Cdf9A1C547Bbe990Db9Dc76Responses]
 
+export type ImportControllerGetTemplateData = {
+  body?: never
+  path: {
+    /**
+     * Function name for import
+     */
+    common_name:
+      | 'PRODUCTS'
+      | 'CATEGORY_PRODUCTS'
+      | 'CUSTOMERS'
+      | 'DEPARTMENTS'
+      | 'OTHER'
+  }
+  query?: never
+  url: '/api/v1/csv-imports/{common_name}/template'
+}
+
+export type ImportControllerGetTemplateErrors = {
+  /**
+   * Invalid common_name
+   */
+  400: {
+    message?: string
+  }
+  /**
+   * Unauthorized
+   */
+  401: {
+    message?: string
+  }
+}
+
+export type ImportControllerGetTemplateError =
+  ImportControllerGetTemplateErrors[keyof ImportControllerGetTemplateErrors]
+
+export type ImportControllerGetTemplateResponses = {
+  /**
+   * CSV template file downloaded successfully
+   */
+  200: Blob | File
+}
+
+export type ImportControllerGetTemplateResponse =
+  ImportControllerGetTemplateResponses[keyof ImportControllerGetTemplateResponses]
+
 export type ImportControllerImportData = {
   /**
    * Import file data
@@ -3961,6 +4006,89 @@ export type ImportControllerImportResponses = {
 
 export type ImportControllerImportResponse =
   ImportControllerImportResponses[keyof ImportControllerImportResponses]
+
+export type ImportControllerGetImportHistoryData = {
+  body?: never
+  path?: never
+  query?: {
+    _page?: number
+    _per_page?: number
+    /**
+     * Filter by import status
+     */
+    status?: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
+    /**
+     * Filter by common name
+     */
+    common_name?:
+      | 'PRODUCTS'
+      | 'CATEGORY_PRODUCTS'
+      | 'CUSTOMERS'
+      | 'DEPARTMENTS'
+      | 'OTHER'
+    start_date?: string
+    end_date?: string
+    /**
+     * Filter by creator name
+     */
+    created_by?: string
+    id?: number
+  }
+  url: '/api/v1/csv-imports/history'
+}
+
+export type ImportControllerGetImportHistoryErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+}
+
+export type ImportControllerGetImportHistoryResponses = {
+  /**
+   * Import history retrieved
+   */
+  200: {
+    message?: string
+    data?: {
+      items?: Array<{
+        id?: number
+        common_name?: string
+        status?: string
+        start_time_import?: string
+        end_time_import?: string
+        data_inserted?: number
+        data_updated?: number
+        data_failed?: number
+        file_failed_key?: string | null
+        /**
+         * Presigned URL for downloading failed file
+         */
+        url_file_failed?: string | null
+        created_by?: string
+        created_at?: string
+        updated_at?: string
+      }>
+      meta?: {
+        current_page?: number
+        from?: number
+        last_page?: number
+        per_page?: number
+        to?: number
+        total?: number
+      }
+      links?: {
+        first?: string
+        last?: string
+        prev?: string | null
+        next?: string
+      }
+    }
+  }
+}
+
+export type ImportControllerGetImportHistoryResponse =
+  ImportControllerGetImportHistoryResponses[keyof ImportControllerGetImportHistoryResponses]
 
 export type MailTemplateControllerShowByCodeData = {
   body?: never

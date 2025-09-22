@@ -1748,7 +1748,7 @@ export const zCustomerControllerIndexData = z.object({
       _per_page: z.optional(z.int()).default(10),
       q: z.optional(z.string()),
       country: z.optional(z.string()),
-      person_in_charge_department_lk: z.optional(z.string()),
+      department_in_charge: z.optional(z.string()),
       price_rank_id: z.optional(z.int()),
       credit_rank: z.optional(z.enum(['A', 'B', 'C', 'D', 'E'])),
       anti_social_rank: z.optional(z.enum(['O', 'T', 'X'])),
@@ -2059,6 +2059,25 @@ export const zE821554Cdf9A1C547Bbe990Db9Dc76Response = z.object({
   message: z.optional(z.string()),
 })
 
+export const zImportControllerGetTemplateData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    common_name: z.enum([
+      'PRODUCTS',
+      'CATEGORY_PRODUCTS',
+      'CUSTOMERS',
+      'DEPARTMENTS',
+      'OTHER',
+    ]),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * CSV template file downloaded successfully
+ */
+export const zImportControllerGetTemplateResponse = z.string()
+
 export const zImportControllerImportData = z.object({
   body: z.object({
     file_key: z.string(),
@@ -2085,6 +2104,81 @@ export const zImportControllerImportResponse = z.object({
       import_history_id: z.optional(z.int()),
       status: z.optional(z.string()),
       message: z.optional(z.string()),
+    }),
+  ),
+})
+
+export const zImportControllerGetImportHistoryData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+      status: z.optional(
+        z.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED']),
+      ),
+      common_name: z.optional(
+        z.enum([
+          'PRODUCTS',
+          'CATEGORY_PRODUCTS',
+          'CUSTOMERS',
+          'DEPARTMENTS',
+          'OTHER',
+        ]),
+      ),
+      start_date: z.optional(z.iso.date()),
+      end_date: z.optional(z.iso.date()),
+      created_by: z.optional(z.string()),
+      id: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Import history retrieved
+ */
+export const zImportControllerGetImportHistoryResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      items: z.optional(
+        z.array(
+          z.object({
+            id: z.optional(z.int()),
+            common_name: z.optional(z.string()),
+            status: z.optional(z.string()),
+            start_time_import: z.optional(z.iso.datetime()),
+            end_time_import: z.optional(z.iso.datetime()),
+            data_inserted: z.optional(z.int()),
+            data_updated: z.optional(z.int()),
+            data_failed: z.optional(z.int()),
+            file_failed_key: z.optional(z.union([z.string(), z.null()])),
+            url_file_failed: z.optional(z.union([z.string(), z.null()])),
+            created_by: z.optional(z.string()),
+            created_at: z.optional(z.iso.datetime()),
+            updated_at: z.optional(z.iso.datetime()),
+          }),
+        ),
+      ),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.int()),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.union([z.string(), z.null()])),
+          next: z.optional(z.string()),
+        }),
+      ),
     }),
   ),
 })

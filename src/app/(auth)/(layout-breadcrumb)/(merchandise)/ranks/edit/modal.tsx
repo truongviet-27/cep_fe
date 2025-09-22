@@ -6,6 +6,7 @@ import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
+import boldText from '@utility/bold-text'
 
 type Props = {
   modalProps: any
@@ -17,9 +18,6 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
     modalProps
 
   const record = queryResult?.data?.data
-
-  const issueMethod = Form.useWatch('issue_method', formProps.form)
-  const isManual = issueMethod === 'manual'
 
   return (
     <Edit
@@ -39,7 +37,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
         colon={false}
       >
         <Form.Item
-          label={t('ranks.fields.code')}
+          label={boldText(t('ranks.fields.code'))}
           name="code"
           rules={[{ required: true }]}
         >
@@ -47,7 +45,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.name')}
+          label={boldText(t('ranks.fields.name'))}
           name="name"
           rules={[{ required: true }]}
         >
@@ -55,7 +53,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.rate')}
+          label={boldText(t('ranks.fields.rate'))}
           name="rate"
           rules={[{ required: true }]}
         >
@@ -63,8 +61,8 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.remarks')}
-          name="remarks"
+          label={boldText(t('ranks.fields.remarks'))}
+          name="note"
           rules={[{ required: true }]}
         >
           <Input multiple />

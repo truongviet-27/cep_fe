@@ -46,7 +46,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
         },
       })
 
-      const { presigned_url, file_key } = presignedData.data
+      const { presigned_url, file_key } = presignedData
 
       // Step 2: Upload file to presigned URL
       const xhr = new XMLHttpRequest()
@@ -108,7 +108,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
           flexDirection: 'row-reverse',
         }}
       >
-        <span style={{ flexGrow: 1, textAlign: 'left', marginLeft: 8 }}>
+        <span style={{ flexGrow: 1, textAlign: 'left' }}>
           {t('placeholders.please_choose_files')}
         </span>
       </Button>

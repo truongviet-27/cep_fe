@@ -31,7 +31,7 @@ function AddressContact(
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
-    optionValue: 'id',
+    optionValue: 'name',
   })
 
   return (
