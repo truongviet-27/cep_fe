@@ -11,6 +11,7 @@ import { createSchemaFieldRule } from 'antd-zod'
 export const useCustomerEdit = () => {
   const t = useTranslate()
   const { formProps, saveButtonProps, form } = useForm<Department>({
+    action: 'edit',
     redirect: 'show',
   })
 

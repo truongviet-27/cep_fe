@@ -38,7 +38,7 @@ export default function CustomerEditPage() {
   return (
     <Edit
       isLoading={isLoading}
-      saveButtonProps={saveButtonProps}
+      // saveButtonProps={saveButtonProps}
       rightFooterButtons={
         <Button {...saveButtonProps} type="primary">
           {t('buttons.save')}

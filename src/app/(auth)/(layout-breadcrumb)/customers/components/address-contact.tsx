@@ -3,8 +3,19 @@
 import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import { useSelect } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
-import { Collapse, DatePicker, Form, Input, Select, Typography } from 'antd'
+import { fieldDistinctionOptions, industryOptions } from '@utility/options'
+import {
+  Col,
+  Collapse,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Select,
+  Typography,
+} from 'antd'
 import React from 'react'
 
 import styles from '../styles.module.css'
@@ -16,6 +27,12 @@ function AddressContact(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
   const { t, rule } = props
+
+  const { selectProps: departmentSelectProps } = useSelect({
+    resource: 'departments',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
 
   return (
     <Collapse
@@ -87,7 +104,8 @@ function AddressContact(
           rules={[rule]}
         >
           <Select
-            options={[{ value: '未上場', label: '未上場' }]}
+            placeholder={t('placeholders.select')}
+            options={fieldDistinctionOptions}
             style={{ maxWidth: 560 }}
           />
         </Form.Item>
@@ -97,7 +115,11 @@ function AddressContact(
           name="industry"
           rules={[rule]}
         >
-          <Input style={{ maxWidth: 560 }} />
+          <Select
+            placeholder={t('placeholders.select')}
+            options={industryOptions}
+            style={{ maxWidth: 560 }}
+          />
         </Form.Item>
 
         <Form.Item
@@ -108,12 +130,21 @@ function AddressContact(
           <DatePicker />
         </Form.Item>
 
-        <Form.Item
-          label={boldText(t('customers.show.department_in_charge'))}
-          name="department_in_charge"
-          rules={[rule]}
-        >
-          <Input style={{ maxWidth: 560 }} />
+        <Form.Item label={boldText(t('customers.show.department_in_charge'))}>
+          <Row gutter={8} align={'middle'}>
+            <Col>
+              <Form.Item name="department_in_charge" rules={[rule]}>
+                <Select
+                  {...departmentSelectProps}
+                  placeholder={t('placeholders.select')}
+                  style={{ minWidth: 300 }}
+                />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item>※当社の部署</Form.Item>
+            </Col>
+          </Row>
         </Form.Item>
       </Panel>
     </Collapse>

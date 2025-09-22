@@ -1,11 +1,10 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Divider, Form, Input, Select, Space, Tag } from 'antd'
+import { Button, Divider, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
-import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
 import ShowMoreInfo from '@components/common/show-more-info'
 
 type Props = {
@@ -71,28 +70,6 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
           <Input multiple />
         </Form.Item>
 
-        <Form.Item
-          label={t('ranks.fields.serial_length')}
-          name="serial_length"
-          rules={[{ required: true }]}
-        >
-          <Select disabled={isManual}>
-            {[...Array(10)].map((_, i) => (
-              <Select.Option key={i + 1} value={i + 1}>
-                {i + 1}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label={t('ranks.fields.total')} name="total">
-          {record?.total}
-        </Form.Item>
-
-        <Form.Item label={t('ranks.fields.preview_code')} name="preview_code">
-          <Tag>{buildCodePreviewFromSetting(form.getFieldsValue())}</Tag>
-        </Form.Item>
-
         <Divider />
 
         <ShowMoreInfo
@@ -120,7 +97,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
       <Space className={'flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
         <Button {...saveButtonProps} type="primary">
-          保存
+          {t('products.buttons.save')}
         </Button>
       </Space>
     </Edit>

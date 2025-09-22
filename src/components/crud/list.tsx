@@ -3,8 +3,6 @@ import { useResource, useTranslate, useUserFriendlyName } from '@refinedev/core'
 import type { ListProps } from '@refinedev/antd'
 import { PageHeader } from '@refinedev/antd'
 import AutoHeading from '@components/common/auto-heading'
-import { Button } from 'antd'
-import { PRIMARY } from '@utility/color'
 
 type CustomProps = {
   isAutoHeading?: boolean
@@ -111,20 +109,20 @@ export const List: React.FC<ListProps & CustomProps> = ({
             {/*{defaultExtra}*/}
           </div>
           {children}
-          <div className={'mt-15 flex justify-end space-x-3'}>
-            {footer}
-            <Button
-              type="default"
-              style={{
-                background: '#fff',
-                borderColor: PRIMARY,
-                color: PRIMARY,
-                fontWeight: 600,
-              }}
-            >
-              戻る
-            </Button>
-          </div>
+          {/*<div className={'mt-15 flex justify-end space-x-3'}>*/}
+          {/*  {footer}*/}
+          {/*  <Button*/}
+          {/*    type="default"*/}
+          {/*    style={{*/}
+          {/*      background: '#fff',*/}
+          {/*      borderColor: PRIMARY,*/}
+          {/*      color: PRIMARY,*/}
+          {/*      fontWeight: 600,*/}
+          {/*    }}*/}
+          {/*  >*/}
+          {/*    戻る*/}
+          {/*  </Button>*/}
+          {/*</div>*/}
         </div>
       </PageHeader>
     </div>

@@ -214,42 +214,38 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
                 }}
                 {...(footerButtonProps ?? {})}
               >
-                {footerButtons ? (
-                  typeof footerButtons === 'function' ? (
-                    footerButtons({
-                      defaultButtons: defaultFooterButtons,
-                      deleteButtonProps,
-                      saveButtonProps,
-                    })
-                  ) : (
-                    <>
-                      {footerButtons}
-                      {
-                        <Space
-                          size={4}
-                          style={{ paddingTop: footerButtons ? 60 : undefined }}
-                        >
-                          {!hiddenButtonBack && (
-                            <Button
-                              type="default"
-                              onClick={() => go({ to: goListPath })}
-                              style={{
-                                background: '#fff',
-                                borderColor: PRIMARY,
-                                color: PRIMARY,
-                                fontWeight: 600,
-                              }}
-                            >
-                              戻る
-                            </Button>
-                          )}
-                          {rightFooterButtons}
-                        </Space>
-                      }
-                    </>
-                  )
+                {typeof footerButtons === 'function' ? (
+                  footerButtons({
+                    defaultButtons: defaultFooterButtons,
+                    deleteButtonProps,
+                    saveButtonProps,
+                  })
                 ) : (
-                  defaultFooterButtons
+                  <>
+                    {footerButtons}
+                    {
+                      <Space
+                        size={4}
+                        style={{ paddingTop: footerButtons ? 60 : undefined }}
+                      >
+                        {!hiddenButtonBack && (
+                          <Button
+                            type="default"
+                            onClick={() => go({ to: goListPath })}
+                            style={{
+                              background: '#fff',
+                              borderColor: PRIMARY,
+                              color: PRIMARY,
+                              fontWeight: 600,
+                            }}
+                          >
+                            戻る
+                          </Button>
+                        )}
+                        {rightFooterButtons}
+                      </Space>
+                    }
+                  </>
                 )}
               </Space>,
             ]}

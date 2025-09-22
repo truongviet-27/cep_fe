@@ -1,163 +1,91 @@
 /* eslint-disable */
-import HashDashIcon from '@components/icons/hash-dash-icon'
-import { useTranslate } from '@refinedev/core'
-import { segmentOptions } from '@utility/options'
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Form,
-  Input,
-  Radio,
-  Select,
-  Space,
-  Tag,
-  Typography,
-} from 'antd'
-import dayjs from 'dayjs'
+import { useCreate, useTranslate } from '@refinedev/core'
+import { Button, Form, Input, Space } from 'antd'
 import React from 'react'
-
-import { Edit } from '@/components/crud/edit'
-import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
-import ShowMoreInfo from '@components/common/show-more-info'
+import { Create } from '@components/crud/create'
+import { useForm } from '@refinedev/antd'
 
 type Props = {
   modalProps: any
 }
 
-export const RankModalShow: React.FC<Props> = ({ modalProps }) => {
+export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
   const t = useTranslate()
-  const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
-    modalProps
 
-  const record = queryResult?.data?.data
+  const { mutate } = useCreate({
+    resource: 'ranks',
+  })
 
-  const issueMethod = Form.useWatch('issue_method', formProps.form)
-  const isManual = issueMethod === 'manual'
+  const { formProps, formLoading, saveButtonProps, form } = useForm({
+    action: 'create',
+    resource: 'ranks',
+  })
+
+  console.log('form', form.getFieldsValue())
+
+  const { close } = modalProps
 
   return (
-    <Edit
+    <Create
       {...formProps}
-      saveButtonProps={saveButtonProps}
       isLoading={formLoading}
+      saveButtonProps={saveButtonProps}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
       title={<></>}
       i18nHeading={'code_issue_settings.edit.edit'}
     >
       <Form
-        {...formProps}
-        initialValues={record}
+        form={form}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
         colon={false}
       >
         <Form.Item
-          label={t('code_issue_settings.fields.name')}
+          label={t('ranks.fields.code')}
+          name="code"
+          rules={[{ required: true }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label={t('ranks.fields.name')}
           name="name"
           rules={[{ required: true }]}
         >
-          {record?.name}
+          <Input />
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.issue_method')}
-          name="issue_method"
+          label={t('ranks.fields.rate')}
+          name="rate"
           rules={[{ required: true }]}
         >
-          <Radio.Group>
-            <Radio value="manual">
-              {t('code_issue_settings.fields.enum_issue.manual')}
-            </Radio>
-            <Radio value="automatic">
-              {t('code_issue_settings.fields.enum_issue.automatic')}
-            </Radio>
-          </Radio.Group>
+          <Input />
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.prefix')}
-          name="prefix"
+          label={t('ranks.fields.remarks')}
+          name="remarks"
           rules={[{ required: true }]}
         >
-          <Input placeholder="例: PD" disabled={isManual} />
+          <Input multiple />
         </Form.Item>
-
-        <Form.Item
-          label={<HashDashIcon />}
-          valuePropName="checked"
-          name="hash_dash"
-        >
-          <Checkbox disabled={isManual}>
-            <Typography.Text>
-              {t('code_issue_settings.fields.hash_dash_hint')}
-            </Typography.Text>
-          </Checkbox>
-        </Form.Item>
-
-        <Form.Item
-          label={t('code_issue_settings.fields.segment')}
-          name="segment"
-          rules={[{ required: true }]}
-        >
-          <Select options={segmentOptions} disabled={isManual} />
-        </Form.Item>
-
-        <Form.Item
-          label={t('code_issue_settings.fields.serial_length')}
-          name="serial_length"
-          rules={[{ required: true }]}
-        >
-          <Select disabled={isManual}>
-            {[...Array(10)].map((_, i) => (
-              <Select.Option key={i + 1} value={i + 1}>
-                {i + 1}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label={t('code_issue_settings.fields.total')} name="total">
-          {record?.total}
-        </Form.Item>
-
-        <Form.Item
-          label={t('code_issue_settings.fields.preview_code')}
-          name="preview_code"
-        >
-          <Tag>{buildCodePreviewFromSetting(form.getFieldsValue())}</Tag>
-        </Form.Item>
-
-        <Divider />
-
-        <ShowMoreInfo
-          descriptions={[
-            {
-              title: t('common.created_by'),
-              value:
-                record?.author?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
-            },
-            {
-              title: t('common.updated_by'),
-              value:
-                record?.editor?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
-            },
-          ]}
-        />
       </Form>
 
       <Space className={'flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
-        <Button {...saveButtonProps} type="primary">
-          保存
+        <Button
+          {...saveButtonProps}
+          type="primary"
+          onClick={() => {
+            mutate(form.getFieldsValue())
+          }}
+        >
+          {t('products.buttons.save')}
         </Button>
       </Space>
-    </Edit>
+    </Create>
   )
 }
