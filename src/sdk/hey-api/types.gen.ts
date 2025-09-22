@@ -4026,6 +4026,13 @@ export type ImportControllerGetImportHistoryData = {
       | 'CUSTOMERS'
       | 'DEPARTMENTS'
       | 'OTHER'
+    start_date?: string
+    end_date?: string
+    /**
+     * Filter by creator name
+     */
+    created_by?: string
+    id?: number
   }
   url: '/api/v1/csv-imports/history'
 }
@@ -4054,6 +4061,11 @@ export type ImportControllerGetImportHistoryResponses = {
         data_updated?: number
         data_failed?: number
         file_failed_key?: string | null
+        /**
+         * Presigned URL for downloading failed file
+         */
+        url_file_failed?: string | null
+        created_by?: string
         created_at?: string
         updated_at?: string
       }>

@@ -3,6 +3,7 @@
 import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import { useSelect } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
 import { countryOptions, typesCompanyOptions } from '@utility/options'
 import {
@@ -33,7 +34,23 @@ function BasicInformation(
     isCodeGenLoading,
     modalFormProps,
     codeGenData,
+    form,
   } = props
+
+  const isCompany = Form.useWatch('customer_type', form) === 'company'
+  const isJapan = Form.useWatch('country', form) === 'Japan'
+  const isNameAfter =
+    Form.useWatch('company_name_display_format', form) === 'after'
+  const name = Form.useWatch('name', form)
+  const companyType = Form.useWatch('company_type', form)
+
+  const parts = isNameAfter ? [companyType, name] : [name, companyType]
+
+  const { selectProps: ranksSelectProps } = useSelect({
+    resource: 'ranks',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
 
   return (
     <Collapse
@@ -97,41 +114,61 @@ function BasicInformation(
               </Form.Item>
             </Col>
 
-            <Col>
-              <Form.Item name="company_classification.judgement" rules={[rule]}>
-                <Select
-                  placeholder={t('placeholders.select')}
-                  options={typesCompanyOptions}
-                />
-              </Form.Item>
-            </Col>
+            {isCompany && (
+              <>
+                <Col>
+                  <Form.Item name="company_type" rules={[rule]}>
+                    <Select
+                      placeholder={t('placeholders.select')}
+                      options={typesCompanyOptions}
+                    />
+                  </Form.Item>
+                </Col>
 
-            <Col>
-              <Form.Item
-                name="company_name_display_format"
-                rules={[rule]}
-                initialValue="after"
-                required
-              >
-                <Radio.Group>
-                  <Radio value="after">前</Radio>
-                  <Radio value="before">後</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
+                <Col>
+                  <Form.Item
+                    name="company_name_display_format"
+                    rules={[rule]}
+                    initialValue="after"
+                    required
+                  >
+                    <Radio.Group>
+                      <Radio value="after">前</Radio>
+                      <Radio value="before">後</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+              </>
+            )}
           </Row>
         </Form.Item>
 
         <Form.Item
+          style={{ marginTop: -26 }}
           label={boldText(t('customers.fields.name'))}
-          name="name"
-          rules={[rule]}
           required
         >
-          <Input style={{ maxWidth: 560 }} />
+          <Row gutter={8} style={{ width: '100%' }}>
+            <Col>
+              <Form.Item name="name" rules={[rule]} required>
+                <Input style={{ maxWidth: 560 }} />
+              </Form.Item>
+            </Col>
+
+            {isCompany && name && companyType && (
+              <Col>
+                <Form.Item>
+                  {form.getFieldValue('company_name_display_format') ===
+                    'after'}
+                  <Typography.Text>{parts.join(' : ')}</Typography.Text>
+                </Form.Item>
+              </Col>
+            )}
+          </Row>
         </Form.Item>
 
         <Form.Item
+          style={{ marginTop: -26 }}
           label={boldText(t('customers.fields.name_kana'))}
           name="customer_name_by_kana"
           rules={[rule]}
@@ -144,6 +181,7 @@ function BasicInformation(
             <Col>
               <Form.Item name="country" rules={[rule]}>
                 <Select
+                  style={{ minWidth: 200 }}
                   placeholder={t('placeholders.select')}
                   options={countryOptions}
                   showSearch
@@ -153,13 +191,23 @@ function BasicInformation(
               </Form.Item>
             </Col>
 
-            <Col>
-              <Form.Item>
-                <Typography.Text>
-                  {t('customers.fields.corporate_number')}
-                </Typography.Text>
-              </Form.Item>
-            </Col>
+            {isJapan && (
+              <>
+                <Col>
+                  <Form.Item>
+                    <Typography.Text>
+                      {t('customers.fields.corporate_number')}
+                    </Typography.Text>
+                  </Form.Item>
+                </Col>
+
+                <Col>
+                  <Form.Item name="corporate_number" rules={[rule]}>
+                    <Input style={{ maxWidth: 560 }} />
+                  </Form.Item>
+                </Col>
+              </>
+            )}
           </Row>
         </Form.Item>
 
@@ -168,10 +216,11 @@ function BasicInformation(
           name="price_rank_id"
           rules={[rule]}
           required
+          style={{ marginTop: -26 }}
         >
           <Select
+            {...ranksSelectProps}
             placeholder={t('placeholders.select')}
-            options={[{ value: 1, label: 'Rank A' }]}
             style={{ maxWidth: 560 }}
           />
         </Form.Item>
