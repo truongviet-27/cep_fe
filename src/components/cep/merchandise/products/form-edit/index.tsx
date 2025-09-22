@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DownOutlined, RightOutlined } from '@ant-design/icons'
-import type { ProductFormType } from '@components/cep/merchandise/products/action/use-product-detail'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { useParsed } from '@refinedev/core'
@@ -21,6 +20,7 @@ import { useRef } from 'react'
 import BasicInfo from './basic-info'
 import PackagingUnitPrice from './packaging-unit-price'
 import PriceGroup from './price-group'
+import type { ProductFormType } from './use-product-form'
 import useProductForm from './use-product-form'
 
 const { Title } = Typography

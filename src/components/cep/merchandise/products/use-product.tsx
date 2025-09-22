@@ -44,10 +44,7 @@ function useProduct() {
         key: 'code',
         width: 200,
         render: (_: unknown, record: ProductListItem) => (
-          <Link
-            href={`/products/show/${record.id}?actionType=VIEW`}
-            className="!underline"
-          >
+          <Link href={`/products/show/${record.id}`} className="!underline">
             {record.code}
           </Link>
         ),
