@@ -2,7 +2,7 @@
 import { DownOutlined, RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { useParsed } from '@refinedev/core'
+import { useGo, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -11,6 +11,7 @@ import {
   Divider,
   Flex,
   Form,
+  Spin,
   Typography,
 } from 'antd'
 import type { FormInstance } from 'antd/lib'
@@ -26,11 +27,10 @@ import useProductForm from './use-product-form'
 const { Title } = Typography
 
 const ProductFormContainer: React.FC = () => {
-  const [{ methods, isLoadingSubmit }, { t, onSubmit }] = useProductForm()
+  const t = useTranslate()
+  const go = useGo()
+  const [{ methods, isLoadingSubmit, isUpdateMode }] = useProductForm()
   const { form, formProps } = methods
-  const { params } = useParsed()
-
-  const isUpdate = !!params?.id
 
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
 
@@ -52,7 +52,7 @@ const ProductFormContainer: React.FC = () => {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {isUpdate ? t('buttons.edit') : t('buttons.create')}
+                  {isUpdateMode ? t('buttons.edit') : t('buttons.create')}
                 </Title>
               ),
             },
@@ -62,141 +62,148 @@ const ProductFormContainer: React.FC = () => {
       }
       title={
         <Title level={5} style={{ color: PRIMARY }}>
-          {isUpdate ? t('buttons.edit') : t('buttons.create')}
+          {isUpdateMode ? t('buttons.edit') : t('buttons.create')}
         </Title>
       }
     >
-      <Form<ProductFormType>
-        {...formProps}
-        form={form as unknown as FormInstance<ProductFormType>}
-        labelCol={{ span: 6 }}
-        labelAlign="left"
-        className="mb-[24px]"
-        onFinish={onSubmit}
-      >
-        <Collapse
-          items={[
-            {
-              key: 1,
-              label: (
-                <span className="font-bold">
-                  {t('products.sections.basicInfo')}
-                </span>
-              ),
-              children: (
-                <BasicInfo
-                  form={form as unknown as FormInstance<ProductFormType>}
-                  addRef={addRef}
-                />
-              ),
-            },
-          ]}
-          expandIconPosition="end"
-          defaultActiveKey={[1]}
-          expandIcon={({ isActive }) => (
-            <DownOutlined
-              style={{ transition: '0.3s' }}
-              rotate={isActive ? 180 : 0}
-            />
+      <Spin spinning={methods.formLoading}>
+        <Form<ProductFormType>
+          {...formProps}
+          form={form as unknown as FormInstance<ProductFormType>}
+          labelCol={{ span: 6 }}
+          labelAlign="left"
+          className="mb-[24px]"
+        >
+          <Collapse
+            items={[
+              {
+                key: 1,
+                label: (
+                  <span className="font-bold">
+                    {t('products.sections.basicInfo')}
+                  </span>
+                ),
+                children: (
+                  <BasicInfo
+                    form={form as unknown as FormInstance<ProductFormType>}
+                    addRef={addRef}
+                  />
+                ),
+              },
+            ]}
+            expandIconPosition="end"
+            defaultActiveKey={[1]}
+            expandIcon={({ isActive }) => (
+              <DownOutlined
+                style={{ transition: '0.3s' }}
+                rotate={isActive ? 180 : 0}
+              />
+            )}
+          />
+
+          <Collapse
+            style={{
+              marginTop: '20px',
+            }}
+            items={[
+              {
+                key: 1,
+                label: (
+                  <span className="font-bold">
+                    {t('products.sections.packagingPrice')}
+                  </span>
+                ),
+                children: (
+                  <PackagingUnitPrice
+                    form={form as unknown as FormInstance<ProductFormType>}
+                    addRef={addRef}
+                  />
+                ),
+              },
+            ]}
+            expandIconPosition="end"
+            defaultActiveKey={[1]}
+            expandIcon={({ isActive }) => (
+              <DownOutlined
+                style={{ transition: '0.3s' }}
+                rotate={isActive ? 180 : 0}
+              />
+            )}
+          />
+
+          <Collapse
+            style={{
+              marginTop: '20px',
+            }}
+            items={[
+              {
+                key: 1,
+                label: (
+                  <span className="font-bold">
+                    {t('products.unitPriceGroup.tableTitle')}
+                  </span>
+                ),
+                children: (
+                  <PriceGroup
+                    form={form as unknown as FormInstance<ProductFormType>}
+                  />
+                ),
+              },
+            ]}
+            expandIconPosition="end"
+            defaultActiveKey={[1]}
+            expandIcon={({ isActive }) => (
+              <DownOutlined
+                style={{ transition: '0.3s' }}
+                rotate={isActive ? 180 : 0}
+              />
+            )}
+          />
+
+          {isUpdateMode && (
+            <>
+              <Divider />
+
+              <ShowMoreInfo
+                descriptions={[
+                  {
+                    title: t('common.created_by'),
+                    value: '',
+                    // data?.author?.name ??
+                    // '---' +
+                    //   ' ' +
+                    //   dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
+                  },
+                  {
+                    title: t('common.updated_by'),
+                    value: '',
+                    // data?.editor?.name ??
+                    // '---' +
+                    //   ' ' +
+                    //   dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                  },
+                ]}
+              />
+            </>
           )}
-        />
-
-        <Collapse
-          style={{
-            marginTop: '20px',
-          }}
-          items={[
-            {
-              key: 1,
-              label: (
-                <span className="font-bold">
-                  {t('products.sections.packagingPrice')}
-                </span>
-              ),
-              children: (
-                <PackagingUnitPrice
-                  form={form as unknown as FormInstance<ProductFormType>}
-                  addRef={addRef}
-                />
-              ),
-            },
-          ]}
-          expandIconPosition="end"
-          defaultActiveKey={[1]}
-          expandIcon={({ isActive }) => (
-            <DownOutlined
-              style={{ transition: '0.3s' }}
-              rotate={isActive ? 180 : 0}
-            />
-          )}
-        />
-
-        <Collapse
-          style={{
-            marginTop: '20px',
-          }}
-          items={[
-            {
-              key: 1,
-              label: (
-                <span className="font-bold">
-                  {t('products.unitPriceGroup.tableTitle')}
-                </span>
-              ),
-              children: (
-                <PriceGroup
-                  form={form as unknown as FormInstance<ProductFormType>}
-                />
-              ),
-            },
-          ]}
-          expandIconPosition="end"
-          defaultActiveKey={[1]}
-          expandIcon={({ isActive }) => (
-            <DownOutlined
-              style={{ transition: '0.3s' }}
-              rotate={isActive ? 180 : 0}
-            />
-          )}
-        />
-
-        {isUpdate && (
-          <>
-            <Divider />
-
-            <ShowMoreInfo
-              descriptions={[
-                {
-                  title: t('common.created_by'),
-                  value: '',
-                  // data?.author?.name ??
-                  // '---' +
-                  //   ' ' +
-                  //   dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
-                },
-                {
-                  title: t('common.updated_by'),
-                  value: '',
-                  // data?.editor?.name ??
-                  // '---' +
-                  //   ' ' +
-                  //   dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
-                },
-              ]}
-            />
-          </>
-        )}
-        {!isUpdate && (
           <Flex justify="end" gap="small" style={{ marginTop: 24 }}>
-            <Button onClick={() => {}} color="primary" variant="outlined">
+            <Button
+              onClick={() => {
+                go({ to: '/products' })
+              }}
+              color="primary"
+              variant="outlined"
+            >
               {t('products.buttons.back')}
             </Button>
             <Button type="primary" htmlType="submit" loading={isLoadingSubmit}>
-              {t('products.buttons.register')}
+              {isUpdateMode
+                ? t('products.buttons.save')
+                : t('products.buttons.register')}
             </Button>
           </Flex>
-        )}
-      </Form>
+        </Form>
+      </Spin>
     </PageContainer>
   )
 }

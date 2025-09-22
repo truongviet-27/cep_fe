@@ -1,12 +1,6 @@
 import { useForm } from '@refinedev/antd'
-import {
-  useCreate,
-  useGo,
-  useShow,
-  useTable,
-  useTranslate,
-} from '@refinedev/core'
-import type { Rank, StoreProductInput } from '@sdk/hey-api'
+import { useParsed, useTable } from '@refinedev/core'
+import type { ProductDetail, Rank, StoreProductInput } from '@sdk/hey-api'
 
 export type ProductFormType = {
   unit: string
@@ -18,29 +12,31 @@ export type ProductFormType = {
 } & StoreProductInput
 
 function useProductForm() {
-  const t = useTranslate()
-  const go = useGo()
-  const methods = useForm<ProductFormType>({
-    defaultFormValues: {
-      code: '',
-      name: '',
-      short_name: '',
-      barcode: '',
-      category: '',
-      unit: '',
-      costPrice: '',
-      sellingPrice: '',
-      note: '',
-      packagings: [],
-      price: [],
-    },
-  })
+  const { params } = useParsed()
 
-  const {} = useShow({
+  const methods = useForm<ProductFormType>({
     resource: 'products',
-    id: 1,
+    id: params?.id,
+    redirect: params?.id ? false : 'list',
     queryOptions: {
-      enabled: false,
+      select: (response) => {
+        const data = response.data as unknown as ProductDetail
+        const packagings = data?.packagings || []
+
+        return {
+          data: {
+            ...data,
+            category: data?.category?.category_path,
+            category_id: data?.category?.id,
+            unit: data?.unit?.name,
+            unit_id: data?.unit?.id,
+            packagings: packagings.map((packaging) => ({
+              ...packaging,
+              cost_price: data.cost_price || 0,
+            })),
+          } as unknown as ProductFormType,
+        }
+      },
     },
   })
 
@@ -48,30 +44,13 @@ function useProductForm() {
     resource: 'ranks',
   })
 
-  const { mutate: onCreateProduct, isPending: isLoadingSubmit } = useCreate({
-    resource: 'products',
-  })
-
-  const onSubmit = (values: ProductFormType) => {
-    onCreateProduct(
-      {
-        values,
-      },
-      {
-        onSuccess: () => {
-          go({ to: '/products' })
-        },
-      },
-    )
-  }
-
   return [
     {
       methods,
       dataRanks: tableQuery?.data?.data ?? [],
-      isLoadingSubmit,
+      isLoadingSubmit: methods.saveButtonProps.loading,
+      isUpdateMode: !!params?.id,
     },
-    { t, onSubmit },
   ] as const
 }
 

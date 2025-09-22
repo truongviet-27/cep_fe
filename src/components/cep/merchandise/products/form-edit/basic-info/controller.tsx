@@ -1,7 +1,11 @@
 import { useDebounce } from '@hook/use-debounce'
 import { useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useList } from '@refinedev/core'
-import type { CodeIssueSetting, ProductUnit } from '@sdk/hey-api'
+import type {
+  CodeIssueSetting,
+  ProductPackagingInput,
+  ProductUnit,
+} from '@sdk/hey-api'
 import type { Category } from '@utility/renderCategories'
 import type { FormInstance } from 'antd'
 import debounce from 'lodash/debounce'
@@ -47,22 +51,6 @@ export const useBasicInfoController = (
     },
   })
 
-  const name_lk_value = useDebounce(getFieldValue('name_lk'), 500)
-
-  const { data: dataProductCategories } = useList<Category>({
-    resource: 'product-categories',
-    filters: [
-      {
-        field: 'name_lk',
-        operator: 'eq',
-        value: name_lk_value,
-      },
-    ],
-    // queryOptions: {
-    //   enabled: !!name_lk_value,
-    // },
-  })
-
   const { data: productUnits, isFetching: isFetchingProductUnits } =
     useList<ProductUnit>({
       resource: 'product-units',
@@ -78,9 +66,6 @@ export const useBasicInfoController = (
           value: false,
         },
       ],
-      // queryOptions: {
-      //   enabled: !!name_lk_value,
-      // },
     })
 
   const handleSearchProductUnit = useMemo(() => {
@@ -122,13 +107,16 @@ export const useBasicInfoController = (
         setFieldValue('category_level_3', currentCat[2].id)
       }
     },
-    [dataProductCategories],
+    [],
   )
 
   const handleAppendPackaging = async () => {
     await form.validateFields()
     setIsAppend(true)
-    if (getFieldValue(['packagings']).length === 0) {
+    const packagings: ProductPackagingInput[] =
+      getFieldValue('packagings') ?? []
+
+    if (!packagings.length) {
       if (addRef.current) {
         addRef.current({
           code: getFieldValue('code'),
@@ -147,40 +135,35 @@ export const useBasicInfoController = (
     }
 
     setFieldsValue({
-      packagings: getFieldValue('packagings').map(
-        (item: object, index: number) => {
-          return index === 0
-            ? {
-                code: getFieldValue('code'),
-                name: getFieldValue('name'),
-                status: 'active',
-                quantity_in_package: 1,
-                unit_id: getFieldValue('unit_id'),
-                cost_price: getFieldValue('cost_price') * 1,
-                selling_price: getFieldValue('selling_price'),
-                is_standard_price: true,
-                is_rate_based: true,
-                is_active: true,
-              }
-            : {
-                ...item,
-                code: `${getFieldValue('code')}-${index + 1}`,
-                cost_price:
-                  getFieldValue('cost_price') *
-                  getFieldValue(['packagings', index, 'quantity_in_package']),
-                quantity_in_package: getFieldValue([
-                  'packagings',
-                  index,
-                  'quantity_in_package',
-                ]),
-                selling_price:
-                  getFieldValue('selling_price') *
-                  getFieldValue(['packagings', index, 'quantity_in_package']),
-                is_rate_based: true,
-                is_active: true,
-              }
-        },
-      ),
+      packagings: packagings.map((item: object, index: number) => {
+        return index === 0
+          ? {
+              ...item,
+              code: getFieldValue('code'),
+              name: getFieldValue('name'),
+              quantity_in_package: 1,
+              unit_id: getFieldValue('unit_id'),
+              cost_price: getFieldValue('cost_price') * 1,
+              selling_price: getFieldValue('selling_price'),
+            }
+          : {
+              ...item,
+              code: `${getFieldValue('code')}-${index + 1}`,
+              cost_price:
+                getFieldValue('cost_price') *
+                getFieldValue(['packagings', index, 'quantity_in_package']),
+              quantity_in_package: getFieldValue([
+                'packagings',
+                index,
+                'quantity_in_package',
+              ]),
+              selling_price:
+                getFieldValue('selling_price') *
+                getFieldValue(['packagings', index, 'quantity_in_package']),
+              is_rate_based: true,
+              is_active: true,
+            }
+      }),
     })
   }
 
@@ -202,7 +185,6 @@ export const useBasicInfoController = (
       modalFormCategory,
       modalFormProps,
       codeIssueSetting,
-      dataProductCategories,
       productUnitOptions,
     },
     {
