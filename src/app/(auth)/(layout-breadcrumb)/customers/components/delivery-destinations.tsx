@@ -15,7 +15,9 @@ const { Panel } = Collapse
 function DeliveryDestinations(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
-  const { t, rule } = props
+  const { t, rule, form } = props
+
+  const [index, setIndex] = React.useState(0)
 
   return (
     <Collapse
@@ -171,7 +173,16 @@ function DeliveryDestinations(
               />
               <Button
                 type="primary"
-                onClick={() => add()}
+                onClick={() => {
+                  if (!form.getFieldValue('customer_code')) {
+                    form.focusField('customer_code')
+                  } else {
+                    add({
+                      code: form.getFieldValue('customer_code') + '-' + index,
+                    })
+                  }
+                  setIndex(index + 1)
+                }}
                 className="float-right mt-4"
               >
                 {t('buttons.add_delivery_destination')}

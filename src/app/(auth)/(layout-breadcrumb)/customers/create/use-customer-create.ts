@@ -2,7 +2,7 @@ import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import type {
   CodeIssueSetting,
-  CustomerStoreRequest,
+  CustomerUpdateRequest,
 } from '@sdk/hey-api/types.gen'
 import { zCustomerStoreRequest } from '@sdk/hey-api/zod.gen'
 import { Form } from 'antd'
@@ -10,9 +10,9 @@ import { createSchemaFieldRule } from 'antd-zod'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
-  const [form] = Form.useForm<CustomerStoreRequest>()
+  const [form] = Form.useForm<CustomerUpdateRequest>()
   const { onFinish: handleSubmit, formLoading: isLoading } =
-    useForm<CustomerStoreRequest>({
+    useForm<CustomerUpdateRequest>({
       resource: 'customers',
       action: 'create',
     })
@@ -43,7 +43,7 @@ export const useCustomerCreate = () => {
 
   const rule = createSchemaFieldRule(zCustomerStoreRequest)
 
-  const onFinish = (values: CustomerStoreRequest) => {
+  const onFinish = (values: CustomerUpdateRequest) => {
     handleSubmit(values)
   }
 

@@ -8,8 +8,10 @@ import BasicInformation from '@app/(auth)/(layout-breadcrumb)/customers/componen
 import { CorporateNumberSearchModal } from '@app/(auth)/(layout-breadcrumb)/customers/components/corporate-number-search-modal'
 import { CorporateResearchFormSection } from '@app/(auth)/(layout-breadcrumb)/customers/components/corporate-research-form-section'
 import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/customers/components/delivery-destinations'
+import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { useModal } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space, Typography } from 'antd'
 import React from 'react'
@@ -24,6 +26,8 @@ export default function CustomerCreatePage() {
   const { t, form, isLoading, onFinish, modalFormProps } = hookProps
 
   const { close: closeModal, open: modalOpen } = modalFormProps
+
+  const { close, visible } = useModal()
 
   const breadcrumbItems = [
     {
@@ -59,17 +63,8 @@ export default function CustomerCreatePage() {
         form={form}
         onFinish={onFinish}
         initialValues={{
-          company_research_information: [
-            {
-              material_name: '与信ランク',
-            },
-            {
-              material_name: '反社チェック',
-            },
-            {
-              material_name: '登記簿謄本',
-            },
-          ],
+          company_research_information:
+            defaultCustomerCompanyResearchInformation,
         }}
         labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
         wrapperCol={{ xs: 24, sm: 16, md: 14, lg: 12, xl: 10 }}
@@ -101,7 +96,7 @@ export default function CustomerCreatePage() {
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
 
-      <Modal open={modalOpen} onCancel={closeModal} footer={null}>
+      <Modal open={visible} onCancel={close} footer={null}>
         <CorporateNumberSearchModal modalProps={modalFormProps} />
       </Modal>
     </Create>

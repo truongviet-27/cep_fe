@@ -1515,19 +1515,12 @@ export type PackagingRankPrice = {
  * Detailed product information
  */
 export type ProductDetail = {
-  category?: {
-    id?: number
-    name?: string
-    category_path?: string
-  }
+  category?: string
   code?: string
   name?: string
-  short_name?: string | null
-  barcode?: string | null
-  unit?: {
-    id?: number
-    name?: string
-  }
+  short_name?: string
+  barcode?: string
+  unit?: string
   cost_price?: number
   selling_price?: number
   packagings?: Array<ProductPackaging>
@@ -1542,13 +1535,12 @@ export type ProductDetailResponse = {
  * Product packaging with rank based prices
  */
 export type ProductPackaging = {
-  id?: number
   code?: string
   name?: string
   quantity_in_package?: number
   unit?: string
   standard_price?: number
-  selling_price?: number
+  sale_price?: number
   is_active?: boolean
   is_rate_based?: boolean
   is_standard_price?: boolean
@@ -4034,6 +4026,13 @@ export type ImportControllerGetImportHistoryData = {
       | 'CUSTOMERS'
       | 'DEPARTMENTS'
       | 'OTHER'
+    start_date?: string
+    end_date?: string
+    /**
+     * Filter by creator name
+     */
+    created_by?: string
+    id?: number
   }
   url: '/api/v1/csv-imports/history'
 }
@@ -4062,6 +4061,11 @@ export type ImportControllerGetImportHistoryResponses = {
         data_updated?: number
         data_failed?: number
         file_failed_key?: string | null
+        /**
+         * Presigned URL for downloading failed file
+         */
+        url_file_failed?: string | null
+        created_by?: string
         created_at?: string
         updated_at?: string
       }>
@@ -4623,7 +4627,7 @@ export type E475E7Ead1848Aa17C399Ba311C51Responses = {
   /**
    * Created
    */
-  201: ProductDetailResponse
+  201: Product
 }
 
 export type E475E7Ead1848Aa17C399Ba311C51Response =
@@ -4753,7 +4757,7 @@ export type Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Responses = {
   /**
    * OK
    */
-  200: ProductDetailResponse
+  200: Product
 }
 
 export type Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Response =
