@@ -26,7 +26,6 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import { PRIMARY } from '@utility/color'
-import { mockCustomers } from '@mockApi/customer'
 import { SimpleCustomer } from '@sdk/hey-api'
 import Link from 'next/link'
 import {
@@ -388,12 +387,7 @@ export default function CustomerListPage() {
         </Space>
       </Row>
 
-      <CommonTable
-        {...tableProps}
-        dataSource={mockCustomers}
-        rowKey="id"
-        columns={columns as any}
-      />
+      <CommonTable {...tableProps} rowKey="id" columns={columns as any} />
     </List>
   )
 }

@@ -137,22 +137,12 @@ function AddressContact(
                 <Select
                   {...departmentSelectProps}
                   placeholder={t('placeholders.select')}
-                  style={{ maxWidth: 560 }}
+                  style={{ minWidth: 300 }}
                 />
               </Form.Item>
             </Col>
             <Col>
-              <Form.Item
-                {...departmentSelectProps}
-                name="department_in_charge"
-                rules={[rule]}
-              >
-                <Select
-                  placeholder={t('placeholders.select')}
-                  options={industryOptions}
-                  style={{ maxWidth: 560 }}
-                />
-              </Form.Item>
+              <Form.Item>※当社の部署</Form.Item>
             </Col>
           </Row>
         </Form.Item>

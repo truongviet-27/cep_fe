@@ -42,12 +42,14 @@
     "suspend": "停止",
     "resume": "開始",
     "add_delivery_destination": "納品先追加",
-    "copy_contact_info": "取引先情報をコピーする"
+    "copy_contact_info": "取引先情報をコピーする",
+    "select_file": "ファイル"
   },
   "placeholders": {
     "partial_match": "部分一致",
     "select": "選択してください",
-    "file_url": "ファイルのURLを入力"
+    "file_url": "ファイルのURLを入力",
+    "please_choose_files": "ファイルを選択してください"
   },
   "notifications": {
     "success": "成功しました",
@@ -117,7 +119,10 @@
       "judgement": "判定",
       "file": "ファイル",
       "updated_by": "登録者",
-      "last_updated": "最終更新日"
+      "last_updated": "最終更新日",
+      "modal": {
+        "title": "調査情報編集"
+      }
     },
     "fields": {
       "code": "取引先コード",

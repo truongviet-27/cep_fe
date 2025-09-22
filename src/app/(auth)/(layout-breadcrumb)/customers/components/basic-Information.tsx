@@ -81,13 +81,13 @@ function BasicInformation(
           <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
             <Col>
               <Form.Item
-                name="company_classification"
+                name="customer_type"
                 rules={[rule]}
-                initialValue="corporation"
+                initialValue="company"
                 required
               >
                 <Radio.Group>
-                  <Radio value="corporation">
+                  <Radio value="company">
                     {t('customers.enums.corporation')}
                   </Radio>
                   <Radio value="individual">
@@ -108,14 +108,14 @@ function BasicInformation(
 
             <Col>
               <Form.Item
-                name="company_classification"
+                name="company_name_display_format"
                 rules={[rule]}
-                initialValue="corporation"
+                initialValue="after"
                 required
               >
                 <Radio.Group>
-                  <Radio value="corporation">前</Radio>
-                  <Radio value="individual">後</Radio>
+                  <Radio value="after">前</Radio>
+                  <Radio value="before">後</Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>

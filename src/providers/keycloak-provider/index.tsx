@@ -22,9 +22,14 @@ const authProvider: AuthProvider = {
     return { success: true, redirectTo: '/login' }
   },
   onError: async (error) => {
-    if (error?.response?.status === 401 || error?.response?.status === 403) {
+    if (error?.response?.status === 401) {
       return { logout: true }
     }
+
+    if (error?.response?.status === 403) {
+      return { success: false, redirectTo: '/not-found' }
+    }
+
     return { error }
   },
   check: async () => {

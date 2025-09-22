@@ -133,6 +133,12 @@ import type {
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Errors,
+  PriceGroupControllerIndexData,
+  PriceGroupControllerIndexResponses,
+  PriceGroupControllerIndexErrors,
+  PriceGroupControllerUpdateData,
+  PriceGroupControllerUpdateResponses,
+  PriceGroupControllerUpdateErrors,
   ProductControllerIndexData,
   ProductControllerIndexResponses,
   ProductControllerIndexErrors,
@@ -190,6 +196,12 @@ import type {
   ProductUnitControllerUpdateData,
   ProductUnitControllerUpdateResponses,
   ProductUnitControllerUpdateErrors,
+  QuotaFormSettingControllerShowData,
+  QuotaFormSettingControllerShowResponses,
+  QuotaFormSettingControllerShowErrors,
+  E8Cee5325E3B2A7681582B13F1051D1Data,
+  E8Cee5325E3B2A7681582B13F1051D1Responses,
+  E8Cee5325E3B2A7681582B13F1051D1Errors,
   RankControllerIndexData,
   RankControllerIndexResponses,
   RankControllerIndexErrors,
@@ -275,6 +287,8 @@ import {
   zAcb89614Ac12565Ecf7396Ba321Eb3Data,
   zDdb2E25Ff33D718A9Addfb6Da6D01259Data,
   zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
+  zPriceGroupControllerIndexData,
+  zPriceGroupControllerUpdateData,
   zProductControllerIndexData,
   zE475E7Ead1848Aa17C399Ba311C51Data,
   zProductControllerDestroyData,
@@ -294,6 +308,8 @@ import {
   zProductUnitControllerDestroyData,
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
+  zQuotaFormSettingControllerShowData,
+  zE8Cee5325E3B2A7681582B13F1051D1Data,
   zRankControllerIndexData,
   zRankControllerStoreData,
   zRankControllerDestroyData,
@@ -1599,6 +1615,64 @@ export const ddd0B8D0A4Fbdc804Fe40999F5Eb58E8 = <
 }
 
 /**
+ * List price groups (product packagings with rank prices)
+ * Returns a non-paginated list of product packagings with rank-based prices. Supports simple filtering.
+ */
+export const priceGroupControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<PriceGroupControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    PriceGroupControllerIndexResponses,
+    PriceGroupControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zPriceGroupControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/price-groups',
+    ...options,
+  })
+}
+
+/**
+ * Bulk update packaging prices per rank
+ * Update rank-based prices for multiple packagings. When is_rate_based is true, prices are recalculated from selling_price * rank.rate; otherwise, explicit ranks_prices are applied.
+ */
+export const priceGroupControllerUpdate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PriceGroupControllerUpdateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PriceGroupControllerUpdateResponses,
+    PriceGroupControllerUpdateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zPriceGroupControllerUpdateData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/price-groups',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get list of products
  */
 export const productControllerIndex = <ThrowOnError extends boolean = false>(
@@ -2129,6 +2203,66 @@ export const productUnitControllerUpdate = <
       },
     ],
     url: '/api/v1/product-units/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Get quota form setting detail
+ * Retrieve a specific quota form setting by its ID
+ */
+export const quotaFormSettingControllerShow = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaFormSettingControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaFormSettingControllerShowResponses,
+    QuotaFormSettingControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaFormSettingControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota-form-settings/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Update quota form setting
+ * Update an existing quota form setting with new configuration values
+ */
+export const e8Cee5325E3B2A7681582B13F1051D1 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<E8Cee5325E3B2A7681582B13F1051D1Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    E8Cee5325E3B2A7681582B13F1051D1Responses,
+    E8Cee5325E3B2A7681582B13F1051D1Errors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zE8Cee5325E3B2A7681582B13F1051D1Data.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota-form-settings/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
