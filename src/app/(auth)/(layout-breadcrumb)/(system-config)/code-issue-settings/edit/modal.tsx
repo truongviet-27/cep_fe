@@ -101,7 +101,11 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
           name="segment"
           rules={[{ required: true }]}
         >
-          <Select options={segmentOptions} disabled={isManual} />
+          <Select
+            placeholder={t('placeholders.select')}
+            options={segmentOptions}
+            disabled={isManual}
+          />
         </Form.Item>
 
         <Form.Item
@@ -109,7 +113,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
           name="serial_length"
           rules={[{ required: true }]}
         >
-          <Select disabled={isManual}>
+          <Select placeholder={t('placeholders.select')} disabled={isManual}>
             {[...Array(10)].map((_, i) => (
               <Select.Option key={i + 1} value={i + 1}>
                 {i + 1}

@@ -39,8 +39,10 @@ export type ApproveRouteListResource = {
   id?: number
   code?: string
   name?: string
-  department_id?: number
-  department_name?: string
+  departments?: Array<{
+    id?: number
+    name?: string
+  }>
   status?: 'active' | 'inactive'
   total_steps?: number
   author?: {
@@ -497,6 +499,18 @@ export type Customer = {
    */
   name?: string
   /**
+   * Customer type (individual or company)
+   */
+  customer_type?: 'individual' | 'company'
+  /**
+   * Company type
+   */
+  company_type?: string | null
+  /**
+   * Display format for company name
+   */
+  company_name_display_format?: 'before' | 'after'
+  /**
    * Customer unique code
    */
   customer_code?: string
@@ -599,6 +613,103 @@ export type Customer = {
    * Company research information records
    */
   company_research_information?: Array<CompanyResearchInformation>
+  /**
+   * Customer delivery addresses
+   */
+  delivery_addresses?: Array<CustomerDeliveryAddress>
+}
+
+/**
+ * Customer Delivery Address
+ * Represents a delivery address record for a customer.
+ */
+export type CustomerDeliveryAddress = {
+  /**
+   * Delivery address ID
+   */
+  id?: number
+  /**
+   * The unique code for the delivery address
+   */
+  delivery_address_code?: string | null
+  /**
+   * The name of the delivery address
+   */
+  delivery_address_name?: string
+  /**
+   * The full address for delivery
+   */
+  address?: string
+  /**
+   * The name of the contact person
+   */
+  contact_person_name?: string
+  /**
+   * The contact phone number
+   */
+  phone?: string
+  /**
+   * The contact email address
+   */
+  mail?: string | null
+}
+
+/**
+ * Customer Delivery Address Store Request
+ * Fields to create a new customer delivery address.
+ */
+export type CustomerDeliveryAddressStoreRequest = {
+  /**
+   * The name of the delivery address
+   */
+  delivery_address_name: string | null
+  /**
+   * The full address for delivery
+   */
+  address: string | null
+  /**
+   * The name of the contact person
+   */
+  contact_person_name: string | null
+  /**
+   * The contact phone number
+   */
+  phone: string | null
+  /**
+   * The contact email address
+   */
+  mail?: string | null
+}
+
+/**
+ * Customer Delivery Address Update Request
+ * Fields to update an existing customer delivery address. The 'id' is required to identify the record.
+ */
+export type CustomerDeliveryAddressUpdateRequest = {
+  /**
+   * The ID of the delivery address to update.
+   */
+  id: number
+  /**
+   * The name of the delivery address
+   */
+  delivery_address_name?: string | null
+  /**
+   * The full address for delivery
+   */
+  address?: string | null
+  /**
+   * The name of the contact person
+   */
+  contact_person_name?: string | null
+  /**
+   * The contact phone number
+   */
+  phone?: string | null
+  /**
+   * The contact email address
+   */
+  mail?: string | null
 }
 
 /**
@@ -608,6 +719,18 @@ export type Customer = {
 export type CustomerStoreRequest = {
   customer_code: string
   name: string
+  /**
+   * Customer type (individual or company)
+   */
+  customer_type: 'individual' | 'company'
+  /**
+   * Company type
+   */
+  company_type?: string | null
+  /**
+   * Display format for company name
+   */
+  company_name_display_format?: 'before' | 'after'
   customer_name_by_kana?: string | null
   corporate_number: string
   price_rank_id: number
@@ -627,6 +750,10 @@ export type CustomerStoreRequest = {
   person_in_charge_mail: string
   person_in_charge_phone?: string | null
   company_research_information?: Array<CompanyResearchInformationStoreRequest>
+  /**
+   * List of delivery addresses for the customer.
+   */
+  delivery_addresses?: Array<CustomerDeliveryAddressStoreRequest> | null
 }
 
 /**
@@ -636,6 +763,18 @@ export type CustomerStoreRequest = {
 export type CustomerUpdateRequest = {
   customer_code: string | null
   name: string | null
+  /**
+   * Customer type (individual or company)
+   */
+  customer_type: 'individual' | 'company'
+  /**
+   * Company type
+   */
+  company_type?: string | null
+  /**
+   * Display format for company name
+   */
+  company_name_display_format?: 'before' | 'after'
   customer_name_by_kana?: string | null
   corporate_number: string | null
   price_rank_id: number | null
@@ -655,6 +794,10 @@ export type CustomerUpdateRequest = {
   person_in_charge_mail: string | null
   person_in_charge_phone?: string | null
   company_research_information?: Array<CompanyResearchInformationUpdateRequest>
+  /**
+   * List of delivery addresses to add, update, or delete.
+   */
+  delivery_addresses?: Array<CustomerDeliveryAddressUpdateRequest> | null
 }
 
 /**
@@ -1277,6 +1420,87 @@ export type PostsPaginatedResponse = PaginatedResponse & {
 }
 
 /**
+ * A product packaging with rank-based prices
+ */
+export type PriceGroupItem = {
+  packaging_id?: number
+  product_id?: number
+  product_code?: string
+  product_name?: string
+  packaging_code?: string
+  packaging_name?: string
+  quantity_in_package?: number
+  category?: string
+  unit?: string
+  selling_price?: number
+  is_active?: boolean
+  is_rate_based?: boolean
+  rank_prices?: Array<{
+    rank_id?: number
+    rank_code?: string
+    rank_name?: string
+    rate?: number
+    price?: number
+  }>
+}
+
+/**
+ * Paginated-like response for price groups
+ */
+export type PriceGroupListResponse = {
+  /**
+   * Data container for response
+   */
+  data?: {
+    /**
+     * Array of price groups
+     */
+    items?: Array<PriceGroupItem>
+    /**
+     * Pagination metadata (may be partial for non-paginated responses)
+     */
+    meta?: {
+      current_page?: number
+      from?: number
+      last_page?: number
+      per_page?: number
+      to?: number
+      total?: number
+    }
+    /**
+     * Pagination links (nulls when not paginated)
+     */
+    links?: {
+      first?: string
+      last?: string
+      prev?: string | null
+      next?: string | null
+    }
+  }
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * One packaging update item
+ */
+export type PriceGroupUpdateItem = {
+  packaging_id: number
+  is_rate_based?: boolean | null
+  ranks_prices?: Array<PackagingRankPriceInput> | null
+}
+
+/**
+ * Response containing updated packaging IDs
+ */
+export type PriceGroupUpdateResponse = {
+  data?: Array<number>
+  message?: string
+}
+
+/**
  * Rank price information for a packaging
  */
 export type PackagingRankPrice = {
@@ -1324,20 +1548,6 @@ export type ProductPackaging = {
 }
 
 /**
- * Rank price item for a packaging (manual mode)
- */
-export type ProductPackagingRankPriceInput = {
-  /**
-   * Rank ID
-   */
-  rank_id: number
-  /**
-   * Custom price for this rank
-   */
-  price: number
-}
-
-/**
  * Packaging data (non-default). Default packaging is derived from product base info
  */
 export type ProductPackagingInput = {
@@ -1380,7 +1590,7 @@ export type ProductPackagingInput = {
   /**
    * Manual rank prices list when not rate based
    */
-  rank_prices?: Array<ProductPackagingRankPriceInput> | null
+  rank_prices?: Array<PackagingRankPriceInput> | null
 }
 
 /**
@@ -1566,6 +1776,278 @@ export type ProductUnitsPaginatedResponse = {
 }
 
 /**
+ * Success response for getting quota form setting detail
+ */
+export type QuotaFormSettingDetailResponse = {
+  /**
+   * Indicates if the request was successful
+   */
+  success?: boolean
+  data?: QuotaFormSettingResponse
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * Quota Form Setting response model
+ */
+export type QuotaFormSettingResponse = {
+  /**
+   * Quota Form Setting ID
+   */
+  id?: number
+  /**
+   * Tenant ID
+   */
+  tenant_id?: string
+  /**
+   * Greeting message
+   */
+  greeting?: string | null
+  /**
+   * Whether delivery is enabled
+   */
+  is_enable_delivery?: boolean
+  /**
+   * Whether delivery method selection is enabled
+   */
+  is_enable_delivery_method?: boolean
+  /**
+   * Default delivery method
+   */
+  default_delivery_method?:
+    | 'monthly_25'
+    | 'monthly_10'
+    | 'net_30_from_delivery'
+    | 'net_30_from_invoice'
+    | 'end_of_month_next'
+    | 'end_of_month_after_next'
+  /**
+   * Whether payment due date is enabled
+   */
+  is_enable_payment_due_date?: boolean
+  /**
+   * Default payment due date period
+   */
+  default_payment_due_date?:
+    | 'days_7'
+    | 'days_14'
+    | 'days_45'
+    | 'days_60'
+    | 'months_3'
+    | 'months_6'
+    | 'years_1'
+  /**
+   * Whether expiration date is enabled
+   */
+  is_enable_expiration_date?: boolean
+  /**
+   * Default expiration date
+   */
+  default_expiration_date?: string | null
+  /**
+   * Company postal code
+   */
+  postal_code?: string | null
+  /**
+   * Company address
+   */
+  address?: string | null
+  /**
+   * Company name
+   */
+  company_name?: string | null
+  /**
+   * Company phone number
+   */
+  phone_number?: string | null
+  /**
+   * Company logo image filename
+   */
+  company_logo_image?: string | null
+  /**
+   * Company seal image filename
+   */
+  company_seal_image?: string | null
+  /**
+   * Preview image filename
+   */
+  preview_image?: string | null
+  /**
+   * Whether to display manager seal
+   */
+  is_display_manager_seal?: boolean | null
+  /**
+   * Consumption tax type
+   */
+  consumption_tax?: 'exclusive' | 'inclusive'
+  /**
+   * Tax rate percentage
+   */
+  tax_rate?: number | null
+  /**
+   * Formatted tax rate with percentage sign
+   */
+  formatted_tax_rate?: string
+  /**
+   * Tax calculation rounding method
+   */
+  tax_rounding_method?: 'round_down' | 'round_up' | 'round_nearest'
+  /**
+   * Sale price rounding method
+   */
+  sale_price_rounding_method?: 'round_down' | 'round_up' | 'round_nearest'
+  /**
+   * Manager name
+   */
+  manager_name?: string | null
+  /**
+   * ID of the user who created this setting
+   */
+  created_by?: number | null
+  /**
+   * ID of the user who last updated this setting
+   */
+  updated_by?: number | null
+  /**
+   * Timestamp when this setting was created
+   */
+  created_at?: string
+  /**
+   * Timestamp when this setting was last updated
+   */
+  updated_at?: string
+  /**
+   * User who created this setting
+   */
+  author?: CreatedBy | null
+  /**
+   * User who last updated this setting
+   */
+  editor?: UpdatedBy | null
+}
+
+/**
+ * Request payload for updating quota form setting
+ */
+export type UpdateQuotaFormSettingRequest = {
+  /**
+   * Greeting message
+   */
+  greeting?: string | null
+  /**
+   * Whether delivery is enabled
+   */
+  is_enable_delivery?: boolean | null
+  /**
+   * Whether delivery method selection is enabled
+   */
+  is_enable_delivery_method?: boolean | null
+  /**
+   * Default delivery method
+   */
+  default_delivery_method?:
+    | 'monthly_25'
+    | 'monthly_10'
+    | 'net_30_from_delivery'
+    | 'net_30_from_invoice'
+    | 'end_of_month_next'
+    | 'end_of_month_after_next'
+  /**
+   * Whether payment due date is enabled
+   */
+  is_enable_payment_due_date?: boolean | null
+  /**
+   * Default payment due date period
+   */
+  default_payment_due_date?:
+    | 'days_7'
+    | 'days_14'
+    | 'days_45'
+    | 'days_60'
+    | 'months_3'
+    | 'months_6'
+    | 'years_1'
+  /**
+   * Whether expiration date is enabled
+   */
+  is_enable_expiration_date?: boolean | null
+  /**
+   * Default expiration date
+   */
+  default_expiration_date?: string | null
+  /**
+   * Company postal code
+   */
+  postal_code?: string | null
+  /**
+   * Company address
+   */
+  address?: string | null
+  /**
+   * Company name
+   */
+  company_name?: string | null
+  /**
+   * Company phone number
+   */
+  phone_number?: string | null
+  /**
+   * Company logo image filename
+   */
+  company_logo_image?: string | null
+  /**
+   * Company seal image filename
+   */
+  company_seal_image?: string | null
+  /**
+   * Preview image filename
+   */
+  preview_image?: string | null
+  /**
+   * Whether to display manager seal
+   */
+  is_display_manager_seal?: boolean | null
+  /**
+   * Consumption tax type
+   */
+  consumption_tax?: 'exclusive' | 'inclusive'
+  /**
+   * Tax rate percentage
+   */
+  tax_rate?: number | null
+  /**
+   * Tax calculation rounding method
+   */
+  tax_rounding_method?: 'round_down' | 'round_up' | 'round_nearest'
+  /**
+   * Sale price rounding method
+   */
+  sale_price_rounding_method?: 'round_down' | 'round_up' | 'round_nearest'
+  /**
+   * Manager name
+   */
+  manager_name?: string | null
+}
+
+/**
+ * Success response for updating quota form setting
+ */
+export type UpdateQuotaFormSettingResponse = {
+  /**
+   * Indicates if the request was successful
+   */
+  success?: boolean
+  data?: QuotaFormSettingResponse
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
  * Rank resource (code: unique per tenant, max 20 alphanumeric chars; name: unique per tenant, max 50 chars; rate: non-negative integer; note: optional max 255 chars)
  */
 export type Rank = {
@@ -1656,6 +2138,20 @@ export type Role = {
    * Human friendly role name
    */
   display_name?: string | null
+}
+
+/**
+ * Rank price item for a packaging
+ */
+export type PackagingRankPriceInput = {
+  /**
+   * Rank ID
+   */
+  rank_id: number
+  /**
+   * Custom price for this rank
+   */
+  price: number
 }
 
 /**
@@ -3839,6 +4335,91 @@ export type Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses = {
 export type Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Response =
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses[keyof Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses]
 
+export type PriceGroupControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Optional. Accepted but ignored (non-paginated).
+     */
+    _page?: number
+    /**
+     * Optional. Accepted but ignored (non-paginated).
+     */
+    _per_page?: number
+    /**
+     * Filter by product ID
+     */
+    product_id?: number
+    /**
+     * Search by code or name (LIKE)
+     */
+    q?: string
+    /**
+     * Filter by pricing method
+     */
+    setting_method?: string
+    /**
+     * Filter by product category ID
+     */
+    category_id?: number
+  }
+  url: '/api/v1/price-groups'
+}
+
+export type PriceGroupControllerIndexErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type PriceGroupControllerIndexResponses = {
+  /**
+   * List retrieved
+   */
+  200: PriceGroupListResponse
+}
+
+export type PriceGroupControllerIndexResponse =
+  PriceGroupControllerIndexResponses[keyof PriceGroupControllerIndexResponses]
+
+export type PriceGroupControllerUpdateData = {
+  body: Array<PriceGroupUpdateItem>
+  path?: never
+  query?: never
+  url: '/api/v1/price-groups'
+}
+
+export type PriceGroupControllerUpdateErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+  /**
+   * Validation error
+   */
+  422: unknown
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type PriceGroupControllerUpdateResponses = {
+  /**
+   * Updated
+   */
+  200: PriceGroupUpdateResponse
+}
+
+export type PriceGroupControllerUpdateResponse =
+  PriceGroupControllerUpdateResponses[keyof PriceGroupControllerUpdateResponses]
+
 export type ProductControllerIndexData = {
   body?: never
   path?: never
@@ -4801,6 +5382,101 @@ export type ProductUnitControllerUpdateResponses = {
 
 export type ProductUnitControllerUpdateResponse =
   ProductUnitControllerUpdateResponses[keyof ProductUnitControllerUpdateResponses]
+
+export type QuotaFormSettingControllerShowData = {
+  body?: never
+  path: {
+    /**
+     * Quota Form Setting ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/quota-form-settings/{id}'
+}
+
+export type QuotaFormSettingControllerShowErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Quota Form Setting not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type QuotaFormSettingControllerShowError =
+  QuotaFormSettingControllerShowErrors[keyof QuotaFormSettingControllerShowErrors]
+
+export type QuotaFormSettingControllerShowResponses = {
+  /**
+   * Quota Form Setting detail retrieved successfully
+   */
+  200: QuotaFormSettingDetailResponse
+}
+
+export type QuotaFormSettingControllerShowResponse =
+  QuotaFormSettingControllerShowResponses[keyof QuotaFormSettingControllerShowResponses]
+
+export type E8Cee5325E3B2A7681582B13F1051D1Data = {
+  /**
+   * Quota Form Setting update data
+   */
+  body: UpdateQuotaFormSettingRequest
+  path: {
+    /**
+     * Quota Form Setting ID to update
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/quota-form-settings/{id}'
+}
+
+export type E8Cee5325E3B2A7681582B13F1051D1Errors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Quota Form Setting not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type E8Cee5325E3B2A7681582B13F1051D1Error =
+  E8Cee5325E3B2A7681582B13F1051D1Errors[keyof E8Cee5325E3B2A7681582B13F1051D1Errors]
+
+export type E8Cee5325E3B2A7681582B13F1051D1Responses = {
+  /**
+   * Quota Form Setting updated successfully
+   */
+  200: UpdateQuotaFormSettingResponse
+}
+
+export type E8Cee5325E3B2A7681582B13F1051D1Response =
+  E8Cee5325E3B2A7681582B13F1051D1Responses[keyof E8Cee5325E3B2A7681582B13F1051D1Responses]
 
 export type RankControllerIndexData = {
   body?: never

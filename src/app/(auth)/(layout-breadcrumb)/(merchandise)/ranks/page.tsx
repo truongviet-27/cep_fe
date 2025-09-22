@@ -12,7 +12,12 @@ import {
   useModalForm,
   useTable,
 } from '@refinedev/antd'
-import { BaseRecord, useResource, useTranslate } from '@refinedev/core'
+import {
+  BaseRecord,
+  useModal,
+  useResource,
+  useTranslate,
+} from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -20,6 +25,7 @@ import React from 'react'
 import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
+import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
 
 const { Title, Text } = Typography
 
@@ -30,7 +36,7 @@ export default function Page() {
     onSearch: (values: any) => [
       {
         field: 'q',
-        operator: 'contains',
+        operator: 'null',
         value: values?.q,
       },
     ],
@@ -40,7 +46,7 @@ export default function Page() {
     { dataIndex: 'code', title: t('ranks.fields.code') },
     { dataIndex: 'name', title: t('ranks.fields.name') },
     { dataIndex: 'rate', title: t('ranks.fields.rate') },
-    { dataIndex: 'customer', title: t('ranks.fields.customer') },
+    { dataIndex: 'customer', title: t('ranks.fields.number_of_customers') },
     { dataIndex: 'note', title: t('ranks.fields.remarks') },
     {
       title: t('table.actions'),
@@ -74,10 +80,9 @@ export default function Page() {
     resource: resource?.name,
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
-    defaultFormValues: {
-      hash_dash: true,
-    },
   })
+
+  const modalCreate = useModal()
 
   const { show, close, open } = modalFormProps
 
@@ -119,7 +124,9 @@ export default function Page() {
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
-            <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
+            <CreateButton onClick={modalCreate.show} icon={null}>
+              {t('buttons.create_new')}
+            </CreateButton>
           </Col>
         </Row>
       </Form>
@@ -136,6 +143,16 @@ export default function Page() {
         width={'70vh'}
       >
         <RankModalEdit modalProps={modalFormProps} />
+      </Modal>
+
+      <Modal
+        open={modalCreate.visible}
+        onCancel={modalCreate.close}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        width={'70vh'}
+      >
+        <RankModalCreate modalProps={modalCreate} />
       </Modal>
     </List>
   )

@@ -1,5 +1,5 @@
-import { useModalForm } from '@refinedev/antd'
-import { useApiUrl, useCreate, useCustom, useTranslate } from '@refinedev/core'
+import { useForm, useModalForm } from '@refinedev/antd'
+import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import type {
   CodeIssueSetting,
   CustomerStoreRequest,
@@ -11,7 +11,11 @@ import { createSchemaFieldRule } from 'antd-zod'
 export const useCustomerCreate = () => {
   const t = useTranslate()
   const [form] = Form.useForm<CustomerStoreRequest>()
-  const { mutate, isLoading } = useCreate<CustomerStoreRequest>()
+  const { onFinish: handleSubmit, formLoading: isLoading } =
+    useForm<CustomerStoreRequest>({
+      resource: 'customers',
+      action: 'create',
+    })
 
   const apiUrl = useApiUrl()
 
@@ -40,11 +44,7 @@ export const useCustomerCreate = () => {
   const rule = createSchemaFieldRule(zCustomerStoreRequest)
 
   const onFinish = (values: CustomerStoreRequest) => {
-    console.log('Form Values:', values)
-    mutate({
-      resource: 'customers',
-      values,
-    })
+    handleSubmit(values)
   }
 
   const handleCopyContact = () => {

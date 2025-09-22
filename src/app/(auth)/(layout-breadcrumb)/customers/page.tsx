@@ -2,7 +2,7 @@
 'use client'
 
 import { List } from '@components/crud/list'
-import { EditButton, useTable } from '@refinedev/antd'
+import { CreateButton, EditButton, useSelect, useTable } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import {
   Button,
@@ -26,7 +26,14 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import { PRIMARY } from '@utility/color'
-import { mockCustomers } from '@mockApi/customer'
+import { SimpleCustomer } from '@sdk/hey-api'
+import Link from 'next/link'
+import {
+  antiSocialCheckOptions,
+  countryOptions,
+  creditCheckOptions,
+  searchDateTypeOptions,
+} from '@utility/options'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -48,23 +55,129 @@ export default function CustomerListPage() {
   const t = useTranslate()
   const go = useGo()
 
-  const { tableProps, setFilters, searchFormProps } = useTable<ICustomer>({
-    syncWithLocation: true,
+  const { selectProps: departmentSelectProps } = useSelect({
+    resource: 'departments',
+    optionLabel: 'name',
+    optionValue: 'id',
   })
 
-  const columns: TableColumnsType<ICustomer> = useMemo(
+  const { selectProps: ranksSelectProps } = useSelect({
+    resource: 'ranks',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
+
+  const { tableProps, setFilters, searchFormProps } = useTable<ICustomer>({
+    syncWithLocation: true,
+    onSearch: (values: any) => [
+      {
+        field: 'q',
+        operator: 'null',
+        value: values?.q,
+      },
+      {
+        field: 'country',
+        operator: 'null',
+        value: values?.country,
+      },
+      {
+        field: 'person_in_charge_department',
+        operator: 'contains',
+        value: values?.person_in_charge_department,
+      },
+      {
+        field: 'price_rank_id',
+        operator: 'null',
+        value: values?.price_rank_id,
+      },
+      {
+        field: 'credit_rank',
+        operator: 'null',
+        value: values?.credit_rank,
+      },
+      {
+        field: 'anti_social_rank',
+        operator: 'null',
+        value: values?.anti_social_rank,
+      },
+      {
+        field: 'search_date_type',
+        operator: 'null',
+        value: values?.search_date_type,
+      },
+      {
+        field: 'date_start',
+        operator: 'null',
+        value: values?.date_start,
+      },
+      {
+        field: 'date_end',
+        operator: 'null',
+        value: values?.date_end,
+      },
+    ],
+  })
+
+  const handleSearch = (values: any) => {
+    setFilters([
+      {
+        field: 'q',
+        operator: 'null',
+        value: values?.q,
+      },
+      {
+        field: 'country',
+        operator: 'null',
+        value: values?.country,
+      },
+      {
+        field: 'person_in_charge_department',
+        operator: 'contains',
+        value: values?.person_in_charge_department,
+      },
+      {
+        field: 'price_rank_id',
+        operator: 'null',
+        value: values?.price_rank_id,
+      },
+      {
+        field: 'credit_rank',
+        operator: 'null',
+        value: values?.credit_rank,
+      },
+      {
+        field: 'anti_social_rank',
+        operator: 'null',
+        value: values?.anti_social_rank,
+      },
+      {
+        field: 'search_date_type',
+        operator: 'null',
+        value: values?.search_date_type,
+      },
+      {
+        field: 'date_start',
+        operator: 'null',
+        value: values?.date_start,
+      },
+      {
+        field: 'date_end',
+        operator: 'null',
+        value: values?.date_end,
+      },
+    ])
+  }
+
+  const columns: TableColumnsType<SimpleCustomer> = useMemo(
     () => [
       {
         title: t('customers.fields.code'),
-        dataIndex: 'code',
-        key: 'code',
+        dataIndex: 'customer_code',
+        key: 'customer_code',
         render: (text, record) => (
-          <Button
-            type="link"
-            onClick={() => go({ to: `/customers/show/${record.id}` })}
-          >
+          <Link href={`/customers/${record.id}`} key={record.id}>
             {text}
-          </Button>
+          </Link>
         ),
       },
       {
@@ -79,13 +192,13 @@ export default function CustomerListPage() {
       },
       {
         title: t('customers.fields.department'),
-        dataIndex: 'department',
-        key: 'department',
+        dataIndex: 'person_in_charge_department',
+        key: 'person_in_charge_department',
       },
       {
         title: t('customers.fields.unit_price_rank'),
-        dataIndex: 'unit_price_rank',
-        key: 'unit_price_rank',
+        dataIndex: 'price_rank_code',
+        key: 'price_rank_code',
         render: (text) => <Button type="link">{text}</Button>,
       },
       {
@@ -95,19 +208,19 @@ export default function CustomerListPage() {
       },
       {
         title: t('customers.fields.anti_social_check_date'),
-        dataIndex: 'anti_social_check_date',
-        key: 'anti_social_check_date',
+        dataIndex: 'anti_social_rank_update_at',
+        key: 'anti_social_rank_update_at',
         width: 150,
       },
       {
         title: t('customers.fields.registration_date'),
-        dataIndex: 'registration_date',
-        key: 'registration_date',
+        dataIndex: 'created_at',
+        key: 'created_at',
       },
       {
         title: t('customers.fields.suspension_date'),
-        dataIndex: 'suspension_date',
-        key: 'suspension_date',
+        dataIndex: 'deleted_at',
+        key: 'deleted_at',
       },
       {
         title: t('customers.fields.actions'),
@@ -119,10 +232,10 @@ export default function CustomerListPage() {
             <EditButton hideText size="small" recordItemId={record.id} />
             <Button
               size="small"
-              danger={!record.suspension_date}
-              type={record.suspension_date ? 'default' : 'primary'}
+              danger={!record.deleted_at}
+              type={record.deleted_at ? 'default' : 'primary'}
               icon={
-                record.suspension_date ? (
+                record.deleted_at ? (
                   <PlayCircleOutlined />
                 ) : (
                   <PauseCircleOutlined />
@@ -135,14 +248,6 @@ export default function CustomerListPage() {
     ],
     [t, go],
   )
-
-  const handleSearch = (values: any) => {
-    console.log('Search values:', values)
-    setFilters([
-      { field: 'code', operator: 'contains', value: values.code },
-      { field: 'name', operator: 'contains', value: values.name },
-    ])
-  }
 
   const handleClear = () => {
     searchFormProps.form?.resetFields()
@@ -179,7 +284,7 @@ export default function CustomerListPage() {
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('customers.filters.code_name'))}
-              name="code_name"
+              name="q"
             >
               <Input placeholder={t('placeholders.partial_match')} />
             </Form.Item>
@@ -189,15 +294,25 @@ export default function CustomerListPage() {
               label={boldText(t('customers.fields.country'))}
               name="country"
             >
-              <Select placeholder={t('placeholders.select')} />
+              <Select
+                placeholder={t('placeholders.select')}
+                options={countryOptions}
+                showSearch
+                filterOption={true}
+                optionFilterProp="label"
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('customers.fields.department'))}
-              name="department"
+              name="department_id"
             >
-              <Select placeholder={t('placeholders.partial_match')} />
+              <Select
+                {...departmentSelectProps}
+                placeholder={t('placeholders.select')}
+                style={{ maxWidth: 560 }}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
@@ -205,7 +320,10 @@ export default function CustomerListPage() {
               label={boldText(t('ranks.fields.code'))}
               name="unit_price_rank"
             >
-              <Select placeholder={t('placeholders.select')} />
+              <Select
+                {...ranksSelectProps}
+                placeholder={t('placeholders.select')}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
@@ -213,7 +331,10 @@ export default function CustomerListPage() {
               label={boldText(t('customers.fields.credit_rank'))}
               name="credit_rank"
             >
-              <Select placeholder={t('placeholders.partial_match')} />
+              <Select
+                placeholder={t('placeholders.partial_match')}
+                options={creditCheckOptions}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
@@ -221,7 +342,10 @@ export default function CustomerListPage() {
               label={boldText(t('customers.fields.anti_social_rank'))}
               name="date_range"
             >
-              <Select placeholder={t('placeholders.select')} />
+              <Select
+                placeholder={t('placeholders.select')}
+                options={antiSocialCheckOptions}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -232,7 +356,10 @@ export default function CustomerListPage() {
               label={boldText(t('customers.filters.date_range'))}
               name="unit_price_rank"
             >
-              <Select placeholder={t('customers.fields.registration_date')} />
+              <Select
+                placeholder={t('customers.fields.registration_date')}
+                options={searchDateTypeOptions}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
@@ -243,7 +370,7 @@ export default function CustomerListPage() {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" onClick={handleSearch}>
                   {t('buttons.search')}
                 </Button>
                 <Button onClick={handleClear}>{t('buttons.clear')}</Button>
@@ -255,30 +382,12 @@ export default function CustomerListPage() {
 
       <Row justify="end" className="mb-4">
         <Space>
-          <Button
-            type="primary"
-            onClick={() => go({ to: '/customers/create' })}
-          >
-            {t('buttons.new_create')}
-          </Button>
-          <Button
-            onClick={() => {
-              go({
-                to: '/customers/csv',
-              })
-            }}
-          >
-            {t('buttons.csv_bulk_register')}
-          </Button>
+          <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
+          <Button>{t('buttons.csv_bulk_register')}</Button>
         </Space>
       </Row>
 
-      <CommonTable
-        {...tableProps}
-        dataSource={mockCustomers}
-        rowKey="id"
-        columns={columns as any}
-      />
+      <CommonTable {...tableProps} rowKey="id" columns={columns as any} />
     </List>
   )
 }

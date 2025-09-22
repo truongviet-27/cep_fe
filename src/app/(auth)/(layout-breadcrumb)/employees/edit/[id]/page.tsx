@@ -213,7 +213,10 @@ export default function EmployeeEdit() {
           name="department_id"
           rules={[{ required: true, message: 'このフィールドは必須です' }]}
         >
-          <Select {...departmentSelectProps} />
+          <Select
+            placeholder={t('placeholders.select')}
+            {...departmentSelectProps}
+          />
         </Form.Item>
 
         <Form.Item label={boldText(t('employees.fields.role'))} name="role_id">

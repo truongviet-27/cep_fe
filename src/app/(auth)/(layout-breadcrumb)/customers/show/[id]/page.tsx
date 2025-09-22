@@ -1,110 +1,95 @@
+/* eslint-disable */
 'use client'
 
 import { DetailItem } from '@components/common/detail-item'
-import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
-import { mockCustomerDetail } from '@mockApi/customer'
 import { useShow, useTranslate } from '@refinedev/core'
-import type { TableColumnsType } from 'antd'
-import { Button, Collapse, Space, Tag, Typography } from 'antd'
-import React, { useMemo } from 'react'
+import { Button, Collapse, Space, Typography } from 'antd'
+import React from 'react'
+import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
+import {
+  DownOutlined,
+  FileImageOutlined,
+  RightOutlined,
+} from '@ant-design/icons'
+import CommonTable from '@components/common/table'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import { PRIMARY } from '@utility/color'
+import type { Customer } from '@sdk/hey-api/types.gen' // SỬA LẠI: Import type từ SDK
 
 const { Title, Text } = Typography
 const { Panel } = Collapse
 
-// Type cho bảng Corporate Research
-interface ICorporateResearch {
-  key: string
-  document_name: string
-  judgement: string
-  files: { name: string; url: string }[]
-  updated_by: string
-  last_updated: string
-}
-
-// Type chi tiết cho khách hàng
-interface ICustomerDetail {
-  id: string
-  code: string
-  name: string
-  name_kana: string
-  country: string
-  corporate_number: string
-  unit_price_rank: { rank: string; date: string }
-  credit_rank: { rank: string; date: string }
-  anti_social_rank: { rank: string; date: string }
-  postal_code: string
-  address: string
-  building_name: string
-  phone: string
-  fax: string
-  email: string
-  listing_status: string
-  industry: string
-  establishment_date: string
-  departments: string[]
-  accounting_contact: {
-    name: string
-    department: string
-    email: string
-    phone: string
-  }
-  corporate_research: ICorporateResearch[]
-  created_by: { name: string; date: string }
-  updated_by: { name: string | null; date: string | null }
-}
-
 export default function CustomerShowPage() {
   const t = useTranslate()
 
-  const { queryResult } = useShow<ICustomerDetail>()
+  const { queryResult } = useShow<Customer>() // SỬA LẠI: Dùng type Customer từ SDK
   const { data, isLoading } = queryResult
-  const record = data?.data ?? mockCustomerDetail
+  const record = data?.data // SỬA LẠI: Bỏ mock data, chỉ dùng data từ API
 
-  const researchColumns: TableColumnsType<ICorporateResearch> = useMemo(
-    () => [
-      {
-        title: t('customers.show.research.document_name'),
-        dataIndex: 'document_name',
-        key: 'document_name',
-      },
-      {
-        title: t('customers.show.research.judgement'),
-        dataIndex: 'judgement',
-        key: 'judgement',
-      },
-      {
-        title: t('customers.show.research.file'),
-        dataIndex: 'files',
-        key: 'files',
-        render: (files: { name: string; url: string }[]) => (
-          <Space direction="vertical">
-            {files.map((file) => (
-              <Button
-                type="link"
-                key={file.name}
-                href={file.url}
-                target="_blank"
-              >
-                {file.name}
-              </Button>
-            ))}
-          </Space>
-        ),
-      },
-      {
-        title: t('common.updated_by'),
-        dataIndex: 'updated_by',
-        key: 'updated_by',
-      },
-      {
-        title: t('customers.show.research.last_updated'),
-        dataIndex: 'last_updated',
-        key: 'last_updated',
-      },
-    ],
-    [t],
-  )
+  const researchColumns = [
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.research.document_name')}
+        </span>
+      ),
+      dataIndex: 'material_name', // SỬA LẠI: Dùng dataIndex
+      key: 'material_name',
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.research.judgement')}
+        </span>
+      ),
+      dataIndex: 'judgement', // SỬA LẠI: Dùng dataIndex
+      key: 'judgement',
+      width: 150,
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.research.file')}
+        </span>
+      ),
+      dataIndex: 'files', // SỬA LẠI: Dùng dataIndex
+      key: 'files',
+      render: (files: Array<{ name: string; url: string }>) => (
+        <Space direction="vertical" size="small">
+          {files?.map((file) => (
+            <a
+              key={file.name}
+              href={file.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FileImageOutlined style={{ marginRight: 8 }} />
+              {file.name}
+            </a>
+          ))}
+        </Space>
+      ),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>{t('common.updated_by')}</span>
+      ),
+      dataIndex: ['editor', 'name'], // SỬA LẠI: Lấy dữ liệu lồng nhau
+      key: 'editor',
+      width: 120,
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.research.last_updated')}
+        </span>
+      ),
+      dataIndex: 'updated_at', // SỬA LẠI: Dùng dataIndex
+      key: 'updated_at',
+      width: 180,
+    },
+  ]
 
   const collapseWrapper = ({
     i18n,
@@ -112,23 +97,39 @@ export default function CustomerShowPage() {
   }: {
     i18n: string
     children: React.ReactNode
-  }) => {
-    return (
-      <Collapse defaultActiveKey={['1']} expandIconPosition="end">
-        <Panel header={<Title level={5}>{t(i18n)}</Title>} key="1">
-          <div className={'space-y-6'}>{children}</div>
-        </Panel>
-      </Collapse>
-    )
-  }
+  }) => (
+    <Collapse
+      defaultActiveKey={['1']}
+      expandIconPosition="end"
+      expandIcon={({ isActive }) => (
+        <DownOutlined
+          style={{ transition: '0.3s' }}
+          rotate={isActive ? 180 : 0}
+        />
+      )}
+    >
+      <Panel header={<Title level={5}>{t(i18n)}</Title>} key="1">
+        <div className={'space-y-6'}>{children}</div>
+      </Panel>
+    </Collapse>
+  )
+
+  const breadcrumbItems = [
+    {
+      title: (
+        <Title level={5} style={{ color: PRIMARY }}>
+          {t('customers.customers')}
+        </Title>
+      ),
+    },
+    { title: <Title level={5}>{t('customers.show.show')}</Title> },
+  ]
 
   return (
     <Show
       isLoading={isLoading}
       title={
-        <Title level={4}>
-          {t('customers.customers')} - {t('buttons.edit')}
-        </Title>
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       rightFooterButtons={
         <Space>
@@ -137,14 +138,16 @@ export default function CustomerShowPage() {
       }
       footerButtons={
         <div>
+          {/* SỬA LẠI: Đường dẫn tới người tạo và ngày tạo */}
           <Text type="secondary" className="mr-8">
-            {t('common.created_by')}: {record?.created_by.name} (
-            {record?.created_by.date})
+            {t('common.created_by')}: {record?.author?.name} (
+            {record?.created_at})
           </Text>
           <Text type="secondary">
+            {/* SỬA LẠI: Đường dẫn tới người sửa và ngày sửa */}
             {t('common.updated_by')}:{' '}
-            {record?.updated_by?.name
-              ? `${record.updated_by.name} (${record.updated_by.date})`
+            {record?.editor?.name
+              ? `${record.editor.name} (${record.updated_at})`
               : t('common.not_set')}
           </Text>
         </div>
@@ -155,13 +158,13 @@ export default function CustomerShowPage() {
           children: (
             <>
               <DetailItem label={t('customers.fields.code')}>
-                {record?.code}
+                {record?.customer_code}
               </DetailItem>
               <DetailItem label={t('customers.fields.name')}>
                 {record?.name}
               </DetailItem>
               <DetailItem label={t('customers.fields.name_kana')}>
-                {record?.name_kana}
+                {record?.customer_name_by_kana}
               </DetailItem>
               <DetailItem label={t('customers.fields.country')}>
                 {record?.country}
@@ -170,22 +173,15 @@ export default function CustomerShowPage() {
                 {record?.corporate_number}
               </DetailItem>
               <DetailItem label={t('customers.fields.unit_price_rank')}>
-                {record?.unit_price_rank?.rank}:
-                <Text className="ml-4 text-gray-500">
-                  {record?.unit_price_rank?.date}
-                </Text>
+                {/* SỬA LẠI: Lấy tên rank từ object lồng nhau */}
+                {record?.rank?.name}
               </DetailItem>
+              {/* LƯU Ý: Các trường này không có trong type Customer của SDK */}
               <DetailItem label={t('customers.fields.credit_rank')}>
-                {record?.credit_rank?.rank}
-                <Text className="ml-4 text-gray-500">
-                  {record?.credit_rank?.date}
-                </Text>
+                N/A
               </DetailItem>
               <DetailItem label={t('customers.fields.anti_social_rank')}>
-                {record?.anti_social_rank?.rank}
-                <Text className="ml-4 text-gray-500">
-                  {record?.anti_social_rank?.date}
-                </Text>
+                N/A
               </DetailItem>
             </>
           ),
@@ -196,45 +192,35 @@ export default function CustomerShowPage() {
           children: (
             <div className={'space-y-6'}>
               <DetailItem label={t('customers.show.postal_code')}>
-                {record?.postal_code}
+                {record?.post_code}
               </DetailItem>
-
               <DetailItem label={t('customers.show.address')}>
                 {record?.address}
               </DetailItem>
-
               <DetailItem label={t('customers.show.building_name')}>
-                {record?.building_name}
+                {record?.building}
               </DetailItem>
-
               <DetailItem label={t('customers.show.phone')}>
                 {record?.phone}
               </DetailItem>
-
               <DetailItem label={t('customers.show.fax')}>
                 {record?.fax}
               </DetailItem>
-
               <DetailItem label={t('customers.delivery.email')}>
-                {record?.email}
+                {record?.mail}
               </DetailItem>
-
-              {/*<DetailItem label={t('customers.show.listing_status')}>*/}
-              {/*  {record?.listing_status}*/}
-              {/*</DetailItem>*/}
-
               <DetailItem label={t('customers.show.listing_classification')}>
+                {record?.listing_classification}
+              </DetailItem>
+              <DetailItem label={t('customers.show.industry')}>
                 {record?.industry}
               </DetailItem>
-
               <DetailItem label={t('customers.show.date_of_establishment')}>
-                {record?.establishment_date}
+                {record?.date_of_establishment}
               </DetailItem>
-
               <DetailItem label={t('customers.show.department_in_charge')}>
-                {record?.departments?.map((dep) => (
-                  <Tag key={dep}>{dep}</Tag>
-                ))}
+                {/* SỬA LẠI: Đây là một chuỗi, không phải mảng */}
+                {record?.department_in_charge}
               </DetailItem>
             </div>
           ),
@@ -245,63 +231,56 @@ export default function CustomerShowPage() {
           children: (
             <div className={'space-y-6'}>
               <DetailItem label={t('customers.show.contact_name')}>
-                {record?.accounting_contact?.name}
+                {record?.person_in_charge_name}
               </DetailItem>
-
               <DetailItem label={t('customers.show.contact_department')}>
-                {record?.accounting_contact?.department}
+                {record?.person_in_charge_department}
               </DetailItem>
-
               <DetailItem label={t('customers.show.contact_email')}>
-                {record?.accounting_contact?.email}
+                {record?.person_in_charge_mail}
               </DetailItem>
-
               <DetailItem label={t('customers.show.contact_phone')}>
-                {record?.accounting_contact?.phone}
+                {record?.person_in_charge_phone}
               </DetailItem>
             </div>
           ),
           i18n: 'customers.show.accounting_contact',
         })}
+
+        {/*{collapseWrapper({*/}
+        {/*  children: (*/}
+        {/*    <div className={'space-y-6'}>*/}
+        {/*      <DetailItem label={t('customers.show.contact_name')}>*/}
+        {/*        {record?.accounting_contact?.name}*/}
+        {/*      </DetailItem>*/}
+
+        {/*      <DetailItem label={t('customers.show.contact_department')}>*/}
+        {/*        {record?.accounting_contact?.department}*/}
+        {/*      </DetailItem>*/}
+
+        {/*      <DetailItem label={t('customers.show.contact_email')}>*/}
+        {/*        {record?.accounting_contact?.email}*/}
+        {/*      </DetailItem>*/}
+
+        {/*      <DetailItem label={t('customers.show.contact_phone')}>*/}
+        {/*        {record?.accounting_contact?.phone}*/}
+        {/*      </DetailItem>*/}
+        {/*    </div>*/}
+        {/*  ),*/}
+        {/*  i18n: 'customers.show.accounting_contact',*/}
+        {/*})}*/}
 
         {collapseWrapper({
+          i18n: 'customers.show.corporate_research',
           children: (
-            <div className={'space-y-6'}>
-              <DetailItem label={t('customers.show.contact_name')}>
-                {record?.accounting_contact?.name}
-              </DetailItem>
-
-              <DetailItem label={t('customers.show.contact_department')}>
-                {record?.accounting_contact?.department}
-              </DetailItem>
-
-              <DetailItem label={t('customers.show.contact_email')}>
-                {record?.accounting_contact?.email}
-              </DetailItem>
-
-              <DetailItem label={t('customers.show.contact_phone')}>
-                {record?.accounting_contact?.phone}
-              </DetailItem>
-            </div>
-          ),
-          i18n: 'customers.show.accounting_contact',
-        })}
-
-        <Collapse defaultActiveKey={['1']} expandIconPosition="end">
-          <Panel
-            header={
-              <Title level={5}>{t('customers.show.corporate_research')}</Title>
-            }
-            key="1"
-          >
             <CommonTable
-              dataSource={record?.corporate_research}
+              dataSource={record?.company_research_information} // SỬA LẠI: Dùng đúng tên trường
               columns={researchColumns}
               pagination={false}
-              rowKey="key"
+              rowKey="id"
             />
-          </Panel>
-        </Collapse>
+          ),
+        })}
       </Space>
     </Show>
   )

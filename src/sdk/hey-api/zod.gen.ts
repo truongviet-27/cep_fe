@@ -9,8 +9,14 @@ export const zApproveRouteListResource = z.object({
   id: z.optional(z.int()),
   code: z.optional(z.string()),
   name: z.optional(z.string()),
-  department_id: z.optional(z.int()),
-  department_name: z.optional(z.string()),
+  departments: z.optional(
+    z.array(
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+      }),
+    ),
+  ),
   status: z.optional(z.enum(['active', 'inactive'])),
   total_steps: z.optional(z.int()),
   author: z.optional(
@@ -350,12 +356,29 @@ export const zRank = z.object({
 })
 
 /**
+ * Customer Delivery Address
+ * Represents a delivery address record for a customer.
+ */
+export const zCustomerDeliveryAddress = z.object({
+  id: z.optional(z.int()),
+  delivery_address_code: z.optional(z.union([z.string(), z.null()])),
+  delivery_address_name: z.optional(z.string()),
+  address: z.optional(z.string()),
+  contact_person_name: z.optional(z.string()),
+  phone: z.optional(z.string()),
+  mail: z.optional(z.union([z.email(), z.null()])),
+})
+
+/**
  * Customer Model
  * Represents a customer record.
  */
 export const zCustomer = z.object({
   id: z.optional(z.int()),
   name: z.optional(z.string()),
+  customer_type: z.optional(z.enum(['individual', 'company'])),
+  company_type: z.optional(z.union([z.string(), z.null()])),
+  company_name_display_format: z.optional(z.enum(['before', 'after'])),
   customer_code: z.optional(z.string()),
   customer_name_by_kana: z.optional(z.union([z.string(), z.null()])),
   corporate_number: z.optional(z.string()),
@@ -388,6 +411,32 @@ export const zCustomer = z.object({
   company_research_information: z.optional(
     z.array(zCompanyResearchInformation),
   ),
+  delivery_addresses: z.optional(z.array(zCustomerDeliveryAddress)),
+})
+
+/**
+ * Customer Delivery Address Store Request
+ * Fields to create a new customer delivery address.
+ */
+export const zCustomerDeliveryAddressStoreRequest = z.object({
+  delivery_address_name: z.union([z.string().max(50), z.null()]),
+  address: z.union([z.string().max(255), z.null()]),
+  contact_person_name: z.union([z.string().max(50), z.null()]),
+  phone: z.union([z.string().max(20), z.null()]),
+  mail: z.optional(z.union([z.email().max(100), z.null()])),
+})
+
+/**
+ * Customer Delivery Address Update Request
+ * Fields to update an existing customer delivery address. The 'id' is required to identify the record.
+ */
+export const zCustomerDeliveryAddressUpdateRequest = z.object({
+  id: z.int(),
+  delivery_address_name: z.optional(z.union([z.string().max(50), z.null()])),
+  address: z.optional(z.union([z.string().max(255), z.null()])),
+  contact_person_name: z.optional(z.union([z.string().max(50), z.null()])),
+  phone: z.optional(z.union([z.string().max(20), z.null()])),
+  mail: z.optional(z.union([z.email().max(100), z.null()])),
 })
 
 /**
@@ -397,6 +446,9 @@ export const zCustomer = z.object({
 export const zCustomerStoreRequest = z.object({
   customer_code: z.string().max(50),
   name: z.string().max(255),
+  customer_type: z.enum(['individual', 'company']),
+  company_type: z.optional(z.union([z.string(), z.null()])),
+  company_name_display_format: z.optional(z.enum(['before', 'after'])),
   customer_name_by_kana: z.optional(z.union([z.string().max(50), z.null()])),
   corporate_number: z.string().max(50),
   price_rank_id: z.int(),
@@ -420,6 +472,9 @@ export const zCustomerStoreRequest = z.object({
   company_research_information: z.optional(
     z.array(zCompanyResearchInformationStoreRequest),
   ),
+  delivery_addresses: z.optional(
+    z.union([z.array(zCustomerDeliveryAddressStoreRequest), z.null()]),
+  ),
 })
 
 /**
@@ -429,6 +484,9 @@ export const zCustomerStoreRequest = z.object({
 export const zCustomerUpdateRequest = z.object({
   customer_code: z.union([z.string().max(50), z.null()]),
   name: z.union([z.string().max(50), z.null()]),
+  customer_type: z.enum(['individual', 'company']),
+  company_type: z.optional(z.union([z.string(), z.null()])),
+  company_name_display_format: z.optional(z.enum(['before', 'after'])),
   customer_name_by_kana: z.optional(z.union([z.string().max(50), z.null()])),
   corporate_number: z.union([z.string().max(50), z.null()]),
   price_rank_id: z.union([z.int(), z.null()]),
@@ -451,6 +509,9 @@ export const zCustomerUpdateRequest = z.object({
   person_in_charge_phone: z.optional(z.union([z.string().max(20), z.null()])),
   company_research_information: z.optional(
     z.array(zCompanyResearchInformationUpdateRequest),
+  ),
+  delivery_addresses: z.optional(
+    z.union([z.array(zCustomerDeliveryAddressUpdateRequest), z.null()]),
   ),
 })
 
@@ -805,6 +866,92 @@ export const zPostsPaginatedResponse = zPaginatedResponse.and(
 )
 
 /**
+ * A product packaging with rank-based prices
+ */
+export const zPriceGroupItem = z.object({
+  packaging_id: z.optional(z.int()),
+  product_id: z.optional(z.int()),
+  product_code: z.optional(z.string()),
+  product_name: z.optional(z.string()),
+  packaging_code: z.optional(z.string()),
+  packaging_name: z.optional(z.string()),
+  quantity_in_package: z.optional(z.int()),
+  category: z.optional(z.string()),
+  unit: z.optional(z.string()),
+  selling_price: z.optional(z.int()),
+  is_active: z.optional(z.boolean()),
+  is_rate_based: z.optional(z.boolean()),
+  rank_prices: z.optional(
+    z.array(
+      z.object({
+        rank_id: z.optional(z.int()),
+        rank_code: z.optional(z.string()),
+        rank_name: z.optional(z.string()),
+        rate: z.optional(z.number()),
+        price: z.optional(z.int()),
+      }),
+    ),
+  ),
+})
+
+/**
+ * Paginated-like response for price groups
+ */
+export const zPriceGroupListResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zPriceGroupItem)),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.int()),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.union([z.string(), z.null()])),
+          next: z.optional(z.union([z.string(), z.null()])),
+        }),
+      ),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Rank price item for a packaging
+ */
+export const zPackagingRankPriceInput = z.object({
+  rank_id: z.int(),
+  price: z.number(),
+})
+
+/**
+ * One packaging update item
+ */
+export const zPriceGroupUpdateItem = z.object({
+  packaging_id: z.int(),
+  is_rate_based: z.optional(z.union([z.boolean(), z.null()])),
+  ranks_prices: z.optional(
+    z.union([z.array(zPackagingRankPriceInput), z.null()]),
+  ),
+})
+
+/**
+ * Response containing updated packaging IDs
+ */
+export const zPriceGroupUpdateResponse = z.object({
+  data: z.optional(z.array(z.int())),
+  message: z.optional(z.string()),
+})
+
+/**
  * Rank price information for a packaging
  */
 export const zPackagingRankPrice = z.object({
@@ -852,14 +999,6 @@ export const zProductDetailResponse = z.object({
 })
 
 /**
- * Rank price item for a packaging (manual mode)
- */
-export const zProductPackagingRankPriceInput = z.object({
-  rank_id: z.int(),
-  price: z.number(),
-})
-
-/**
  * Packaging data (non-default). Default packaging is derived from product base info
  */
 export const zProductPackagingInput = z.object({
@@ -873,7 +1012,7 @@ export const zProductPackagingInput = z.object({
   is_rate_based: z.boolean(),
   selling_price: z.optional(z.union([z.int(), z.null()])),
   rank_prices: z.optional(
-    z.union([z.array(zProductPackagingRankPriceInput), z.null()]),
+    z.union([z.array(zPackagingRankPriceInput), z.null()]),
   ),
 })
 
@@ -1007,6 +1146,133 @@ export const zProductUnitsPaginatedResponse = z.object({
       links: z.optional(zUnitLinks),
     }),
   ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Quota Form Setting response model
+ */
+export const zQuotaFormSettingResponse = z.object({
+  id: z.optional(z.int()),
+  tenant_id: z.optional(z.string()),
+  greeting: z.optional(z.union([z.string(), z.null()])),
+  is_enable_delivery: z.optional(z.boolean()),
+  is_enable_delivery_method: z.optional(z.boolean()),
+  default_delivery_method: z.optional(
+    z.enum([
+      'monthly_25',
+      'monthly_10',
+      'net_30_from_delivery',
+      'net_30_from_invoice',
+      'end_of_month_next',
+      'end_of_month_after_next',
+    ]),
+  ),
+  is_enable_payment_due_date: z.optional(z.boolean()),
+  default_payment_due_date: z.optional(
+    z.enum([
+      'days_7',
+      'days_14',
+      'days_45',
+      'days_60',
+      'months_3',
+      'months_6',
+      'years_1',
+    ]),
+  ),
+  is_enable_expiration_date: z.optional(z.boolean()),
+  default_expiration_date: z.optional(z.union([z.iso.datetime(), z.null()])),
+  postal_code: z.optional(z.union([z.string(), z.null()])),
+  address: z.optional(z.union([z.string(), z.null()])),
+  company_name: z.optional(z.union([z.string(), z.null()])),
+  phone_number: z.optional(z.union([z.string(), z.null()])),
+  company_logo_image: z.optional(z.union([z.string(), z.null()])),
+  company_seal_image: z.optional(z.union([z.string(), z.null()])),
+  preview_image: z.optional(z.union([z.string(), z.null()])),
+  is_display_manager_seal: z.optional(z.union([z.boolean(), z.null()])),
+  consumption_tax: z.optional(z.enum(['exclusive', 'inclusive'])),
+  tax_rate: z.optional(z.union([z.int(), z.null()])),
+  formatted_tax_rate: z.optional(z.string()),
+  tax_rounding_method: z.optional(
+    z.enum(['round_down', 'round_up', 'round_nearest']),
+  ),
+  sale_price_rounding_method: z.optional(
+    z.enum(['round_down', 'round_up', 'round_nearest']),
+  ),
+  manager_name: z.optional(z.union([z.string(), z.null()])),
+  created_by: z.optional(z.union([z.int(), z.null()])),
+  updated_by: z.optional(z.union([z.int(), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+  author: z.optional(z.union([zCreatedBy, z.null()])),
+  editor: z.optional(z.union([zUpdatedBy, z.null()])),
+})
+
+/**
+ * Success response for getting quota form setting detail
+ */
+export const zQuotaFormSettingDetailResponse = z.object({
+  success: z.optional(z.boolean()),
+  data: z.optional(zQuotaFormSettingResponse),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Request payload for updating quota form setting
+ */
+export const zUpdateQuotaFormSettingRequest = z.object({
+  greeting: z.optional(z.union([z.string().max(1000), z.null()])),
+  is_enable_delivery: z.optional(z.union([z.boolean(), z.null()])),
+  is_enable_delivery_method: z.optional(z.union([z.boolean(), z.null()])),
+  default_delivery_method: z.optional(
+    z.enum([
+      'monthly_25',
+      'monthly_10',
+      'net_30_from_delivery',
+      'net_30_from_invoice',
+      'end_of_month_next',
+      'end_of_month_after_next',
+    ]),
+  ),
+  is_enable_payment_due_date: z.optional(z.union([z.boolean(), z.null()])),
+  default_payment_due_date: z.optional(
+    z.enum([
+      'days_7',
+      'days_14',
+      'days_45',
+      'days_60',
+      'months_3',
+      'months_6',
+      'years_1',
+    ]),
+  ),
+  is_enable_expiration_date: z.optional(z.union([z.boolean(), z.null()])),
+  default_expiration_date: z.optional(z.union([z.iso.date(), z.null()])),
+  postal_code: z.optional(z.union([z.string().max(20), z.null()])),
+  address: z.optional(z.union([z.string().max(255), z.null()])),
+  company_name: z.optional(z.union([z.string().max(255), z.null()])),
+  phone_number: z.optional(z.union([z.string().max(255), z.null()])),
+  company_logo_image: z.optional(z.union([z.string().max(255), z.null()])),
+  company_seal_image: z.optional(z.union([z.string().max(255), z.null()])),
+  preview_image: z.optional(z.union([z.string().max(255), z.null()])),
+  is_display_manager_seal: z.optional(z.union([z.boolean(), z.null()])),
+  consumption_tax: z.optional(z.enum(['exclusive', 'inclusive'])),
+  tax_rate: z.optional(z.union([z.int().gte(0).lte(100), z.null()])),
+  tax_rounding_method: z.optional(
+    z.enum(['round_down', 'round_up', 'round_nearest']),
+  ),
+  sale_price_rounding_method: z.optional(
+    z.enum(['round_down', 'round_up', 'round_nearest']),
+  ),
+  manager_name: z.optional(z.union([z.string().max(255), z.null()])),
+})
+
+/**
+ * Success response for updating quota form setting
+ */
+export const zUpdateQuotaFormSettingResponse = z.object({
+  success: z.optional(z.boolean()),
+  data: z.optional(zQuotaFormSettingResponse),
   message: z.optional(z.string()),
 })
 
@@ -2015,6 +2281,37 @@ export const zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Response = z.object({
   data: z.optional(zPost),
 })
 
+export const zPriceGroupControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int().gte(1)),
+      _per_page: z.optional(z.int().gte(1).lte(100)),
+      product_id: z.optional(z.int()),
+      q: z.optional(z.string().max(255)),
+      setting_method: z.optional(z.string()),
+      category_id: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * List retrieved
+ */
+export const zPriceGroupControllerIndexResponse = zPriceGroupListResponse
+
+export const zPriceGroupControllerUpdateData = z.object({
+  body: z.array(zPriceGroupUpdateItem),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Updated
+ */
+export const zPriceGroupControllerUpdateResponse = zPriceGroupUpdateResponse
+
 export const zProductControllerIndexData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -2371,6 +2668,34 @@ export const zProductUnitControllerUpdateResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zProductUnit),
 })
+
+export const zQuotaFormSettingControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota Form Setting detail retrieved successfully
+ */
+export const zQuotaFormSettingControllerShowResponse =
+  zQuotaFormSettingDetailResponse
+
+export const zE8Cee5325E3B2A7681582B13F1051D1Data = z.object({
+  body: zUpdateQuotaFormSettingRequest,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota Form Setting updated successfully
+ */
+export const zE8Cee5325E3B2A7681582B13F1051D1Response =
+  zUpdateQuotaFormSettingResponse
 
 export const zRankControllerIndexData = z.object({
   body: z.optional(z.never()),

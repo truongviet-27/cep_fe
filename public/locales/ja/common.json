@@ -42,12 +42,14 @@
     "suspend": "停止",
     "resume": "開始",
     "add_delivery_destination": "納品先追加",
-    "copy_contact_info": "取引先情報をコピーする"
+    "copy_contact_info": "取引先情報をコピーする",
+    "select_file": "ファイル"
   },
   "placeholders": {
     "partial_match": "部分一致",
     "select": "選択してください",
-    "file_url": "ファイルのURLを入力"
+    "file_url": "ファイルのURLを入力",
+    "please_choose_files": "ファイルを選択してください"
   },
   "notifications": {
     "success": "成功しました",
@@ -92,7 +94,7 @@
       "corporate_number": "法人番号"
     },
     "show": {
-      "show": "取引先編集",
+      "show": "取引先詳細",
       "basic_info": "基本情報",
       "address_contact": "住所・連絡先",
       "delivery_destinations": "納品先情報",
@@ -109,14 +111,18 @@
       "contact_department": "担当者部署",
       "contact_email": "担当者メール",
       "contact_phone": "担当者電話番号",
-      "accounting_contact": "経理者情報"
+      "accounting_contact": "経理者情報",
+      "corporate_research": "企業調査情報"
     },
     "research": {
       "document_name": "資料名",
       "judgement": "判定",
       "file": "ファイル",
       "updated_by": "登録者",
-      "last_updated": "最終更新日"
+      "last_updated": "最終更新日",
+      "modal": {
+        "title": "調査情報編集"
+      }
     },
     "fields": {
       "code": "取引先コード",
