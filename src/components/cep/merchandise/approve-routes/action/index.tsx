@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CloseOutlined, RightOutlined } from '@ant-design/icons'
+import {
+  CloseOutlined,
+  QuestionCircleFilled,
+  RightOutlined,
+} from '@ant-design/icons'
 import { Action } from '@components/common/action'
 import CoreAutoComplete from '@components/common/auto-complete'
 import CoreInput from '@components/common/core-input'
@@ -15,7 +19,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { PRIMARY, WHITE } from '@utility/color'
+import { GREY_TAG, PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -30,12 +34,13 @@ import {
   Select,
   Space,
   Spin,
+  Tooltip,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
-const { Title } = Typography
+const { Title, Text } = Typography
 
 type Form = {
   id: number
@@ -93,6 +98,7 @@ function ApproveAction() {
         value: true,
       },
     ],
+    // defaultValue: query.data?.data.departments.map((item: any) => item?.id),
     onSearch: (value) => {
       return [
         {
@@ -482,6 +488,22 @@ function ApproveAction() {
                                     }
                                   }}
                                 />
+                                <Text className="mr-2 ml-4">
+                                  社員を複数指定する
+                                </Text>
+                                <Tooltip
+                                  title="チェックを入れると、1つのステップに複数の承認者を追加できます。その場合、承認者のうち1人が承認すれば完了となります。"
+                                  color={'#E8E8E8'}
+                                  key={GREY_TAG}
+                                >
+                                  <QuestionCircleFilled
+                                    style={{
+                                      fontSize: 20,
+                                      color: '#767676',
+                                      marginTop: 1,
+                                    }}
+                                  />
+                                </Tooltip>
                               </Form.Item>
                             </Col>
                           </Row>

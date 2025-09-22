@@ -102,9 +102,15 @@ import type {
   E821554Cdf9A1C547Bbe990Db9Dc76Data,
   E821554Cdf9A1C547Bbe990Db9Dc76Responses,
   E821554Cdf9A1C547Bbe990Db9Dc76Errors,
+  ImportControllerGetTemplateData,
+  ImportControllerGetTemplateResponses,
+  ImportControllerGetTemplateErrors,
   ImportControllerImportData,
   ImportControllerImportResponses,
   ImportControllerImportErrors,
+  ImportControllerGetImportHistoryData,
+  ImportControllerGetImportHistoryResponses,
+  ImportControllerGetImportHistoryErrors,
   MailTemplateControllerShowByCodeData,
   MailTemplateControllerShowByCodeResponses,
   MailTemplateControllerShowByCodeErrors,
@@ -276,7 +282,9 @@ import {
   zEmployeeControllerShowData,
   zEmployeeControllerUpdateData,
   zE821554Cdf9A1C547Bbe990Db9Dc76Data,
+  zImportControllerGetTemplateData,
   zImportControllerImportData,
+  zImportControllerGetImportHistoryData,
   zMailTemplateControllerShowByCodeData,
   zMailTemplateControllerStoreData,
   zParameterSettingControllerIndexData,
@@ -1289,6 +1297,34 @@ export const e821554Cdf9A1C547Bbe990Db9Dc76 = <
 }
 
 /**
+ * Download CSV import template
+ * Download CSV template file with headers for import
+ */
+export const importControllerGetTemplate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ImportControllerGetTemplateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ImportControllerGetTemplateResponses,
+    ImportControllerGetTemplateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zImportControllerGetTemplateData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/csv-imports/{common_name}/template',
+    ...options,
+  })
+}
+
+/**
  * Import file data
  * Import CSV file data and perform actual insert/update operations using file_key from S3. File should be validated first using validate endpoint
  */
@@ -1315,6 +1351,34 @@ export const importControllerImport = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get import history list
+ * Get list of CSV import history with pagination and filtering
+ */
+export const importControllerGetImportHistory = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ImportControllerGetImportHistoryData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ImportControllerGetImportHistoryResponses,
+    ImportControllerGetImportHistoryErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zImportControllerGetImportHistoryData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/csv-imports/history',
+    ...options,
   })
 }
 

@@ -483,7 +483,50 @@
     }
   },
   "import_history": {
-    "import_history": "インポート履歴"
+    "import_history": "CSVタスク履歴",
+    "filters": {
+      "taskCode": "タスクコード",
+      "status": "ステータス",
+      "type": "種別",
+      "startDate": "開始日時",
+      "all": "全て",
+      "placeholders": {
+        "partialMatch": "部分一致",
+        "select": "選択してください"
+      }
+    },
+    "table": {
+      "headers": {
+        "taskCode": "タスクコード",
+        "status": "ステータス",
+        "type": "種別",
+        "creator": "登録者",
+        "startDate": "開始日時",
+        "endDate": "終了日時",
+        "result": "結果",
+        "create": "登録",
+        "update": "更新",
+        "error": "エラー",
+        "dataCount": "データ数",
+        "errorResult": "エラー結果"
+      }
+    },
+    "text": {
+      "status": {
+        "PENDING": "保留中",
+        "PROCESSING": "処理中",
+        "COMPLETED": "成功",
+        "FAILED": "エラー"
+      },
+      "category": {
+        "PRODUCTS": "製品",
+        "CATEGORY_PRODUCTS": "製品カテゴリー",
+        "CUSTOMERS": "顧客",
+        "DEPARTMENTS": "部門",
+        "OTHER": "その他"
+      },
+      "error": "処理が途中で失敗しました"
+    }
   },
   "system_config": {
     "system_config": "システム設定",
@@ -715,5 +758,8 @@
       "nextStep": "次へ",
       "cancel": "キャンセル"
     }
+  },
+  "tenant_settings": {
+    "tenant_settings": "見積フォーム設定"
   }
 }
