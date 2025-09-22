@@ -102,9 +102,15 @@ import type {
   E821554Cdf9A1C547Bbe990Db9Dc76Data,
   E821554Cdf9A1C547Bbe990Db9Dc76Responses,
   E821554Cdf9A1C547Bbe990Db9Dc76Errors,
+  ImportControllerGetTemplateData,
+  ImportControllerGetTemplateResponses,
+  ImportControllerGetTemplateErrors,
   ImportControllerImportData,
   ImportControllerImportResponses,
   ImportControllerImportErrors,
+  ImportControllerGetImportHistoryData,
+  ImportControllerGetImportHistoryResponses,
+  ImportControllerGetImportHistoryErrors,
   MailTemplateControllerShowByCodeData,
   MailTemplateControllerShowByCodeResponses,
   MailTemplateControllerShowByCodeErrors,
@@ -133,6 +139,12 @@ import type {
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Responses,
   Ddd0B8D0A4Fbdc804Fe40999F5Eb58E8Errors,
+  PriceGroupControllerIndexData,
+  PriceGroupControllerIndexResponses,
+  PriceGroupControllerIndexErrors,
+  PriceGroupControllerUpdateData,
+  PriceGroupControllerUpdateResponses,
+  PriceGroupControllerUpdateErrors,
   ProductControllerIndexData,
   ProductControllerIndexResponses,
   ProductControllerIndexErrors,
@@ -190,6 +202,12 @@ import type {
   ProductUnitControllerUpdateData,
   ProductUnitControllerUpdateResponses,
   ProductUnitControllerUpdateErrors,
+  QuotaFormSettingControllerShowData,
+  QuotaFormSettingControllerShowResponses,
+  QuotaFormSettingControllerShowErrors,
+  E8Cee5325E3B2A7681582B13F1051D1Data,
+  E8Cee5325E3B2A7681582B13F1051D1Responses,
+  E8Cee5325E3B2A7681582B13F1051D1Errors,
   RankControllerIndexData,
   RankControllerIndexResponses,
   RankControllerIndexErrors,
@@ -264,7 +282,9 @@ import {
   zEmployeeControllerShowData,
   zEmployeeControllerUpdateData,
   zE821554Cdf9A1C547Bbe990Db9Dc76Data,
+  zImportControllerGetTemplateData,
   zImportControllerImportData,
+  zImportControllerGetImportHistoryData,
   zMailTemplateControllerShowByCodeData,
   zMailTemplateControllerStoreData,
   zParameterSettingControllerIndexData,
@@ -275,6 +295,8 @@ import {
   zAcb89614Ac12565Ecf7396Ba321Eb3Data,
   zDdb2E25Ff33D718A9Addfb6Da6D01259Data,
   zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
+  zPriceGroupControllerIndexData,
+  zPriceGroupControllerUpdateData,
   zProductControllerIndexData,
   zE475E7Ead1848Aa17C399Ba311C51Data,
   zProductControllerDestroyData,
@@ -294,6 +316,8 @@ import {
   zProductUnitControllerDestroyData,
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
+  zQuotaFormSettingControllerShowData,
+  zE8Cee5325E3B2A7681582B13F1051D1Data,
   zRankControllerIndexData,
   zRankControllerStoreData,
   zRankControllerDestroyData,
@@ -1273,6 +1297,34 @@ export const e821554Cdf9A1C547Bbe990Db9Dc76 = <
 }
 
 /**
+ * Download CSV import template
+ * Download CSV template file with headers for import
+ */
+export const importControllerGetTemplate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ImportControllerGetTemplateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ImportControllerGetTemplateResponses,
+    ImportControllerGetTemplateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zImportControllerGetTemplateData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/csv-imports/{common_name}/template',
+    ...options,
+  })
+}
+
+/**
  * Import file data
  * Import CSV file data and perform actual insert/update operations using file_key from S3. File should be validated first using validate endpoint
  */
@@ -1299,6 +1351,34 @@ export const importControllerImport = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get import history list
+ * Get list of CSV import history with pagination and filtering
+ */
+export const importControllerGetImportHistory = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ImportControllerGetImportHistoryData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ImportControllerGetImportHistoryResponses,
+    ImportControllerGetImportHistoryErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zImportControllerGetImportHistoryData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/csv-imports/history',
+    ...options,
   })
 }
 
@@ -1590,6 +1670,64 @@ export const ddd0B8D0A4Fbdc804Fe40999F5Eb58E8 = <
       },
     ],
     url: '/api/v1/posts/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * List price groups (product packagings with rank prices)
+ * Returns a non-paginated list of product packagings with rank-based prices. Supports simple filtering.
+ */
+export const priceGroupControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<PriceGroupControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    PriceGroupControllerIndexResponses,
+    PriceGroupControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zPriceGroupControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/price-groups',
+    ...options,
+  })
+}
+
+/**
+ * Bulk update packaging prices per rank
+ * Update rank-based prices for multiple packagings. When is_rate_based is true, prices are recalculated from selling_price * rank.rate; otherwise, explicit ranks_prices are applied.
+ */
+export const priceGroupControllerUpdate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PriceGroupControllerUpdateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PriceGroupControllerUpdateResponses,
+    PriceGroupControllerUpdateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zPriceGroupControllerUpdateData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/price-groups',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2129,6 +2267,66 @@ export const productUnitControllerUpdate = <
       },
     ],
     url: '/api/v1/product-units/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Get quota form setting detail
+ * Retrieve a specific quota form setting by its ID
+ */
+export const quotaFormSettingControllerShow = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaFormSettingControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaFormSettingControllerShowResponses,
+    QuotaFormSettingControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaFormSettingControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota-form-settings/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Update quota form setting
+ * Update an existing quota form setting with new configuration values
+ */
+export const e8Cee5325E3B2A7681582B13F1051D1 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<E8Cee5325E3B2A7681582B13F1051D1Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    E8Cee5325E3B2A7681582B13F1051D1Responses,
+    E8Cee5325E3B2A7681582B13F1051D1Errors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zE8Cee5325E3B2A7681582B13F1051D1Data.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota-form-settings/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',

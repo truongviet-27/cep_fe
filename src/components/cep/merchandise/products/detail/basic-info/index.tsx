@@ -52,13 +52,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                 <div className="w-[150px] text-left font-bold">
                   {t('products.fields.category')}
                 </div>
-                <div>{product.category}</div>
+                <div>{product?.category?.category_path}</div>
               </Flex>
               <Flex>
                 <div className="w-[150px] text-left font-bold">
                   {t('products.fields.unit')}
                 </div>
-                <div>{product.unit}</div>
+                <div>{product?.unit?.name}</div>
               </Flex>
               <Flex>
                 <div className="w-[150px] text-left font-bold">
