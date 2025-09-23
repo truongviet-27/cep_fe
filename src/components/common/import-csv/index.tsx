@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import {
   DownloadOutlined,
   FileAddOutlined,
@@ -19,8 +20,8 @@ import Title from 'antd/lib/typography/Title'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
-
 import LoadingImport from '@/assets/svg/loading.svg'
+import { axiosInstance } from '@rest-data-provider/utils'
 
 const { Text, Paragraph } = Typography
 
@@ -40,6 +41,26 @@ function ImportCsv({
   const { mutate: mutate2 } = useCustomMutation()
 
   const apiUrl = useApiUrl()
+
+  const handleDownload = async () => {
+    const response = await axiosInstance.get(
+      `${apiUrl}/csv-imports/${name}/template`,
+      {
+        responseType: 'blob',
+      },
+    )
+
+    if (!response?.data) return
+
+    const url = URL.createObjectURL(response.data)
+    const downloadLink = document.createElement('a')
+    document.body.appendChild(downloadLink)
+    downloadLink.href = url
+    downloadLink.target = '_self'
+    downloadLink.download = 'example'
+    downloadLink.click()
+    document.body.removeChild(downloadLink)
+  }
 
   useEffect(() => {
     if (isResult) {
@@ -132,7 +153,7 @@ function ImportCsv({
                   marginTop: 20,
                 }}
               >
-                CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。
+                {t('csv.step_1.result.title')}
               </Text>
 
               <Link
@@ -143,7 +164,7 @@ function ImportCsv({
                   marginBottom: 24,
                 }}
               >
-                CSVタスク履歴画面
+                {t('csv.step_1.result.redirect')}
               </Link>
             </div>
           </Card>
@@ -167,6 +188,7 @@ function ImportCsv({
                 type="link"
                 icon={<DownloadOutlined />}
                 style={{ paddingLeft: 0 }}
+                onClick={handleDownload}
               >
                 {t('csv.step_1.downloadButton')}
               </Button>
