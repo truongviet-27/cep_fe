@@ -19,6 +19,8 @@ function DeliveryDestinations(
 
   const [index, setIndex] = React.useState(0)
 
+  const code = Form.useWatch('customer_code', form)
+
   return (
     <Collapse
       expandIconPosition="end"
@@ -37,7 +39,7 @@ function DeliveryDestinations(
         }
         key="1"
       >
-        <Form.List name="delivery_destinations">
+        <Form.List name="delivery_addresses">
           {(fields, { add, remove }) => (
             <Space
               size={20}
@@ -174,11 +176,11 @@ function DeliveryDestinations(
               <Button
                 type="primary"
                 onClick={() => {
-                  if (!form.getFieldValue('customer_code')) {
+                  if (!code) {
                     form.focusField('customer_code')
                   } else {
                     add({
-                      code: form.getFieldValue('customer_code') + '-' + index,
+                      code: code + '-' + index,
                     })
                   }
                   setIndex(index + 1)

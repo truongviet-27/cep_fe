@@ -57,7 +57,9 @@
     "deleteSuccess": "削除しました",
     "deleteError": "削除に失敗しました",
     "createSuccess": "登録しました",
-    "error": "Error"
+    "error": "エラー",
+    "editError": "編集エラー",
+    "createError": "作成エラー"
   },
   "menu": {
     "dashboard": "ダッシュボード",

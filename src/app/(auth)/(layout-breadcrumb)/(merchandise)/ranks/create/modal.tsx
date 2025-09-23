@@ -20,23 +20,38 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
 
   const { close } = modalProps
 
+  const handleFinish = async (values: any) => {
+    const result = await formProps.onFinish?.(values)
+    form.resetFields()
+    close()
+    return result
+  }
+
   return (
     <Create
       {...formProps}
       isLoading={formLoading}
       saveButtonProps={saveButtonProps}
-      contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
       title={<></>}
       i18nHeading={'code_issue_settings.edit.edit'}
+      contentProps={{ style: { boxShadow: 'none' } }}
+      rightFooterButtons={
+        <Space className={'flex w-full justify-end'}>
+          <Button onClick={close}>{t('buttons.cancel')}</Button>
+          <CreateButton {...saveButtonProps} type="primary" icon={null}>
+            {t('products.buttons.save')}
+          </CreateButton>
+        </Space>
+      }
+      hiddenButtonBack
     >
       <Form
         {...formProps}
-        form={form}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
         colon={false}
-        onFinish={close}
+        onFinish={handleFinish}
       >
         <Form.Item
           label={boldText(t('ranks.fields.code'))}
@@ -70,13 +85,6 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           <Input multiple />
         </Form.Item>
       </Form>
-
-      <Space className={'flex w-full justify-end'}>
-        <Button onClick={close}>{t('buttons.cancel')}</Button>
-        <CreateButton {...saveButtonProps} type="primary">
-          {t('products.buttons.save')}
-        </CreateButton>
-      </Space>
     </Create>
   )
 }
