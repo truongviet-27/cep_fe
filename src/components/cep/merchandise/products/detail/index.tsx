@@ -37,7 +37,7 @@ const ProductDetailContainer: React.FC = () => {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('商品詳細')}
+                  {t('products.detail.title')}
                 </Title>
               ),
             },
@@ -47,7 +47,7 @@ const ProductDetailContainer: React.FC = () => {
       }
       title={
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('商品詳細')}
+          {t('products.detail.title')}
         </Title>
       }
     >
