@@ -27,7 +27,7 @@ const authProvider: AuthProvider = {
     }
 
     if (error?.response?.status === 403) {
-      return { success: false, redirectTo: '/not-found' }
+      return { redirectTo: '/not-found' }
     }
 
     return { error }

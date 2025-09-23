@@ -3,19 +3,19 @@ import { useApiUrl, useCreate, useCustom, useTranslate } from '@refinedev/core'
 import type {
   CodeIssueSetting,
   CustomerStoreRequest,
-  Department,
+  CustomerUpdateRequest,
 } from '@sdk/hey-api/types.gen'
 import { zCustomerStoreRequest } from '@sdk/hey-api/zod.gen'
 import { createSchemaFieldRule } from 'antd-zod'
 
 export const useCustomerEdit = () => {
   const t = useTranslate()
-  const { formProps, saveButtonProps, form } = useForm<Department>({
+  const { formProps, saveButtonProps, form } = useForm({
     action: 'edit',
     redirect: 'show',
   })
 
-  const { mutate, isLoading } = useCreate<CustomerStoreRequest>()
+  const { mutate, isLoading } = useCreate<CustomerUpdateRequest>()
 
   const apiUrl = useApiUrl()
 

@@ -1,25 +1,32 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Divider, Form, Input, Space } from 'antd'
+import { Button, Divider, Form, Input, Space, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
+import boldText from '@utility/bold-text'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 
 type Props = {
   modalProps: any
+  isShow?: boolean
 }
 
-export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
+export const RankModalEdit: React.FC<Props> = ({
+  modalProps,
+  isShow = false,
+}) => {
   const t = useTranslate()
   const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
     modalProps
 
   const record = queryResult?.data?.data
 
-  const issueMethod = Form.useWatch('issue_method', formProps.form)
-  const isManual = issueMethod === 'manual'
+  const getFieldData = (name: string) => (
+    <Typography.Text>{form.getFieldValue(name)}</Typography.Text>
+  )
 
   return (
     <Edit
@@ -32,42 +39,41 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
     >
       <Form
         {...formProps}
-        initialValues={record}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
         colon={false}
       >
         <Form.Item
-          label={t('ranks.fields.code')}
+          label={boldText(t('ranks.fields.code'))}
           name="code"
           rules={[{ required: true }]}
         >
-          <Input />
+          {isShow ? getFieldData('code') : <Input />}
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.name')}
+          label={boldText(t('ranks.fields.name'))}
           name="name"
           rules={[{ required: true }]}
         >
-          <Input />
+          {isShow ? getFieldData('name') : <Input />}
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.rate')}
+          label={boldText(t('ranks.fields.rate'))}
           name="rate"
           rules={[{ required: true }]}
         >
-          <Input />
+          {isShow ? getFieldData('rate') : <Input />}
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.remarks')}
-          name="remarks"
+          label={boldText(t('ranks.fields.remarks'))}
+          name="note"
           rules={[{ required: true }]}
         >
-          <Input multiple />
+          {isShow ? getFieldData('note') : <Input multiple />}
         </Form.Item>
 
         <Divider />
@@ -80,7 +86,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.author?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
+                  dayjs(record?.created_at).format(FORMAT_DATE_TIME),
             },
             {
               title: t('common.updated_by'),
@@ -88,7 +94,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.editor?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
+                  dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
             },
           ]}
         />

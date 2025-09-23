@@ -80,9 +80,7 @@ function useTags() {
       ),
     },
     {
-      title: (
-        <Title level={5}>{t('product_categories.product_categories')}</Title>
-      ),
+      title: <Title level={5}>{t('tags.tags')}</Title>,
     },
   ]
 

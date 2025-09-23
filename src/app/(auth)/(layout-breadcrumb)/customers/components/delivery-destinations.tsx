@@ -15,7 +15,11 @@ const { Panel } = Collapse
 function DeliveryDestinations(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
-  const { t, rule } = props
+  const { t, rule, form } = props
+
+  const [index, setIndex] = React.useState(0)
+
+  const code = Form.useWatch('customer_code', form)
 
   return (
     <Collapse
@@ -35,7 +39,7 @@ function DeliveryDestinations(
         }
         key="1"
       >
-        <Form.List name="delivery_destinations">
+        <Form.List name="delivery_addresses">
           {(fields, { add, remove }) => (
             <Space
               size={20}
@@ -171,7 +175,16 @@ function DeliveryDestinations(
               />
               <Button
                 type="primary"
-                onClick={() => add()}
+                onClick={() => {
+                  if (!code) {
+                    form.focusField('customer_code')
+                  } else {
+                    add({
+                      code: code + '-' + index,
+                    })
+                  }
+                  setIndex(index + 1)
+                }}
                 className="float-right mt-4"
               >
                 {t('buttons.add_delivery_destination')}
