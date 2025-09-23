@@ -159,6 +159,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             ]}
           >
             <ProductCategoryDropdown
+              defaultValue={form.getFieldValue('category')}
               valueOnly={allowShowForm}
               placeholder="選択してください"
               onSelect={handleChooseCategory}
