@@ -64,7 +64,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: 'This field is required',
+                message: t('validation.required'),
               },
             ]}
           />
@@ -80,7 +80,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 onClick={handleAutoNumber}
                 loading={loadingPd}
               >
-                自動採番
+                {t('products.buttons.autoNumbering')}
               </Button>
 
               <Button
@@ -91,7 +91,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   show(codeIssueSetting?.data.id)
                 }}
               >
-                コード採番設定はこちら
+                {t('products.codeNumberingSettings')}
               </Button>
             </div>
           </div>
@@ -108,7 +108,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: 'This field is required',
+                message: t('validation.required'),
               },
             ]}
           />
@@ -154,7 +154,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: 'This field is required',
+                message: t('validation.required'),
               },
             ]}
           >
@@ -177,7 +177,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               margin: '4px 0 0 40px',
             }}
           >
-            新規登録
+            {t('products.newRegistration')}
           </Button>
         </Col>
       </Row>
@@ -196,7 +196,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: 'This field is required',
+                message: t('validation.required'),
               },
             ]}
           >
@@ -208,7 +208,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 notFoundContent={
                   isFetchingProductUnits ? <Spin size="small" /> : <Empty />
                 }
-                placeholder="選択してください"
+                placeholder={t('products.pleaseSelect')}
                 options={isFetchingProductUnits ? [] : productUnitOptions}
                 suffixIcon={<CaretDownOutlined />}
                 onSelect={(_, option) => {
@@ -233,7 +233,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: 'This field is required',
+                message: t('validation.required'),
               },
             ]}
             style={{
@@ -255,7 +255,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: 'This field is required',
+                message: t('validation.required'),
               },
             ]}
             style={{
@@ -310,7 +310,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
         width={'25vw'}
-        title={t('商品カテゴリ編集')}
+        title={t('products.productCategoryEdit')}
         footer={null}
       >
         <ProductCategoryModal modalProps={modalFormCategory} />
