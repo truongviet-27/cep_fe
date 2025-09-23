@@ -69,9 +69,6 @@ function ImportHistory() {
                 showSearch
                 placeholder={t('approve_routes.filters.selectPlaceholder')}
               >
-                <Select.Option value="PENDING">
-                  {t('import_history.text.status.PENDING')}
-                </Select.Option>
                 <Select.Option value="PROCESSING">
                   {t('import_history.text.status.PROCESSING')}
                 </Select.Option>
@@ -147,7 +144,9 @@ function ImportHistory() {
               <Button type="primary" htmlType="submit">
                 {t('buttons.search')}
               </Button>
-              <Button onClick={onReset}>{t('buttons.back')}</Button>
+              <Button variant="outlined" onClick={onReset}>
+                {t('buttons.back')}
+              </Button>
             </div>
           </Col>
         </Row>

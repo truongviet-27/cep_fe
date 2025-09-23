@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useTable } from '@refinedev/antd'
 import type { CrudFilters } from '@refinedev/core'
-import { useTranslate } from '@refinedev/core'
+import { useGo, useTranslate } from '@refinedev/core'
 import { GREEN, GREY_TAG, PRIMARY, RED } from '@utility/color'
-import { Tag, Typography } from 'antd'
+import { Button, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
@@ -12,7 +12,7 @@ const { Text } = Typography
 
 function useImportHistory() {
   const t = useTranslate()
-
+  const go = useGo()
   const { tableProps, searchFormProps, setFilters } = useTable({
     syncWithLocation: true,
     resource: 'csv-imports/history',
@@ -72,10 +72,10 @@ function useImportHistory() {
     return {
       PENDING: {
         color: GREY_TAG,
-        text: t('import_history.text.status.PENDING'),
+        text: t('import_history.text.status.PROCESSING'),
       },
       PROCESSING: {
-        color: GREEN,
+        color: GREY_TAG,
         text: t('import_history.text.status.PROCESSING'),
       },
       COMPLETED: {
@@ -217,20 +217,30 @@ function useImportHistory() {
         },
       },
       {
-        key: 'errorFile',
-        dataIndex: 'errorFile',
+        key: 'url_file_failed',
+        dataIndex: 'url_file_failed',
         title: t('import_history.table.headers.errorResult'),
         render(value) {
-          return (
-            value ?? (
-              <Text
-                style={{
-                  color: RED,
-                }}
-              >
-                {t('import_history.text.error')}
-              </Text>
-            )
+          return value ? (
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={() => {
+                go({
+                  to: value,
+                })
+              }}
+            >
+              ダウンロード
+            </Button>
+          ) : (
+            <Text
+              style={{
+                color: RED,
+              }}
+            >
+              {t('import_history.text.error')}
+            </Text>
           )
         },
       },
