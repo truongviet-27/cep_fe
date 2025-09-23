@@ -7,7 +7,7 @@ import { Form, Image, Upload } from 'antd'
 import type { RcFile } from 'antd/es/upload'
 import axios from 'axios'
 import ImageNext from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
 const getBase64 = (file: FileType): Promise<string> =>
@@ -18,7 +18,13 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onerror = (error) => reject(error)
   })
 
-function UploadSetting({ name }: { name: string }) {
+function UploadSetting({
+  name,
+  fileListProp,
+}: {
+  name: string
+  fileListProp: UploadFile[] | null
+}) {
   const form = Form.useFormInstance()
 
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -57,10 +63,8 @@ function UploadSetting({ name }: { name: string }) {
                 },
               })
               .then(() => {
-                form.setFieldValue(name, {
-                  file_key: data.data.file_key,
-                  file: file,
-                })
+                form.setFieldValue(name, file)
+                form.setFieldValue(`${name}_file_key`, data.data.file_key)
                 setFileList(fileList)
               })
               .catch((error) => {
@@ -71,22 +75,26 @@ function UploadSetting({ name }: { name: string }) {
       )
     } else {
       form.setFieldValue(name, null)
+      form.setFieldValue(`${name}_file_key`, null)
       setFileList([])
     }
   }
+
+  useEffect(() => {
+    if (fileListProp) {
+      setFileList(fileListProp)
+    }
+  }, [fileListProp])
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as RcFile)
     }
 
-    console.log(file, 'filefile')
-
     setPreviewImage(file.url || (file.preview as string))
     setPreviewOpen(true)
   }
 
-  console.log(previewImage, 'previewImage')
   return (
     <div>
       <Upload

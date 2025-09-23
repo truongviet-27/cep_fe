@@ -22,8 +22,9 @@ function Right() {
   const t = useTranslate()
   const form = Form.useFormInstance()
 
-  const watchCompanySealImage = Form.useWatch('company_seal_image', form)?.file
-  const watchCompanyLogoImage = Form.useWatch('company_logo_image', form)?.file
+  const watchCompanyLogoImage = Form.useWatch('company_logo_image', form)
+  const watchCompanySealImage = Form.useWatch('company_seal_image', form)
+
   const watchAddress = Form.useWatch('address', form)
   const watchPhone = Form.useWatch('phone_number', form)
   const watchCompanyName = Form.useWatch('company_name', form)
@@ -36,14 +37,28 @@ function Right() {
             <Text strong>{t('tenant_settings.companyLogo.label')}</Text>
           </div>
           <div className="flex flex-1 content-center items-center">
-            <div className="w-3/4 content-center px-4">
+            <div className="flex w-3/4 content-center items-center px-4">
+              {watchCompanyLogoImage &&
+                !form.getFieldValue('company_logo_image_file_key') && (
+                  <div className="mr-4 rounded-lg border border-[#d9d9d9] p-2">
+                    <Image
+                      src={watchCompanyLogoImage}
+                      alt="watchCompanySealImage"
+                      width={84}
+                      height={84}
+                    />
+                  </div>
+                )}
               <Form.Item
                 name="company_logo_image"
                 style={{
                   margin: 0,
                 }}
               >
-                <UploadSetting name={'company_logo_image'} />
+                <UploadSetting
+                  name={'company_logo_image'}
+                  fileListProp={null}
+                />
               </Form.Item>
             </div>
 
@@ -64,14 +79,28 @@ function Right() {
             <Text strong>{t('tenant_settings.companySeal.label')}</Text>
           </div>
           <div className="flex flex-1 content-center items-center">
-            <div className="w-3/4 content-center px-4">
+            <div className="flex w-3/4 content-center items-center px-4">
+              {watchCompanySealImage &&
+                !form.getFieldValue('company_seal_image_file_key') && (
+                  <div className="mr-4 rounded-lg border border-[#d9d9d9] p-2">
+                    <Image
+                      src={watchCompanySealImage}
+                      alt="watchCompanySealImage"
+                      width={84}
+                      height={84}
+                    />
+                  </div>
+                )}
               <Form.Item
                 name="company_seal_image"
                 style={{
                   margin: 0,
                 }}
               >
-                <UploadSetting name={'company_seal_image'} />
+                <UploadSetting
+                  name={'company_seal_image'}
+                  fileListProp={null}
+                />
               </Form.Item>
             </div>
 
@@ -87,7 +116,7 @@ function Right() {
           </div>
         </div>
 
-        <div className="flex min-h-[200px] border-b-[1px] border-solid border-[#D0D0D0]">
+        <div className="flex min-h-[250px] border-b-[1px] border-solid border-[#D0D0D0]">
           <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
             <Text strong>{t('tenant_settings.preview.title')}</Text>
           </div>
@@ -98,28 +127,41 @@ function Right() {
                 marginBottom: 0,
               }}
             >
-              <div className="relative my-4 min-h-[150px] rounded-lg border border-solid border-[#ccc] p-4">
+              <div className="relative my-4 min-h-[200px] rounded-lg border border-solid border-[#ccc] p-4">
                 {watchCompanyLogoImage && (
                   <div className="mb-4">
                     <Image
-                      src={URL.createObjectURL(watchCompanyLogoImage ?? '')}
+                      src={
+                        watchCompanyLogoImage instanceof File
+                          ? URL.createObjectURL(watchCompanyLogoImage)
+                          : watchCompanyLogoImage
+                      }
                       alt="preview"
                       width={50}
                       height={50}
                       style={{
                         marginLeft: 'auto',
+                        marginRight: 40,
+                        borderRadius: 8,
                       }}
                     />
                   </div>
                 )}
 
                 {watchCompanySealImage && (
-                  <div className="absolute top-1/2 right-5">
+                  <div className="absolute top-2/5 right-5">
                     <Image
-                      src={URL.createObjectURL(watchCompanySealImage ?? '')}
+                      src={
+                        watchCompanySealImage instanceof File
+                          ? URL.createObjectURL(watchCompanySealImage)
+                          : watchCompanySealImage
+                      }
                       alt="preview"
-                      width={60}
-                      height={60}
+                      width={100}
+                      height={100}
+                      style={{
+                        borderRadius: 8,
+                      }}
                     />
                   </div>
                 )}

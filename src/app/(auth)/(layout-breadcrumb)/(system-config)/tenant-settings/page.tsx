@@ -7,33 +7,59 @@ import Right from '@components/cep/system-config/tenant-setting/components/Right
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useTranslate,
+} from '@refinedev/core'
+import type { QuotaFormSettingResponse } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Row, Space, Typography } from 'antd'
+import { useEffect } from 'react'
 
 const { Title } = Typography
 
+type FormType = QuotaFormSettingResponse & {
+  company_logo_image_file_key: string | null
+  company_seal_image_file_key: string | null
+}
+
 function Page() {
   const t = useTranslate()
-  const { formProps, saveButtonProps } = useForm()
+  const { formProps, saveButtonProps, form } = useForm<FormType>()
   const apiUrl = useApiUrl()
 
-  const { data } = useCustom({
+  const { mutate, isPending } = useCustomMutation()
+
+  const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
-    url: `${apiUrl}/api/v1/quota-form-settings`,
+    url: `${apiUrl}/quota-form-settings`,
   })
 
   const handleFinish = (values: any) => {
-    const customValues = {
+    const customValues: QuotaFormSettingResponse = {
       ...values,
-      updatedAt: new Date().toISOString(),
+      id: form.getFieldValue('id'),
+      company_logo_image: form.getFieldValue('company_logo_image_file_key'),
+      company_seal_image: form.getFieldValue('company_seal_image_file_key'),
     }
-    formProps.onFinish?.(customValues)
+    mutate({
+      method: 'put',
+      url: `${apiUrl}/quota-form-settings/${form.getFieldValue('id')}`,
+      values: customValues,
+    })
   }
+
+  useEffect(() => {
+    if (data?.data) {
+      form.setFieldsValue(data.data)
+    }
+  }, [data])
 
   return (
     <Create
-      isLoading={false}
+      isLoading={isFetching}
       title={
         <Breadcrumbs
           items={[
@@ -62,18 +88,18 @@ function Page() {
           <Button type="default" size="large">
             {'プレビュー'}
           </Button>
-          <Button type="primary" size="large" {...saveButtonProps}>
+          <Button
+            type="primary"
+            size="large"
+            {...saveButtonProps}
+            loading={isPending}
+          >
             {t('buttons.save')}
           </Button>
         </Space>
       }
     >
-      <Form
-        initialValues={data?.data}
-        {...formProps}
-        layout="vertical"
-        onFinish={handleFinish}
-      >
+      <Form {...formProps} layout="vertical" onFinish={handleFinish}>
         <Row gutter={[16, 16]}>
           {/* Left Column */}
           <Left />

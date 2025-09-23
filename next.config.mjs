@@ -10,7 +10,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'img.icons8.com',
+        hostname: 'dev-cep-erp-private.s3.ap-northeast-1.amazonaws.com',
         pathname: '/**',
       },
     ],

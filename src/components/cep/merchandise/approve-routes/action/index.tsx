@@ -189,8 +189,6 @@ function ApproveAction() {
     }
   }
 
-  console.log(form.getFieldsValue(), 'getFieldsValue')
-
   return (
     <PageContainer
       breadcrumbs={
@@ -347,8 +345,6 @@ function ApproveAction() {
                       ...(optionFromDp2 ?? []),
                       ...optionsFromDp,
                     ]
-
-                    console.log(newOptions, 'newOptions')
 
                     return newOptions
                   })()}

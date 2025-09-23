@@ -236,7 +236,6 @@ function ImportCsv({
                 maxCount={1}
                 beforeUpload={() => false}
                 onRemove={() => {
-                  console.log('xxxxxxxxxxxxxxx')
                   form.setFields([{ name: 'file', errors: [], value: [] }])
                 }}
               >
