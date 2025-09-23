@@ -19,15 +19,6 @@ function useImportHistory() {
     onSearch: (data: any) => {
       setFilters([], 'replace')
       const filters = [] as CrudFilters
-
-      if (data.q) {
-        filters.push({
-          field: 'q',
-          operator: 'contains',
-          value: data.q,
-        })
-      }
-
       if (data.common_name) {
         filters.push({
           field: 'common_name',
@@ -41,6 +32,35 @@ function useImportHistory() {
           field: 'status',
           operator: 'eq',
           value: data.status,
+        })
+      }
+
+      if (data.id) {
+        filters.push({
+          field: 'id',
+          operator: 'eq',
+          value: data.id,
+        })
+      }
+
+      if (data.created_by) {
+        filters.push({
+          field: 'created_by',
+          operator: 'eq',
+          value: data.created_by,
+        })
+      }
+      if (data.date) {
+        const [start, end] = data.date
+        filters.push({
+          field: 'start_date',
+          operator: 'eq',
+          value: dayjs(start).format('YYYY-MM-DD'),
+        })
+        filters.push({
+          field: 'end_date',
+          operator: 'eq',
+          value: dayjs(end).format('YYYY-MM-DD'),
         })
       }
 
@@ -110,8 +130,8 @@ function useImportHistory() {
         },
       },
       {
-        key: 'createdBy',
-        dataIndex: 'createdBy',
+        key: 'created_by',
+        dataIndex: 'created_by',
         title: t('import_history.table.headers.creator'),
       },
       {

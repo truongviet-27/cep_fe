@@ -1,0 +1,281 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client'
+import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
+import { useTranslate } from '@refinedev/core'
+import {
+  Checkbox,
+  Col,
+  Flex,
+  Form,
+  InputNumber,
+  Radio,
+  Select,
+  Space,
+  Typography,
+} from 'antd'
+import Image from 'next/image'
+
+const { Text } = Typography
+const { Group } = Radio
+
+function Right() {
+  const t = useTranslate()
+  const form = Form.useFormInstance()
+
+  const watchCompanySealImage = Form.useWatch('company_seal_image', form)?.file
+  const watchCompanyLogoImage = Form.useWatch('company_logo_image', form)?.file
+  const watchAddress = Form.useWatch('address', form)
+  const watchPhone = Form.useWatch('phone_number', form)
+  const watchCompanyName = Form.useWatch('company_name', form)
+
+  return (
+    <Col xs={24} xxl={12}>
+      <div className="rounded-lg border border-[#D0D0D0]">
+        <div className="flex h-[120px] border-b-[1px] border-solid border-[#D0D0D0]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
+            <Text strong>{t('tenant_settings.companyLogo.label')}</Text>
+          </div>
+          <div className="flex flex-1 content-center items-center">
+            <div className="w-3/4 content-center px-4">
+              <Form.Item
+                name="company_logo_image"
+                style={{
+                  margin: 0,
+                }}
+              >
+                <UploadSetting name={'company_logo_image'} />
+              </Form.Item>
+            </div>
+
+            <Form.Item
+              style={{
+                marginBottom: 0,
+                scale: 1.3,
+                padding: '0 40px',
+              }}
+            >
+              <Checkbox>{t('tenant_settings.hide')}</Checkbox>
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="flex h-[120px] border-b-[1px] border-solid border-[#D0D0D0]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
+            <Text strong>{t('tenant_settings.companySeal.label')}</Text>
+          </div>
+          <div className="flex flex-1 content-center items-center">
+            <div className="w-3/4 content-center px-4">
+              <Form.Item
+                name="company_seal_image"
+                style={{
+                  margin: 0,
+                }}
+              >
+                <UploadSetting name={'company_seal_image'} />
+              </Form.Item>
+            </div>
+
+            <Form.Item
+              style={{
+                marginBottom: 0,
+                scale: 1.3,
+                padding: '0 40px',
+              }}
+            >
+              <Checkbox>{t('tenant_settings.hide')}</Checkbox>
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="flex min-h-[200px] border-b-[1px] border-solid border-[#D0D0D0]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
+            <Text strong>{t('tenant_settings.preview.title')}</Text>
+          </div>
+          <div className="flex-1 content-center px-4">
+            <Form.Item
+              name="preview_image"
+              style={{
+                marginBottom: 0,
+              }}
+            >
+              <div className="relative my-4 min-h-[150px] rounded-lg border border-solid border-[#ccc] p-4">
+                {watchCompanyLogoImage && (
+                  <div className="mb-4">
+                    <Image
+                      src={URL.createObjectURL(watchCompanyLogoImage ?? '')}
+                      alt="preview"
+                      width={50}
+                      height={50}
+                      style={{
+                        marginLeft: 'auto',
+                      }}
+                    />
+                  </div>
+                )}
+
+                {watchCompanySealImage && (
+                  <div className="absolute top-1/2 right-5">
+                    <Image
+                      src={URL.createObjectURL(watchCompanySealImage ?? '')}
+                      alt="preview"
+                      width={60}
+                      height={60}
+                    />
+                  </div>
+                )}
+
+                <Flex vertical gap={8} align="end">
+                  <Space>{watchAddress}</Space>
+                  <Space>{watchCompanyName}</Space>
+                  <Space>{watchPhone}</Space>
+                </Flex>
+              </div>
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pl-4 text-left">
+            <Text strong>{t('tenant_settings.digitalStamp.label')}</Text>
+          </div>
+          <div className="flex flex-1 content-center items-center">
+            <div className="solid content-center px-4">
+              <Form.Item
+                name="is_display_manger_seal"
+                style={{
+                  margin: 0,
+                }}
+              >
+                <Group
+                  defaultValue={true}
+                  options={[
+                    {
+                      value: true,
+                      label: t('tenant_settings.digitalStamp.withStamp'),
+                    },
+                    {
+                      value: false,
+                      label: t('tenant_settings.digitalStamp.withoutStamp'),
+                    },
+                  ]}
+                />
+              </Form.Item>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pl-4 text-left">
+            <Text strong>{t('tenant_settings.consumptionTax.label')}</Text>
+          </div>
+          <div className="flex flex-1 items-center px-4">
+            <Form.Item
+              name="consumption_tax"
+              style={{
+                margin: 0,
+              }}
+            >
+              <Group
+                defaultValue={'exclusive'}
+                options={[
+                  {
+                    value: 'exclusive',
+                    label: t('tenant_settings.consumptionTax.taxExclusive'),
+                  },
+                  {
+                    value: 'inclusive',
+                    label: t('tenant_settings.consumptionTax.taxInclusive'),
+                  },
+                  {
+                    value: 'external',
+                    label: t('tenant_settings.consumptionTax.taxExempt'),
+                  },
+                ]}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="tax_rate"
+              label={t('tenant_settings.consumptionTax.taxRateLabel')}
+              colon={false}
+              layout="horizontal"
+              style={{
+                marginBottom: 0,
+                marginLeft: 'auto',
+              }}
+              getValueFromEvent={(value) => Number(value)}
+            >
+              <InputNumber controls={false} min={0} max={100} addonAfter="%" />
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
+            <Text strong>{t('tenant_settings.taxRounding.label')}</Text>
+          </div>
+          <div className="flex-1 content-center px-4">
+            <Form.Item
+              name="tax_rounding_method"
+              style={{
+                marginBottom: 0,
+              }}
+            >
+              <Select
+                style={{ width: '50%' }}
+                options={[
+                  {
+                    value: 'round_down',
+                    label: t('tenant_settings.taxRounding.options.roundDown'),
+                  },
+                  {
+                    value: 'round_up',
+                    label: t('tenant_settings.taxRounding.options.roundUp'),
+                  },
+                  {
+                    value: 'round_nearest',
+                    label: t('tenant_settings.taxRounding.options.round'),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="flex h-[80px]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
+            <Text strong>{t('tenant_settings.priceRounding.label')}</Text>
+          </div>
+          <div className="flex-1 content-center px-4">
+            <Form.Item
+              name="sale_price_rounding_method"
+              style={{
+                marginBottom: 0,
+              }}
+            >
+              <Select
+                style={{ width: '50%' }}
+                options={[
+                  {
+                    value: 'round_down',
+                    label: t('tenant_settings.priceRounding.options.roundDown'),
+                  },
+                  {
+                    value: 'round_up',
+                    label: t('tenant_settings.priceRounding.options.roundUp'),
+                  },
+                  {
+                    value: 'round_nearest',
+                    label: t('tenant_settings.priceRounding.options.round'),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </div>
+        </div>
+      </div>
+    </Col>
+  )
+}
+
+export default Right

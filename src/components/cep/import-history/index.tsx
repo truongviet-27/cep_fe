@@ -2,6 +2,7 @@ import useImportHistory from '@components/cep/import-history/useImportHistory'
 import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
+import { useSelect } from '@refinedev/antd'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -9,7 +10,6 @@ import {
   Col,
   DatePicker,
   Form,
-  Input,
   Row,
   Select,
   Typography,
@@ -21,6 +21,12 @@ const { RangePicker } = DatePicker
 function ImportHistory() {
   const [{ columns, tableProps, searchFormProps }, { t, onReset }] =
     useImportHistory()
+
+  const { selectProps: employeeSelectProps } = useSelect({
+    resource: 'employees',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
 
   return (
     <PageContainer
@@ -43,7 +49,7 @@ function ImportHistory() {
         <Row gutter={[16, 0]}>
           <Col xs={24} md={8}>
             <CoreInput
-              name="q"
+              name="id"
               label={<span className="font-bold">{t('タスクコード')}</span>}
               placeholder={t('検索キーワード')}
             />
@@ -109,11 +115,16 @@ function ImportHistory() {
         <Row gutter={[16, 0]}>
           <Col xs={24} md={8}>
             <Form.Item
-              name="code"
-              label={<span className="font-bold">処理ID</span>}
+              name="created_by"
+              label={<span className="font-bold">登録者</span>}
               layout="vertical"
             >
-              <Input placeholder="コード入力" />
+              <Select
+                placeholder="コード入力"
+                showSearch
+                allowClear
+                {...employeeSelectProps}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={8}>
@@ -121,9 +132,9 @@ function ImportHistory() {
               layout="vertical"
               label={<span className="font-bold">登録日時</span>}
               colon={false}
+              name={'date'}
             >
               <RangePicker
-                showTime
                 style={{
                   width: '100%',
                 }}
