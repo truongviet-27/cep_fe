@@ -27,7 +27,16 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
 
   // Handle file list change
   const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-    setFileList(newFileList)
+    const processedList = newFileList.map((file) => {
+      if (file.status === 'done' && file.response) {
+        return {
+          ...file,
+          url: file.response.url,
+        }
+      }
+      return file
+    })
+    setFileList(processedList)
   }
 
   // Custom upload logic using presigned URL
@@ -46,7 +55,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
         },
       })
 
-      const { presigned_url, file_key } = presignedData.data
+      const { presigned_url, file_key, file_name } = presignedData
 
       // Step 2: Upload file to presigned URL
       const xhr = new XMLHttpRequest()
@@ -62,7 +71,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
       xhr.onload = () => {
         if (xhr.status === 200) {
           if (onSuccess) {
-            onSuccess({ file_key }, xhr)
+            onSuccess({ file_key, url: presigned_url, name: file_name }, xhr)
             notification.success({ message: 'File uploaded successfully!' })
           }
         } else {
@@ -108,7 +117,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
           flexDirection: 'row-reverse',
         }}
       >
-        <span style={{ flexGrow: 1, textAlign: 'left', marginLeft: 8 }}>
+        <span style={{ flexGrow: 1, textAlign: 'left' }}>
           {t('placeholders.please_choose_files')}
         </span>
       </Button>

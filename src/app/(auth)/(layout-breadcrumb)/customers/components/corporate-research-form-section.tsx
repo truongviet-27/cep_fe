@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { DownOutlined, FileImageOutlined } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
 import CommonTable from '@components/common/table'
 import {
@@ -10,35 +10,61 @@ import {
   Select,
   Space,
   Typography,
-  UploadFile,
+  type UploadFile,
 } from 'antd'
-import React, { useState } from 'react'
+import React from 'react'
 
 import styles from '../styles.module.css'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import { useModal } from '@refinedev/core'
-import { antiSocialCheckOptions } from '@utility/options'
+import { antiSocialCheckOptions, creditCheckOptions } from '@utility/options'
 import { DeleteButton, EditButton } from '@refinedev/antd'
 import { InputUploadFile } from '@components/common/input-upload-file'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
+import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
 
 const { Title } = Typography
 const { Panel } = Collapse
 
+type CurrentType = {
+  index: number
+  type: 'credit' | 'anti-social' | 'certified'
+  fileList: UploadFile[]
+  judgement: string
+  name: string
+}
+
 export const CorporateResearchFormSection = (
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) => {
-  const { t, form, rule } = props
+  const { t, form } = props
 
-  const [currentType, setCurrentType] = React.useState<{
-    index: number
-    type: 'credit' | 'anti-social' | 'certified'
-  }>({ index: 0, type: 'credit' })
+  const initCur: CurrentType = {
+    index: 0,
+    type: 'credit',
+    fileList: [],
+    judgement: '',
+    name: '',
+  }
+
+  const [currentType, setCurrentType] = React.useState<CurrentType>(initCur)
 
   const modalForm = useModal()
 
   const { visible, show, close } = modalForm
 
-  const [fileList, setFileList] = useState<UploadFile[]>([])
+  //make component force rerender to update the new values
+  const formTrigger = () => setCurrentType(initCur)
+
+  const handleClearAll = () => {
+    // form.resetFields()
+    form.setFieldValue(
+      'company_research_information',
+      defaultCustomerCompanyResearchInformation,
+    )
+    formTrigger()
+  }
 
   const columns = [
     {
@@ -79,7 +105,7 @@ export const CorporateResearchFormSection = (
         return (
           <>
             {record?.files?.map((file: any) => (
-              <FileImageOutlined>{file}</FileImageOutlined>
+              <>{file.name}</>
             ))}
           </>
         )
@@ -91,7 +117,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'editor',
       width: 120,
-      render: (_: any, record: any) => record.updated_by,
+      render: (_: any, record: any) =>
+        record.editor?.name ?? record.author?.name,
     },
     {
       title: (
@@ -101,7 +128,7 @@ export const CorporateResearchFormSection = (
       ),
       key: 'updated_at',
       width: 180,
-      render: (_: any, record: any) => record.updated_at,
+      render: (_: any, record: any) => record?.updated_at ?? record?.created_at,
     },
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
@@ -121,13 +148,35 @@ export const CorporateResearchFormSection = (
               } else if (index === 2) {
                 type = 'certified'
               }
-              setCurrentType({ index, type })
+              const fileList =
+                form.getFieldValue([
+                  'company_research_information',
+                  currentType.index,
+                  'files',
+                ]) ?? []
+              setCurrentType({
+                index,
+                type,
+                fileList,
+                judgement: currentType.judgement ?? '',
+                name: record.material_name,
+              })
               show()
             }}
           >
             {t('buttons.edit')}
           </EditButton>
-          <DeleteButton icon={null} danger size="small">
+          <DeleteButton
+            icon={null}
+            danger
+            size="small"
+            onClick={() => {
+              form.setFieldValue(['company_research_information', index], {
+                material_name: record.material_name,
+              })
+              formTrigger()
+            }}
+          >
             {t('buttons.clear')}
           </DeleteButton>
         </Space>
@@ -135,8 +184,15 @@ export const CorporateResearchFormSection = (
     },
   ]
 
-  const handleClearAll = () => {
-    form.setFieldsValue({ company_research_information: [] })
+  const options = () => {
+    switch (currentType.type) {
+      case 'credit':
+        return creditCheckOptions
+      case 'anti-social':
+        return antiSocialCheckOptions
+      case 'certified':
+        return []
+    }
   }
 
   return (
@@ -163,13 +219,22 @@ export const CorporateResearchFormSection = (
           direction={'vertical'}
           className={'pb-4'}
         >
-          <CommonTable
-            dataSource={form.getFieldValue('company_research_information')}
-            columns={columns as any}
-            rowKey="key"
-            pagination={false}
-            bordered
-          />
+          <Form.List name="company_research_information">
+            {() => {
+              return (
+                <CommonTable
+                  dataSource={form.getFieldValue(
+                    'company_research_information',
+                  )}
+                  columns={columns as any}
+                  rowKey="key"
+                  bordered
+                  pagination={false}
+                />
+              )
+            }}
+          </Form.List>
+
           <Space size={10} className="float-right mt-4">
             <Button danger onClick={handleClearAll}>
               {t('product_units.buttons.clear_all_research')}
@@ -178,16 +243,31 @@ export const CorporateResearchFormSection = (
         </Space>
 
         <Modal
-          title={t('customers.research.modal.title')}
+          title={boldText(t('customers.research.modal.title'), PRIMARY)}
           open={visible}
-          onOk={close}
+          onOk={() => {
+            form.setFieldValue(
+              ['company_research_information', currentType.index],
+              {
+                files: currentType.fileList,
+                judgement: currentType.judgement,
+                material_name: currentType.name,
+              },
+            )
+            close()
+          }}
           onCancel={close}
           okText={t('buttons.save')}
           cancelText={t('buttons.cancel')}
-          width={600}
         >
-          <Form layout="vertical" className="mt-4">
-            <Form.Item label={t('customers.research.document_name')}>
+          <Form
+            labelCol={{ span: 4 }}
+            wrapperCol={{ xl: 16 }}
+            layout="horizontal"
+            colon={false}
+            style={{ paddingTop: 20 }}
+          >
+            <Form.Item label={boldText(t('customers.research.document_name'))}>
               <Typography.Text>
                 {form.getFieldValue([
                   'company_research_information',
@@ -196,35 +276,43 @@ export const CorporateResearchFormSection = (
                 ])}
               </Typography.Text>
             </Form.Item>
-            <Form.Item
-              label={t('customers.research.judgement')}
-              name={[
-                'company_research_information',
-                currentType.index,
-                'judgement',
-              ]}
-            >
-              <Select
-                placeholder={t('placeholders.select')}
-                options={antiSocialCheckOptions}
-                onSelect={(value) => {
-                  const val = value == '△' ? 'T' : value
-                  form.setFieldValue(
-                    [
-                      'company_research_information',
-                      currentType.index,
-                      'judgement',
-                    ],
-                    val,
-                  )
+            <Form.Item label={boldText(t('customers.research.judgement'))}>
+              {currentType.type !== 'certified' ? (
+                <Select
+                  style={{ maxWidth: 235 }}
+                  placeholder={t('placeholders.select')}
+                  options={options()}
+                  onSelect={(value) => {
+                    const val = value == '△' ? 'T' : value
+                    setCurrentType({ ...currentType, judgement: val })
+                  }}
+                />
+              ) : (
+                <Typography.Text>未定</Typography.Text>
+              )}
+            </Form.Item>
+            <Form.Item label={boldText(t('customers.research.file'))}>
+              <InputUploadFile
+                fileList={currentType.fileList}
+                setFileList={(fileList) => {
+                  setCurrentType({ ...currentType, fileList })
                 }}
               />
             </Form.Item>
-            <Form.Item label={t('customers.research.file')}>
-              <InputUploadFile fileList={fileList} setFileList={setFileList} />
-            </Form.Item>
             <Typography.Text type="secondary">
-              {t('common.updated_by')}: 伊藤太郎 2025/08/04 12:30
+              {t('common.updated_by')}:
+              {
+                form.getFieldValue([
+                  'company_research_information',
+                  currentType.index,
+                ])?.author?.name
+              }
+              {
+                form.getFieldValue([
+                  'company_research_information',
+                  currentType.index,
+                ])?.updated_at
+              }
             </Typography.Text>
           </Form>
         </Modal>

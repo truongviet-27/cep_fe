@@ -92,7 +92,11 @@ export const customDataProvider = (
   },
 
   update: async ({ resource, id, variables, meta }) => {
-    const url = `${apiUrl}/${resource}/${id}`
+    let url = `${apiUrl}/${resource}/${id}`
+
+    if (meta?.action === 'restore') {
+      url += '/restore'
+    }
 
     const { headers, method } = meta ?? {}
     const requestMethod = (method as MethodTypesWithBody) ?? 'patch'

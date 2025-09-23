@@ -57,7 +57,9 @@
     "deleteSuccess": "削除しました",
     "deleteError": "削除に失敗しました",
     "createSuccess": "登録しました",
-    "error": "Error"
+    "error": "エラー",
+    "editError": "編集エラー",
+    "createError": "作成エラー"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -71,7 +73,8 @@
     "logout": "ログアウト"
   },
   "table": {
-    "actions": "操作"
+    "actions": "操作",
+    "noData": "データなし"
   },
   "estimates": {
     "estimates": "見積"
@@ -425,7 +428,10 @@
     }
   },
   "tags": {
-    "tags": "見積タグ設定"
+    "tags": "見積タグ設定",
+    "filters": {
+      "search_label": "タグ名"
+    }
   },
   "parameter_settings": {
     "parameter_settings": "パラメーター設定",

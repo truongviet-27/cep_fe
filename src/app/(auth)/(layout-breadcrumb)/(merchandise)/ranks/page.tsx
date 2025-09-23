@@ -9,6 +9,7 @@ import {
   DeleteButton,
   EditButton,
   RefreshButton,
+  ShowButton,
   useModalForm,
   useTable,
 } from '@refinedev/antd'
@@ -53,6 +54,11 @@ export default function Page() {
       dataIndex: 'actions',
       render: (_: any, record: BaseRecord) => (
         <Space>
+          <ShowButton
+            hideText
+            size="small"
+            onClick={() => modalFormShow.show(record.id)}
+          />
           <EditButton hideText size="small" onClick={() => show(record.id)} />
           <DeleteButton hideText size="small" recordItemId={record.id} />
         </Space>
@@ -74,6 +80,13 @@ export default function Page() {
   ]
 
   const { resource } = useResource()
+
+  const modalFormShow = useModalForm({
+    action: 'clone',
+    resource: resource?.name,
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+  })
 
   const modalFormProps = useModalForm({
     action: 'edit',
@@ -134,6 +147,16 @@ export default function Page() {
       <div className="mt-6">
         <CommonTable<Rank> {...tableProps} columns={columns} />
       </div>
+
+      <Modal
+        open={modalFormShow.open}
+        onCancel={modalFormShow.close}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        width={'70vh'}
+      >
+        <RankModalEdit modalProps={modalFormShow} isShow={true} />
+      </Modal>
 
       <Modal
         open={open}
