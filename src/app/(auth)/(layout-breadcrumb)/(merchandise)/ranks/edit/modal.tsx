@@ -14,7 +14,7 @@ type Props = {
 
 export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
   const t = useTranslate()
-  const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
+  const { close, formProps, queryResult, saveButtonProps, formLoading } =
     modalProps
 
   const record = queryResult?.data?.data

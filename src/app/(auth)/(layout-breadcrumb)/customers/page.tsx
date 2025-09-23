@@ -34,6 +34,8 @@ import {
   creditCheckOptions,
   searchDateTypeOptions,
 } from '@utility/options'
+import dayjs from 'dayjs'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -216,6 +218,8 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
+        render: (_, record) =>
+          dayjs(record?.created_at).format(FORMAT_DATE_TIME),
       },
       {
         title: t('customers.fields.suspension_date'),

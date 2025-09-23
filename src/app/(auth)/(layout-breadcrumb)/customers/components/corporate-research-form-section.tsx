@@ -22,6 +22,7 @@ import { DeleteButton, EditButton } from '@refinedev/antd'
 import { InputUploadFile } from '@components/common/input-upload-file'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
 
 const { Title } = Typography
 const { Panel } = Collapse
@@ -57,7 +58,11 @@ export const CorporateResearchFormSection = (
   const formTrigger = () => setCurrentType(initCur)
 
   const handleClearAll = () => {
-    form.resetFields()
+    // form.resetFields()
+    form.setFieldValue(
+      'company_research_information',
+      defaultCustomerCompanyResearchInformation,
+    )
     formTrigger()
   }
 
@@ -153,7 +158,7 @@ export const CorporateResearchFormSection = (
                 index,
                 type,
                 fileList,
-                judgement: '',
+                judgement: currentType.judgement ?? '',
                 name: record.material_name,
               })
               show()
@@ -214,13 +219,22 @@ export const CorporateResearchFormSection = (
           direction={'vertical'}
           className={'pb-4'}
         >
-          <CommonTable
-            dataSource={form.getFieldValue('company_research_information')}
-            columns={columns as any}
-            rowKey="key"
-            bordered
-            pagination={false}
-          />
+          <Form.List name="company_research_information">
+            {() => {
+              return (
+                <CommonTable
+                  dataSource={form.getFieldValue(
+                    'company_research_information',
+                  )}
+                  columns={columns as any}
+                  rowKey="key"
+                  bordered
+                  pagination={false}
+                />
+              )
+            }}
+          </Form.List>
+
           <Space size={10} className="float-right mt-4">
             <Button danger onClick={handleClearAll}>
               {t('product_units.buttons.clear_all_research')}

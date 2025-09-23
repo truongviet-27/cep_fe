@@ -15,7 +15,10 @@ import {
 import CommonTable from '@components/common/table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { PRIMARY } from '@utility/color'
-import type { Customer } from '@sdk/hey-api/types.gen' // SỬA LẠI: Import type từ SDK
+import type { Customer } from '@sdk/hey-api/types.gen'
+import dayjs from 'dayjs'
+import ShowMoreInfo from '@components/common/show-more-info'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 
 const { Title, Text } = Typography
 const { Panel } = Collapse
@@ -137,20 +140,24 @@ export default function CustomerShowPage() {
         </Space>
       }
       footerButtons={
-        <div>
-          {/* SỬA LẠI: Đường dẫn tới người tạo và ngày tạo */}
-          <Text type="secondary" className="mr-8">
-            {t('common.created_by')}: {record?.author?.name} (
-            {record?.created_at})
-          </Text>
-          <Text type="secondary">
-            {/* SỬA LẠI: Đường dẫn tới người sửa và ngày sửa */}
-            {t('common.updated_by')}:{' '}
-            {record?.editor?.name
-              ? `${record.editor.name} (${record.updated_at})`
-              : t('common.not_set')}
-          </Text>
-        </div>
+        <ShowMoreInfo
+          descriptions={[
+            {
+              title: t('common.created_by'),
+              value:
+                (record?.author?.name ?? '--') +
+                ' ' +
+                dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+            },
+            {
+              title: t('common.updated_by'),
+              value:
+                (record?.editor?.name ?? '--') +
+                ' ' +
+                dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
+            },
+          ]}
+        />
       }
     >
       <Space direction="vertical" size={20} style={{ width: '100%' }}>
@@ -173,10 +180,8 @@ export default function CustomerShowPage() {
                 {record?.corporate_number}
               </DetailItem>
               <DetailItem label={t('customers.fields.unit_price_rank')}>
-                {/* SỬA LẠI: Lấy tên rank từ object lồng nhau */}
                 {record?.rank?.name}
               </DetailItem>
-              {/* LƯU Ý: Các trường này không có trong type Customer của SDK */}
               <DetailItem label={t('customers.fields.credit_rank')}>
                 N/A
               </DetailItem>
@@ -219,7 +224,6 @@ export default function CustomerShowPage() {
                 {record?.date_of_establishment}
               </DetailItem>
               <DetailItem label={t('customers.show.department_in_charge')}>
-                {/* SỬA LẠI: Đây là một chuỗi, không phải mảng */}
                 {record?.department_in_charge}
               </DetailItem>
             </div>
@@ -274,7 +278,7 @@ export default function CustomerShowPage() {
           i18n: 'customers.show.corporate_research',
           children: (
             <CommonTable
-              dataSource={record?.company_research_information} // SỬA LẠI: Dùng đúng tên trường
+              dataSource={record?.company_research_information}
               columns={researchColumns}
               pagination={false}
               rowKey="id"
