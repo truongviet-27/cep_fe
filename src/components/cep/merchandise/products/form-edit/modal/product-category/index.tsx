@@ -55,7 +55,7 @@ export const ProductCategoryModal: React.FC<Props> = ({ modalProps }) => {
         rules={[
           {
             required: true,
-            message: 'This field is required',
+            message: t('validation.required'),
           },
         ]}
       />

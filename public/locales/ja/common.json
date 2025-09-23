@@ -71,7 +71,8 @@
     "logout": "ログアウト"
   },
   "table": {
-    "actions": "操作"
+    "actions": "操作",
+    "noData": "データなし"
   },
   "estimates": {
     "estimates": "見積"
