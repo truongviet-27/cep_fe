@@ -12,6 +12,7 @@ interface Props {
   placeholder?: string
   hidden?: boolean
   valueOnly?: boolean
+  defaultValue?: string
   onSelect?: (
     level: number,
     currentPath: string[],
@@ -21,12 +22,12 @@ interface Props {
 }
 
 const ProductCategoryDropdown: React.FC<Props> = (props) => {
-  const { placeholder, hidden, valueOnly, onSelect } = props
+  const { placeholder, hidden, valueOnly, defaultValue, onSelect } = props
   const [
     { options, debounceFetcher, isLoading, categories },
     { setSearchText, setAllowFetchData },
   ] = useController()
-  const [value, setValue] = useState<string>('')
+  const [value, setValue] = useState<string>(defaultValue ?? '')
   const [isOpenSelect, setIsOpenSelect] = useState<boolean>(false)
   const [isOpenDropdown, setIsOpenDropdown] = useState<boolean>(false)
   const handleSelect = (

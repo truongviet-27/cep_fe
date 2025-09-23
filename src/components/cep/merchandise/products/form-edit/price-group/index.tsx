@@ -122,7 +122,12 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                 index === 0 ? (
                   <div>{t('products.text.active')}</div>
                 ) : (
-                  <Form.Item name={[index, 'is_active']}>
+                  <Form.Item
+                    name={[index, 'is_active']}
+                    style={{
+                      marginBottom: 0,
+                    }}
+                  >
                     <Radio.Group
                       options={[
                         {

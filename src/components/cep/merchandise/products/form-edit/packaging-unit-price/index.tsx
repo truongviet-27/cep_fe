@@ -31,6 +31,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.packagingCode'),
               dataIndex: 'code',
+              width: '10%',
+              align: 'center',
               render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'code']}
@@ -52,6 +54,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.packagingName'),
               dataIndex: 'name',
+              width: '20%',
+              align: 'left',
               render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'name']}
@@ -73,6 +77,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                           cursor: 'default',
                         }
                       : {}),
+                    width: '100%',
                   }}
                   styleForm={{
                     marginBottom: '0px',
@@ -83,6 +88,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.status'),
               dataIndex: 'is_active',
+              width: '10%',
               render: (_: unknown, __: unknown, index: number) =>
                 index === 0 ? (
                   <div>{t('products.text.active')}</div>
@@ -111,6 +117,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.quantity'),
               dataIndex: 'quantity_in_package',
+              width: '10%',
               render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'quantity_in_package']}
@@ -133,6 +140,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                           cursor: 'default',
                         }
                       : {}),
+                    width: '100%',
                   }}
                   styleForm={{
                     marginBottom: '0px',
@@ -153,6 +161,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.unit'),
               dataIndex: 'unit_id',
+              width: '10%',
               render: (_: unknown, __: unknown, index: number) => (
                 <>
                   <CoreInput name={[index, 'unit_id']} readOnly={true} hidden />
@@ -163,7 +172,9 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.standardPrice'),
               dataIndex: 'cost_price',
-              render: (_: unknown, __: unknown, index: number) => {
+              width: '10%',
+              className: 'p-[0px !important]',
+              render: (value: string, __: unknown, index: number) => {
                 return (
                   <CoreInput
                     name={[index, 'cost_price']}
@@ -186,6 +197,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.sellingPrice'),
               dataIndex: 'selling_price',
+              width: '10%',
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <CoreInput
@@ -209,6 +221,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                             cursor: 'default',
                           }
                         : {}),
+                      width: '100%',
                     }}
                     styleForm={{
                       marginBottom: '0px',
@@ -220,6 +233,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.isStandard'),
               dataIndex: 'is_standard_price',
+              width: '5%',
               render: (_: unknown, __: unknown, index: number) =>
                 index !== 0 && (
                   <Form.Item
@@ -248,6 +262,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.actions'),
               dataIndex: 'action',
+              width: '5%',
               render: (_: unknown, __: unknown, index: number) =>
                 index > 0 && (
                   <Action
