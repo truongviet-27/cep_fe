@@ -37,21 +37,22 @@ export type RowVM = UnitRow & { __index: string }
 function useProductUnits() {
   const t = useTranslate()
   const { resource } = useResource()
-  const { tableProps, searchFormProps, setFilters } = useTable<UnitRow>({
-    syncWithLocation: true,
-    onSearch: (values: any) => {
-      if (values.name_lk) {
-        return [
-          {
-            field: 'name_lk',
-            value: values.name_lk,
-            operator: 'null',
-          },
-        ]
-      }
-      return []
-    },
-  })
+  const { tableProps, searchFormProps, setFilters, current, setPageSize } =
+    useTable<UnitRow>({
+      syncWithLocation: true,
+      onSearch: (values: any) => {
+        if (values.name_lk) {
+          return [
+            {
+              field: 'name_lk',
+              value: values.name_lk,
+              operator: 'null',
+            },
+          ]
+        }
+        return []
+      },
+    })
 
   const apiUrl = useApiUrl()
 
@@ -127,8 +128,10 @@ function useProductUnits() {
 
   const addNew = () => {
     const order = fields?.[1]?.order ?? 0
+    setPageSize((pre) => pre++)
+
     insert(
-      0,
+      current - 1,
       {
         id: crypto?.randomUUID?.(),
         name: '',

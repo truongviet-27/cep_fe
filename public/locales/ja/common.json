@@ -427,7 +427,10 @@
     }
   },
   "tags": {
-    "tags": "見積タグ設定"
+    "tags": "見積タグ設定",
+    "filters": {
+      "search_label": "タグ名"
+    }
   },
   "parameter_settings": {
     "parameter_settings": "パラメーター設定",

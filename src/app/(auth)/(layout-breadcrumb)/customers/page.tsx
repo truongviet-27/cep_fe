@@ -2,8 +2,14 @@
 'use client'
 
 import { List } from '@components/crud/list'
-import { CreateButton, EditButton, useSelect, useTable } from '@refinedev/antd'
-import { useGo, useTranslate } from '@refinedev/core'
+import {
+  CreateButton,
+  DeleteButton,
+  EditButton,
+  useSelect,
+  useTable,
+} from '@refinedev/antd'
+import { useGo, useTranslate, useUpdate } from '@refinedev/core'
 import {
   Button,
   Col,
@@ -20,11 +26,7 @@ import React, { useMemo } from 'react'
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import {
-  PauseCircleOutlined,
-  PlayCircleOutlined,
-  RightOutlined,
-} from '@ant-design/icons'
+import { RightOutlined } from '@ant-design/icons'
 import { PRIMARY } from '@utility/color'
 import { SimpleCustomer } from '@sdk/hey-api'
 import Link from 'next/link'
@@ -56,6 +58,8 @@ interface ICustomer {
 export default function CustomerListPage() {
   const t = useTranslate()
   const go = useGo()
+
+  const { mutate, isLoading } = useUpdate()
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -225,6 +229,9 @@ export default function CustomerListPage() {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
+        render: (_, record) =>
+          record?.deleted_at &&
+          dayjs(record?.deleted_at).format(FORMAT_DATE_TIME),
       },
       {
         title: t('customers.fields.actions'),
@@ -233,16 +240,42 @@ export default function CustomerListPage() {
         fixed: 'right',
         render: (_, record) => (
           <Space>
-            <EditButton hideText size="small" recordItemId={record.id} />
+            <EditButton icon={null} recordItemId={record.id} size={'small'}>
+              {t('buttons.edit')}
+            </EditButton>
+            &nbsp;
             <Button
               size="small"
               danger={!record.deleted_at}
               type={record.deleted_at ? 'default' : 'primary'}
               icon={
                 record.deleted_at ? (
-                  <PlayCircleOutlined />
+                  <EditButton
+                    loading={isLoading}
+                    onClick={() =>
+                      mutate({
+                        resource: 'customers',
+                        id: record.id,
+                        values: {},
+                        meta: { action: 'restore' },
+                      })
+                    }
+                    icon={null}
+                    recordItemId={record.id}
+                    size={'small'}
+                    type={'primary'}
+                  >
+                    {t('buttons.resume')}
+                  </EditButton>
                 ) : (
-                  <PauseCircleOutlined />
+                  <DeleteButton
+                    icon={null}
+                    danger
+                    recordItemId={record.id}
+                    size={'small'}
+                  >
+                    {t('buttons.suspend')}
+                  </DeleteButton>
                 )
               }
             />

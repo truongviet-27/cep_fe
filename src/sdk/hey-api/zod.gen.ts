@@ -966,12 +966,13 @@ export const zPackagingRankPrice = z.object({
  * Product packaging with rank based prices
  */
 export const zProductPackaging = z.object({
+  id: z.optional(z.int()),
   code: z.optional(z.string()),
   name: z.optional(z.string()),
   quantity_in_package: z.optional(z.int()),
   unit: z.optional(z.string()),
   standard_price: z.optional(z.int()),
-  sale_price: z.optional(z.int()),
+  selling_price: z.optional(z.int()),
   is_active: z.optional(z.boolean()),
   is_rate_based: z.optional(z.boolean()),
   is_standard_price: z.optional(z.boolean()),
@@ -982,12 +983,23 @@ export const zProductPackaging = z.object({
  * Detailed product information
  */
 export const zProductDetail = z.object({
-  category: z.optional(z.string()),
+  category: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+      category_path: z.optional(z.string()),
+    }),
+  ),
   code: z.optional(z.string()),
   name: z.optional(z.string()),
-  short_name: z.optional(z.string()),
-  barcode: z.optional(z.string()),
-  unit: z.optional(z.string()),
+  short_name: z.optional(z.union([z.string(), z.null()])),
+  barcode: z.optional(z.union([z.string(), z.null()])),
+  unit: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+    }),
+  ),
   cost_price: z.optional(z.int()),
   selling_price: z.optional(z.int()),
   packagings: z.optional(z.array(zProductPackaging)),
@@ -2433,7 +2445,7 @@ export const zE475E7Ead1848Aa17C399Ba311C51Data = z.object({
 /**
  * Created
  */
-export const zE475E7Ead1848Aa17C399Ba311C51Response = zProduct
+export const zE475E7Ead1848Aa17C399Ba311C51Response = zProductDetailResponse
 
 export const zProductControllerDestroyData = z.object({
   body: z.optional(z.never()),
@@ -2475,7 +2487,7 @@ export const zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data = z.object({
 /**
  * OK
  */
-export const zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Response = zProduct
+export const zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Response = zProductDetailResponse
 
 export const zProductCategoryControllerUpdateTreeData = z.object({
   body: z.array(
