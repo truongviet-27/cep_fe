@@ -6,7 +6,7 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DeleteButton, useForm, useModalForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
@@ -18,6 +18,8 @@ const { Text, Title } = Typography
 
 export default function EmployeeEdit() {
   const t = useTranslate()
+
+  const go = useGo()
 
   const { formProps, saveButtonProps, queryResult, form } = useForm<Department>(
     {
@@ -117,7 +119,11 @@ export default function EmployeeEdit() {
           />
 
           <div className="mt-4 flex w-full justify-start pb-4">
-            <DeleteButton icon={null} size={'small'} />
+            <DeleteButton
+              icon={null}
+              size={'small'}
+              onSuccess={() => go({ type: 'replace', to: '/departments' })}
+            />
           </div>
         </div>
       }

@@ -1,23 +1,32 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Divider, Form, Input, Space } from 'antd'
+import { Button, Divider, Form, Input, Space, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
 import boldText from '@utility/bold-text'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 
 type Props = {
   modalProps: any
+  isShow?: boolean
 }
 
-export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
+export const RankModalEdit: React.FC<Props> = ({
+  modalProps,
+  isShow = false,
+}) => {
   const t = useTranslate()
-  const { close, formProps, queryResult, saveButtonProps, formLoading } =
+  const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
     modalProps
 
   const record = queryResult?.data?.data
+
+  const getFieldData = (name: string) => (
+    <Typography.Text>{form.getFieldValue(name)}</Typography.Text>
+  )
 
   return (
     <Edit
@@ -30,7 +39,6 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
     >
       <Form
         {...formProps}
-        initialValues={record}
         layout="horizontal"
         labelCol={{ span: 6 }}
         labelAlign="left"
@@ -41,7 +49,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
           name="code"
           rules={[{ required: true }]}
         >
-          <Input />
+          {isShow ? getFieldData('code') : <Input />}
         </Form.Item>
 
         <Form.Item
@@ -49,7 +57,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
           name="name"
           rules={[{ required: true }]}
         >
-          <Input />
+          {isShow ? getFieldData('name') : <Input />}
         </Form.Item>
 
         <Form.Item
@@ -57,7 +65,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
           name="rate"
           rules={[{ required: true }]}
         >
-          <Input />
+          {isShow ? getFieldData('rate') : <Input />}
         </Form.Item>
 
         <Form.Item
@@ -65,7 +73,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
           name="note"
           rules={[{ required: true }]}
         >
-          <Input multiple />
+          {isShow ? getFieldData('note') : <Input multiple />}
         </Form.Item>
 
         <Divider />
@@ -78,7 +86,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.author?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
+                  dayjs(record?.created_at).format(FORMAT_DATE_TIME),
             },
             {
               title: t('common.updated_by'),
@@ -86,7 +94,7 @@ export const RankModalEdit: React.FC<Props> = ({ modalProps }) => {
                 record?.editor?.name ??
                 '---' +
                   ' ' +
-                  dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
+                  dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
             },
           ]}
         />

@@ -64,7 +64,9 @@ export default function Page() {
           <Col flex="auto">
             <Row align="middle" gutter={16} wrap={false}>
               <Col>
-                <div style={{ fontWeight: 600 }}>単位名</div>
+                <div style={{ fontWeight: 600 }}>
+                  {t('tags.filters.search_label')}
+                </div>
               </Col>
               <Col flex="360px">
                 <Form.Item name="name_lk" style={{ margin: 0 }}>
