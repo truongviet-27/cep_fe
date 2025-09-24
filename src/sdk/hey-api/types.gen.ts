@@ -1298,12 +1298,51 @@ export type PaginatedResponse = {
   }
 }
 
+export const ParameterResourceEnum = {
+  CUSTOMERS: 'customers',
+  RANKS: 'ranks',
+  PRODUCTS: 'products',
+  PRODUCT_CATEGORIES: 'product-categories',
+  PRODUCT_UNITS: 'product-units',
+  QUOTATION_TEMPLATES: 'quotation-templates',
+  QUOTATION_FORMS: 'quotation-forms',
+  MAIL_TEMPLATES: 'mail-templates',
+  CODE_ISSUE_SETTINGS: 'code-issue-settings',
+  APPROVE_ROUTES: 'approve-routes',
+} as const
+
+export type ParameterResourceEnum =
+  (typeof ParameterResourceEnum)[keyof typeof ParameterResourceEnum]
+
 export type BulkAssignPermissionsRequest = {
   assignments: Array<{
     role: string
     permissions: Array<number>
   }>
 }
+
+/**
+ * List of available permission codes
+ */
+export const PermissionEnum = {
+  CUSTOMER_EDIT: 'customer.edit',
+  PRODUCT_EDIT: 'product.edit',
+  PRODUCT_UNIT_EDIT: 'product_unit.edit',
+  PRODUCT_CATEGORY_EDIT: 'product_category.edit',
+  DEPARTMENT_EDIT: 'department.edit',
+  EMPLOYEE_EDIT: 'employee.edit',
+  TAG_EDIT: 'tag.edit',
+  CODE_ISSUE_SETTING_EDIT: 'code-issue-setting.edit',
+  PARAMETER_SETTING_EDIT: 'parameter-setting.edit',
+  RANK_EDIT: 'rank.edit',
+  APPROVE_ROUTE_EDIT: 'approve-route.edit',
+} as const
+
+/**
+ * List of available permission codes
+ */
+export type PermissionEnum =
+  (typeof PermissionEnum)[keyof typeof PermissionEnum]
 
 /**
  * Permission entity describing a granular access capability
@@ -1823,9 +1862,17 @@ export type QuotaFormSettingResponse = {
    */
   is_enable_delivery_method?: boolean
   /**
-   * Default delivery method
+   * Default delivery method as free-form string
    */
-  default_delivery_method?:
+  default_delivery_method?: string | null
+  /**
+   * Whether payment due date is enabled
+   */
+  is_enable_payment_due_date?: boolean
+  /**
+   * Default payment due date method
+   */
+  default_payment_due_date?:
     | 'monthly_25'
     | 'monthly_10'
     | 'net_30_from_delivery'
@@ -1833,13 +1880,13 @@ export type QuotaFormSettingResponse = {
     | 'end_of_month_next'
     | 'end_of_month_after_next'
   /**
-   * Whether payment due date is enabled
+   * Whether expiration date is enabled
    */
-  is_enable_payment_due_date?: boolean
+  is_enable_expiration_date?: boolean
   /**
-   * Default payment due date period
+   * Default expiration date period
    */
-  default_payment_due_date?:
+  default_expiration_date?:
     | 'days_7'
     | 'days_14'
     | 'days_45'
@@ -1847,14 +1894,6 @@ export type QuotaFormSettingResponse = {
     | 'months_3'
     | 'months_6'
     | 'years_1'
-  /**
-   * Whether expiration date is enabled
-   */
-  is_enable_expiration_date?: boolean
-  /**
-   * Default expiration date
-   */
-  default_expiration_date?: string | null
   /**
    * Company postal code
    */
@@ -1954,9 +1993,17 @@ export type UpdateQuotaFormSettingRequest = {
    */
   is_enable_delivery_method?: boolean | null
   /**
-   * Default delivery method
+   * Default delivery method as free-form string
    */
-  default_delivery_method?:
+  default_delivery_method?: string | null
+  /**
+   * Whether payment due date is enabled
+   */
+  is_enable_payment_due_date?: boolean | null
+  /**
+   * Default payment due date method
+   */
+  default_payment_due_date?:
     | 'monthly_25'
     | 'monthly_10'
     | 'net_30_from_delivery'
@@ -1964,13 +2011,13 @@ export type UpdateQuotaFormSettingRequest = {
     | 'end_of_month_next'
     | 'end_of_month_after_next'
   /**
-   * Whether payment due date is enabled
+   * Whether expiration date is enabled
    */
-  is_enable_payment_due_date?: boolean | null
+  is_enable_expiration_date?: boolean | null
   /**
-   * Default payment due date period
+   * Default expiration date period
    */
-  default_payment_due_date?:
+  default_expiration_date?:
     | 'days_7'
     | 'days_14'
     | 'days_45'
@@ -1978,14 +2025,6 @@ export type UpdateQuotaFormSettingRequest = {
     | 'months_3'
     | 'months_6'
     | 'years_1'
-  /**
-   * Whether expiration date is enabled
-   */
-  is_enable_expiration_date?: boolean | null
-  /**
-   * Default expiration date
-   */
-  default_expiration_date?: string | null
   /**
    * Company postal code
    */
@@ -2839,6 +2878,42 @@ export type Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses = {
 
 export type Ba30F404343172Ff3A8Fa2Cca1Db68E5Response =
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses[keyof Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses]
+
+export type D2E4443E7836Acd1D2Cc61486Af6Ed34Data = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/me'
+}
+
+export type D2E4443E7836Acd1D2Cc61486Af6Ed34Errors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+}
+
+export type D2E4443E7836Acd1D2Cc61486Af6Ed34Responses = {
+  /**
+   * Profile retrieved
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      is_module_admin?: boolean
+      role?: {
+        id?: number
+        name?: string
+        display_name?: string
+      } | null
+      permissions?: Array<PermissionEnum>
+    }
+  }
+}
+
+export type D2E4443E7836Acd1D2Cc61486Af6Ed34Response =
+  D2E4443E7836Acd1D2Cc61486Af6Ed34Responses[keyof D2E4443E7836Acd1D2Cc61486Af6Ed34Responses]
 
 export type CodeIssueSettingControllerIndexData = {
   body?: never
@@ -4198,6 +4273,7 @@ export type ParameterSettingControllerIndexResponses = {
   200: {
     data?: Array<{
       parameter_id?: number
+      resource?: ParameterResourceEnum
       code?: string
       name?: string
       is_manage?: boolean
@@ -5521,14 +5597,9 @@ export type ProductUnitControllerUpdateResponse =
 
 export type QuotaFormSettingControllerShowData = {
   body?: never
-  path: {
-    /**
-     * Quota Form Setting ID
-     */
-    id: number
-  }
+  path?: never
   query?: never
-  url: '/api/v1/quota-form-settings/{id}'
+  url: '/api/v1/quota-form-settings'
 }
 
 export type QuotaFormSettingControllerShowErrors = {
@@ -5563,7 +5634,7 @@ export type QuotaFormSettingControllerShowResponses = {
 export type QuotaFormSettingControllerShowResponse =
   QuotaFormSettingControllerShowResponses[keyof QuotaFormSettingControllerShowResponses]
 
-export type E8Cee5325E3B2A7681582B13F1051D1Data = {
+export type A229A59B851Ad68435Ac0E91E98F32Data = {
   /**
    * Quota Form Setting update data
    */
@@ -5578,7 +5649,7 @@ export type E8Cee5325E3B2A7681582B13F1051D1Data = {
   url: '/api/v1/quota-form-settings/{id}'
 }
 
-export type E8Cee5325E3B2A7681582B13F1051D1Errors = {
+export type A229A59B851Ad68435Ac0E91E98F32Errors = {
   /**
    * Validation error
    */
@@ -5601,18 +5672,18 @@ export type E8Cee5325E3B2A7681582B13F1051D1Errors = {
   500: InternalServerErrorResponse
 }
 
-export type E8Cee5325E3B2A7681582B13F1051D1Error =
-  E8Cee5325E3B2A7681582B13F1051D1Errors[keyof E8Cee5325E3B2A7681582B13F1051D1Errors]
+export type A229A59B851Ad68435Ac0E91E98F32Error =
+  A229A59B851Ad68435Ac0E91E98F32Errors[keyof A229A59B851Ad68435Ac0E91E98F32Errors]
 
-export type E8Cee5325E3B2A7681582B13F1051D1Responses = {
+export type A229A59B851Ad68435Ac0E91E98F32Responses = {
   /**
    * Quota Form Setting updated successfully
    */
   200: UpdateQuotaFormSettingResponse
 }
 
-export type E8Cee5325E3B2A7681582B13F1051D1Response =
-  E8Cee5325E3B2A7681582B13F1051D1Responses[keyof E8Cee5325E3B2A7681582B13F1051D1Responses]
+export type A229A59B851Ad68435Ac0E91E98F32Response =
+  A229A59B851Ad68435Ac0E91E98F32Responses[keyof A229A59B851Ad68435Ac0E91E98F32Responses]
 
 export type RankControllerIndexData = {
   body?: never

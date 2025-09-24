@@ -1,5 +1,6 @@
-import { redirect } from 'next/navigation'
+// eslint-disable-next-line simple-import-sort/imports
 import { getServerSession } from 'next-auth/next'
+import { redirect } from 'next/navigation'
 import type React from 'react'
 
 import authOptions from '@/app/api/auth/[...nextauth]/options'

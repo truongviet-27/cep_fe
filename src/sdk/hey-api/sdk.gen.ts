@@ -37,6 +37,9 @@ import type {
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Data,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Errors,
+  D2E4443E7836Acd1D2Cc61486Af6Ed34Data,
+  D2E4443E7836Acd1D2Cc61486Af6Ed34Responses,
+  D2E4443E7836Acd1D2Cc61486Af6Ed34Errors,
   CodeIssueSettingControllerIndexData,
   CodeIssueSettingControllerIndexResponses,
   CodeIssueSettingControllerIndexErrors,
@@ -205,9 +208,9 @@ import type {
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
-  E8Cee5325E3B2A7681582B13F1051D1Data,
-  E8Cee5325E3B2A7681582B13F1051D1Responses,
-  E8Cee5325E3B2A7681582B13F1051D1Errors,
+  A229A59B851Ad68435Ac0E91E98F32Data,
+  A229A59B851Ad68435Ac0E91E98F32Responses,
+  A229A59B851Ad68435Ac0E91E98F32Errors,
   RankControllerIndexData,
   RankControllerIndexResponses,
   RankControllerIndexErrors,
@@ -260,6 +263,7 @@ import {
   zCc3D6A8269D166673C5B9A3Ce3028772Data,
   zFaedd72A00012E0F68519B5407E844AaData,
   zBa30F404343172Ff3A8Fa2Cca1Db68E5Data,
+  zD2E4443E7836Acd1D2Cc61486Af6Ed34Data,
   zCodeIssueSettingControllerIndexData,
   zCodeIssueSettingControllerShowData,
   zEed87Adddef6126Fa051Bd6Cd2D733E6Data,
@@ -317,7 +321,7 @@ import {
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
   zQuotaFormSettingControllerShowData,
-  zE8Cee5325E3B2A7681582B13F1051D1Data,
+  zA229A59B851Ad68435Ac0E91E98F32Data,
   zRankControllerIndexData,
   zRankControllerStoreData,
   zRankControllerDestroyData,
@@ -674,6 +678,34 @@ export const ba30F404343172Ff3A8Fa2Cca1Db68E5 = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get current user
+ * Get current user profile and permissions by JWT token
+ */
+export const d2E4443E7836Acd1D2Cc61486Af6Ed34 = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<D2E4443E7836Acd1D2Cc61486Af6Ed34Data, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    D2E4443E7836Acd1D2Cc61486Af6Ed34Responses,
+    D2E4443E7836Acd1D2Cc61486Af6Ed34Errors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zD2E4443E7836Acd1D2Cc61486Af6Ed34Data.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/me',
+    ...options,
   })
 }
 
@@ -2282,9 +2314,9 @@ export const productUnitControllerUpdate = <
 export const quotaFormSettingControllerShow = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<QuotaFormSettingControllerShowData, ThrowOnError>,
+  options?: Options<QuotaFormSettingControllerShowData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).get<
+  return (options?.client ?? _heyApiClient).get<
     QuotaFormSettingControllerShowResponses,
     QuotaFormSettingControllerShowErrors,
     ThrowOnError
@@ -2298,7 +2330,7 @@ export const quotaFormSettingControllerShow = <
         type: 'http',
       },
     ],
-    url: '/api/v1/quota-form-settings/{id}',
+    url: '/api/v1/quota-form-settings',
     ...options,
   })
 }
@@ -2307,18 +2339,18 @@ export const quotaFormSettingControllerShow = <
  * Update quota form setting
  * Update an existing quota form setting with new configuration values
  */
-export const e8Cee5325E3B2A7681582B13F1051D1 = <
+export const a229A59B851Ad68435Ac0E91E98F32 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<E8Cee5325E3B2A7681582B13F1051D1Data, ThrowOnError>,
+  options: Options<A229A59B851Ad68435Ac0E91E98F32Data, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).put<
-    E8Cee5325E3B2A7681582B13F1051D1Responses,
-    E8Cee5325E3B2A7681582B13F1051D1Errors,
+  return (options.client ?? _heyApiClient).patch<
+    A229A59B851Ad68435Ac0E91E98F32Responses,
+    A229A59B851Ad68435Ac0E91E98F32Errors,
     ThrowOnError
   >({
     requestValidator: async (data) => {
-      return await zE8Cee5325E3B2A7681582B13F1051D1Data.parseAsync(data)
+      return await zA229A59B851Ad68435Ac0E91E98F32Data.parseAsync(data)
     },
     security: [
       {
