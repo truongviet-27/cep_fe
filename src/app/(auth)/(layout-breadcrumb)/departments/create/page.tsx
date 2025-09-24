@@ -37,7 +37,7 @@ export default function Page() {
     () => [
       { required: true, message: '部門コードは必須です。' },
       { pattern: /^[A-Z0-9-]+$/, message: 'A-Z, 0-9, - のみ使用できます。' },
-      { max: 32, message: '最大32文字までです。' },
+      { max: 20, message: '最大20文字までです。' },
     ],
     [],
   )
@@ -45,7 +45,7 @@ export default function Page() {
   const nameRules: Rule[] = useMemo(
     () => [
       { required: true, message: '部門名は必須です。' },
-      { max: 120, message: '最大120文字までです。' },
+      { max: 100, message: '最大100文字までです。' },
     ],
     [],
   )
@@ -157,7 +157,7 @@ export default function Page() {
             </Col>
 
             <Col xs={24} sm="auto" flex="none">
-              <Space direction="vertical" size={6} wrap>
+              <Space direction="vertical" size={3} wrap>
                 <Button
                   size="middle"
                   type="default"
@@ -174,6 +174,7 @@ export default function Page() {
                   type="link"
                   onClick={() => show(data?.data?.id)}
                   className="text-blue-500"
+                  style={{ marginLeft: -16, marginTop: -10 }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>

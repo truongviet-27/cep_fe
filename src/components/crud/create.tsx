@@ -45,6 +45,7 @@ export const Create: React.FC<CreateProps & CustomProps> = ({
   isAutoHeading = true,
   rightFooterButtons,
   hiddenButtonBack = false,
+  i18nHeading,
 }) => {
   const translate = useTranslate()
   const { options: { breadcrumb: globalBreadcrumb } = {} } = useRefineContext()
@@ -149,7 +150,7 @@ export const Create: React.FC<CreateProps & CustomProps> = ({
             ]}
             {...(contentProps ?? {})}
           >
-            {isAutoHeading && <AutoHeading />}
+            {isAutoHeading && <AutoHeading i18n={i18nHeading} />}
             {children}
           </Card>
         </Spin>

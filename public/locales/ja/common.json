@@ -43,7 +43,8 @@
     "resume": "開始",
     "add_delivery_destination": "納品先追加",
     "copy_contact_info": "取引先情報をコピーする",
-    "select_file": "ファイル"
+    "select_file": "ファイル",
+    "show": "show"
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -153,7 +154,7 @@
     },
     "enums": {
       "corporation": "法人",
-      "individual": "個人"
+      "individual": "会社"
     },
     "filters": {
       "code_name": "取引先コード・取引先名",
@@ -220,7 +221,6 @@
       "active": "有効",
       "inactive": "無効"
     },
-
     "list": {
       "title": "商品一覧",
       "searchArea": {
@@ -262,10 +262,13 @@
       }
     },
     "create": {
-      "create": "新しい単価ランクを追加"
+      "create": "単価ランク作成"
     },
     "edit": {
       "edit": "単価ランク編集"
+    },
+    "show": {
+      "show": "単価ランク詳細"
     },
     "fields": {
       "code": "単価ランクコード",
@@ -396,6 +399,9 @@
   },
   "code_issue_settings": {
     "code_issue_settings": "各種コード採番設定",
+    "titles": {
+      "edit": "コード採番編集"
+    },
     "edit": {
       "edit": "コード採番編集"
     },
@@ -737,15 +743,12 @@
       "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
       "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
       "downloadButton": "CSVテンプレートをダウンロード",
-
       "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
       "orSelectFile": "または、下のボタンからファイルを選択してください",
       "selectFileButton": "ファイルを選択",
-
       "requiredError": "必須項目です",
       "onlyCSVError": "CSVファイルのみアップロード可能です。",
       "maxSizeError": "ファイルサイズは最大5MBです。",
-
       "noteTitle": "CSV登録時の注意事項",
       "noteItems": {
         "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
@@ -766,6 +769,11 @@
       "nextStep": "次へ",
       "cancel": "キャンセル"
     }
+  },
+  "actions": {
+    "create": "登録",
+    "list": "list",
+    "show": "show"
   },
   "tenant_settings": {
     "tenant_settings": "見積フォーム設定",

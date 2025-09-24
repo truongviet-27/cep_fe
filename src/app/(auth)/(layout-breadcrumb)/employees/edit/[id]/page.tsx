@@ -54,7 +54,7 @@ export default function EmployeeEdit() {
     () => [
       { required: true, message: '部門コードは必須です。' },
       { pattern: /^[A-Z0-9-]+$/, message: 'A-Z, 0-9, - のみ使用できます。' },
-      { max: 32, message: '最大32文字までです。' },
+      { max: 20, message: '最大32文字までです。' },
     ],
     [],
   )
@@ -82,7 +82,7 @@ export default function EmployeeEdit() {
 
   const handleAutoNumber = () => {
     const codeGen = data?.data
-    form?.setFieldsValue({ code: codeGen?.preview_code, name: codeGen?.name })
+    form?.setFieldsValue({ code: codeGen?.preview_code })
   }
 
   const breadcrumbItems = [
@@ -140,7 +140,7 @@ export default function EmployeeEdit() {
       rightFooterButtons={
         <Space size={2} className={'flex justify-end'}>
           <Button {...saveButtonProps} type="primary" loading={formLoading}>
-            {t('buttons.save')}
+            {t('permission_settings.buttons.save')}
           </Button>
         </Space>
       }
@@ -161,7 +161,7 @@ export default function EmployeeEdit() {
         autoComplete="off"
       >
         <Form.Item label={boldText(t('employees.fields.code'))} required>
-          <Row align="middle" gutter={[8, 8]}>
+          <Row align="middle" gutter={[8, 8]} style={{ marginTop: -10 }}>
             <Col flex="none">
               <Form.Item
                 name="code"
@@ -192,6 +192,7 @@ export default function EmployeeEdit() {
                   type="link"
                   onClick={() => show(data?.data?.id)}
                   className="text-blue-500"
+                  style={{ marginLeft: -16, marginTop: -10 }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>
@@ -200,15 +201,24 @@ export default function EmployeeEdit() {
           </Row>
         </Form.Item>
 
-        <Form.Item label={boldText(t('employees.fields.name'))} name="name">
+        <Form.Item
+          style={{ marginTop: -24 }}
+          label={boldText(t('employees.fields.name'))}
+          name="name"
+        >
           <Text>{form.getFieldValue('name')}</Text>
         </Form.Item>
 
-        <Form.Item label={boldText(t('employees.fields.email'))} name="email">
+        <Form.Item
+          style={{ marginTop: -14 }}
+          label={boldText(t('employees.fields.email'))}
+          name="email"
+        >
           <Text>{form.getFieldValue('email')}</Text>
         </Form.Item>
 
         <Form.Item
+          style={{ marginTop: -10 }}
           label={boldText(t('employees.fields.department'))}
           name="department_id"
           rules={[{ required: true, message: 'このフィールドは必須です' }]}
@@ -219,7 +229,11 @@ export default function EmployeeEdit() {
           />
         </Form.Item>
 
-        <Form.Item label={boldText(t('employees.fields.role'))} name="role_id">
+        <Form.Item
+          style={{ marginTop: -4 }}
+          label={boldText(t('employees.fields.role'))}
+          name="role_id"
+        >
           <Radio.Group buttonStyle="solid">
             {isArray(roles?.data) &&
               roles?.data.map(({ id, name }) => (

@@ -122,6 +122,7 @@ export default function Page() {
         />
         <Table.Column
           dataIndex="preview_code"
+          render={(value: SegmentedValue) => <Tag>{value}</Tag>}
           title={t('code_issue_settings.fields.preview_code')}
         />
         <Table.Column
@@ -145,7 +146,7 @@ export default function Page() {
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'70vh'}
+        width={'60vh'}
       >
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
