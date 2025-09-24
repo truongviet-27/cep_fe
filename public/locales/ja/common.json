@@ -495,7 +495,50 @@
     }
   },
   "import_history": {
-    "import_history": "インポート履歴"
+    "import_history": "CSVタスク履歴",
+    "filters": {
+      "taskCode": "タスクコード",
+      "status": "ステータス",
+      "type": "種別",
+      "startDate": "開始日時",
+      "all": "全て",
+      "placeholders": {
+        "partialMatch": "部分一致",
+        "select": "選択してください"
+      }
+    },
+    "table": {
+      "headers": {
+        "taskCode": "タスクコード",
+        "status": "ステータス",
+        "type": "種別",
+        "creator": "登録者",
+        "startDate": "開始日時",
+        "endDate": "終了日時",
+        "result": "結果",
+        "create": "登録",
+        "update": "更新",
+        "error": "エラー",
+        "dataCount": "データ数",
+        "errorResult": "エラー結果"
+      }
+    },
+    "text": {
+      "status": {
+        "PENDING": "保留中",
+        "PROCESSING": "処理中",
+        "COMPLETED": "成功",
+        "FAILED": "エラー"
+      },
+      "category": {
+        "PRODUCTS": "製品",
+        "CATEGORY_PRODUCTS": "製品カテゴリー",
+        "CUSTOMERS": "顧客",
+        "DEPARTMENTS": "部門",
+        "OTHER": "その他"
+      },
+      "error": "処理が途中で失敗しました"
+    }
   },
   "system_config": {
     "system_config": "システム設定",
@@ -713,10 +756,12 @@
         "line3": "同じ項目コードが複数ある場合、上書きされます。",
         "line4": "必須項目が不足する場合は取り込み不可です。",
         "line5": "空白行があってもスキップされます。"
+      },
+
+      "result": {
+        "title": "CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。",
+        "redirect": "CSVタスク履歴画面"
       }
-    },
-    "step_2": {
-      "title": "登録完了"
     },
     "buttons": {
       "back": "戻る",
@@ -729,5 +774,94 @@
     "create": "登録",
     "list": "list",
     "show": "show"
+  },
+  "tenant_settings": {
+    "tenant_settings": "見積フォーム設定",
+    "hide": "非表示",
+    "greeting": {
+      "label": "あいさつ文",
+      "placeholder": "下記の通りお見積り申し上げます。"
+    },
+    "deliveryDate": {
+      "label": "納入期日"
+    },
+    "deliveryMethod": {
+      "label": "納品方法",
+      "placeholder": "納品方法"
+    },
+    "paymentDueDate": {
+      "label": "支払期日",
+      "options": {
+        "monthly_25th": "毎月25日",
+        "monthly_10th": "毎月10日",
+        "30_days_after_delivery": "納品日後30日",
+        "30_days_after_invoice": "請求日後30日",
+        "eom_next_eom": "月末締め、翌月末支払い",
+        "eom_next_next_eom": "月末締め、翌々月末支払い"
+      }
+    },
+    "validityPeriod": {
+      "label": "有効期限",
+      "options": {
+        "days_7": "7日",
+        "days_14": "14日",
+        "days_30": "30日",
+        "days_45": "45日",
+        "days_60": "60日",
+        "months_3": "3月",
+        "months_6": "6月",
+        "year_1": "1年"
+      }
+    },
+    "postalCode": {
+      "label": "郵便番号"
+    },
+    "address": {
+      "label": "住所"
+    },
+    "companyName": {
+      "label": "会社名"
+    },
+    "phoneNumber": {
+      "label": "電話番号"
+    },
+    "companyLogo": {
+      "label": "会社ロゴ"
+    },
+    "companySeal": {
+      "label": "会社角印",
+      "button": "角印画像"
+    },
+    "preview": {
+      "title": "プレビュー"
+    },
+    "digitalStamp": {
+      "label": "担当者デジタル捺印",
+      "withStamp": "捺印あり",
+      "withoutStamp": "捺印なし"
+    },
+    "consumptionTax": {
+      "label": "消費税（デフォルト）",
+      "taxExclusive": "外税",
+      "taxInclusive": "内税",
+      "taxExempt": "税抜",
+      "taxRateLabel": "消費税率"
+    },
+    "taxRounding": {
+      "label": "税額の端数処理",
+      "options": {
+        "roundDown": "切り捨て",
+        "roundUp": "切り上げ",
+        "round": "四捨五入"
+      }
+    },
+    "priceRounding": {
+      "label": "売価の端数処理",
+      "options": {
+        "roundDown": "切り捨て",
+        "roundUp": "切り上げ",
+        "round": "四捨五入"
+      }
+    }
   }
 }
