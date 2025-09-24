@@ -130,18 +130,14 @@ function useProductUnits() {
     const order = fields?.[1]?.order ?? 0
     setPageSize((pre) => pre++)
 
-    insert(
-      current - 1,
-      {
-        id: crypto?.randomUUID?.(),
-        name: '',
-        order,
-        is_disable: false,
-        _isNew: true,
-        _isEditing: true,
-      },
-      { shouldFocus: true },
-    )
+    insert(current - 1, {
+      id: crypto?.randomUUID?.(),
+      name: '',
+      order,
+      is_disable: false,
+      _isNew: true,
+      _isEditing: true,
+    })
   }
 
   const startEdit = (index: number) => {
@@ -265,16 +261,13 @@ function useProductUnits() {
       title: '単位名',
       dataIndex: 'name',
       key: 'name',
-      render: (_v, record) => {
-        const index = Number(record.__index)
-        const isEditing = (watchedRows[index] as UnitRow | undefined)
-          ?._isEditing
-        return isEditing ? (
+      render: (_v, record, index) => {
+        return record._isEditing ? (
           <Controller
             control={control}
             name={`rows.${index}.name`}
             render={({ field }) => (
-              <Input {...field} size="middle" autoFocus placeholder="単位名" />
+              <Input {...field} autoFocus size="middle" placeholder="単位名" />
             )}
           />
         ) : (
@@ -288,13 +281,10 @@ function useProductUnits() {
       title: '有効・無効',
       key: 'is_disable',
       width: 240,
-      render: (_v, record) => {
-        const index = Number(record.__index)
-        const isEditing = (watchedRows[index] as UnitRow | undefined)
-          ?._isEditing
+      render: (_v, record, index) => {
         const value =
           (watchedRows[index] as UnitRow | undefined)?.is_disable ?? false
-        return isEditing ? (
+        return record._isEditing ? (
           <Controller
             control={control}
             name={`rows.${index}.is_disable`}

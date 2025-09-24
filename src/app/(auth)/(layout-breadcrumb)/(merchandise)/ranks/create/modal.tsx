@@ -5,6 +5,8 @@ import React from 'react'
 import { Create } from '@components/crud/create'
 import { CreateButton, useForm } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
+import { createSchemaFieldRule } from 'antd-zod'
+import { zRank } from '@sdk/hey-api/zod.gen'
 
 type Props = {
   modalProps: any
@@ -27,19 +29,21 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
     return result
   }
 
+  const rule = createSchemaFieldRule(zRank)
+
   return (
     <Create
       {...formProps}
       isLoading={formLoading}
       saveButtonProps={saveButtonProps}
       title={<></>}
-      i18nHeading={'code_issue_settings.edit.edit'}
+      i18nHeading={'ranks.create.create'}
       contentProps={{ style: { boxShadow: 'none' } }}
       rightFooterButtons={
         <Space className={'flex w-full justify-end'}>
           <Button onClick={close}>{t('buttons.cancel')}</Button>
           <CreateButton {...saveButtonProps} type="primary" icon={null}>
-            {t('products.buttons.save')}
+            {t('buttons.create')}
           </CreateButton>
         </Space>
       }
@@ -56,31 +60,35 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
         <Form.Item
           label={boldText(t('ranks.fields.code'))}
           name="code"
-          rules={[{ required: true }]}
+          required
+          rules={[rule]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.name'))}
           name="name"
-          rules={[{ required: true }]}
+          rules={[rule]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.rate'))}
           name="rate"
-          rules={[{ required: true }]}
+          rules={[rule]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
-          rules={[{ required: true }]}
+          rules={[rule]}
         >
           <Input multiple />
         </Form.Item>

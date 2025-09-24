@@ -9,6 +9,7 @@ import { DeleteButton, useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
@@ -51,7 +52,7 @@ export default function EmployeeEdit() {
     () => [
       { required: true, message: '部門コードは必須です。' },
       { pattern: /^[A-Z0-9-]+$/, message: 'A-Z, 0-9, - のみ使用できます。' },
-      { max: 32, message: '最大32文字までです。' },
+      { max: 20, message: '最大20文字までです。' },
     ],
     [],
   )
@@ -59,14 +60,14 @@ export default function EmployeeEdit() {
   const nameRules: Rule[] = useMemo(
     () => [
       { required: true, message: '部門名は必須です。' },
-      { max: 120, message: '最大120文字までです。' },
+      { max: 100, message: '最大100文字までです。' },
     ],
     [],
   )
 
   const handleAutoNumber = () => {
     const codeGen = data?.data
-    form?.setFieldsValue({ code: codeGen?.preview_code, name: codeGen?.name })
+    form?.setFieldsValue({ code: codeGen?.preview_code })
   }
 
   const breadcrumbItems = [
@@ -100,12 +101,12 @@ export default function EmployeeEdit() {
           <ShowMoreInfo
             descriptions={[
               {
-                title: t('common.created_by'),
+                title: t('approve_routes.show.creator'),
                 value:
                   employeeData?.author?.name ??
                   '---' +
                     ' ' +
-                    dayjs(employeeData?.created_at).format('YYYY/MM/DD HH:mm'),
+                    dayjs(employeeData?.created_at).format(FORMAT_DATE_TIME),
               },
               {
                 title: t('common.updated_by'),
@@ -113,7 +114,7 @@ export default function EmployeeEdit() {
                   employeeData?.editor?.name ??
                   '---' +
                     ' ' +
-                    dayjs(employeeData?.updated_at).format('YYYY/MM/DD HH:mm'),
+                    dayjs(employeeData?.updated_at).format(FORMAT_DATE_TIME),
               },
             ]}
           />
@@ -130,11 +131,11 @@ export default function EmployeeEdit() {
       rightFooterButtons={
         <Space size={2} className={'flex justify-end'}>
           <Button {...saveButtonProps} type="primary">
-            {t('buttons.save')}
+            {t('products.buttons.save')}
           </Button>
         </Space>
       }
-      i18nHeading={t('departments.edit.edit')}
+      i18nHeading={'departments.edit.edit'}
     >
       <Form
         {...formProps}
@@ -192,6 +193,7 @@ export default function EmployeeEdit() {
                   onClick={() => show(data?.data?.id)}
                   className="text-blue-500"
                   disabled={!data?.data?.id}
+                  style={{ marginLeft: -16, marginTop: -10 }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>

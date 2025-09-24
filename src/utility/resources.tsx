@@ -3,7 +3,6 @@ import type { ResourceProps } from '@refinedev/core'
 export const resource: ResourceProps[] = [
   {
     name: 'estimates',
-    list: '/estimates',
   },
   {
     name: 'estimates',

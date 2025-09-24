@@ -93,7 +93,7 @@ export default function Page() {
           </Col>
           <Col>
             <Button type="primary" size="middle" onClick={addNew}>
-              新規登録
+              {t('buttons.create_new')}
             </Button>
           </Col>
         </Row>

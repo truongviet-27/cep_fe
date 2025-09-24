@@ -44,7 +44,10 @@ export default function Page() {
   })
 
   const columns: ColumnsType<Rank> = [
-    { dataIndex: 'code', title: t('ranks.fields.code') },
+    {
+      dataIndex: 'code',
+      title: t('ranks.fields.code'),
+    },
     { dataIndex: 'name', title: t('ranks.fields.name') },
     { dataIndex: 'rate', title: t('ranks.fields.rate') },
     { dataIndex: 'customer', title: t('ranks.fields.number_of_customers') },

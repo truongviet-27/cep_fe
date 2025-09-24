@@ -27,6 +27,7 @@ import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Department } from '@sdk/hey-api'
+import Link from 'next/link'
 
 const { Title, Text } = Typography
 
@@ -111,9 +112,22 @@ export default function Page() {
   }
 
   const columns: ColumnsType<RowVM> = [
-    { dataIndex: 'code', title: t('departments.fields.code') },
+    {
+      dataIndex: 'code',
+      title: t('departments.fields.code'),
+      render: (value, record) => {
+        return (
+          <Link
+            style={{ textDecoration: 'underline' }}
+            href={`/employees/show/${record?.id}`}
+          >
+            {value}
+          </Link>
+        )
+      },
+    },
     { dataIndex: 'name', title: t('departments.fields.name') },
-    { dataIndex: 'created_by', title: t('departments.fields.created_by') },
+    { dataIndex: 'created_by', title: t('approve_routes.show.creator') },
     { dataIndex: 'updated_by', title: t('departments.fields.updated_by') },
     {
       dataIndex: 'created_at',
