@@ -1,7 +1,8 @@
-import React from 'react'
+'use client'
+import QuotaList from '@components/cep/estimates/quota'
 
 function Page() {
-  return <div></div>
+  return <QuotaList />
 }
 
 export default Page

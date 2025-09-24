@@ -553,7 +553,7 @@
     "advanced_content": "高度設定の内容",
     "enterprise_content": "エンタープライズ設定の内容",
     "employee": "社員",
-    "manager": "マネージャー "
+    "manager": "一般 "
   },
   "projects": {
     "projects": "案件",
@@ -855,5 +855,12 @@
         "round": "四捨五入"
       }
     }
+  },
+  "quota": {
+    "quota": "見積",
+    "list": "見積一覧",
+    "create": "見積新規作成",
+    "edit": "見積編集",
+    "detail": "見積詳細"
   }
 }
