@@ -79,7 +79,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         <Form.Item
           label={t('code_issue_settings.fields.prefix')}
           name="prefix"
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: t('validation.required') }]}
         >
           <Input placeholder="例: PD" disabled={isManual} />
         </Form.Item>
@@ -157,10 +157,10 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         />
       </Form>
 
-      <Space className={'flex w-full justify-end'}>
+      <Space className={'mt-4 flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
         <Button {...saveButtonProps} type="primary">
-          {t('buttons.save')}
+          {t('permission_settings.buttons.save')}
         </Button>
       </Space>
     </Edit>

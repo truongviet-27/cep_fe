@@ -68,16 +68,9 @@ export default function Page() {
       render: (cur, _, index) => {
         return (
           <>
-            <Form.Item
-              name={['data', index, 'id']}
-              initialValue={cur?.id}
-              hidden
-            />
+            <Form.Item name={[index, 'id']} initialValue={cur?.id} hidden />
 
-            <Form.Item
-              name={['data', index, 'is_manage']}
-              initialValue={cur.is_manage}
-            >
+            <Form.Item name={[index, 'is_manage']} initialValue={cur.is_manage}>
               <Radio.Group>
                 <Space size={'large'}>
                   <Radio value={true}>
@@ -110,17 +103,18 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       isLoading={isLoading || formLoading}
+      hiddenButtonBack
       rightFooterButtons={
         <ActionButtons
           onCancel={handleCancel}
           saveButtonProps={saveButtonProps}
           loading={isLoading || formLoading}
           cancelText={t('buttons.cancel')}
-          saveText={t('buttons.save_settings')}
+          saveText={t('permission_settings.buttons.save')}
         />
       }
     >
-      <Form {...formProps} onFinish={handleOnFinish} initialValues={data?.data}>
+      <Form {...formProps} onFinish={handleOnFinish}>
         <CommonTable
           dataSource={data?.data || []}
           columns={columns}

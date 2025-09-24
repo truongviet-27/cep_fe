@@ -14,16 +14,7 @@ type Form = {
 function useMailTemplates() {
   const t = useTranslate()
 
-  const methods = useForm<Form>({
-    defaultFormValues: {
-      title_1: '',
-      content_1: '',
-      signature_1: t('mail_templates.form.signature.content'),
-      title_2: '',
-      content_2: '',
-      signature_2: t('mail_templates.form.signature.content'),
-    },
-  })
+  const methods = useForm<Form>()
   const {
     form: { setFieldsValue, validateFields },
   } = methods

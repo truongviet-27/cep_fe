@@ -45,7 +45,7 @@ export default function Page() {
           <ShowMoreInfo
             descriptions={[
               {
-                title: t('common.created_by'),
+                title: t('approve_routes.show.creator'),
                 value: `${departmentData?.author?.name ?? '---'} ${dayjs(
                   departmentData?.created_at,
                 ).format(FORMAT_DATE_TIME)}`,

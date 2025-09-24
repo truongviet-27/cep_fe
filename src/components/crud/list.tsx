@@ -109,20 +109,20 @@ export const List: React.FC<ListProps & CustomProps> = ({
             {/*{defaultExtra}*/}
           </div>
           {children}
-          {/*<div className={'mt-15 flex justify-end space-x-3'}>*/}
-          {/*  {footer}*/}
-          {/*  <Button*/}
-          {/*    type="default"*/}
-          {/*    style={{*/}
-          {/*      background: '#fff',*/}
-          {/*      borderColor: PRIMARY,*/}
-          {/*      color: PRIMARY,*/}
-          {/*      fontWeight: 600,*/}
-          {/*    }}*/}
-          {/*  >*/}
-          {/*    戻る*/}
-          {/*  </Button>*/}
-          {/*</div>*/}
+          <div className={'mt-15 flex justify-end space-x-3'}>
+            {footer}
+            {/*  <Button*/}
+            {/*    type="default"*/}
+            {/*    style={{*/}
+            {/*      background: '#fff',*/}
+            {/*      borderColor: PRIMARY,*/}
+            {/*      color: PRIMARY,*/}
+            {/*      fontWeight: 600,*/}
+            {/*    }}*/}
+            {/*  >*/}
+            {/*    戻る*/}
+            {/*  </Button>*/}
+          </div>
         </div>
       </PageHeader>
     </div>
