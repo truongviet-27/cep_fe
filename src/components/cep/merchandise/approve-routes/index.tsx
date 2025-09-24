@@ -97,7 +97,6 @@ function Approve() {
         dataIndex: 'departments',
         title: t('approve_routes.table.department'),
         render: (value) => {
-          console.log(value, 'value')
           return value?.map((item: any) => item?.name + ' , ')
         },
       },

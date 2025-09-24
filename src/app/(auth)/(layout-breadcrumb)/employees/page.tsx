@@ -53,7 +53,6 @@ function Page() {
   }
 
   const handleSearch = (values: any) => {
-    console.log('Search values:', values)
     setFilters([
       { field: 'code', operator: 'contains', value: values.code },
       { field: 'name', operator: 'contains', value: values.name },
