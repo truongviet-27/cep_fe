@@ -1,5 +1,7 @@
 import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import {
+  Button,
   Card,
   Col,
   DatePicker,
@@ -7,6 +9,7 @@ import {
   Input,
   InputNumber,
   Radio,
+  Row,
   Select,
 } from 'antd'
 import React from 'react'
@@ -18,7 +21,6 @@ function BasicInfo() {
       title={'基本情報'}
       style={{
         border: 'none',
-        marginTop: 40,
       }}
       headStyle={{
         padding: 0,
@@ -28,21 +30,31 @@ function BasicInfo() {
         padding: 0,
       }}
     >
-      <Col>
-        <Form.Item
-          colon={false}
-          required
-          label={<span className="font-bold">見積番号</span>}
-        >
-          <Input />
-        </Form.Item>
-      </Col>
-
       <Form.Item
-        colon={false}
+        label={boldText(t('customers.fields.code'))}
         required
-        label={<span className="font-bold">見積区分</span>}
+        style={{ marginTop: 20 }}
       >
+        <Row align="middle" gutter={20}>
+          <Col>
+            <Form.Item rules={[]} name="customer_code" required noStyle>
+              <Input style={{ width: 240 }} />
+            </Form.Item>
+          </Col>
+          <Col>
+            <Button onClick={() => {}} loading={false}>
+              {t('departments.create.auto_number')}
+            </Button>
+          </Col>
+          <Col>
+            <Button type="link" onClick={() => {}}>
+              {t('departments.create.popup_number_setting')}
+            </Button>
+          </Col>
+        </Row>
+      </Form.Item>
+
+      <Form.Item required label={<span className="font-bold">見積区分</span>}>
         <Radio.Group
           defaultValue={'exclusive'}
           options={[
@@ -58,63 +70,37 @@ function BasicInfo() {
         />
       </Form.Item>
 
-      <Form.Item
-        colon={false}
-        required
-        label={<span className="font-bold">タイトル</span>}
-      >
+      <Form.Item required label={<span className="font-bold">タイトル</span>}>
         <Input />
       </Form.Item>
 
-      <Form.Item
-        colon={false}
-        label={<span className="font-bold">取引先</span>}
-      >
+      <Form.Item label={<span className="font-bold">取引先</span>}>
         <Select allowClear showSearch />
       </Form.Item>
 
-      <Form.Item
-        colon={false}
-        label={<span className="font-bold">見積日</span>}
-      >
+      <Form.Item label={<span className="font-bold">見積日</span>}>
         <DatePicker />
       </Form.Item>
 
-      <Form.Item
-        colon={false}
-        label={<span className="font-bold">納入期日</span>}
-      >
+      <Form.Item label={<span className="font-bold">納入期日</span>}>
         <DatePicker />
       </Form.Item>
 
-      <Form.Item
-        colon={false}
-        label={<span className="font-bold">納品方法</span>}
-      >
+      <Form.Item label={<span className="font-bold">納品方法</span>}>
         <Input />
       </Form.Item>
 
-      <Form.Item
-        colon={false}
-        label={<span className="font-bold">支払期日</span>}
-      >
+      <Form.Item label={<span className="font-bold">支払期日</span>}>
+        <Select allowClear showSearch />
+      </Form.Item>
+
+      <Form.Item label={<span className="font-bold">有効期限</span>}>
         <Select allowClear showSearch />
       </Form.Item>
 
       <Form.Item
-        colon={false}
-        label={<span className="font-bold">有効期限</span>}
-      >
-        <Select allowClear showSearch />
-      </Form.Item>
-
-      <Form.Item
-        colon={false}
         label={<span className="font-bold">消費税</span>}
         name="consumption_tax"
-        style={{
-          margin: 0,
-        }}
       >
         <Radio.Group
           defaultValue={'exclusive'}
@@ -135,7 +121,6 @@ function BasicInfo() {
         />
       </Form.Item>
       <Form.Item
-        colon={false}
         name="tax_rate"
         label={
           <span className="font-bold">
@@ -149,7 +134,9 @@ function BasicInfo() {
         }}
         getValueFromEvent={(value) => Number(value)}
       >
-        <InputNumber controls={false} min={0} max={100} addonAfter="%" />
+        <Row>
+          <InputNumber controls={false} min={0} max={100} addonAfter="%" />
+        </Row>
       </Form.Item>
     </Card>
   )

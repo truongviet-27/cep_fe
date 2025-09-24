@@ -68,6 +68,12 @@ function QuotaAction() {
     >
       <Form
         {...formProps}
+        labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
+        wrapperCol={{ xs: 24, sm: 16, md: 10, lg: 8, xl: 8 }}
+        labelAlign="left"
+        layout="horizontal"
+        colon={false}
+        autoComplete="off"
         initialValues={{
           detail_info: [
             {
