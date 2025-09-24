@@ -1,7 +1,7 @@
 import React from 'react'
 
-function Page() {
+function History() {
   return <div></div>
 }
 
-export default Page
+export default History

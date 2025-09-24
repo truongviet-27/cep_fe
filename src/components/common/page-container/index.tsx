@@ -29,8 +29,8 @@ const PageContainer = ({
             style={{
               color: PRIMARY,
               margin: '10px 0 20px 0',
+              fontSize: 16,
             }}
-            level={5}
           >
             {title}
           </Title>

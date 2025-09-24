@@ -3,7 +3,7 @@ import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
 import PageContainer from '@components/common/page-container'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Form, Popconfirm, Typography } from 'antd'
+import { Breadcrumb, Button, Form, Popconfirm } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import Title from 'antd/es/typography/Title'
 
@@ -27,7 +27,7 @@ function MailTemplate() {
 
   return (
     <PageContainer
-      title={
+      breadcrumbs={
         <Breadcrumb
           items={[
             {
@@ -46,6 +46,7 @@ function MailTemplate() {
           separator={<RightOutlined />}
         />
       }
+      title={t('mail_templates.mail_templates')}
     >
       <Form
         {...formProps}
@@ -55,14 +56,6 @@ function MailTemplate() {
           [`signature_${indexTab}`]: data?.signature,
         }}
       >
-        <Typography.Title
-          level={5}
-          style={{
-            color: '#1890FF',
-          }}
-        >
-          {t('mail_templates.mail_templates')}
-        </Typography.Title>
         <TabsEmailTemplate
           isEdit={isEdit}
           onChange={onChangeTabs}

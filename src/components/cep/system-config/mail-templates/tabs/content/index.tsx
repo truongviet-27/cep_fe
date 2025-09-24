@@ -37,14 +37,21 @@ function TabsContent({
     const end = input.selectionEnd
     const currentValue = getFieldValue(field) || ''
 
+    const cleanText = text.trim()
+    const insertValue = `[[${cleanText}]]`
+
     const newValue =
-      currentValue.substring(0, start) + text + currentValue.substring(end)
+      currentValue.substring(0, start) +
+      `[[${text.trim()}]]` +
+      currentValue.substring(end)
 
     setFieldValue(field, newValue)
 
     setTimeout(() => {
       input.focus()
-      input.selectionStart = input.selectionEnd = start + text.length
+      const cursorPos = start + insertValue.length
+      input.setSelectionRange(cursorPos, cursorPos)
+      input.scrollTop = input.scrollHeight
     })
   }
 
@@ -62,14 +69,21 @@ function TabsContent({
             {t('mail_templates.form.subject')}
           </span>
         }
-        rules={[
-          { required: true, message: t('mail_templates.validation.required') },
-          { max: 255, message: t('mail_templates.validation.max255') },
-          {
-            pattern: /^(?!\s*$).+/,
-            message: t('mail_templates.validation.notBlank'),
-          },
-        ]}
+        rules={
+          isEdit
+            ? [
+                {
+                  required: true,
+                  message: t('mail_templates.validation.required'),
+                },
+                { max: 255, message: t('mail_templates.validation.max255') },
+                {
+                  pattern: /^(?!\s*$).+/,
+                  message: t('mail_templates.validation.notBlank'),
+                },
+              ]
+            : []
+        }
       >
         <Input
           variant={isEdit ? 'outlined' : 'borderless'}
@@ -115,20 +129,26 @@ function TabsContent({
             )}
           </>
         }
-        rules={[
-          { required: true, message: t('mail_templates.validation.required') },
-          { max: 255, message: t('mail_templates.validation.max255') },
-          {
-            pattern: /^(?!\s*$).+/,
-            message: t('mail_templates.validation.notBlank'),
-          },
-        ]}
+        rules={
+          isEdit
+            ? [
+                {
+                  required: true,
+                  message: t('mail_templates.validation.required'),
+                },
+                { max: 255, message: t('mail_templates.validation.max255') },
+                {
+                  pattern: /^(?!\s*$).+/,
+                  message: t('mail_templates.validation.notBlank'),
+                },
+              ]
+            : []
+        }
       >
         <TextArea
           rows={8}
           name={`content_${index}`}
           variant={isEdit ? 'outlined' : 'borderless'}
-          className="!resize-none"
           readOnly={!isEdit}
           ref={inputRef}
         />
@@ -142,14 +162,21 @@ function TabsContent({
             {t('mail_templates.form.signature.label')}
           </span>
         }
-        rules={[
-          { required: true, message: t('mail_templates.validation.required') },
-          { max: 255, message: t('mail_templates.validation.max255') },
-          {
-            pattern: /^(?!\s*$).+/,
-            message: t('mail_templates.validation.notBlank'),
-          },
-        ]}
+        rules={
+          isEdit
+            ? [
+                {
+                  required: true,
+                  message: t('mail_templates.validation.required'),
+                },
+                { max: 255, message: t('mail_templates.validation.max255') },
+                {
+                  pattern: /^(?!\s*$).+/,
+                  message: t('mail_templates.validation.notBlank'),
+                },
+              ]
+            : []
+        }
       >
         <TextArea
           rows={4}
