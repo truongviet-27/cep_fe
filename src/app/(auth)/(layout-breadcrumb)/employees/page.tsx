@@ -7,6 +7,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import { EditButton, EmailField, ShowButton, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -19,13 +20,15 @@ import {
   Table,
   Typography,
 } from 'antd'
-import React from 'react'
-import boldText from '@utility/bold-text'
+import { useSession } from 'next-auth/react'
 
 const { Title, Text } = Typography
 
 function Page() {
   const t = useTranslate()
+
+  const session = useSession()
+  const userEmail = session.data?.user?.email
 
   const renderFieldNotSet = (value?: any) => {
     return (
@@ -49,7 +52,15 @@ function Page() {
   ]
 
   const getRowClassName = (record: BaseRecord) => {
-    return !record.email || !record.code ? 'bg-gray-200' : ''
+    let className = ''
+    if (!record.email || !record.code) {
+      className = 'bg-gray-200'
+    }
+
+    if (record.email === userEmail) {
+      className = 'bg-gray-300'
+    }
+    return className
   }
 
   const handleSearch = (values: any) => {
@@ -159,7 +170,11 @@ function Page() {
           render={(_, record: BaseRecord) => (
             <Space>
               <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
+              {userEmail === record.email ? (
+                <EditButton size="small" disabled hideText />
+              ) : (
+                <EditButton hideText size="small" recordItemId={record.id} />
+              )}
             </Space>
           )}
         />

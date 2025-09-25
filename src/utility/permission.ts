@@ -53,6 +53,8 @@ export const hasForbiddenRoute = (pathName: string) => {
     case '/products/create':
     case '/products/edit':
       return !hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
+    case '/employees/edit':
+      return !hasFullAccessModule(PermissionEnum.EMPLOYEE_EDIT)
     default:
       return false
   }

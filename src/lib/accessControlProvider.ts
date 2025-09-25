@@ -44,6 +44,10 @@ export const accessControlProvider: AccessControlProvider = {
         return {
           can: hasFullAccessModule(PermissionEnum.PRODUCT_EDIT),
         }
+      case 'employees':
+        return {
+          can: hasFullAccessModule(PermissionEnum.EMPLOYEE_EDIT),
+        }
       default:
         return { can: false }
     }
