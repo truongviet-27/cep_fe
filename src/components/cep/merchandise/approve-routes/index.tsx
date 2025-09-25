@@ -3,6 +3,7 @@ import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import {
+  CreateButton,
   DeleteButton,
   EditButton,
   RefreshButton,
@@ -244,7 +245,7 @@ function Approve() {
             </Space>
 
             <Space className="mt-[3px] ml-2">
-              <Button
+              <CreateButton
                 type="primary"
                 size="middle"
                 onClick={() => {
@@ -252,9 +253,10 @@ function Approve() {
                     to: '/approve-routes/create',
                   })
                 }}
+                icon={null}
               >
                 {t('buttons.add')}
-              </Button>
+              </CreateButton>
             </Space>
           </Col>
         </Row>
