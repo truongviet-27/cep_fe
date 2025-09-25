@@ -36,11 +36,17 @@ export const hasForbiddenRoute = (pathName: string) => {
     return true
   }
 
-  switch (pathName) {
+  const pathConverted = pathName.replace(/\/\d+$/, '')
+
+  switch (pathConverted) {
     case '/product-categories/csv':
       return !permission?.permissions?.has?.(
         PermissionEnum.PRODUCT_CATEGORY_EDIT,
       )
+    case '/departments/csv':
+    case '/departments/create':
+    case '/departments/edit':
+      return !permission?.permissions?.has?.(PermissionEnum.DEPARTMENT_EDIT)
     default:
       return false
   }

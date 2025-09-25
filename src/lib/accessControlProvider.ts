@@ -36,6 +36,10 @@ export const accessControlProvider: AccessControlProvider = {
             PermissionEnum.PRODUCT_CATEGORY_EDIT,
           ),
         }
+      case 'departments':
+        return {
+          can: !!permission?.permissions?.has?.(PermissionEnum.DEPARTMENT_EDIT),
+        }
       default:
         return { can: false }
     }
