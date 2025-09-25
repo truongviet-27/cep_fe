@@ -27,6 +27,7 @@ import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
+import Link from 'next/link'
 
 const { Title, Text } = Typography
 
@@ -47,6 +48,11 @@ export default function Page() {
     {
       dataIndex: 'code',
       title: t('ranks.fields.code'),
+      render: (_, record) => (
+        <Link href={`/customers/show/${record.id}`} className="!underline">
+          {record.code}
+        </Link>
+      ),
     },
     { dataIndex: 'name', title: t('ranks.fields.name') },
     { dataIndex: 'rate', title: t('ranks.fields.rate') },
