@@ -2,14 +2,14 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import TableDnd from '@components/common/table-dnd'
-import { List } from '@components/crud/list'
-import Breadcrumbs from '@components/layout/breadcrumbs'
-import { Button, Col, Form, Input, Row, Space } from 'antd'
-import React from 'react'
 import useProductUnits, {
   RowVM,
 } from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-units/use-product-units'
+import TableDnd from '@components/common/table-dnd'
+import { List } from '@components/crud/list'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import { CreateButton } from '@refinedev/antd'
+import { Button, Col, Form, Input, Row, Space } from 'antd'
 
 export default function Page() {
   const {
@@ -92,9 +92,14 @@ export default function Page() {
             </Row>
           </Col>
           <Col>
-            <Button type="primary" size="middle" onClick={addNew}>
+            <CreateButton
+              type="primary"
+              size="middle"
+              onClick={addNew}
+              icon={null}
+            >
               新規登録
-            </Button>
+            </CreateButton>
           </Col>
         </Row>
       </Form>
