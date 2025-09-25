@@ -7,9 +7,16 @@ export const resource: ResourceProps[] = [
   {
     name: 'estimates',
     list: '/estimates',
-    show: '/estimates/:id',
-    create: '/estimates/:id',
-    edit: '/estimates/:id',
+    meta: {
+      parent: 'estimates',
+    },
+  },
+  {
+    name: 'quota',
+    list: '/quota',
+    show: '/quota/:id',
+    create: '/quota/:id',
+    edit: '/quota/:id',
     meta: {
       parent: 'estimates',
       canDelete: true,
@@ -31,13 +38,6 @@ export const resource: ResourceProps[] = [
       canCreate: true,
     },
   },
-  // {
-  //   name: 'projects',
-  //   list: '/projects',
-  //   edit: '/projects/edit/:id',
-  //   create: '/projects/create',
-  //   show: '/projects/show/:id',
-  // },
   {
     name: 'merchandise',
     list: '/merchandise',
@@ -168,6 +168,13 @@ export const resource: ResourceProps[] = [
       parent: 'system-config',
       canDelete: true,
       canCreate: true,
+    },
+  },
+  {
+    name: 'tenant-settings',
+    list: '/tenant-settings',
+    meta: {
+      parent: 'system-config',
     },
   },
   {

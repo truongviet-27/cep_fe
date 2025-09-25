@@ -1,6 +1,5 @@
 import { RightOutlined } from '@ant-design/icons'
 import usePermissionSetting from '@components/cep/system-config/permission-setting/usePermissionSetting'
-import AutoHeading from '@components/common/auto-heading'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import { Breadcrumb, Button } from 'antd'
@@ -12,11 +11,11 @@ function PermissionSetting() {
   ] = usePermissionSetting()
   return (
     <PageContainer
-      title={
+      breadcrumbs={
         <Breadcrumb items={breadcrumbItems} separator={<RightOutlined />} />
       }
+      title={t('system_config.permission_settings')}
     >
-      <AutoHeading i18n={'system_config.permission_settings'} />
       <CommonTable
         columns={columns}
         dataSource={dataSource}

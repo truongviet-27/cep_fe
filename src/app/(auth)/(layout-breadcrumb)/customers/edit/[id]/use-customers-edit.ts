@@ -44,7 +44,6 @@ export const useCustomerEdit = () => {
   const rule = createSchemaFieldRule(zCustomerStoreRequest)
 
   const onFinish = (values: CustomerStoreRequest) => {
-    console.log('Form Values:', values)
     mutate({
       resource: 'customers',
       values,

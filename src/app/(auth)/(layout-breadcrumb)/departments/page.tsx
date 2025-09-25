@@ -23,7 +23,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
+import { Button, Col, Flex, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Department } from '@sdk/hey-api'
