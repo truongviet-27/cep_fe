@@ -61,9 +61,9 @@ export default function CustomerListPage() {
   const go = useGo()
 
   const { mutate, isLoading } = useUpdate()
-  const { hasFullAcceptModule } = useUserStore.getState()
+  const { hasFullAccessModule } = useUserStore.getState()
 
-  const isFullAccess = hasFullAcceptModule(PermissionEnum.CUSTOMER_EDIT)
+  const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',

@@ -26,7 +26,7 @@ export const hasDisableMenu = (route?: string): boolean => {
 }
 
 export const hasForbiddenRoute = (pathName: string) => {
-  const { permission, hasFullAcceptModule } = useUserStore.getState()
+  const { permission, hasFullAccessModule } = useUserStore.getState()
 
   if (permission?.is_module_admin) {
     return false
@@ -40,15 +40,19 @@ export const hasForbiddenRoute = (pathName: string) => {
 
   switch (pathConverted) {
     case '/product-categories/csv':
-      return !hasFullAcceptModule(PermissionEnum.PRODUCT_CATEGORY_EDIT)
+      return !hasFullAccessModule(PermissionEnum.PRODUCT_CATEGORY_EDIT)
     case '/departments/csv':
     case '/departments/create':
     case '/departments/edit':
-      return !hasFullAcceptModule(PermissionEnum.DEPARTMENT_EDIT)
+      return !hasFullAccessModule(PermissionEnum.DEPARTMENT_EDIT)
     case '/customers/csv':
     case '/customers/create':
     case '/customers/edit':
-      return !hasFullAcceptModule(PermissionEnum.CUSTOMER_EDIT)
+      return !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
+    case '/products/csv':
+    case '/products/create':
+    case '/products/edit':
+      return !hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
     default:
       return false
   }

@@ -1,7 +1,7 @@
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
-import type { ProductListItem } from '@sdk/hey-api'
+import { type ProductListItem } from '@sdk/hey-api'
 import { Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'

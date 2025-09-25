@@ -8,14 +8,14 @@ type UserStore = {
   permission: PermissionType | null
   logout?: () => void
   useSyncUser: () => Promise<boolean>
-  hasFullAcceptModule: (permissionName: PermissionEnum) => boolean
+  hasFullAccessModule: (permissionName: PermissionEnum) => boolean
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
   isFetching: false,
   permission: null,
   logout: () => set({ permission: null }),
-  hasFullAcceptModule: (permissionName: PermissionEnum) => {
+  hasFullAccessModule: (permissionName: PermissionEnum) => {
     const permission = get().permission
 
     if (permission?.is_module_admin) return true
