@@ -1,22 +1,21 @@
+/* eslint-disable simple-import-sort/imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-
 import { RightOutlined } from '@ant-design/icons'
 import Left from '@components/cep/system-config/tenant-setting/components/Left'
 import Right from '@components/cep/system-config/tenant-setting/components/Right'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { Viewer, Worker } from '@react-pdf-viewer/core'
+import '@react-pdf-viewer/core/lib/styles/index.css'
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
+import '@react-pdf-viewer/default-layout/lib/styles/index.css'
 import { useForm } from '@refinedev/antd'
-import {
-  useApiUrl,
-  useCustom,
-  useCustomMutation,
-  useTranslate,
-} from '@refinedev/core'
+import { useApiUrl, useCustom, useTranslate, useUpdate } from '@refinedev/core'
 import type { QuotaFormSettingResponse } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { Button, Form, Row, Space, Typography } from 'antd'
-import { useEffect } from 'react'
+import { Button, Form, Modal, Row, Space, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 
 const { Title } = Typography
 
@@ -28,9 +27,16 @@ type FormType = QuotaFormSettingResponse & {
 function TenantSetting() {
   const t = useTranslate()
   const { formProps, saveButtonProps, form } = useForm<FormType>()
+
+  const [isPdf, setIsPdf] = useState(false)
   const apiUrl = useApiUrl()
 
-  const { mutate, isPending } = useCustomMutation()
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+
+  const { mutate, isPending } = useUpdate({
+    resource: `quota-form-settings`,
+    id: form.getFieldValue('id'),
+  })
 
   const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
@@ -41,12 +47,18 @@ function TenantSetting() {
     const customValues: QuotaFormSettingResponse = {
       ...values,
       id: form.getFieldValue('id'),
-      company_logo_image: form.getFieldValue('company_logo_image_file_key'),
-      company_seal_image: form.getFieldValue('company_seal_image_file_key'),
+      company_logo_image:
+        form.getFieldValue('company_logo_image_file_key') ??
+        form
+          .getFieldValue('company_logo_image')
+          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+      company_seal_image:
+        form.getFieldValue('company_seal_image_file_key') ??
+        form
+          .getFieldValue('company_seal_image')
+          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
     }
     mutate({
-      method: 'put',
-      url: `${apiUrl}/quota-form-settings/${form.getFieldValue('id')}`,
       values: customValues,
     })
   }
@@ -91,7 +103,13 @@ function TenantSetting() {
           >
             {'キャンセル'}
           </Button>
-          <Button type="default" size="large">
+          <Button
+            type="default"
+            size="large"
+            onClick={() => {
+              setIsPdf(!isPdf)
+            }}
+          >
             {'プレビュー'}
           </Button>
           <Button
@@ -113,6 +131,36 @@ function TenantSetting() {
           <Right />
         </Row>
       </Form>
+
+      {
+        <Modal
+          title="PDF Default"
+          closable={{ 'aria-label': 'Custom Close Button' }}
+          open={isPdf}
+          onCancel={() => {
+            setIsPdf(false)
+          }}
+          footer={null}
+          style={{ top: 20 }}
+          width={{
+            xs: '90%',
+            sm: '80%',
+            md: '70%',
+            lg: '60%',
+          }}
+        >
+          <div
+            style={{ height: '800px', border: '1px solid rgba(0, 0, 0, 0.3)' }}
+          >
+            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+              <Viewer
+                fileUrl="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf"
+                plugins={[defaultLayoutPluginInstance]}
+              />
+            </Worker>
+          </div>
+        </Modal>
+      }
     </Create>
   )
 }

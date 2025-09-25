@@ -77,43 +77,48 @@ function QuotaAction() {
         initialValues={{
           detail_info: [
             {
-              key: '1',
-              productCode: 'P-001',
-              productName: 'ノートパソコン', // Laptop
-              unit: '台',
-              package: '箱',
-              costPrice: 50000,
-              sellingPrice: 65000,
-              quantity: 2,
-              profitRate: 30,
-              sellingAmount: 130000,
-              total: 130000,
-            },
-            {
-              key: '2',
-              productCode: 'P-002',
-              productName: 'マウス', // Mouse
-              unit: '個',
-              package: '-',
-              costPrice: 800,
-              sellingPrice: 1200,
-              quantity: 5,
-              profitRate: 50,
-              sellingAmount: 6000,
-              total: 6000,
-            },
-            {
-              key: '3',
-              productCode: 'P-003',
-              productName: 'サービスA', // Service A
-              unit: '式',
-              package: '-',
-              costPrice: 10000,
-              sellingPrice: 15000,
-              quantity: 1,
-              profitRate: 50,
-              sellingAmount: 15000,
-              total: 15000,
+              title: '商品リスト名入力',
+              children: [
+                {
+                  key: '1',
+                  productCode: 'P-001',
+                  productName: 'ノートパソコン', // Laptop
+                  unit: '台',
+                  package: '箱',
+                  costPrice: 50000,
+                  sellingPrice: 65000,
+                  quantity: 2,
+                  profitRate: 30,
+                  sellingAmount: 130000,
+                  total: 130000,
+                },
+                {
+                  key: '2',
+                  productCode: 'P-002',
+                  productName: 'マウス', // Mouse
+                  unit: '個',
+                  package: '-',
+                  costPrice: 800,
+                  sellingPrice: 1200,
+                  quantity: 5,
+                  profitRate: 50,
+                  sellingAmount: 6000,
+                  total: 6000,
+                },
+                {
+                  key: '3',
+                  productCode: 'P-003',
+                  productName: 'サービスA', // Service A
+                  unit: '式',
+                  package: '-',
+                  costPrice: 10000,
+                  sellingPrice: 15000,
+                  quantity: 1,
+                  profitRate: 50,
+                  sellingAmount: 15000,
+                  total: 15000,
+                },
+              ],
             },
           ],
         }}

@@ -13,7 +13,6 @@ function CoreAutoComplete({
   style,
   labelPath = 'name',
   valuePath = 'id',
-  options,
   ...rest
 }: {
   nameFilter: string
@@ -23,7 +22,6 @@ function CoreAutoComplete({
   filterPath?: any
   labelPath?: any
   valuePath?: any
-  options?: any[]
 }) {
   const t = useTranslate()
 
@@ -67,9 +65,6 @@ function CoreAutoComplete({
       allowClear
       onChange={onChange}
       disabled={!filter}
-      options={
-        Number(selectProps?.options?.length) > 0 ? selectProps.options : options
-      }
     />
   )
 }

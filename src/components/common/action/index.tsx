@@ -52,7 +52,13 @@ export const Action = ({
           color="blue"
           variant="outlined"
           onClick={onViewAction}
-          icon={<EyeOutlined />}
+          icon={
+            <EyeOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 
@@ -62,7 +68,13 @@ export const Action = ({
           color="blue"
           variant="outlined"
           onClick={onEditAction}
-          icon={<EditOutlined />}
+          icon={
+            <EditOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 
@@ -84,7 +96,13 @@ export const Action = ({
           color="blue"
           variant="outlined"
           onClick={onAppendAction}
-          icon={<PlusOutlined />}
+          icon={
+            <PlusOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 
@@ -94,7 +112,13 @@ export const Action = ({
           color="red"
           variant="outlined"
           onClick={onRemoveAction}
-          icon={<DeleteOutlined />}
+          icon={
+            <DeleteOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 

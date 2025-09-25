@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { cn } from '@utility/cn'
+import boldText from '@utility/bold-text'
 import { Form, Input, InputNumber } from 'antd'
 import type { Rule } from 'antd/es/form'
 import type { ColProps } from 'antd/lib'
@@ -15,7 +15,6 @@ function CoreInput({
   required = false,
   style,
   styleForm,
-  classNameLabel,
   colon = false,
   type = 'text',
   icon,
@@ -52,19 +51,13 @@ function CoreInput({
   return (
     <Form.Item
       name={name}
-      label={
-        label && (
-          <span className={cn('text-left font-bold', classNameLabel)}>
-            {label}
-          </span>
-        )
-      }
+      label={boldText(label)}
       labelCol={labelCol}
       wrapperCol={wrapperCol}
       shouldUpdate
       layout={layout}
-      rules={rules}
       required={required}
+      rules={rules}
       colon={colon}
       style={styleForm}
       hidden={hidden}
