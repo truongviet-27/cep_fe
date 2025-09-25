@@ -12,7 +12,6 @@ import {
   Row,
   Select,
 } from 'antd'
-import React from 'react'
 
 function BasicInfo() {
   const t = useTranslate()
@@ -31,13 +30,13 @@ function BasicInfo() {
       }}
     >
       <Form.Item
-        label={boldText(t('customers.fields.code'))}
+        label={boldText('見積番号')}
         required
         style={{ marginTop: 20 }}
       >
         <Row align="middle" gutter={20}>
           <Col>
-            <Form.Item rules={[]} name="customer_code" required noStyle>
+            <Form.Item rules={[]} name={'title'} required noStyle>
               <Input style={{ width: 240 }} />
             </Form.Item>
           </Col>
@@ -54,71 +53,191 @@ function BasicInfo() {
         </Row>
       </Form.Item>
 
-      <Form.Item required label={<span className="font-bold">見積区分</span>}>
-        <Radio.Group
-          defaultValue={'exclusive'}
-          options={[
-            {
-              value: 'exclusive',
-              label: '通常',
-            },
-            {
-              value: 'inclusive',
-              label: '販路限定',
-            },
-          ]}
-        />
+      <Form.Item name={'name'} required label={boldText('見積区分')}>
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Radio.Group
+              defaultValue={'exclusive'}
+              options={[
+                {
+                  value: 'exclusive',
+                  label: '通常',
+                },
+                {
+                  value: 'inclusive',
+                  label: '販路限定',
+                },
+              ]}
+            />
+          </Col>
+        </Row>
       </Form.Item>
 
-      <Form.Item required label={<span className="font-bold">タイトル</span>}>
-        <Input />
+      <Form.Item required label={boldText('タイトル')}>
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Input />
+          </Col>
+        </Row>
       </Form.Item>
 
       <Form.Item label={<span className="font-bold">取引先</span>}>
-        <Select allowClear showSearch />
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Select allowClear showSearch />
+          </Col>
+        </Row>
       </Form.Item>
 
       <Form.Item label={<span className="font-bold">見積日</span>}>
-        <DatePicker />
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <DatePicker style={{ width: '75%' }} />
+          </Col>
+        </Row>
       </Form.Item>
 
       <Form.Item label={<span className="font-bold">納入期日</span>}>
-        <DatePicker />
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <DatePicker style={{ width: '75%' }} />
+          </Col>
+        </Row>
       </Form.Item>
 
       <Form.Item label={<span className="font-bold">納品方法</span>}>
-        <Input />
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Input />
+          </Col>
+        </Row>
       </Form.Item>
 
-      <Form.Item label={<span className="font-bold">支払期日</span>}>
-        <Select allowClear showSearch />
+      <Form.Item
+        name={'payment_due_date'}
+        label={<span className="font-bold">支払期日</span>}
+      >
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Select
+              allowClear
+              showSearch
+              options={[
+                {
+                  value: 'monthly_25',
+                  label: t(
+                    'tenant_settings.paymentDueDate.options.monthly_25th',
+                  ),
+                },
+                {
+                  value: 'monthly_10',
+                  label: t(
+                    'tenant_settings.paymentDueDate.options.monthly_10th',
+                  ),
+                },
+                {
+                  value: 'net_30_from_delivery',
+                  label: t(
+                    'tenant_settings.paymentDueDate.options.30_days_after_delivery',
+                  ),
+                },
+                {
+                  value: 'net_30_from_invoice',
+                  label: t(
+                    'tenant_settings.paymentDueDate.options.30_days_after_invoice',
+                  ),
+                },
+                {
+                  value: 'end_of_month_next',
+                  label: t(
+                    'tenant_settings.paymentDueDate.options.eom_next_eom',
+                  ),
+                },
+                {
+                  value: 'end_of_month_after_next',
+                  label: t(
+                    'tenant_settings.paymentDueDate.options.eom_next_next_eom',
+                  ),
+                },
+              ]}
+            />
+          </Col>
+        </Row>
       </Form.Item>
 
-      <Form.Item label={<span className="font-bold">有効期限</span>}>
-        <Select allowClear showSearch />
+      <Form.Item
+        name={'expiration_date'}
+        label={<span className="font-bold">有効期限</span>}
+      >
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Select
+              allowClear
+              showSearch
+              options={[
+                {
+                  value: 'days_7',
+                  label: t('tenant_settings.validityPeriod.options.days_7'),
+                },
+                {
+                  value: 'days_14',
+                  label: t('tenant_settings.validityPeriod.options.days_14'),
+                },
+                {
+                  value: 'days_30',
+                  label: t('tenant_settings.validityPeriod.options.days_30'),
+                },
+                {
+                  value: 'days_45',
+                  label: t('tenant_settings.validityPeriod.options.days_45'),
+                },
+                {
+                  value: 'days_60',
+                  label: t('tenant_settings.validityPeriod.options.days_60'),
+                },
+                {
+                  value: 'months_3',
+                  label: t('tenant_settings.validityPeriod.options.months_3'),
+                },
+                {
+                  value: 'months_6',
+                  label: t('tenant_settings.validityPeriod.options.months_6'),
+                },
+                {
+                  value: 'years_1',
+                  label: t('tenant_settings.validityPeriod.options.year_1'),
+                },
+              ]}
+            />
+          </Col>
+        </Row>
       </Form.Item>
 
       <Form.Item
         label={<span className="font-bold">消費税</span>}
         name="consumption_tax"
       >
-        <Radio.Group
-          defaultValue={'exclusive'}
-          options={[
-            {
-              value: 'exclusive',
-              label: t('tenant_settings.consumptionTax.taxExclusive'),
-            },
-            {
-              value: 'inclusive',
-              label: t('tenant_settings.consumptionTax.taxInclusive'),
-            },
-            {
-              value: 'external',
-              label: t('tenant_settings.consumptionTax.taxExempt'),
-            },
-          ]}
-        />
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Radio.Group
+              defaultValue={'exclusive'}
+              options={[
+                {
+                  value: 'exclusive',
+                  label: t('tenant_settings.consumptionTax.taxExclusive'),
+                },
+                {
+                  value: 'inclusive',
+                  label: t('tenant_settings.consumptionTax.taxInclusive'),
+                },
+                {
+                  value: 'external',
+                  label: t('tenant_settings.consumptionTax.taxExempt'),
+                },
+              ]}
+            />
+          </Col>
+        </Row>
       </Form.Item>
       <Form.Item
         name="tax_rate"
@@ -128,14 +247,11 @@ function BasicInfo() {
           </span>
         }
         layout="horizontal"
-        style={{
-          marginBottom: 0,
-          marginLeft: 'auto',
-        }}
-        getValueFromEvent={(value) => Number(value)}
       >
         <Row>
-          <InputNumber controls={false} min={0} max={100} addonAfter="%" />
+          <Col xs={24} sm={16} md={10} lg={8}>
+            <InputNumber controls={false} min={0} max={100} addonAfter="%" />
+          </Col>
         </Row>
       </Form.Item>
     </Card>

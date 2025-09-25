@@ -2,26 +2,19 @@
 import { Action } from '@components/common/action'
 import FormItem from '@components/common/FormItem'
 import CommonTable from '@components/common/table'
-import {
-  Button,
-  Card,
-  Checkbox,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-} from 'antd'
+import { PRIMARY } from '@utility/color'
+import { Button, Card, Checkbox, Flex, Form, Input, InputNumber } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 
 function DetailInfo() {
+  const form = Form.useFormInstance()
   return (
     <Card
       title={'詳細情報'}
       headStyle={{
         padding: 0,
-        minHeight: 'none',
+        minHeight: 0,
       }}
       bodyStyle={{
         padding: 0,
@@ -31,7 +24,7 @@ function DetailInfo() {
         marginTop: 40,
       }}
     >
-      <Form.List name={'detail_info'}>
+      <Form.List name={'original_product'}>
         {(fields, { add, remove }) => {
           const columns: ColumnsType = [
             {
@@ -39,8 +32,7 @@ function DetailInfo() {
               dataIndex: 'productCode',
               key: 'productCode',
               align: 'left',
-              render: (value, record) => {
-                console.log(record, value, 'record')
+              render: (_, record) => {
                 if (record.children) {
                   return {
                     children: (
@@ -84,16 +76,7 @@ function DetailInfo() {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return (
-                  <Select
-                    style={{ width: 80 }}
-                    options={[
-                      { label: '-', value: '-' },
-                      { label: '個', value: '個' },
-                      { label: '箱', value: '箱' },
-                    ]}
-                  />
-                )
+                return
               },
             },
             {
@@ -115,7 +98,7 @@ function DetailInfo() {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return <InputNumber min={0} />
+                return 123
               },
             },
             {
@@ -126,7 +109,7 @@ function DetailInfo() {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return <InputNumber min={0} />
+                return <InputNumber min={0} controls={false} />
               },
             },
             {
@@ -137,7 +120,7 @@ function DetailInfo() {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return <InputNumber min={0} />
+                return <InputNumber min={0} controls={false} />
               },
             },
             {
@@ -216,10 +199,45 @@ function DetailInfo() {
               </Flex>
               <CommonTable
                 columns={columns}
-                dataSource={fields}
+                dataSource={form?.getFieldValue('original_product')}
                 rowClassName={(record) =>
                   record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
                 }
+                components={{
+                  body: {
+                    row: () => (
+                      <>
+                        <td
+                          colSpan={columns.length - 1}
+                          style={{
+                            backgroundColor: '#F0F9FF',
+                            color: PRIMARY,
+                            textAlign: 'center',
+                            padding: 11,
+                          }}
+                        >
+                          <Form.Item style={{ marginBottom: 0, maxWidth: 300 }}>
+                            <Input />
+                          </Form.Item>
+                        </td>
+                        <td
+                          style={{
+                            backgroundColor: '#F0F9FF',
+                            color: PRIMARY,
+                            textAlign: 'center',
+                            padding: 11,
+                          }}
+                        >
+                          <Action
+                            actionList={['append', 'remove']}
+                            onAppendAction={() => {}}
+                            onRemoveAction={() => {}}
+                          />
+                        </td>
+                      </>
+                    ),
+                  },
+                }}
                 pagination={false}
                 summary={() => {
                   // let totalQty = 0

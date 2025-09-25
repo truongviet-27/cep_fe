@@ -13,9 +13,11 @@ import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
   Button,
+  Col,
   Divider,
   Flex,
   Form,
+  Row,
   Space,
   Typography,
 } from 'antd'
@@ -52,7 +54,7 @@ function QuotaAction() {
             {
               title: (
                 <Title level={5}>
-                  {id ? t('quota.edit') : t('quota.create')}
+                  {isUpdate ? t('quota.edit') : t('quota.create')}
                 </Title>
               ),
             },
@@ -61,7 +63,7 @@ function QuotaAction() {
       }
       title={
         <div className="flex justify-between">
-          <span>{id ? t('quota.edit') : t('quota.create')}</span>
+          <span>{isUpdate ? t('quota.edit') : t('quota.create')}</span>
           <Button>プレビュー</Button>
         </div>
       }
@@ -69,54 +71,88 @@ function QuotaAction() {
       <Form
         {...formProps}
         labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
-        wrapperCol={{ xs: 24, sm: 16, md: 10, lg: 8, xl: 8 }}
         labelAlign="left"
         layout="horizontal"
         colon={false}
         autoComplete="off"
         initialValues={{
-          detail_info: [
+          source_id: 123,
+          title: 'hung123',
+          type: 'normal',
+          status: 'waiting_approve',
+          delivery_date: '2025-10-01T00:00:00Z',
+          delivery_method: 'free text',
+          payment_due_date: 'monthly_25',
+          expiration_date: 'days_7',
+          consumption_tax: 'exclusive',
+          tax_rate: 12,
+          note: 'textarea',
+          tags: [
             {
-              title: '商品リスト名入力',
-              children: [
+              id: 1,
+              name: 'name',
+            },
+            {
+              id: 2,
+              name: 'name2',
+            },
+          ],
+          original_product: [
+            {
+              id: 123,
+              group_name: 'group_name',
+              products: [
                 {
-                  key: '1',
-                  productCode: 'P-001',
-                  productName: 'ノートパソコン', // Laptop
-                  unit: '台',
-                  package: '箱',
-                  costPrice: 50000,
-                  sellingPrice: 65000,
-                  quantity: 2,
-                  profitRate: 30,
-                  sellingAmount: 130000,
-                  total: 130000,
+                  id: 1,
+                  product_id: 1,
+                  package_id: 1,
+                  name: 'name',
+                  code: 'code',
+                  cost_price: 123123,
+                  selling_price: 123123,
+                  profit_margin: 12,
+                  is_add_total: true,
                 },
                 {
-                  key: '2',
-                  productCode: 'P-002',
-                  productName: 'マウス', // Mouse
-                  unit: '個',
-                  package: '-',
-                  costPrice: 800,
-                  sellingPrice: 1200,
-                  quantity: 5,
-                  profitRate: 50,
-                  sellingAmount: 6000,
-                  total: 6000,
+                  id: 2,
+                  product_id: 1,
+                  package_id: 2,
+                  name: 'name',
+                  code: 'code',
+                  cost_price: 123123,
+                  selling_price: 123123,
+                  profit_margin: 12,
+                  is_add_total: true,
+                },
+              ],
+            },
+          ],
+          additional_product: [
+            {
+              id: 123,
+              group_name: 'group_name',
+              products: [
+                {
+                  id: 1,
+                  product_id: 1,
+                  package_id: 1,
+                  name: 'name',
+                  code: 'code',
+                  cost_price: 123123,
+                  selling_price: 123123,
+                  profit_margin: 12,
+                  is_add_total: true,
                 },
                 {
-                  key: '3',
-                  productCode: 'P-003',
-                  productName: 'サービスA', // Service A
-                  unit: '式',
-                  package: '-',
-                  costPrice: 10000,
-                  sellingPrice: 15000,
-                  quantity: 1,
-                  profitRate: 50,
-                  sellingAmount: 15000,
-                  total: 15000,
+                  id: 2,
+                  product_id: 1,
+                  package_id: 2,
+                  name: 'name',
+                  code: 'code',
+                  cost_price: 123123,
+                  selling_price: 123123,
+                  profit_margin: 12,
+                  is_add_total: true,
                 },
               ],
             },
@@ -126,9 +162,13 @@ function QuotaAction() {
         <BasicInfo />
         <DetailInfo />
         <OptionalInfo />
-        <Note />
+        <Row>
+          <Col xs={24}>
+            <Note />
+          </Col>
+        </Row>
         <Tags />
-        <History />
+        {isUpdate && <History />}
 
         <Divider />
         {isUpdate && (
@@ -165,7 +205,7 @@ function QuotaAction() {
                 size={'small'}
                 onSuccess={() => {
                   go({
-                    to: '/approve-routes',
+                    to: '/quota',
                   })
                 }}
               />
@@ -176,7 +216,7 @@ function QuotaAction() {
               type="default"
               onClick={() => {
                 go({
-                  to: '/approve-routes',
+                  to: '/quota',
                 })
               }}
             >

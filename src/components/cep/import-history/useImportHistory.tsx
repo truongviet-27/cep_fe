@@ -220,8 +220,9 @@ function useImportHistory() {
         key: 'url_file_failed',
         dataIndex: 'url_file_failed',
         title: t('import_history.table.headers.errorResult'),
-        render(value) {
-          return value ? (
+        render(value, record) {
+          return record.status === 'COMPLETED' ? null : !value &&
+            record.status !== 'COMPLETED' ? (
             <Button
               color="primary"
               variant="outlined"
