@@ -7,5 +7,5 @@ export type PermissionType = {
     name: string
     display_name: string
   }
-  permissions: PermissionEnum[]
+  permissions: Set<PermissionEnum>
 }
