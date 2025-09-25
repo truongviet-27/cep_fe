@@ -30,6 +30,12 @@ export const accessControlProvider: AccessControlProvider = {
             PermissionEnum.PRODUCT_UNIT_EDIT,
           ),
         }
+      case 'product-categories':
+        return {
+          can: !!permission?.permissions?.has?.(
+            PermissionEnum.PRODUCT_CATEGORY_EDIT,
+          ),
+        }
       default:
         return { can: false }
     }

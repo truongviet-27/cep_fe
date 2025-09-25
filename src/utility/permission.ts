@@ -1,3 +1,4 @@
+import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 
 export const PermissionResourceFullAdminOnly = new Set([
@@ -35,5 +36,12 @@ export const hasForbiddenRoute = (pathName: string) => {
     return true
   }
 
-  return true
+  switch (pathName) {
+    case '/product-categories/csv':
+      return !permission?.permissions?.has?.(
+        PermissionEnum.PRODUCT_CATEGORY_EDIT,
+      )
+    default:
+      return false
+  }
 }

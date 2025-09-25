@@ -4,7 +4,10 @@ import { DownOutlined, RightOutlined, UpOutlined } from '@ant-design/icons'
 import useProductCategories from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-categories/use-product-categories'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { CreateButton } from '@refinedev/antd'
 import { useGo } from '@refinedev/core'
+import { PermissionEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { LAYOUT_BG } from '@utility/color'
 import { Button, Col, Form, Input, Row, Select, Space, Tree } from 'antd'
 
@@ -26,8 +29,11 @@ export default function Page() {
     form,
     t,
   } = useProductCategories()
-
+  const { permission } = useUserStore.getState()
   const go = useGo()
+  const hasProductCategoryEditPermission = !!permission?.permissions.has(
+    PermissionEnum.PRODUCT_CATEGORY_EDIT,
+  )
 
   return (
     <Create
@@ -39,7 +45,7 @@ export default function Page() {
         <Space size={8}>
           <Button
             type="primary"
-            disabled={!dirty}
+            disabled={!dirty || hasProductCategoryEditPermission}
             onClick={save}
             className="shadow-sm disabled:opacity-60"
           >
@@ -110,9 +116,14 @@ export default function Page() {
             </Row>
           </Col>
           <Col className="mt-6">
-            <Button type="primary" size="middle" onClick={addRootCategory}>
+            <CreateButton
+              type="primary"
+              size="middle"
+              onClick={addRootCategory}
+              icon={null}
+            >
               新規登録
-            </Button>
+            </CreateButton>
           </Col>
         </Row>
       </Form>
@@ -129,6 +140,7 @@ export default function Page() {
               : t('product_categories.all_close')}
           </Button>
           <Button
+            disabled={!hasProductCategoryEditPermission}
             type="link"
             onClick={() => {
               go({
