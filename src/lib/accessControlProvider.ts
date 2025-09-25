@@ -9,7 +9,7 @@ import { PermissionResourceFullAdminOnly } from '@utility/permission'
 
 export const accessControlProvider: AccessControlProvider = {
   can: async ({ action, resource }: CanParams): Promise<CanReturnType> => {
-    const { permission } = useUserStore.getState()
+    const { permission, hasFullAcceptModule } = useUserStore.getState()
 
     if (permission?.is_module_admin) {
       return { can: true }
@@ -26,19 +26,19 @@ export const accessControlProvider: AccessControlProvider = {
     switch (resource) {
       case 'product-units':
         return {
-          can: !!permission?.permissions?.has?.(
-            PermissionEnum.PRODUCT_UNIT_EDIT,
-          ),
+          can: hasFullAcceptModule(PermissionEnum.PRODUCT_UNIT_EDIT),
         }
       case 'product-categories':
         return {
-          can: !!permission?.permissions?.has?.(
-            PermissionEnum.PRODUCT_CATEGORY_EDIT,
-          ),
+          can: hasFullAcceptModule(PermissionEnum.PRODUCT_CATEGORY_EDIT),
         }
       case 'departments':
         return {
-          can: !!permission?.permissions?.has?.(PermissionEnum.DEPARTMENT_EDIT),
+          can: hasFullAcceptModule(PermissionEnum.DEPARTMENT_EDIT),
+        }
+      case 'customers':
+        return {
+          can: hasFullAcceptModule(PermissionEnum.CUSTOMER_EDIT),
         }
       default:
         return { can: false }

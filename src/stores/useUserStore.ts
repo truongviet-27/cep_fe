@@ -1,5 +1,6 @@
 import type { PermissionType } from '@interfaces/permission'
 import { dataProvider } from '@providers/data-provider'
+import type { PermissionEnum } from '@sdk/hey-api'
 import { create } from 'zustand'
 
 type UserStore = {
@@ -7,12 +8,20 @@ type UserStore = {
   permission: PermissionType | null
   logout?: () => void
   useSyncUser: () => Promise<boolean>
+  hasFullAcceptModule: (permissionName: PermissionEnum) => boolean
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
   isFetching: false,
   permission: null,
   logout: () => set({ permission: null }),
+  hasFullAcceptModule: (permissionName: PermissionEnum) => {
+    const permission = get().permission
+
+    if (permission?.is_module_admin) return true
+
+    return !!permission?.permissions.has(permissionName)
+  },
   useSyncUser: async () => {
     try {
       if (get().permission) {
