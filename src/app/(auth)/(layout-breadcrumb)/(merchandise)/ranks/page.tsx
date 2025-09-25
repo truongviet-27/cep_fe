@@ -85,7 +85,7 @@ export default function Page() {
   const { resource } = useResource()
 
   const modalFormShow = useModalForm({
-    action: 'clone',
+    action: 'edit',
     resource: resource?.name,
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
@@ -107,7 +107,7 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={t('ranks.list.list')}
+      i18nHeading={'ranks.list.list'}
     >
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>

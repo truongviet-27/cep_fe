@@ -37,7 +37,7 @@ import {
   searchDateTypeOptions,
 } from '@utility/options'
 import dayjs from 'dayjs'
-import { FORMAT_DATE_TIME } from '@utility/instances'
+import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -181,7 +181,11 @@ export default function CustomerListPage() {
         dataIndex: 'customer_code',
         key: 'customer_code',
         render: (text, record) => (
-          <Link href={`/customers/${record.id}`} key={record.id}>
+          <Link
+            href={`/customers/${record.id}`}
+            key={record.id}
+            style={{ textDecoration: 'underline' }}
+          >
             {text}
           </Link>
         ),
@@ -295,7 +299,7 @@ export default function CustomerListPage() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('customers.customers')}
+          {t('business_partner.business_partner')}
         </Title>
       ),
     },
@@ -369,7 +373,7 @@ export default function CustomerListPage() {
               name="credit_rank"
             >
               <Select
-                placeholder={t('placeholders.partial_match')}
+                placeholder={t('placeholders.select')}
                 options={creditCheckOptions}
               />
             </Form.Item>
@@ -377,7 +381,7 @@ export default function CustomerListPage() {
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('customers.fields.anti_social_rank'))}
-              name="date_range"
+              name="anti_social_rank"
             >
               <Select
                 placeholder={t('placeholders.select')}
@@ -391,7 +395,7 @@ export default function CustomerListPage() {
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('customers.filters.date_range'))}
-              name="unit_price_rank"
+              name="search_date_type"
             >
               <Select
                 placeholder={t('customers.fields.registration_date')}
@@ -401,7 +405,10 @@ export default function CustomerListPage() {
           </Col>
           <Col xs={24} md={4}>
             <Form.Item label={<></>} name="date_range">
-              <RangePicker className="w-full" />
+              <RangePicker
+                className="w-full"
+                placeholder={[FORMAT_DATE, FORMAT_DATE]}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
@@ -418,9 +425,9 @@ export default function CustomerListPage() {
       </Form>
 
       <Row justify="end" className="mb-4">
-        <Space>
+        <Space direction={'vertical'}>
           <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
-          <Button>{t('buttons.csv_bulk_register')}</Button>
+          <Link href={'/customers/csv'}>{t('projects.csv_upload.title')}</Link>
         </Space>
       </Row>
 
