@@ -26,16 +26,12 @@ import {
   Table,
   Typography,
 } from 'antd'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 const { Title, Text } = Typography
 
 function Page() {
   const t = useTranslate()
-
-  const session = useSession()
-  const userEmail = session.data?.user?.email
 
   const renderFieldNotSet = (value?: any) => {
     return (

@@ -9,6 +9,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useForm, useModalForm, useSelect } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
@@ -38,6 +39,7 @@ export default function EmployeeEdit() {
   const apiUrl = useApiUrl()
   const session = useSession()
   const userEmail = session.data?.user?.email
+  const { permission } = useUserStore.getState()
 
   const { data: roles } = useCustom({ method: 'get', url: `${apiUrl}/roles` })
 
@@ -236,7 +238,7 @@ export default function EmployeeEdit() {
           style={{ marginTop: -4 }}
           label={boldText(t('employees.fields.role'))}
           name="role_id"
-          hidden={userEmail === form.getFieldValue('email')}
+          hidden={!permission?.is_module_admin}
         >
           <Radio.Group buttonStyle="solid">
             {isArray(roles?.data) &&
