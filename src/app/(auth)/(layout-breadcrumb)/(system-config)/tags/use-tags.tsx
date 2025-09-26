@@ -49,9 +49,11 @@ function useTags() {
     ],
   })
 
-  const { control, getValues, resetField } = useForm<FormValues>({
-    defaultValues: { rows: [] },
-  })
+  const { control, getValues, resetField, setValue, setFocus } =
+    useForm<FormValues>({
+      defaultValues: { rows: [] },
+      mode: 'onTouched',
+    })
 
   const { insert, remove, update, move, replace, fields } = useFieldArray({
     control,
@@ -86,17 +88,13 @@ function useTags() {
 
   const addNew = () => {
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
-    insert(
-      0,
-      {
-        name: '',
-        _isNew: true,
-        _isEditing: true,
-        id: crypto?.randomUUID?.(),
-        order,
-      },
-      { shouldFocus: true },
-    )
+    insert(0, {
+      name: '',
+      _isNew: true,
+      _isEditing: true,
+      id: crypto?.randomUUID?.(),
+      order,
+    })
   }
 
   const startEdit = (index: number) => {
@@ -134,9 +132,10 @@ function useTags() {
       method: 'post',
       values,
       successNotification: (data) => {
+        setValue('rows', values as any)
         return {
-          message: 'success',
-          description: 'success',
+          message: t('notifications.success'),
+          description: data?.data?.message ?? 'Success',
           type: 'success',
         }
       },
@@ -154,6 +153,7 @@ function useTags() {
         ...r,
         id: isString(r.id) ? null : r.id,
         order: maxOrder - index,
+        _isEditing: false,
       }))
 
     if (!values.length) return
@@ -243,15 +243,28 @@ function useTags() {
       title: 'タグ名',
       dataIndex: 'name',
       key: 'name',
-      render: (_val, record) => {
-        const index = Number(record.__index)
+      render: (_val, record, index) => {
         const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
         return isEditing ? (
           <Controller
             control={control}
+            rules={{ required: t('validation.required') }}
             name={`rows.${index}.name`}
-            render={({ field }) => (
-              <Input {...field} size="middle" autoFocus placeholder="タグ名" />
+            render={({ field, fieldState: { error } }) => (
+              <div className={'-mb-2 !h-fit'}>
+                <Input
+                  required
+                  size="middle"
+                  placeholder={t('product_units.columns.unit_name')}
+                  status={error ? 'error' : ''}
+                  {...field}
+                />
+                {error?.message && (
+                  <p className="!h-2 text-[0.7rem] text-red-600">
+                    {error?.message}
+                  </p>
+                )}
+              </div>
             )}
           />
         ) : (

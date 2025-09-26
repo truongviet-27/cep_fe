@@ -1,30 +1,32 @@
 /* eslint-disable */
 'use client'
 
-import { DetailItem } from '@components/common/detail-item'
-import { Show } from '@components/crud/show'
-import { useShow, useTranslate } from '@refinedev/core'
-import { Button, Collapse, Space, Typography } from 'antd'
-import React from 'react'
-import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
 import {
   DownOutlined,
   FileImageOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import CommonTable from '@components/common/table'
-import Breadcrumbs from '@components/layout/breadcrumbs'
-import { PRIMARY } from '@utility/color'
-import type { Customer } from '@sdk/hey-api/types.gen'
-import dayjs from 'dayjs'
+import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
+import { DetailItem } from '@components/common/detail-item'
 import ShowMoreInfo from '@components/common/show-more-info'
+import CommonTable from '@components/common/table'
+import { Show } from '@components/crud/show'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import { useShow, useTranslate } from '@refinedev/core'
+import { ParameterResourceEnum, type Customer } from '@sdk/hey-api/types.gen'
+import { useUserStore } from '@stores/useUserStore'
+import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
+import { Button, Collapse, Space, Typography } from 'antd'
+import dayjs from 'dayjs'
+import React from 'react'
 
 const { Title, Text } = Typography
 const { Panel } = Collapse
 
 export default function CustomerShowPage() {
   const t = useTranslate()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   const { queryResult } = useShow<Customer>() // SỬA LẠI: Dùng type Customer từ SDK
   const { data, isLoading } = queryResult
@@ -179,9 +181,11 @@ export default function CustomerShowPage() {
               <DetailItem label={t('customers.fields.corporate_number')}>
                 {record?.corporate_number}
               </DetailItem>
-              <DetailItem label={t('customers.fields.unit_price_rank')}>
-                {record?.rank?.name}
-              </DetailItem>
+              {parameterSettings.get(ParameterResourceEnum.RANKS) && (
+                <DetailItem label={t('customers.fields.unit_price_rank')}>
+                  {record?.rank?.name}
+                </DetailItem>
+              )}
               <DetailItem label={t('customers.fields.credit_rank')}>
                 N/A
               </DetailItem>

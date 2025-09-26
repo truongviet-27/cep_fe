@@ -9,12 +9,12 @@ import type { ParameterSettingControllerIndexResponse } from '@sdk/hey-api'
 import { Form, message, Radio, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useTranslations } from 'next-intl'
-import React from 'react'
 
 import ActionButtons from '@/components/common/action-button'
 import CommonTable from '@/components/common/table'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { PRIMARY } from '@/utility/color'
+import { PARAMETER_SETTING_EXCLUDE } from '@utility/permission'
 
 const { Title } = Typography
 
@@ -67,22 +67,28 @@ export default function Page() {
       align: 'center',
       render: (cur, _, index) => {
         return (
-          <>
+          <div className={'!h-5'}>
             <Form.Item name={[index, 'id']} initialValue={cur?.id} hidden />
 
             <Form.Item name={[index, 'is_manage']} initialValue={cur.is_manage}>
               <Radio.Group>
                 <Space size={'large'}>
-                  <Radio value={true}>
+                  <Radio
+                    value={true}
+                    defaultChecked={PARAMETER_SETTING_EXCLUDE.has(cur.resource)}
+                  >
                     {t('parameter_settings.is_manage')}
                   </Radio>
-                  <Radio value={false}>
+                  <Radio
+                    value={false}
+                    disabled={PARAMETER_SETTING_EXCLUDE.has(cur.resource)}
+                  >
                     {t('parameter_settings.not_manage')}
                   </Radio>
                 </Space>
               </Radio.Group>
             </Form.Item>
-          </>
+          </div>
         )
       },
     },

@@ -47,17 +47,10 @@ export const useCustomerCreate = () => {
   }
 
   const handleCopyContact = () => {
-    const mainContact = form.getFieldsValue([
-      'person_in_charge_name',
-      'person_in_charge_department',
-      'person_in_charge_mail',
-      'person_in_charge_phone',
-    ])
+    const mainContact = form.getFieldsValue(['mail', 'phone'])
     form.setFieldsValue({
-      person_in_charge_name: mainContact.person_in_charge_name,
-      person_in_charge_department: mainContact.person_in_charge_department,
-      person_in_charge_mail: mainContact.person_in_charge_mail,
-      person_in_charge_phone: mainContact.person_in_charge_phone,
+      person_in_charge_mail: mainContact.mail,
+      person_in_charge_phone: mainContact.phone,
     })
   }
 

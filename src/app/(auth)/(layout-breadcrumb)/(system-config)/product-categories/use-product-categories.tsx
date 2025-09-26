@@ -301,7 +301,8 @@ function useProductCategories() {
       return
 
     // --- QUAN TRỌNG: cập nhật parentId trước khi tính level & chèn
-    dragNode.parent_id = Number(targetParentId)
+    dragNode.parent_id =
+      Number(targetParentId) == 0 ? null : Number(targetParentId)
 
     // Tính level mới theo parent
     const parentLevel = targetParentId

@@ -36,11 +36,9 @@ type RowVM = Department & { __index: number }
 
 export default function Page() {
   const t = useTranslate()
-  const { permission } = useUserStore.getState()
+  const { hasFullAccessModule } = useUserStore.getState()
   const { resource } = useResource()
-  const isEditPermission = !!permission?.permissions.has(
-    PermissionEnum.DEPARTMENT_EDIT,
-  )
+  const isEditPermission = hasFullAccessModule(PermissionEnum.DEPARTMENT_EDIT)
 
   const { tableProps, searchFormProps, setFilters } = useTable<Department>({
     syncWithLocation: true,
@@ -124,7 +122,7 @@ export default function Page() {
         return (
           <Link
             style={{ textDecoration: 'underline' }}
-            href={`/employees/show/${record?.id}`}
+            href={`/departments/show/${record?.id}`}
           >
             {value}
           </Link>

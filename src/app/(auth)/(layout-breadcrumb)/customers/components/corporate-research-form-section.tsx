@@ -23,6 +23,8 @@ import { InputUploadFile } from '@components/common/input-upload-file'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
+import dayjs from 'dayjs'
+import { FORMAT_DATE } from '@utility/instances'
 
 const { Title } = Typography
 const { Panel } = Collapse
@@ -105,7 +107,7 @@ export const CorporateResearchFormSection = (
         return (
           <>
             {record?.files?.map((file: any) => (
-              <>{file.name}</>
+              <div key={file.name}>{file.name}</div>
             ))}
           </>
         )
@@ -128,7 +130,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'updated_at',
       width: 180,
-      render: (_: any, record: any) => record?.updated_at ?? record?.created_at,
+      render: (_: any, record: any) =>
+        record?.updated_at ?? dayjs(record?.created_at, FORMAT_DATE),
     },
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
@@ -148,17 +151,26 @@ export const CorporateResearchFormSection = (
               } else if (index === 2) {
                 type = 'certified'
               }
+
               const fileList =
                 form.getFieldValue([
                   'company_research_information',
-                  currentType.index,
+                  index,
                   'files',
                 ]) ?? []
+
+              const judgement =
+                form.getFieldValue([
+                  'company_research_information',
+                  index,
+                  'judgement',
+                ]) ?? ''
+
               setCurrentType({
                 index,
                 type,
                 fileList,
-                judgement: currentType.judgement ?? '',
+                judgement,
                 name: record.material_name,
               })
               show()
@@ -276,7 +288,10 @@ export const CorporateResearchFormSection = (
                 ])}
               </Typography.Text>
             </Form.Item>
-            <Form.Item label={boldText(t('customers.research.judgement'))}>
+            <Form.Item
+              label={boldText(t('customers.research.judgement'))}
+              name={`temp.${currentType.index}`}
+            >
               {currentType.type !== 'certified' ? (
                 <Select
                   style={{ maxWidth: 235 }}

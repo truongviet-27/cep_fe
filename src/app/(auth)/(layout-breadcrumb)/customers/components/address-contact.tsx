@@ -5,6 +5,7 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customer
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import { useSelect } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
+import { FORMAT_DATE } from '@utility/instances'
 import { fieldDistinctionOptions, industryOptions } from '@utility/options'
 import {
   Col,
@@ -16,6 +17,7 @@ import {
   Select,
   Typography,
 } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 
 import styles from '../styles.module.css'
@@ -105,7 +107,7 @@ function AddressContact(
         >
           <Select
             placeholder={t('placeholders.select')}
-            options={fieldDistinctionOptions}
+            options={industryOptions}
             style={{ maxWidth: 560 }}
           />
         </Form.Item>
@@ -117,7 +119,7 @@ function AddressContact(
         >
           <Select
             placeholder={t('placeholders.select')}
-            options={industryOptions}
+            options={fieldDistinctionOptions}
             style={{ maxWidth: 560 }}
           />
         </Form.Item>
@@ -126,8 +128,17 @@ function AddressContact(
           label={boldText(t('customers.show.date_of_establishment'))}
           name="date_of_establishment"
           rules={[rule]}
+          getValueProps={(value) => ({
+            value: value ? dayjs(value, FORMAT_DATE) : null,
+          })}
         >
-          <DatePicker />
+          <DatePicker
+            placeholder={FORMAT_DATE}
+            // format={FORMAT_DATE}
+            onChange={(date) =>
+              date ? dayjs(date, FORMAT_DATE).toString() : null
+            }
+          />
         </Form.Item>
 
         <Form.Item label={boldText(t('customers.show.department_in_charge'))}>

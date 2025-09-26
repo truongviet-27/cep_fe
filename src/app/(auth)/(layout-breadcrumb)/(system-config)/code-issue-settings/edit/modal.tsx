@@ -15,12 +15,13 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { FORMAT_DATE_TIME } from '@utility/instances'
+import AutoHeading from '@components/common/auto-heading'
 
 type Props = {
   modalProps: any
@@ -35,16 +36,42 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
 
   const issueMethod = Form.useWatch('issue_method', formProps.form)
   const isManual = issueMethod === 'manual'
+  const total = Form.useWatch('total', formProps.form)
+  const segment = Form.useWatch('segment', formProps.form)
+  const updated_at = Form.useWatch('updated_at', formProps.form)
+  const serial_length = Form.useWatch('serial_length', formProps.form)
+  const hash_dash = Form.useWatch('hash_dash', formProps.form)
+  const prefix = Form.useWatch('prefix', formProps.form)
+
+  const previewCode = useMemo(
+    () =>
+      buildCodePreviewFromSetting({
+        total,
+        segment,
+        updated_at,
+        serial_length,
+        hash_dash,
+        prefix,
+      }),
+    [total, segment, updated_at, serial_length, hash_dash, prefix],
+  )
 
   return (
     <Edit
       {...formProps}
       saveButtonProps={saveButtonProps}
       isLoading={formLoading}
-      contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
+      contentProps={{
+        style: { boxShadow: 'none' },
+        actions: undefined,
+      }}
       title={<></>}
-      i18nHeading={'code_issue_settings.edit.edit'}
+      isAutoHeading={false}
     >
+      <AutoHeading
+        style={{ marginTop: -40 }}
+        i18n={'code_issue_settings.edit.edit'}
+      />
       <Form
         {...formProps}
         initialValues={record}
@@ -52,6 +79,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         labelCol={{ span: 6 }}
         labelAlign="left"
         colon={false}
+        style={{ marginTop: 30 }}
       >
         <Form.Item
           label={t('code_issue_settings.fields.name')}
@@ -130,7 +158,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
           label={t('code_issue_settings.fields.preview_code')}
           name="preview_code"
         >
-          <Tag>{buildCodePreviewFromSetting(form.getFieldsValue())}</Tag>
+          <Tag>{previewCode}</Tag>
         </Form.Item>
 
         <Divider />
@@ -140,18 +168,16 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
             {
               title: t('common.created_by'),
               value:
-                record?.author?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+                (record?.author?.name ?? '---') +
+                ' ' +
+                dayjs(record?.created_at).format(FORMAT_DATE_TIME),
             },
             {
               title: t('common.updated_by'),
               value:
-                record?.editor?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
+                (record?.editor?.name ?? '---') +
+                ' ' +
+                dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
             },
           ]}
         />
