@@ -1,6 +1,6 @@
 import { useForm } from '@refinedev/antd'
-import { useParsed, useTable } from '@refinedev/core'
-import type { ProductDetail, Rank, StoreProductInput } from '@sdk/hey-api'
+import { useParsed } from '@refinedev/core'
+import { type ProductDetail, type StoreProductInput } from '@sdk/hey-api'
 
 export type ProductFormType = {
   unit: string
@@ -40,14 +40,9 @@ function useProductForm() {
     },
   })
 
-  const { tableQuery } = useTable<Rank>({
-    resource: 'ranks',
-  })
-
   return [
     {
       methods,
-      dataRanks: tableQuery?.data?.data ?? [],
       isLoadingSubmit: methods.saveButtonProps.loading,
       isUpdateMode: !!params?.id,
     },

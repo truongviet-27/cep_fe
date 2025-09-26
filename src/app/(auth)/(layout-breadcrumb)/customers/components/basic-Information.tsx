@@ -4,6 +4,8 @@ import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import { useSelect } from '@refinedev/antd'
+import { ParameterResourceEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { countryOptions, typesCompanyOptions } from '@utility/options'
 import {
@@ -17,7 +19,6 @@ import {
   Select,
   Typography,
 } from 'antd'
-import React from 'react'
 
 import styles from '../styles.module.css'
 
@@ -43,13 +44,17 @@ function BasicInformation(
     Form.useWatch('company_name_display_format', form) === 'after'
   const name = Form.useWatch('name', form)
   const companyType = Form.useWatch('company_type', form)
-
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
   const parts = isNameAfter ? [companyType, name] : [name, companyType]
+  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
 
   const { selectProps: ranksSelectProps } = useSelect({
     resource: 'ranks',
     optionLabel: 'name',
     optionValue: 'id',
+    queryOptions: {
+      enabled: allowRankResource,
+    },
   })
 
   return (
@@ -217,6 +222,7 @@ function BasicInformation(
           rules={[rule]}
           required
           style={{ marginTop: -26 }}
+          hidden={!allowRankResource}
         >
           <Select
             {...ranksSelectProps}
