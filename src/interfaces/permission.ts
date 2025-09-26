@@ -1,4 +1,4 @@
-import type { PermissionEnum } from '@sdk/hey-api'
+import type { ParameterResourceEnum, PermissionEnum } from '@sdk/hey-api'
 
 export type PermissionType = {
   is_module_admin: boolean
@@ -9,3 +9,5 @@ export type PermissionType = {
   }
   permissions: Set<PermissionEnum>
 }
+
+export type ParameterSettingType = Map<ParameterResourceEnum, boolean>

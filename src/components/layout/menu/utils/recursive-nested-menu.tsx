@@ -1,5 +1,5 @@
 import { DownOutlined } from '@ant-design/icons'
-import { hasDisableMenu } from '@utility/permission'
+import { hasDisableMenu, hasDisableMenuByParameter } from '@utility/permission'
 import React from 'react'
 
 type Tree = {
@@ -33,7 +33,7 @@ const recursiveNestedMenu = (menuItems: Tree[], items: ConvertTree[] = []) => {
         </span>
       ),
       children: [],
-      disabled: hasDisableMenu(route),
+      disabled: hasDisableMenu(route) || hasDisableMenuByParameter(route),
     })
 
     if (children && items[index]?.children && children.length > 0) {
