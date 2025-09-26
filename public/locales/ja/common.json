@@ -885,6 +885,7 @@
   "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
   "quota": {
     "quota": "見積",
+    "quotas": "見積",
     "list": "見積一覧",
     "create": "見積新規作成",
     "edit": "見積編集",
