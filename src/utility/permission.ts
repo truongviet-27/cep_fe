@@ -1,4 +1,4 @@
-import { PermissionEnum } from '@sdk/hey-api'
+import { ParameterResourceEnum, PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 
 export const PermissionResourceFullAdminOnly = new Set([
@@ -15,6 +15,24 @@ export const PermissionRouteFullAdminOnly = new Set([
   '/tags', // ST05
 ])
 
+export const PARAMETER_SETTINGS = new Set(Object.values(ParameterResourceEnum))
+
+export const PARAMETER_SETTING_EXCLUDE = new Set([
+  ParameterResourceEnum.CUSTOMERS,
+  ParameterResourceEnum.PRODUCT_CATEGORIES,
+  ParameterResourceEnum.PRODUCT_UNITS,
+  ParameterResourceEnum.QUOTATION_TEMPLATES,
+  ParameterResourceEnum.MAIL_TEMPLATES,
+  ParameterResourceEnum.CODE_ISSUE_SETTINGS,
+])
+
+export const PARAMETER_SETTING_URL = new Map<string, ParameterResourceEnum>([
+  ['/ranks', ParameterResourceEnum.RANKS],
+  ['/products', ParameterResourceEnum.PRODUCTS],
+  ['/tenant-settings', ParameterResourceEnum.QUOTATION_FORMS],
+  ['/approve-routes', ParameterResourceEnum.APPROVE_ROUTES],
+])
+
 export const hasDisableMenu = (route?: string): boolean => {
   const { permission } = useUserStore.getState()
 
@@ -23,6 +41,19 @@ export const hasDisableMenu = (route?: string): boolean => {
   }
 
   return !!(route && PermissionRouteFullAdminOnly.has(route))
+}
+
+export const hasDisableMenuByParameter = (route?: string): boolean => {
+  const { parameterSettings } = useUserStore.getState()
+
+  if (!route) {
+    return false
+  }
+  const resource = PARAMETER_SETTING_URL.get(route)
+
+  if (!resource) return false
+
+  return !parameterSettings?.get?.(resource)
 }
 
 export const hasForbiddenRoute = (pathName: string) => {
