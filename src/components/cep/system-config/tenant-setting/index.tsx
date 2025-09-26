@@ -12,9 +12,14 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import '@react-pdf-viewer/default-layout/lib/styles/index.css'
 import { useForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useTranslate, useUpdate } from '@refinedev/core'
-import type { QuotaFormSettingResponse } from '@sdk/hey-api'
+import {
+  ParameterResourceEnum,
+  type QuotaFormSettingResponse,
+} from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Row, Space, Typography } from 'antd'
+import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const { Title } = Typography
@@ -26,6 +31,12 @@ type FormType = QuotaFormSettingResponse & {
 
 function TenantSetting() {
   const t = useTranslate()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+
+  if (!parameterSettings.get(ParameterResourceEnum.QUOTATION_FORMS)) {
+    redirect('/403')
+  }
+
   const { formProps, saveButtonProps, form } = useForm<FormType>()
 
   const [isPdf, setIsPdf] = useState(false)
