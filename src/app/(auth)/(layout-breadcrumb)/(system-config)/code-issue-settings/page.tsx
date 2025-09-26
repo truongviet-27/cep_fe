@@ -9,19 +9,36 @@ import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
 import { BaseRecord, useResource } from '@refinedev/core'
+import { ParameterResourceEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { DARK_RED, GREY, PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
 import { Modal, Table, Tag, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import type { SegmentedValue } from 'rc-segmented'
-import React from 'react'
 
 const { Title } = Typography
 
 export default function Page() {
   const t = useTranslations()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+
   const { tableProps } = useTable({
     syncWithLocation: true,
+    queryOptions: {
+      select: (data) => {
+        return {
+          ...data,
+          data: data.data.filter(
+            (item) =>
+              !(
+                item.code === 'products' &&
+                !parameterSettings.get(ParameterResourceEnum.PRODUCTS)
+              ),
+          ),
+        }
+      },
+    },
   })
 
   const { resource } = useResource()
