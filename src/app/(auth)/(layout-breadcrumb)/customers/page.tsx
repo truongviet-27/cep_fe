@@ -1,7 +1,10 @@
 /* eslint-disable */
 'use client'
 
+import { RightOutlined } from '@ant-design/icons'
+import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
+import Breadcrumbs from '@components/layout/breadcrumbs'
 import {
   CreateButton,
   DeleteButton,
@@ -10,6 +13,17 @@ import {
   useTable,
 } from '@refinedev/antd'
 import { useGo, useTranslate, useUpdate } from '@refinedev/core'
+import { PermissionEnum, SimpleCustomer } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
+import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
+import {
+  antiSocialCheckOptions,
+  countryOptions,
+  creditCheckOptions,
+  searchDateTypeOptions,
+} from '@utility/options'
 import {
   Button,
   Col,
@@ -22,22 +36,9 @@ import {
   TableColumnsType,
   Typography,
 } from 'antd'
-import React, { useMemo } from 'react'
-import CommonTable from '@components/common/table'
-import boldText from '@utility/bold-text'
-import Breadcrumbs from '@components/layout/breadcrumbs'
-import { RightOutlined } from '@ant-design/icons'
-import { PRIMARY } from '@utility/color'
-import { SimpleCustomer } from '@sdk/hey-api'
-import Link from 'next/link'
-import {
-  antiSocialCheckOptions,
-  countryOptions,
-  creditCheckOptions,
-  searchDateTypeOptions,
-} from '@utility/options'
 import dayjs from 'dayjs'
-import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
+import Link from 'next/link'
+import { useMemo } from 'react'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -60,6 +61,9 @@ export default function CustomerListPage() {
   const go = useGo()
 
   const { mutate, isLoading } = useUpdate()
+  const { hasFullAccessModule } = useUserStore.getState()
+
+  const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -244,7 +248,12 @@ export default function CustomerListPage() {
         fixed: 'right',
         render: (_, record) => (
           <Space>
-            <EditButton icon={null} recordItemId={record.id} size={'small'}>
+            <EditButton
+              icon={null}
+              recordItemId={record.id}
+              size={'small'}
+              disabled={!isFullAccess}
+            >
               {t('buttons.edit')}
             </EditButton>
             &nbsp;
@@ -268,6 +277,7 @@ export default function CustomerListPage() {
                     recordItemId={record.id}
                     size={'small'}
                     type={'primary'}
+                    disabled={!isFullAccess}
                   >
                     {t('buttons.resume')}
                   </EditButton>
@@ -277,6 +287,9 @@ export default function CustomerListPage() {
                     danger
                     recordItemId={record.id}
                     size={'small'}
+                    type={'primary'}
+                    className={isFullAccess ? '' : '!bg-gray-100'}
+                    disabled={!isFullAccess}
                   >
                     {t('buttons.suspend')}
                   </DeleteButton>
@@ -426,8 +439,15 @@ export default function CustomerListPage() {
 
       <Row justify="end" className="mb-4">
         <Space direction={'vertical'}>
-          <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
-          <Link href={'/customers/csv'}>{t('projects.csv_upload.title')}</Link>
+          <CreateButton icon={null} disabled={!isFullAccess}>
+            {t('buttons.create_new')}
+          </CreateButton>
+          <Link
+            href={isFullAccess ? '/customers/csv' : '#'}
+            className={isFullAccess ? '' : '!text-gray-400'}
+          >
+            {t('projects.csv_upload.title')}
+          </Link>
         </Space>
       </Row>
 

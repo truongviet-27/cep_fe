@@ -11,7 +11,9 @@ import {
   useSelect,
   useTable,
 } from '@refinedev/antd'
-import { BaseRecord, useTranslate } from '@refinedev/core'
+import type { BaseRecord } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -24,14 +26,16 @@ import {
   Table,
   Typography,
 } from 'antd'
-import React from 'react'
-import boldText from '@utility/bold-text'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 const { Title, Text } = Typography
 
 function Page() {
   const t = useTranslate()
+
+  const session = useSession()
+  const userEmail = session.data?.user?.email
 
   const renderFieldNotSet = (value?: any) => {
     return (

@@ -11,13 +11,14 @@ import {
   useTranslate,
   useUpdate,
 } from '@refinedev/core'
+import { PermissionEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
 import { Button, Input, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { isString } from 'lodash'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
-import { isString } from 'lodash'
-import { cn } from '@utility/cn'
 
 const { Title } = Typography
 
@@ -70,6 +71,9 @@ const EditableNameCell = React.memo(
 function useProductUnits() {
   const t = useTranslate()
   const { resource } = useResource()
+  const { hasFullAccessModule } = useUserStore.getState()
+
+  const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_UNIT_EDIT)
   const { tableProps, searchFormProps, setFilters, current, setPageSize } =
     useTable<UnitRow>({
       syncWithLocation: true,
@@ -385,6 +389,7 @@ function useProductUnits() {
     searchFormProps,
     savingAll,
     saving,
+    isFullAccess,
     getRowIdForDnd,
     onDragEnd,
     setFilters,
