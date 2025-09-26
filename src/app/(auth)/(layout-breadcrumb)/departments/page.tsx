@@ -122,7 +122,7 @@ export default function Page() {
         return (
           <Link
             style={{ textDecoration: 'underline' }}
-            href={`/employees/show/${record?.id}`}
+            href={`/departments/show/${record?.id}`}
           >
             {value}
           </Link>

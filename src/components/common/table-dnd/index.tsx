@@ -15,6 +15,7 @@ import { Button } from 'antd'
 import React, { useContext, useMemo } from 'react'
 import CommonTable from '@components/common/table'
 import { CSS } from '@dnd-kit/utilities'
+import { has } from 'lodash'
 
 type SortableListeners = ReturnType<typeof useSortable>['listeners']
 
@@ -90,6 +91,8 @@ export default function TableDnd<T extends object>({
     [dataSource, getRowId],
   )
 
+  const isPaging = has(tableProps?.pagination, 'total')
+
   const injectedColumns: TableColumnsType<T> = useMemo(() => {
     const handleCol = {
       key: '__drag__',
@@ -121,10 +124,16 @@ export default function TableDnd<T extends object>({
               row: DndRow,
             },
           }}
-          pagination={{
-            ...tableProps?.pagination,
-            showSizeChanger: true,
-          }}
+          pagination={
+            isPaging
+              ? {
+                  showTotal: (total, range) =>
+                    `${range[0]}-${range[1]} / ${total}件`,
+                  showSizeChanger: true,
+                  ...tableProps?.pagination,
+                }
+              : tableProps?.pagination
+          }
           rowKey={getRowId}
           columns={injectedColumns}
           dataSource={dataSource}

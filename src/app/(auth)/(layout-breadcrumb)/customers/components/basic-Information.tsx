@@ -17,6 +17,7 @@ import {
   Radio,
   Row,
   Select,
+  Space,
   Typography,
 } from 'antd'
 
@@ -162,11 +163,18 @@ function BasicInformation(
 
             {isIndividual && name && companyType && (
               <Col>
-                <Form.Item>
-                  {form.getFieldValue('company_name_display_format') ===
-                    'after'}
-                  <Typography.Text>{parts.join(' : ')}</Typography.Text>
-                </Form.Item>
+                <Space direction={'horizontal'}>
+                  <Form.Item>
+                    <Typography.Text strong>
+                      {t('customers.create.example')} :
+                    </Typography.Text>
+                  </Form.Item>
+                  <Form.Item>
+                    {form.getFieldValue('company_name_display_format') ===
+                      'after'}
+                    <Typography.Text>{parts.join(' ')}</Typography.Text>
+                  </Form.Item>
+                </Space>
               </Col>
             )}
           </Row>
