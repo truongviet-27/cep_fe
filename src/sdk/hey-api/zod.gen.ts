@@ -793,6 +793,19 @@ export const zPaginatedResponse = z.object({
   ),
 })
 
+export const zParameterResourceEnum = z.enum([
+  'customers',
+  'ranks',
+  'products',
+  'product-categories',
+  'product-units',
+  'quotation-templates',
+  'quotation-forms',
+  'mail-templates',
+  'code-issue-settings',
+  'approve-routes',
+])
+
 export const zBulkAssignPermissionsRequest = z.object({
   assignments: z.array(
     z.object({
@@ -801,6 +814,23 @@ export const zBulkAssignPermissionsRequest = z.object({
     }),
   ),
 })
+
+/**
+ * List of available permission codes
+ */
+export const zPermissionEnum = z.enum([
+  'customer.edit',
+  'product.edit',
+  'product_unit.edit',
+  'product_category.edit',
+  'department.edit',
+  'employee.edit',
+  'tag.edit',
+  'code-issue-setting.edit',
+  'parameter-setting.edit',
+  'rank.edit',
+  'approve-route.edit',
+])
 
 /**
  * Permission entity describing a granular access capability
@@ -1170,7 +1200,9 @@ export const zQuotaFormSettingResponse = z.object({
   greeting: z.optional(z.union([z.string(), z.null()])),
   is_enable_delivery: z.optional(z.boolean()),
   is_enable_delivery_method: z.optional(z.boolean()),
-  default_delivery_method: z.optional(
+  default_delivery_method: z.optional(z.union([z.string(), z.null()])),
+  is_enable_payment_due_date: z.optional(z.boolean()),
+  default_payment_due_date: z.optional(
     z.enum([
       'monthly_25',
       'monthly_10',
@@ -1180,8 +1212,8 @@ export const zQuotaFormSettingResponse = z.object({
       'end_of_month_after_next',
     ]),
   ),
-  is_enable_payment_due_date: z.optional(z.boolean()),
-  default_payment_due_date: z.optional(
+  is_enable_expiration_date: z.optional(z.boolean()),
+  default_expiration_date: z.optional(
     z.enum([
       'days_7',
       'days_14',
@@ -1192,8 +1224,6 @@ export const zQuotaFormSettingResponse = z.object({
       'years_1',
     ]),
   ),
-  is_enable_expiration_date: z.optional(z.boolean()),
-  default_expiration_date: z.optional(z.union([z.iso.datetime(), z.null()])),
   postal_code: z.optional(z.union([z.string(), z.null()])),
   address: z.optional(z.union([z.string(), z.null()])),
   company_name: z.optional(z.union([z.string(), z.null()])),
@@ -1236,7 +1266,9 @@ export const zUpdateQuotaFormSettingRequest = z.object({
   greeting: z.optional(z.union([z.string().max(1000), z.null()])),
   is_enable_delivery: z.optional(z.union([z.boolean(), z.null()])),
   is_enable_delivery_method: z.optional(z.union([z.boolean(), z.null()])),
-  default_delivery_method: z.optional(
+  default_delivery_method: z.optional(z.union([z.string().max(255), z.null()])),
+  is_enable_payment_due_date: z.optional(z.union([z.boolean(), z.null()])),
+  default_payment_due_date: z.optional(
     z.enum([
       'monthly_25',
       'monthly_10',
@@ -1246,8 +1278,8 @@ export const zUpdateQuotaFormSettingRequest = z.object({
       'end_of_month_after_next',
     ]),
   ),
-  is_enable_payment_due_date: z.optional(z.union([z.boolean(), z.null()])),
-  default_payment_due_date: z.optional(
+  is_enable_expiration_date: z.optional(z.union([z.boolean(), z.null()])),
+  default_expiration_date: z.optional(
     z.enum([
       'days_7',
       'days_14',
@@ -1258,8 +1290,6 @@ export const zUpdateQuotaFormSettingRequest = z.object({
       'years_1',
     ]),
   ),
-  is_enable_expiration_date: z.optional(z.union([z.boolean(), z.null()])),
-  default_expiration_date: z.optional(z.union([z.iso.date(), z.null()])),
   postal_code: z.optional(z.union([z.string().max(20), z.null()])),
   address: z.optional(z.union([z.string().max(255), z.null()])),
   company_name: z.optional(z.union([z.string().max(255), z.null()])),
@@ -1684,6 +1714,36 @@ export const zBa30F404343172Ff3A8Fa2Cca1Db68E5Data = z.object({
 export const zBa30F404343172Ff3A8Fa2Cca1Db68E5Response = z.object({
   success: z.optional(z.boolean()),
   message: z.optional(z.string()),
+})
+
+export const zD2E4443E7836Acd1D2Cc61486Af6Ed34Data = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Profile retrieved
+ */
+export const zD2E4443E7836Acd1D2Cc61486Af6Ed34Response = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      is_module_admin: z.optional(z.boolean()),
+      role: z.optional(
+        z.union([
+          z.object({
+            id: z.optional(z.int()),
+            name: z.optional(z.string()),
+            display_name: z.optional(z.string()),
+          }),
+          z.null(),
+        ]),
+      ),
+      permissions: z.optional(z.array(zPermissionEnum)),
+    }),
+  ),
 })
 
 export const zCodeIssueSettingControllerIndexData = z.object({
@@ -2244,6 +2304,7 @@ export const zParameterSettingControllerIndexResponse = z.object({
     z.array(
       z.object({
         parameter_id: z.optional(z.int()),
+        resource: z.optional(zParameterResourceEnum),
         code: z.optional(z.string()),
         name: z.optional(z.string()),
         is_manage: z.optional(z.boolean()),
@@ -2777,9 +2838,7 @@ export const zProductUnitControllerUpdateResponse = z.object({
 
 export const zQuotaFormSettingControllerShowData = z.object({
   body: z.optional(z.never()),
-  path: z.object({
-    id: z.int(),
-  }),
+  path: z.optional(z.never()),
   query: z.optional(z.never()),
 })
 
@@ -2789,7 +2848,7 @@ export const zQuotaFormSettingControllerShowData = z.object({
 export const zQuotaFormSettingControllerShowResponse =
   zQuotaFormSettingDetailResponse
 
-export const zE8Cee5325E3B2A7681582B13F1051D1Data = z.object({
+export const zA229A59B851Ad68435Ac0E91E98F32Data = z.object({
   body: zUpdateQuotaFormSettingRequest,
   path: z.object({
     id: z.int(),
@@ -2800,7 +2859,7 @@ export const zE8Cee5325E3B2A7681582B13F1051D1Data = z.object({
 /**
  * Quota Form Setting updated successfully
  */
-export const zE8Cee5325E3B2A7681582B13F1051D1Response =
+export const zA229A59B851Ad68435Ac0E91E98F32Response =
   zUpdateQuotaFormSettingResponse
 
 export const zRankControllerIndexData = z.object({

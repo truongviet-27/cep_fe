@@ -7,7 +7,7 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useForm, useModalForm, useSelect } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -27,14 +27,17 @@ import {
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import { isArray } from 'lodash'
-import React, { useMemo } from 'react'
+import { useSession } from 'next-auth/react'
+import { useMemo } from 'react'
 
 const { Text, Title } = Typography
 
 export default function EmployeeEdit() {
   const t = useTranslate()
-
+  const go = useGo()
   const apiUrl = useApiUrl()
+  const session = useSession()
+  const userEmail = session.data?.user?.email
 
   const { data: roles } = useCustom({ method: 'get', url: `${apiUrl}/roles` })
 
@@ -233,6 +236,7 @@ export default function EmployeeEdit() {
           style={{ marginTop: -4 }}
           label={boldText(t('employees.fields.role'))}
           name="role_id"
+          hidden={userEmail === form.getFieldValue('email')}
         >
           <Radio.Group buttonStyle="solid">
             {isArray(roles?.data) &&

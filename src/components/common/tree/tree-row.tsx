@@ -1,7 +1,12 @@
-import { DownOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons'
+import {
+  DownOutlined,
+  PlusOutlined,
+  RollbackOutlined,
+  SaveOutlined,
+} from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
-import { DeleteButton, EditButton } from '@refinedev/antd'
+import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { Button, Input, Space, Tag, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
 
@@ -113,14 +118,20 @@ const TreeRow: React.FC<TreeRowProps> = ({
             onClick={() => onStartEdit(cat.id)}
           />
         )}
-
-        <CommonButton
+        <CreateButton
+          hideText
+          size="middle"
+          onClick={() => onAddChild(cat.id)}
+          icon={<PlusOutlined />}
+          style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
+        />
+        {/* <CommonButton
           hideText
           type="add"
           disabled={isNew}
           onClick={() => onAddChild(cat.id)}
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
-        />
+        /> */}
 
         {typeof cat.id === 'number' ? (
           <DeleteButton hideText recordItemId={cat.id} />
