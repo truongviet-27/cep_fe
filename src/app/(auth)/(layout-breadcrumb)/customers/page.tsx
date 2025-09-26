@@ -13,7 +13,11 @@ import {
   useTable,
 } from '@refinedev/antd'
 import { useGo, useTranslate, useUpdate } from '@refinedev/core'
-import { PermissionEnum, SimpleCustomer } from '@sdk/hey-api'
+import {
+  ParameterResourceEnum,
+  PermissionEnum,
+  SimpleCustomer,
+} from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -61,9 +65,12 @@ export default function CustomerListPage() {
   const go = useGo()
 
   const { mutate, isLoading } = useUpdate()
-  const { hasFullAccessModule } = useUserStore.getState()
+  const { parameterSettings, hasFullAccessModule } = useUserStore(
+    (state) => state,
+  )
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
+  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -75,6 +82,9 @@ export default function CustomerListPage() {
     resource: 'ranks',
     optionLabel: 'name',
     optionValue: 'id',
+    queryOptions: {
+      enabled: allowRankResource,
+    },
   })
 
   const { tableProps, setFilters, searchFormProps } = useTable<ICustomer>({
@@ -369,17 +379,19 @@ export default function CustomerListPage() {
               />
             </Form.Item>
           </Col>
-          <Col xs={24} md={4}>
-            <Form.Item
-              label={boldText(t('ranks.fields.code'))}
-              name="unit_price_rank"
-            >
-              <Select
-                {...ranksSelectProps}
-                placeholder={t('placeholders.select')}
-              />
-            </Form.Item>
-          </Col>
+          {allowRankResource && (
+            <Col xs={24} md={4}>
+              <Form.Item
+                label={boldText(t('ranks.fields.code'))}
+                name="unit_price_rank"
+              >
+                <Select
+                  {...ranksSelectProps}
+                  placeholder={t('placeholders.select')}
+                />
+              </Form.Item>
+            </Col>
+          )}
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('customers.fields.credit_rank'))}
