@@ -1,6 +1,13 @@
+import { useSelect } from '@refinedev/antd'
 import { Card, Col, Form, Row, Select } from 'antd'
 
 function Tags() {
+  const { selectProps } = useSelect({
+    resource: 'tags',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
+
   return (
     <Card
       title={'タグ'}
@@ -18,7 +25,7 @@ function Tags() {
     >
       <Row>
         <Col xs={12} md={6}>
-          <Form.Item>
+          <Form.Item name={'tags'}>
             <Select
               allowClear
               showSearch
@@ -27,6 +34,9 @@ function Tags() {
                 marginTop: 20,
                 width: '100%',
               }}
+              labelInValue
+              mode="multiple"
+              {...selectProps}
             />
           </Form.Item>
         </Col>

@@ -735,7 +735,7 @@ function ApproveAction() {
               </Button>
 
               <Button {...saveButtonProps} type="primary">
-                {isUpdate ? t('buttons.edit') : t('buttons.create')}
+                {isUpdate ? t('buttons.save') : t('buttons.create')}
               </Button>
             </Space>
           </Flex>

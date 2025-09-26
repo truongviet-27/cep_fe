@@ -38,7 +38,7 @@ function TenantSetting() {
     id: form.getFieldValue('id'),
   })
 
-  const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
+  const { data, isFetching, refetch } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
     url: `${apiUrl}/quota-form-settings`,
   })
@@ -58,9 +58,16 @@ function TenantSetting() {
           .getFieldValue('company_seal_image')
           .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
     }
-    mutate({
-      values: customValues,
-    })
+    mutate(
+      {
+        values: customValues,
+      },
+      {
+        onSuccess: () => {
+          refetch()
+        },
+      },
+    )
   }
 
   useEffect(() => {
@@ -150,11 +157,11 @@ function TenantSetting() {
           }}
         >
           <div
-            style={{ height: '800px', border: '1px solid rgba(0, 0, 0, 0.3)' }}
+            style={{ height: '850px', border: '1px solid rgba(0, 0, 0, 0.3)' }}
           >
             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
               <Viewer
-                fileUrl="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf"
+                fileUrl={data?.data?.pdf_file_url}
                 plugins={[defaultLayoutPluginInstance]}
               />
             </Worker>

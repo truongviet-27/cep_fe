@@ -13,6 +13,7 @@ function CoreAutoComplete({
   style,
   labelPath = 'name',
   valuePath = 'id',
+  params,
   ...rest
 }: {
   nameFilter: string
@@ -22,6 +23,7 @@ function CoreAutoComplete({
   filterPath?: any
   labelPath?: any
   valuePath?: any
+  params?: any
 }) {
   const t = useTranslate()
 
@@ -37,7 +39,7 @@ function CoreAutoComplete({
       ? [{ field: nameFilter, operator: 'eq', value: filter }]
       : [],
     queryOptions: {
-      enabled: !!filter,
+      enabled: !!filterPath && !!filter,
     },
     pagination: {
       mode: 'off',

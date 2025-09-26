@@ -4,6 +4,13 @@ export const resource: ResourceProps[] = [
   {
     name: 'estimates',
   },
+  // {
+  //   name: 'estimates',
+  //   list: '/estimates',
+  //   meta: {
+  //     parent: 'estimates',
+  //   },
+  // },
   {
     name: 'quota',
     list: '/quota',
@@ -14,6 +21,7 @@ export const resource: ResourceProps[] = [
       parent: 'estimates',
       canDelete: true,
       canCreate: true,
+      canEdit: true,
     },
   },
   {

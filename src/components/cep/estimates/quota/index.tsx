@@ -7,7 +7,7 @@ import {
   MessageOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import StatusDashboard from '@components/cep/estimates/quota/components/status-dashboard'
+import StatusDashboard from '@components/cep/estimates/quota/action/components/status-dashboard'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'

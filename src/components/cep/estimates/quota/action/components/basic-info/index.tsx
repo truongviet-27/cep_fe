@@ -1,3 +1,4 @@
+import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import {
@@ -15,6 +16,13 @@ import {
 
 function BasicInfo() {
   const t = useTranslate()
+
+  const { selectProps: selectPropsEm } = useSelect({
+    resource: 'customers',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
+
   return (
     <Card
       title={'基本情報'}
@@ -36,7 +44,7 @@ function BasicInfo() {
       >
         <Row align="middle" gutter={20}>
           <Col>
-            <Form.Item rules={[]} name={'title'} required noStyle>
+            <Form.Item rules={[]} name={'code'} required>
               <Input style={{ width: 240 }} />
             </Form.Item>
           </Col>
@@ -53,14 +61,19 @@ function BasicInfo() {
         </Row>
       </Form.Item>
 
-      <Form.Item name={'name'} required label={boldText('見積区分')}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item
+            name={'type'}
+            required
+            label={boldText('見積区分')}
+            noStyle
+          >
             <Radio.Group
               defaultValue={'exclusive'}
               options={[
                 {
-                  value: 'exclusive',
+                  value: 'normal',
                   label: '通常',
                 },
                 {
@@ -69,56 +82,57 @@ function BasicInfo() {
                 },
               ]}
             />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item required label={boldText('タイトル')}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item required label={boldText('タイトル')} name={'title'}>
             <Input />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item label={<span className="font-bold">取引先</span>}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Select allowClear showSearch />
-          </Col>
-        </Row>
-      </Form.Item>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item name={'customer'} label={boldText('取引先')}>
+            <Select allowClear showSearch {...selectPropsEm} labelInValue />
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item label={<span className="font-bold">見積日</span>}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item label={boldText('見積日')} name={'create_quota'}>
             <DatePicker style={{ width: '75%' }} />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item label={<span className="font-bold">納入期日</span>}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item
+            label={boldText('納入期日')}
+            name={'delivery_date'}
+            getValueFromEvent={(date) => date}
+          >
             <DatePicker style={{ width: '75%' }} />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item label={<span className="font-bold">納品方法</span>}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item label={boldText('納品方法')} name={'delivery_method'}>
             <Input />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item
-        name={'payment_due_date'}
-        label={<span className="font-bold">支払期日</span>}
-      >
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item name={'payment_due_date'} label={boldText('支払期日')}>
             <Select
               allowClear
               showSearch
@@ -161,16 +175,13 @@ function BasicInfo() {
                 },
               ]}
             />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item
-        name={'expiration_date'}
-        label={<span className="font-bold">有効期限</span>}
-      >
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item name={'expiration_date'} label={boldText('有効期限')}>
             <Select
               allowClear
               showSearch
@@ -209,16 +220,13 @@ function BasicInfo() {
                 },
               ]}
             />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
 
-      <Form.Item
-        label={<span className="font-bold">消費税</span>}
-        name="consumption_tax"
-      >
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Form.Item label={boldText('消費税')} name="consumption_tax">
             <Radio.Group
               defaultValue={'exclusive'}
               options={[
@@ -236,24 +244,20 @@ function BasicInfo() {
                 },
               ]}
             />
-          </Col>
-        </Row>
-      </Form.Item>
-      <Form.Item
-        name="tax_rate"
-        label={
-          <span className="font-bold">
-            {t('tenant_settings.consumptionTax.taxRateLabel')}
-          </span>
-        }
-        layout="horizontal"
-      >
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8}>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={24} sm={16} md={10} lg={8}>
+          <Form.Item
+            name="tax_rate"
+            label={boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
+            layout="horizontal"
+          >
             <InputNumber controls={false} min={0} max={100} addonAfter="%" />
-          </Col>
-        </Row>
-      </Form.Item>
+          </Form.Item>
+        </Col>
+      </Row>
     </Card>
   )
 }

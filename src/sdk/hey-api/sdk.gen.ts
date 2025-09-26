@@ -37,6 +37,9 @@ import type {
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Data,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Errors,
+  AuthControllerMeData,
+  AuthControllerMeResponses,
+  AuthControllerMeErrors,
   CodeIssueSettingControllerIndexData,
   CodeIssueSettingControllerIndexResponses,
   CodeIssueSettingControllerIndexErrors,
@@ -181,6 +184,9 @@ import type {
   ProductCategoryControllerUpdateData,
   ProductCategoryControllerUpdateResponses,
   ProductCategoryControllerUpdateErrors,
+  ProductCategoryControllerGetProductsData,
+  ProductCategoryControllerGetProductsResponses,
+  ProductCategoryControllerGetProductsErrors,
   ProductUnitControllerIndexData,
   ProductUnitControllerIndexResponses,
   ProductUnitControllerIndexErrors,
@@ -202,12 +208,21 @@ import type {
   ProductUnitControllerUpdateData,
   ProductUnitControllerUpdateResponses,
   ProductUnitControllerUpdateErrors,
+  QuotaControllerStoreData,
+  QuotaControllerStoreResponses,
+  QuotaControllerStoreErrors,
+  QuotaControllerShowData,
+  QuotaControllerShowResponses,
+  QuotaControllerShowErrors,
+  QuotaControllerCloneData,
+  QuotaControllerCloneResponses,
+  QuotaControllerCloneErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
-  E8Cee5325E3B2A7681582B13F1051D1Data,
-  E8Cee5325E3B2A7681582B13F1051D1Responses,
-  E8Cee5325E3B2A7681582B13F1051D1Errors,
+  A229A59B851Ad68435Ac0E91E98F32Data,
+  A229A59B851Ad68435Ac0E91E98F32Responses,
+  A229A59B851Ad68435Ac0E91E98F32Errors,
   RankControllerIndexData,
   RankControllerIndexResponses,
   RankControllerIndexErrors,
@@ -260,6 +275,7 @@ import {
   zCc3D6A8269D166673C5B9A3Ce3028772Data,
   zFaedd72A00012E0F68519B5407E844AaData,
   zBa30F404343172Ff3A8Fa2Cca1Db68E5Data,
+  zAuthControllerMeData,
   zCodeIssueSettingControllerIndexData,
   zCodeIssueSettingControllerShowData,
   zEed87Adddef6126Fa051Bd6Cd2D733E6Data,
@@ -309,6 +325,7 @@ import {
   zProductCategoryControllerDestroyData,
   zProductCategoryControllerShowData,
   zProductCategoryControllerUpdateData,
+  zProductCategoryControllerGetProductsData,
   zProductUnitControllerIndexData,
   zProductUnitControllerStoreData,
   zProductUnitControllerUpsertData,
@@ -316,8 +333,11 @@ import {
   zProductUnitControllerDestroyData,
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
+  zQuotaControllerStoreData,
+  zQuotaControllerShowData,
+  zQuotaControllerCloneData,
   zQuotaFormSettingControllerShowData,
-  zE8Cee5325E3B2A7681582B13F1051D1Data,
+  zA229A59B851Ad68435Ac0E91E98F32Data,
   zRankControllerIndexData,
   zRankControllerStoreData,
   zRankControllerDestroyData,
@@ -674,6 +694,32 @@ export const ba30F404343172Ff3A8Fa2Cca1Db68E5 = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get current user
+ * Get current user profile and permissions by JWT token
+ */
+export const authControllerMe = <ThrowOnError extends boolean = false>(
+  options?: Options<AuthControllerMeData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    AuthControllerMeResponses,
+    AuthControllerMeErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zAuthControllerMeData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/me',
+    ...options,
   })
 }
 
@@ -2070,6 +2116,34 @@ export const productCategoryControllerUpdate = <
 }
 
 /**
+ * Get all products and packages for a category
+ * Get all products and their product packages for a specific category without pagination.
+ */
+export const productCategoryControllerGetProducts = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductCategoryControllerGetProductsData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ProductCategoryControllerGetProductsResponses,
+    ProductCategoryControllerGetProductsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductCategoryControllerGetProductsData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-categories/{id}/products',
+    ...options,
+  })
+}
+
+/**
  * Get list of product units
  * Retrieve a paginated list of product units with search and filter options.
  */
@@ -2276,15 +2350,101 @@ export const productUnitControllerUpdate = <
 }
 
 /**
+ * Create a new quota
+ * Create a new quota with nested product groups, products, and tags.
+ */
+export const quotaControllerStore = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerStoreResponses,
+    QuotaControllerStoreErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Get a quota by ID
+ * Get a specific quota's details by ID with all related data.
+ */
+export const quotaControllerShow = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaControllerShowResponses,
+    QuotaControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Clone a quota
+ * Clone an existing quota with optional override data.
+ */
+export const quotaControllerClone = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerCloneData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerCloneResponses,
+    QuotaControllerCloneErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerCloneData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{sourceId}/clone',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get quota form setting detail
  * Retrieve a specific quota form setting by its ID
  */
 export const quotaFormSettingControllerShow = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<QuotaFormSettingControllerShowData, ThrowOnError>,
+  options?: Options<QuotaFormSettingControllerShowData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).get<
+  return (options?.client ?? _heyApiClient).get<
     QuotaFormSettingControllerShowResponses,
     QuotaFormSettingControllerShowErrors,
     ThrowOnError
@@ -2298,7 +2458,7 @@ export const quotaFormSettingControllerShow = <
         type: 'http',
       },
     ],
-    url: '/api/v1/quota-form-settings/{id}',
+    url: '/api/v1/quota-form-settings',
     ...options,
   })
 }
@@ -2307,18 +2467,18 @@ export const quotaFormSettingControllerShow = <
  * Update quota form setting
  * Update an existing quota form setting with new configuration values
  */
-export const e8Cee5325E3B2A7681582B13F1051D1 = <
+export const a229A59B851Ad68435Ac0E91E98F32 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<E8Cee5325E3B2A7681582B13F1051D1Data, ThrowOnError>,
+  options: Options<A229A59B851Ad68435Ac0E91E98F32Data, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).put<
-    E8Cee5325E3B2A7681582B13F1051D1Responses,
-    E8Cee5325E3B2A7681582B13F1051D1Errors,
+  return (options.client ?? _heyApiClient).patch<
+    A229A59B851Ad68435Ac0E91E98F32Responses,
+    A229A59B851Ad68435Ac0E91E98F32Errors,
     ThrowOnError
   >({
     requestValidator: async (data) => {
-      return await zE8Cee5325E3B2A7681582B13F1051D1Data.parseAsync(data)
+      return await zA229A59B851Ad68435Ac0E91E98F32Data.parseAsync(data)
     },
     security: [
       {

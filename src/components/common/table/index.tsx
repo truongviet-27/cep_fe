@@ -13,8 +13,6 @@ function CommonTable<T extends object>(
 
   const isPaging = has(restTableProps.pagination, 'total')
 
-  console.log(components, 'bodybody')
-
   return (
     <Table<T>
       {...restTableProps}
