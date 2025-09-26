@@ -34,7 +34,8 @@
     "save_all": "全て保存",
     "confirm": "確認",
     "add": "追加",
-    "save": "登録",
+    "registration": "新規登録",
+    "save": "保存",
     "search": "検索",
     "clear": "クリア",
     "new_create": "新規作成",
@@ -44,7 +45,8 @@
     "add_delivery_destination": "納品先追加",
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
-    "show": "show"
+    "show": "show",
+    "refresh": "refresh"
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -80,13 +82,16 @@
   "estimates": {
     "estimates": "見積"
   },
+  "business_partner": {
+    "business_partner": "取引先"
+  },
   "customers": {
-    "customers": "取引先",
+    "customers": "単価ランク一覧",
     "list": {
       "list": "取引先一覧"
     },
     "create": {
-      "create": "取引先新規作成"
+      "create": "取引先編集"
     },
     "edit": {
       "edit": "取引先編集"
@@ -254,6 +259,10 @@
   },
   "ranks": {
     "ranks": "単価ランク一覧",
+    "titles": {
+      "clone": "clone",
+      "edit": "edit"
+    },
     "list": {
       "list": "単価ランク一覧",
       "filters": {
@@ -282,11 +291,16 @@
     "merchandise": "商品"
   },
   "approve_routes": {
-    "approve_routes": "承認ルート一覧",
+    "approve_routes": "承認ルート",
+    "list": "承認ルート一覧",
+    "detail": "承認ルート詳細",
+    "create": "承認ルート登録",
+    "edit": "承認ルート編集",
     "labels": {
       "routeCode": "ルートコード",
       "routeName": "ルート名",
       "department": "部門（支社/部/課）",
+      "employee": "社員・社員コード",
       "status": "ステータス",
       "stepName": "ステップ名",
       "approverDesignation": "承認者の指定",
@@ -457,6 +471,8 @@
     "form": {
       "subject": "件名",
       "body": "本文",
+      "title": "【見積書送付】お知らせメール",
+      "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付の通りお見積りを送付いたします。\nよろしくご査収ください。",
       "signature": {
         "label": "署名（自動挿入）",
         "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team mail: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"

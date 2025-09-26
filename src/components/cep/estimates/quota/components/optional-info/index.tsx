@@ -1,6 +1,15 @@
 import { Action } from '@components/common/action'
 import CommonTable from '@components/common/table'
-import { Card, Checkbox, Form, Input, InputNumber, Select } from 'antd'
+import {
+  Button,
+  Card,
+  Checkbox,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+} from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 
 function OptionalInfo() {
@@ -9,7 +18,7 @@ function OptionalInfo() {
       title={'オプション情報'}
       headStyle={{
         padding: 0,
-        minHeight: 'none',
+        minHeight: 0,
       }}
       bodyStyle={{
         padding: 0,
@@ -19,7 +28,7 @@ function OptionalInfo() {
         marginTop: 40,
       }}
     >
-      <Form.List name={'detail_info'}>
+      <Form.List name={'additional_product'}>
         {(fields) => {
           const columns: ColumnsType = [
             {
@@ -105,14 +114,25 @@ function OptionalInfo() {
           ]
 
           return (
-            <CommonTable
-              columns={columns}
-              dataSource={fields}
-              style={{
-                marginTop: 20,
-              }}
-              pagination={false}
-            />
+            <Flex vertical>
+              <Flex
+                justify="end"
+                style={{
+                  marginTop: 20,
+                  marginBottom: 20,
+                }}
+              >
+                <Button type="primary">カテゴリから入力</Button>
+              </Flex>
+              <CommonTable
+                columns={columns}
+                dataSource={fields}
+                rowClassName={(record) =>
+                  record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
+                }
+                pagination={false}
+              />
+            </Flex>
           )
         }}
       </Form.List>

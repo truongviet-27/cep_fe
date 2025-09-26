@@ -6,7 +6,7 @@ function Tags() {
       title={'タグ'}
       headStyle={{
         padding: 0,
-        minHeight: 'none',
+        minHeight: 0,
       }}
       bodyStyle={{
         padding: 0,

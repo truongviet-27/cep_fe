@@ -1,12 +1,11 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Form, Input, Space } from 'antd'
+import { Button, Form, Input, InputNumber, Row, Space, Typography } from 'antd'
 import React from 'react'
 import { Create } from '@components/crud/create'
 import { CreateButton, useForm } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
-import { createSchemaFieldRule } from 'antd-zod'
-import { zRank } from '@sdk/hey-api/zod.gen'
+import { validateRankRule } from '@validate/rank'
 
 type Props = {
   modalProps: any
@@ -28,8 +27,6 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
     close()
     return result
   }
-
-  const rule = createSchemaFieldRule(zRank)
 
   return (
     <Create
@@ -57,38 +54,41 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
         colon={false}
         onFinish={handleFinish}
       >
-        <Form.Item
-          label={boldText(t('ranks.fields.code'))}
-          name="code"
-          required
-          rules={[rule]}
-        >
-          <Input />
+        <Form.Item required label={boldText(t('ranks.fields.code'))}>
+          <Row>
+            <Form.Item required name="code" rules={[validateRankRule(t)]}>
+              <Input style={{ width: '105%' }} />
+            </Form.Item>
+            <Typography.Text className={'mt-1 ml-10'} type="secondary">
+              (A-Z, 0-9, -)
+            </Typography.Text>
+          </Row>
         </Form.Item>
 
         <Form.Item
           required
           label={boldText(t('ranks.fields.name'))}
           name="name"
-          rules={[rule]}
+          rules={[validateRankRule(t)]}
+          style={{ marginTop: -20 }}
         >
-          <Input />
+          <Input style={{ width: '50%' }} />
         </Form.Item>
 
         <Form.Item
           required
           label={boldText(t('ranks.fields.rate'))}
           name="rate"
-          rules={[rule]}
+          rules={[validateRankRule(t)]}
         >
-          <Input />
+          <InputNumber style={{ width: '50%' }} />
         </Form.Item>
 
         <Form.Item
           required
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
-          rules={[rule]}
+          rules={[validateRankRule(t)]}
         >
           <Input multiple />
         </Form.Item>

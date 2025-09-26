@@ -17,7 +17,7 @@ import {
   EditButton,
   ShowButton,
 } from '@refinedev/antd'
-import { useTranslate } from '@refinedev/core'
+import { useGo, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -41,6 +41,8 @@ const { RangePicker } = DatePicker
 
 function QuotaList() {
   const t = useTranslate()
+
+  const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
@@ -300,8 +302,8 @@ function QuotaList() {
       <Form>
         <StatusDashboard />
         <div className="my-4">
-          <Row gutter={[24, 12]}>
-            <Col xs={12} md={6} xxl={3}>
+          <Row gutter={[24, 0]}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">見積番号</span>}
                 layout="vertical"
@@ -309,7 +311,7 @@ function QuotaList() {
                 <Input />
               </Form.Item>
             </Col>
-            <Col xs={12} md={6} xxl={3}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">取引先</span>}
                 layout="vertical"
@@ -317,7 +319,7 @@ function QuotaList() {
                 <Input />
               </Form.Item>
             </Col>
-            <Col xs={12} md={6} xxl={3}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">タイトル</span>}
                 layout="vertical"
@@ -325,7 +327,7 @@ function QuotaList() {
                 <Input />
               </Form.Item>
             </Col>
-            <Col xs={12} md={6} xxl={3}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">作成者</span>}
                 layout="vertical"
@@ -333,7 +335,7 @@ function QuotaList() {
                 <Input />
               </Form.Item>
             </Col>
-            <Col xs={12} md={6} xxl={3}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">承認者</span>}
                 layout="vertical"
@@ -341,7 +343,7 @@ function QuotaList() {
                 <Input />
               </Form.Item>
             </Col>
-            <Col xs={12} md={6} xxl={3}>
+            <Col xs={12} md={6} lg={4} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">部門（支社/部/課）</span>}
                 layout="vertical"
@@ -349,7 +351,7 @@ function QuotaList() {
                 <Select allowClear showSearch />
               </Form.Item>
             </Col>
-            <Col xs={12} md={6} xxl={3}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
@@ -359,7 +361,7 @@ function QuotaList() {
             </Col>
           </Row>
           <Row gutter={[24, 0]}>
-            <Col xs={12} md={6} lg={3}>
+            <Col xs={12} md={6} lg={4}>
               <Form.Item
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
@@ -386,7 +388,7 @@ function QuotaList() {
           </Row>
 
           <Row gutter={[24, 24]}>
-            <Col xs={8} md={6} lg={3}>
+            <Col xs={8} md={6} lg={4}>
               <Form.Item
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
@@ -395,10 +397,19 @@ function QuotaList() {
               </Form.Item>
             </Col>
 
-            <Col xs={16} md={18} lg={21}>
+            <Col xs={16} md={18} lg={20}>
               <div className="mt-7 flex justify-end gap-2">
                 <Button type="default">見積テンプレート一覧</Button>
-                <Button type="primary">新規作成</Button>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    go({
+                      to: 'quota/create',
+                    })
+                  }}
+                >
+                  新規作成
+                </Button>
               </div>
             </Col>
           </Row>

@@ -197,20 +197,24 @@ function ApproveAction() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('merchandise.merchandise')}
+                  {t('approve_routes.approve_routes')}
                 </Title>
               ),
             },
             {
               title: (
-                <Title level={5}>{t('approve_routes.approve_routes')}</Title>
+                <Title level={5}>
+                  {isUpdate
+                    ? t('approve_routes.edit')
+                    : t('approve_routes.create')}
+                </Title>
               ),
             },
           ]}
           separator={<RightOutlined />}
         />
       }
-      title={<Title level={5}>{t('approve_routes.approve_routes')}</Title>}
+      title={isUpdate ? t('approve_routes.edit') : t('approve_routes.create')}
     >
       <Spin
         spinning={
@@ -228,6 +232,9 @@ function ApproveAction() {
             isUpdate
               ? {
                   ...query.data?.data,
+                  steps: query.data?.data.steps.map((item: any) => ({
+                    ...item,
+                  })),
                   departments: query?.data?.data.departments?.map(
                     (item: any) => item.id,
                   ),
@@ -259,13 +266,14 @@ function ApproveAction() {
           wrapperCol={{ span: 18 }}
           onFinish={onFinish}
           labelAlign="left"
+          colon={false}
         >
           <Row>
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <CoreInput
                 name={'code'}
                 label={t('approve_routes.labels.routeCode')}
-                required
+                required={true}
                 layout="horizontal"
                 rules={[
                   {
@@ -287,13 +295,19 @@ function ApproveAction() {
                 ]}
               />
             </Col>
+
+            <Col sm={12} md={3}>
+              <div className="mt-1 mb-2 text-left text-[#757575] md:text-right">
+                （A-Z, 0-9, -）
+              </div>
+            </Col>
           </Row>
           <Row>
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <CoreInput
                 name={'name'}
                 label={t('approve_routes.labels.routeName')}
-                required
+                required={true}
                 layout="horizontal"
                 rules={[
                   {
@@ -458,7 +472,6 @@ function ApproveAction() {
                                     'approve_routes.labels.approverDesignation',
                                   ),
                                 )}
-                                colon={false}
                                 valuePropName="checked"
                               >
                                 <Checkbox
@@ -466,22 +479,20 @@ function ApproveAction() {
                                     transform: 'scale(1.3)',
                                     marginBottom: 0,
                                   }}
-                                  checked={getFieldValue([
+                                  defaultChecked={getFieldValue([
+                                    'steps',
                                     item.name,
                                     'is_multi_appover',
                                   ])}
                                   onChange={(e) => {
-                                    if (e.target.checked) {
-                                      setIsMultiApprove((prev) => ({
-                                        ...prev,
-                                        [index]: true,
-                                      }))
-                                    } else {
-                                      setIsMultiApprove((prev) => ({
-                                        ...prev,
-                                        [index]: false,
-                                      }))
-                                    }
+                                    setFieldValue(
+                                      ['steps', item.name, 'is_multi_appover'],
+                                      e.target.checked,
+                                    )
+                                    setIsMultiApprove((prev) => ({
+                                      ...prev,
+                                      [index]: e.target.checked,
+                                    }))
                                   }}
                                 />
                                 <Text className="mr-2 ml-4">
@@ -520,6 +531,7 @@ function ApproveAction() {
                                               t(
                                                 'approve_routes.labels.approver',
                                               ),
+                                              PRIMARY,
                                             )}
                                           </Col>
                                           <Col xs={10} md={8}>
@@ -544,12 +556,12 @@ function ApproveAction() {
                                                 placeholder={t(
                                                   'placeholders.select',
                                                 )}
-                                                onClear={() => {
+                                                onChange={() => {
                                                   setFieldValue(
                                                     [
                                                       'steps',
                                                       item.name,
-                                                      'employee',
+                                                      'employees',
                                                       item2.name,
                                                       'employee_id',
                                                     ],
@@ -563,7 +575,7 @@ function ApproveAction() {
                                             <Form.Item
                                               label={boldText(
                                                 t(
-                                                  'approve_routes.labels.department',
+                                                  'approve_routes.labels.employee',
                                                 ),
                                               )}
                                               name={[item2.name, 'employee_id']}
@@ -589,7 +601,6 @@ function ApproveAction() {
                                                 ]}
                                                 resource="employees"
                                                 style={{ width: 200 }}
-                                                options={selectPropsEp.options}
                                               />
                                             </Form.Item>
                                           </Col>
