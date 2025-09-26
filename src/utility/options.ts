@@ -54,8 +54,8 @@ export const creditCheckOptions: { value: string; label: string }[] = [
 ]
 
 export const antiSocialCheckOptions: { value: string; label: string }[] = [
-  { value: '〇', label: '〇' },
-  { value: '△', label: '△' },
+  { value: 'O', label: '〇' },
+  { value: 'T', label: '△' },
   { value: 'X', label: 'X' },
 ]
 

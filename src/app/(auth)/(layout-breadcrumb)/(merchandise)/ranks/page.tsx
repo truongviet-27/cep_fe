@@ -27,6 +27,7 @@ import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
+import Link from 'next/link'
 
 const { Title, Text } = Typography
 
@@ -47,6 +48,11 @@ export default function Page() {
     {
       dataIndex: 'code',
       title: t('ranks.fields.code'),
+      render: (_, record) => (
+        <Link href={`/customers/show/${record.id}`} className="!underline">
+          {record.code}
+        </Link>
+      ),
     },
     { dataIndex: 'name', title: t('ranks.fields.name') },
     { dataIndex: 'rate', title: t('ranks.fields.rate') },
@@ -85,7 +91,7 @@ export default function Page() {
   const { resource } = useResource()
 
   const modalFormShow = useModalForm({
-    action: 'clone',
+    action: 'edit',
     resource: resource?.name,
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
@@ -107,7 +113,7 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={t('ranks.list.list')}
+      i18nHeading={'ranks.list.list'}
     >
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>

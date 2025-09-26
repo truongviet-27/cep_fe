@@ -37,7 +37,7 @@ function BasicInformation(
     form,
   } = props
 
-  const isCompany = Form.useWatch('customer_type', form) === 'company'
+  const isIndividual = Form.useWatch('customer_type', form) === 'individual'
   const isJapan = Form.useWatch('country', form) === 'Japan'
   const isNameAfter =
     Form.useWatch('company_name_display_format', form) === 'after'
@@ -114,7 +114,7 @@ function BasicInformation(
               </Form.Item>
             </Col>
 
-            {isCompany && (
+            {isIndividual && (
               <>
                 <Col>
                   <Form.Item name="company_type" rules={[rule]}>
@@ -155,7 +155,7 @@ function BasicInformation(
               </Form.Item>
             </Col>
 
-            {isCompany && name && companyType && (
+            {isIndividual && name && companyType && (
               <Col>
                 <Form.Item>
                   {form.getFieldValue('company_name_display_format') ===

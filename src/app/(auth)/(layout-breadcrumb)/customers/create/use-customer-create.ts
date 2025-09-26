@@ -4,9 +4,8 @@ import type {
   CodeIssueSetting,
   CustomerUpdateRequest,
 } from '@sdk/hey-api/types.gen'
-import { zCustomerStoreRequest } from '@sdk/hey-api/zod.gen'
+import { validateCustomerRule } from '@validate/customer'
 import { Form } from 'antd'
-import { createSchemaFieldRule } from 'antd-zod'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
@@ -41,7 +40,7 @@ export const useCustomerCreate = () => {
     }
   }
 
-  const rule = createSchemaFieldRule(zCustomerStoreRequest)
+  const rule = validateCustomerRule(t)
 
   const onFinish = (values: CustomerUpdateRequest) => {
     handleSubmit(values)

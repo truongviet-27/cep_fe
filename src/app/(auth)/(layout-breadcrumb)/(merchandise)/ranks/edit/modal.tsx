@@ -1,6 +1,14 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Divider, Form, Input, Space, Typography } from 'antd'
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Space,
+  Typography,
+} from 'antd'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 
@@ -9,8 +17,7 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { DeleteButton } from '@refinedev/antd'
-import { createSchemaFieldRule } from 'antd-zod'
-import { zRank } from '@sdk/hey-api/zod.gen'
+import { validateRankRule } from '@validate/rank'
 
 type Props = {
   modalProps: any
@@ -26,8 +33,6 @@ export const RankModalEdit: React.FC<Props> = ({
     modalProps
 
   const [isEdit, setEdit] = useState<boolean>(!isShow)
-
-  const rule = createSchemaFieldRule(zRank)
 
   const record = queryResult?.data?.data
 
@@ -55,34 +60,38 @@ export const RankModalEdit: React.FC<Props> = ({
           required
           label={boldText(t('ranks.fields.code'))}
           name="code"
-          rules={[rule]}
+          rules={[validateRankRule(t)]}
         >
-          {!isEdit ? getFieldData('code') : <Input />}
+          {!isEdit ? getFieldData('code') : <Input style={{ width: '50%' }} />}
         </Form.Item>
 
         <Form.Item
           required
           label={boldText(t('ranks.fields.name'))}
           name="name"
-          rules={[rule]}
+          rules={[validateRankRule(t)]}
         >
-          {!isEdit ? getFieldData('name') : <Input />}
+          {!isEdit ? getFieldData('name') : <Input style={{ width: '50%' }} />}
         </Form.Item>
 
         <Form.Item
           required
           label={boldText(t('ranks.fields.rate'))}
           name="rate"
-          rules={[rule]}
+          rules={[validateRankRule(t)]}
         >
-          {!isEdit ? getFieldData('rate') : <Input />}
+          {!isEdit ? (
+            getFieldData('rate')
+          ) : (
+            <InputNumber style={{ width: '50%' }} />
+          )}
         </Form.Item>
 
         <Form.Item
           required
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
-          rules={[rule]}
+          rules={[validateRankRule(t)]}
         >
           {!isEdit ? getFieldData('note') : <Input multiple />}
         </Form.Item>

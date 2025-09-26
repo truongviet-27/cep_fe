@@ -17,12 +17,16 @@ export const resource: ResourceProps[] = [
     },
   },
   {
+    name: 'business_partner',
+  },
+  {
     name: 'customers',
     list: '/customers',
     show: '/customers/show/:id',
     create: '/customers/create',
     edit: '/customers/edit/:id',
     meta: {
+      parent: 'business_partner',
       canDelete: true,
       canCreate: true,
     },
