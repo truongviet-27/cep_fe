@@ -223,6 +223,14 @@ function useImportHistory() {
         render(value, record) {
           return record.status === 'COMPLETED' ? null : !value &&
             record.status !== 'COMPLETED' ? (
+            <Text
+              style={{
+                color: RED,
+              }}
+            >
+              {t('import_history.text.error')}
+            </Text>
+          ) : (
             <Button
               color="primary"
               variant="outlined"
@@ -234,14 +242,6 @@ function useImportHistory() {
             >
               ダウンロード
             </Button>
-          ) : (
-            <Text
-              style={{
-                color: RED,
-              }}
-            >
-              {t('import_history.text.error')}
-            </Text>
           )
         },
       },

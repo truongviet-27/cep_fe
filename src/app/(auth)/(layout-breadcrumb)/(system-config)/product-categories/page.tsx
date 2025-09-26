@@ -39,18 +39,16 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
+      hiddenButtonBack
       rightFooterButtons={
-        <Space size={8}>
-          <Button
-            type="primary"
-            disabled={!dirty || !isFullAccess}
-            onClick={save}
-            className="shadow-sm disabled:opacity-60"
-          >
-            並べ替えを保存
-          </Button>
-          <Button>その他の操作</Button>
-        </Space>
+        <Button
+          type="primary"
+          disabled={!dirty || !isFullAccess}
+          onClick={save}
+          className="shadow-sm disabled:opacity-60"
+        >
+          {t('buttons.save_all')}
+        </Button>
       }
     >
       <Form

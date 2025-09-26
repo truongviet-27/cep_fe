@@ -216,14 +216,14 @@ export const Show: React.FC<ShowProps & CustomProps> = ({
               >
                 <>
                   {footerButtons}
-                  {
+                  {!hiddenButtonBack && (
                     <Space
                       size={4}
                       style={{
                         paddingTop: footerButtons ? 40 : undefined,
                       }}
                     >
-                      {!hiddenButtonBack && (
+                      {
                         <Button
                           type="default"
                           onClick={() => go({ to: goListPath })}
@@ -236,10 +236,10 @@ export const Show: React.FC<ShowProps & CustomProps> = ({
                         >
                           戻る
                         </Button>
-                      )}
+                      }
                       {rightFooterButtons}
                     </Space>
-                  }
+                  )}
                 </>
               </Space>,
             ]}
