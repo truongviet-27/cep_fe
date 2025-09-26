@@ -71,15 +71,7 @@ function Page() {
   })
 
   const getRowClassName = (record: BaseRecord) => {
-    let className = ''
-    if (!record.email || !record.code) {
-      className = 'bg-gray-200'
-    }
-
-    if (record.email === userEmail) {
-      className = 'bg-gray-300'
-    }
-    return className
+    return !record.email || !record.code ? 'bg-gray-200' : ''
   }
 
   const handleSearch = (values: any) => {
@@ -204,11 +196,7 @@ function Page() {
           render={(_, record: BaseRecord) => (
             <Space>
               <ShowButton hideText size="small" recordItemId={record.id} />
-              {userEmail === record.email ? (
-                <EditButton size="small" disabled hideText />
-              ) : (
-                <EditButton hideText size="small" recordItemId={record.id} />
-              )}
+              <EditButton hideText size="small" recordItemId={record.id} />
             </Space>
           )}
         />

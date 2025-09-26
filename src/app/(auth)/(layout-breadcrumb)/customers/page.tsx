@@ -442,7 +442,12 @@ export default function CustomerListPage() {
           <CreateButton icon={null} disabled={!isFullAccess}>
             {t('buttons.create_new')}
           </CreateButton>
-          <Link href={'/customers/csv'}>{t('projects.csv_upload.title')}</Link>
+          <Link
+            href={isFullAccess ? '/customers/csv' : '#'}
+            className={isFullAccess ? '' : '!text-gray-400'}
+          >
+            {t('projects.csv_upload.title')}
+          </Link>
         </Space>
       </Row>
 

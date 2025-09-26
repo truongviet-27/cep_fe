@@ -29,11 +29,9 @@ export default function Page() {
     form,
     t,
   } = useProductCategories()
-  const { permission } = useUserStore.getState()
+  const { hasFullAccessModule } = useUserStore.getState()
   const go = useGo()
-  const hasProductCategoryEditPermission = !!permission?.permissions.has(
-    PermissionEnum.PRODUCT_CATEGORY_EDIT,
-  )
+  const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_CATEGORY_EDIT)
 
   return (
     <Create
@@ -45,7 +43,7 @@ export default function Page() {
         <Space size={8}>
           <Button
             type="primary"
-            disabled={!dirty || hasProductCategoryEditPermission}
+            disabled={!dirty || !isFullAccess}
             onClick={save}
             className="shadow-sm disabled:opacity-60"
           >
@@ -141,7 +139,7 @@ export default function Page() {
               : t('product_categories.all_close')}
           </Button>
           <Button
-            disabled={!hasProductCategoryEditPermission}
+            disabled={!isFullAccess}
             type="link"
             onClick={() => {
               go({

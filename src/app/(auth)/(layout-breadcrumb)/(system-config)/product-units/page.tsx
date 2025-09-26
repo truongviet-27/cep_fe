@@ -22,6 +22,7 @@ export default function Page() {
     tableProps,
     searchFormProps,
     savingAll,
+    isFullAccess,
     getRowIdForDnd,
     onDragEnd,
     setFilters,
@@ -38,7 +39,7 @@ export default function Page() {
             type="primary"
             onClick={onSaveAll}
             loading={savingAll}
-            disabled={savingAll}
+            disabled={savingAll || !isFullAccess}
           >
             {t('buttons.save_all', { defaultValue: '並び順を保存' })}
           </Button>
@@ -97,6 +98,7 @@ export default function Page() {
               size="middle"
               onClick={addNew}
               icon={null}
+              disabled={!isFullAccess}
             >
               {t('buttons.create_new')}
             </CreateButton>

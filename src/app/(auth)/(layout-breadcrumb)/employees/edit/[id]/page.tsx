@@ -7,13 +7,7 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useForm, useModalForm, useSelect } from '@refinedev/antd'
-import {
-  GetOneResponse,
-  useApiUrl,
-  useCustom,
-  useGo,
-  useTranslate,
-} from '@refinedev/core'
+import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -50,15 +44,6 @@ export default function EmployeeEdit() {
   const { formProps, saveButtonProps, queryResult, form, formLoading } =
     useForm<Employee>({
       redirect: 'show',
-      queryOptions: {
-        select: (data: GetOneResponse<Employee>) => {
-          if (data.data.email === userEmail) {
-            go({ to: '/403' })
-          }
-
-          return data
-        },
-      },
     })
   const employeeData = queryResult?.data?.data
 
@@ -251,6 +236,7 @@ export default function EmployeeEdit() {
           style={{ marginTop: -4 }}
           label={boldText(t('employees.fields.role'))}
           name="role_id"
+          hidden={userEmail === form.getFieldValue('email')}
         >
           <Radio.Group buttonStyle="solid">
             {isArray(roles?.data) &&
