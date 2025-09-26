@@ -13,6 +13,8 @@ function CommonTable<T extends object>(
 
   const isPaging = has(restTableProps.pagination, 'total')
 
+  console.log(components, 'bodybody')
+
   return (
     <Table<T>
       {...restTableProps}
@@ -29,7 +31,7 @@ function CommonTable<T extends object>(
               {...props}
               style={{
                 ...props.style,
-                backgroundColor: '#e6f7ff',
+                backgroundColor: '#F0F9FF',
                 color: PRIMARY,
                 textAlign: 'center',
                 padding: 11,

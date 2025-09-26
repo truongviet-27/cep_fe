@@ -4,9 +4,9 @@ import {
   EditOutlined,
   ExportOutlined,
   EyeOutlined,
-  FileAddOutlined,
   HistoryOutlined,
   ImportOutlined,
+  PlusOutlined,
 } from '@ant-design/icons'
 import { Button } from 'antd'
 
@@ -52,7 +52,13 @@ export const Action = ({
           color="blue"
           variant="outlined"
           onClick={onViewAction}
-          icon={<EyeOutlined />}
+          icon={
+            <EyeOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 
@@ -62,7 +68,13 @@ export const Action = ({
           color="blue"
           variant="outlined"
           onClick={onEditAction}
-          icon={<EditOutlined />}
+          icon={
+            <EditOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 
@@ -81,10 +93,16 @@ export const Action = ({
       {actionList.includes('append') && (
         <Button
           className="cursor-pointer"
-          color="red"
+          color="blue"
           variant="outlined"
           onClick={onAppendAction}
-          icon={<FileAddOutlined />}
+          icon={
+            <PlusOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 
@@ -94,7 +112,13 @@ export const Action = ({
           color="red"
           variant="outlined"
           onClick={onRemoveAction}
-          icon={<DeleteOutlined />}
+          icon={
+            <DeleteOutlined
+              style={{
+                fontSize: 12,
+              }}
+            />
+          }
         />
       )}
 

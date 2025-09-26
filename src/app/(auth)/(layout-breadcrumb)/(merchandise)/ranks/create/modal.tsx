@@ -1,10 +1,11 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Form, Input, Space } from 'antd'
+import { Button, Form, Input, InputNumber, Row, Space, Typography } from 'antd'
 import React from 'react'
 import { Create } from '@components/crud/create'
 import { CreateButton, useForm } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
+import { validateRankRule } from '@validate/rank'
 
 type Props = {
   modalProps: any
@@ -33,13 +34,13 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
       isLoading={formLoading}
       saveButtonProps={saveButtonProps}
       title={<></>}
-      i18nHeading={'code_issue_settings.edit.edit'}
+      i18nHeading={'ranks.create.create'}
       contentProps={{ style: { boxShadow: 'none' } }}
       rightFooterButtons={
         <Space className={'flex w-full justify-end'}>
           <Button onClick={close}>{t('buttons.cancel')}</Button>
           <CreateButton {...saveButtonProps} type="primary" icon={null}>
-            {t('products.buttons.save')}
+            {t('buttons.create')}
           </CreateButton>
         </Space>
       }
@@ -53,34 +54,41 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
         colon={false}
         onFinish={handleFinish}
       >
-        <Form.Item
-          label={boldText(t('ranks.fields.code'))}
-          name="code"
-          rules={[{ required: true }]}
-        >
-          <Input />
+        <Form.Item required label={boldText(t('ranks.fields.code'))}>
+          <Row>
+            <Form.Item required name="code" rules={[validateRankRule(t)]}>
+              <Input style={{ width: '105%' }} />
+            </Form.Item>
+            <Typography.Text className={'mt-1 ml-10'} type="secondary">
+              (A-Z, 0-9, -)
+            </Typography.Text>
+          </Row>
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.name'))}
           name="name"
-          rules={[{ required: true }]}
+          rules={[validateRankRule(t)]}
+          style={{ marginTop: -20 }}
         >
-          <Input />
+          <Input style={{ width: '50%' }} />
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.rate'))}
           name="rate"
-          rules={[{ required: true }]}
+          rules={[validateRankRule(t)]}
         >
-          <Input />
+          <InputNumber style={{ width: '50%' }} />
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
-          rules={[{ required: true }]}
+          rules={[validateRankRule(t)]}
         >
           <Input multiple />
         </Form.Item>

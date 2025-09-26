@@ -4,7 +4,7 @@ import useMailTemplates from '@components/cep/system-config/mail-templates/useMa
 import PageContainer from '@components/common/page-container'
 import { EditButton } from '@refinedev/antd'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Form, Popconfirm, Typography } from 'antd'
+import { Breadcrumb, Button, Form, Popconfirm } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import Title from 'antd/es/typography/Title'
 
@@ -28,7 +28,7 @@ function MailTemplate() {
 
   return (
     <PageContainer
-      title={
+      breadcrumbs={
         <Breadcrumb
           items={[
             {
@@ -47,6 +47,7 @@ function MailTemplate() {
           separator={<RightOutlined />}
         />
       }
+      title={t('mail_templates.mail_templates')}
     >
       <Form
         {...formProps}
@@ -56,14 +57,6 @@ function MailTemplate() {
           [`signature_${indexTab}`]: data?.signature,
         }}
       >
-        <Typography.Title
-          level={5}
-          style={{
-            color: '#1890FF',
-          }}
-        >
-          {t('mail_templates.mail_templates')}
-        </Typography.Title>
         <TabsEmailTemplate
           isEdit={isEdit}
           onChange={onChangeTabs}
@@ -78,7 +71,15 @@ function MailTemplate() {
                 description={t('mail_templates.popup.reset.message')}
                 open={openReset}
                 onConfirm={() => {
-                  resetFields()
+                  form.setFieldsValue({
+                    [`title_${indexTab}`]: t('mail_templates.form.title'),
+                    [`content_${indexTab}`]: t(
+                      'mail_templates.form.quotationMailTemplate',
+                    ),
+                    [`signature_${indexTab}`]: t(
+                      'mail_templates.form.signature.content',
+                    ),
+                  })
                   setOpenReset(!openReset)
                 }}
                 onCancel={() => {

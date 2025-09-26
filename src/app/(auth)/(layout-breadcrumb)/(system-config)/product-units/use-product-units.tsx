@@ -17,6 +17,7 @@ import type { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
+import { cn } from '@utility/cn'
 
 const { Title } = Typography
 
@@ -33,6 +34,38 @@ export type UnitRow = {
 type FormValues = { rows: UnitRow[] }
 
 export type RowVM = UnitRow & { __index: string }
+const EditableNameCell = React.memo(
+  ({ control, index, t }: { control: any; index: number; t: any }) => {
+    const isEditing = useWatch({ control, name: `rows.${index}._isEditing` })
+    const nameValue = useWatch({ control, name: `rows.${index}.name` })
+
+    return isEditing ? (
+      <Controller
+        control={control}
+        name={`rows.${index}.name`}
+        rules={{ required: t('validation.required') }}
+        render={({ field, fieldState: { error } }) => (
+          <div className={'-mb-2 !h-fit'}>
+            <Input
+              {...field}
+              required
+              size="middle"
+              placeholder={t('product_units.columns.unit_name')}
+              status={error ? 'error' : ''}
+            />
+            {error?.message && (
+              <p className="!h-2 text-[0.7rem] text-red-600">
+                {error?.message}
+              </p>
+            )}
+          </div>
+        )}
+      />
+    ) : (
+      <Typography.Text>{nameValue}</Typography.Text>
+    )
+  },
+)
 
 function useProductUnits() {
   const t = useTranslate()
@@ -56,8 +89,9 @@ function useProductUnits() {
 
   const apiUrl = useApiUrl()
 
-  const { control, getValues, resetField } = useForm<FormValues>({
-    defaultValues: { rows: [] },
+  const { control, getValues, resetField, setFocus } = useForm<FormValues>({
+    defaultValues: { rows: [{ name: '', is_disable: true, order: 0 }] },
+    mode: 'onTouched',
   })
 
   const { insert, remove, update, move, replace, fields } = useFieldArray({
@@ -128,10 +162,8 @@ function useProductUnits() {
 
   const addNew = () => {
     const order = fields?.[1]?.order ?? 0
-    setPageSize((pre) => pre++)
-
     insert(
-      current - 1,
+      0,
       {
         id: crypto?.randomUUID?.(),
         name: '',
@@ -140,8 +172,9 @@ function useProductUnits() {
         _isNew: true,
         _isEditing: true,
       },
-      { shouldFocus: true },
+      { focusIndex: 0 },
     )
+    setTimeout(() => setFocus(`rows.0.name`), 0)
   }
 
   const startEdit = (index: number) => {
@@ -168,6 +201,8 @@ function useProductUnits() {
     }
     delete originalRef.current[stableKey]
   }
+
+  console.log('rendered')
 
   const { mutate: createRow } = useCreate()
   const { mutate: updateRow, isLoading: saving } = useUpdate()
@@ -265,36 +300,18 @@ function useProductUnits() {
       title: '単位名',
       dataIndex: 'name',
       key: 'name',
-      render: (_v, record) => {
-        const index = Number(record.__index)
-        const isEditing = (watchedRows[index] as UnitRow | undefined)
-          ?._isEditing
-        return isEditing ? (
-          <Controller
-            control={control}
-            name={`rows.${index}.name`}
-            render={({ field }) => (
-              <Input {...field} size="middle" autoFocus placeholder="単位名" />
-            )}
-          />
-        ) : (
-          <Typography.Text>
-            {(watchedRows[index] as UnitRow | undefined)?.name}
-          </Typography.Text>
-        )
-      },
+      render: (_v, _record, index) => (
+        <EditableNameCell control={control} index={index} t={t} />
+      ),
     },
     {
       title: '有効・無効',
       key: 'is_disable',
       width: 240,
-      render: (_v, record) => {
-        const index = Number(record.__index)
-        const isEditing = (watchedRows[index] as UnitRow | undefined)
-          ?._isEditing
+      render: (_v, record, index) => {
         const value =
           (watchedRows[index] as UnitRow | undefined)?.is_disable ?? false
-        return isEditing ? (
+        return record._isEditing ? (
           <Controller
             control={control}
             name={`rows.${index}.is_disable`}

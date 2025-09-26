@@ -34,7 +34,8 @@
     "save_all": "全て保存",
     "confirm": "確認",
     "add": "追加",
-    "save": "登録",
+    "registration": "新規登録",
+    "save": "保存",
     "search": "検索",
     "clear": "クリア",
     "new_create": "新規作成",
@@ -43,7 +44,9 @@
     "resume": "開始",
     "add_delivery_destination": "納品先追加",
     "copy_contact_info": "取引先情報をコピーする",
-    "select_file": "ファイル"
+    "select_file": "ファイル",
+    "show": "show",
+    "refresh": "refresh"
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -79,13 +82,16 @@
   "estimates": {
     "estimates": "見積"
   },
+  "business_partner": {
+    "business_partner": "取引先"
+  },
   "customers": {
-    "customers": "取引先",
+    "customers": "単価ランク一覧",
     "list": {
       "list": "取引先一覧"
     },
     "create": {
-      "create": "取引先新規作成"
+      "create": "取引先編集"
     },
     "edit": {
       "edit": "取引先編集"
@@ -153,7 +159,7 @@
     },
     "enums": {
       "corporation": "法人",
-      "individual": "個人"
+      "individual": "会社"
     },
     "filters": {
       "code_name": "取引先コード・取引先名",
@@ -220,7 +226,6 @@
       "active": "有効",
       "inactive": "無効"
     },
-
     "list": {
       "title": "商品一覧",
       "searchArea": {
@@ -254,6 +259,10 @@
   },
   "ranks": {
     "ranks": "単価ランク一覧",
+    "titles": {
+      "clone": "clone",
+      "edit": "edit"
+    },
     "list": {
       "list": "単価ランク一覧",
       "filters": {
@@ -262,10 +271,13 @@
       }
     },
     "create": {
-      "create": "新しい単価ランクを追加"
+      "create": "単価ランク作成"
     },
     "edit": {
       "edit": "単価ランク編集"
+    },
+    "show": {
+      "show": "単価ランク詳細"
     },
     "fields": {
       "code": "単価ランクコード",
@@ -279,11 +291,16 @@
     "merchandise": "商品"
   },
   "approve_routes": {
-    "approve_routes": "承認ルート一覧",
+    "approve_routes": "承認ルート",
+    "list": "承認ルート一覧",
+    "detail": "承認ルート詳細",
+    "create": "承認ルート登録",
+    "edit": "承認ルート編集",
     "labels": {
       "routeCode": "ルートコード",
       "routeName": "ルート名",
       "department": "部門（支社/部/課）",
+      "employee": "社員・社員コード",
       "status": "ステータス",
       "stepName": "ステップ名",
       "approverDesignation": "承認者の指定",
@@ -396,6 +413,9 @@
   },
   "code_issue_settings": {
     "code_issue_settings": "各種コード採番設定",
+    "titles": {
+      "edit": "コード採番編集"
+    },
     "edit": {
       "edit": "コード採番編集"
     },
@@ -451,6 +471,8 @@
     "form": {
       "subject": "件名",
       "body": "本文",
+      "title": "【見積書送付】お知らせメール",
+      "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付の通りお見積りを送付いたします。\nよろしくご査収ください。",
       "signature": {
         "label": "署名（自動挿入）",
         "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team mail: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"
@@ -553,7 +575,7 @@
     "advanced_content": "高度設定の内容",
     "enterprise_content": "エンタープライズ設定の内容",
     "employee": "社員",
-    "manager": "マネージャー "
+    "manager": "一般 "
   },
   "projects": {
     "projects": "案件",
@@ -737,15 +759,12 @@
       "alertDesc1": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。",
       "alertDesc2": "テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
       "downloadButton": "CSVテンプレートをダウンロード",
-
       "dragDrop": "CSVファイルをここにドラッグ＆ドロップ",
       "orSelectFile": "または、下のボタンからファイルを選択してください",
       "selectFileButton": "ファイルを選択",
-
       "requiredError": "必須項目です",
       "onlyCSVError": "CSVファイルのみアップロード可能です。",
       "maxSizeError": "ファイルサイズは最大5MBです。",
-
       "noteTitle": "CSV登録時の注意事項",
       "noteItems": {
         "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
@@ -766,6 +785,11 @@
       "nextStep": "次へ",
       "cancel": "キャンセル"
     }
+  },
+  "actions": {
+    "create": "登録",
+    "list": "list",
+    "show": "show"
   },
   "tenant_settings": {
     "tenant_settings": "見積フォーム設定",
@@ -857,5 +881,12 @@
     }
   },
   "forbiddenMessage": "申し訳ありませんが、このページへのアクセス権限がありません。",
-  "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。"
+  "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
+  "quota": {
+    "quota": "見積",
+    "list": "見積一覧",
+    "create": "見積新規作成",
+    "edit": "見積編集",
+    "detail": "見積詳細"
+  }
 }

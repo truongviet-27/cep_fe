@@ -4,7 +4,13 @@ import { RightOutlined, WarningOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { EditButton, EmailField, ShowButton, useTable } from '@refinedev/antd'
+import {
+  EditButton,
+  EmailField,
+  ShowButton,
+  useSelect,
+  useTable,
+} from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
@@ -21,6 +27,7 @@ import {
   Typography,
 } from 'antd'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 const { Title, Text } = Typography
 
@@ -51,6 +58,18 @@ function Page() {
     { title: <Title level={5}>{t('employees.list.list')}</Title> },
   ]
 
+  const { selectProps: departmentSelectProps } = useSelect({
+    resource: 'departments',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
+
+  const { selectProps: rolesSelectProps } = useSelect({
+    resource: 'roles',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
+
   const getRowClassName = (record: BaseRecord) => {
     let className = ''
     if (!record.email || !record.code) {
@@ -65,8 +84,10 @@ function Page() {
 
   const handleSearch = (values: any) => {
     setFilters([
-      { field: 'code', operator: 'contains', value: values.code },
-      { field: 'name', operator: 'contains', value: values.name },
+      { field: 'q', operator: 'contains', value: values.q },
+      { field: 'email', operator: 'null', value: values.email },
+      { field: 'department_id', operator: 'null', value: values.department_id },
+      { field: 'role_id', operator: 'null', value: values.role_id },
     ])
   }
 
@@ -92,7 +113,7 @@ function Page() {
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('employees.filters.code_name'))}
-              name="code_name"
+              name="q"
             >
               <Input placeholder={t('placeholders.partial_match')} />
             </Form.Item>
@@ -108,17 +129,23 @@ function Page() {
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('departments.departments'))}
-              name="department"
+              name="department_id"
             >
-              <Select placeholder={t('placeholders.partial_match')} />
+              <Select
+                {...departmentSelectProps}
+                placeholder={t('placeholders.partial_match')}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('employees.fields.role'))}
-              name="unit_price_rank"
+              name="role_id"
             >
-              <Select placeholder={t('placeholders.select')} />
+              <Select
+                {...rolesSelectProps}
+                placeholder={t('placeholders.select')}
+              />
             </Form.Item>
           </Col>
 
@@ -146,7 +173,14 @@ function Page() {
         <Table.Column
           dataIndex="code"
           title={t('employees.fields.code')}
-          render={(value) => renderFieldNotSet(value)}
+          render={(value, record) => (
+            <Link
+              style={{ textDecoration: 'underline' }}
+              href={`/employees/show/${record?.id}`}
+            >
+              {value}
+            </Link>
+          )}
         />
         <Table.Column dataIndex="name" title={t('employees.fields.name')} />
         <Table.Column

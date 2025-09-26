@@ -1,13 +1,23 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Divider, Form, Input, Space, Typography } from 'antd'
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Space,
+  Typography,
+} from 'antd'
 import dayjs from 'dayjs'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE_TIME } from '@utility/instances'
+import { DeleteButton } from '@refinedev/antd'
+import { validateRankRule } from '@validate/rank'
 
 type Props = {
   modalProps: any
@@ -22,6 +32,8 @@ export const RankModalEdit: React.FC<Props> = ({
   const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
     modalProps
 
+  const [isEdit, setEdit] = useState<boolean>(!isShow)
+
   const record = queryResult?.data?.data
 
   const getFieldData = (name: string) => (
@@ -35,7 +47,7 @@ export const RankModalEdit: React.FC<Props> = ({
       isLoading={formLoading}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
       title={<></>}
-      i18nHeading={'ranks.edit.edit'}
+      i18nHeading={!isEdit ? 'ranks.show.show' : 'ranks.edit.edit'}
     >
       <Form
         {...formProps}
@@ -45,35 +57,43 @@ export const RankModalEdit: React.FC<Props> = ({
         colon={false}
       >
         <Form.Item
+          required
           label={boldText(t('ranks.fields.code'))}
           name="code"
-          rules={[{ required: true }]}
+          rules={[validateRankRule(t)]}
         >
-          {isShow ? getFieldData('code') : <Input />}
+          {!isEdit ? getFieldData('code') : <Input style={{ width: '50%' }} />}
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.name'))}
           name="name"
-          rules={[{ required: true }]}
+          rules={[validateRankRule(t)]}
         >
-          {isShow ? getFieldData('name') : <Input />}
+          {!isEdit ? getFieldData('name') : <Input style={{ width: '50%' }} />}
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.rate'))}
           name="rate"
-          rules={[{ required: true }]}
+          rules={[validateRankRule(t)]}
         >
-          {isShow ? getFieldData('rate') : <Input />}
+          {!isEdit ? (
+            getFieldData('rate')
+          ) : (
+            <InputNumber style={{ width: '50%' }} />
+          )}
         </Form.Item>
 
         <Form.Item
+          required
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
-          rules={[{ required: true }]}
+          rules={[validateRankRule(t)]}
         >
-          {isShow ? getFieldData('note') : <Input multiple />}
+          {!isEdit ? getFieldData('note') : <Input multiple />}
         </Form.Item>
 
         <Divider />
@@ -100,11 +120,27 @@ export const RankModalEdit: React.FC<Props> = ({
         />
       </Form>
 
-      <Space className={'flex w-full justify-end'}>
-        <Button onClick={close}>{t('buttons.cancel')}</Button>
-        <Button {...saveButtonProps} type="primary">
-          {t('products.buttons.save')}
-        </Button>
+      <Space className={'mt-4 flex w-full justify-between'}>
+        <DeleteButton icon={null} size={'small'}>
+          {t('buttons.delete')}
+        </DeleteButton>
+        <Space className={'flex justify-end'}>
+          <Button onClick={close}>{t('buttons.cancel')}</Button>
+          {!isEdit ? (
+            <Button
+              onClick={() => {
+                setEdit(true)
+              }}
+              type="primary"
+            >
+              {t('products.buttons.edit')}
+            </Button>
+          ) : (
+            <Button {...saveButtonProps} type="primary">
+              {t('products.buttons.save')}
+            </Button>
+          )}
+        </Space>
       </Space>
     </Edit>
   )

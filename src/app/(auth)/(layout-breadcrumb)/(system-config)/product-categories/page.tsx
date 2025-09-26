@@ -96,6 +96,7 @@ export default function Page() {
                       placeholder="部分一致"
                       allowClear
                       style={{ width: 360 }}
+                      maxLength={255}
                     />
                   </Form.Item>
                 </div>

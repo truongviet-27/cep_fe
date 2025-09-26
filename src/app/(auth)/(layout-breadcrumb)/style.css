@@ -132,4 +132,18 @@
     margin-top: 10px;
     font-size: 22px;
   }
+
+  .ant-form-item-required::before {
+    display: none !important;
+  }
+
+  .ant-form-item-required > .ant-typography::after {
+    display: inline-block;
+    margin-left: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: '*';
+  }
 }

@@ -98,7 +98,7 @@ function Approve() {
         dataIndex: 'departments',
         title: t('approve_routes.table.department'),
         render: (value) => {
-          return value?.map((item: any) => item?.name + ' , ')
+          return value?.map((item: any) => item?.name).join(', ')
         },
       },
       {
@@ -159,20 +159,18 @@ function Approve() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('merchandise.merchandise')}
+                  {t('approve_routes.approve_routes')}
                 </Title>
               ),
             },
             {
-              title: (
-                <Title level={5}>{t('approve_routes.approve_routes')}</Title>
-              ),
+              title: <Title level={5}>{t('approve_routes.list')}</Title>,
             },
           ]}
           separator={<RightOutlined />}
         />
       }
-      title={t('approve_routes.approve_routes')}
+      title={t('approve_routes.list')}
     >
       <Form
         {...searchFormProps}
@@ -255,7 +253,7 @@ function Approve() {
                 }}
                 icon={null}
               >
-                {t('buttons.add')}
+                {t('buttons.registration')}
               </CreateButton>
             </Space>
           </Col>

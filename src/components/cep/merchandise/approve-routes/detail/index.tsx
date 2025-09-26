@@ -79,20 +79,18 @@ function ApproveDetail() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('merchandise.merchandise')}
+                  {t('approve_routes.approve_routes')}
                 </Title>
               ),
             },
             {
-              title: (
-                <Title level={5}>{t('approve_routes.approve_routes')}</Title>
-              ),
+              title: <Title level={5}> {t('approve_routes.detail')}</Title>,
             },
           ]}
           separator={<RightOutlined />}
         />
       }
-      title={<Title level={5}>{t('approve_routes.approve_routes')}</Title>}
+      title={t('approve_routes.detail')}
     >
       <Spin spinning={query.isLoading}>
         <Form
@@ -158,9 +156,9 @@ function ApproveDetail() {
                 colon={false}
                 name={'departments'}
               >
-                {query.data?.data.departments?.map(
-                  (item: any) => item.name + ' , ',
-                )}
+                {query.data?.data.departments
+                  ?.map((item: any) => item.name)
+                  .join(', ')}
               </Form.Item>
             </Col>
           </Row>

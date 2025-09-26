@@ -98,7 +98,7 @@ export default function Page() {
               onClick={addNew}
               icon={null}
             >
-              新規登録
+              {t('buttons.create_new')}
             </CreateButton>
           </Col>
         </Row>

@@ -5,23 +5,19 @@ export const resource: ResourceProps[] = [
     name: 'estimates',
   },
   {
-    name: 'estimates',
-    list: '/estimates',
-    meta: {
-      parent: 'estimates',
-    },
-  },
-  {
     name: 'quota',
     list: '/quota',
-    show: '/quota/:id',
-    create: '/quota/:id',
-    edit: '/quota/:id',
+    show: '/quota/show/:id',
+    create: '/quota/create',
+    edit: '/quota/edit/:id',
     meta: {
       parent: 'estimates',
       canDelete: true,
       canCreate: true,
     },
+  },
+  {
+    name: 'business_partner',
   },
   {
     name: 'customers',
@@ -30,6 +26,7 @@ export const resource: ResourceProps[] = [
     create: '/customers/create',
     edit: '/customers/edit/:id',
     meta: {
+      parent: 'business_partner',
       canDelete: true,
       canCreate: true,
     },

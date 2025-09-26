@@ -38,17 +38,14 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
         render: (_: unknown, __: unknown, index: number) => {
           return (
             <Form.Item
-              shouldUpdate
               style={{
                 marginBottom: 0,
               }}
             >
-              {() =>
-                (
-                  getFieldValue(['packagings', index, 'selling_price']) *
-                  ((rank.rate ?? 0) / 100)
-                ).toFixed(2)
-              }
+              {(
+                getFieldValue(['packagings', index, 'selling_price']) *
+                ((rank.rate ?? 0) / 100)
+              ).toFixed(2)}
             </Form.Item>
           )
         },

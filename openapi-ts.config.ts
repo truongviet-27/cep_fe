@@ -18,8 +18,7 @@ export default defineConfig({
     {
       name: `@hey-api/sdk`,
       validator: {
-        request: true,
-        response: false,
+        request: 'zod',
       },
     },
     {
