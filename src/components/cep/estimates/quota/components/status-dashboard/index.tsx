@@ -1,4 +1,4 @@
-import { Card, Space, Statistic } from 'antd'
+import { Card, Statistic } from 'antd'
 import React, { useState } from 'react'
 
 const StatusDashboard: React.FC = () => {
@@ -16,19 +16,15 @@ const StatusDashboard: React.FC = () => {
   ]
 
   return (
-    <Space
-      wrap
-      style={{
-        width: '100%',
-      }}
-      size={18}
-    >
+    <div className="flex flex-wrap gap-4">
       {statusData.map((item) => (
         <Card
           key={item.key}
           style={{
-            width: 185,
-            textAlign: 'center',
+            width: '100%',
+            display: 'flex',
+            flex: 1,
+            alignItems: 'center',
             border:
               status === item.key ? '2px solid #1677ff ' : '1px solid #f0f0f0',
             background: status === item.key ? '#E6F7FF' : '',
@@ -36,15 +32,19 @@ const StatusDashboard: React.FC = () => {
           onClick={() => {
             setStatus(item.key)
           }}
+          bodyStyle={{
+            width: '100%',
+            textAlign: 'center',
+          }}
         >
           <Statistic
             value={item.value}
-            valueStyle={{ color: item.color || 'inherit', fontSize: 18 }}
+            valueStyle={{ color: item.color || 'inherit', fontSize: 16 }}
           />
           <div style={{ marginTop: 8, fontSize: 12 }}>{item.title}</div>
         </Card>
       ))}
-    </Space>
+    </div>
   )
 }
 

@@ -12,7 +12,7 @@ function Left() {
   const { getFieldValue } = form
 
   return (
-    <Col xs={24} xxl={12}>
+    <Col xs={24} xl={12}>
       <div className="rounded-lg border border-[#D0D0D0]">
         <div className="flex h-[100px] border-b-[1px] border-solid border-[#D0D0D0]">
           <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">

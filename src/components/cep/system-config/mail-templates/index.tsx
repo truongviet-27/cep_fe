@@ -70,7 +70,15 @@ function MailTemplate() {
                 description={t('mail_templates.popup.reset.message')}
                 open={openReset}
                 onConfirm={() => {
-                  resetFields()
+                  form.setFieldsValue({
+                    [`title_${indexTab}`]: t('mail_templates.form.title'),
+                    [`content_${indexTab}`]: t(
+                      'mail_templates.form.quotationMailTemplate',
+                    ),
+                    [`signature_${indexTab}`]: t(
+                      'mail_templates.form.signature.content',
+                    ),
+                  })
                   setOpenReset(!openReset)
                 }}
                 onCancel={() => {

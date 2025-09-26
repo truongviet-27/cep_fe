@@ -1,4 +1,4 @@
-import { Card, Input } from 'antd'
+import { Card, Form, Input } from 'antd'
 import React from 'react'
 
 function Note() {
@@ -7,7 +7,7 @@ function Note() {
       title={'詳細情報'}
       headStyle={{
         padding: 0,
-        minHeight: 'none',
+        minHeight: 0,
       }}
       bodyStyle={{
         padding: 0,
@@ -17,7 +17,13 @@ function Note() {
         marginTop: 40,
       }}
     >
-      <Input.TextArea style={{ marginTop: 20 }} rows={5} />
+      <Form.Item name={'note'}>
+        <Input.TextArea
+          style={{ marginTop: 20 }}
+          rows={6}
+          className="!resize-none"
+        />
+      </Form.Item>
     </Card>
   )
 }
