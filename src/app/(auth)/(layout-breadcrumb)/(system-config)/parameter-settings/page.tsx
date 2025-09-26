@@ -67,7 +67,7 @@ export default function Page() {
       align: 'center',
       render: (cur, _, index) => {
         return (
-          <>
+          <div className={'!h-5'}>
             <Form.Item name={[index, 'id']} initialValue={cur?.id} hidden />
 
             <Form.Item name={[index, 'is_manage']} initialValue={cur.is_manage}>
@@ -82,7 +82,7 @@ export default function Page() {
                 </Space>
               </Radio.Group>
             </Form.Item>
-          </>
+          </div>
         )
       },
     },

@@ -47,7 +47,7 @@ function QuotaAction() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('quota.quota')}
+                  {t('estimates.estimates')}
                 </Title>
               ),
             },

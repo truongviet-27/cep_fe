@@ -26,7 +26,7 @@ function QuotaDetail() {
                     color: PRIMARY,
                   }}
                 >
-                  {t('quota.quota')}
+                  {t('estimates.estimates')}
                 </Title>
               ),
             },
