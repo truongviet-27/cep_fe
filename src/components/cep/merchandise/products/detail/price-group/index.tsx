@@ -1,6 +1,11 @@
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
-import type { ProductDetail, ProductPackaging } from '@sdk/hey-api'
+import {
+  ParameterResourceEnum,
+  type ProductDetail,
+  type ProductPackaging,
+} from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import type { ColumnsType } from 'antd/es/table'
 import { forEach } from 'lodash'
 import { useMemo } from 'react'
@@ -11,6 +16,7 @@ interface PriceGroupProps {
 
 const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
   const t = useTranslate()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   const columns = useMemo(() => {
     const result = [
@@ -63,7 +69,7 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
     return (product?.packagings || []).map((item: ProductPackaging) => {
       const ranks = item.rank_prices
       const rankItem: { [key: string]: number } = {}
-      if (ranks) {
+      if (ranks && parameterSettings.get(ParameterResourceEnum.RANKS)) {
         forEach(ranks, (rank) => {
           rankItem[`rank_${rank.rank_id}`] = Number((rank.price || 0) / 100)
         })
