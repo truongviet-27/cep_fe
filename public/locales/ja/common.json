@@ -91,7 +91,8 @@
       "list": "取引先一覧"
     },
     "create": {
-      "create": "取引先編集"
+      "create": "取引先編集",
+      "example": "取引先"
     },
     "edit": {
       "edit": "取引先編集"
@@ -880,6 +881,8 @@
       }
     }
   },
+  "forbiddenMessage": "申し訳ありませんが、このページへのアクセス権限がありません。",
+  "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
   "quotas": {
     "quotas": "見積",
     "list": "見積一覧",

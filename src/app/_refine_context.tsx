@@ -6,6 +6,7 @@ import { dataProvider } from '@/providers/data-provider'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import LoadingPage from '@components/common/loading-page'
 import { NProgressProvider } from '@components/common/progress-provider'
+import { accessControlProvider } from '@lib/accessControlProvider'
 import authProvider from '@providers/keycloak-provider'
 import { useNotificationProvider } from '@refinedev/antd'
 import '@refinedev/antd/dist/reset.css'
@@ -16,6 +17,7 @@ import { resource } from '@utility/resources'
 import { SessionProvider, useSession } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
+import { useBootstrap } from './controller'
 
 type RefineContextProps = {
   defaultMode?: string
@@ -36,7 +38,9 @@ const App = (props: React.PropsWithChildren) => {
   const { status } = session
   const t = useTranslations()
 
-  if (status === 'loading') {
+  const { isLoading } = useBootstrap()
+
+  if (status === 'loading' || isLoading) {
     return <LoadingPage />
   }
 
@@ -62,6 +66,7 @@ const App = (props: React.PropsWithChildren) => {
           notificationProvider={useNotificationProvider}
           authProvider={authProvider}
           resources={resource}
+          accessControlProvider={accessControlProvider}
           options={{
             syncWithLocation: true,
             warnWhenUnsavedChanges: true,

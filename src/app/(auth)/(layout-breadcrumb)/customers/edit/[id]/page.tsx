@@ -4,8 +4,8 @@ import { RightOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import AccountingContact from '@app/(auth)/(layout-breadcrumb)/customers/components/accounting-contact'
 import AddressContact from '@app/(auth)/(layout-breadcrumb)/customers/components/address-contact'
-// Import các component con, không thay đổi
 import BasicInformation from '@app/(auth)/(layout-breadcrumb)/customers/components/basic-Information'
+// Import các component con, không thay đổi
 import { CorporateResearchFormSection } from '@app/(auth)/(layout-breadcrumb)/customers/components/corporate-research-form-section'
 import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/customers/components/delivery-destinations'
 import { Edit } from '@components/crud/edit'

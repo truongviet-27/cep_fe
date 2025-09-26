@@ -31,7 +31,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
       if (file.status === 'done' && file.response) {
         return {
           ...file,
-          url: file.response.url,
+          url: file.response.file_key,
         }
       }
       return file

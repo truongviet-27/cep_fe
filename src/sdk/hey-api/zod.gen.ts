@@ -863,6 +863,23 @@ export const zBulkAssignPermissionsRequest = z.object({
 })
 
 /**
+ * List of available permission codes
+ */
+export const zPermissionEnum = z.enum([
+  'customer.edit',
+  'product.edit',
+  'product_unit.edit',
+  'product_category.edit',
+  'department.edit',
+  'employee.edit',
+  'tag.edit',
+  'code-issue-setting.edit',
+  'parameter-setting.edit',
+  'rank.edit',
+  'approve-route.edit',
+])
+
+/**
  * Permission entity describing a granular access capability
  */
 export const zPermission = z.object({
@@ -3175,9 +3192,7 @@ export const zQuotaControllerStoreResponse = z.object({
 
 export const zQuotaControllerShowData = z.object({
   body: z.optional(z.never()),
-  path: z.object({
-    id: z.int(),
-  }),
+  path: z.optional(z.never()),
   query: z.optional(z.never()),
 })
 

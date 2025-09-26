@@ -102,7 +102,7 @@ export default function Page() {
 
       <div className="mt-8">
         <TableDnd<RowVM>
-          {...tableProps}
+          tableProps={tableProps}
           dataSource={dataSource}
           columns={columns}
           getRowId={getRowIdForDnd}

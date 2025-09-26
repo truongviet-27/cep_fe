@@ -2,6 +2,7 @@ import { RightOutlined } from '@ant-design/icons'
 import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs'
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
 import PageContainer from '@components/common/page-container'
+import { EditButton } from '@refinedev/antd'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Form, Popconfirm } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
@@ -143,20 +144,16 @@ function MailTemplate() {
               </div>
             </div>
           ) : (
-            <Button
-              type="default"
-              style={{
-                background: '#fff',
-                borderColor: PRIMARY,
-                color: PRIMARY,
-                fontWeight: 600,
-              }}
+            <EditButton
+              variant="outlined"
+              color="primary"
               onClick={() => {
                 setIsEdit(true)
               }}
+              icon={null}
             >
               {t('mail_templates.buttons.edit')}
-            </Button>
+            </EditButton>
           )}
         </div>
         {isEdit && (

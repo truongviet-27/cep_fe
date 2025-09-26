@@ -1,6 +1,7 @@
 import CommonTable from '@components/common/table'
 import { useList, useTranslate } from '@refinedev/core'
-import type { Rank } from '@sdk/hey-api'
+import { ParameterResourceEnum, type Rank } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { Form, Radio } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { FormInstance } from 'antd/lib'
@@ -16,12 +17,13 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
   const { form } = props
   const { getFieldValue } = form
   const t = useTranslate()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   const { data: ranks } = useList<Rank>({
     resource: 'ranks',
-    // queryOptions: {
-    //   enabled: !!name_lk_value,
-    // },
+    queryOptions: {
+      enabled: parameterSettings.get(ParameterResourceEnum.RANKS),
+    },
   })
   const renderRanks = useMemo(() => {
     return (

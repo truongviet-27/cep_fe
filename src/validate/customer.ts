@@ -177,11 +177,7 @@ export const validateCustomerRule = (t: any) => {
           error: t('validation.customer.industry.max', { max: 255 }),
         }),
       ),
-      date_of_establishment: z.optional(
-        z
-          .string()
-          .date({ error: t('validation.customer.date_of_establishment.date') }),
-      ),
+      date_of_establishment: z.any().optional(),
 
       department_in_charge: z.optional(
         z

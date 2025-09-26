@@ -1,8 +1,12 @@
 'use client'
 
-import type { AuthProvider } from '@refinedev/core'
+// eslint-disable-next-line simple-import-sort/imports
+import { type AuthProvider } from '@refinedev/core'
 import { axiosInstance } from '@rest-data-provider/utils'
+import { useUserStore } from '@stores/useUserStore'
 import { signIn, signOut } from 'next-auth/react'
+
+import { dataProvider } from '@/providers/data-provider'
 
 const authProvider: AuthProvider = {
   login: async () => {
@@ -19,6 +23,7 @@ const authProvider: AuthProvider = {
       callbackUrl: '/login',
     })
     delete axiosInstance.defaults.headers.common['Authorization']
+    useUserStore.getState().logout?.()
     return { success: true, redirectTo: '/login' }
   },
   onError: async (error) => {
@@ -27,7 +32,7 @@ const authProvider: AuthProvider = {
     }
 
     if (error?.response?.status === 403) {
-      return { redirectTo: '/not-found' }
+      return { redirectTo: '/403' }
     }
 
     return { error }
@@ -39,15 +44,17 @@ const authProvider: AuthProvider = {
     return null
   },
   getIdentity: async () => {
-    // const res = await fetch('/api/get-user')
-    // if (res.status === 200) {
-    //   const user = await res.json()
-    //   return {
-    //     name: user.name,
-    //     avatar: user.image,
-    //   }
-    // }
-    return null
+    try {
+      const { data } = await dataProvider.custom({
+        url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/me`,
+        method: 'get',
+      })
+
+      return data
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
+      return null
+    }
   },
 }
 

@@ -3,10 +3,9 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customer
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
 import boldText from '@utility/bold-text'
-import { Button, Collapse, Form, Input, Typography } from 'antd'
+import { Button, Collapse, Form, Input } from 'antd'
 import React from 'react'
 
-const { Title } = Typography
 const { Panel } = Collapse
 
 function AccountingContact(
@@ -28,14 +27,28 @@ function AccountingContact(
     >
       <Panel
         header={
-          <Title level={5}>{t('customers.show.accounting_contact')}</Title>
+          <Form.Item
+            className={'!h-2'}
+            label={boldText(t('customers.show.accounting_contact'))}
+          >
+            <Button
+              type="link"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleCopyContact()
+              }}
+              className={'!-ml-3 !underline'}
+            >
+              {t('buttons.copy_contact_info')}
+            </Button>
+          </Form.Item>
         }
         key="1"
-        extra={
-          <Button type="link" onClick={handleCopyContact}>
-            {t('buttons.copy_contact_info')}
-          </Button>
-        }
+        // extra={
+        //   <Button type="link" onClick={handleCopyContact}>
+        //     {t('buttons.copy_contact_info')}
+        //   </Button>
+        // }
       >
         <Form.Item
           label={boldText(t('customers.show.contact_name'))}

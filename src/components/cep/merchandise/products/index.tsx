@@ -4,6 +4,7 @@ import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
+import { CreateButton } from '@refinedev/antd'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Col, Form, Row, Typography } from 'antd'
 import Link from 'next/link'
@@ -86,14 +87,14 @@ function ProductContainer() {
             </div>
             <div className="flex flex-col items-start">
               <Link href={'products/create'}>
-                <Button type="primary">
+                <CreateButton type="primary" icon={null}>
                   {t('products.list.actions.createNewButton')}
-                </Button>
+                </CreateButton>
               </Link>
               <Link href={'products/csv'}>
-                <Button className="!px-0" type="link">
+                <CreateButton className="!px-0" type="link" icon={null}>
                   {t('products.list.actions.csvBulkUploadLink')}
-                </Button>
+                </CreateButton>
               </Link>
             </div>
           </div>

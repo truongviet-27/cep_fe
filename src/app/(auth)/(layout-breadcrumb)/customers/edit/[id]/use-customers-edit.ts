@@ -5,8 +5,7 @@ import type {
   CustomerStoreRequest,
   CustomerUpdateRequest,
 } from '@sdk/hey-api/types.gen'
-import { zCustomerStoreRequest } from '@sdk/hey-api/zod.gen'
-import { createSchemaFieldRule } from 'antd-zod'
+import { validateCustomerRule } from '@validate/customer'
 
 export const useCustomerEdit = () => {
   const t = useTranslate()
@@ -41,7 +40,7 @@ export const useCustomerEdit = () => {
     }
   }
 
-  const rule = createSchemaFieldRule(zCustomerStoreRequest)
+  const rule = validateCustomerRule(t)
 
   const onFinish = (values: CustomerStoreRequest) => {
     mutate({
@@ -51,17 +50,10 @@ export const useCustomerEdit = () => {
   }
 
   const handleCopyContact = () => {
-    const mainContact = form.getFieldsValue([
-      'person_in_charge_name',
-      'person_in_charge_department',
-      'person_in_charge_mail',
-      'person_in_charge_phone',
-    ])
+    const mainContact = form.getFieldsValue(['mail', 'phone'])
     form.setFieldsValue({
-      person_in_charge_name: mainContact.person_in_charge_name,
-      person_in_charge_department: mainContact.person_in_charge_department,
-      person_in_charge_mail: mainContact.person_in_charge_mail,
-      person_in_charge_phone: mainContact.person_in_charge_phone,
+      person_in_charge_mail: mainContact.mail,
+      person_in_charge_phone: mainContact.phone,
     })
   }
 

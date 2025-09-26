@@ -1,4 +1,4 @@
-import type { CodeIssueSetting } from '@sdk/hey-api'
+import type { CodeIssueSettingResponse } from '@sdk/hey-api'
 
 const pad = (n: number, len: number) =>
   String(Math.max(0, n)).padStart(Math.max(1, len), '0')
@@ -17,12 +17,17 @@ const YMD = (d: Date, dash: boolean) =>
  * Sinh preview code theo setting.
  * @param setting       CodeIssueSetting
  */
-export function buildCodePreviewFromSetting(setting: CodeIssueSetting): string {
-  const { total, segment, updated_at, serial_length } = setting
-
-  const useDash = !!setting.hash_dash
+export function buildCodePreviewFromSetting({
+  total,
+  segment,
+  updated_at,
+  serial_length,
+  hash_dash,
+  prefix,
+}: CodeIssueSettingResponse): string {
+  const useDash = !!hash_dash
   const sep = useDash ? '-' : ''
-  const prefix = (setting.prefix ?? '').trim()
+  const pr = (prefix ?? '').trim()
   const today = new Date(updated_at ?? new Date())
 
   // Tạo phần segment theo type
@@ -62,6 +67,6 @@ export function buildCodePreviewFromSetting(setting: CodeIssueSetting): string {
   const serial = pad((total ?? 0) + 1, digits)
 
   // Ghép các phần
-  const parts = [prefix, segmentPart, serial].filter(Boolean)
+  const parts = [pr, segmentPart, serial].filter(Boolean)
   return useDash ? parts.join(sep) : parts.join('')
 }

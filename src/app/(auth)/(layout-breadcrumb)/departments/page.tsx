@@ -22,12 +22,13 @@ import {
   useResource,
   useTranslate,
 } from '@refinedev/core'
+import { Department, PermissionEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
-import { Button, Col, Flex, Form, Input, Row, Space, Typography } from 'antd'
+import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Department } from '@sdk/hey-api'
 import Link from 'next/link'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 const { Title, Text } = Typography
 
@@ -35,7 +36,9 @@ type RowVM = Department & { __index: number }
 
 export default function Page() {
   const t = useTranslate()
+  const { hasFullAccessModule } = useUserStore.getState()
   const { resource } = useResource()
+  const isEditPermission = hasFullAccessModule(PermissionEnum.DEPARTMENT_EDIT)
 
   const { tableProps, searchFormProps, setFilters } = useTable<Department>({
     syncWithLocation: true,
@@ -119,7 +122,7 @@ export default function Page() {
         return (
           <Link
             style={{ textDecoration: 'underline' }}
-            href={`/employees/show/${record?.id}`}
+            href={`/departments/show/${record?.id}`}
           >
             {value}
           </Link>
@@ -216,9 +219,12 @@ export default function Page() {
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
             <div className="flex flex-col items-end">
-              <CreateButton icon={null}>{t('buttons.create_new')}</CreateButton>
+              <CreateButton icon={null} disabled={!isEditPermission}>
+                {t('buttons.create_new')}
+              </CreateButton>
               <Button
                 type="link"
+                disabled={!isEditPermission}
                 onClick={() => {
                   go({
                     to: '/departments/csv',

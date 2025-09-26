@@ -1,3 +1,4 @@
+import { EditableCell } from '@components/common/table/editable-cell'
 import { PRIMARY } from '@utility/color'
 import type { TableProps } from 'antd'
 import { Table } from 'antd'
@@ -39,20 +40,7 @@ function CommonTable<T extends object>(
         },
         body: {
           ...components?.body,
-          cell: (
-            props: React.JSX.IntrinsicAttributes &
-              React.ClassAttributes<HTMLTableDataCellElement> &
-              React.TdHTMLAttributes<HTMLTableDataCellElement>,
-          ) => (
-            <td
-              {...props}
-              style={{
-                textAlign: 'center',
-                ...props.style,
-                padding: 11,
-              }}
-            />
-          ),
+          cell: EditableCell,
         },
       }}
       bordered

@@ -11,7 +11,9 @@ import {
   useSelect,
   useTable,
 } from '@refinedev/antd'
-import { BaseRecord, useTranslate } from '@refinedev/core'
+import type { BaseRecord } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -24,8 +26,6 @@ import {
   Table,
   Typography,
 } from 'antd'
-import React from 'react'
-import boldText from '@utility/bold-text'
 import Link from 'next/link'
 
 const { Title, Text } = Typography
