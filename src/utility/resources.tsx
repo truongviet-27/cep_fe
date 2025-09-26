@@ -12,11 +12,11 @@ export const resource: ResourceProps[] = [
   //   },
   // },
   {
-    name: 'quota',
-    list: '/quota',
-    show: '/quota/show/:id',
-    create: '/quota/create',
-    edit: '/quota/edit/:id',
+    name: 'quotas',
+    list: '/quotas',
+    show: '/quotas/show/:id',
+    create: '/quotas/create',
+    edit: '/quotas/edit/:id',
     meta: {
       parent: 'estimates',
       canDelete: true,
