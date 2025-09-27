@@ -1,9 +1,11 @@
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { Card, Form } from 'antd'
 
 function Note({ note }: { note: string }) {
   return (
     <Card
-      title={'詳細情報'}
+      title={boldText('仕様・条件', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,
@@ -16,7 +18,13 @@ function Note({ note }: { note: string }) {
         marginTop: 40,
       }}
     >
-      <Form.Item>{note}</Form.Item>
+      <Form.Item
+        style={{
+          padding: '0 10px',
+        }}
+      >
+        {note}
+      </Form.Item>
     </Card>
   )
 }

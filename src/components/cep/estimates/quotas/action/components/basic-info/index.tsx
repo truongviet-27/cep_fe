@@ -13,15 +13,18 @@ import {
   Row,
   Select,
 } from 'antd'
+import React from 'react'
 
-function BasicInfo() {
+const BasicInfo = () => {
   const t = useTranslate()
 
-  const { selectProps: selectPropsEm } = useSelect({
+  const { selectProps: selectPropsCt } = useSelect({
     resource: 'customers',
     optionLabel: 'name',
     optionValue: 'id',
   })
+
+  console.log('xxxxxxxxxxxxxxxxxxxx')
 
   return (
     <Card
@@ -77,7 +80,7 @@ function BasicInfo() {
                     label: '通常',
                   },
                   {
-                    value: 'inclusive',
+                    value: 'channel_limited',
                     label: '販路限定',
                   },
                 ]}
@@ -101,7 +104,7 @@ function BasicInfo() {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
-              <Select allowClear showSearch {...selectPropsEm} labelInValue />
+              <Select allowClear showSearch {...selectPropsCt} labelInValue />
             </Form.Item>
           </Col>
         </Row>
@@ -110,7 +113,7 @@ function BasicInfo() {
       <Form.Item label={boldText('見積日')}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'create_quota'}>
+            <Form.Item name={'created_at'}>
               <DatePicker style={{ width: '75%' }} />
             </Form.Item>
           </Col>
@@ -120,10 +123,7 @@ function BasicInfo() {
       <Form.Item label={boldText('納入期日')}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item
-              name={'delivery_date'}
-              getValueFromEvent={(date) => date}
-            >
+            <Form.Item name={'delivery_date'}>
               <DatePicker style={{ width: '75%' }} />
             </Form.Item>
           </Col>

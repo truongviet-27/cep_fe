@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CommonTable from '@components/common/table'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { Card, Flex, Form } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 
@@ -17,7 +19,7 @@ function OptionalInfo({ data }: { data: any }) {
   ])
   const columns: ColumnsType = [
     {
-      title: '商品コード',
+      title: 'オプション情報',
       dataIndex: 'code',
       key: 'code',
       align: 'left',
@@ -74,7 +76,7 @@ function OptionalInfo({ data }: { data: any }) {
               marginBottom: 0,
             }}
           >
-            {record?.unit}
+            {record?.unit_name}
           </Form.Item>
         )
       },
@@ -94,7 +96,7 @@ function OptionalInfo({ data }: { data: any }) {
               marginBottom: 0,
             }}
           >
-            {record?.package?.name}
+            {record?.package_name}
           </Form.Item>
         )
       },
@@ -176,25 +178,6 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '合計計算',
-      dataIndex: 'is_add_total',
-      key: 'is_add_total',
-      render: (_, record) => {
-        if (record.isHeader) {
-          return { props: { colSpan: 0 } }
-        }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.is_add_total}
-          </Form.Item>
-        )
-      },
-    },
-    {
       title: '売価金額',
       dataIndex: 'sellingAmount',
       key: 'sellingAmount',
@@ -208,7 +191,7 @@ function OptionalInfo({ data }: { data: any }) {
               marginBottom: 0,
             }}
           >
-            {(record?.selling_price || 0) * (record?.quantity || 0)}
+            {(record?.selling_price || 0) * (record?.quantity || 1)}
           </Form.Item>
         )
       },
@@ -216,7 +199,7 @@ function OptionalInfo({ data }: { data: any }) {
   ]
   return (
     <Card
-      title={'詳細情報'}
+      title={boldText('詳細情報', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,

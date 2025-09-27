@@ -13,9 +13,7 @@ export default function AuthContainer({
 }>) {
   return (
     <Content>
-      <div className="px-6 pb-6" style={{ backgroundColor: LAYOUT_BG }}>
-        {children}
-      </div>
+      <div style={{ backgroundColor: LAYOUT_BG }}>{children}</div>
     </Content>
   )
 }

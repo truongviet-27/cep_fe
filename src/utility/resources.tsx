@@ -19,9 +19,9 @@ export const resource: ResourceProps[] = [
     edit: '/quotas/edit/:id',
     meta: {
       parent: 'estimates',
-      canDelete: true,
-      canCreate: true,
-      canEdit: true,
+      // canDelete: true,
+      // canCreate: true,
+      // canEdit: true,
     },
   },
   {

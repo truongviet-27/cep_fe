@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { Card, Col, Form, Row } from 'antd'
 import dayjs from 'dayjs'
 
 function BasicInfo({ data }: { data: any }) {
   const t = useTranslate()
 
-  console.log(data, 'datadata')
-
   return (
     <Card
-      title={'基本情報'}
+      title={boldText('基本情報', PRIMARY, 16)}
       style={{
         border: 'none',
       }}
@@ -50,7 +49,7 @@ function BasicInfo({ data }: { data: any }) {
       <Form.Item label={boldText('取引先')}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item>{data?.customer?.name}</Form.Item>
+            <Form.Item>{data?.customer_name}</Form.Item>
           </Col>
         </Row>
       </Form.Item>
@@ -59,7 +58,7 @@ function BasicInfo({ data }: { data: any }) {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>
-              {dayjs(data?.delivery_date).format('YYYY/MM/DD HH:mm:ss')}
+              {dayjs(data?.delivery_date).format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
         </Row>
@@ -69,7 +68,7 @@ function BasicInfo({ data }: { data: any }) {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>
-              {dayjs(data?.delivery_date).format('YYYY/MM/DD HH:mm:ss')}
+              {dayjs(data?.delivery_date).format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
         </Row>

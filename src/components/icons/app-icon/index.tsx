@@ -43,6 +43,7 @@ export const AppIcon: React.FC<AppIconProps> = ({
         display: 'flex',
         alignItems: 'center',
         margin: 0,
+        marginRight: 30,
       }}
       aria-label={fullText}
       title={fullText}

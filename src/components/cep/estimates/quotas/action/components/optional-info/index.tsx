@@ -31,15 +31,15 @@ function OptionalInfo() {
     values[groupIndex].products = [
       ...products,
       {
-        id: Date.now(),
         product_id: null,
         package_id: null,
         name: '',
         code: '自動採番',
+        quantity: 0,
         cost_price: 0,
         selling_price: 0,
         profit_margin: 0,
-        is_add_total: true,
+        is_add_total: false,
       },
     ]
 
@@ -98,6 +98,7 @@ function OptionalInfo() {
               dataIndex: 'code',
               key: 'code',
               align: 'left',
+              width: 200,
               render: (_, record) => {
                 if (record.isHeader) {
                   return {
@@ -345,7 +346,18 @@ function OptionalInfo() {
                     'selling_price',
                   ]) || 0
 
-                return selling > 0 ? ((selling - cost) / selling) * 100 : 0
+                form.setFieldValue(
+                  [
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'profit_margin',
+                  ],
+                  selling > 0 ? ((selling - cost) / cost) * 100 : 0,
+                )
+
+                return `${selling > 0 ? ((selling - cost) / cost) * 100 : 0}%`
               },
             },
             {
@@ -367,7 +379,7 @@ function OptionalInfo() {
 
                 const selling =
                   form.getFieldValue([
-                    '',
+                    'optional_product',
                     record.index,
                     'products',
                     record.index2,
@@ -405,7 +417,19 @@ function OptionalInfo() {
                     add(
                       {
                         group_name: '',
-                        products: [{}],
+                        products: [
+                          {
+                            product_id: null,
+                            package_id: null,
+                            name: '',
+                            code: '自動採番',
+                            quantity: 0,
+                            cost_price: 0,
+                            selling_price: 0,
+                            profit_margin: 0,
+                            is_add_total: false,
+                          },
+                        ],
                       },
                       record.index + 1,
                     )
