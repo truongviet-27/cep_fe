@@ -37,9 +37,9 @@ import type {
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Data,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses,
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Errors,
-  D2E4443E7836Acd1D2Cc61486Af6Ed34Data,
-  D2E4443E7836Acd1D2Cc61486Af6Ed34Responses,
-  D2E4443E7836Acd1D2Cc61486Af6Ed34Errors,
+  AuthControllerMeData,
+  AuthControllerMeResponses,
+  AuthControllerMeErrors,
   CodeIssueSettingControllerIndexData,
   CodeIssueSettingControllerIndexResponses,
   CodeIssueSettingControllerIndexErrors,
@@ -184,6 +184,9 @@ import type {
   ProductCategoryControllerUpdateData,
   ProductCategoryControllerUpdateResponses,
   ProductCategoryControllerUpdateErrors,
+  ProductCategoryControllerGetProductsData,
+  ProductCategoryControllerGetProductsResponses,
+  ProductCategoryControllerGetProductsErrors,
   ProductUnitControllerIndexData,
   ProductUnitControllerIndexResponses,
   ProductUnitControllerIndexErrors,
@@ -205,6 +208,15 @@ import type {
   ProductUnitControllerUpdateData,
   ProductUnitControllerUpdateResponses,
   ProductUnitControllerUpdateErrors,
+  QuotaControllerStoreData,
+  QuotaControllerStoreResponses,
+  QuotaControllerStoreErrors,
+  QuotaControllerShowData,
+  QuotaControllerShowResponses,
+  QuotaControllerShowErrors,
+  QuotaControllerCloneData,
+  QuotaControllerCloneResponses,
+  QuotaControllerCloneErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
@@ -263,7 +275,7 @@ import {
   zCc3D6A8269D166673C5B9A3Ce3028772Data,
   zFaedd72A00012E0F68519B5407E844AaData,
   zBa30F404343172Ff3A8Fa2Cca1Db68E5Data,
-  zD2E4443E7836Acd1D2Cc61486Af6Ed34Data,
+  zAuthControllerMeData,
   zCodeIssueSettingControllerIndexData,
   zCodeIssueSettingControllerShowData,
   zEed87Adddef6126Fa051Bd6Cd2D733E6Data,
@@ -313,6 +325,7 @@ import {
   zProductCategoryControllerDestroyData,
   zProductCategoryControllerShowData,
   zProductCategoryControllerUpdateData,
+  zProductCategoryControllerGetProductsData,
   zProductUnitControllerIndexData,
   zProductUnitControllerStoreData,
   zProductUnitControllerUpsertData,
@@ -320,6 +333,9 @@ import {
   zProductUnitControllerDestroyData,
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
+  zQuotaControllerStoreData,
+  zQuotaControllerShowData,
+  zQuotaControllerCloneData,
   zQuotaFormSettingControllerShowData,
   zA229A59B851Ad68435Ac0E91E98F32Data,
   zRankControllerIndexData,
@@ -685,18 +701,16 @@ export const ba30F404343172Ff3A8Fa2Cca1Db68E5 = <
  * Get current user
  * Get current user profile and permissions by JWT token
  */
-export const d2E4443E7836Acd1D2Cc61486Af6Ed34 = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<D2E4443E7836Acd1D2Cc61486Af6Ed34Data, ThrowOnError>,
+export const authControllerMe = <ThrowOnError extends boolean = false>(
+  options?: Options<AuthControllerMeData, ThrowOnError>,
 ) => {
   return (options?.client ?? _heyApiClient).get<
-    D2E4443E7836Acd1D2Cc61486Af6Ed34Responses,
-    D2E4443E7836Acd1D2Cc61486Af6Ed34Errors,
+    AuthControllerMeResponses,
+    AuthControllerMeErrors,
     ThrowOnError
   >({
     requestValidator: async (data) => {
-      return await zD2E4443E7836Acd1D2Cc61486Af6Ed34Data.parseAsync(data)
+      return await zAuthControllerMeData.parseAsync(data)
     },
     security: [
       {
@@ -2102,6 +2116,34 @@ export const productCategoryControllerUpdate = <
 }
 
 /**
+ * Get all products and packages for a category
+ * Get all products and their product packages for a specific category without pagination.
+ */
+export const productCategoryControllerGetProducts = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductCategoryControllerGetProductsData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ProductCategoryControllerGetProductsResponses,
+    ProductCategoryControllerGetProductsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductCategoryControllerGetProductsData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-categories/{id}/products',
+    ...options,
+  })
+}
+
+/**
  * Get list of product units
  * Retrieve a paginated list of product units with search and filter options.
  */
@@ -2299,6 +2341,92 @@ export const productUnitControllerUpdate = <
       },
     ],
     url: '/api/v1/product-units/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Create a new quota
+ * Create a new quota with nested product groups, products, and tags.
+ */
+export const quotaControllerStore = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerStoreResponses,
+    QuotaControllerStoreErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Get a quota by ID
+ * Get a specific quota's details by ID with all related data.
+ */
+export const quotaControllerShow = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaControllerShowResponses,
+    QuotaControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Clone a quota
+ * Clone an existing quota with optional override data.
+ */
+export const quotaControllerClone = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerCloneData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerCloneResponses,
+    QuotaControllerCloneErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerCloneData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{sourceId}/clone',
     ...options,
     headers: {
       'Content-Type': 'application/json',

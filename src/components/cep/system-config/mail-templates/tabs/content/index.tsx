@@ -5,6 +5,7 @@ import { Button, Form, Input, Space, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useRef } from 'react'
 import './style-email.css'
+import boldText from '@utility/bold-text'
 
 function TabsContent({
   index,
@@ -64,11 +65,8 @@ function TabsContent({
       <Form.Item
         layout="vertical"
         name={`title_${index}`}
-        label={
-          <span style={{ fontWeight: 'bold' }}>
-            {t('mail_templates.form.subject')}
-          </span>
-        }
+        label={boldText(t('mail_templates.form.subject'))}
+        required={isEdit}
         rules={
           isEdit
             ? [
@@ -95,11 +93,10 @@ function TabsContent({
       <Form.Item
         name={`content_${index}`}
         layout="vertical"
+        required={isEdit}
         label={
           <>
-            <span style={{ fontWeight: 'bold' }}>
-              {t('mail_templates.form.body')}
-            </span>
+            {boldText(t('mail_templates.form.body'))}
             {isEdit && (
               <Space
                 style={{
@@ -157,11 +154,8 @@ function TabsContent({
       <Form.Item
         layout="vertical"
         name={`signature_${index}`}
-        label={
-          <span style={{ fontWeight: 'bold' }}>
-            {t('mail_templates.form.signature.label')}
-          </span>
-        }
+        label={boldText(t('mail_templates.form.signature.label'))}
+        required={isEdit}
         rules={
           isEdit
             ? [
