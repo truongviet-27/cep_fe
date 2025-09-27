@@ -94,6 +94,57 @@ export type ApproveRouteStep = {
 }
 
 /**
+ * Current user profile response
+ */
+export type ProfileResponse = {
+  /**
+   * Operation success status
+   */
+  success?: boolean
+  /**
+   * Response message
+   */
+  message?: string
+  data?: UserProfile
+}
+
+/**
+ * Current user profile data
+ */
+export type UserProfile = {
+  /**
+   * Whether user has module admin access
+   */
+  is_module_admin?: boolean
+  /**
+   * User role information
+   */
+  role?: UserRole | null
+  /**
+   * Array of user permissions
+   */
+  permissions?: Array<PermissionEnum>
+}
+
+/**
+ * User role information
+ */
+export type UserRole = {
+  /**
+   * Role ID
+   */
+  id?: number
+  /**
+   * Role name
+   */
+  name?: string
+  /**
+   * Role display name
+   */
+  display_name?: string
+} | null
+
+/**
  * Code Issue Setting model
  */
 export type CodeIssueSetting = {
@@ -1823,6 +1874,439 @@ export type ProductUnitsPaginatedResponse = {
 }
 
 /**
+ * Schema for quota product group
+ */
+export type QuotaProductGroupRequest = {
+  /**
+   * Product group ID (for updates)
+   */
+  id?: number
+  /**
+   * Product group name
+   */
+  group_name: string
+  /**
+   * Display order for sorting groups
+   */
+  display_order?: number
+  /**
+   * Array of products in this group
+   */
+  products: Array<QuotaProductItemRequest>
+}
+
+/**
+ * Schema for quota product item
+ */
+export type QuotaProductItemRequest = {
+  /**
+   * Product item ID (for updates)
+   */
+  id?: number
+  /**
+   * Reference to product master
+   */
+  product_id: number
+  /**
+   * Package ID (optional)
+   */
+  package_id?: number
+  /**
+   * Product name
+   */
+  name: string
+  /**
+   * Product code
+   */
+  code: string
+  /**
+   * Cost price
+   */
+  cost_price: number
+  /**
+   * Selling price
+   */
+  selling_price: number
+  /**
+   * Profit margin amount or percentage
+   */
+  profit_margin: number
+  /**
+   * Whether this product should be included in total calculations
+   */
+  is_add_total: boolean
+  /**
+   * Display order for sorting products within group
+   */
+  display_order?: number
+}
+
+/**
+ * Schema for quota response resource
+ */
+export type QuotaResource = {
+  /**
+   * Quota ID
+   */
+  id?: number
+  /**
+   * Unique quota code
+   */
+  code?: string
+  /**
+   * Quota title
+   */
+  title?: string
+  /**
+   * Quota type
+   */
+  type?: 'normal' | 'channel_limited'
+  /**
+   * Quota status
+   */
+  status?:
+    | 'creating'
+    | 'waiting_approval'
+    | 'approved'
+    | 'rejected'
+    | 'sent_to_customer'
+    | 'completed'
+    | 'cancelled'
+  /**
+   * Delivery date
+   */
+  delivery_date?: string
+  /**
+   * Delivery method
+   */
+  delivery_method?: string
+  /**
+   * Payment due date
+   */
+  payment_due_date?: string
+  /**
+   * Expiration date
+   */
+  expiration_date?: string
+  /**
+   * Consumption tax type
+   */
+  consumption_tax?: string
+  /**
+   * Tax rate percentage
+   */
+  tax_rate?: number
+  /**
+   * Customer ID
+   */
+  customer_id?: number
+  /**
+   * Customer name
+   */
+  customer_name?: string
+  /**
+   * Additional notes
+   */
+  note?: string
+  /**
+   * Total cost amount
+   */
+  total_cost?: number
+  /**
+   * Consumption tax amount
+   */
+  consumption_tax_amount?: number
+  /**
+   * Total profit margin
+   */
+  total_profit_margin?: number
+  /**
+   * Total price including tax
+   */
+  total_price_tax_included?: number
+  /**
+   * Customer information
+   */
+  customer?: {
+    id?: number
+    name?: string
+    customer_code?: string
+  }
+  /**
+   * Main product groups
+   */
+  main_product_groups?: Array<{
+    id?: number
+    group_name?: string
+    display_order?: number
+    products?: Array<{
+      id?: number
+      product_id?: number
+      package_id?: number
+      name?: string
+      code?: string
+      cost_price?: number
+      selling_price?: number
+      profit_margin?: number
+      is_add_total?: boolean
+      display_order?: number
+    }>
+  }>
+  /**
+   * Optional product groups
+   */
+  optional_product_groups?: Array<{
+    id?: number
+    group_name?: string
+    display_order?: number
+    products?: Array<{
+      id?: number
+      product_id?: number
+      package_id?: number
+      name?: string
+      code?: string
+      cost_price?: number
+      selling_price?: number
+      profit_margin?: number
+      is_add_total?: boolean
+      display_order?: number
+    }>
+  }>
+  /**
+   * Quota tags
+   */
+  tags?: Array<{
+    id?: number
+    name?: string
+  }>
+  created_at?: string
+  updated_at?: string
+  created_by?: number
+  updated_by?: number
+}
+
+/**
+ * Request schema for creating a new quota
+ */
+export type QuotaStoreRequest = {
+  /**
+   * ID of source quota to clone from (optional)
+   */
+  source_id?: number
+  /**
+   * Unique quota code
+   */
+  code: string
+  /**
+   * Quota title
+   */
+  title: string
+  /**
+   * Quota type
+   */
+  type: 'normal' | 'channel_limited'
+  /**
+   * Quota status
+   */
+  status:
+    | 'creating'
+    | 'waiting_approval'
+    | 'approved'
+    | 'rejected'
+    | 'sent_to_customer'
+    | 'completed'
+    | 'cancelled'
+  /**
+   * Delivery date
+   */
+  delivery_date?: string
+  /**
+   * Delivery method (free text)
+   */
+  delivery_method?: string
+  /**
+   * Payment due date type
+   */
+  payment_due_date?:
+    | 'monthly_25'
+    | 'monthly_10'
+    | 'net_30_from_delivery'
+    | 'net_30_from_invoice'
+    | 'end_of_month_next'
+    | 'end_of_month_after_next'
+  /**
+   * Expiration date type
+   */
+  expiration_date?:
+    | 'days_7'
+    | 'days_14'
+    | 'days_45'
+    | 'days_60'
+    | 'months_3'
+    | 'months_6'
+    | 'years_1'
+  /**
+   * Consumption tax type
+   */
+  consumption_tax?: 'exclusive' | 'inclusive' | 'external'
+  /**
+   * Customer ID
+   */
+  customer_id?: number
+  /**
+   * Customer name
+   */
+  customer_name?: string
+  /**
+   * Tax rate percentage
+   */
+  tax_rate?: number
+  /**
+   * Additional notes
+   */
+  note?: string
+  /**
+   * Total cost amount
+   */
+  total_cost?: number
+  /**
+   * Consumption tax amount
+   */
+  consumption_tax_amount?: number
+  /**
+   * Total profit margin amount
+   */
+  total_profit_margin?: number
+  /**
+   * Total price including tax
+   */
+  total_price_tax_included?: number
+  /**
+   * Array of quota tags
+   */
+  tags?: Array<QuotaTagRequest>
+  /**
+   * Array of main product groups
+   */
+  main_product?: Array<QuotaProductGroupRequest>
+  /**
+   * Array of optional product groups
+   */
+  optional_product?: Array<QuotaProductGroupRequest>
+}
+
+/**
+ * Schema for quota tag
+ */
+export type QuotaTagRequest = {
+  /**
+   * Tag ID
+   */
+  id: number
+  /**
+   * Tag name
+   */
+  name: string
+}
+
+/**
+ * Request schema for updating an existing quota
+ */
+export type QuotaUpdateRequest = {
+  /**
+   * Source quota ID for cloning reference
+   */
+  source_id?: number
+  /**
+   * Unique quota code identifier
+   */
+  code: string
+  /**
+   * Quota title or name
+   */
+  title: string
+  /**
+   * Type of quota
+   */
+  type: 'standard' | 'custom' | 'enterprise'
+  /**
+   * Current status of the quota
+   */
+  status:
+    | 'creating'
+    | 'waiting_approval'
+    | 'approved'
+    | 'rejected'
+    | 'sent_to_customer'
+    | 'completed'
+    | 'cancelled'
+  /**
+   * Expected delivery date
+   */
+  delivery_date?: string
+  /**
+   * Method of delivery
+   */
+  delivery_method?: string
+  /**
+   * Payment due date option
+   */
+  payment_due_date?: 'immediate' | 'net_30' | 'net_60' | 'net_90'
+  /**
+   * Quota expiration date option
+   */
+  expiration_date?: '30_days' | '60_days' | '90_days' | '120_days'
+  /**
+   * Consumption tax option
+   */
+  consumption_tax?: 'included' | 'excluded' | 'exempt'
+  /**
+   * Customer ID associated with quota
+   */
+  customer_id?: number
+  /**
+   * Customer name override
+   */
+  customer_name?: string
+  /**
+   * Tax rate percentage (0-100)
+   */
+  tax_rate?: number
+  /**
+   * Additional notes or comments
+   */
+  note?: string
+  /**
+   * Total cost amount
+   */
+  total_cost?: number
+  /**
+   * Consumption tax amount
+   */
+  consumption_tax_amount?: number
+  /**
+   * Total profit margin amount
+   */
+  total_profit_margin?: number
+  /**
+   * Total price including tax
+   */
+  total_price_tax_included?: number
+  /**
+   * Array of tags associated with the quota
+   */
+  tags?: Array<QuotaTagRequest>
+  /**
+   * Array of main product groups
+   */
+  main_product?: Array<QuotaProductGroupRequest>
+  /**
+   * Array of optional product groups
+   */
+  optional_product?: Array<QuotaProductGroupRequest>
+}
+
+/**
  * Success response for getting quota form setting detail
  */
 export type QuotaFormSettingDetailResponse = {
@@ -1915,9 +2399,17 @@ export type QuotaFormSettingResponse = {
    */
   company_logo_image?: string | null
   /**
+   * Whether to display company logo image
+   */
+  is_display_company_logo_image?: boolean | null
+  /**
    * Company seal image filename
    */
   company_seal_image?: string | null
+  /**
+   * Whether to display company seal image
+   */
+  is_display_company_seal_image?: boolean | null
   /**
    * Preview image filename
    */
@@ -1950,6 +2442,14 @@ export type QuotaFormSettingResponse = {
    * Manager name
    */
   manager_name?: string | null
+  /**
+   * URL to the generated PDF file
+   */
+  pdf_file_url?: string | null
+  /**
+   * Storage key for the generated PDF file
+   */
+  pdf_file_key?: string | null
   /**
    * ID of the user who created this setting
    */
@@ -2046,9 +2546,17 @@ export type UpdateQuotaFormSettingRequest = {
    */
   company_logo_image?: string | null
   /**
+   * Whether to display company logo image
+   */
+  is_display_company_logo_image?: boolean | null
+  /**
    * Company seal image filename
    */
   company_seal_image?: string | null
+  /**
+   * Whether to display company seal image
+   */
+  is_display_company_seal_image?: boolean | null
   /**
    * Preview image filename
    */
@@ -2879,41 +3387,32 @@ export type Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses = {
 export type Ba30F404343172Ff3A8Fa2Cca1Db68E5Response =
   Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses[keyof Ba30F404343172Ff3A8Fa2Cca1Db68E5Responses]
 
-export type D2E4443E7836Acd1D2Cc61486Af6Ed34Data = {
+export type AuthControllerMeData = {
   body?: never
   path?: never
   query?: never
   url: '/api/v1/me'
 }
 
-export type D2E4443E7836Acd1D2Cc61486Af6Ed34Errors = {
+export type AuthControllerMeErrors = {
   /**
    * Unauthorized
    */
-  401: unknown
+  401: UnauthorizedResponse
 }
 
-export type D2E4443E7836Acd1D2Cc61486Af6Ed34Responses = {
+export type AuthControllerMeError =
+  AuthControllerMeErrors[keyof AuthControllerMeErrors]
+
+export type AuthControllerMeResponses = {
   /**
-   * Profile retrieved
+   * Profile retrieved successfully
    */
-  200: {
-    success?: boolean
-    message?: string
-    data?: {
-      is_module_admin?: boolean
-      role?: {
-        id?: number
-        name?: string
-        display_name?: string
-      } | null
-      permissions?: Array<PermissionEnum>
-    }
-  }
+  200: ProfileResponse
 }
 
-export type D2E4443E7836Acd1D2Cc61486Af6Ed34Response =
-  D2E4443E7836Acd1D2Cc61486Af6Ed34Responses[keyof D2E4443E7836Acd1D2Cc61486Af6Ed34Responses]
+export type AuthControllerMeResponse =
+  AuthControllerMeResponses[keyof AuthControllerMeResponses]
 
 export type CodeIssueSettingControllerIndexData = {
   body?: never
@@ -5254,6 +5753,101 @@ export type ProductCategoryControllerUpdateResponses = {
 export type ProductCategoryControllerUpdateResponse =
   ProductCategoryControllerUpdateResponses[keyof ProductCategoryControllerUpdateResponses]
 
+export type ProductCategoryControllerGetProductsData = {
+  body?: never
+  path: {
+    /**
+     * Product Category ID. Must be a valid integer.
+     */
+    id: number
+  }
+  query?: {
+    /**
+     * Customer rank ID for pricing calculation. Optional parameter.
+     */
+    rank_id?: number
+  }
+  url: '/api/v1/product-categories/{id}/products'
+}
+
+export type ProductCategoryControllerGetProductsErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Product category not found
+   */
+  404: {
+    data?: Array<string>
+    message?: string
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    data?: Array<string>
+    message?: string
+  }
+}
+
+export type ProductCategoryControllerGetProductsError =
+  ProductCategoryControllerGetProductsErrors[keyof ProductCategoryControllerGetProductsErrors]
+
+export type ProductCategoryControllerGetProductsResponses = {
+  /**
+   * Products retrieved successfully
+   */
+  200: {
+    message?: string
+    data?: {
+      products?: Array<{
+        category?: {
+          id?: number | null
+          name?: string | null
+          category_path?: string | null
+        }
+        code?: string
+        name?: string
+        short_name?: string | null
+        barcode?: string | null
+        unit?: {
+          id?: number | null
+          name?: string | null
+        }
+        cost_price?: number | null
+        selling_price?: number | null
+        packagings?: Array<{
+          id?: number
+          code?: string
+          name?: string
+          quantity_in_package?: number | null
+          unit?: string | null
+          standard_price?: number | null
+          selling_price?: number | null
+          is_active?: boolean
+          is_rate_based?: boolean
+          is_standard_price?: boolean
+          rank_prices?: Array<{
+            rank_id?: number
+            rank_code?: string | null
+            rank_name?: string | null
+            rate?: number | null
+            price?: number
+          }>
+        }>
+      }>
+      total_count?: number
+    }
+  }
+}
+
+export type ProductCategoryControllerGetProductsResponse =
+  ProductCategoryControllerGetProductsResponses[keyof ProductCategoryControllerGetProductsResponses]
+
 export type ProductUnitControllerIndexData = {
   body?: never
   path?: never
@@ -5594,6 +6188,144 @@ export type ProductUnitControllerUpdateResponses = {
 
 export type ProductUnitControllerUpdateResponse =
   ProductUnitControllerUpdateResponses[keyof ProductUnitControllerUpdateResponses]
+
+export type QuotaControllerStoreData = {
+  body: QuotaStoreRequest
+  path?: never
+  query?: never
+  url: '/api/v1/quotas'
+}
+
+export type QuotaControllerStoreErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+}
+
+export type QuotaControllerStoreError =
+  QuotaControllerStoreErrors[keyof QuotaControllerStoreErrors]
+
+export type QuotaControllerStoreResponses = {
+  /**
+   * Quota created successfully
+   */
+  201: {
+    message?: string
+    data?: QuotaResource
+  }
+}
+
+export type QuotaControllerStoreResponse =
+  QuotaControllerStoreResponses[keyof QuotaControllerStoreResponses]
+
+export type QuotaControllerShowData = {
+  body?: never
+  path: {
+    /**
+     * Quota ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/quotas/{id}'
+}
+
+export type QuotaControllerShowErrors = {
+  /**
+   * Invalid ID format or value
+   */
+  400: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Quota not found
+   */
+  404: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type QuotaControllerShowError =
+  QuotaControllerShowErrors[keyof QuotaControllerShowErrors]
+
+export type QuotaControllerShowResponses = {
+  /**
+   * Quota retrieved successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: QuotaResource
+  }
+}
+
+export type QuotaControllerShowResponse =
+  QuotaControllerShowResponses[keyof QuotaControllerShowResponses]
+
+export type QuotaControllerCloneData = {
+  body?: {
+    title?: string
+    status?:
+      | 'creating'
+      | 'waiting_approval'
+      | 'approved'
+      | 'rejected'
+      | 'sent_to_customer'
+      | 'completed'
+      | 'cancelled'
+    delivery_date?: string
+    note?: string
+  }
+  path: {
+    /**
+     * Source Quota ID to clone from
+     */
+    sourceId: number
+  }
+  query?: never
+  url: '/api/v1/quotas/{sourceId}/clone'
+}
+
+export type QuotaControllerCloneErrors = {
+  /**
+   * Invalid source ID format
+   */
+  400: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Source quota not found
+   */
+  404: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type QuotaControllerCloneError =
+  QuotaControllerCloneErrors[keyof QuotaControllerCloneErrors]
+
+export type QuotaControllerCloneResponses = {
+  /**
+   * Quota cloned successfully
+   */
+  201: {
+    success?: boolean
+    message?: string
+    data?: QuotaResource
+  }
+}
+
+export type QuotaControllerCloneResponse =
+  QuotaControllerCloneResponses[keyof QuotaControllerCloneResponses]
 
 export type QuotaFormSettingControllerShowData = {
   body?: never

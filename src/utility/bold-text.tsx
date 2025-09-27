@@ -7,6 +7,7 @@ const { Text } = Typography
 export default function boldText(
   text: string | ReactNode,
   color: string = BLACK,
+  fontSize: number = 14,
 ) {
   return (
     <Text
@@ -14,6 +15,7 @@ export default function boldText(
       style={{
         color: color,
         fontWeight: 900,
+        fontSize,
       }}
     >
       {text}

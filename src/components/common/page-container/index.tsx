@@ -15,7 +15,7 @@ const PageContainer = ({
 }) => {
   return (
     <div className="h-full w-full overflow-hidden">
-      <div className="mt-[4px] mb-[12px] px-[24px]">{breadcrumbs}</div>
+      <div className="mt-[12px] mb-[6px] px-[32px]">{breadcrumbs}</div>
       <Card
         style={{
           backgroundColor: WHITE,
@@ -23,17 +23,22 @@ const PageContainer = ({
             ? `calc( 100vh - 168px)`
             : `calc( 100vh - 80px)`,
         }}
+        bodyStyle={{
+          padding: 32,
+        }}
       >
         <div>
-          <Title
-            style={{
-              color: PRIMARY,
-              margin: '10px 0 20px 0',
-              fontSize: 16,
-            }}
-          >
-            {title}
-          </Title>
+          <div className="mb-5 flex">
+            <Title
+              style={{
+                color: PRIMARY,
+                fontSize: 16,
+                width: '100%',
+              }}
+            >
+              {title}
+            </Title>
+          </div>
           {children}
         </div>
       </Card>

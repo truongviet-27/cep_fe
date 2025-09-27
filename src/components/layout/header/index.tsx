@@ -32,13 +32,15 @@ export default function AuthHeader({
   const tenantName = getOrgFromToken(session.data?.accessToken)?.name
 
   return (
-    <div className={cn(children && 'sticky top-0 z-50 flex justify-center')}>
+    <div
+      className={cn(
+        children &&
+          'sticky top-0 z-50 mb-0 flex justify-center border-b-[1px] border-solid border-[#E0E0E0]',
+      )}
+    >
       <Header
         className={cn(
-          'flex w-full items-center border-b',
-          'rounded-lg',
-          'border',
-          'shadow-sm',
+          'flex w-full items-center',
           'px-6 py-4 pb-6',
 
           children ? 'justify-between' : 'justify-end',
@@ -46,7 +48,8 @@ export default function AuthHeader({
         style={{
           background: WHITE,
           borderColor: GRAY,
-          width: children ? `calc(100% - 3rem)` : '100%',
+          width: '100%',
+          padding: 32,
         }}
       >
         {children}

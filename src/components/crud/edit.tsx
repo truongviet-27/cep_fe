@@ -204,6 +204,9 @@ export const Edit: React.FC<EditProps & CustomProps> = ({
         <Spin spinning={isLoading}>
           <Card
             bordered={false}
+            bodyStyle={{
+              padding: 32,
+            }}
             actions={[
               <Space
                 key="footer-buttons"

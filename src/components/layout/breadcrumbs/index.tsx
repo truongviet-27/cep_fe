@@ -5,11 +5,7 @@ import { Breadcrumb } from 'antd'
 import React from 'react'
 
 const Breadcrumbs: React.FC<BreadcrumbProps> = (props) => {
-  return (
-    <div className="px-6">
-      <Breadcrumb {...props} />
-    </div>
-  )
+  return <Breadcrumb {...props} />
 }
 
 export default Breadcrumbs
