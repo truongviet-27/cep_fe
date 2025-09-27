@@ -172,7 +172,7 @@ function TenantSetting() {
           >
             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
               <Viewer
-                fileUrl={data?.data?.pdf_file_url}
+                fileUrl={data?.data?.pdf_file_url ?? ''}
                 plugins={[defaultLayoutPluginInstance]}
               />
             </Worker>
