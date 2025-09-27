@@ -1,38 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CommonTable from '@components/common/table'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Card, Col, Flex, Form, Row, Typography } from 'antd'
+import { Card, Checkbox, Col, Flex, Form, Row, Typography } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 
 const { Text } = Typography
 
-function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
-  function calculateSummary(main_product_groups: any[], tax_rate: number) {
-    let costTotal = 0
-    let sellTotal = 0
-
-    main_product_groups.forEach((group) => {
-      group.products.forEach((product: any) => {
-        costTotal += product.cost_price * product.quantity
-        sellTotal += product.selling_price * product.quantity
-      })
-    })
-
-    const taxTotal = (sellTotal * tax_rate) / 100
-
-    const sellTotalWithTax = (sellTotal * tax_rate) / 100 + sellTotal
-    const profitRate =
-      costTotal > 0 ? ((sellTotal - costTotal) / costTotal) * 100 : 0
-
-    return {
-      costTotal, // tổng giá nhập
-      taxTotal, // tổng giá bán chưa thuế
-      sellTotalWithTax, // tổng giá bán sau thuế 12%
-      profitRate, // lãi suất %
-    }
-  }
-
+function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
   const dataSource: any[] = (data ?? []).flatMap((item: any) => [
     {
       isHeader: true,
@@ -103,7 +79,7 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
               marginBottom: 0,
             }}
           >
-            {record?.unit}
+            {record?.unit_name}
           </Form.Item>
         )
       },
@@ -123,7 +99,7 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
               marginBottom: 0,
             }}
           >
-            {record?.package?.name}
+            {record?.package_name}
           </Form.Item>
         )
       },
@@ -209,6 +185,7 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
       dataIndex: 'is_add_total',
       key: 'is_add_total',
       render: (_, record) => {
+        console.log(record.is_add_total, 'record')
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
@@ -218,7 +195,13 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
               marginBottom: 0,
             }}
           >
-            {record?.is_add_total}
+            <Checkbox
+              style={{
+                transform: 'scale(1.3)',
+                marginBottom: 0,
+              }}
+              checked={record.is_add_total}
+            />
           </Form.Item>
         )
       },
@@ -245,7 +228,7 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
   ]
   return (
     <Card
-      title={'詳細情報'}
+      title={boldText('詳細情報', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,
@@ -317,7 +300,7 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
                 原価合計
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {calculateSummary(data, tax_rate).costTotal}
+                {basicInfo?.total_cost}
               </Text>
             </div>
           </Col>
@@ -337,10 +320,10 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
                   fontWeight: 700,
                 }}
               >
-                消費税金額（{tax_rate}%）
+                消費税金額（{basicInfo?.tax_rate}%）
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {calculateSummary(data, tax_rate).taxTotal}
+                {basicInfo?.consumption_tax_amount}
               </Text>
             </div>
           </Col>
@@ -363,7 +346,7 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
                 合計利益率
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {calculateSummary(data, tax_rate).profitRate}%
+                {basicInfo?.total_profit_margin}%
               </Text>
             </div>
           </Col>
@@ -386,7 +369,7 @@ function DetailInfo({ tax_rate, data }: { tax_rate: number; data: any }) {
                 合計金額（税込）
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {calculateSummary(data, tax_rate).sellTotalWithTax}
+                {basicInfo?.total_price_tax_included}
               </Text>
             </div>
           </Col>

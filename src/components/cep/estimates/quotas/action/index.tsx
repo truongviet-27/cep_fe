@@ -48,72 +48,147 @@ function QuotaAction() {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const { formProps, saveButtonProps, form, mutation } = methods
+  const {
+    formProps,
+    saveButtonProps,
+    form,
+    mutation,
+    query: queryBasic,
+  } = methods
 
   const { resource } = useResource()
   const { params } = useParsed()
 
   const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
-    url: `${apiUrl}/quotas-form-settings`,
+    url: `${apiUrl}/quota-form-settings`,
     queryOptions: {
       enabled: !isUpdate,
     },
   })
 
+  const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
+    url: `${apiUrl}/quotas/${id}/products`,
+    method: 'get',
+    queryOptions: {
+      enabled: isUpdate,
+    },
+  })
+
+  const { data: dataHistory, isFetching: isFetchingHistory } = useCustom({
+    url: `${apiUrl}/quotas/${id}/history`,
+    method: 'get',
+    queryOptions: {
+      enabled: isUpdate,
+    },
+  })
+
+  console.log(
+    queryBasic?.data?.data?.tags,
+    'dataProducts?.data?.data.main_product',
+  )
+
+  console.log(form.getFieldsValue(), 'getFieldsValue')
+
   useEffect(() => {
-    if (data?.data) {
-      form.setFieldsValue({
-        title: data?.data.greeting,
-        type: 'normal',
-        customer: null,
-        status: 'waiting_approve',
-        create_quota: null,
-        delivery_date: null,
-        delivery_method: data?.data.default_delivery_method,
-        payment_due_date: data?.data.default_payment_due_date,
-        expiration_date: data?.data.default_expiration_date,
-        consumption_tax: data?.data.consumption_tax,
-        tax_rate: data?.data.tax_rate,
-        note: null,
-        tags: [],
-        main_product: [
-          {
-            group_name: '',
-            products: [
-              {
-                product_id: null,
-                package_id: null,
-                name: '',
-                code: '',
-                cost_price: 0,
-                selling_price: 0,
-                profit_margin: 0,
-                is_add_total: false,
-              },
-            ],
+    if (isUpdate) {
+      if (queryBasic?.data?.data && dataProducts?.data) {
+        form.setFieldsValue({
+          ...queryBasic.data.data,
+          customer: {
+            value: queryBasic.data.data.customer_id,
+            label: queryBasic.data.data.customer_name,
           },
-        ],
-        optional_product: [
-          {
-            group_name: '',
-            products: [
-              {
-                product_id: null,
-                package_id: null,
-                name: '',
-                code: '',
-                cost_price: 0,
-                selling_price: 0,
-                profit_margin: 0,
-                is_add_total: false,
-              },
-            ],
-          },
-        ],
-      })
+          delivery_date: queryBasic.data.data.delivery_date
+            ? dayjs(queryBasic.data.data.delivery_date)
+            : null,
+          created_at: queryBasic.data.data.created_at
+            ? dayjs(queryBasic.data.data.created_at)
+            : null,
+          tags:
+            queryBasic.data.data.tags?.map((item: any) => ({
+              value: item.id,
+              label: item.name,
+            })) || [],
+          main_product: dataProducts.data.main_product.map((item: any) => ({
+            ...item,
+            products: item.products.map((item2: any) => ({
+              ...item2,
+              unit: item2.unit_name,
+            })),
+          })),
+          optional_product: dataProducts.data.optional_product.map(
+            (item: any) => ({
+              ...item,
+              products: item.products.map((item2: any) => ({
+                ...item2,
+                unit: item2.unit_name,
+              })),
+            }),
+          ),
+          ...dataHistory?.data?.data,
+        })
+      }
+    } else {
+      if (data?.data) {
+        form.setFieldsValue({
+          title: data?.data.greeting,
+          type: 'normal',
+          customer: null,
+          status: 'waiting_approve',
+          created_at: null,
+          delivery_date: null,
+          delivery_method: data?.data.default_delivery_method,
+          payment_due_date: data?.data.default_payment_due_date,
+          expiration_date: data?.data.default_expiration_date,
+          consumption_tax: data?.data.consumption_tax,
+          tax_rate: data?.data.tax_rate,
+          note: null,
+          tags: [],
+          total_cost: 0,
+          consumption_tax_amount: 0,
+          total_profit_margin: 0,
+          total_price_tax_included: 0,
+          main_product: [
+            {
+              group_name: '',
+              products: [
+                {
+                  product_id: null,
+                  package_id: null,
+                  name: '',
+                  code: '',
+                  cost_price: 0,
+                  quantity: 0,
+                  selling_price: 0,
+                  profit_margin: 0,
+                  is_add_total: false,
+                },
+              ],
+            },
+          ],
+          optional_product: [
+            {
+              group_name: '',
+              products: [
+                {
+                  product_id: null,
+                  package_id: null,
+                  name: '',
+                  code: '',
+                  cost_price: 0,
+                  selling_price: 0,
+                  quantity: 0,
+                  profit_margin: 0,
+                  is_add_total: false,
+                },
+              ],
+            },
+          ],
+        })
+      }
     }
-  }, [data])
+  }, [data, dataProducts, dataHistory, queryBasic])
 
   const onFinish = (values: any) => {
     if (isUpdate) {
@@ -122,6 +197,9 @@ function QuotaAction() {
           resource: resource?.name,
           values: {
             ...values,
+            customer_id: values.customer.value,
+            customer_name: values.customer.label,
+            status: 'waiting_approval',
             tags: values?.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
@@ -142,90 +220,20 @@ function QuotaAction() {
         {
           resource: resource?.name,
           values: {
-            source_id: null,
-            code: 'QUOTA-2025-001',
-            title: 'hung123',
-            type: 'normal',
+            ...values,
+            customer_id: values.customer.value,
+            customer_name: values.customer.label,
             status: 'waiting_approval',
-            delivery_date: '2025-10-01T00:00:00Z',
-            delivery_method: 'free text',
-            payment_due_date: 'monthly_25',
-            expiration_date: 'days_7',
-            consumption_tax: 'exclusive',
-            customer_id: 123,
-            customer_name: 'Acme Corporation',
-            tax_rate: 12,
-            note: 'textarea',
-            total_cost: 1220.5,
-            consumption_tax_amount: 1220.5,
-            total_profit_margin: 120.5,
-            total_price_tax_included: 1423.6,
-            tags: [
-              {
-                id: 1,
-                name: 'name',
-              },
-            ],
-            main_product: [
-              {
-                id: 123,
-                group_name: 'group_name',
-                display_order: 1,
-                products: [
-                  {
-                    id: 1,
-                    product_id: 1,
-                    package_id: 1,
-                    name: 'name',
-                    code: 'code',
-                    cost_price: 123123,
-                    selling_price: 123123,
-                    profit_margin: 12,
-                    is_add_total: true,
-                    display_order: 1,
-                  },
-                ],
-              },
-            ],
-            optional_product: [
-              {
-                id: 123,
-                group_name: 'group_name',
-                display_order: 1,
-                products: [
-                  {
-                    id: 1,
-                    product_id: 1,
-                    package_id: 1,
-                    name: 'name',
-                    code: 'code',
-                    cost_price: 123123,
-                    selling_price: 123123,
-                    profit_margin: 12,
-                    is_add_total: true,
-                    display_order: 1,
-                  },
-                ],
-              },
-            ],
+            tags: values.tags.map((item: any) => ({
+              id: item.value,
+              name: item.label,
+            })),
           },
-          // {
-          //   ...values,
-          //   customer: {
-          //     id: values.customer.value,
-          //     name: values.customer.label,
-          //   },
-          //   status: 'waiting_approval',
-          //   tags: values.tags.map((item: any) => ({
-          //     id: item.value,
-          //     name: item.label,
-          //   })),
-          // },
         },
         {
           onSuccess(data) {
             go({
-              to: `/approve-routes/show/${data.data.id}`,
+              to: `/quotas/show/${data.data.id}`,
             })
           },
         },
@@ -262,7 +270,14 @@ function QuotaAction() {
         </div>
       }
     >
-      <Spin spinning={isFetching}>
+      <Spin
+        spinning={
+          isFetching ||
+          queryBasic?.isFetching ||
+          isFetchingProduct ||
+          isFetchingHistory
+        }
+      >
         <Form
           {...formProps}
           labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
@@ -270,123 +285,10 @@ function QuotaAction() {
           layout="horizontal"
           colon={false}
           onFinish={onFinish}
-          // initialValues={
-          //   isUpdate
-          //     ? {
-          //         title: 'hung123',
-          //         type: 'normal',
-          //         customer: {
-          //           id: 10,
-          //           name: '',
-          //         },
-          //         status: 'waiting_approve',
-          //         create_quota: '',
-          //         delivery_date: '2025-10-01T00:00:00Z',
-          //         delivery_method: 'free text',
-          //         payment_due_date: 'monthly_25',
-          //         expiration_date: 'days_7',
-          //         consumption_tax: 'exclusive',
-          //         tax_rate: 12,
-          //         note: 'textarea',
-          //         tags: [
-          //           {
-          //             id: 1,
-          //             name: 'A5',
-          //           },
-          //           {
-          //             id: 2,
-          //             name: 'A1',
-          //           },
-          //         ],
-          //         original_product: [
-          //           {
-          //             id: 123,
-          //             group_name: 'group_name',
-          //             products: [
-          //               {
-          //                 id: 1,
-          //                 product_id: 1,
-          //                 package_id: 1,
-          //                 name: 'name',
-          //                 code: 'code',
-          //                 cost_price: 123123,
-          //                 selling_price: 123123,
-          //                 profit_margin: 12,
-          //                 is_add_total: true,
-          //               },
-          //               {
-          //                 id: 2,
-          //                 product_id: 1,
-          //                 package_id: 2,
-          //                 name: 'name',
-          //                 code: 'code',
-          //                 cost_price: 123123,
-          //                 selling_price: 123123,
-          //                 profit_margin: 12,
-          //                 is_add_total: true,
-          //               },
-          //             ],
-          //           },
-          //         ],
-          //         additional_product: [
-          //           {
-          //             id: 123,
-          //             group_name: 'group_name',
-          //             products: [
-          //               {
-          //                 id: 1,
-          //                 product_id: 1,
-          //                 package_id: 1,
-          //                 name: 'name',
-          //                 code: 'code',
-          //                 cost_price: 123123,
-          //                 selling_price: 123123,
-          //                 profit_margin: 12,
-          //                 is_add_total: true,
-          //               },
-          //               {
-          //                 id: 2,
-          //                 product_id: 1,
-          //                 package_id: 2,
-          //                 name: 'name',
-          //                 code: 'code',
-          //                 cost_price: 123123,
-          //                 selling_price: 123123,
-          //                 profit_margin: 12,
-          //                 is_add_total: true,
-          //               },
-          //             ],
-          //           },
-          //         ],
-          //       }
-          //     : {
-          //         title: '',
-          //         type: '',
-          //         customer: null,
-          //         status: '',
-          //         create_quota: '',
-          //         delivery_date: '',
-          //         delivery_method: '',
-          //         payment_due_date: '',
-          //         expiration_date: '',
-          //         consumption_tax: '',
-          //         tax_rate: null,
-          //         note: '',
-          //         tags: [],
-          //         original_product: [
-          //           {
-          //             group_name: '',
-          //             products: [{}],
-          //           },
-          //         ],
-          //         additional_product: [
-          //           {
-          //             group_name: '',
-          //             products: [{}],
-          //           },
-          //         ],
-          //       }
-          // }
+          initialValues={{
+            delivery_date: dayjs(),
+            created_at: dayjs(),
+          }}
         >
           <BasicInfo />
           <DetailInfo />
@@ -406,16 +308,20 @@ function QuotaAction() {
                 {
                   title: t('approve_routes.show.creator'),
                   value:
-                    (data?.data?.author?.name ?? '---') +
+                    (queryBasic?.data?.data.author?.name ?? '---') +
                     ' ' +
-                    dayjs(data?.data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                    dayjs(queryBasic?.data?.data.created_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
                 {
                   title: t('approve_routes.show.updater'),
                   value:
-                    (data?.data?.editor?.name ?? '---') +
+                    (queryBasic?.data?.data.editor?.name ?? '---') +
                     ' ' +
-                    dayjs(data?.data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                    dayjs(queryBasic?.data?.data.updated_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
               ]}
             />

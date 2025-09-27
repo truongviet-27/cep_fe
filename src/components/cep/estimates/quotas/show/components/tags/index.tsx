@@ -1,9 +1,11 @@
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { Card, Col, Form, Row, Space, Tag } from 'antd'
 
 function Tags({ tags }: { tags: { id: number; name: string }[] }) {
   return (
     <Card
-      title={'タグ'}
+      title={boldText('タグ', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,
@@ -17,10 +19,10 @@ function Tags({ tags }: { tags: { id: number; name: string }[] }) {
       }}
     >
       <Row style={{ marginTop: 20 }}>
-        <Col xs={12} md={6}>
+        <Col xs={24}>
           <Form.Item name={'tags'}>
-            <Space>
-              {tags.map((item) => (
+            <Space wrap>
+              {tags?.map((item) => (
                 <Tag
                   key={item.id}
                   style={{

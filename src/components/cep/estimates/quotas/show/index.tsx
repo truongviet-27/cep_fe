@@ -8,7 +8,14 @@ import Tags from '@components/cep/estimates/quotas/show/components/tags'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Show } from '@components/crud/show'
 import { DeleteButton } from '@refinedev/antd'
-import { useGo, useParsed, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useGo,
+  useParsed,
+  useShow,
+  useTranslate,
+} from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -24,112 +31,34 @@ import dayjs from 'dayjs'
 const { Title } = Typography
 
 function QuotaDetail() {
-  const { id } = useParsed()
-  // const { query } = useShow({
-  //   id,
-  // })
+  const t = useTranslate()
 
-  const query = {
-    data: {
-      data: {
-        id: 1,
-        code: 'QUOTA-2025-001',
-        title: 'hung123',
-        type: 'normal',
-        status: 'waiting_approval',
-        delivery_date: '2025-10-01T00:00:00Z',
-        delivery_method: 'free text',
-        payment_due_date: 'monthly_25',
-        expiration_date: 'days_7',
-        consumption_tax: 'exclusive',
-        tax_rate: 12,
-        customer_id: 123,
-        customer_name: 'Acme Corporation',
-        note: 'textarea',
-        total_cost: 1220.5,
-        consumption_tax_amount: 1220.5,
-        total_profit_margin: 120.5,
-        total_price_tax_included: 1123.6,
-        customer: {
-          id: 1,
-          name: 'Customer Name',
-          customer_code: 'CUST001',
-        },
-        main_product_groups: [
-          {
-            id: 0,
-            group_name: 'string',
-            display_order: 0,
-            products: [
-              {
-                id: 0,
-                product_id: 0,
-                package: {
-                  id: 1,
-                  name: 'package',
-                },
-                unit: 'Thung',
-                name: 'string',
-                code: 'string',
-                cost_price: 100,
-                selling_price: 200,
-                profit_margin: 220,
-                quantity: 2,
-                is_add_total: true,
-                display_order: 0,
-              },
-            ],
-          },
-        ],
-        optional_product_groups: [
-          {
-            id: 0,
-            group_name: 'string',
-            display_order: 0,
-            products: [
-              {
-                id: 0,
-                product_id: 0,
-                package: {
-                  id: 1,
-                  name: 'package',
-                },
-                unit: 'Thung',
-                name: 'string',
-                code: 'string',
-                cost_price: 330,
-                selling_price: 110,
-                profit_margin: 550,
-                quantity: 2,
-                is_add_total: true,
-                display_order: 0,
-              },
-            ],
-          },
-        ],
-        tags: [
-          {
-            id: 0,
-            name: 'string',
-          },
-        ],
-        created_at: '2025-09-26T14:53:45.221Z',
-        updated_at: '2025-09-26T14:53:45.221Z',
-        created_by: {
-          name: 'Viet Nguyen',
-        },
-        updated_by: {
-          name: 'Viet Nguyen',
-        },
-      },
-    },
-  }
+  const { id } = useParsed()
+  const apiUrl = useApiUrl()
 
   const go = useGo()
 
-  const t = useTranslate()
+  const { query: queryBasic } = useShow({
+    id,
+  })
+
+  const { data: dataProducts, isFetching: isFetchingProducts } = useCustom({
+    url: `${apiUrl}/quotas/${id}/products`,
+    method: 'get',
+  })
+
+  const { data: dataHistory, isFetching: isFetchingHistory } = useCustom({
+    url: `${apiUrl}/quotas/${id}/history`,
+    method: 'get',
+  })
+
+  console.log(dataHistory, 'dataHistory')
+
   return (
     <Show
+      isLoading={
+        queryBasic.isFetching || isFetchingProducts || isFetchingHistory
+      }
       title={
         <Breadcrumb
           items={[
@@ -160,16 +89,20 @@ function QuotaDetail() {
         layout="horizontal"
         colon={false}
         autoComplete="off"
+        style={{
+          marginTop: 30,
+        }}
       >
-        <BasicInfo data={query.data.data} />
+        <BasicInfo data={queryBasic?.data?.data} />
         <DetailInfo
-          tax_rate={query.data.data.tax_rate}
-          data={query.data.data.main_product_groups}
+          data={dataProducts?.data?.main_product}
+          basicInfo={queryBasic?.data?.data}
         />
-        <OptionalInfo data={query.data.data.optional_product_groups} />
-        <Conditions note={query.data.data.note} />
-        <Tags tags={query.data.data.tags} />
+        <OptionalInfo data={dataProducts?.data?.optional_product} />
+        <Conditions note={queryBasic?.data?.data?.note} />
+        <Tags tags={queryBasic?.data?.data?.tags} />
         <History />
+
         <Reason reason="差戻の理由を入力してください" />
 
         <Divider />
@@ -178,16 +111,20 @@ function QuotaDetail() {
             {
               title: t('approve_routes.show.creator'),
               value:
-                (query.data?.data?.created_by?.name ?? '---') +
+                (queryBasic.data?.data?.author?.name ?? '---') +
                 ' ' +
-                dayjs(query.data?.data?.created_at).format('YYYY/MM/DD HH:mm'),
+                dayjs(queryBasic.data?.data?.created_at).format(
+                  'YYYY/MM/DD HH:mm',
+                ),
             },
             {
               title: t('approve_routes.show.updater'),
               value:
-                (query.data?.data?.updated_by?.name ?? '---') +
+                (queryBasic.data?.data?.editor?.name ?? '---') +
                 ' ' +
-                dayjs(query.data?.data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                dayjs(queryBasic.data?.data?.updated_at).format(
+                  'YYYY/MM/DD HH:mm',
+                ),
             },
           ]}
         />

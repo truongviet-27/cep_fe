@@ -20,16 +20,57 @@ import {
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const { Text } = Typography
 
 function DetailInfo() {
   const form = Form.useFormInstance()
 
-  const [costPrice, setCostPrice] = useState(0)
-  const [totalProfit, setTotalProfit] = useState(0)
-  const [totalPrice, setTotalPrice] = useState(0)
+  const taxRateWatch = Form.useWatch('tax_rate', form)
+
+  const [costTotal, setCostTotal] = useState(0)
+  const [profitRate, setProfitRate] = useState(0)
+  const [taxTotal, setTaxTotal] = useState(0)
+  const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
+
+  const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
+    let costTotal = 0
+    let sellTotal = 0
+
+    ;(main_product_groups ?? []).forEach((group: any) => {
+      ;(group.products ?? []).forEach((product: any) => {
+        if (product.is_add_total) {
+          costTotal += (product.cost_price || 0) * (product.quantity || 0)
+          sellTotal += (product.selling_price || 0) * (product.quantity || 0)
+        }
+      })
+    })
+
+    const taxTotal = (sellTotal * tax_rate) / 100
+    const sellTotalWithTax = sellTotal + taxTotal
+    const profitRate =
+      costTotal > 0 ? ((sellTotal - costTotal) / costTotal) * 100 : 0
+
+    setCostTotal(costTotal)
+    setTaxTotal(taxTotal)
+    setProfitRate(profitRate)
+    setSellTotalWithTax(sellTotalWithTax)
+  }
+
+  useEffect(() => {
+    form.setFieldValue('total_cost', costTotal)
+    form.setFieldValue('consumption_tax_amount', taxTotal)
+    form.setFieldValue('total_profit_margin', profitRate)
+    form.setFieldValue('total_price_tax_included', sellTotalWithTax)
+  }, [costTotal, profitRate, taxTotal, sellTotalWithTax])
+
+  useEffect(() => {
+    calculateSummary(
+      form.getFieldValue('main_product'),
+      form.getFieldValue('tax_rate'),
+    )
+  }, [taxRateWatch])
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
@@ -50,7 +91,20 @@ function DetailInfo() {
     const values = form?.getFieldValue('main_product') || []
     const products = values[groupIndex].products || []
 
-    values[groupIndex].products = [...products, {}]
+    values[groupIndex].products = [
+      ...products,
+      {
+        product_id: null,
+        package_id: null,
+        name: '',
+        code: '自動採番',
+        quantity: 0,
+        cost_price: 0,
+        selling_price: 0,
+        profit_margin: 0,
+        is_add_total: true,
+      },
+    ]
 
     form.setFieldsValue({ main_product: values })
   }
@@ -107,6 +161,7 @@ function DetailInfo() {
               dataIndex: 'code',
               key: 'code',
               align: 'left',
+              width: 200,
               render: (_, record) => {
                 if (record.isHeader) {
                   return {
@@ -354,7 +409,18 @@ function DetailInfo() {
                     'selling_price',
                   ]) || 0
 
-                return selling > 0 ? ((selling - cost) / selling) * 100 : 0
+                form.setFieldValue(
+                  [
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'profit_margin',
+                  ],
+                  selling > 0 ? ((selling - cost) / cost) * 100 : 0,
+                )
+
+                return `${selling > 0 ? ((selling - cost) / cost) * 100 : 0}%`
               },
             },
             {
@@ -419,25 +485,10 @@ function DetailInfo() {
                         'is_add_total',
                       ])}
                       onChange={() => {
-                        const totalCostPrice = (
-                          form.getFieldValue('main_product') ?? []
-                        ).reduce((accGroup: any, group: any) => {
-                          const groupTotal = group.products.reduce(
-                            (accProd: any, prod: any) => {
-                              if (prod.is_add_total) {
-                                return (
-                                  accProd +
-                                  (prod.selling_price || 0) *
-                                    (prod.quantity || 0)
-                                )
-                              }
-                            },
-                            0,
-                          )
-                          return accGroup + groupTotal
-                        }, 0)
-
-                        setCostPrice(totalCostPrice)
+                        calculateSummary(
+                          form.getFieldValue('main_product'),
+                          form.getFieldValue('tax_rate'),
+                        )
                       }}
                     />
                   </Form.Item>
@@ -469,7 +520,19 @@ function DetailInfo() {
                     add(
                       {
                         group_name: '',
-                        products: [{}],
+                        products: [
+                          {
+                            product_id: null,
+                            package_id: null,
+                            name: '',
+                            code: '自動採番',
+                            quantity: 0,
+                            cost_price: 0,
+                            selling_price: 0,
+                            profit_margin: 0,
+                            is_add_total: false,
+                          },
+                        ],
                       },
                       record.index + 1,
                     )
@@ -518,21 +581,21 @@ function DetailInfo() {
                 summary={() => {
                   const total = (
                     form.getFieldValue('main_product') ?? []
-                  ).reduce((accGroup: any, group: any) => {
-                    const groupTotal = group.products.reduce(
-                      (accProd: any, prod: any) => {
+                  ).reduce((accGroup: number, group: any) => {
+                    const groupTotal = (group.products ?? []).reduce(
+                      (accProd: number, prod: any) => {
                         if (prod.is_add_total) {
                           return (
                             accProd +
                             (prod.selling_price || 0) * (prod.quantity || 0)
                           )
                         }
+                        return accProd
                       },
                       0,
                     )
                     return accGroup + groupTotal
                   }, 0)
-                  console.log(total, 'total')
                   return (
                     <Table.Summary.Row
                       style={{
@@ -550,7 +613,7 @@ function DetailInfo() {
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
                       <Table.Summary.Cell index={6} align="center">
-                        {total}
+                        {total || 0}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
@@ -558,107 +621,118 @@ function DetailInfo() {
                   )
                 }}
               />
-
-              <Card bordered={false}>
-                <Row gutter={[16, 16]}>
-                  <Col span={12}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        padding: '8px 12px',
-                        border: '1px solid #f0f0f0',
-                        borderRadius: 6,
-                        background: '#F8F9FA',
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontWeight: 700,
-                        }}
-                      >
-                        原価合計
-                      </Text>
-                      <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                        {costPrice}
-                      </Text>
-                    </div>
-                  </Col>
-                  <Col span={12}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        padding: '8px 12px',
-                        border: '1px solid #f0f0f0',
-                        borderRadius: 6,
-                        background: '#F8F9FA',
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontWeight: 700,
-                        }}
-                      >
-                        消費税金額（{form.getFieldValue('tax_rate')}%）
-                      </Text>
-                      <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                        {0}
-                      </Text>
-                    </div>
-                  </Col>
-                  <Col span={12}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        padding: '8px 12px',
-                        border: '1px solid #f0f0f0',
-                        borderRadius: 6,
-                        background: '#F8F9FA',
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontWeight: 700,
-                        }}
-                      >
-                        合計利益率
-                      </Text>
-                      <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                        {totalProfit}
-                      </Text>
-                    </div>
-                  </Col>
-                  <Col span={12}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        padding: '8px 12px',
-                        border: '1px solid #f0f0f0',
-                        borderRadius: 6,
-                        background: '#F8F9FA',
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontWeight: 700,
-                        }}
-                      >
-                        合計金額（税込）
-                      </Text>
-                      <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                        {totalPrice}
-                      </Text>
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
             </Flex>
           )
         }}
       </Form.List>
+      <Card bordered={false}>
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '8px 12px',
+                border: '1px solid #f0f0f0',
+                borderRadius: 6,
+                background: '#F8F9FA',
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: 700,
+                }}
+              >
+                原価合計
+              </Text>
+              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                {costTotal || 0}
+              </Text>
+              <Form.Item name="total_cost" hidden>
+                <InputNumber />
+              </Form.Item>
+            </div>
+          </Col>
+          <Col span={12}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '8px 12px',
+                border: '1px solid #f0f0f0',
+                borderRadius: 6,
+                background: '#F8F9FA',
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: 700,
+                }}
+              >
+                消費税金額（{taxRateWatch}%）
+              </Text>
+              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                {taxTotal || 0}
+              </Text>
+              <Form.Item name="consumption_tax_amount" hidden>
+                <InputNumber />
+              </Form.Item>
+            </div>
+          </Col>
+          <Col span={12}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '8px 12px',
+                border: '1px solid #f0f0f0',
+                borderRadius: 6,
+                background: '#F8F9FA',
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: 700,
+                }}
+              >
+                合計利益率
+              </Text>
+              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                {profitRate || 0}%
+              </Text>
+              <Form.Item name="total_profit_margin" hidden>
+                <InputNumber />
+              </Form.Item>
+            </div>
+          </Col>
+          <Col span={12}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '8px 12px',
+                border: '1px solid #f0f0f0',
+                borderRadius: 6,
+                background: '#F8F9FA',
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: 700,
+                }}
+              >
+                合計金額（税込）
+              </Text>
+              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                {sellTotalWithTax || 0}
+              </Text>
+              <Form.Item name="total_price_tax_included" hidden>
+                <InputNumber />
+              </Form.Item>
+            </div>
+          </Col>
+        </Row>
+      </Card>
     </Card>
   )
 }

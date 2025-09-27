@@ -865,19 +865,6 @@ export const zBulkAssignPermissionsRequest = z.object({
 /**
  * List of available permission codes
  */
-export const zPermissionEnum = z.enum([
-  'customer.edit',
-  'product.edit',
-  'product_unit.edit',
-  'product_category.edit',
-  'department.edit',
-  'employee.edit',
-  'tag.edit',
-  'code-issue-setting.edit',
-  'parameter-setting.edit',
-  'rank.edit',
-  'approve-route.edit',
-])
 
 /**
  * Permission entity describing a granular access capability

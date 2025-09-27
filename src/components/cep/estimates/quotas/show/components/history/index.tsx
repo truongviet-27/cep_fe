@@ -1,8 +1,13 @@
+/* eslint-disable simple-import-sort/imports */
+import { DownOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
-import { Button, Card, Flex, Typography } from 'antd'
+import boldText from '@utility/bold-text'
+import { PRIMARY, WHITE } from '@utility/color'
+import { Button, Card, Collapse, Typography } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useMemo } from 'react'
+import '../../../style/style-history.css'
 
 const { Title } = Typography
 
@@ -88,31 +93,38 @@ function History() {
   }, [t])
 
   return (
-    <Card
-      title={'履歴'}
-      headStyle={{
-        padding: 0,
-        minHeight: 0,
-      }}
-      bodyStyle={{
-        padding: 0,
-      }}
+    <Collapse
+      bordered={false}
+      expandIconPosition="end"
+      expandIcon={({ isActive }) => (
+        <DownOutlined rotate={isActive ? 180 : 0} />
+      )}
       style={{
-        border: 'none',
-        marginTop: 40,
+        background: WHITE,
+        padding: 'none',
+        marginTop: 30,
+        paddingBottom: 20,
       }}
-    >
-      <Flex vertical style={{ padding: 20 }}>
-        <div className="mb-4">
-          <Title level={5}>承認履歴</Title>
-          <CommonTable columns={columnsApprove} />
-        </div>
-        <div>
-          <Title level={5}>作成履歴</Title>
-          <CommonTable columns={columnsCreation} />
-        </div>
-      </Flex>
-    </Card>
+      className="custom-collapse"
+      items={[
+        {
+          key: 1,
+          label: <span>{boldText('履歴', PRIMARY, 16)}</span>,
+          children: (
+            <Card style={{ marginTop: 10, background: '#F8F9FA' }}>
+              <div className="mb-4">
+                <Title level={5}>承認履歴</Title>
+                <CommonTable columns={columnsApprove} />
+              </div>
+              <div>
+                <Title level={5}>作成履歴</Title>
+                <CommonTable columns={columnsCreation} />
+              </div>
+            </Card>
+          ),
+        },
+      ]}
+    ></Collapse>
   )
 }
 

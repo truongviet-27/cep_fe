@@ -54,8 +54,6 @@ function QuotaList() {
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
-  console.log(selectedRowKeys, 'selectedRowKeys')
-
   const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange,
