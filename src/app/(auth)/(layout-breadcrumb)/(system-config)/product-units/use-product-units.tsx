@@ -313,21 +313,18 @@ function useProductUnits() {
       key: 'is_disable',
       width: 240,
       render: (_v, record, index) => {
-        const value =
-          (watchedRows[index] as UnitRow | undefined)?.is_disable ?? false
-        return record._isEditing ? (
+        return (
           <Controller
             control={control}
             name={`rows.${index}.is_disable`}
             render={({ field }) => (
               <Switch
+                {...field}
                 checked={!field.value}
                 onChange={(checked) => field.onChange(!checked)}
               />
             )}
           />
-        ) : (
-          <Switch checked={!value} disabled />
         )
       },
     },

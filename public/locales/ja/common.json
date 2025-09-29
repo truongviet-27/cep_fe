@@ -892,5 +892,22 @@
     "create": "見積新規作成",
     "edit": "見積編集",
     "detail": "見積詳細"
+  },
+  "price_groups": {
+    "price_groups": "取引先",
+    "list": {
+      "list": "単価グループ設定"
+    },
+    "fields": {
+      "product_code": "商品コード",
+      "product_name": "商品名",
+      "category": "カテゴリ (小)",
+      "unit": "単位",
+      "packaging_name": "荷姿",
+      "selling_price": "販売価格(円)",
+      "is_rate_based": "設定方式",
+      "rate": "換率",
+      "absolute": "絶対"
+    }
   }
 }
