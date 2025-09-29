@@ -91,7 +91,7 @@
       "list": "取引先一覧"
     },
     "create": {
-      "create": "取引先編集",
+      "create": "取引先登録",
       "example": "取引先"
     },
     "edit": {

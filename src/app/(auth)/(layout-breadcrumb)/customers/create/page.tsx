@@ -23,7 +23,7 @@ const { Title } = Typography
 export default function CustomerCreatePage() {
   const hookProps = useCustomerCreate()
 
-  const { t, form, isLoading, onFinish, modalFormProps } = hookProps
+  const { t, formProps, isLoading, modalFormProps, saveButtonProps } = hookProps
 
   const { close: closeModal, open: modalOpen } = modalFormProps
 
@@ -43,15 +43,8 @@ export default function CustomerCreatePage() {
   return (
     <Create
       isLoading={isLoading}
-      saveButtonProps={{
-        onClick: () => form.submit(),
-      }}
       rightFooterButtons={
-        <Button
-          type="primary"
-          onClick={() => form.submit()}
-          loading={isLoading}
-        >
+        <Button {...saveButtonProps} type="primary" loading={isLoading}>
           {t('buttons.save')}
         </Button>
       }
@@ -60,8 +53,7 @@ export default function CustomerCreatePage() {
       }
     >
       <Form
-        form={form}
-        onFinish={onFinish}
+        {...formProps}
         initialValues={{
           company_research_information:
             defaultCustomerCompanyResearchInformation,
