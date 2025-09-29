@@ -14,7 +14,8 @@ import styles from './index.module.css'
 const { Title } = Typography
 
 function ProductContainer() {
-  const [{ columns, tableProps, searchFormProps }, { t }] = useProduct()
+  const [{ columns, tableProps, searchFormProps, isFullAccess }, { t }] =
+    useProduct()
 
   return (
     <PageContainer
@@ -92,9 +93,14 @@ function ProductContainer() {
                 </CreateButton>
               </Link>
               <Link href={'products/csv'}>
-                <CreateButton className="!px-0" type="link" icon={null}>
+                <Button
+                  className="!px-0"
+                  type="link"
+                  icon={null}
+                  disabled={!isFullAccess}
+                >
                   {t('products.list.actions.csvBulkUploadLink')}
-                </CreateButton>
+                </Button>
               </Link>
             </div>
           </div>
