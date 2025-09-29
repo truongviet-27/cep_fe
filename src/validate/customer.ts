@@ -83,6 +83,9 @@ export const validateCustomerRule = (t: any) => {
           .string({ error: t('validation.customer.customer_code.string') })
           .max(50, {
             error: t('validation.customer.customer_code.max', { max: 50 }),
+          })
+          .regex(/^[A-Z0-9-]+$/, {
+            error: t('validation.rank.code.regex'),
           }),
       ),
       name: z.optional(

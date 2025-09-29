@@ -5,16 +5,19 @@ import type {
   CustomerUpdateRequest,
 } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { Form } from 'antd'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
-  const [form] = Form.useForm<CustomerUpdateRequest>()
-  const { onFinish: handleSubmit, formLoading: isLoading } =
-    useForm<CustomerUpdateRequest>({
-      resource: 'customers',
-      action: 'create',
-    })
+  // const [form] = Form.useForm<CustomerUpdateRequest>()
+  const {
+    formProps,
+    formLoading: isLoading,
+    form,
+    saveButtonProps,
+  } = useForm<CustomerUpdateRequest>({
+    resource: 'customers',
+    action: 'create',
+  })
 
   const apiUrl = useApiUrl()
 
@@ -42,10 +45,6 @@ export const useCustomerCreate = () => {
 
   const rule = validateCustomerRule(t)
 
-  const onFinish = (values: CustomerUpdateRequest) => {
-    handleSubmit(values)
-  }
-
   const handleCopyContact = () => {
     const mainContact = form.getFieldsValue(['mail', 'phone'])
     form.setFieldsValue({
@@ -59,12 +58,13 @@ export const useCustomerCreate = () => {
     form,
     rule,
     isLoading,
-    onFinish,
     handleCopyContact,
     handleAutoNumber,
     modalFormProps,
     isCodeGenLoading,
     codeGenData,
     refetchCodeGen,
+    saveButtonProps,
+    formProps,
   }
 }
