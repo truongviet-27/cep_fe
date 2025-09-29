@@ -4,8 +4,11 @@
 import { RightOutlined } from '@ant-design/icons'
 import { Create } from '@components/crud/create'
 import { useForm } from '@refinedev/antd'
-import { useList } from '@refinedev/core'
-import type { ParameterSettingControllerIndexResponse } from '@sdk/hey-api'
+import { GetListResponse, useList } from '@refinedev/core'
+import type {
+  ParameterResourceEnum,
+  ParameterSettingControllerIndexResponse,
+} from '@sdk/hey-api'
 import { Form, message, Radio, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useTranslations } from 'next-intl'
@@ -15,13 +18,33 @@ import CommonTable from '@/components/common/table'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { PRIMARY } from '@/utility/color'
 import { PARAMETER_SETTING_EXCLUDE } from '@utility/permission'
+import { sortBy } from 'lodash'
+
+type ParameterItemType = {
+  parameter_id?: number
+  resource?: ParameterResourceEnum
+  code?: string
+  name?: string
+  is_manage?: boolean
+}
 
 const { Title } = Typography
 
 export default function Page() {
   const t = useTranslations()
 
-  const { data, isLoading } = useList<ParameterSettingControllerIndexResponse>()
+  const { data, isLoading } = useList<ParameterSettingControllerIndexResponse>({
+    queryOptions: {
+      select: (data) => {
+        return {
+          ...data,
+          data: sortBy(data.data, ({ resource }: ParameterItemType) => {
+            return resource && !PARAMETER_SETTING_EXCLUDE.has(resource)
+          }),
+        } as GetListResponse<ParameterSettingControllerIndexResponse>
+      },
+    },
+  })
 
   const { formProps, formLoading, saveButtonProps, onFinish, form } =
     useForm<ParameterSettingControllerIndexResponse>({
@@ -58,13 +81,15 @@ export default function Page() {
       dataIndex: 'name',
       key: 'settingItem',
       width: 400,
-      align: 'center',
+      align: 'left',
+      className: '!px-4',
     },
     {
       title: t('system_config.initial_setting'),
       key: 'is_manage',
       width: 400,
-      align: 'center',
+      align: 'left',
+      className: '!px-4',
       render: (cur, _, index) => {
         return (
           <div className={'!h-5'}>
@@ -79,12 +104,11 @@ export default function Page() {
                   >
                     {t('parameter_settings.is_manage')}
                   </Radio>
-                  <Radio
-                    value={false}
-                    disabled={PARAMETER_SETTING_EXCLUDE.has(cur.resource)}
-                  >
-                    {t('parameter_settings.not_manage')}
-                  </Radio>
+                  {!PARAMETER_SETTING_EXCLUDE.has(cur.resource) && (
+                    <Radio value={false}>
+                      {t('parameter_settings.not_manage')}
+                    </Radio>
+                  )}
                 </Space>
               </Radio.Group>
             </Form.Item>
@@ -96,7 +120,8 @@ export default function Page() {
       title: t('parameter_settings.description'),
       dataIndex: 'description',
       key: 'description',
-      align: 'center',
+      align: 'left',
+      className: '!px-4',
       render: (text) => (
         <div className="text-sm whitespace-pre-line text-gray-600">{text}</div>
       ),

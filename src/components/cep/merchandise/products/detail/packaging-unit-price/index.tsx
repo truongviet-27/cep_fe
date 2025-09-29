@@ -58,6 +58,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = ({ product }) => {
         columns={columns}
         dataSource={dataSource}
         pagination={false}
+        scroll={{ y: 55 * 5 }}
       />
     </div>
   )

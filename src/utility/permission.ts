@@ -17,7 +17,7 @@ export const PermissionRouteFullAdminOnly = new Set([
 
 export const PARAMETER_SETTINGS = new Set(Object.values(ParameterResourceEnum))
 
-export const PARAMETER_SETTING_EXCLUDE = new Set([
+export const PARAMETER_SETTING_EXCLUDE: Set<string> = new Set([
   ParameterResourceEnum.CUSTOMERS,
   ParameterResourceEnum.PRODUCT_CATEGORIES,
   ParameterResourceEnum.PRODUCT_UNITS,
