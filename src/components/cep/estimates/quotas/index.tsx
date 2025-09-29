@@ -7,7 +7,7 @@ import {
   MessageOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import StatusDashboard from '@components/cep/estimates/quota/action/components/status-dashboard'
+// import StatusDashboard from '@components/cep/estimates/quota/action/components/status-dashboard'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -298,7 +298,7 @@ function QuotaList() {
       i18nHeading={'quota.list'}
     >
       <Form>
-        <StatusDashboard />
+        {/*<StatusDashboard />*/}
         <div className="my-4">
           <Row gutter={[24, 0]}>
             <Col xs={12} md={6} lg={3} xxl={3}>

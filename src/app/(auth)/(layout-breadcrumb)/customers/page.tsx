@@ -196,7 +196,7 @@ export default function CustomerListPage() {
         key: 'customer_code',
         render: (text, record) => (
           <Link
-            href={`/customers/${record.id}`}
+            href={`/customers/show/${record.id}`}
             key={record.id}
             style={{ textDecoration: 'underline' }}
           >
