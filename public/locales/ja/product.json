@@ -95,5 +95,12 @@
   "codeNumberingSettings": "コード採番設定はこちら",
   "newRegistration": "新規登録",
   "pleaseSelect": "選択してください",
-  "productCategoryEdit": "商品カテゴリ編集"
+  "productCategoryEdit": "商品カテゴリ編集",
+  "breadcrumb": {
+    "home": "商品",
+    "productList": "商品一覧",
+    "productDetail": "商品詳細",
+    "productCreate": "商品登録",
+    "productEdit": "商品編集"
+  }
 }

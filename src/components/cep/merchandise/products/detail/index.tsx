@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
+import ShowMoreInfo from '@components/common/show-more-info'
+import { DeleteButton, EditButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Divider, Flex, Space, Typography } from 'antd'
@@ -25,19 +27,18 @@ const ProductDetailContainer: React.FC = () => {
         <Breadcrumb
           items={[
             {
-              title: <Title level={5}>{t('merchandise.merchandise')}</Title>,
-            },
-            {
               title: (
                 <Link href="/products">
-                  <Title level={5}>{t('products.products')}</Title>
+                  <Title level={5} style={{ color: PRIMARY }}>
+                    {t('products.breadcrumb.home')}
+                  </Title>
                 </Link>
               ),
             },
             {
               title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('products.detail.title')}
+                <Title level={5}>
+                  {t('products.breadcrumb.productDetail')}
                 </Title>
               ),
             },
@@ -47,7 +48,7 @@ const ProductDetailContainer: React.FC = () => {
       }
       title={
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('products.detail.title')}
+          {t('products.breadcrumb.productDetail')}
         </Title>
       }
     >
@@ -58,8 +59,36 @@ const ProductDetailContainer: React.FC = () => {
             <PackagingUnitPrice product={product} />
             <PriceGroup product={product} />
             <Divider />
-            <Flex justify="space-between">
-              <div></div>
+            <ShowMoreInfo
+              descriptions={[
+                {
+                  title: t('common.created_by'),
+                  value: '',
+                  // data?.author?.name ??
+                  // '---' +
+                  //   ' ' +
+                  //   dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
+                },
+                {
+                  title: t('common.updated_by'),
+                  value: '',
+                  // data?.editor?.name ??
+                  // '---' +
+                  //   ' ' +
+                  //   dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                },
+              ]}
+            />
+            <Flex justify="space-between" style={{ marginTop: 24 }}>
+              <DeleteButton
+                icon={null}
+                size={'small'}
+                onSuccess={() => {
+                  go({
+                    to: '/products',
+                  })
+                }}
+              />
               <Space size="small">
                 <Button
                   onClick={() => {
@@ -70,7 +99,9 @@ const ProductDetailContainer: React.FC = () => {
                 >
                   {t('products.buttons.back')}
                 </Button>
-                <Button type="primary">{t('products.buttons.edit')}</Button>
+                <EditButton type="primary" icon={null}>
+                  {t('products.buttons.edit')}
+                </EditButton>
               </Space>
             </Flex>
           </>

@@ -21,12 +21,12 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
   const columns = useMemo(() => {
     const result = [
       {
-        title: t('products.fields.productCode'),
+        title: t('products.fields.packagingCode'),
         dataIndex: 'code',
         key: 'code',
       },
       {
-        title: t('products.fields.productName'),
+        title: t('products.fields.packagingName'),
         dataIndex: 'name',
         key: 'name',
       },

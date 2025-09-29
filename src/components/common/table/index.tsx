@@ -54,7 +54,9 @@ function CommonTable<T extends object>(
             }
           : restTableProps.pagination
       }
-      scroll={{ x: 'max-content' }}
+      scroll={
+        restTableProps.scroll ? restTableProps.scroll : { x: 'max-content' }
+      }
     />
   )
 }
