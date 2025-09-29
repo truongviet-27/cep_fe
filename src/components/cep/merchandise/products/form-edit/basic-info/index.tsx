@@ -2,6 +2,7 @@ import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { Button, Col, Form, Modal, Row, Select, Spin, Typography } from 'antd'
 import { Empty, type FormInstance } from 'antd/lib'
 import { type MutableRefObject, useMemo } from 'react'
@@ -144,11 +145,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <Form.Item
             name="category"
-            label={
-              <span className="text-left font-bold">
-                {t('products.fields.category')}
-              </span>
-            }
+            label={boldText(t('products.fields.category'))}
             colon={false}
             required={true}
             rules={[
@@ -186,11 +183,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           <CoreInput name="unit" hidden />
           <Form.Item
             name="unit_id"
-            label={
-              <span className="text-left font-bold">
-                {t('products.fields.unit')}
-              </span>
-            }
+            label={boldText(t('products.fields.unit'))}
             colon={false}
             required={true}
             rules={[

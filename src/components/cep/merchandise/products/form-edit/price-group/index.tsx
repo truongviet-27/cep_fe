@@ -22,7 +22,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
   const { data: ranks } = useList<Rank>({
     resource: 'ranks',
     queryOptions: {
-      enabled: parameterSettings.get(ParameterResourceEnum.RANKS),
+      enabled: parameterSettings?.get?.(ParameterResourceEnum.RANKS),
     },
   })
   const renderRanks = useMemo(() => {
@@ -61,7 +61,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
         {(fields) => {
           const columns = [
             {
-              title: t('products.fields.productCode'),
+              title: t('products.fields.packagingCode'),
               dataIndex: 'code',
               key: 'code',
               render: (_: unknown, __: unknown, index: number) => {
@@ -78,7 +78,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               },
             },
             {
-              title: t('products.fields.productName'),
+              title: t('products.fields.packagingName'),
               dataIndex: 'name',
               key: 'name',
               render: (_: unknown, __: unknown, index: number) => {
@@ -159,6 +159,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                         ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
                         : ''
                     }}
+                    scroll={{ y: 55 * 5 }}
                   />
                 )
               }}

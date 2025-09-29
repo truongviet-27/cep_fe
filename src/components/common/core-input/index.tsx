@@ -51,7 +51,7 @@ function CoreInput({
   return (
     <Form.Item
       name={name}
-      label={boldText(label)}
+      label={label ? boldText(label) : undefined}
       labelCol={labelCol}
       wrapperCol={wrapperCol}
       shouldUpdate

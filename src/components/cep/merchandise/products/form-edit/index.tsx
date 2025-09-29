@@ -2,6 +2,7 @@
 import { DownOutlined, RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
+import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
@@ -11,6 +12,7 @@ import {
   Divider,
   Flex,
   Form,
+  Space,
   Spin,
   Typography,
 } from 'antd'
@@ -40,19 +42,20 @@ const ProductFormContainer: React.FC = () => {
         <Breadcrumb
           items={[
             {
-              title: <Title level={5}>{t('merchandise.merchandise')}</Title>,
-            },
-            {
               title: (
                 <Link href="/products">
-                  <Title level={5}>{t('products.products')}</Title>
+                  <Title level={5} style={{ color: PRIMARY }}>
+                    {t('products.breadcrumb.home')}
+                  </Title>
                 </Link>
               ),
             },
             {
               title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {isUpdateMode ? t('buttons.edit') : t('buttons.create')}
+                <Title level={5}>
+                  {isUpdateMode
+                    ? t('products.breadcrumb.productEdit')
+                    : t('products.breadcrumb.productCreate')}
                 </Title>
               ),
             },
@@ -62,7 +65,9 @@ const ProductFormContainer: React.FC = () => {
       }
       title={
         <Title level={5} style={{ color: PRIMARY }}>
-          {isUpdateMode ? t('buttons.edit') : t('buttons.create')}
+          {isUpdateMode
+            ? t('products.breadcrumb.productEdit')
+            : t('products.breadcrumb.productCreate')}
         </Title>
       }
     >
@@ -186,21 +191,40 @@ const ProductFormContainer: React.FC = () => {
               />
             </>
           )}
-          <Flex justify="end" gap="small" style={{ marginTop: 24 }}>
-            <Button
-              onClick={() => {
-                go({ to: '/products' })
-              }}
-              color="primary"
-              variant="outlined"
-            >
-              {t('products.buttons.back')}
-            </Button>
-            <Button type="primary" htmlType="submit" loading={isLoadingSubmit}>
-              {isUpdateMode
-                ? t('products.buttons.save')
-                : t('products.buttons.register')}
-            </Button>
+          <Flex justify="space-between" style={{ marginTop: 24 }}>
+            {isUpdateMode ? (
+              <DeleteButton
+                icon={null}
+                size={'small'}
+                onSuccess={() => {
+                  go({
+                    to: '/products',
+                  })
+                }}
+              />
+            ) : (
+              <div></div>
+            )}
+            <Space size="small">
+              <Button
+                onClick={() => {
+                  go({ to: '/products' })
+                }}
+                color="primary"
+                variant="outlined"
+              >
+                {t('products.buttons.back')}
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isLoadingSubmit}
+              >
+                {isUpdateMode
+                  ? t('products.buttons.save')
+                  : t('products.buttons.register')}
+              </Button>
+            </Space>
           </Flex>
         </Form>
       </Spin>

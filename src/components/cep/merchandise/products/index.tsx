@@ -9,12 +9,11 @@ import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Col, Form, Row, Typography } from 'antd'
 import Link from 'next/link'
 
-import styles from './index.module.css'
-
 const { Title } = Typography
 
 function ProductContainer() {
-  const [{ columns, tableProps, searchFormProps }, { t }] = useProduct()
+  const [{ columns, tableProps, searchFormProps, isFullAccess }, { t }] =
+    useProduct()
 
   return (
     <PageContainer
@@ -24,12 +23,14 @@ function ProductContainer() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('products.products')}
+                  {t('products.breadcrumb.home')}
                 </Title>
               ),
             },
             {
-              title: <Title level={5}>{t('products.list.title')}</Title>,
+              title: (
+                <Title level={5}>{t('products.breadcrumb.productList')}</Title>
+              ),
             },
           ]}
           separator={<RightOutlined />}
@@ -92,14 +93,19 @@ function ProductContainer() {
                 </CreateButton>
               </Link>
               <Link href={'products/csv'}>
-                <CreateButton className="!px-0" type="link" icon={null}>
+                <Button
+                  className="!px-0"
+                  type="link"
+                  icon={null}
+                  disabled={!isFullAccess}
+                >
                   {t('products.list.actions.csvBulkUploadLink')}
-                </CreateButton>
+                </Button>
               </Link>
             </div>
           </div>
         </Row>
-        <div className={styles.tableContainer}>
+        <div>
           <CommonTable
             {...tableProps}
             columns={columns}
@@ -108,14 +114,6 @@ function ProductContainer() {
               showSizeChanger: true,
             }}
           />
-        </div>
-
-        <div className="mt-4 text-right">
-          <Link href={''}>
-            <Button color="primary" variant="outlined">
-              {t('buttons.back')}
-            </Button>
-          </Link>
         </div>
       </Form>
     </PageContainer>

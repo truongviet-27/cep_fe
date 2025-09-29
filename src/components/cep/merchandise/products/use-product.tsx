@@ -1,7 +1,8 @@
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
-import { type ProductListItem } from '@sdk/hey-api'
+import { PermissionEnum, type ProductListItem } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
@@ -14,6 +15,8 @@ interface ISearch {
 
 function useProduct() {
   const t = useTranslate()
+  const { hasFullAccessModule } = useUserStore.getState()
+  const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
 
   const { tableProps, searchFormProps } = useTable<
     ProductListItem,
@@ -113,6 +116,7 @@ function useProduct() {
 
   return [
     {
+      isFullAccess,
       columns,
       tableProps,
       searchFormProps,
