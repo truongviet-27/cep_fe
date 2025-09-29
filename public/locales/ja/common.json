@@ -285,7 +285,10 @@
       "name": "単価ランク名",
       "rate": "掛け率（％)",
       "number_of_customers": "顧客数",
-      "remarks": "備考"
+      "remarks": "備考",
+      "serial_length": "連番桁数",
+      "preview_code": "採番例",
+      "total": "現在値"
     }
   },
   "merchandise": {

@@ -288,6 +288,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
                       : ''
                   }
+                  scroll={{ y: 55 * 5 }}
                 />
               </Form.Item>
               <div className="mt-4 text-right">
