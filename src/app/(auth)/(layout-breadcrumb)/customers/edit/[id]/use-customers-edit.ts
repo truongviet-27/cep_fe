@@ -11,8 +11,7 @@ export const useCustomerEdit = () => {
     form,
     formLoading: isLoading,
   } = useForm({
-    // action: 'edit',
-    redirect: 'show',
+    action: 'edit',
   })
 
   const apiUrl = useApiUrl()

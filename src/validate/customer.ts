@@ -102,6 +102,9 @@ export const validateCustomerRule = (t: any) => {
             error: t('validation.customer.customer_name_by_kana.max', {
               max: 255,
             }),
+          })
+          .regex(/^[ァ-ンヴ・ー]+$/, {
+            error: t('validation.customer.customer_name_by_kana.string'),
           }),
       ),
       customer_type: z.optional(

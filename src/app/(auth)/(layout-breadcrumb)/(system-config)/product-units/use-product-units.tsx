@@ -191,7 +191,9 @@ function useProductUnits() {
       },
       { focusIndex: 0 },
     )
-    setTimeout(() => setFocus(`rows.0.name`), 0)
+    setTimeout(() => {
+      setFocus(`rows.0.name`)
+    }, 0)
   }
 
   const startEdit = (index: number) => {
