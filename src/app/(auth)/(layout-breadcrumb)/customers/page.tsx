@@ -12,7 +12,12 @@ import {
   useSelect,
   useTable,
 } from '@refinedev/antd'
-import { useGo, useTranslate, useUpdate } from '@refinedev/core'
+import {
+  type BaseRecord,
+  useGo,
+  useTranslate,
+  useUpdate,
+} from '@refinedev/core'
 import {
   ParameterResourceEnum,
   PermissionEnum,
@@ -44,6 +49,7 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 import AutoHeading from '@components/common/auto-heading'
+import { cn } from '@utility/cn'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -197,6 +203,10 @@ export default function CustomerListPage() {
     ])
   }
 
+  const getRowClassName = (record: BaseRecord) => {
+    return record.deleted_at ? '!bg-gray-200' : ''
+  }
+
   const columns: TableColumnsType<SimpleCustomer> = useMemo(
     () => [
       {
@@ -225,7 +235,7 @@ export default function CustomerListPage() {
       },
       {
         title: t('customers.fields.department'),
-        dataIndex: 'person_in_charge_department',
+        dataIndex: 'department_in_charge',
         key: 'person_in_charge_department',
       },
       {
@@ -291,14 +301,16 @@ export default function CustomerListPage() {
         fixed: 'right',
         render: (_, record) => (
           <Space>
-            <EditButton
-              icon={null}
-              recordItemId={record.id}
-              size={'small'}
-              disabled={!isFullAccess}
-            >
-              {t('buttons.edit')}
-            </EditButton>
+            {!record.deleted_at && (
+              <EditButton
+                icon={null}
+                recordItemId={record.id}
+                size={'small'}
+                disabled={!isFullAccess}
+              >
+                {t('buttons.edit')}
+              </EditButton>
+            )}
             &nbsp;
             <Button
               size="small"
@@ -497,7 +509,14 @@ export default function CustomerListPage() {
         </Space>
       </Row>
 
-      <CommonTable {...tableProps} rowKey="id" columns={columns as any} />
+      <CommonTable
+        onRow={(record) => ({
+          className: getRowClassName(record),
+        })}
+        {...tableProps}
+        rowKey="id"
+        columns={columns as any}
+      />
     </List>
   )
 }

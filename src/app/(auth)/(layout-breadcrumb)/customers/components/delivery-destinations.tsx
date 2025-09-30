@@ -66,7 +66,7 @@ function DeliveryDestinations(
                         noStyle
                         required
                       >
-                        <Input style={{ maxWidth: 560 }} />
+                        <Input style={{ maxWidth: 560 }} disabled />
                       </Form.Item>
                     ),
                   },
@@ -181,6 +181,7 @@ function DeliveryDestinations(
                 onClick={() => {
                   if (!code) {
                     form.focusField('customer_code')
+                    form.validateFields().then(() => {})
                   } else {
                     add({
                       code: code + '-' + index,

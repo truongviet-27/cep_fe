@@ -155,7 +155,7 @@
       "code": "納品先コード",
       "name": "納品先名",
       "address": "住所",
-      "contact_person": "担当者",
+      "contact_person": "受取人",
       "phone": "電話番号",
       "email": "メールアドレス"
     },
