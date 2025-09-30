@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum QuotaStatus {
   Creating = 'creating',
   WaitingApproval = 'waiting_approval',
@@ -7,3 +8,4 @@ export enum QuotaStatus {
   Completed = 'completed',
   Cancelled = 'cancelled',
 }
+/* eslint-enable @typescript-eslint/no-duplicate-enum-values */
