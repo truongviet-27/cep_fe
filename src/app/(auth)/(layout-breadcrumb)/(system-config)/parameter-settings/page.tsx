@@ -72,7 +72,7 @@ export default function Page() {
 
   const handleCancel = () => {
     message.info(t('system_config.cancel_message'))
-    form?.setFieldValue('data', data?.data)
+    form?.resetFields()
   }
 
   const columns: ColumnsType<ParameterSettingControllerIndexResponse> = [
