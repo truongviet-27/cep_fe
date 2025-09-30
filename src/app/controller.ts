@@ -1,70 +1,89 @@
+// eslint-disable-next-line simple-import-sort/imports
 import type { PermissionType } from '@interfaces/permission'
-import { dataProvider } from '@providers/data-provider'
 import type { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import { hasForbiddenRoute } from '@utility/permission'
-import { usePathname, useRouter } from 'next/navigation'
+import { signIn, signOut, useSession } from 'next-auth/react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export const useBootstrap = () => {
+  const session = useSession()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
   const pathname = usePathname()
-  const { setPermission, setParameterSettings } = useUserStore((state) => state)
-  const apiUrl = dataProvider.getApiUrl()
+  const searchParams = useSearchParams()
+  const {
+    isLoggedIn,
+    setPermission,
+    setParameterSettings,
+    setIsLoggedIn,
+    logout,
+  } = useUserStore((state) => state)
+  const token = searchParams.get('token')
+  const refreshToken = searchParams.get('refreshToken')
+  const { status } = session
 
-  const initSetup = async () => {
-    if (pathname === '/login') return
+  const validateToken = async () => {
+    try {
+      if (pathname === '/' && token && refreshToken) {
+        if (isLoggedIn) {
+          return false
+        }
 
-    await getProfile()
+        const res = await signIn('TokenLogin', {
+          token,
+          refreshToken,
+          redirect: false,
+          callbackUrl: '/',
+        })
 
-    if (hasForbiddenRoute(pathname)) {
-      router.push('/403')
+        if (!res?.ok) {
+          throw res
+        }
+
+        return true
+      }
+
+      return false
+    } catch (error) {
+      console.error(error)
+      useUserStore.getState().logout?.()
+      signOut({
+        redirect: true,
+        callbackUrl: '/login',
+      })
+      throw error
     }
   }
 
   const getProfile = async () => {
     try {
-      // if (!permission) return permission
       setIsLoading(true)
-      const response = await dataProvider.custom({
-        url: `${apiUrl}/me`,
-        method: 'get',
+      const headers = {
+        token: '',
+      }
+      if (pathname === '/' && token && refreshToken) {
+        headers.token = token
+      }
+      const response = await fetch('/api/me', {
+        headers,
       })
+      const { permission, parameterSettings } = await response.json()
 
-      if (!response) return null
+      if (!permission || !parameterSettings) {
+        throw new Error('Failed to fetch permission')
+      }
 
       const permissionResponse = {
-        ...response.data,
-        permissions: new Set(response.data.permissions),
+        ...permission,
+        permissions: new Set(permission.permissions),
       } as PermissionType
-
       setPermission(permissionResponse)
-
-      const parameterSettings = await getParameterSettings()
-
-      return {
-        permission: permissionResponse,
-        parameterSettings,
-      }
-    } catch (error) {
-      console.error(error)
-      return null
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const getParameterSettings = async () => {
-    try {
-      const { data } = await dataProvider.custom({
-        url: `${apiUrl}/parameter-settings`,
-        method: 'get',
-      })
 
       const dataConvert: Map<ParameterResourceEnum, boolean> = new Map([])
 
-      data.items.forEach(
+      parameterSettings.forEach(
         ({
           is_manage,
           resource,
@@ -77,12 +96,36 @@ export const useBootstrap = () => {
       )
 
       setParameterSettings(dataConvert)
+      setIsLoggedIn(true)
+    } catch (error) {
+      console.error(error)
+      if (isLoggedIn) {
+        logout()
+        signOut({
+          redirect: true,
+          callbackUrl: '/login',
+        })
+      } else {
+        router.push('/login')
+      }
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-      return dataConvert
-    } catch (e) {
-      console.error(e)
+  const initSetup = async () => {
+    try {
+      if (pathname === '/login') return
 
-      return null
+      await validateToken()
+      await getProfile()
+
+      if (hasForbiddenRoute(pathname)) {
+        router.push('/403')
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -91,6 +134,6 @@ export const useBootstrap = () => {
   }, [])
 
   return {
-    isLoading,
+    isLoadingPage: isLoading || status === 'loading',
   }
 }

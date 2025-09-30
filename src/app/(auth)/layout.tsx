@@ -1,15 +1,16 @@
+'use client'
 // eslint-disable-next-line simple-import-sort/imports
-import { getServerSession } from 'next-auth/next'
-import { redirect } from 'next/navigation'
 import type React from 'react'
 
-import authOptions from '@/app/api/auth/[...nextauth]/options'
+import { useGo } from '@refinedev/core'
+import { useUserStore } from '@stores/useUserStore'
 
-export default async function Layout({ children }: React.PropsWithChildren) {
-  const session = await getServerSession(authOptions)
+export default function Layout({ children }: React.PropsWithChildren) {
+  const go = useGo()
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
 
-  if (!session?.user) {
-    return redirect('/login')
+  if (!isLoggedIn) {
+    go({ to: '/login' })
   }
 
   return children

@@ -14,7 +14,7 @@ import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import routerProvider from '@refinedev/nextjs-router'
 import { resource } from '@utility/resources'
-import { SessionProvider, useSession } from 'next-auth/react'
+import { SessionProvider } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
 import { useBootstrap } from './controller'
@@ -34,13 +34,10 @@ export const RefineContext = (
 }
 
 const App = (props: React.PropsWithChildren) => {
-  const session = useSession()
-  const { status } = session
   const t = useTranslations()
+  const { isLoadingPage } = useBootstrap()
 
-  const { isLoading } = useBootstrap()
-
-  if (status === 'loading' || isLoading) {
+  if (isLoadingPage) {
     return <LoadingPage />
   }
 
