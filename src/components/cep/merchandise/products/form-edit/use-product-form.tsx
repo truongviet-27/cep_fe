@@ -9,6 +9,16 @@ export type ProductFormType = {
   category_level_1?: number
   category_level_2?: number
   category_level_3?: number
+  author?: {
+    id?: number
+    name?: string
+  }
+  editor?: {
+    id?: number
+    name?: string
+  }
+  created_at?: string
+  updated_at?: string
 } & StoreProductInput
 
 function useProductForm() {
