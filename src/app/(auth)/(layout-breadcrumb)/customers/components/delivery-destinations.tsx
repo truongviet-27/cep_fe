@@ -64,6 +64,7 @@ function DeliveryDestinations(
                         name={[field.name, 'code']}
                         rules={[rule]}
                         noStyle
+                        required
                       >
                         <Input style={{ maxWidth: 560 }} />
                       </Form.Item>
@@ -80,6 +81,7 @@ function DeliveryDestinations(
                       <Form.Item
                         name={[field.name, 'name']}
                         rules={[rule]}
+                        required
                         noStyle
                       >
                         <Input style={{ maxWidth: 560 }} />
@@ -98,6 +100,7 @@ function DeliveryDestinations(
                         name={[field.name, 'address']}
                         rules={[rule]}
                         noStyle
+                        required
                       >
                         <Input style={{ maxWidth: 560 }} />
                       </Form.Item>
@@ -181,6 +184,12 @@ function DeliveryDestinations(
                   } else {
                     add({
                       code: code + '-' + index,
+                      name: null,
+                      address: null,
+                      contact_person: null,
+                      phone: null,
+                      email: null,
+                      key: index,
                     })
                   }
                   setIndex(index + 1)

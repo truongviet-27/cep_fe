@@ -13,7 +13,7 @@ async function refreshAccessToken(token: JWT) {
         client_id: process.env.NEXT_PUBLIC_CLIENT_ID!,
         client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET!,
         grant_type: 'refresh_token',
-        refresh_token: token.refreshToken as string,
+        refresh_token: token.refreshToken!,
       }),
     })
 
@@ -24,7 +24,7 @@ async function refreshAccessToken(token: JWT) {
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // fallback nếu KC không trả refreshToken mới
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
       expiresAt: Math.floor(Date.now() / 1000) + refreshedTokens.expires_in,
       error: undefined,
     }

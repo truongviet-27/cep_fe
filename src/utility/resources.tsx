@@ -83,6 +83,15 @@ export const resource: ResourceProps[] = [
     },
   },
   {
+    name: 'price-groups',
+    list: '/price-groups',
+    meta: {
+      parent: 'merchandise',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
     name: 'departments',
     list: '/departments',
     show: '/departments/show/:id',

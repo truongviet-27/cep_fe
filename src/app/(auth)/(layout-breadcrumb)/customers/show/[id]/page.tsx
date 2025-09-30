@@ -123,7 +123,7 @@ export default function CustomerShowPage() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('customers.customers')}
+          {t('business_partner.business_partner')}
         </Title>
       ),
     },

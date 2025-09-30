@@ -75,7 +75,7 @@ export default function Page() {
 
   const handleAutoNumber = () => {
     const codeGen = data?.data
-    form?.setFieldsValue({ code: codeGen?.preview_code, name: codeGen?.name })
+    form?.setFieldsValue({ code: codeGen?.preview_code })
   }
 
   const onSubmit = (values: DepartmentPayload) => {
@@ -132,7 +132,7 @@ export default function Page() {
       >
         <Form.Item
           required
-          label={<Text strong>{t(`departments.create.create`)}</Text>}
+          label={<Text strong>{t(`departments.fields.code`)}</Text>}
           style={{ marginBottom: 16 }}
         >
           <Row align="middle" gutter={[8, 8]}>

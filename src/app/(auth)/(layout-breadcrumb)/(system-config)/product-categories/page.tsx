@@ -8,7 +8,7 @@ import { CreateButton } from '@refinedev/antd'
 import { useGo } from '@refinedev/core'
 import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-import { LAYOUT_BG } from '@utility/color'
+import { CSV_LINK, LAYOUT_BG } from '@utility/color'
 import { Button, Col, Form, Input, Row, Select, Space, Tree } from 'antd'
 
 export default function Page() {
@@ -39,18 +39,16 @@ export default function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
+      hiddenButtonBack
       rightFooterButtons={
-        <Space size={8}>
-          <Button
-            type="primary"
-            disabled={!dirty || !isFullAccess}
-            onClick={save}
-            className="shadow-sm disabled:opacity-60"
-          >
-            並べ替えを保存
-          </Button>
-          <Button>その他の操作</Button>
-        </Space>
+        <Button
+          type="primary"
+          disabled={!dirty || !isFullAccess}
+          onClick={save}
+          className="shadow-sm disabled:opacity-60"
+        >
+          {t('buttons.save_all')}
+        </Button>
       }
     >
       <Form
@@ -146,8 +144,10 @@ export default function Page() {
                 to: '/product-categories/csv',
               })
             }}
+            style={{ color: CSV_LINK }}
+            className={'!underline'}
           >
-            {t('projects.csv_upload.title')}
+            {t('projects.list.buttons.csv_export')}
           </Button>
         </div>
 
