@@ -383,7 +383,9 @@
     "permission_settings": "権限設定",
     "table": {
       "settingItem": "権限",
-      "employee": "管理者"
+      "employee": "管理者",
+      "manager": "一般",
+      "purpose": "説明"
     },
     "dataSource": {
       "clientMaster": {
@@ -579,13 +581,13 @@
         "FAILED": "エラー"
       },
       "category": {
-        "PRODUCTS": "製品",
-        "CATEGORY_PRODUCTS": "製品カテゴリー",
-        "CUSTOMERS": "顧客",
-        "DEPARTMENTS": "部門",
+        "PRODUCTS": "商品登録",
+        "CATEGORY_PRODUCTS": "商品カテゴリ登録",
+        "CUSTOMERS": "取引先登録",
+        "DEPARTMENTS": "部門登録",
         "OTHER": "その他"
       },
-      "error": "処理が途中で失敗しました"
+      "error": "処理が途中で失敗しました."
     }
   },
   "system_config": {

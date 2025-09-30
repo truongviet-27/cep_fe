@@ -2,7 +2,6 @@ import useImportHistory from '@components/cep/import-history/useImportHistory'
 import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
-import { useSelect } from '@refinedev/antd'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -10,6 +9,7 @@ import {
   Col,
   DatePicker,
   Form,
+  Input,
   Row,
   Select,
   Typography,
@@ -22,11 +22,11 @@ function ImportHistory() {
   const [{ columns, tableProps, searchFormProps }, { t, onReset }] =
     useImportHistory()
 
-  const { selectProps: employeeSelectProps } = useSelect({
-    resource: 'employees',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
+  // const { selectProps: employeeSelectProps } = useSelect({
+  //   resource: 'employees',
+  //   optionLabel: 'name',
+  //   optionValue: 'id',
+  // })
 
   return (
     <PageContainer
@@ -131,12 +131,13 @@ function ImportHistory() {
               }
               layout="vertical"
             >
-              <Select
+              {/* <Select
                 placeholder={t('import_history.placeholder.created_by')}
                 showSearch
                 allowClear
                 {...employeeSelectProps}
-              />
+              /> */}
+              <Input placeholder={t('import_history.placeholder.created_by')} />
             </Form.Item>
           </Col>
           <Col xs={24} md={8}>

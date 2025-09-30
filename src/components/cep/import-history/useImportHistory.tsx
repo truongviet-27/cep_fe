@@ -17,7 +17,6 @@ function useImportHistory() {
     syncWithLocation: true,
     resource: 'csv-imports/history',
     onSearch: (data: any) => {
-      setFilters([], 'replace')
       const filters = [] as CrudFilters
       if (data.common_name) {
         filters.push({

@@ -169,7 +169,7 @@ function usePermissionSetting() {
       },
     },
     {
-      title: t('system_config.manager'),
+      title: t('permission_settings.table.manager'),
       dataIndex: 'manager',
       key: 'manager',
       width: 200,
@@ -184,7 +184,7 @@ function usePermissionSetting() {
       ),
     },
     {
-      title: t('system_config.purpose'),
+      title: t('permission_settings.table.purpose'),
       dataIndex: 'purpose',
       key: 'purpose',
       align: 'center',
