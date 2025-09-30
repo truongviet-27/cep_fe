@@ -7,6 +7,7 @@ import { useGo, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Divider, Flex, Space, Typography } from 'antd'
 import { Empty, Spin } from 'antd/lib'
+import dayjs from 'dayjs'
 import Link from 'next/link'
 
 import BasicInfo from './basic-info'
@@ -63,19 +64,15 @@ const ProductDetailContainer: React.FC = () => {
               descriptions={[
                 {
                   title: t('common.created_by'),
-                  value: '',
-                  // data?.author?.name ??
-                  // '---' +
-                  //   ' ' +
-                  //   dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
+                  value: product?.author?.name
+                    ? `${product.author.name} ${dayjs(product?.created_at).format('YYYY/MM/DD HH:mm')}`
+                    : '---',
                 },
                 {
                   title: t('common.updated_by'),
-                  value: '',
-                  // data?.editor?.name ??
-                  // '---' +
-                  //   ' ' +
-                  //   dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                  value: product?.editor?.name
+                    ? `${product.editor.name} ${dayjs(product?.updated_at).format('YYYY/MM/DD HH:mm')}`
+                    : '---',
                 },
               ]}
             />
