@@ -46,7 +46,8 @@
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
     "show": "show",
-    "refresh": "refresh"
+    "refresh": "refresh",
+    "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？"
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -86,7 +87,7 @@
     "business_partner": "取引先"
   },
   "customers": {
-    "customers": "単価ランク一覧",
+    "customers": "取引先一覧",
     "list": {
       "list": "取引先一覧"
     },
@@ -142,7 +143,7 @@
       "unit_price_rank": "単価ランク",
       "credit_rank": "与信ランク",
       "anti_social_rank": "反社ランク",
-      "anti_social_check_date": "反社チェック更新日",
+      "anti_social_check_date": "反社チェック",
       "registration_date": "登録日",
       "suspension_date": "停止日",
       "actions": "操作",

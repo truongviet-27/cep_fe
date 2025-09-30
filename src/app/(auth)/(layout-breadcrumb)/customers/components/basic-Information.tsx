@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
@@ -48,6 +49,8 @@ function BasicInformation(
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const parts = isNameAfter ? [companyType, name] : [name, companyType]
   const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+
+  const isOtherSelected = companyType === null
 
   const { selectProps: ranksSelectProps } = useSelect({
     resource: 'ranks',
@@ -123,11 +126,33 @@ function BasicInformation(
             {isIndividual && (
               <>
                 <Col>
-                  <Form.Item name="company_type" rules={[rule]}>
-                    <Select
-                      placeholder={t('placeholders.select')}
-                      options={typesCompanyOptions}
-                    />
+                  <Form.Item
+                    name="company_type"
+                    rules={[
+                      {
+                        validator: (_, value) => {
+                          if (
+                            form.getFieldValue('customer_type') ===
+                              'individual' &&
+                            !value
+                          ) {
+                            return Promise.reject(
+                              new Error(t('validation.required')),
+                            )
+                          }
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
+                    {isOtherSelected ? (
+                      <Input />
+                    ) : (
+                      <Select
+                        placeholder={t('placeholders.select')}
+                        options={typesCompanyOptions}
+                      />
+                    )}
                   </Form.Item>
                 </Col>
 

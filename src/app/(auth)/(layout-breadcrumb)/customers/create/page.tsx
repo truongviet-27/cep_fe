@@ -33,7 +33,7 @@ export default function CustomerCreatePage() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('customers.customers')}
+          {t('business_partner.business_partner')}
         </Title>
       ),
     },
@@ -44,7 +44,7 @@ export default function CustomerCreatePage() {
     <Create
       isLoading={isLoading}
       rightFooterButtons={
-        <Button {...saveButtonProps} type="primary" loading={isLoading}>
+        <Button {...saveButtonProps} type="primary">
           {t('buttons.save')}
         </Button>
       }
@@ -57,6 +57,12 @@ export default function CustomerCreatePage() {
         initialValues={{
           company_research_information:
             defaultCustomerCompanyResearchInformation,
+          customer_code: null,
+          customer_name_by_kana: null,
+          person_in_charge_name: null,
+          person_in_charge_department: null,
+          person_in_charge_mail: null,
+          name: null,
         }}
         labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
         wrapperCol={{ xs: 24, sm: 16, md: 14, lg: 12, xl: 10 }}

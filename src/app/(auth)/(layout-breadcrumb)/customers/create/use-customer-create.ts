@@ -1,22 +1,18 @@
 import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
-import type {
-  CodeIssueSetting,
-  CustomerUpdateRequest,
-} from '@sdk/hey-api/types.gen'
+import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
-  // const [form] = Form.useForm<CustomerUpdateRequest>()
   const {
     formProps,
-    formLoading: isLoading,
-    form,
     saveButtonProps,
-  } = useForm<CustomerUpdateRequest>({
-    resource: 'customers',
+    form,
+    formLoading: isLoading,
+  } = useForm({
     action: 'create',
+    redirect: 'show',
   })
 
   const apiUrl = useApiUrl()
@@ -64,7 +60,7 @@ export const useCustomerCreate = () => {
     isCodeGenLoading,
     codeGenData,
     refetchCodeGen,
-    saveButtonProps,
     formProps,
+    saveButtonProps,
   }
 }

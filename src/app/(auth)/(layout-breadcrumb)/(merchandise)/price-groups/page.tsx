@@ -160,7 +160,7 @@ function Page() {
         </Row>
       </Form>
 
-      <Form {...formProps} className={'mt-10'}>
+      <Form {...formProps} className={'!mt-10'}>
         <CommonTable<PriceGroupItem>
           {...tableProps}
           loading={tableProps.loading || isLoading}

@@ -3,6 +3,7 @@ import { useTranslate } from '@refinedev/core'
 import {
   Button,
   Divider,
+  Flex,
   Form,
   Input,
   InputNumber,
@@ -10,7 +11,7 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
@@ -18,51 +19,65 @@ import boldText from '@utility/bold-text'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { DeleteButton } from '@refinedev/antd'
 import { validateRankRule } from '@validate/rank'
+import AutoHeading from '@components/common/auto-heading'
 
 type Props = {
-  modalProps: any
-  isShow?: boolean
+  modalFormProps: any
+  isShow: boolean
+  setIsShow: (isShow: boolean) => void
 }
 
 export const RankModalEdit: React.FC<Props> = ({
-  modalProps,
-  isShow = false,
+  modalFormProps,
+  isShow,
+  setIsShow,
 }) => {
   const t = useTranslate()
   const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
-    modalProps
-
-  const [isEdit, setEdit] = useState<boolean>(!isShow)
+    modalFormProps
 
   const record = queryResult?.data?.data
 
   const getFieldData = (name: string) => (
     <Typography.Text>{form.getFieldValue(name)}</Typography.Text>
   )
+  if (record) {
+    form.setFieldsValue(record)
+  }
 
   return (
     <Edit
-      {...formProps}
       saveButtonProps={saveButtonProps}
       isLoading={formLoading}
       contentProps={{ style: { boxShadow: 'none' }, actions: undefined }}
       title={<></>}
-      i18nHeading={!isEdit ? 'ranks.show.show' : 'ranks.edit.edit'}
+      isAutoHeading={false}
     >
+      <AutoHeading
+        className={'!-mt-8'}
+        i18n={isShow ? 'ranks.show.show' : 'ranks.edit.edit'}
+      />
+
       <Form
         {...formProps}
+        className={'!mt-10'}
         layout="horizontal"
-        labelCol={{ span: 6 }}
+        labelCol={{ span: 8 }}
         labelAlign="left"
         colon={false}
       >
-        <Form.Item
-          required
-          label={boldText(t('ranks.fields.code'))}
-          name="code"
-          rules={[validateRankRule(t)]}
-        >
-          {!isEdit ? getFieldData('code') : <Input style={{ width: '50%' }} />}
+        <Form.Item required label={boldText(t('ranks.fields.code'))}>
+          <Flex>
+            <Form.Item required name="code" rules={[validateRankRule(t)]}>
+              {isShow ? (
+                getFieldData('code')
+              ) : (
+                <Input style={{ width: '85%' }} />
+              )}
+            </Form.Item>
+            &nbsp;
+            <div className={'mt-1'}>{t('products.validation.codeFormat')}</div>
+          </Flex>
         </Form.Item>
 
         <Form.Item
@@ -71,7 +86,7 @@ export const RankModalEdit: React.FC<Props> = ({
           name="name"
           rules={[validateRankRule(t)]}
         >
-          {!isEdit ? getFieldData('name') : <Input style={{ width: '50%' }} />}
+          {isShow ? getFieldData('name') : <Input style={{ width: '50%' }} />}
         </Form.Item>
 
         <Form.Item
@@ -80,7 +95,7 @@ export const RankModalEdit: React.FC<Props> = ({
           name="rate"
           rules={[validateRankRule(t)]}
         >
-          {!isEdit ? (
+          {isShow ? (
             getFieldData('rate')
           ) : (
             <InputNumber style={{ width: '50%' }} />
@@ -93,7 +108,7 @@ export const RankModalEdit: React.FC<Props> = ({
           name="note"
           rules={[validateRankRule(t)]}
         >
-          {!isEdit ? getFieldData('note') : <Input multiple />}
+          {isShow ? getFieldData('note') : <Input multiple />}
         </Form.Item>
 
         <Divider />
@@ -126,10 +141,10 @@ export const RankModalEdit: React.FC<Props> = ({
         </DeleteButton>
         <Space className={'flex justify-end'}>
           <Button onClick={close}>{t('buttons.cancel')}</Button>
-          {!isEdit ? (
+          {isShow ? (
             <Button
               onClick={() => {
-                setEdit(true)
+                setIsShow(false)
               }}
               type="primary"
             >

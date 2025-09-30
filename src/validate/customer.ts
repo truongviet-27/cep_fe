@@ -217,7 +217,7 @@ export const validateCustomerRule = (t: any) => {
       ),
       person_in_charge_mail: z.optional(
         z
-          .string()
+          .string(t('validation.customer.person_in_charge_mail.email'))
           .email({
             error: t('validation.customer.person_in_charge_mail.email'),
           })

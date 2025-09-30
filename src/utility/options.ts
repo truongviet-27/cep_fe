@@ -36,13 +36,13 @@ export const fieldDistinctionOptions: { value: string; label: string }[] = [
   { value: 'グロース', label: 'グロース' },
 ]
 
-export const typesCompanyOptions: { value: string; label: string }[] = [
+export const typesCompanyOptions: { value: string | null; label: string }[] = [
   { value: '株式会社', label: '株式会社' },
   { value: '有限会社', label: '有限会社' },
   { value: '合同会社', label: '合同会社' },
   { value: '合名会社', label: '合名会社' },
   { value: '合資会社', label: '合資会社' },
-  { value: '自分入力', label: '自分入力' },
+  { value: null, label: '自分入力' },
 ]
 
 export const creditCheckOptions: { value: string; label: string }[] = [

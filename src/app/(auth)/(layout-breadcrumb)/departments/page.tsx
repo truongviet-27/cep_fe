@@ -19,12 +19,13 @@ import {
   useApiUrl,
   useCustomMutation,
   useGo,
+  useNotification,
   useResource,
   useTranslate,
 } from '@refinedev/core'
 import { Department, PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-import { PRIMARY } from '@utility/color'
+import { CSV_LINK, PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
@@ -88,6 +89,7 @@ export default function Page() {
 
   const apiUrl = useApiUrl()
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
+  const { open: openNotification } = useNotification()
 
   const handleUpdateOrdering = (
     values: {
@@ -95,11 +97,22 @@ export default function Page() {
       order: number
     }[],
   ) => {
-    updateAll({
-      url: `${apiUrl}/${resource?.name}/ordering`,
-      method: 'post',
-      values: { data: values },
-    })
+    updateAll(
+      {
+        url: `${apiUrl}/${resource?.name}/ordering`,
+        method: 'post',
+        values: { data: values },
+      },
+      {
+        onSuccess: (data) => {
+          openNotification?.({
+            type: 'success',
+            message: t('notifications.success'),
+            description: t('notifications.success'),
+          })
+        },
+      },
+    )
   }
 
   const onSaveAll = () => {
@@ -230,7 +243,8 @@ export default function Page() {
                     to: '/departments/csv',
                   })
                 }}
-                style={{ padding: 0 }}
+                style={{ padding: 0, color: CSV_LINK }}
+                className={'!underline'}
               >
                 {t('projects.csv_upload.title')}
               </Button>
