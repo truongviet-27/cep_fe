@@ -50,8 +50,12 @@ function ImportHistory() {
           <Col xs={24} md={8}>
             <CoreInput
               name="id"
-              label={<span className="font-bold">{t('タスクコード')}</span>}
-              placeholder={t('検索キーワード')}
+              label={
+                <span className="font-bold">
+                  {t('import_history.label.id')}
+                </span>
+              }
+              placeholder={t('import_history.placeholder.id')}
             />
           </Col>
 
@@ -59,7 +63,7 @@ function ImportHistory() {
             <Form.Item
               label={
                 <span className="font-bold">
-                  {t('approve_routes.filters.statusLabel')}
+                  {t('import_history.label.status')}
                 </span>
               }
               name="status"
@@ -67,7 +71,7 @@ function ImportHistory() {
             >
               <Select
                 showSearch
-                placeholder={t('approve_routes.filters.selectPlaceholder')}
+                placeholder={t('import_history.placeholder.status')}
               >
                 <Select.Option value="PROCESSING">
                   {t('import_history.text.status.PROCESSING')}
@@ -85,10 +89,17 @@ function ImportHistory() {
           <Col xs={24} md={8}>
             <Form.Item
               name="common_name"
-              label={<span className="font-bold">種別</span>}
+              label={
+                <span className="font-bold">
+                  {t('import_history.label.common_name')}
+                </span>
+              }
               layout="vertical"
             >
-              <Select showSearch placeholder="サブカテゴリーを選択">
+              <Select
+                showSearch
+                placeholder={t('import_history.placeholder.common_name')}
+              >
                 <Select.Option value="PRODUCTS">
                   {t('import_history.text.category.PRODUCTS')}
                 </Select.Option>
@@ -113,11 +124,15 @@ function ImportHistory() {
           <Col xs={24} md={8}>
             <Form.Item
               name="created_by"
-              label={<span className="font-bold">登録者</span>}
+              label={
+                <span className="font-bold">
+                  {t('import_history.label.created_by')}
+                </span>
+              }
               layout="vertical"
             >
               <Select
-                placeholder="コード入力"
+                placeholder={t('import_history.placeholder.created_by')}
                 showSearch
                 allowClear
                 {...employeeSelectProps}
@@ -127,7 +142,11 @@ function ImportHistory() {
           <Col xs={24} md={8}>
             <Form.Item
               layout="vertical"
-              label={<span className="font-bold">登録日時</span>}
+              label={
+                <span className="font-bold">
+                  {t('import_history.label.date')}
+                </span>
+              }
               colon={false}
               name={'date'}
             >
@@ -135,6 +154,8 @@ function ImportHistory() {
                 style={{
                   width: '100%',
                 }}
+                showTime
+                placeholder={['YYYY/MM/DD HH:mm:ss', 'YYYY/MM/DD HH:mm:ss']}
               />
             </Form.Item>
           </Col>
@@ -145,7 +166,7 @@ function ImportHistory() {
                 {t('buttons.search')}
               </Button>
               <Button variant="outlined" onClick={onReset}>
-                {t('buttons.back')}
+                {t('buttons.clear')}
               </Button>
             </div>
           </Col>
