@@ -10,7 +10,7 @@ export const validateRankRule = (t: any) => {
         z
           .string()
           .max(20, { error: t('validation.rank.code.max', { max: 20 }) })
-          .regex(/^[A-Za-z0-9]+$/, {
+          .regex(/^[A-Z0-9]+$/, {
             error: t('validation.rank.code.regex'),
           }),
       ),

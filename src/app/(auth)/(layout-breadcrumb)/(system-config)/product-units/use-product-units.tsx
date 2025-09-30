@@ -44,7 +44,15 @@ const EditableNameCell = React.memo(
       <Controller
         control={control}
         name={`rows.${index}.name`}
-        rules={{ required: t('validation.required') }}
+        rules={{
+          required: t('validation.required'),
+          maxLength: {
+            value: 20,
+            message: t('validation.customer.person_in_charge_phone.max', {
+              max: 20,
+            }),
+          },
+        }}
         render={({ field, fieldState: { error } }) => (
           <div className={'-mb-2 !h-fit'}>
             <Input
@@ -93,10 +101,11 @@ function useProductUnits() {
 
   const apiUrl = useApiUrl()
 
-  const { control, getValues, resetField, setFocus } = useForm<FormValues>({
-    defaultValues: { rows: [{ name: '', is_disable: true, order: 0 }] },
-    mode: 'onTouched',
-  })
+  const { control, getValues, resetField, setFocus, setValue } =
+    useForm<FormValues>({
+      defaultValues: { rows: [{ name: '', is_disable: true, order: 0 }] },
+      mode: 'onTouched',
+    })
 
   const { insert, remove, update, move, replace, fields } = useFieldArray({
     control,
@@ -112,6 +121,10 @@ function useProductUnits() {
       method: 'post',
       values,
       successNotification: (data) => {
+        fields.forEach((_, index) => {
+          setValue(`rows.${index}._isEditing`, false)
+        })
+
         return {
           message: t('notifications.editSuccess'),
           description: t('notifications.editSuccess'),
@@ -205,8 +218,6 @@ function useProductUnits() {
     }
     delete originalRef.current[stableKey]
   }
-
-  console.log('rendered')
 
   const { mutate: createRow } = useCreate()
   const { mutate: updateRow, isLoading: saving } = useUpdate()
@@ -313,21 +324,18 @@ function useProductUnits() {
       key: 'is_disable',
       width: 240,
       render: (_v, record, index) => {
-        const value =
-          (watchedRows[index] as UnitRow | undefined)?.is_disable ?? false
-        return record._isEditing ? (
+        return (
           <Controller
             control={control}
             name={`rows.${index}.is_disable`}
             render={({ field }) => (
               <Switch
+                {...field}
                 checked={!field.value}
                 onChange={(checked) => field.onChange(!checked)}
               />
             )}
           />
-        ) : (
-          <Switch checked={!value} disabled />
         )
       },
     },

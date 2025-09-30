@@ -17,6 +17,7 @@ export const resource: ResourceProps[] = [
     show: '/quotas/show/:id',
     create: '/quotas/create',
     edit: '/quotas/edit/:id',
+    clone: '/quotas/clone/:id',
     meta: {
       parent: 'estimates',
       // canDelete: true,
@@ -75,6 +76,15 @@ export const resource: ResourceProps[] = [
     show: '/ranks/show:id',
     create: '/ranks/create',
     edit: '/ranks/edit:id',
+    meta: {
+      parent: 'merchandise',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
+    name: 'price-groups',
+    list: '/price-groups',
     meta: {
       parent: 'merchandise',
       canDelete: true,

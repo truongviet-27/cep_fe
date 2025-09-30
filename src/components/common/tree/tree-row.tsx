@@ -7,6 +7,7 @@ import {
 import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
+import { useTranslate } from '@refinedev/core'
 import { Button, Input, Space, Tag, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
 
@@ -50,6 +51,8 @@ const TreeRow: React.FC<TreeRowProps> = ({
   isNew,
 }) => {
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
+
+  const t = useTranslate()
 
   const [localName, setLocalName] = useState(editingName || '')
 
@@ -134,7 +137,13 @@ const TreeRow: React.FC<TreeRowProps> = ({
         /> */}
 
         {typeof cat.id === 'number' ? (
-          <DeleteButton hideText recordItemId={cat.id} />
+          <DeleteButton
+            hideText
+            recordItemId={cat.id}
+            confirmTitle={
+              hasChildren ? t('buttons.confirm_delete_parent') : undefined
+            }
+          />
         ) : (
           <CommonButton hideText onClick={onDelete} type="delete" />
         )}

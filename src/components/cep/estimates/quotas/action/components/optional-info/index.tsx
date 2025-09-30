@@ -354,10 +354,13 @@ function OptionalInfo() {
                     record.index2,
                     'profit_margin',
                   ],
-                  selling > 0 ? ((selling - cost) / cost) * 100 : 0,
+                  (selling > 0
+                    ? ((selling - cost) / selling) * 100
+                    : 0
+                  ).toFixed(2),
                 )
 
-                return `${selling > 0 ? ((selling - cost) / cost) * 100 : 0}%`
+                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
               },
             },
             {

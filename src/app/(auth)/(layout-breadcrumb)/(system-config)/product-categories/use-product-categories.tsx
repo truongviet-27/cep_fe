@@ -158,6 +158,7 @@ function useProductCategories() {
       ...prev,
       [id]: { name: node.name, original: node.name },
     }))
+    setDirty(true)
   }
 
   const changeName = (id: string | number, name: string) =>

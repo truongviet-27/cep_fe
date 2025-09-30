@@ -1,11 +1,21 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import { Button, Form, Input, InputNumber, Row, Space, Typography } from 'antd'
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Row,
+  Space,
+  Typography,
+} from 'antd'
 import React from 'react'
 import { Create } from '@components/crud/create'
 import { CreateButton, useForm } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
 import { validateRankRule } from '@validate/rank'
+import AutoHeading from '@components/common/auto-heading'
 
 type Props = {
   modalProps: any
@@ -34,7 +44,6 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
       isLoading={formLoading}
       saveButtonProps={saveButtonProps}
       title={<></>}
-      i18nHeading={'ranks.create.create'}
       contentProps={{ style: { boxShadow: 'none' } }}
       rightFooterButtons={
         <Space className={'flex w-full justify-end'}>
@@ -45,24 +54,27 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
         </Space>
       }
       hiddenButtonBack
+      isAutoHeading={false}
     >
+      <AutoHeading className={'!-mt-8'} i18n={'ranks.create.create'} />
+
       <Form
+        className={'!mt-10'}
         {...formProps}
         layout="horizontal"
-        labelCol={{ span: 6 }}
+        labelCol={{ span: 8 }}
         labelAlign="left"
         colon={false}
         onFinish={handleFinish}
       >
         <Form.Item required label={boldText(t('ranks.fields.code'))}>
-          <Row>
+          <Flex>
             <Form.Item required name="code" rules={[validateRankRule(t)]}>
-              <Input style={{ width: '105%' }} />
+              <Input />
             </Form.Item>
-            <Typography.Text className={'mt-1 ml-10'} type="secondary">
-              (A-Z, 0-9, -)
-            </Typography.Text>
-          </Row>
+            &nbsp;
+            <div className={'mt-1'}>{t('products.validation.codeFormat')}</div>
+          </Flex>
         </Form.Item>
 
         <Form.Item

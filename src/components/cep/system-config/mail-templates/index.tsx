@@ -61,6 +61,7 @@ function MailTemplate() {
           isEdit={isEdit}
           onChange={onChangeTabs}
           isLoading={isFetching}
+          indexTab={indexTab}
         />
 
         <div className="my-4 text-right">
@@ -71,15 +72,27 @@ function MailTemplate() {
                 description={t('mail_templates.popup.reset.message')}
                 open={openReset}
                 onConfirm={() => {
-                  form.setFieldsValue({
-                    [`title_${indexTab}`]: t('mail_templates.form.title'),
-                    [`content_${indexTab}`]: t(
-                      'mail_templates.form.quotationMailTemplate',
-                    ),
-                    [`signature_${indexTab}`]: t(
-                      'mail_templates.form.signature.content',
-                    ),
-                  })
+                  form.setFieldsValue(
+                    indexTab === 1
+                      ? {
+                          [`title_${indexTab}`]: t('mail_templates.form.title'),
+                          [`content_${indexTab}`]: t(
+                            'mail_templates.form.quotationMailTemplate',
+                          ),
+                          [`signature_${indexTab}`]: t(
+                            'mail_templates.form.signature.content',
+                          ),
+                        }
+                      : {
+                          [`title_${indexTab}`]: t('mail_templates.form.title'),
+                          [`content_${indexTab}`]: t(
+                            'mail_templates.form.quotationPasswordTemplate',
+                          ),
+                          [`signature_${indexTab}`]: t(
+                            'mail_templates.form.signature.content',
+                          ),
+                        },
+                  )
                   setOpenReset(!openReset)
                 }}
                 onCancel={() => {

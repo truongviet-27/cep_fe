@@ -41,7 +41,7 @@ function QuotaAction() {
   const t = useTranslate()
   const methods = useForm()
 
-  const { id } = useParsed()
+  const { id, action } = useParsed()
 
   const isUpdate = !!id
 
@@ -50,11 +50,13 @@ function QuotaAction() {
 
   const {
     formProps,
-    saveButtonProps,
     form,
+    saveButtonProps,
     mutation,
     query: queryBasic,
   } = methods
+
+  const { form: formProps2 } = formProps
 
   const { resource } = useResource()
   const { params } = useParsed()
@@ -82,13 +84,6 @@ function QuotaAction() {
       enabled: isUpdate,
     },
   })
-
-  console.log(
-    queryBasic?.data?.data?.tags,
-    'dataProducts?.data?.data.main_product',
-  )
-
-  console.log(form.getFieldsValue(), 'getFieldsValue')
 
   useEffect(() => {
     if (isUpdate) {
@@ -129,69 +124,71 @@ function QuotaAction() {
           ...dataHistory?.data?.data,
         })
       }
-    } else {
-      if (data?.data) {
-        form.setFieldsValue({
-          title: data?.data.greeting,
-          type: 'normal',
-          customer: null,
-          status: 'waiting_approve',
-          created_at: null,
-          delivery_date: null,
-          delivery_method: data?.data.default_delivery_method,
-          payment_due_date: data?.data.default_payment_due_date,
-          expiration_date: data?.data.default_expiration_date,
-          consumption_tax: data?.data.consumption_tax,
-          tax_rate: data?.data.tax_rate,
-          note: null,
-          tags: [],
-          total_cost: 0,
-          consumption_tax_amount: 0,
-          total_profit_margin: 0,
-          total_price_tax_included: 0,
-          main_product: [
-            {
-              group_name: '',
-              products: [
-                {
-                  product_id: null,
-                  package_id: null,
-                  name: '',
-                  code: '',
-                  cost_price: 0,
-                  quantity: 0,
-                  selling_price: 0,
-                  profit_margin: 0,
-                  is_add_total: false,
-                },
-              ],
-            },
-          ],
-          optional_product: [
-            {
-              group_name: '',
-              products: [
-                {
-                  product_id: null,
-                  package_id: null,
-                  name: '',
-                  code: '',
-                  cost_price: 0,
-                  selling_price: 0,
-                  quantity: 0,
-                  profit_margin: 0,
-                  is_add_total: false,
-                },
-              ],
-            },
-          ],
-        })
-      }
     }
-  }, [data, dataProducts, dataHistory, queryBasic])
+  }, [dataProducts, dataHistory, queryBasic])
+
+  useEffect(() => {
+    if (!isUpdate && data?.data) {
+      form.setFieldsValue({
+        title: '',
+        type: 'normal',
+        customer: null,
+        status: 'waiting_approve',
+        created_at: null,
+        delivery_date: null,
+        delivery_method: data?.data.default_delivery_method,
+        payment_due_date: data?.data.default_payment_due_date,
+        expiration_date: data?.data.default_expiration_date,
+        consumption_tax: data?.data.consumption_tax,
+        tax_rate: data?.data.tax_rate,
+        note: null,
+        tags: [],
+        total_cost: 0,
+        consumption_tax_amount: 0,
+        total_profit_margin: 0,
+        total_price_tax_included: 0,
+        main_product: [
+          {
+            group_name: '',
+            products: [
+              {
+                product_id: null,
+                package_id: null,
+                name: '',
+                code: '',
+                cost_price: 0,
+                quantity: 0,
+                selling_price: 0,
+                profit_margin: 0,
+                is_add_total: false,
+              },
+            ],
+          },
+        ],
+        optional_product: [
+          {
+            group_name: '',
+            products: [
+              {
+                product_id: null,
+                package_id: null,
+                name: '',
+                code: '',
+                cost_price: 0,
+                selling_price: 0,
+                quantity: 0,
+                profit_margin: 0,
+                is_add_total: false,
+              },
+            ],
+          },
+        ],
+      })
+    }
+  }, [data])
 
   const onFinish = (values: any) => {
-    if (isUpdate) {
+    if (isUpdate && action === 'edit') {
       mutation.mutate(
         {
           resource: resource?.name,
@@ -199,7 +196,7 @@ function QuotaAction() {
             ...values,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
-            status: 'waiting_approval',
+            status: 'creating',
             tags: values?.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
@@ -221,9 +218,10 @@ function QuotaAction() {
           resource: resource?.name,
           values: {
             ...values,
+            resource_id: action === 'clone' ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
-            status: 'waiting_approval',
+            status: 'creating',
             tags: values.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
@@ -279,12 +277,12 @@ function QuotaAction() {
         }
       >
         <Form
-          {...formProps}
+          form={formProps2}
+          onFinish={onFinish}
           labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
           labelAlign="left"
           layout="horizontal"
           colon={false}
-          onFinish={onFinish}
           initialValues={{
             delivery_date: dayjs(),
             created_at: dayjs(),
@@ -359,7 +357,7 @@ function QuotaAction() {
               </Button>
 
               <Button {...saveButtonProps} type="primary">
-                {isUpdate ? t('buttons.save') : t('buttons.create')}
+                {action === 'edit' ? t('buttons.save') : t('buttons.create')}
               </Button>
             </Space>
           </Flex>

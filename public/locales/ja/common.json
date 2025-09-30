@@ -46,7 +46,8 @@
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
     "show": "show",
-    "refresh": "refresh"
+    "refresh": "refresh",
+    "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？"
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -86,12 +87,12 @@
     "business_partner": "取引先"
   },
   "customers": {
-    "customers": "単価ランク一覧",
+    "customers": "取引先一覧",
     "list": {
       "list": "取引先一覧"
     },
     "create": {
-      "create": "取引先編集",
+      "create": "取引先登録",
       "example": "取引先"
     },
     "edit": {
@@ -142,7 +143,7 @@
       "unit_price_rank": "単価ランク",
       "credit_rank": "与信ランク",
       "anti_social_rank": "反社ランク",
-      "anti_social_check_date": "反社チェック更新日",
+      "anti_social_check_date": "反社チェック",
       "registration_date": "登録日",
       "suspension_date": "停止日",
       "actions": "操作",
@@ -477,18 +478,30 @@
       "body": "本文",
       "title": "【見積書送付】お知らせメール",
       "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付の通りお見積りを送付いたします。\nよろしくご査収ください。",
+      "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先程と送付致しましたお見積書のパスワードを送付致します。\nパスワードは\n\n[[パスワード]]\n\nです。\nよろしくお願い致します。",
+
       "signature": {
         "label": "署名（自動挿入）",
         "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team mail: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"
       },
       "note": "タグは必ず[[]]で囲って入力してください。\n・署名は自動的に追加されるため、テンプレート内に記載する必要はありません。\n・変更したテンプレートは「更新」ボタンを押すまで保存されません。\n・テンプレートは見積書送付時に自動的に適用されます。\n・入力欄上部のボタンをクリックすると、テンプレート内の任意の位置にタグを埋め込むことができます。埋め込まれたタグは、メール送信実行時に登録して表示されます。\n（例）[[取引先会社名]] → ○○商事株式会社"
     },
-    "tags": {
+    "tags_mail": {
       "customerCompany": "取引先会社名",
       "customerDepartment": "取引先部署名",
       "customerName": "取引先担当者名",
       "selfCompany": "自社名",
-      "selfDepartment": "自社部署",
+      "selfDepartment": "自社担当者名",
+      "selfEmail": "自社担当者メールアドレス",
+      "selfTel": "自社担当者電話番号"
+    },
+    "tags_password": {
+      "customerCompany": "取引先会社名",
+      "customerDepartment": "取引先部署名",
+      "customerName": "取引先担当者名",
+      "selfCompany": "自社名",
+      "selfDepartment": "自社担当者名",
+      "selfPassword": "パスワード",
       "selfEmail": "自社担当者メールアドレス",
       "selfTel": "自社担当者電話番号"
     },
@@ -892,5 +905,22 @@
     "create": "見積新規作成",
     "edit": "見積編集",
     "detail": "見積詳細"
+  },
+  "price_groups": {
+    "price_groups": "取引先",
+    "list": {
+      "list": "単価グループ設定"
+    },
+    "fields": {
+      "product_code": "商品コード",
+      "product_name": "商品名",
+      "category": "カテゴリ (小)",
+      "unit": "単位",
+      "packaging_name": "荷姿",
+      "selling_price": "販売価格(円)",
+      "is_rate_based": "設定方式",
+      "rate": "換率",
+      "absolute": "絶対"
+    }
   }
 }
