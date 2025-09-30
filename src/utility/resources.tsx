@@ -17,6 +17,7 @@ export const resource: ResourceProps[] = [
     show: '/quotas/show/:id',
     create: '/quotas/create',
     edit: '/quotas/edit/:id',
+    clone: '/quotas/clone/:id',
     meta: {
       parent: 'estimates',
       // canDelete: true,
