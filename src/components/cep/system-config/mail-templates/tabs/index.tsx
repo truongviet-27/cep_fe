@@ -8,43 +8,80 @@ function TabsEmailTemplate({
   isEdit,
   onChange,
   isLoading,
+  indexTab,
 }: {
   isEdit: boolean
   onChange: (value: string) => void
   isLoading: boolean
+  indexTab: number
 }) {
   const t = useTranslate()
   const tags = useMemo(() => {
-    return [
-      {
-        value: 1,
-        text: t('mail_templates.tags.customerCompany'),
-      },
-      {
-        value: 2,
-        text: t('mail_templates.tags.customerDepartment'),
-      },
-      {
-        value: 3,
-        text: t('mail_templates.tags.customerName'),
-      },
-      {
-        value: 4,
-        text: t('mail_templates.tags.selfCompany'),
-      },
-      {
-        value: 5,
-        text: t('mail_templates.tags.selfDepartment'),
-      },
-      {
-        value: 6,
-        text: t('mail_templates.tags.selfEmail'),
-      },
-      {
-        value: 7,
-        text: t('mail_templates.tags.selfTel'),
-      },
-    ]
+    return indexTab === 1
+      ? [
+          {
+            value: 1,
+            text: t('mail_templates.tags_mail.customerCompany'),
+          },
+          {
+            value: 2,
+            text: t('mail_templates.tags_mail.customerDepartment'),
+          },
+          {
+            value: 3,
+            text: t('mail_templates.tags_mail.customerName'),
+          },
+          {
+            value: 4,
+            text: t('mail_templates.tags_mail.selfCompany'),
+          },
+          {
+            value: 5,
+            text: t('mail_templates.tags_mail.selfDepartment'),
+          },
+          {
+            value: 6,
+            text: t('mail_templates.tags_mail.selfEmail'),
+          },
+          {
+            value: 7,
+            text: t('mail_templates.tags_mail.selfTel'),
+          },
+        ]
+      : [
+          {
+            value: 1,
+            text: t('mail_templates.tags_password.customerCompany'),
+          },
+          {
+            value: 2,
+            text: t('mail_templates.tags_password.customerDepartment'),
+          },
+          {
+            value: 3,
+            text: t('mail_templates.tags_password.customerName'),
+          },
+          {
+            value: 4,
+            text: t('mail_templates.tags_password.selfCompany'),
+          },
+          {
+            value: 5,
+            text: t('mail_templates.tags_password.selfDepartment'),
+          },
+          {
+            value: 6,
+            text: t('mail_templates.tags_password.selfPassword'),
+          },
+          {
+            value: 7,
+            text: t('mail_templates.tags_password.selfEmail'),
+          },
+          {
+            value: 8,
+            text: t('mail_templates.tags_password.selfTel'),
+          },
+        ]
   }, [])
 
   const items = useMemo(() => {

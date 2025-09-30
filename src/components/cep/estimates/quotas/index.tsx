@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  CommentOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
-  MessageOutlined,
   RightOutlined,
 } from '@ant-design/icons'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
+import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import { DownloadButton } from '@components/common/button/download'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -16,6 +18,8 @@ import {
   DeleteButton,
   EditButton,
   ShowButton,
+  useSelect,
+  useTable,
 } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
@@ -29,11 +33,14 @@ import {
   Select,
   Space,
   Tag,
+  Tooltip,
   Typography,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { type TableRowSelection } from 'antd/es/table/interface'
-import React, { useMemo, useState } from 'react'
+import dayjs from 'dayjs'
+import Link from 'next/link'
+import React, { useCallback, useMemo, useState } from 'react'
 
 const { Title } = Typography
 
@@ -45,12 +52,83 @@ function QuotaList() {
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [options, setOptions] = useState<any>()
+
+  const statusButton = useCallback(
+    (status: string) => {
+      if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
+        return [
+          {
+            value: '',
+            label: '削除',
+          },
+          {
+            value: '',
+            label: '承認依頼（作成者）',
+          },
+        ]
+      } else if (status === QuotaStatus.WaitingApproval) {
+        return [
+          {
+            value: '',
+            label: '承認（承認者）',
+          },
+        ]
+      } else if (status === QuotaStatus.Approved) {
+        return [
+          {
+            value: '',
+            label: '送信（作成者）',
+          },
+        ]
+      } else if (status === QuotaStatus.SentToCustomer) {
+        return [
+          {
+            value: '',
+            label: '受注へ移動',
+          },
+          {
+            value: '',
+            label: '注へ移動',
+          },
+        ]
+      } else if (status === QuotaStatus.Completed) {
+        return [
+          {
+            value: '',
+            label: '送信へ移動',
+          },
+        ]
+      } else if (status === QuotaStatus.Cancelled) {
+        return [
+          {
+            value: '',
+            label: '削除',
+          },
+          {
+            value: '',
+            label: '送信へ移動',
+          },
+        ]
+      } else {
+        return []
+      }
+    },
+    [t],
+  )
 
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
     selectedRows: any,
   ) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys, selectedRows)
+    const status = handleOptions(selectedRows)
+
+    console.log(newSelectedRowKeys, selectedRows, 'selectProps')
+
+    console.log(status, 'statusxxxxxx')
+    const options = statusButton(status)
+    setOptions(options)
+
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
@@ -66,53 +144,96 @@ function QuotaList() {
         dataIndex: 'status',
         key: 'status',
         render: (value, record) => {
+          let background = ''
           let color = ''
           let text = ''
-          switch (value) {
-            case 'draft':
-              color = 'default'
+          switch (value as QuotaStatus) {
+            case QuotaStatus.Creating:
+              background = '#E2E2E2'
+              color = '#666666'
               text = '下書き'
               break
-            case 'pending':
-              color = 'orange'
+
+            case QuotaStatus.WaitingApproval:
+              background = '#FFFFC7'
+              color = '#D2A904'
               text = '承認待'
               break
-            case 'rejected':
-              color = 'red'
-              text = '否認'
-              break
-            case 'approved':
-              color = 'green'
+
+            case QuotaStatus.Approved:
+              background = '#DAEDFF'
+              color = '#0066CC'
               text = '承認済'
               break
-            case 'sent':
-              color = 'blue'
+
+            case QuotaStatus.Rejected:
+              background = '#FFDFBF'
+              color = '#FF8400'
+              text = '差戻'
+              break
+
+            case QuotaStatus.SentToCustomer:
+              background = '#DAEDFF'
+              color = '#0066CC'
               text = '送信済'
+              break
+
+            case QuotaStatus.Completed:
+              background = '#DFFFEB'
+              color = '#22874D'
+              text = '受注'
+              break
+
+            case QuotaStatus.Cancelled:
+              background = '#FFDFDF'
+              color = '#FF0000'
+              text = '失注'
+              break
+
+            default:
+              background = '#FFFFFF'
+              color = '#000000'
+              text = ''
               break
           }
 
           return (
-            <Space direction="vertical" align="center" content="center">
-              <Tag color={color}>{text}</Tag>
-              {record.comment && <MessageOutlined />}
-            </Space>
+            <div className="flex flex-col items-center justify-center gap-1">
+              <Tag color={background} style={{ color, marginRight: 0 }}>
+                {text}
+              </Tag>
+              {record.latest_approval_comment?.comment && (
+                <Tooltip
+                  title={`${record.latest_approval_comment?.approver_name} (${dayjs(record.latest_approval_comment?.update_at).format('YYYY/MM/DD')}) : ${record.latest_approval_comment?.comment}`}
+                >
+                  <CommentOutlined
+                    style={{
+                      fontSize: 16,
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </div>
           )
         },
       },
       {
         title: '見積番号',
-        dataIndex: 'number',
-        key: 'number',
-        render: (value) => <a>{value}</a>,
+        dataIndex: 'code',
+        key: 'code',
+        render: (value, record) => (
+          <Link href={`/quotas/show/${record.id}`}>{value}</Link>
+        ),
       },
       {
         title: 'タイトル / 取引先',
         dataIndex: 'title',
         key: 'title',
         render: (_, record) => (
-          <div>
+          <div className="flex flex-col gap-[2px]">
             <div>{record.title}</div>
-            <div style={{ color: '#888' }}>{record.customer}</div>
+            <div style={{ color: '#888' }}>{record.customer_name}</div>
           </div>
         ),
       },
@@ -122,8 +243,10 @@ function QuotaList() {
         key: 'creator',
         render: (_, record) => (
           <div>
-            <div>{record.creator}</div>
-            <div style={{ color: '#888' }}>{record.approver}</div>
+            <div>{record.author?.name}</div>
+            <div className="flex flex-wrap gap-[2px]" style={{ color: '#888' }}>
+              {record.approvers?.map((item: string) => item)}
+            </div>
           </div>
         ),
       },
@@ -132,9 +255,9 @@ function QuotaList() {
         dataIndex: 'department',
         key: 'department',
         render: (_, record) => (
-          <div>
+          <div className="flex flex-col gap-2">
             <div>{record.department}</div>
-            <div>{record.amount.toLocaleString()}</div>
+            <div>{record?.total_price}</div>
           </div>
         ),
       },
@@ -144,8 +267,10 @@ function QuotaList() {
         key: 'createdAt',
         render: (_, record) => (
           <div>
-            <div>{record.createdAt}</div>
-            <div>{record.expiredAt}</div>
+            <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
+            <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
+
+            {/* <div>{record.expiration_date}</div> */}
           </div>
         ),
       },
@@ -153,12 +278,33 @@ function QuotaList() {
         title: '送信日 / 受注・失注日',
         dataIndex: 'sentAt',
         key: 'sentAt',
-        render: (_, record) => (
-          <div>
-            <div>{record.sentAt || '-'}</div>
-            <div>{record.resultDate || '-'}</div>
-          </div>
-        ),
+        render: (_, record) => {
+          if (
+            record.sent_to_customer_date ||
+            record.customer_accepted_date ||
+            record.customer_cancelled_date
+          ) {
+            return (
+              <div>
+                <div>
+                  {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
+                    '-'}
+                </div>
+                <div>
+                  {dayjs(record.customer_accepted_date).format('YYYY/MM/DD') ||
+                    dayjs(record.customer_cancelled_date).format('YYYY/MM/DD')}
+                </div>
+              </div>
+            )
+          } else {
+            return (
+              <div>
+                <div>{dayjs().format('YYYY/MM/DD')}</div>
+                <div>{dayjs().format('YYYY/MM/DD')}</div>
+              </div>
+            )
+          }
+        },
       },
       {
         title: '操作',
@@ -171,12 +317,14 @@ function QuotaList() {
               icon={<EyeOutlined />}
               recordItemId={record.id}
             />
-            <EditButton
-              hideText
-              size="small"
-              icon={<EditOutlined />}
-              recordItemId={record.id}
-            />
+            {record.status === QuotaStatus.Creating && (
+              <EditButton
+                hideText
+                size="small"
+                icon={<EditOutlined />}
+                recordItemId={record.id}
+              />
+            )}
 
             <CloneButton
               hideText
@@ -185,96 +333,135 @@ function QuotaList() {
               recordItemId={record.id}
             />
 
-            <DeleteButton
-              hideText
-              size="small"
-              icon={<DeleteOutlined />}
-              recordItemId={record.id}
-            />
+            {(record.status === QuotaStatus.Rejected ||
+              record.status === QuotaStatus.Cancelled) && (
+              <DeleteButton
+                hideText
+                size="small"
+                icon={<DeleteOutlined />}
+                recordItemId={record.id}
+              />
+            )}
+            <DownloadButton hideText size="small" recordItemId={record.id} />
+
+            {record.status === QuotaStatus.Completed && (
+              <Button type="default">決定移動</Button>
+            )}
           </Space>
         ),
       },
     ]
   }, [t])
 
-  const dataSource: any[] = [
-    {
-      id: 1,
-      status: 'draft',
-      comment: 'Chưa hoàn thiện',
-      number: 'ES-250527-001',
-      title: 'システムカスタマイズ',
-      customer: '株式会社フューチャーデバイス',
-      creator: '伊藤健太',
-      approver: '田中洋一',
-      department: 'SaaS事業部',
-      amount: 200000,
-      createdAt: '2025/05/31',
-      expiredAt: '2025/08/31',
-      sentAt: undefined,
-      resultDate: undefined,
+  const [status, setStatus] = useState<string | null>(null)
+
+  const { tableProps, searchFormProps, setFilters } = useTable({
+    syncWithLocation: true,
+    onSearch(values: any) {
+      return [
+        {
+          field: 'status',
+          operator: 'eq',
+          value: status,
+        },
+        {
+          field: 'code',
+          operator: 'eq',
+          value: values.code,
+        },
+        {
+          field: 'customer_name',
+          operator: 'eq',
+          value: values.customer_name,
+        },
+        {
+          field: 'creator_name',
+          operator: 'eq',
+          value: values.creator_name,
+        },
+        {
+          field: 'tag_name',
+          operator: 'eq',
+          value: values.tag_name,
+        },
+        {
+          field: 'approver_name',
+          operator: 'eq',
+          value: values.approver_name,
+        },
+        {
+          field: 'creator_department_name',
+          operator: 'eq',
+          value: values.creator_department_name?.label,
+        },
+        {
+          field: 'search_date_type',
+          operator: 'eq',
+          value: values.search_date_type,
+        },
+        {
+          field: 'start_date',
+          operator: 'eq',
+          value: dayjs((values?.date ?? [])[0]).format('YYYY-MM-DD'),
+        },
+        {
+          field: 'end_date',
+          operator: 'eq',
+          value: dayjs((values?.date ?? [])[1]).format('YYYY-MM-DD'),
+        },
+      ]
     },
+  })
+
+  const statusData = [
+    { title: 'すべて', value: 9222, key: null },
+    { title: '作成中', value: 4, key: QuotaStatus.Creating },
     {
-      id: 2,
-      status: 'pending',
-      number: 'ES-250527-002',
-      title: 'システムカスタマイズ',
-      customer: '株式会社フューチャーデバイス',
-      creator: '伊藤健太',
-      approver: '田中洋一',
-      department: 'SaaS事業部',
-      amount: 200000,
-      createdAt: '2025/05/31',
-      expiredAt: '2025/08/31',
-      sentAt: undefined,
-      resultDate: undefined,
-    },
+      title: '承認待',
+      value: 3,
+      color: '#faad14',
+      key: QuotaStatus.WaitingApproval,
+    }, // vàng
+    { title: '承認済', value: 11, color: '#1890ff', key: QuotaStatus.Approved }, // xanh
     {
-      id: 3,
-      status: 'rejected',
-      number: 'ES-250527-003',
-      title: 'システムカスタマイズ',
-      customer: '株式会社フューチャーデバイス',
-      creator: '伊藤健太',
-      approver: '田中洋一',
-      department: 'SaaS事業部',
-      amount: 200000,
-      createdAt: '2025/05/31',
-      expiredAt: '2025/08/31',
-      sentAt: '2025/06/01',
-      resultDate: '2025/06/01',
-    },
-    {
-      id: 4,
-      status: 'approved',
-      number: 'ES-250527-004',
-      title: 'システムカスタマイズ',
-      customer: '株式会社フューチャーデバイス',
-      creator: '伊藤健太',
-      approver: '田中洋一',
-      department: 'SaaS事業部',
-      amount: 200000,
-      createdAt: '2025/05/31',
-      expiredAt: '2025/08/31',
-      sentAt: '2025/06/01',
-      resultDate: '2025/06/30',
-    },
-    {
-      id: 5,
-      status: 'sent',
-      number: 'ES-250527-005',
-      title: 'システムカスタマイズ',
-      customer: '株式会社フューチャーデバイス',
-      creator: '伊藤健太',
-      approver: '田中洋一',
-      department: 'SaaS事業部',
-      amount: 200000,
-      createdAt: '2025/05/31',
-      expiredAt: '2025/08/31',
-      sentAt: '2025/06/01',
-      resultDate: undefined,
-    },
+      title: '送信済',
+      value: 9100,
+      color: '#1677ff',
+      key: QuotaStatus.SentToCustomer,
+    }, // xanh đậm
+    { title: '差戻', value: 96, color: '#fa541c', key: QuotaStatus.Rejected }, // cam
+    { title: '受注', value: 4, color: '#52c41a', key: QuotaStatus.Completed }, // xanh lá
+    { title: '失注', value: 4, color: '#ff4d4f', key: QuotaStatus.Cancelled }, // đỏ
   ]
+
+  const onChangeStatus = useCallback(
+    (status: string | null) => {
+      setStatus(status)
+    },
+    [status],
+  )
+
+  const { selectProps } = useSelect({
+    resource: 'departments',
+    optionLabel: 'name',
+    optionValue: 'id',
+  })
+
+  const handleOptions = (data: any[]) => {
+    let filter = ''
+    for (const item of data) {
+      if (filter.length === 0) {
+        filter = item?.status
+      } else if (item?.status === filter) {
+        continue
+      } else {
+        filter = ''
+        break
+      }
+    }
+
+    return filter
+  }
 
   return (
     <List
@@ -297,64 +484,82 @@ function QuotaList() {
       }
       i18nHeading={'quotas.list'}
     >
-      <Form>
-        <StatusDashboard />
+      <Form {...searchFormProps}>
+        <Form.Item name={'status'} hidden />
+        <StatusDashboard
+          statusData={statusData}
+          status={status}
+          onChangeStatus={onChangeStatus}
+        />
         <div className="my-4">
           <Row gutter={[24, 0]}>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">見積番号</span>}
                 layout="vertical"
+                name={'code'}
               >
-                <Input />
+                <Input placeholder="部分一致" />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">取引先</span>}
                 layout="vertical"
+                name={'customer_name'}
               >
-                <Input />
+                <Input placeholder="部分一致" />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">タイトル</span>}
                 layout="vertical"
+                name={'title'}
               >
-                <Input />
+                <Input placeholder="部分一致" />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">作成者</span>}
                 layout="vertical"
+                name={'creator_name'}
               >
-                <Input />
+                <Input placeholder="部分一致" />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">承認者</span>}
                 layout="vertical"
+                name={'approver_name'}
               >
-                <Input />
+                <Input placeholder="部分一致" />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">部門（支社/部/課）</span>}
                 layout="vertical"
+                name={'creator_department_name'}
               >
-                <Select allowClear showSearch />
+                <Select
+                  allowClear
+                  showSearch
+                  {...selectProps}
+                  labelInValue
+                  placeholder={'選択してください'}
+                />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
+                name={'tag_name'}
               >
-                <Input />
+                <Input placeholder="部分一致" />
               </Form.Item>
             </Col>
           </Row>
@@ -363,8 +568,35 @@ function QuotaList() {
               <Form.Item
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
+                name={'search_date_type'}
               >
-                <Select allowClear showSearch />
+                <Select
+                  allowClear
+                  showSearch
+                  options={[
+                    {
+                      value: 'created_at',
+                      label: '作成日',
+                    },
+                    {
+                      value: '',
+                      label: '送信日',
+                    },
+                    {
+                      value: 'expiration_date',
+                      label: '有効期限',
+                    },
+                    {
+                      value: '',
+                      label: '受注日 ',
+                    },
+                    {
+                      value: '',
+                      label: '失注日',
+                    },
+                  ]}
+                  placeholder={'作成日'}
+                />
               </Form.Item>
             </Col>
 
@@ -372,15 +604,31 @@ function QuotaList() {
               <Form.Item
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
+                name={'date'}
               >
-                <RangePicker allowClear className="w-full" />
+                <RangePicker
+                  allowClear
+                  className="w-full"
+                  placeholder={['YYYY/MM/DD', 'YYYY/MM/DD']}
+                />
               </Form.Item>
             </Col>
 
             <Col xs={12} md={6}>
               <div className="mt-7 mb-6 flex gap-2">
-                <Button type="primary">{t('buttons.search')}</Button>
-                <Button type="default">{t('buttons.clear')}</Button>
+                <Button htmlType="submit" type="primary">
+                  {t('buttons.search')}
+                </Button>
+                <Button
+                  htmlType="reset"
+                  type="default"
+                  onClick={() => {
+                    setFilters([], 'replace')
+                    setStatus(null)
+                  }}
+                >
+                  {t('buttons.clear')}
+                </Button>
               </div>
             </Col>
           </Row>
@@ -391,7 +639,12 @@ function QuotaList() {
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
               >
-                <Select allowClear showSearch />
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder={'一括処理'}
+                  options={options ?? []}
+                />
               </Form.Item>
             </Col>
 
@@ -417,7 +670,7 @@ function QuotaList() {
           rowKey={'id'}
           rowSelection={rowSelection}
           columns={columns}
-          dataSource={dataSource}
+          {...tableProps}
         />
       </Form>
     </List>

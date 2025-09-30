@@ -163,6 +163,9 @@ import type {
   Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data,
   Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Responses,
   Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Errors,
+  ProductControllerGetProductWithCustomerPricingData,
+  ProductControllerGetProductWithCustomerPricingResponses,
+  ProductControllerGetProductWithCustomerPricingErrors,
   ProductCategoryControllerUpdateTreeData,
   ProductCategoryControllerUpdateTreeResponses,
   ProductCategoryControllerUpdateTreeErrors,
@@ -208,15 +211,29 @@ import type {
   ProductUnitControllerUpdateData,
   ProductUnitControllerUpdateResponses,
   ProductUnitControllerUpdateErrors,
+  QuotaControllerIndexData,
+  QuotaControllerIndexResponses,
   QuotaControllerStoreData,
   QuotaControllerStoreResponses,
   QuotaControllerStoreErrors,
+  QuotaControllerDestroyData,
+  QuotaControllerDestroyResponses,
+  QuotaControllerDestroyErrors,
   QuotaControllerShowData,
   QuotaControllerShowResponses,
   QuotaControllerShowErrors,
+  QuotaControllerUpdateData,
+  QuotaControllerUpdateResponses,
+  QuotaControllerUpdateErrors,
   QuotaControllerCloneData,
   QuotaControllerCloneResponses,
   QuotaControllerCloneErrors,
+  QuotaControllerGetHistoryData,
+  QuotaControllerGetHistoryResponses,
+  QuotaControllerGetHistoryErrors,
+  QuotaControllerGetProductsData,
+  QuotaControllerGetProductsResponses,
+  QuotaControllerGetProductsErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
@@ -318,6 +335,7 @@ import {
   zProductControllerDestroyData,
   zProductControllerShowData,
   zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data,
+  zProductControllerGetProductWithCustomerPricingData,
   zProductCategoryControllerUpdateTreeData,
   zProductCategoryControllerIndexData,
   zProductCategoryControllerStoreData,
@@ -333,9 +351,14 @@ import {
   zProductUnitControllerDestroyData,
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
+  zQuotaControllerIndexData,
   zQuotaControllerStoreData,
+  zQuotaControllerDestroyData,
   zQuotaControllerShowData,
+  zQuotaControllerUpdateData,
   zQuotaControllerCloneData,
+  zQuotaControllerGetHistoryData,
+  zQuotaControllerGetProductsData,
   zQuotaFormSettingControllerShowData,
   zA229A59B851Ad68435Ac0E91E98F32Data,
   zRankControllerIndexData,
@@ -1908,6 +1931,39 @@ export const fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3 = <
 }
 
 /**
+ * Get product detail with customer-specific pricing
+ * Get product details including packages and rank-based pricing for a specific customer
+ */
+export const productControllerGetProductWithCustomerPricing = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    ProductControllerGetProductWithCustomerPricingData,
+    ThrowOnError
+  >,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ProductControllerGetProductWithCustomerPricingResponses,
+    ProductControllerGetProductWithCustomerPricingErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductControllerGetProductWithCustomerPricingData.parseAsync(
+        data,
+      )
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/products/{productId}/customer-pricing/{customerId}',
+    ...options,
+  })
+}
+
+/**
  * Update category order and tree structure
  * Updates the order of product categories based on a new tree structure. The API validates the tree's integrity and re-orders all categories sequentially, regardless of the 'order' values in the request body.
  */
@@ -2350,6 +2406,32 @@ export const productUnitControllerUpdate = <
 }
 
 /**
+ * Get all quotas
+ * Get a list of quotas with pagination and advanced filters.
+ */
+export const quotaControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<QuotaControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaControllerIndexResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas',
+    ...options,
+  })
+}
+
+/**
  * Create a new quota
  * Create a new quota with nested product groups, products, and tags.
  */
@@ -2380,6 +2462,32 @@ export const quotaControllerStore = <ThrowOnError extends boolean = false>(
 }
 
 /**
+ * Soft delete a quota
+ * Soft delete an existing quota.
+ */
+export const quotaControllerDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    QuotaControllerDestroyResponses,
+    QuotaControllerDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}',
+    ...options,
+  })
+}
+
+/**
  * Get a quota by ID
  * Get a specific quota's details by ID with all related data.
  */
@@ -2402,6 +2510,36 @@ export const quotaControllerShow = <ThrowOnError extends boolean = false>(
     ],
     url: '/api/v1/quotas/{id}',
     ...options,
+  })
+}
+
+/**
+ * Update a quota
+ * Update an existing quota with nested product groups, products, and tags.
+ */
+export const quotaControllerUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerUpdateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    QuotaControllerUpdateResponses,
+    QuotaControllerUpdateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerUpdateData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 
@@ -2432,6 +2570,60 @@ export const quotaControllerClone = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get quota history
+ * Get the approval and clone history for a specific quota.
+ */
+export const quotaControllerGetHistory = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerGetHistoryData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaControllerGetHistoryResponses,
+    QuotaControllerGetHistoryErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerGetHistoryData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}/history',
+    ...options,
+  })
+}
+
+/**
+ * Get quota products
+ * Get all product groups and products for a specific quota, categorized into original and additional.
+ */
+export const quotaControllerGetProducts = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerGetProductsData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaControllerGetProductsResponses,
+    QuotaControllerGetProductsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerGetProductsData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}/products',
+    ...options,
   })
 }
 

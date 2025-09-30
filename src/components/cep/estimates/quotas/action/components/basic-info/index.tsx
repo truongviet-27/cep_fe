@@ -1,5 +1,7 @@
-import { useSelect } from '@refinedev/antd'
-import { useTranslate } from '@refinedev/core'
+import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import { useModalForm, useSelect } from '@refinedev/antd'
+import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import { type CodeIssueSetting } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import {
   Button,
@@ -9,14 +11,18 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Radio,
   Row,
   Select,
 } from 'antd'
-import React from 'react'
 
 const BasicInfo = () => {
   const t = useTranslate()
+
+  const form = Form.useFormInstance()
+
+  const apiUrl = useApiUrl()
 
   const { selectProps: selectPropsCt } = useSelect({
     resource: 'customers',
@@ -24,7 +30,30 @@ const BasicInfo = () => {
     optionValue: 'id',
   })
 
-  console.log('xxxxxxxxxxxxxxxxxxxx')
+  const { data: codeIssueSetting, isLoading: loadingQuota } =
+    useCustom<CodeIssueSetting>({
+      url: `${apiUrl}/code-issue-settings/by-code/quotas`,
+      method: 'get',
+    })
+
+  const modalFormProps = useModalForm({
+    action: 'edit',
+    resource: 'code-issue-settings',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+    defaultFormValues: {
+      hash_dash: true,
+    },
+  })
+
+  const handleAutoNumber = () => {
+    const code = codeIssueSetting?.data?.preview_code
+    if (code) {
+      form.setFieldsValue({ code })
+    }
+  }
+
+  const { show, close, open } = modalFormProps
 
   return (
     <Card
@@ -47,20 +76,59 @@ const BasicInfo = () => {
       >
         <Row align="middle" gutter={20}>
           <Col>
-            <Form.Item rules={[]} name={'code'} required>
+            <Form.Item
+              rules={[
+                {
+                  required: true,
+                  message: t('approve_routes.validation.route_code.required'),
+                },
+                {
+                  whitespace: true,
+                  message: t(
+                    'approve_routes.validation.route_code.invalid_whitespace',
+                  ),
+                },
+                {
+                  pattern: /^[A-Z0-9-]+$/,
+                  message: t(
+                    'approve_routes.validation.route_code.invalid_format',
+                  ),
+                },
+                {
+                  max: 255,
+                  message: t(
+                    'approve_routes.validation.route_code.invalid_format',
+                  ),
+                },
+              ]}
+              name={'code'}
+              required
+            >
               <Input style={{ width: 240 }} />
             </Form.Item>
           </Col>
           <Col>
             <Form.Item>
-              <Button onClick={() => {}} loading={false}>
+              <Button
+                onClick={handleAutoNumber}
+                loading={loadingQuota}
+                color="primary"
+                variant="outlined"
+              >
                 {t('departments.create.auto_number')}
               </Button>
             </Form.Item>
           </Col>
           <Col>
             <Form.Item>
-              <Button type="link" onClick={() => {}}>
+              <Button
+                color="primary"
+                variant="link"
+                size="small"
+                onClick={() => {
+                  show(codeIssueSetting?.data.id)
+                }}
+              >
                 {t('departments.create.popup_number_setting')}
               </Button>
             </Form.Item>
@@ -93,7 +161,27 @@ const BasicInfo = () => {
       <Form.Item required label={boldText('タイトル')}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'title'}>
+            <Form.Item
+              name={'title'}
+              rules={[
+                {
+                  required: true,
+                  message: t('approve_routes.validation.route_code.required'),
+                },
+                {
+                  whitespace: true,
+                  message: t(
+                    'approve_routes.validation.route_code.invalid_whitespace',
+                  ),
+                },
+                {
+                  max: 255,
+                  message: t(
+                    'approve_routes.validation.route_code.invalid_format',
+                  ),
+                },
+              ]}
+            >
               <Input />
             </Form.Item>
           </Col>
@@ -275,6 +363,10 @@ const BasicInfo = () => {
           </Col>
         </Row>
       </Form.Item>
+
+      <Modal open={open} onCancel={close} footer={null}>
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
+      </Modal>
     </Card>
   )
 }

@@ -50,7 +50,7 @@ function DetailInfo() {
     const taxTotal = (sellTotal * tax_rate) / 100
     const sellTotalWithTax = sellTotal + taxTotal
     const profitRate =
-      costTotal > 0 ? ((sellTotal - costTotal) / costTotal) * 100 : 0
+      costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
@@ -102,7 +102,7 @@ function DetailInfo() {
         cost_price: 0,
         selling_price: 0,
         profit_margin: 0,
-        is_add_total: true,
+        is_add_total: false,
       },
     ]
 
@@ -417,10 +417,13 @@ function DetailInfo() {
                     record.index2,
                     'profit_margin',
                   ],
-                  selling > 0 ? ((selling - cost) / cost) * 100 : 0,
+                  (selling > 0
+                    ? ((selling - cost) / selling) * 100
+                    : 0
+                  ).toFixed(2),
                 )
 
-                return `${selling > 0 ? ((selling - cost) / cost) * 100 : 0}%`
+                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
               },
             },
             {
@@ -698,7 +701,7 @@ function DetailInfo() {
                 合計利益率
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {profitRate || 0}%
+                {profitRate.toFixed(2) || 0}%
               </Text>
               <Form.Item name="total_profit_margin" hidden>
                 <InputNumber />
