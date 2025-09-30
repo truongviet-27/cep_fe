@@ -485,9 +485,13 @@ export type CompanyResearchInformationFile = {
    */
   name?: string
   /**
-   * URL of the file
+   * key of the file
    */
   url?: string
+  /**
+   * URL of the file
+   */
+  access_url?: string
 }
 
 /**
@@ -1104,6 +1108,20 @@ export type Employee = {
    * Last update timestamp
    */
   updated_at?: string
+  /**
+   * Creator summary (present only when loaded)
+   */
+  author?: {
+    id?: number
+    name?: string
+  } | null
+  /**
+   * Updater summary (present only when loaded)
+   */
+  editor?: {
+    id?: number
+    name?: string
+  } | null
 }
 
 /**
@@ -1602,6 +1620,54 @@ export type PackagingRankPrice = {
 }
 
 /**
+ * Detailed product information with customer-specific pricing
+ */
+export type ProductCustomerPricingDetail = {
+  category?: {
+    id?: number
+    name?: string
+    category_path?: string
+  }
+  code?: string
+  name?: string
+  short_name?: string | null
+  barcode?: string | null
+  unit?: {
+    id?: number
+    name?: string
+  }
+  cost_price?: number
+  selling_price?: number
+  packagings?: Array<ProductCustomerPricingPackaging>
+}
+
+/**
+ * Product packaging with customer-specific rank price
+ */
+export type ProductCustomerPricingPackaging = {
+  id?: number
+  code?: string
+  name?: string
+  quantity_in_package?: number
+  unit?: string
+  standard_price?: number
+  selling_price?: number
+  is_active?: boolean
+  is_rate_based?: boolean
+  is_standard_price?: boolean
+  /**
+   * Customer-specific rank price for this packaging
+   */
+  rank_prices?: number | null
+}
+
+export type ProductCustomerPricingResponse = {
+  success?: boolean
+  data?: ProductCustomerPricingDetail
+  message?: string
+}
+
+/**
  * Detailed product information
  */
 export type ProductDetail = {
@@ -1620,7 +1686,17 @@ export type ProductDetail = {
   }
   cost_price?: number
   selling_price?: number
+  author?: {
+    id?: number
+    name?: string
+  } | null
+  editor?: {
+    id?: number
+    name?: string
+  } | null
   packagings?: Array<ProductPackaging>
+  created_at?: string
+  updated_at?: string
 }
 
 export type ProductDetailResponse = {
@@ -1873,6 +1949,29 @@ export type ProductUnitsPaginatedResponse = {
   message?: string
 }
 
+export type QuotaApprovalHistoryResource = {
+  id?: number
+  approver_name?: string
+  step_order?: number
+  status?: 'approved' | 'rejected' | 'pending'
+  comment?: string | null
+  created_at?: string
+}
+
+export type QuotaCloneHistoryResource = {
+  id?: number
+  created_at?: string
+  sent_to_customer_date?: string | null
+  code?: string
+  /**
+   * Creator of the cloned quota.
+   */
+  author?: {
+    id?: number
+    name?: string
+  }
+}
+
 /**
  * Schema for quota product group
  */
@@ -1893,6 +1992,28 @@ export type QuotaProductGroupRequest = {
    * Array of products in this group
    */
   products: Array<QuotaProductItemRequest>
+}
+
+/**
+ * A group of products belonging to a quota, categorized as main or optional.
+ */
+export type QuotaProductGroupResource = {
+  /**
+   * Quota Product Group ID
+   */
+  id?: number
+  /**
+   * Name of the product group.
+   */
+  group_name?: string
+  /**
+   * Display order of the group.
+   */
+  display_order?: number
+  /**
+   * List of products within this group.
+   */
+  products?: Array<QuotaProductResource>
 }
 
 /**
@@ -1939,6 +2060,72 @@ export type QuotaProductItemRequest = {
    * Display order for sorting products within group
    */
   display_order?: number
+  /**
+   * Product quantity
+   */
+  quantity?: number
+}
+
+/**
+ * Product details specific to a quota group.
+ */
+export type QuotaProductResource = {
+  /**
+   * Quota Product ID
+   */
+  id?: number
+  /**
+   * Master Product ID
+   */
+  product_id?: number
+  /**
+   * Package ID (if applicable)
+   */
+  package_id?: number
+  /**
+   * Name of the Product Packaging.
+   */
+  package_name?: string
+  /**
+   * Quantity of product units in the selected package.
+   */
+  quantity_in_package?: number
+  /**
+   * Product name (from Master Product)
+   */
+  name?: string
+  /**
+   * Product code (from Master Product)
+   */
+  code?: string
+  /**
+   * Name of the Product Unit (e.g., Cái, Chiếc, Bộ).
+   */
+  unit_name?: string
+  /**
+   * Original cost price saved in quota.
+   */
+  cost_price?: number
+  /**
+   * Selling price saved in quota.
+   */
+  selling_price?: number
+  /**
+   * Profit margin saved in quota.
+   */
+  profit_margin?: number
+  /**
+   * If this product is included in total calculation.
+   */
+  is_add_total?: boolean
+  /**
+   * Display order for sorting products within group
+   */
+  display_order?: number
+  /**
+   * Product quantity
+   */
+  quantity?: number
 }
 
 /**
@@ -1953,6 +2140,18 @@ export type QuotaResource = {
    * Unique quota code
    */
   code?: string
+  /**
+   * Tenant ID
+   */
+  tenant_id?: string
+  /**
+   * ID of the customer.
+   */
+  customer_id?: number | null
+  /**
+   * Name of the customer.
+   */
+  customer_name?: string | null
   /**
    * Quota title
    */
@@ -1997,81 +2196,29 @@ export type QuotaResource = {
    */
   tax_rate?: number
   /**
-   * Customer ID
+   * Total original cost of products included in calculation.
    */
-  customer_id?: number
+  total_cost?: number
   /**
-   * Customer name
+   * Calculated tax amount.
    */
-  customer_name?: string
+  consumption_tax_amount?: number
+  /**
+   * Total profit margin (selling price - cost price).
+   */
+  total_profit_margin?: number
+  /**
+   * Final total price including tax.
+   */
+  total_price_tax_included?: number
   /**
    * Additional notes
    */
   note?: string
   /**
-   * Total cost amount
+   * Flag indicating if the current user is eligible to see the approve action button.
    */
-  total_cost?: number
-  /**
-   * Consumption tax amount
-   */
-  consumption_tax_amount?: number
-  /**
-   * Total profit margin
-   */
-  total_profit_margin?: number
-  /**
-   * Total price including tax
-   */
-  total_price_tax_included?: number
-  /**
-   * Customer information
-   */
-  customer?: {
-    id?: number
-    name?: string
-    customer_code?: string
-  }
-  /**
-   * Main product groups
-   */
-  main_product_groups?: Array<{
-    id?: number
-    group_name?: string
-    display_order?: number
-    products?: Array<{
-      id?: number
-      product_id?: number
-      package_id?: number
-      name?: string
-      code?: string
-      cost_price?: number
-      selling_price?: number
-      profit_margin?: number
-      is_add_total?: boolean
-      display_order?: number
-    }>
-  }>
-  /**
-   * Optional product groups
-   */
-  optional_product_groups?: Array<{
-    id?: number
-    group_name?: string
-    display_order?: number
-    products?: Array<{
-      id?: number
-      product_id?: number
-      package_id?: number
-      name?: string
-      code?: string
-      cost_price?: number
-      selling_price?: number
-      profit_margin?: number
-      is_add_total?: boolean
-      display_order?: number
-    }>
-  }>
+  display?: boolean
   /**
    * Quota tags
    */
@@ -2079,10 +2226,18 @@ export type QuotaResource = {
     id?: number
     name?: string
   }>
+  /**
+   * ID of the user who created the quota.
+   */
+  created_by?: number | null
+  /**
+   * ID of the last user who updated the quota.
+   */
+  updated_by?: number | null
   created_at?: string
   updated_at?: string
-  created_by?: number
-  updated_by?: number
+  author?: SimpleUser
+  editor?: SimpleUser
 }
 
 /**
@@ -2214,10 +2369,6 @@ export type QuotaTagRequest = {
  */
 export type QuotaUpdateRequest = {
   /**
-   * Source quota ID for cloning reference
-   */
-  source_id?: number
-  /**
    * Unique quota code identifier
    */
   code: string
@@ -2304,6 +2455,72 @@ export type QuotaUpdateRequest = {
    * Array of optional product groups
    */
   optional_product?: Array<QuotaProductGroupRequest>
+}
+
+/**
+ * Quota details for listing purposes
+ */
+export type SimpleQuota = {
+  id?: number
+  code?: string
+  status?:
+    | 'creating'
+    | 'waiting_approval'
+    | 'approved'
+    | 'rejected'
+    | 'sent_to_customer'
+    | 'completed'
+    | 'cancelled'
+  title?: string
+  customer_name?: string
+  /**
+   * Formatted total price
+   */
+  total_price?: string
+  created_at?: string
+  expiration_date?: string
+  author?: string | null
+  /**
+   * List of approver names
+   */
+  approvers?: Array<string>
+  latest_approval_comment?: {
+    comment?: string
+    approver_name?: string
+    approval_date?: string
+  } | null
+  author_department_name?: string | null
+}
+
+/**
+ * Pagination links
+ */
+export type QuotaLinks = {
+  first?: string
+  last?: string
+  prev?: string | null
+  next?: string
+}
+
+/**
+ * Paginated response for quotas
+ */
+export type QuotasPaginatedResponse = {
+  /**
+   * Paginated data and links for quotas
+   */
+  data?: {
+    /**
+     * Array of quotas
+     */
+    items?: Array<SimpleQuota>
+    meta?: Meta
+    links?: QuotaLinks
+  }
+  /**
+   * Response message
+   */
+  message?: string
 }
 
 /**
@@ -2614,6 +2831,18 @@ export type Rank = {
    */
   rate?: number
   note?: string | null
+  author?: {
+    id?: number
+    name?: string
+  } | null
+  editor?: {
+    id?: number
+    name?: string
+  } | null
+  /**
+   * Number of customers assigned to this rank
+   */
+  readonly number_of_customers?: number
   created_at?: string
   updated_at?: string
 }
@@ -4610,10 +4839,7 @@ export type ImportControllerGetImportHistoryData = {
       | 'OTHER'
     start_date?: string
     end_date?: string
-    /**
-     * Filter by creator name
-     */
-    created_by?: string
+    created_by?: number
     id?: number
   }
   url: '/api/v1/csv-imports/history'
@@ -5345,6 +5571,57 @@ export type Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Responses = {
 
 export type Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Response =
   Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Responses[keyof Fa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Responses]
+
+export type ProductControllerGetProductWithCustomerPricingData = {
+  body?: never
+  path: {
+    /**
+     * Product ID
+     */
+    productId: number
+    /**
+     * Customer ID
+     */
+    customerId: number
+  }
+  query?: never
+  url: '/api/v1/products/{productId}/customer-pricing/{customerId}'
+}
+
+export type ProductControllerGetProductWithCustomerPricingErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Product or Customer not found
+   */
+  404: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductControllerGetProductWithCustomerPricingError =
+  ProductControllerGetProductWithCustomerPricingErrors[keyof ProductControllerGetProductWithCustomerPricingErrors]
+
+export type ProductControllerGetProductWithCustomerPricingResponses = {
+  /**
+   * Product detail with customer pricing retrieved successfully
+   */
+  200: ProductCustomerPricingResponse
+}
+
+export type ProductControllerGetProductWithCustomerPricingResponse =
+  ProductControllerGetProductWithCustomerPricingResponses[keyof ProductControllerGetProductWithCustomerPricingResponses]
 
 export type ProductCategoryControllerUpdateTreeData = {
   /**
@@ -6189,6 +6466,79 @@ export type ProductUnitControllerUpdateResponses = {
 export type ProductUnitControllerUpdateResponse =
   ProductUnitControllerUpdateResponses[keyof ProductUnitControllerUpdateResponses]
 
+export type QuotaControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Page number
+     */
+    _page?: number
+    /**
+     * Number of items per page (max 100)
+     */
+    _per_page?: number
+    /**
+     * Filter by quota status
+     */
+    status?:
+      | 'creating'
+      | 'waiting_approval'
+      | 'approved'
+      | 'rejected'
+      | 'sent_to_customer'
+      | 'completed'
+      | 'cancelled'
+    /**
+     * Search by quota code
+     */
+    code?: string
+    /**
+     * Search by customer name
+     */
+    customer_name?: string
+    /**
+     * Search by the name of the creator/author
+     */
+    creator_name?: string
+    /**
+     * Search by associated tag name
+     */
+    tag_name?: string
+    /**
+     * Search by the name of the approver
+     */
+    approver_name?: string
+    /**
+     * Search by the creator's department name
+     */
+    creator_department_name?: string
+    /**
+     * Type of date to filter
+     */
+    search_date_type?: 'created_at' | 'expiration_date'
+    /**
+     * Start date for filtering (e.g., Y-m-d)
+     */
+    start_date?: string
+    /**
+     * End date for filtering (e.g., Y-m-d)
+     */
+    end_date?: string
+  }
+  url: '/api/v1/quotas'
+}
+
+export type QuotaControllerIndexResponses = {
+  /**
+   * Quotas retrieved successfully
+   */
+  200: QuotasPaginatedResponse
+}
+
+export type QuotaControllerIndexResponse =
+  QuotaControllerIndexResponses[keyof QuotaControllerIndexResponses]
+
 export type QuotaControllerStoreData = {
   body: QuotaStoreRequest
   path?: never
@@ -6216,12 +6566,48 @@ export type QuotaControllerStoreResponses = {
    */
   201: {
     message?: string
-    data?: QuotaResource
   }
 }
 
 export type QuotaControllerStoreResponse =
   QuotaControllerStoreResponses[keyof QuotaControllerStoreResponses]
+
+export type QuotaControllerDestroyData = {
+  body?: never
+  path: {
+    /**
+     * Quota ID to soft delete
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/quotas/{id}'
+}
+
+export type QuotaControllerDestroyErrors = {
+  /**
+   * Invalid ID format or value
+   */
+  400: unknown
+  /**
+   * Forbidden
+   */
+  403: unknown
+  /**
+   * Quota not found
+   */
+  404: unknown
+}
+
+export type QuotaControllerDestroyResponses = {
+  /**
+   * Quota soft deleted successfully (No Content)
+   */
+  204: void
+}
+
+export type QuotaControllerDestroyResponse =
+  QuotaControllerDestroyResponses[keyof QuotaControllerDestroyResponses]
 
 export type QuotaControllerShowData = {
   body?: never
@@ -6268,6 +6654,60 @@ export type QuotaControllerShowResponses = {
 
 export type QuotaControllerShowResponse =
   QuotaControllerShowResponses[keyof QuotaControllerShowResponses]
+
+export type QuotaControllerUpdateData = {
+  body: QuotaUpdateRequest
+  path: {
+    /**
+     * Quota ID to update
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/quotas/{id}'
+}
+
+export type QuotaControllerUpdateErrors = {
+  /**
+   * Invalid ID format or validation error
+   */
+  400: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Quota not found
+   */
+  404: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type QuotaControllerUpdateError =
+  QuotaControllerUpdateErrors[keyof QuotaControllerUpdateErrors]
+
+export type QuotaControllerUpdateResponses = {
+  /**
+   * Quota updated successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: QuotaResource
+  }
+}
+
+export type QuotaControllerUpdateResponse =
+  QuotaControllerUpdateResponses[keyof QuotaControllerUpdateResponses]
 
 export type QuotaControllerCloneData = {
   body?: {
@@ -6326,6 +6766,96 @@ export type QuotaControllerCloneResponses = {
 
 export type QuotaControllerCloneResponse =
   QuotaControllerCloneResponses[keyof QuotaControllerCloneResponses]
+
+export type QuotaControllerGetHistoryData = {
+  body?: never
+  path: {
+    /**
+     * Quota ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/quotas/{id}/history'
+}
+
+export type QuotaControllerGetHistoryErrors = {
+  /**
+   * Quota not found
+   */
+  404: {
+    message?: string
+  }
+}
+
+export type QuotaControllerGetHistoryError =
+  QuotaControllerGetHistoryErrors[keyof QuotaControllerGetHistoryErrors]
+
+export type QuotaControllerGetHistoryResponses = {
+  /**
+   * Quota history retrieved successfully.
+   */
+  200: {
+    message?: string
+    data?: {
+      approval_history?: Array<QuotaApprovalHistoryResource>
+      /**
+       * List of quotas cloned from the current quota (where current quota is the source).
+       */
+      clone_history?: Array<QuotaCloneHistoryResource>
+    }
+  }
+}
+
+export type QuotaControllerGetHistoryResponse =
+  QuotaControllerGetHistoryResponses[keyof QuotaControllerGetHistoryResponses]
+
+export type QuotaControllerGetProductsData = {
+  body?: never
+  path: {
+    /**
+     * Quota ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/quotas/{id}/products'
+}
+
+export type QuotaControllerGetProductsErrors = {
+  /**
+   * Quota not found
+   */
+  404: {
+    message?: string
+  }
+}
+
+export type QuotaControllerGetProductsError =
+  QuotaControllerGetProductsErrors[keyof QuotaControllerGetProductsErrors]
+
+export type QuotaControllerGetProductsResponses = {
+  /**
+   * Product list retrieved successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      /**
+       * List of main product groups.
+       */
+      main_product?: Array<QuotaProductGroupResource>
+      /**
+       * List of optional/additional product groups.
+       */
+      optional_product?: Array<QuotaProductGroupResource>
+    }
+  }
+}
+
+export type QuotaControllerGetProductsResponse =
+  QuotaControllerGetProductsResponses[keyof QuotaControllerGetProductsResponses]
 
 export type QuotaFormSettingControllerShowData = {
   body?: never

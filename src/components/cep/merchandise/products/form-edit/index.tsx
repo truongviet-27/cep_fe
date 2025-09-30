@@ -17,6 +17,7 @@ import {
   Typography,
 } from 'antd'
 import type { FormInstance } from 'antd/lib'
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useRef } from 'react'
 
@@ -32,8 +33,8 @@ const ProductFormContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
   const [{ methods, isLoadingSubmit, isUpdateMode }] = useProductForm()
-  const { form, formProps } = methods
-
+  const { form, formProps, query } = methods
+  const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
 
   return (
@@ -173,19 +174,15 @@ const ProductFormContainer: React.FC = () => {
                 descriptions={[
                   {
                     title: t('common.created_by'),
-                    value: '',
-                    // data?.author?.name ??
-                    // '---' +
-                    //   ' ' +
-                    //   dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
+                    value: product?.author?.name
+                      ? `${product.author.name} ${dayjs(product?.created_at).format('YYYY/MM/DD HH:mm')}`
+                      : '---',
                   },
                   {
                     title: t('common.updated_by'),
-                    value: '',
-                    // data?.editor?.name ??
-                    // '---' +
-                    //   ' ' +
-                    //   dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
+                    value: product?.editor?.name
+                      ? `${product.editor.name} ${dayjs(product?.updated_at).format('YYYY/MM/DD HH:mm')}`
+                      : '---',
                   },
                 ]}
               />
