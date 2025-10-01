@@ -192,7 +192,15 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
-              <Select allowClear showSearch {...selectPropsCt} labelInValue />
+              <Select
+                allowClear
+                showSearch
+                {...selectPropsCt}
+                labelInValue
+                onChange={() => {
+                  console.log('xxxxxxxxxxxxxx')
+                }}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -234,7 +242,6 @@ const BasicInfo = () => {
             <Form.Item name={'payment_due_date'}>
               <Select
                 allowClear
-                showSearch
                 options={[
                   {
                     value: 'monthly_25',
@@ -285,7 +292,6 @@ const BasicInfo = () => {
             <Form.Item name={'expiration_date'}>
               <Select
                 allowClear
-                showSearch
                 options={[
                   {
                     value: 'days_7',

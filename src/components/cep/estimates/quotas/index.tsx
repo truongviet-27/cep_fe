@@ -3,6 +3,7 @@ import {
   CommentOutlined,
   CopyOutlined,
   DeleteOutlined,
+  DownOutlined,
   EditOutlined,
   EyeOutlined,
   RightOutlined,
@@ -21,12 +22,20 @@ import {
   useSelect,
   useTable,
 } from '@refinedev/antd'
-import { useGo, useTranslate } from '@refinedev/core'
+import {
+  type OpenNotificationParams,
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useGo,
+  useTranslate,
+} from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
   Col,
   DatePicker,
+  Dropdown,
   Form,
   Input,
   Row,
@@ -38,8 +47,10 @@ import {
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { type TableRowSelection } from 'antd/es/table/interface'
+import { type ItemType } from 'antd/lib/menu/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { type MenuInfo } from 'rc-menu/lib/interface'
 import React, { useCallback, useMemo, useState } from 'react'
 
 const { Title } = Typography
@@ -49,86 +60,24 @@ const { RangePicker } = DatePicker
 function QuotaList() {
   const t = useTranslate()
 
+  const apiUrl = useApiUrl()
+
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
-  const [options, setOptions] = useState<any>()
-
-  const statusButton = useCallback(
-    (status: string) => {
-      if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
-        return [
-          {
-            value: '',
-            label: '削除',
-          },
-          {
-            value: '',
-            label: '承認依頼（作成者）',
-          },
-        ]
-      } else if (status === QuotaStatus.WaitingApproval) {
-        return [
-          {
-            value: '',
-            label: '承認（承認者）',
-          },
-        ]
-      } else if (status === QuotaStatus.Approved) {
-        return [
-          {
-            value: '',
-            label: '送信（作成者）',
-          },
-        ]
-      } else if (status === QuotaStatus.SentToCustomer) {
-        return [
-          {
-            value: '',
-            label: '受注へ移動',
-          },
-          {
-            value: '',
-            label: '注へ移動',
-          },
-        ]
-      } else if (status === QuotaStatus.Completed) {
-        return [
-          {
-            value: '',
-            label: '送信へ移動',
-          },
-        ]
-      } else if (status === QuotaStatus.Cancelled) {
-        return [
-          {
-            value: '',
-            label: '削除',
-          },
-          {
-            value: '',
-            label: '送信へ移動',
-          },
-        ]
-      } else {
-        return []
-      }
-    },
-    [t],
-  )
+  const [options, setOptions] = useState<ItemType[]>()
+  const [selectedRows, setSelectedRows] = useState<any>()
 
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
     selectedRows: any,
   ) => {
+    setSelectedRows(selectedRows)
+
     const status = handleOptions(selectedRows)
 
-    console.log(newSelectedRowKeys, selectedRows, 'selectProps')
-
-    console.log(status, 'statusxxxxxx')
     const options = statusButton(status)
     setOptions(options)
-
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
@@ -355,7 +304,12 @@ function QuotaList() {
 
   const [status, setStatus] = useState<string | null>(null)
 
-  const { tableProps, searchFormProps, setFilters } = useTable({
+  const {
+    tableProps,
+    searchFormProps,
+    setFilters,
+    tableQuery: { refetch },
+  } = useTable({
     syncWithLocation: true,
     onSearch(values: any) {
       return [
@@ -413,27 +367,6 @@ function QuotaList() {
     },
   })
 
-  const statusData = [
-    { title: 'すべて', value: 9222, key: null },
-    { title: '作成中', value: 4, key: QuotaStatus.Creating },
-    {
-      title: '承認待',
-      value: 3,
-      color: '#faad14',
-      key: QuotaStatus.WaitingApproval,
-    }, // vàng
-    { title: '承認済', value: 11, color: '#1890ff', key: QuotaStatus.Approved }, // xanh
-    {
-      title: '送信済',
-      value: 9100,
-      color: '#1677ff',
-      key: QuotaStatus.SentToCustomer,
-    }, // xanh đậm
-    { title: '差戻', value: 96, color: '#fa541c', key: QuotaStatus.Rejected }, // cam
-    { title: '受注', value: 4, color: '#52c41a', key: QuotaStatus.Completed }, // xanh lá
-    { title: '失注', value: 4, color: '#ff4d4f', key: QuotaStatus.Cancelled }, // đỏ
-  ]
-
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
@@ -463,6 +396,201 @@ function QuotaList() {
     return filter
   }
 
+  const { data } = useCustom({
+    method: 'get',
+    url: `${apiUrl}/quotas/stats`,
+  })
+
+  const statusData = [
+    { title: 'すべて', value: 0, key: QuotaStatus.Total },
+    { title: '作成中', value: 0, key: QuotaStatus.Creating },
+    {
+      title: '承認待',
+      value: 0,
+      color: '#faad14',
+      key: QuotaStatus.WaitingApproval,
+    }, // vàng
+    { title: '承認済', value: 0, color: '#1890ff', key: QuotaStatus.Approved }, // xanh
+    {
+      title: '送信済',
+      value: 0,
+      color: '#1677ff',
+      key: QuotaStatus.SentToCustomer,
+    }, // xanh đậm
+    { title: '差戻', value: 0, color: '#fa541c', key: QuotaStatus.Rejected }, // cam
+    { title: '受注', value: 0, color: '#52c41a', key: QuotaStatus.Completed }, // xanh lá
+    { title: '失注', value: 0, color: '#ff4d4f', key: QuotaStatus.Cancelled }, // đỏ
+  ]
+
+  const statusDashboard = useMemo(() => {
+    return statusData.map((item) => ({
+      ...item,
+      value: data?.data[item.key],
+    }))
+  }, [data])
+
+  const statusButton = useCallback(
+    (status: string) => {
+      if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
+        return [
+          {
+            key: 1,
+            label: '削除',
+          },
+          {
+            key: 2,
+            label: '承認依頼（作成者）',
+          },
+        ]
+      } else if (status === QuotaStatus.WaitingApproval) {
+        return [
+          {
+            key: 3,
+            label: '承認（承認者）',
+          },
+        ]
+      } else if (status === QuotaStatus.Approved) {
+        return [
+          {
+            key: 4,
+            label: '送信（作成者）',
+          },
+        ]
+      } else if (status === QuotaStatus.SentToCustomer) {
+        return [
+          {
+            key: 5,
+            label: '受注へ移動',
+          },
+          {
+            key: 6,
+            label: '注へ移動',
+          },
+        ]
+      } else if (status === QuotaStatus.Completed) {
+        return [
+          {
+            key: 7,
+            label: '送信へ移動',
+          },
+        ]
+      } else if (status === QuotaStatus.Cancelled) {
+        return [
+          {
+            key: 1,
+            label: '削除',
+          },
+          {
+            key: 7,
+            label: '送信へ移動',
+          },
+        ]
+      }
+    },
+    [t],
+  )
+
+  const notificationFunction = useCallback(
+    (message: string): OpenNotificationParams | false | undefined => {
+      refetch()
+      setSelectedRowKeys([])
+      return {
+        message: t('notifications.success'),
+        description: message ?? 'Success',
+        type: 'success',
+      }
+    },
+    [t],
+  )
+
+  const { mutate } = useCustomMutation()
+
+  const handleClick = (info: MenuInfo) => {
+    if (Number(info.key) === 1) {
+      mutate({
+        values: {
+          ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'delete',
+        url: `${apiUrl}/quotas`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 2) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'put',
+        url: `${apiUrl}/quotas/send-to-approver`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 3) {
+      mutate({
+        values: selectedRows.map((item: any) => ({
+          quota_id: item?.id,
+          status: 'approved',
+          comment: '',
+        })),
+        method: 'put',
+        url: `${apiUrl}/quotas/approval-steps`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 4) {
+      mutate({
+        values: selectedRows.map((item: any) => ({
+          quota_id: item?.id,
+          status: 'rejected',
+          comment: '',
+        })),
+        method: 'put',
+        url: `${apiUrl}/quotas/approval-steps`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 5) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+          status: 'sent_to_customer',
+        },
+        method: 'put',
+        url: `${apiUrl}/quotas/send-to-customer`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 6) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'put',
+        url: `${apiUrl}/quotas/mark-completed`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 7) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'put',
+        url: `${apiUrl}/quotas/cancel-quota`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    }
+  }
+
   return (
     <List
       title={
@@ -487,7 +615,7 @@ function QuotaList() {
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
         <StatusDashboard
-          statusData={statusData}
+          statusData={statusDashboard}
           status={status}
           onChangeStatus={onChangeStatus}
         />
@@ -566,13 +694,11 @@ function QuotaList() {
           <Row gutter={[24, 0]}>
             <Col xs={12} md={6} lg={4}>
               <Form.Item
-                label={<span className="font-bold">タグ名</span>}
+                label={<span className="font-bold">日付</span>}
                 layout="vertical"
                 name={'search_date_type'}
               >
                 <Select
-                  allowClear
-                  showSearch
                   options={[
                     {
                       value: 'created_at',
@@ -624,7 +750,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    setStatus(null)
+                    setStatus('total')
                   }}
                 >
                   {t('buttons.clear')}
@@ -635,17 +761,42 @@ function QuotaList() {
 
           <Row gutter={[24, 24]}>
             <Col xs={8} md={6} lg={4}>
-              <Form.Item
+              {/* <Form.Item
                 label={<span className="font-bold">タグ名</span>}
                 layout="vertical"
               >
-                <Select
-                  allowClear
-                  showSearch
-                  placeholder={'一括処理'}
-                  options={options ?? []}
-                />
-              </Form.Item>
+                <Select placeholder={'一括処理'} options={options ?? []} />
+              </Form.Item> */}
+              <Dropdown
+                menu={{
+                  items: options,
+                  onClick: handleClick,
+                }}
+                disabled={!options || options.length === 0}
+              >
+                <Button
+                  size="large"
+                  style={{
+                    width: '100%',
+                  }}
+                >
+                  <Space
+                    style={{
+                      width: '100%',
+                      justifyContent: 'space-between',
+                      fontSize: 14,
+                      color: '#ccc',
+                    }}
+                  >
+                    一括処理
+                    <DownOutlined
+                      style={{
+                        fontSize: 13,
+                      }}
+                    />
+                  </Space>
+                </Button>
+              </Dropdown>
             </Col>
 
             <Col xs={16} md={18} lg={20}>

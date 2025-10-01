@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import BasicInfo from '@components/cep/estimates/quotas/show/components/basic-info'
 import DetailInfo from '@components/cep/estimates/quotas/show/components/detail-info'
 import History from '@components/cep/estimates/quotas/show/components/history'
@@ -9,14 +11,16 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { Show } from '@components/crud/show'
 import { DeleteButton } from '@refinedev/antd'
 import {
+  type OpenNotificationParams,
   useApiUrl,
   useCustom,
+  useCustomMutation,
   useGo,
   useParsed,
   useShow,
   useTranslate,
 } from '@refinedev/core'
-import { PRIMARY } from '@utility/color'
+import { PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -27,6 +31,7 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
+import { useCallback } from 'react'
 
 const { Title } = Typography
 
@@ -37,6 +42,8 @@ function QuotaDetail() {
   const apiUrl = useApiUrl()
 
   const go = useGo()
+
+  const { mutate } = useCustomMutation()
 
   const { query: queryBasic } = useShow({
     id,
@@ -52,7 +59,33 @@ function QuotaDetail() {
     method: 'get',
   })
 
-  console.log(dataHistory, 'dataHistory')
+  console.log(dataHistory)
+
+  const notificationFunction = useCallback(
+    (message: string): OpenNotificationParams | false | undefined => {
+      queryBasic.refetch()
+      return {
+        message: t('notifications.success'),
+        description: message ?? 'Success',
+        type: 'success',
+      }
+    },
+    [t],
+  )
+
+  const handleChangeStatus = useCallback(
+    (resource: string, values: any) => {
+      mutate({
+        values,
+        method: 'put',
+        url: `${apiUrl}/quotas/${resource}`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    },
+    [t],
+  )
 
   return (
     <Show
@@ -145,6 +178,142 @@ function QuotaDetail() {
               }}
             />
           </Space>
+
+          <Space>
+            {queryBasic?.data?.data.status === QuotaStatus.Creating && (
+              <Button
+                style={{
+                  background: '#10B981',
+                  color: WHITE,
+                }}
+                icon={null}
+                size={'middle'}
+                onClick={() => {
+                  handleChangeStatus('send-to-approver', {
+                    quota_ids: [queryBasic.data?.data.id],
+                  })
+                }}
+              >
+                承認依頼
+              </Button>
+            )}
+            {queryBasic?.data?.data.status === QuotaStatus.WaitingApproval &&
+              queryBasic.data.data.display && (
+                <>
+                  <Button
+                    style={{
+                      background: '#721C24',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('approval-steps', [
+                        {
+                          quota_id: queryBasic.data?.data?.id,
+                          status: 'approved',
+                          comment: '',
+                        },
+                      ])
+                    }}
+                  >
+                    差戻
+                  </Button>
+                  <Button
+                    style={{
+                      background: '#10B981',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('approval-steps', [
+                        {
+                          quota_id: queryBasic.data?.data?.id,
+                          status: 'approved',
+                          comment: '',
+                        },
+                      ])
+                    }}
+                  >
+                    承認
+                  </Button>
+                </>
+              )}
+
+            {queryBasic?.data?.data.status === QuotaStatus.Approved && (
+              <Button
+                style={{
+                  background: '#10B981',
+                  color: WHITE,
+                }}
+                icon={null}
+                size={'middle'}
+                onClick={() => {
+                  handleChangeStatus('send-to-customer', {
+                    quota_ids: [queryBasic.data?.data.id],
+                  })
+                }}
+              >
+                送信
+              </Button>
+            )}
+
+            {queryBasic?.data?.data.status === QuotaStatus.SentToCustomer && (
+              <>
+                <Button
+                  style={{
+                    background: '#721C24',
+                    color: WHITE,
+                  }}
+                  icon={null}
+                  size={'middle'}
+                  onClick={() => {
+                    handleChangeStatus('mark-completed', {
+                      quota_ids: [queryBasic.data?.data.id],
+                    })
+                  }}
+                >
+                  失注へ移動
+                </Button>
+                <Button
+                  style={{
+                    background: '#10B981',
+                    color: WHITE,
+                  }}
+                  icon={null}
+                  size={'middle'}
+                  onClick={() => {
+                    handleChangeStatus('cancel-quota', {
+                      quota_ids: [queryBasic.data?.data.id],
+                    })
+                  }}
+                >
+                  受注へ移動
+                </Button>
+              </>
+            )}
+
+            {(queryBasic?.data?.data.status === QuotaStatus.Completed ||
+              queryBasic?.data?.data.status === QuotaStatus.Cancelled) &&
+              queryBasic.data.data.display && (
+                <Button
+                  style={{
+                    background: '#721C24',
+                    color: WHITE,
+                  }}
+                  icon={null}
+                  size={'middle'}
+                  onClick={() => {
+                    handleChangeStatus('send-to-approver', {
+                      quota_ids: [queryBasic.data?.data.id],
+                    })
+                  }}
+                >
+                  送信へ移動
+                </Button>
+              )}
+          </Space>
           <Space className="items-end">
             <Button
               type="default"
@@ -157,16 +326,19 @@ function QuotaDetail() {
               {t('buttons.back')}
             </Button>
 
-            <Button
-              type="primary"
-              onClick={() => {
-                go({
-                  to: `/quotas/edit/${id}`,
-                })
-              }}
-            >
-              {t('buttons.edit')}
-            </Button>
+            {(queryBasic?.data?.data.status === QuotaStatus.Creating ||
+              queryBasic?.data?.data.status === QuotaStatus.Rejected) && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  go({
+                    to: `/quotas/edit/${id}`,
+                  })
+                }}
+              >
+                {t('buttons.edit')}
+              </Button>
+            )}
           </Space>
         </Flex>
       </Form>

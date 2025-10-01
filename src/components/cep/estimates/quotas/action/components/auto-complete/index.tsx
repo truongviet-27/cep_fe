@@ -74,6 +74,7 @@ function CoreAutoComplete({
       allowClear
       onChange={(value) => {
         if (onChange) {
+          console.log(value, 'xxxxxxxxxxxxxx')
           onChange(value)
         }
         const option = data?.data.packagings.find(
@@ -82,22 +83,24 @@ function CoreAutoComplete({
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'unit'],
-          option?.unit,
+          option?.unit ?? data?.data?.unit?.name,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'cost_price'],
-          option?.standard_price,
+          option?.standard_price ?? data?.data?.cost_price,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'selling_price'],
-          option?.rank_prices ?? option?.selling_price,
+          option?.rank_prices ??
+            option?.selling_price ??
+            data?.data?.selling_price,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'quantity'],
-          option?.quantity_in_package,
+          option?.quantity_in_package ?? 1,
         )
       }}
       disabled={!filter1 || !filter2}

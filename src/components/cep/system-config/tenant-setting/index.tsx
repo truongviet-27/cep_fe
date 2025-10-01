@@ -3,15 +3,20 @@
 'use client'
 import { RightOutlined } from '@ant-design/icons'
 import Left from '@components/cep/system-config/tenant-setting/components/Left'
+import PreviewPdf from '@components/cep/system-config/tenant-setting/components/preview'
 import Right from '@components/cep/system-config/tenant-setting/components/Right'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { Viewer, Worker } from '@react-pdf-viewer/core'
 import '@react-pdf-viewer/core/lib/styles/index.css'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import '@react-pdf-viewer/default-layout/lib/styles/index.css'
 import { useForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate, useUpdate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useTranslate,
+  useUpdate,
+} from '@refinedev/core'
 import {
   ParameterResourceEnum,
   type QuotaFormSettingResponse,
@@ -33,6 +38,8 @@ function TenantSetting() {
   const t = useTranslate()
   const parameterSettings = useUserStore((state) => state.parameterSettings)
 
+  const [htmlString, setHtmlString] = useState('')
+
   if (!parameterSettings.get(ParameterResourceEnum.QUOTATION_FORMS)) {
     redirect('/403')
   }
@@ -42,7 +49,7 @@ function TenantSetting() {
   const [isPdf, setIsPdf] = useState(false)
   const apiUrl = useApiUrl()
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+  // const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
   const { mutate, isPending } = useUpdate({
     resource: `quota-form-settings`,
@@ -63,6 +70,12 @@ function TenantSetting() {
         form
           .getFieldValue('company_logo_image')
           .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+      is_enable_delivery: !values.is_enable_delivery,
+      is_enable_delivery_method: !values.is_enable_delivery_method,
+      is_enable_payment_due_date: !values.is_enable_payment_due_date,
+      is_enable_expiration_date: !values.is_enable_expiration_date,
+      is_display_company_logo_image: !values.is_display_company_logo_image,
+      is_display_company_seal_image: !values.is_display_company_seal_image,
       company_seal_image:
         form.getFieldValue('company_seal_image_file_key') ??
         form
@@ -81,9 +94,65 @@ function TenantSetting() {
     )
   }
 
+  const { mutate: mutatePreviewPdf } = useCustomMutation()
+
+  const handlePreviewPdf = () => {
+    const customValues: QuotaFormSettingResponse = {
+      ...form.getFieldsValue(),
+      id: form.getFieldValue('id'),
+      company_logo_image:
+        form.getFieldValue('company_logo_image_file_key') ??
+        form
+          .getFieldValue('company_logo_image')
+          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+      company_seal_image:
+        form.getFieldValue('company_seal_image_file_key') ??
+        form
+          .getFieldValue('company_seal_image')
+          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+      is_enable_delivery: !form.getFieldValue('is_enable_delivery'),
+      is_enable_delivery_method: !form.getFieldValue(
+        'is_enable_delivery_method',
+      ),
+      is_enable_payment_due_date: !form.getFieldValue(
+        'is_enable_payment_due_date',
+      ),
+      is_enable_expiration_date: !form.getFieldValue(
+        'is_enable_expiration_date',
+      ),
+      is_display_company_logo_image: !form.getFieldValue(
+        'is_display_company_logo_image',
+      ),
+      is_display_company_seal_image: !form.getFieldValue(
+        'is_display_company_seal_image',
+      ),
+    }
+
+    mutatePreviewPdf(
+      {
+        values: customValues,
+        url: `${apiUrl}/quota-form-settings`,
+        method: 'post',
+      },
+      {
+        onSuccess(data) {
+          setHtmlString(data.data?.html)
+        },
+      },
+    )
+  }
+
   useEffect(() => {
     if (data?.data) {
-      form.setFieldsValue(data.data)
+      form.setFieldsValue({
+        ...data.data,
+        is_enable_delivery: !data.data.is_enable_delivery,
+        is_enable_delivery_method: !data.data.is_enable_delivery_method,
+        is_enable_payment_due_date: !data.data.is_enable_payment_due_date,
+        is_enable_expiration_date: !data.data.is_enable_expiration_date,
+        is_display_company_logo_image: !data.data.is_display_company_logo_image,
+        is_display_company_seal_image: !data.data.is_display_company_seal_image,
+      })
     }
   }, [data])
 
@@ -126,6 +195,7 @@ function TenantSetting() {
             size="large"
             onClick={() => {
               setIsPdf(!isPdf)
+              handlePreviewPdf()
             }}
           >
             {'プレビュー'}
@@ -152,7 +222,7 @@ function TenantSetting() {
 
       {
         <Modal
-          title="PDF Default"
+          title="Preview PDF"
           closable={{ 'aria-label': 'Custom Close Button' }}
           open={isPdf}
           onCancel={() => {
@@ -168,14 +238,20 @@ function TenantSetting() {
           }}
         >
           <div
-            style={{ height: '850px', border: '1px solid rgba(0, 0, 0, 0.3)' }}
+            style={{
+              height: '850px',
+              border: '1px solid rgba(0, 0, 0, 0.3)',
+              borderRadius: 8,
+            }}
           >
-            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+            {/* <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
               <Viewer
                 fileUrl={data?.data?.pdf_file_url ?? ''}
                 plugins={[defaultLayoutPluginInstance]}
               />
-            </Worker>
+            </Worker> */}
+
+            <PreviewPdf htmlString={htmlString} />
           </div>
         </Modal>
       }
