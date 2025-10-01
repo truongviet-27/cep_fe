@@ -1,0 +1,24 @@
+{
+  "quota_templates": "見積テンプレート一覧",
+  "breadcrumb": {
+    "home": "見積",
+    "quotasList": "見積テンプレート一覧"
+  },
+  "list": {
+    "title": "見積テンプレート一覧",
+    "templateName": "テンプレート名",
+    "creator": "作成者",
+    "placeholderPartialMatch": "部分一致",
+    "creationDate": "作成日",
+    "updateDate": "更新日",
+    "numberOfItems": "商品数",
+    "bassPrice": "基本金額",
+    "description": "説明",
+    "operation": "操作"
+  },
+  "button": {
+    "search": "検索",
+    "clear": "クリア",
+    "create": "新規作成"
+  }
+}

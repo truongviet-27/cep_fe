@@ -26,6 +26,19 @@ export const resource: ResourceProps[] = [
     },
   },
   {
+    name: 'quota-templates',
+    list: '/quota-templates',
+    show: '/quota-templates/show/:id',
+    create: '/quota-templates/create',
+    edit: '/quota-templates/edit/:id',
+    meta: {
+      parent: 'estimates',
+      // canDelete: true,
+      // canCreate: true,
+      // canEdit: true,
+    },
+  },
+  {
     name: 'business_partner',
   },
   {
