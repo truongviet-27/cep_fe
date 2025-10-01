@@ -1,17 +1,8 @@
-import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth/next'
-import React from 'react'
-
-import authOptions from '@/app/api/auth/[...nextauth]/options'
+// eslint-disable-next-line simple-import-sort/imports
+import type React from 'react'
 
 export default async function LoginLayout({
   children,
 }: React.PropsWithChildren) {
-  const session = await getServerSession(authOptions)
-
-  if (session?.user) {
-    return redirect('/projects')
-  }
-
-  return <>{children}</>
+  return children
 }
