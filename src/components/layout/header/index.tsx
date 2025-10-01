@@ -9,9 +9,9 @@ import {
 import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
 import { useModal } from '@refinedev/core'
 import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
-import { Avatar, Badge, Input, Layout, Modal, Space } from 'antd'
+import { Avatar, Badge, Dropdown, Input, Layout, Modal, Space } from 'antd'
 import { useKBar } from 'kbar'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
@@ -24,12 +24,19 @@ export default function AuthHeader({
   children,
 }: Readonly<React.PropsWithChildren>) {
   const t_btn = useTranslations('buttons')
+  const t_menu = useTranslations('menu')
   const { query } = useKBar()
   const session = useSession()
   const modalProps = useModal()
 
   const isAdmin = isSupperAdmin(session.data?.accessToken)
   const tenantName = getOrgFromToken(session.data?.accessToken)?.name
+  const menuItems = [{ key: 'logout', label: t_menu('logout') }]
+  const onMenuClick = ({ key }: { key: string }) => {
+    if (key === 'logout') {
+      signOut({ callbackUrl: '/login' })
+    }
+  }
 
   return (
     <div
@@ -68,12 +75,18 @@ export default function AuthHeader({
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}
               </Space>
 
-              <div className="flex items-center justify-end gap-1">
-                <span className="max-w-[180px] truncate text-[14px] font-medium text-gray-900">
-                  {session?.data?.user?.name}
-                </span>
-                <UserOutlined className="text-[16px] text-[#1677ff]" />
-              </div>
+              <Dropdown
+                trigger={['click']}
+                menu={{ items: menuItems, onClick: onMenuClick }}
+              >
+                <div className="flex cursor-pointer items-center justify-end gap-1">
+                  <span className="max-w-[180px] truncate text-[14px] font-medium text-gray-900">
+                    {session?.data?.user?.name}
+                  </span>
+                  <UserOutlined className="text-[16px] text-[#1677ff]" />
+                  <DownOutlined style={{ fontSize: '10px' }} />
+                </div>
+              </Dropdown>
 
               <div className="text-[11px] text-gray-400">テナント管理者</div>
             </div>
@@ -95,12 +108,18 @@ export default function AuthHeader({
               <Badge dot>
                 <BellOutlined style={{ fontSize: '18px' }} />
               </Badge>
-              <Space>
-                <Avatar
-                  src={'https://via.placeholder.com/48'}
-                  icon={<UserOutlined />}
-                />
-              </Space>
+              <Dropdown
+                trigger={['click']}
+                menu={{ items: menuItems, onClick: onMenuClick }}
+              >
+                <Space className="cursor-pointer">
+                  <Avatar
+                    src={'https://via.placeholder.com/48'}
+                    icon={<UserOutlined />}
+                  />
+                  <DownOutlined style={{ fontSize: '10px' }} />
+                </Space>
+              </Dropdown>
             </Space>
           </div>
         )}
