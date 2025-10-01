@@ -83,6 +83,9 @@ export const validateCustomerRule = (t: any) => {
           .string({ error: t('validation.customer.customer_code.string') })
           .max(50, {
             error: t('validation.customer.customer_code.max', { max: 50 }),
+          })
+          .regex(/^[A-Z0-9-]+$/, {
+            error: t('validation.rank.code.regex'),
           }),
       ),
       name: z.optional(
@@ -99,6 +102,9 @@ export const validateCustomerRule = (t: any) => {
             error: t('validation.customer.customer_name_by_kana.max', {
               max: 255,
             }),
+          })
+          .regex(/^[ァ-ンヴ・ー]+$/, {
+            error: t('validation.customer.customer_name_by_kana.string'),
           }),
       ),
       customer_type: z.optional(
@@ -214,7 +220,7 @@ export const validateCustomerRule = (t: any) => {
       ),
       person_in_charge_mail: z.optional(
         z
-          .string()
+          .string(t('validation.customer.person_in_charge_mail.email'))
           .email({
             error: t('validation.customer.person_in_charge_mail.email'),
           })

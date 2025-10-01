@@ -65,7 +65,7 @@ function AccountingContact(
           required
         >
           <Input style={{ maxWidth: 560 }} />
-        </Form.Item>{' '}
+        </Form.Item>
         <Form.Item
           label={boldText(t('customers.show.contact_email'))}
           name="person_in_charge_mail"

@@ -46,7 +46,8 @@
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
     "show": "show",
-    "refresh": "refresh"
+    "refresh": "refresh",
+    "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？"
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -86,12 +87,12 @@
     "business_partner": "取引先"
   },
   "customers": {
-    "customers": "単価ランク一覧",
+    "customers": "取引先一覧",
     "list": {
       "list": "取引先一覧"
     },
     "create": {
-      "create": "取引先編集",
+      "create": "取引先登録",
       "example": "取引先"
     },
     "edit": {
@@ -142,7 +143,7 @@
       "unit_price_rank": "単価ランク",
       "credit_rank": "与信ランク",
       "anti_social_rank": "反社ランク",
-      "anti_social_check_date": "反社チェック更新日",
+      "anti_social_check_date": "反社チェック",
       "registration_date": "登録日",
       "suspension_date": "停止日",
       "actions": "操作",
@@ -154,7 +155,7 @@
       "code": "納品先コード",
       "name": "納品先名",
       "address": "住所",
-      "contact_person": "担当者",
+      "contact_person": "受取人",
       "phone": "電話番号",
       "email": "メールアドレス"
     },
@@ -904,5 +905,22 @@
     "create": "見積新規作成",
     "edit": "見積編集",
     "detail": "見積詳細"
+  },
+  "price_groups": {
+    "price_groups": "取引先",
+    "list": {
+      "list": "単価グループ設定"
+    },
+    "fields": {
+      "product_code": "商品コード",
+      "product_name": "商品名",
+      "category": "カテゴリ (小)",
+      "unit": "単位",
+      "packaging_name": "荷姿",
+      "selling_price": "販売価格(円)",
+      "is_rate_based": "設定方式",
+      "rate": "換率",
+      "absolute": "絶対"
+    }
   }
 }

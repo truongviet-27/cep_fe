@@ -12,8 +12,8 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useShow, useTranslate } from '@refinedev/core'
-import { ParameterResourceEnum, type Customer } from '@sdk/hey-api/types.gen'
+import { useGo, useShow, useTranslate } from '@refinedev/core'
+import { type Customer, ParameterResourceEnum } from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
@@ -21,16 +21,17 @@ import { Button, Collapse, Space, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
-const { Title, Text } = Typography
+const { Title } = Typography
 const { Panel } = Collapse
 
 export default function CustomerShowPage() {
   const t = useTranslate()
   const parameterSettings = useUserStore((state) => state.parameterSettings)
 
-  const { queryResult } = useShow<Customer>() // SỬA LẠI: Dùng type Customer từ SDK
+  const { queryResult } = useShow<Customer>()
   const { data, isLoading } = queryResult
-  const record = data?.data // SỬA LẠI: Bỏ mock data, chỉ dùng data từ API
+  const record = data?.data
+  const go = useGo()
 
   const researchColumns = [
     {
@@ -123,7 +124,7 @@ export default function CustomerShowPage() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('customers.customers')}
+          {t('business_partner.business_partner')}
         </Title>
       ),
     },
@@ -138,7 +139,21 @@ export default function CustomerShowPage() {
       }
       rightFooterButtons={
         <Space>
-          <Button type="primary">{t('buttons.edit')}</Button>
+          <Button
+            type="primary"
+            onClick={() =>
+              data?.data.id &&
+              go({
+                to: {
+                  resource: 'customers',
+                  action: 'edit',
+                  id: data?.data.id,
+                },
+              })
+            }
+          >
+            {t('buttons.edit')}
+          </Button>
         </Space>
       }
       footerButtons={

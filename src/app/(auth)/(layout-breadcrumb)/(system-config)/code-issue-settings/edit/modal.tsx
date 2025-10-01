@@ -22,6 +22,7 @@ import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(sy
 import ShowMoreInfo from '@components/common/show-more-info'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import AutoHeading from '@components/common/auto-heading'
+import { validateCodeIssueSettingsRule } from '@validate/code-issue-settings'
 
 type Props = {
   modalProps: any
@@ -56,6 +57,8 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
     [total, segment, updated_at, serial_length, hash_dash, prefix],
   )
 
+  const rule = validateCodeIssueSettingsRule(t)
+
   return (
     <Edit
       {...formProps}
@@ -84,7 +87,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         <Form.Item
           label={t('code_issue_settings.fields.name')}
           name="name"
-          rules={[{ required: true }]}
+          rules={[rule]}
         >
           {record?.name}
         </Form.Item>
@@ -92,7 +95,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         <Form.Item
           label={t('code_issue_settings.fields.issue_method')}
           name="issue_method"
-          rules={[{ required: true }]}
+          rules={[rule]}
         >
           <Radio.Group>
             <Radio value="manual">
@@ -107,7 +110,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         <Form.Item
           label={t('code_issue_settings.fields.prefix')}
           name="prefix"
-          rules={[{ required: true, message: t('validation.required') }]}
+          rules={[rule]}
         >
           <Input placeholder="例: PD" disabled={isManual} />
         </Form.Item>
@@ -127,7 +130,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         <Form.Item
           label={t('code_issue_settings.fields.segment')}
           name="segment"
-          rules={[{ required: true }]}
+          rules={[rule]}
         >
           <Select
             placeholder={t('placeholders.select')}
@@ -139,7 +142,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         <Form.Item
           label={t('code_issue_settings.fields.serial_length')}
           name="serial_length"
-          rules={[{ required: true }]}
+          rules={[rule]}
         >
           <Select placeholder={t('placeholders.select')} disabled={isManual}>
             {[...Array(10)].map((_, i) => (

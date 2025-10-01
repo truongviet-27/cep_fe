@@ -2,7 +2,7 @@ import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
   input:
-    'https://k8nw75hfk8.execute-api.ap-northeast-1.amazonaws.com//docs/api-docs.json',
+    'https://k8nw75hfk8.execute-api.ap-northeast-1.amazonaws.com/docs/api-docs.json',
   output: {
     format: `prettier`,
     lint: `eslint`,

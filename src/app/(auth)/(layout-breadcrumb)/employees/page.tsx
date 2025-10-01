@@ -58,6 +58,14 @@ function Page() {
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
+    // @ts-ignore
+    onSearch: (value) => [
+      {
+        field: 'q',
+        operator: 'null',
+        value,
+      },
+    ],
   })
 
   const { selectProps: rolesSelectProps } = useSelect({
@@ -133,6 +141,7 @@ function Page() {
               <Select
                 {...rolesSelectProps}
                 placeholder={t('placeholders.select')}
+                showSearch={false}
               />
             </Form.Item>
           </Col>

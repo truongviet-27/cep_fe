@@ -13,7 +13,7 @@ export const validateCodeIssueSettingsRule = (t: any) => {
       prefix: z.optional(
         z
           .string({ error: t('validation.code_issue_settings.prefix.string') })
-          .regex(/^\d+$/, {
+          .regex(/^[A-Z]+$/, {
             error: t('validation.code_issue_settings.prefix.numeric'),
           })
           .max(2, {

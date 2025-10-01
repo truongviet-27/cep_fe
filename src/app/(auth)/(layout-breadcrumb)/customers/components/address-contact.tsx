@@ -101,8 +101,8 @@ function AddressContact(
         </Form.Item>
 
         <Form.Item
-          label={boldText(t('customers.show.listing_classification'))}
-          name="listing_classification"
+          label={boldText(t('customers.show.industry'))}
+          name="industry"
           rules={[rule]}
         >
           <Select
@@ -113,8 +113,8 @@ function AddressContact(
         </Form.Item>
 
         <Form.Item
-          label={boldText(t('customers.show.industry'))}
-          name="industry"
+          label={boldText(t('customers.show.listing_classification'))}
+          name="listing_classification"
           rules={[rule]}
         >
           <Select

@@ -25,6 +25,7 @@ import { PRIMARY } from '@utility/color'
 import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
 import dayjs from 'dayjs'
 import { FORMAT_DATE } from '@utility/instances'
+import { useSession } from 'next-auth/react'
 
 const { Title } = Typography
 const { Panel } = Collapse
@@ -41,6 +42,7 @@ export const CorporateResearchFormSection = (
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) => {
   const { t, form } = props
+  const session = useSession()
 
   const initCur: CurrentType = {
     index: 0,
@@ -264,6 +266,10 @@ export const CorporateResearchFormSection = (
                 files: currentType.fileList,
                 judgement: currentType.judgement,
                 material_name: currentType.name,
+                updated_at: dayjs().format(FORMAT_DATE),
+                editor: {
+                  name: session.data?.user?.name,
+                },
               },
             )
             close()

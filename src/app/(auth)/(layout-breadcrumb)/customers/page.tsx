@@ -12,7 +12,12 @@ import {
   useSelect,
   useTable,
 } from '@refinedev/antd'
-import { useGo, useTranslate, useUpdate } from '@refinedev/core'
+import {
+  type BaseRecord,
+  useGo,
+  useTranslate,
+  useUpdate,
+} from '@refinedev/core'
 import {
   ParameterResourceEnum,
   PermissionEnum,
@@ -20,8 +25,8 @@ import {
 } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
-import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
+import { CSV_LINK, PRIMARY } from '@utility/color'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   antiSocialCheckOptions,
   countryOptions,
@@ -42,7 +47,9 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
+import AutoHeading from '@components/common/auto-heading'
+import { cn } from '@utility/cn'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -128,12 +135,16 @@ export default function CustomerListPage() {
       {
         field: 'date_start',
         operator: 'null',
-        value: values?.date_start,
+        value: values.date_range?.[0]
+          ? dayjs(values.date_range[0]).format(FORMAT_DATE)
+          : undefined,
       },
       {
         field: 'date_end',
         operator: 'null',
-        value: values?.date_end,
+        value: values.date_range?.[1]
+          ? dayjs(values.date_range[1]).format(FORMAT_DATE)
+          : undefined,
       },
     ],
   })
@@ -178,14 +189,22 @@ export default function CustomerListPage() {
       {
         field: 'date_start',
         operator: 'null',
-        value: values?.date_start,
+        value: values.date_range?.[0]
+          ? dayjs(values.date_range[0]).format('YYYY-MM-DD')
+          : undefined,
       },
       {
         field: 'date_end',
         operator: 'null',
-        value: values?.date_end,
+        value: values.date_range?.[1]
+          ? dayjs(values.date_range[1]).format('YYYY-MM-DD')
+          : undefined,
       },
     ])
+  }
+
+  const getRowClassName = (record: BaseRecord) => {
+    return record.deleted_at ? '!bg-gray-200' : ''
   }
 
   const columns: TableColumnsType<SimpleCustomer> = useMemo(
@@ -196,7 +215,7 @@ export default function CustomerListPage() {
         key: 'customer_code',
         render: (text, record) => (
           <Link
-            href={`/customers/${record.id}`}
+            href={`/customers/show/${record.id}`}
             key={record.id}
             style={{ textDecoration: 'underline' }}
           >
@@ -216,22 +235,48 @@ export default function CustomerListPage() {
       },
       {
         title: t('customers.fields.department'),
-        dataIndex: 'person_in_charge_department',
+        dataIndex: 'department_in_charge',
         key: 'person_in_charge_department',
       },
       {
         title: t('customers.fields.unit_price_rank'),
         dataIndex: 'price_rank_code',
         key: 'price_rank_code',
-        render: (text) => <Button type="link">{text}</Button>,
+        render: (text, record) => (
+          <Link href={`/customers/show/${record.id}`} className="!underline">
+            {text}
+          </Link>
+        ),
       },
       {
-        title: t('customers.fields.credit_rank'),
+        title: (
+          <div>
+            <AutoHeading
+              i18n={'customers.fields.credit_rank'}
+              style={{ fontSize: '14px' }}
+            />
+            <AutoHeading
+              i18n={'code_issue_settings.fields.updated_at'}
+              style={{ fontSize: 12 }}
+            />
+          </div>
+        ),
         dataIndex: 'credit_rank',
         key: 'credit_rank',
       },
       {
-        title: t('customers.fields.anti_social_check_date'),
+        title: (
+          <div>
+            <AutoHeading
+              i18n={'customers.fields.anti_social_check_date'}
+              style={{ fontSize: '14px' }}
+            />
+            <AutoHeading
+              i18n={'code_issue_settings.fields.updated_at'}
+              style={{ fontSize: 12 }}
+            />
+          </div>
+        ),
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
         width: 150,
@@ -240,16 +285,14 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        render: (_, record) =>
-          dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+        render: (_, record) => dayjs(record?.created_at).format(FORMAT_DATE),
       },
       {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
         render: (_, record) =>
-          record?.deleted_at &&
-          dayjs(record?.deleted_at).format(FORMAT_DATE_TIME),
+          record?.deleted_at && dayjs(record?.deleted_at).format(FORMAT_DATE),
       },
       {
         title: t('customers.fields.actions'),
@@ -258,14 +301,16 @@ export default function CustomerListPage() {
         fixed: 'right',
         render: (_, record) => (
           <Space>
-            <EditButton
-              icon={null}
-              recordItemId={record.id}
-              size={'small'}
-              disabled={!isFullAccess}
-            >
-              {t('buttons.edit')}
-            </EditButton>
+            {!record.deleted_at && (
+              <EditButton
+                icon={null}
+                recordItemId={record.id}
+                size={'small'}
+                disabled={!isFullAccess}
+              >
+                {t('buttons.edit')}
+              </EditButton>
+            )}
             &nbsp;
             <Button
               size="small"
@@ -428,7 +473,7 @@ export default function CustomerListPage() {
               />
             </Form.Item>
           </Col>
-          <Col xs={24} md={4}>
+          <Col xs={24} md={8}>
             <Form.Item label={<></>} name="date_range">
               <RangePicker
                 className="w-full"
@@ -456,14 +501,22 @@ export default function CustomerListPage() {
           </CreateButton>
           <Link
             href={isFullAccess ? '/customers/csv' : '#'}
-            className={isFullAccess ? '' : '!text-gray-400'}
+            className={isFullAccess ? '!underline' : '!text-gray-400'}
+            style={{ color: CSV_LINK }}
           >
             {t('projects.csv_upload.title')}
           </Link>
         </Space>
       </Row>
 
-      <CommonTable {...tableProps} rowKey="id" columns={columns as any} />
+      <CommonTable
+        onRow={(record) => ({
+          className: getRowClassName(record),
+        })}
+        {...tableProps}
+        rowKey="id"
+        columns={columns as any}
+      />
     </List>
   )
 }

@@ -22,7 +22,7 @@ import {
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React from 'react'
+import React, { useState } from 'react'
 import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
@@ -33,6 +33,7 @@ const { Title, Text } = Typography
 
 export default function Page() {
   const t = useTranslate()
+  const [isShow, setIsShow] = useState(false)
   const { tableProps, searchFormProps, setFilters } = useTable<Rank>({
     syncWithLocation: true,
     onSearch: (values: any) => [
@@ -49,9 +50,16 @@ export default function Page() {
       dataIndex: 'code',
       title: t('ranks.fields.code'),
       render: (_, record) => (
-        <Link href={`/customers/show/${record.id}`} className="!underline">
+        <Button
+          type={'link'}
+          onClick={() => {
+            setIsShow(true)
+            editModalShow(record.id)
+          }}
+          className="!underline"
+        >
           {record.code}
-        </Link>
+        </Button>
       ),
     },
     { dataIndex: 'name', title: t('ranks.fields.name') },
@@ -66,9 +74,20 @@ export default function Page() {
           <ShowButton
             hideText
             size="small"
-            onClick={() => modalFormShow.show(record.id)}
+            onClick={() => {
+              setIsShow(true)
+              editModalShow(record.id)
+            }}
           />
-          <EditButton hideText size="small" onClick={() => show(record.id)} />
+          <EditButton
+            hideText
+            size="small"
+            onClick={() => {
+              setIsShow(false)
+              editModalShow(record.id)
+            }}
+            recordItemId={record.id}
+          />
           <DeleteButton hideText size="small" recordItemId={record.id} />
         </Space>
       ),
@@ -90,23 +109,21 @@ export default function Page() {
 
   const { resource } = useResource()
 
-  const modalFormShow = useModalForm({
+  const modalFormProps = useModalForm<Rank>({
     action: 'edit',
     resource: resource?.name,
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
+    autoResetForm: true,
   })
 
-  const modalFormProps = useModalForm({
-    action: 'edit',
-    resource: resource?.name,
-    autoResetFormWhenClose: true,
-    warnWhenUnsavedChanges: false,
-  })
+  const {
+    show: editModalShow,
+    close: editModalClose,
+    open: editModalOpen,
+  } = modalFormProps
 
   const modalCreate = useModal()
-
-  const { show, close, open } = modalFormProps
 
   return (
     <List
@@ -157,24 +174,28 @@ export default function Page() {
         <CommonTable<Rank> {...tableProps} columns={columns} />
       </div>
 
-      <Modal
-        open={modalFormShow.open}
-        onCancel={modalFormShow.close}
-        cancelButtonProps={{ style: { display: 'none' } }}
-        okButtonProps={{ style: { display: 'none' } }}
-        width={'70vh'}
-      >
-        <RankModalEdit modalProps={modalFormShow} isShow={true} />
-      </Modal>
+      {/*<Modal*/}
+      {/*  open={modalFormShow.open}*/}
+      {/*  onCancel={modalFormShow.close}*/}
+      {/*  cancelButtonProps={{ style: { display: 'none' } }}*/}
+      {/*  okButtonProps={{ style: { display: 'none' } }}*/}
+      {/*  width={'70vh'}*/}
+      {/*>*/}
+      {/*  <RankModalEdit modalProps={modalFormShow} isShow={true} />*/}
+      {/*</Modal>*/}
 
       <Modal
-        open={open}
-        onCancel={close}
+        open={editModalOpen}
+        onCancel={editModalClose}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <RankModalEdit modalProps={modalFormProps} />
+        <RankModalEdit
+          modalFormProps={modalFormProps}
+          setIsShow={setIsShow}
+          isShow={isShow}
+        />
       </Modal>
 
       <Modal
@@ -182,7 +203,6 @@ export default function Page() {
         onCancel={modalCreate.close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'70vh'}
       >
         <RankModalCreate modalProps={modalCreate} />
       </Modal>

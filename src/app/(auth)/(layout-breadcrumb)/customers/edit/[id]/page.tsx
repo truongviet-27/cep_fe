@@ -28,7 +28,7 @@ export default function CustomerEditPage() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('customers.customers')}
+          {t('business_partner.business_partner')}
         </Title>
       ),
     },
@@ -38,7 +38,6 @@ export default function CustomerEditPage() {
   return (
     <Edit
       isLoading={isLoading}
-      // saveButtonProps={saveButtonProps}
       rightFooterButtons={
         <Button {...saveButtonProps} type="primary">
           {t('buttons.save')}
