@@ -211,6 +211,15 @@ import type {
   ProductUnitControllerUpdateData,
   ProductUnitControllerUpdateResponses,
   ProductUnitControllerUpdateErrors,
+  QuotaAgreedPriceControllerIndexData,
+  QuotaAgreedPriceControllerIndexResponses,
+  QuotaAgreedPriceControllerIndexErrors,
+  QuotaAgreedPriceControllerStoreData,
+  QuotaAgreedPriceControllerStoreResponses,
+  QuotaAgreedPriceControllerStoreErrors,
+  QuotaControllerBulkDestroyData,
+  QuotaControllerBulkDestroyResponses,
+  QuotaControllerBulkDestroyErrors,
   QuotaControllerIndexData,
   QuotaControllerIndexResponses,
   QuotaControllerStoreData,
@@ -225,21 +234,39 @@ import type {
   QuotaControllerUpdateData,
   QuotaControllerUpdateResponses,
   QuotaControllerUpdateErrors,
-  QuotaControllerCloneData,
-  QuotaControllerCloneResponses,
-  QuotaControllerCloneErrors,
   QuotaControllerGetHistoryData,
   QuotaControllerGetHistoryResponses,
   QuotaControllerGetHistoryErrors,
   QuotaControllerGetProductsData,
   QuotaControllerGetProductsResponses,
   QuotaControllerGetProductsErrors,
+  QuotaControllerGetStatsData,
+  QuotaControllerGetStatsResponses,
+  QuotaControllerApproveStepData,
+  QuotaControllerApproveStepResponses,
+  QuotaControllerApproveStepErrors,
+  QuotaControllerSendToCustomerData,
+  QuotaControllerSendToCustomerResponses,
+  QuotaControllerSendToCustomerErrors,
+  QuotaControllerMarkCompletedData,
+  QuotaControllerMarkCompletedResponses,
+  QuotaControllerMarkCompletedErrors,
+  QuotaControllerCancelQuotaData,
+  QuotaControllerCancelQuotaResponses,
+  QuotaControllerSendToApproverData,
+  QuotaControllerSendToApproverResponses,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
+  F44B13Bc4971Acac4481E0A6B882787Data,
+  F44B13Bc4971Acac4481E0A6B882787Responses,
+  F44B13Bc4971Acac4481E0A6B882787Errors,
   A229A59B851Ad68435Ac0E91E98F32Data,
   A229A59B851Ad68435Ac0E91E98F32Responses,
   A229A59B851Ad68435Ac0E91E98F32Errors,
+  QuotaTemplateControllerStoreData,
+  QuotaTemplateControllerStoreResponses,
+  QuotaTemplateControllerStoreErrors,
   RankControllerIndexData,
   RankControllerIndexResponses,
   RankControllerIndexErrors,
@@ -278,6 +305,9 @@ import type {
   TagControllerUpdateData,
   TagControllerUpdateResponses,
   TagControllerUpdateErrors,
+  TenantControllerIndexData,
+  TenantControllerIndexResponses,
+  TenantControllerIndexErrors,
 } from './types.gen'
 import {
   zB39Fb0Dd3A8Eca7E26483C4E675C0aData,
@@ -351,16 +381,26 @@ import {
   zProductUnitControllerDestroyData,
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
+  zQuotaAgreedPriceControllerIndexData,
+  zQuotaAgreedPriceControllerStoreData,
+  zQuotaControllerBulkDestroyData,
   zQuotaControllerIndexData,
   zQuotaControllerStoreData,
   zQuotaControllerDestroyData,
   zQuotaControllerShowData,
   zQuotaControllerUpdateData,
-  zQuotaControllerCloneData,
   zQuotaControllerGetHistoryData,
   zQuotaControllerGetProductsData,
+  zQuotaControllerGetStatsData,
+  zQuotaControllerApproveStepData,
+  zQuotaControllerSendToCustomerData,
+  zQuotaControllerMarkCompletedData,
+  zQuotaControllerCancelQuotaData,
+  zQuotaControllerSendToApproverData,
   zQuotaFormSettingControllerShowData,
+  zF44B13Bc4971Acac4481E0A6B882787Data,
   zA229A59B851Ad68435Ac0E91E98F32Data,
+  zQuotaTemplateControllerStoreData,
   zRankControllerIndexData,
   zRankControllerStoreData,
   zRankControllerDestroyData,
@@ -374,6 +414,7 @@ import {
   zTagControllerDestroyData,
   zTagControllerShowData,
   zTagControllerUpdateData,
+  zTenantControllerIndexData,
 } from './zod.gen'
 import { client as _heyApiClient } from './client.gen'
 
@@ -2406,6 +2447,98 @@ export const productUnitControllerUpdate = <
 }
 
 /**
+ * Get list of quota agreed prices
+ * Retrieve a paginated list of quota agreed prices with filtering options.
+ */
+export const quotaAgreedPriceControllerIndex = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<QuotaAgreedPriceControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaAgreedPriceControllerIndexResponses,
+    QuotaAgreedPriceControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices',
+    ...options,
+  })
+}
+
+/**
+ * Create quota agreed price
+ * Create a new quota agreed price
+ */
+export const quotaAgreedPriceControllerStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaAgreedPriceControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaAgreedPriceControllerStoreResponses,
+    QuotaAgreedPriceControllerStoreErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Soft delete multiple quotas
+ * Soft delete multiple existing quotas by providing a list of IDs in the request body.
+ */
+export const quotaControllerBulkDestroy = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerBulkDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    QuotaControllerBulkDestroyResponses,
+    QuotaControllerBulkDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerBulkDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get all quotas
  * Get a list of quotas with pagination and advanced filters.
  */
@@ -2544,36 +2677,6 @@ export const quotaControllerUpdate = <ThrowOnError extends boolean = false>(
 }
 
 /**
- * Clone a quota
- * Clone an existing quota with optional override data.
- */
-export const quotaControllerClone = <ThrowOnError extends boolean = false>(
-  options: Options<QuotaControllerCloneData, ThrowOnError>,
-) => {
-  return (options.client ?? _heyApiClient).post<
-    QuotaControllerCloneResponses,
-    QuotaControllerCloneErrors,
-    ThrowOnError
-  >({
-    requestValidator: async (data) => {
-      return await zQuotaControllerCloneData.parseAsync(data)
-    },
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
-    url: '/api/v1/quotas/{sourceId}/clone',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  })
-}
-
-/**
  * Get quota history
  * Get the approval and clone history for a specific quota.
  */
@@ -2628,6 +2731,192 @@ export const quotaControllerGetProducts = <
 }
 
 /**
+ * Get quota status statistics
+ * Get the count of quotas for each status and the total count.
+ */
+export const quotaControllerGetStats = <ThrowOnError extends boolean = false>(
+  options?: Options<QuotaControllerGetStatsData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaControllerGetStatsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerGetStatsData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/stats',
+    ...options,
+  })
+}
+
+/**
+ * Approve quota steps
+ * Approve or reject quota approval steps for multiple quotas
+ */
+export const quotaControllerApproveStep = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerApproveStepData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaControllerApproveStepResponses,
+    QuotaControllerApproveStepErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerApproveStepData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/approval-steps',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Send quotas to customers
+ * Send approved quotas to customers via email. This operation updates quota status and queues email sending jobs.
+ */
+export const quotaControllerSendToCustomer = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerSendToCustomerData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaControllerSendToCustomerResponses,
+    QuotaControllerSendToCustomerErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerSendToCustomerData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/send-to-customer',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Mark quotas as completed
+ * Update multiple quotas status from sent_to_customer to completed
+ */
+export const quotaControllerMarkCompleted = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerMarkCompletedData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaControllerMarkCompletedResponses,
+    QuotaControllerMarkCompletedErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerMarkCompletedData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/mark-completed',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Cancel quotas from customer
+ * Update multiple quotas status from sent_to_customer to cancelled
+ */
+export const quotaControllerCancelQuota = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerCancelQuotaData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaControllerCancelQuotaResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerCancelQuotaData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/cancel-quota',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Send quotas to approver
+ * Update multiple quotas status from creating to waiting_approval
+ */
+export const quotaControllerSendToApprover = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerSendToApproverData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaControllerSendToApproverResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerSendToApproverData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/send-to-approver',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get quota form setting detail
  * Retrieve a specific quota form setting by its ID
  */
@@ -2656,6 +2945,38 @@ export const quotaFormSettingControllerShow = <
 }
 
 /**
+ * Preview quota form setting
+ * Preview an existing quota form setting with new configuration values
+ */
+export const f44B13Bc4971Acac4481E0A6B882787 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<F44B13Bc4971Acac4481E0A6B882787Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    F44B13Bc4971Acac4481E0A6B882787Responses,
+    F44B13Bc4971Acac4481E0A6B882787Errors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zF44B13Bc4971Acac4481E0A6B882787Data.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota-form-settings',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Update quota form setting
  * Update an existing quota form setting with new configuration values
  */
@@ -2679,6 +3000,38 @@ export const a229A59B851Ad68435Ac0E91E98F32 = <
       },
     ],
     url: '/api/v1/quota-form-settings/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Create quota template
+ * Create a new quota template with products. Product information (name, code, cost_price, selling_price) will be automatically fetched from database based on product_id and package_id. Only product_id, package_id (optional), profit_margin, is_add_total, and quantity are required for each product.
+ */
+export const quotaTemplateControllerStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaTemplateControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaTemplateControllerStoreResponses,
+    QuotaTemplateControllerStoreErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaTemplateControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota_template',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3038,5 +3391,31 @@ export const tagControllerUpdate = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get list of tenants
+ * Retrieve paginated list of tenants
+ */
+export const tenantControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<TenantControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    TenantControllerIndexResponses,
+    TenantControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zTenantControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/tenants',
+    ...options,
   })
 }
