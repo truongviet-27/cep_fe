@@ -2,7 +2,8 @@
   "quota_templates": "見積テンプレート一覧",
   "breadcrumb": {
     "home": "見積",
-    "quotasList": "見積テンプレート一覧"
+    "quotasList": "見積テンプレート一覧",
+    "quotasDetail": "見積詳細"
   },
   "list": {
     "title": "見積テンプレート一覧",
@@ -20,5 +21,8 @@
     "search": "検索",
     "clear": "クリア",
     "create": "新規作成"
+  },
+  "detail": {
+    "title": "見積詳細"
   }
 }

@@ -28,7 +28,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       title: t('quota_templates.list.templateName'),
       render: (item, record) => (
         <Link
-          href={`/quotas-template/show/${record.id}`}
+          href={`/quota-templates/show/${record.id}`}
           className="!underline"
         >
           {item}
