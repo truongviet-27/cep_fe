@@ -31,7 +31,10 @@ const zDeliveryAddressRule = (t: any) =>
     phone: z.optional(
       z
         .string({ error: t('validation.customer.phone.string') })
-        .max(20, { error: t('validation.customer.phone.max', { max: 20 }) }),
+        .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
+        .regex(/^\+[1-9]{1}[0-9]{3,14}$/, {
+          error: t('validation.customer.phone.regex'),
+        }),
     ),
     mail: z.optional(
       z
@@ -159,7 +162,10 @@ export const validateCustomerRule = (t: any) => {
       phone: z.optional(
         z
           .string({ error: t('validation.customer.phone.string') })
-          .max(20, { error: t('validation.customer.phone.max', { max: 20 }) }),
+          .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
+          .regex(/^\+[1-9]{1}[0-9]{3,14}$/, {
+            error: t('validation.customer.phone.regex'),
+          }),
       ),
       fax: z.optional(
         z
@@ -239,6 +245,9 @@ export const validateCustomerRule = (t: any) => {
             error: t('validation.customer.person_in_charge_phone.max', {
               max: 20,
             }),
+          })
+          .regex(/^\+[1-9]{1}[0-9]{3,14}$/, {
+            error: t('validation.customer.person_in_charge_phone.regex'),
           }),
       ),
 

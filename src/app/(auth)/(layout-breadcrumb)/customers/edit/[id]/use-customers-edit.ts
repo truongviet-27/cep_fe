@@ -1,5 +1,6 @@
+/* eslint-disable */
 import { useForm, useModalForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 
@@ -9,10 +10,24 @@ export const useCustomerEdit = () => {
     formProps,
     saveButtonProps,
     form,
+    onFinish,
     formLoading: isLoading,
   } = useForm({
     action: 'edit',
   })
+
+  const handleFinish = async (values: any) => {
+    let company_type = values?.company_type
+    let temp_industry = values?.temp_industry
+    if (values?.temp_company_type) {
+      company_type = values?.temp_company_type
+    }
+    if (values?.temp_industry) {
+      temp_industry = values?.temp_industry
+    }
+
+    await onFinish({ ...values, company_type, temp_industry })
+  }
 
   const apiUrl = useApiUrl()
 
@@ -30,6 +45,8 @@ export const useCustomerEdit = () => {
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
   })
+
+  const modalFormCorporate = useModal()
 
   const handleAutoNumber = () => {
     const code = codeGenData?.data?.preview_code
@@ -61,5 +78,7 @@ export const useCustomerEdit = () => {
     refetchCodeGen,
     formProps,
     saveButtonProps,
+    modalFormCorporate,
+    handleFinish,
   }
 }
