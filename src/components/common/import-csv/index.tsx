@@ -21,7 +21,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import LoadingImport from '@/assets/svg/loading.svg'
-import { axiosInstance } from '@rest-data-provider/utils'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 
 const { Text, Paragraph } = Typography
 

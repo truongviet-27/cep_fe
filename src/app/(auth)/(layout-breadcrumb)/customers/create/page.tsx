@@ -66,7 +66,6 @@ export default function CustomerCreatePage() {
           company_research_information:
             defaultCustomerCompanyResearchInformation,
           customer_code: null,
-          customer_name_by_kana: null,
           person_in_charge_name: null,
           person_in_charge_department: null,
           person_in_charge_mail: null,

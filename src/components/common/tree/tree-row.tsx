@@ -1,7 +1,7 @@
 import {
+  CloseOutlined,
   DownOutlined,
   PlusOutlined,
-  RollbackOutlined,
   SaveOutlined,
 } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
@@ -102,7 +102,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
         {isEditing ? (
           <>
             <Button
-              type="primary"
+              type="default"
               size="middle"
               loading={Boolean(saving)}
               onClick={() => onSave(cat.id)}
@@ -111,7 +111,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             <Button
               size="middle"
               onClick={() => (isNew ? onDelete() : onCancel(cat.id))}
-              icon={<RollbackOutlined />}
+              icon={<CloseOutlined />}
             />
           </>
         ) : (
@@ -127,6 +127,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
           onClick={() => onAddChild(cat.id)}
           icon={<PlusOutlined />}
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
+          type={'default'}
         />
         {/* <CommonButton
           hideText
