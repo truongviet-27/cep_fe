@@ -7,23 +7,32 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 type UserStore = {
+  isLoggedIn: boolean
   permission: PermissionType | null
   parameterSettings: ParameterSettingType
-  logout?: () => void
+  logout: () => void
   setPermission: (permission: PermissionType) => void
   setParameterSettings: (parameterSettings: ParameterSettingType) => void
+  setIsLoggedIn: (isLoggedIn: boolean) => void
   hasFullAccessModule: (permissionName: PermissionEnum) => boolean
 }
 
 export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
+      isLoggedIn: false,
       permission: null,
       parameterSettings: new Map(),
       setPermission: (permission: PermissionType) => set({ permission }),
       setParameterSettings: (parameterSettings: ParameterSettingType) =>
         set({ parameterSettings }),
-      logout: () => set({ permission: null }),
+      setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
+      logout: () =>
+        set({
+          permission: null,
+          isLoggedIn: false,
+          parameterSettings: new Map(),
+        }),
       hasFullAccessModule: (permissionName: PermissionEnum) => {
         const permission = get().permission
 
