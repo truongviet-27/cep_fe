@@ -591,7 +591,7 @@ export const zSimpleCustomer = z.object({
   name: z.optional(z.string()),
   country: z.optional(z.string()),
   person_in_charge_department: z.optional(z.string()),
-  price_rank_code: z.optional(z.string()),
+  rank: z.optional(zRank),
   credit_rank: z.optional(z.union([z.string(), z.null()])),
   credit_rank_update_at: z.optional(z.union([z.iso.date(), z.null()])),
   anti_social_rank: z.optional(z.union([z.string(), z.null()])),
@@ -1328,6 +1328,80 @@ export const zProductUnitsPaginatedResponse = z.object({
   message: z.optional(z.string()),
 })
 
+/**
+ * Request schema for approving or rejecting multiple quota steps
+ */
+export const zApproveQuotaStepRequest = z.array(
+  z.object({
+    quota_id: z.int(),
+    status: z.enum(['approved', 'rejected']),
+    comment: z.optional(z.union([z.string(), z.null()])),
+  }),
+)
+
+/**
+ * Quota agreed price details
+ */
+export const zQuotaAgreedPrice = z.object({
+  id: z.optional(z.int()),
+  quota_id: z.optional(z.int()),
+  quota_code: z.optional(z.string()),
+  number_products: z.optional(z.int()),
+  total_price: z.optional(z.number()),
+  customer_id: z.optional(z.int()),
+  number_updating: z.optional(z.int()),
+  expiration_date: z.optional(z.union([z.iso.datetime(), z.null()])),
+  created_by: z.optional(z.union([z.int(), z.null()])),
+  updated_by: z.optional(z.union([z.int(), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+  deleted_at: z.optional(z.union([z.iso.datetime(), z.null()])),
+  creator: z.optional(
+    z.union([
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+        email: z.optional(z.string()),
+      }),
+      z.null(),
+    ]),
+  ),
+  customer: z.optional(
+    z.union([
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+        code: z.optional(z.string()),
+      }),
+      z.null(),
+    ]),
+  ),
+})
+
+/**
+ * Pagination links for quota agreed prices
+ */
+export const zQuotaAgreedPriceLinks = z.object({
+  first: z.optional(z.string()),
+  last: z.optional(z.string()),
+  prev: z.optional(z.union([z.string(), z.null()])),
+  next: z.optional(z.union([z.string(), z.null()])),
+})
+
+/**
+ * Paginated response for quota agreed prices
+ */
+export const zQuotaAgreedPricesPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zQuotaAgreedPrice)),
+      meta: z.optional(zMeta),
+      links: z.optional(zQuotaAgreedPriceLinks),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
 export const zQuotaApprovalHistoryResource = z.object({
   id: z.optional(z.int()),
   approver_name: z.optional(z.string()),
@@ -1579,6 +1653,9 @@ export const zSimpleQuota = z.object({
   total_price: z.optional(z.string()),
   created_at: z.optional(z.iso.datetime()),
   expiration_date: z.optional(z.iso.date()),
+  sent_to_customer_date: z.optional(z.iso.date()),
+  customer_accepted_date: z.optional(z.iso.date()),
+  customer_cancelled_date: z.optional(z.iso.date()),
   author: z.optional(z.union([z.string(), z.null()])),
   approvers: z.optional(z.array(z.string())),
   latest_approval_comment: z.optional(
@@ -1752,6 +1829,91 @@ export const zUpdateQuotaFormSettingResponse = z.object({
 })
 
 /**
+ * Quota Template Product
+ * Represents a product within a quota template product group.
+ */
+export const zQuotaTemplateProduct = z.object({
+  id: z.optional(z.int()),
+  product_id: z.optional(z.int()),
+  package_id: z.optional(z.int()),
+  package_name: z.optional(z.union([z.string(), z.null()])),
+  quantity_in_package: z.optional(z.union([z.int(), z.null()])),
+  name: z.optional(z.union([z.string(), z.null()])),
+  code: z.optional(z.union([z.string(), z.null()])),
+  unit_name: z.optional(z.union([z.string(), z.null()])),
+  cost_price: z.optional(z.int()),
+  selling_price: z.optional(z.int()),
+  profit_margin: z.optional(z.int()),
+  is_add_total: z.optional(z.boolean()),
+  display_order: z.optional(z.int()),
+  quantity: z.optional(z.int()),
+})
+
+/**
+ * Quota Template Product Group
+ * Represents a product group within a quota template.
+ */
+export const zQuotaTemplateProductGroup = z.object({
+  id: z.optional(z.int()),
+  group_name: z.optional(z.string()),
+  display_order: z.optional(z.int()),
+  products: z.optional(z.array(zQuotaTemplateProduct)),
+})
+
+/**
+ * Quota Template Resource
+ * Represents a quota template with products and configuration.
+ */
+export const zQuotaTemplateResource = z.object({
+  id: z.optional(z.int()),
+  tenant_id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  description: z.optional(z.string()),
+  type: z.optional(z.enum(['normal', 'channel_limited'])),
+  delivery_method: z.optional(z.union([z.string(), z.null()])),
+  payment_due_date: z.optional(
+    z.enum([
+      'monthly_25',
+      'monthly_10',
+      'net_30_from_delivery',
+      'net_30_from_invoice',
+      'end_of_month_next',
+      'end_of_month_after_next',
+    ]),
+  ),
+  expiration_date: z.optional(
+    z.enum([
+      'days_7',
+      'days_14',
+      'days_45',
+      'days_60',
+      'months_3',
+      'months_6',
+      'years_1',
+    ]),
+  ),
+  consumption_tax: z.optional(z.enum(['exclusive', 'inclusive', 'external'])),
+  tax_rate: z.optional(z.union([z.int(), z.null()])),
+  note: z.optional(z.union([z.string(), z.null()])),
+  number_product: z.optional(z.union([z.int(), z.null()])),
+  total_price: z.optional(z.union([z.int(), z.null()])),
+  tags: z.optional(
+    z.array(
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+      }),
+    ),
+  ),
+  main_product: z.optional(z.array(zQuotaTemplateProductGroup)),
+  optional_product: z.optional(z.array(zQuotaTemplateProductGroup)),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+  author: z.optional(z.union([zSimpleUser, z.null()])),
+  editor: z.optional(z.union([zSimpleUser, z.null()])),
+})
+
+/**
  * Paginated ranks list envelope
  */
 export const zRanksPaginatedResponse = z.object({
@@ -1824,6 +1986,46 @@ export const zTagsPaginatedResponse = z.object({
       items: z.optional(z.array(zTag)),
       meta: z.optional(zMeta),
       links: z.optional(zLinks),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Tenant item
+ */
+export const zTenant = z.object({
+  id: z.optional(z.uuid()),
+  name: z.optional(z.string()),
+  code: z.optional(z.union([z.string(), z.null()])),
+  is_active: z.optional(z.boolean()),
+})
+
+/**
+ * Paginated response for tenants
+ */
+export const zTenantsPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zTenant)),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.int()),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.union([z.string(), z.null()])),
+          next: z.optional(z.union([z.string(), z.null()])),
+        }),
+      ),
     }),
   ),
   message: z.optional(z.string()),
@@ -3341,6 +3543,77 @@ export const zProductUnitControllerUpdateResponse = z.object({
   data: z.optional(zProductUnit),
 })
 
+export const zQuotaAgreedPriceControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int().gte(1)).default(1),
+      _per_page: z.optional(z.int().gte(1).lte(100)).default(10),
+      quota_code: z.optional(z.string().max(255)),
+      'customer_id_in[]': z.optional(z.array(z.int().gte(1))),
+      customer_name: z.optional(z.string().max(255)),
+      creator_name: z.optional(z.string().max(255)),
+      'created_by_in[]': z.optional(z.array(z.int().gte(1))),
+      'department_id_in[]': z.optional(z.array(z.int().gte(1))),
+      status: z.optional(
+        z.enum(['all', 'active', 'expired', 'about_to_expire']),
+      ),
+      expiration_date_gte: z.optional(z.iso.date()),
+      expiration_date_lte: z.optional(z.iso.date()),
+    }),
+  ),
+})
+
+/**
+ * Quota agreed prices retrieved successfully
+ */
+export const zQuotaAgreedPriceControllerIndexResponse =
+  zQuotaAgreedPricesPaginatedResponse
+
+export const zQuotaAgreedPriceControllerStoreData = z.object({
+  body: z.object({
+    quota_id: z.int(),
+    expiration_date: z.optional(z.union([z.iso.datetime(), z.null()])),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota agreed price created successfully
+ */
+export const zQuotaAgreedPriceControllerStoreResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+    }),
+  ),
+})
+
+export const zQuotaControllerBulkDestroyData = z.object({
+  body: z.object({
+    ids: z.array(z.int()),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quotas soft deleted successfully
+ */
+export const zQuotaControllerBulkDestroyResponse = z.object({
+  data: z.optional(
+    z.object({
+      deleted_count: z.optional(z.int()),
+      deleted_ids: z.optional(z.array(z.int())),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
 export const zQuotaControllerIndexData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -3365,7 +3638,15 @@ export const zQuotaControllerIndexData = z.object({
       tag_name: z.optional(z.string()),
       approver_name: z.optional(z.string()),
       creator_department_name: z.optional(z.string()),
-      search_date_type: z.optional(z.enum(['created_at', 'expiration_date'])),
+      search_date_type: z.optional(
+        z.enum([
+          'created_at',
+          'expiration_date',
+          'sent_to_customer_date',
+          'customer_accepted_date',
+          'customer_cancelled_date',
+        ]),
+      ),
       start_date: z.optional(z.iso.date()),
       end_date: z.optional(z.iso.date()),
     }),
@@ -3437,40 +3718,6 @@ export const zQuotaControllerUpdateResponse = z.object({
   data: z.optional(zQuotaResource),
 })
 
-export const zQuotaControllerCloneData = z.object({
-  body: z.optional(
-    z.object({
-      title: z.optional(z.string()),
-      status: z.optional(
-        z.enum([
-          'creating',
-          'waiting_approval',
-          'approved',
-          'rejected',
-          'sent_to_customer',
-          'completed',
-          'cancelled',
-        ]),
-      ),
-      delivery_date: z.optional(z.iso.date()),
-      note: z.optional(z.string()),
-    }),
-  ),
-  path: z.object({
-    sourceId: z.int(),
-  }),
-  query: z.optional(z.never()),
-})
-
-/**
- * Quota cloned successfully
- */
-export const zQuotaControllerCloneResponse = z.object({
-  success: z.optional(z.boolean()),
-  message: z.optional(z.string()),
-  data: z.optional(zQuotaResource),
-})
-
 export const zQuotaControllerGetHistoryData = z.object({
   body: z.optional(z.never()),
   path: z.object({
@@ -3514,6 +3761,179 @@ export const zQuotaControllerGetProductsResponse = z.object({
   ),
 })
 
+export const zQuotaControllerGetStatsData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Statistics retrieved successfully
+ */
+export const zQuotaControllerGetStatsResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      creating: z.optional(z.int()),
+      waiting_approval: z.optional(z.int()),
+      approved: z.optional(z.int()),
+      rejected: z.optional(z.int()),
+      sent_to_customer: z.optional(z.int()),
+      completed: z.optional(z.int()),
+      cancelled: z.optional(z.int()),
+      total: z.optional(z.int()),
+    }),
+  ),
+})
+
+export const zQuotaControllerApproveStepData = z.object({
+  body: zApproveQuotaStepRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota step approval processed successfully
+ */
+export const zQuotaControllerApproveStepResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      step_status: z.optional(z.string()),
+      quota_status: z.optional(z.string()),
+    }),
+  ),
+})
+
+export const zQuotaControllerSendToCustomerData = z.object({
+  body: z.object({
+    status: z.optional(z.enum(['sent_to_customer'])),
+    quota_ids: z.optional(z.array(z.int())),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quotas processing initiated successfully
+ */
+export const zQuotaControllerSendToCustomerResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      results: z.optional(
+        z.array(
+          z.object({
+            quota_id: z.optional(z.int()),
+            status: z.optional(z.string()),
+            message: z.optional(z.string()),
+          }),
+        ),
+      ),
+      errors: z.optional(
+        z.array(
+          z.object({
+            quota_id: z.optional(z.int()),
+            status: z.optional(z.string()),
+            message: z.optional(z.string()),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
+export const zQuotaControllerMarkCompletedData = z.object({
+  body: z.object({
+    quota_ids: z.array(z.int().gte(1)),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quotas marked as completed successfully
+ */
+export const zQuotaControllerMarkCompletedResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      processed: z.optional(z.int()),
+      failed: z.optional(z.int()),
+      results: z.optional(
+        z.array(
+          z.object({
+            quota_id: z.optional(z.int()),
+            status: z.optional(z.string()),
+            message: z.optional(z.string()),
+          }),
+        ),
+      ),
+      errors: z.optional(
+        z.array(
+          z.object({
+            quota_id: z.optional(z.int()),
+            status: z.optional(z.string()),
+            message: z.optional(z.string()),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
+export const zQuotaControllerCancelQuotaData = z.object({
+  body: z.object({
+    quota_ids: z.array(z.int().gte(1)),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quotas cancelled successfully
+ */
+export const zQuotaControllerCancelQuotaResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      processed: z.optional(z.int()),
+      failed: z.optional(z.int()),
+      results: z.optional(z.array(z.object({}))),
+      errors: z.optional(z.array(z.object({}))),
+    }),
+  ),
+})
+
+export const zQuotaControllerSendToApproverData = z.object({
+  body: z.object({
+    quota_ids: z.array(z.int().gte(1)),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quotas resubmitted successfully
+ */
+export const zQuotaControllerSendToApproverResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      processed: z.optional(z.int()),
+      failed: z.optional(z.int()),
+      results: z.optional(z.array(z.object({}))),
+      errors: z.optional(z.array(z.object({}))),
+    }),
+  ),
+})
+
 export const zQuotaFormSettingControllerShowData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -3525,6 +3945,24 @@ export const zQuotaFormSettingControllerShowData = z.object({
  */
 export const zQuotaFormSettingControllerShowResponse =
   zQuotaFormSettingDetailResponse
+
+export const zF44B13Bc4971Acac4481E0A6B882787Data = z.object({
+  body: zUpdateQuotaFormSettingRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota Form Setting previewd successfully
+ */
+export const zF44B13Bc4971Acac4481E0A6B882787Response = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      html: z.optional(z.string()),
+    }),
+  ),
+})
 
 export const zA229A59B851Ad68435Ac0E91E98F32Data = z.object({
   body: zUpdateQuotaFormSettingRequest,
@@ -3539,6 +3977,105 @@ export const zA229A59B851Ad68435Ac0E91E98F32Data = z.object({
  */
 export const zA229A59B851Ad68435Ac0E91E98F32Response =
   zUpdateQuotaFormSettingResponse
+
+export const zQuotaTemplateControllerStoreData = z.object({
+  body: z.object({
+    name: z.string(),
+    description: z.string(),
+    type: z.enum(['normal', 'channel_limited']),
+    delivery_method: z.optional(z.string()),
+    payment_due_date: z.optional(
+      z.enum([
+        'monthly_25',
+        'monthly_10',
+        'net_30_from_delivery',
+        'net_30_from_invoice',
+        'end_of_month_next',
+        'end_of_month_after_next',
+      ]),
+    ),
+    expiration_date: z.optional(
+      z.enum([
+        'days_7',
+        'days_14',
+        'days_45',
+        'days_60',
+        'months_3',
+        'months_6',
+        'years_1',
+      ]),
+    ),
+    consumption_tax: z.optional(z.enum(['exclusive', 'inclusive', 'external'])),
+    tax_rate: z.optional(z.int()),
+    note: z.optional(z.string()),
+    number_product: z.optional(z.int()),
+    total_price: z.optional(z.int()),
+    tags: z.optional(z.array(z.int())),
+    main_product: z.optional(
+      z.array(
+        z.object({
+          id: z.optional(z.int()),
+          group_name: z.optional(z.string()),
+          display_order: z.optional(z.int()),
+          products: z.optional(
+            z.array(
+              z.object({
+                id: z.optional(z.int()),
+                product_id: z.int(),
+                package_id: z.optional(z.int()),
+                name: z.optional(z.string()),
+                code: z.optional(z.string()),
+                cost_price: z.optional(z.int()),
+                selling_price: z.optional(z.int()),
+                profit_margin: z.int(),
+                is_add_total: z.boolean(),
+                display_order: z.optional(z.int()),
+                quantity: z.int(),
+              }),
+            ),
+          ),
+        }),
+      ),
+    ),
+    optional_product: z.optional(
+      z.array(
+        z.object({
+          id: z.optional(z.int()),
+          group_name: z.optional(z.string()),
+          display_order: z.optional(z.int()),
+          products: z.optional(
+            z.array(
+              z.object({
+                id: z.optional(z.int()),
+                product_id: z.int(),
+                package_id: z.optional(z.int()),
+                name: z.optional(z.string()),
+                code: z.optional(z.string()),
+                cost_price: z.optional(z.int()),
+                selling_price: z.optional(z.int()),
+                profit_margin: z.int(),
+                is_add_total: z.boolean(),
+                display_order: z.optional(z.int()),
+                quantity: z.int(),
+              }),
+            ),
+          ),
+        }),
+      ),
+    ),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota template created successfully
+ */
+export const zQuotaTemplateControllerStoreResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(zQuotaTemplateResource),
+})
 
 export const zRankControllerIndexData = z.object({
   body: z.optional(z.never()),
@@ -3735,3 +4272,19 @@ export const zTagControllerUpdateResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zTag),
 })
+
+export const zTenantControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Tenants retrieved successfully
+ */
+export const zTenantControllerIndexResponse = zTenantsPaginatedResponse

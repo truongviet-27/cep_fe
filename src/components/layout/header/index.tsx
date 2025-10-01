@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons'
 import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
 import { useModal } from '@refinedev/core'
+import useTenantStore from '@stores/useTenantStore'
 import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
 import { Avatar, Badge, Dropdown, Input, Layout, Modal, Space } from 'antd'
 import { useKBar } from 'kbar'
@@ -30,7 +31,9 @@ export default function AuthHeader({
   const modalProps = useModal()
 
   const isAdmin = isSupperAdmin(session.data?.accessToken)
-  const tenantName = getOrgFromToken(session.data?.accessToken)?.name
+  const storeTenantName = useTenantStore((s) => s.tenantName)
+  const tokenTenantName = getOrgFromToken(session.data?.accessToken)?.name
+  const tenantName = isAdmin ? storeTenantName : tokenTenantName
   const menuItems = [{ key: 'logout', label: t_menu('logout') }]
   const onMenuClick = ({ key }: { key: string }) => {
     if (key === 'logout') {
