@@ -11,7 +11,6 @@ import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/customers/comp
 import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useModal } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space, Typography } from 'antd'
 import React from 'react'
@@ -23,11 +22,19 @@ const { Title } = Typography
 export default function CustomerCreatePage() {
   const hookProps = useCustomerCreate()
 
-  const { t, formProps, isLoading, modalFormProps, saveButtonProps } = hookProps
+  const {
+    t,
+    formProps,
+    isLoading,
+    modalFormProps,
+    saveButtonProps,
+    modalFormCorporate,
+    handleFinish,
+  } = hookProps
 
   const { close: closeModal, open: modalOpen } = modalFormProps
 
-  const { close, visible } = useModal()
+  const { close, visible } = modalFormCorporate
 
   const breadcrumbItems = [
     {
@@ -45,7 +52,7 @@ export default function CustomerCreatePage() {
       isLoading={isLoading}
       rightFooterButtons={
         <Button {...saveButtonProps} type="primary">
-          {t('buttons.save')}
+          {t('buttons.create')}
         </Button>
       }
       title={
@@ -54,6 +61,7 @@ export default function CustomerCreatePage() {
     >
       <Form
         {...formProps}
+        onFinish={handleFinish}
         initialValues={{
           company_research_information:
             defaultCustomerCompanyResearchInformation,
@@ -63,9 +71,10 @@ export default function CustomerCreatePage() {
           person_in_charge_department: null,
           person_in_charge_mail: null,
           name: null,
+          price_rank_id: null,
         }}
         labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
-        wrapperCol={{ xs: 24, sm: 16, md: 14, lg: 12, xl: 10 }}
+        wrapperCol={{ xs: 24, sm: 16, md: 14 }}
         labelAlign="left"
         layout="horizontal"
         colon={false}
@@ -94,8 +103,14 @@ export default function CustomerCreatePage() {
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
 
-      <Modal open={visible} onCancel={close} footer={null}>
-        <CorporateNumberSearchModal modalProps={modalFormProps} />
+      <Modal
+        title={t('customers.modal.title')}
+        open={visible}
+        onCancel={close}
+        width={800}
+        footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
+      >
+        <CorporateNumberSearchModal modalProps={modalFormCorporate} />
       </Modal>
     </Create>
   )

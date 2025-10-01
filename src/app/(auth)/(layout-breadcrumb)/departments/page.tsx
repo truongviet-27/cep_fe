@@ -143,6 +143,10 @@ export default function Page() {
       },
     },
     { dataIndex: 'name', title: t('departments.fields.name') },
+    {
+      dataIndex: 'number_of_employee',
+      title: t('departments.fields.number_of_employee'),
+    },
     { dataIndex: 'created_by', title: t('approve_routes.show.creator') },
     { dataIndex: 'updated_by', title: t('departments.fields.updated_by') },
     {

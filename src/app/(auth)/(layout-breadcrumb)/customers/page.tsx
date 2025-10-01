@@ -49,7 +49,6 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 import AutoHeading from '@components/common/auto-heading'
-import { cn } from '@utility/cn'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -298,7 +297,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.actions'),
         key: 'actions',
         align: 'center',
-        fixed: 'right',
+        dataIndex: 'actions',
         render: (_, record) => (
           <Space>
             {!record.deleted_at && (

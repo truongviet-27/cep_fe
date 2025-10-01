@@ -2,8 +2,7 @@
 import CommonTable from '@components/common/table'
 import { useTable } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
-import type { TableColumnsType } from 'antd'
-import { Button, Form, Input, Modal, Space } from 'antd'
+import { Button, Col, Form, Input, Row, Space, TableColumnsType } from 'antd'
 import React from 'react'
 
 // Type cho dữ liệu của popup
@@ -47,7 +46,7 @@ export const CorporateNumberSearchModal: React.FC<
   const t = useTranslate()
   const [searchForm] = Form.useForm()
 
-  const { open, close, onSelect } = modalProps
+  const { visible, close } = modalProps
 
   const { tableProps, setFilters } = useTable<ICorporateInfo>({
     // queryFn: async () => ({
@@ -57,7 +56,7 @@ export const CorporateNumberSearchModal: React.FC<
   })
 
   const handleSelect = (record: ICorporateInfo) => {
-    onSelect(record)
+    // onSelect(record)
     close()
   }
 
@@ -72,13 +71,12 @@ export const CorporateNumberSearchModal: React.FC<
       title: t('customers.modal.corporate_number'),
       dataIndex: 'corporate_number',
       key: 'corporate_number',
-    },
-    {
-      title: '',
-      key: 'action',
-      align: 'center',
       render: (_, record) => (
-        <Button type="primary" onClick={() => handleSelect(record)}>
+        <Button
+          type="primary"
+          onClick={() => handleSelect(record)}
+          size="small"
+        >
           {t('buttons.select')}
         </Button>
       ),
@@ -98,35 +96,40 @@ export const CorporateNumberSearchModal: React.FC<
   }
 
   return (
-    <Modal
-      title={t('customers.modal.title')}
-      open={open}
-      onCancel={close}
-      width={800}
-      footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
-    >
+    <div>
       <Form
         form={searchForm}
-        layout="inline"
+        layout="vertical"
         onFinish={handleSearch}
         className="mb-4"
+        colon={false}
       >
-        <Form.Item label={t('customers.modal.name')} name="name">
-          <Input placeholder={t('placeholders.partial_match')} />
-        </Form.Item>
-        <Form.Item label={t('customers.modal.address')} name="address">
-          <Input placeholder={t('placeholders.partial_match')} />
-        </Form.Item>
-        <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit">
-              {t('buttons.search')}
-            </Button>
-            <Button onClick={handleClear}>{t('buttons.clear')}</Button>
-          </Space>
-        </Form.Item>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} md={6}>
+            <Form.Item label={t('customers.modal.name')} name="name">
+              <Input placeholder={t('placeholders.partial_match')} />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={6}>
+            <Form.Item label={t('customers.modal.address')} name="address">
+              <Input placeholder={t('placeholders.partial_match')} />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={6}>
+            <Form.Item className={'!mt-7.5'}>
+              <Space>
+                <Button type="primary" htmlType="submit">
+                  {t('buttons.search')}
+                </Button>
+                <Button onClick={handleClear}>{t('buttons.clear')}</Button>
+              </Space>
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
       <CommonTable {...tableProps} columns={columns as any} rowKey="id" />
-    </Modal>
+    </div>
   )
 }

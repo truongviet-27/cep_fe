@@ -712,7 +712,7 @@
       "name_placeholder": "例）営業本部 / 営業部 / 第一課"
     },
     "edit": {
-      "edit": "部門登録"
+      "edit": "部門編集"
     },
     "show": {
       "show": "部門詳細"
@@ -920,7 +920,8 @@
       "selling_price": "販売価格(円)",
       "is_rate_based": "設定方式",
       "rate": "換率",
-      "absolute": "絶対"
+      "absolute": "絶対",
+      "percentage": "掛率"
     }
   }
 }

@@ -56,7 +56,7 @@ export default function Page() {
             setIsShow(true)
             editModalShow(record.id)
           }}
-          className="!underline"
+          className="!h-4 !underline"
         >
           {record.code}
         </Button>
