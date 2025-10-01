@@ -5,7 +5,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import AccountingContact from '@app/(auth)/(layout-breadcrumb)/customers/components/accounting-contact'
 import AddressContact from '@app/(auth)/(layout-breadcrumb)/customers/components/address-contact'
 import BasicInformation from '@app/(auth)/(layout-breadcrumb)/customers/components/basic-Information'
-// Import các component con, không thay đổi
+import { CorporateNumberSearchModal } from '@app/(auth)/(layout-breadcrumb)/customers/components/corporate-number-search-modal'
 import { CorporateResearchFormSection } from '@app/(auth)/(layout-breadcrumb)/customers/components/corporate-research-form-section'
 import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/customers/components/delivery-destinations'
 import { Edit } from '@components/crud/edit'
@@ -21,8 +21,18 @@ const { Title } = Typography
 export default function CustomerEditPage() {
   const hookProps = useCustomerEdit()
 
-  const { t, formProps, saveButtonProps, isLoading, modalFormProps } = hookProps
+  const {
+    t,
+    formProps,
+    saveButtonProps,
+    isLoading,
+    modalFormProps,
+    modalFormCorporate,
+    handleFinish,
+  } = hookProps
   const { close: closeModal, open: modalOpen } = modalFormProps
+
+  const { close, visible } = modalFormCorporate
 
   const breadcrumbItems = [
     {
@@ -49,8 +59,9 @@ export default function CustomerEditPage() {
     >
       <Form
         {...formProps}
+        onFinish={handleFinish}
         labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
-        wrapperCol={{ xs: 24, sm: 16, md: 14, lg: 12, xl: 10 }}
+        wrapperCol={{ xs: 24, sm: 16, md: 14 }}
         labelAlign="left"
         layout="horizontal"
         colon={false}
@@ -69,8 +80,9 @@ export default function CustomerEditPage() {
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
 
-      {/* Logic cho modal tìm kiếm corporate number cũng có thể được thêm vào hook nếu cần */}
-      {/* <CorporateNumberSearchModal modalProps={...} /> */}
+      <Modal open={visible} onCancel={close} footer={null}>
+        <CorporateNumberSearchModal modalProps={modalFormProps} />
+      </Modal>
     </Edit>
   )
 }
