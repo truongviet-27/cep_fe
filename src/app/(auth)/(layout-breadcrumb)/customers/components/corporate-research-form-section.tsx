@@ -70,6 +70,8 @@ export const CorporateResearchFormSection = (
     formTrigger()
   }
 
+  console.log(form.getFieldValue('company_research_information'), 'value')
+
   const columns = [
     {
       title: (

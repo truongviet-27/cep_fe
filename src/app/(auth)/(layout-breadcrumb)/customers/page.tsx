@@ -93,62 +93,64 @@ export default function CustomerListPage() {
     },
   })
 
-  const { tableProps, setFilters, searchFormProps } = useTable<ICustomer>({
-    syncWithLocation: true,
-    onSearch: (values: any) => [
-      {
-        field: 'q',
-        operator: 'null',
-        value: values?.q,
-      },
-      {
-        field: 'country',
-        operator: 'null',
-        value: values?.country,
-      },
-      {
-        field: 'person_in_charge_department',
-        operator: 'contains',
-        value: values?.person_in_charge_department,
-      },
-      {
-        field: 'price_rank_id',
-        operator: 'null',
-        value: values?.price_rank_id,
-      },
-      {
-        field: 'credit_rank',
-        operator: 'null',
-        value: values?.credit_rank,
-      },
-      {
-        field: 'anti_social_rank',
-        operator: 'null',
-        value: values?.anti_social_rank,
-      },
-      {
-        field: 'search_date_type',
-        operator: 'null',
-        value: values?.search_date_type,
-      },
-      {
-        field: 'date_start',
-        operator: 'null',
-        value: values.date_range?.[0]
-          ? dayjs(values.date_range[0]).format(FORMAT_DATE)
-          : undefined,
-      },
-      {
-        field: 'date_end',
-        operator: 'null',
-        value: values.date_range?.[1]
-          ? dayjs(values.date_range[1]).format(FORMAT_DATE)
-          : undefined,
-      },
-    ],
-  })
+  const { tableProps, setFilters, searchFormProps, setCurrent } =
+    useTable<ICustomer>({
+      syncWithLocation: true,
+      onSearch: (values: any) => [
+        {
+          field: 'q',
+          operator: 'null',
+          value: values?.q,
+        },
+        {
+          field: 'country',
+          operator: 'null',
+          value: values?.country,
+        },
+        {
+          field: 'person_in_charge_department',
+          operator: 'contains',
+          value: values?.person_in_charge_department,
+        },
+        {
+          field: 'price_rank_id',
+          operator: 'null',
+          value: values?.price_rank_id,
+        },
+        {
+          field: 'credit_rank',
+          operator: 'null',
+          value: values?.credit_rank,
+        },
+        {
+          field: 'anti_social_rank',
+          operator: 'null',
+          value: values?.anti_social_rank,
+        },
+        {
+          field: 'search_date_type',
+          operator: 'null',
+          value: values?.search_date_type,
+        },
+        {
+          field: 'date_start',
+          operator: 'null',
+          value: values.date_range?.[0]
+            ? dayjs(values.date_range[0]).format(FORMAT_DATE)
+            : undefined,
+        },
+        {
+          field: 'date_end',
+          operator: 'null',
+          value: values.date_range?.[1]
+            ? dayjs(values.date_range[1]).format(FORMAT_DATE)
+            : undefined,
+        },
+      ],
+    })
 
   const handleSearch = (values: any) => {
+    setCurrent(1)
     setFilters([
       {
         field: 'q',

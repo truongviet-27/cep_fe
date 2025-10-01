@@ -107,7 +107,7 @@ export const validateCustomerRule = (t: any) => {
             }),
           })
           .regex(/^[ァ-ンヴ・ー]+$/, {
-            error: t('validation.customer.customer_name_by_kana.string'),
+            error: t('validation.customer.customer_name_by_kana.regex'),
           }),
       ),
       customer_type: z.optional(

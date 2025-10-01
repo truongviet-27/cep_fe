@@ -14,6 +14,7 @@ export const useCustomerEdit = () => {
     formLoading: isLoading,
   } = useForm({
     action: 'edit',
+    redirect: 'edit',
   })
 
   const handleFinish = async (values: any) => {
@@ -25,6 +26,8 @@ export const useCustomerEdit = () => {
     if (values?.temp_industry) {
       temp_industry = values?.temp_industry
     }
+
+    console.log(values?.company_research_information, 'values')
 
     await onFinish({ ...values, company_type, temp_industry })
   }
