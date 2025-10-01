@@ -17,7 +17,7 @@ export const segmentOptions: { value: SegmentValue; label: string }[] = [
   { value: 'year_month_day_range', label: '年月日—（YYMMDD—）' },
 ]
 
-export const industryOptions: { value: string; label: string }[] = [
+export const industryOptions: { value: string | null; label: string }[] = [
   { value: '食品', label: '食品' },
   { value: '卸-商社', label: '卸-商社' },
   { value: '製造・加工', label: '製造・加工' },
@@ -26,7 +26,7 @@ export const industryOptions: { value: string; label: string }[] = [
   { value: '医療', label: '医療' },
   { value: '鉄鋼', label: '鉄鋼' },
   { value: '鉄鋼', label: '鉄鋼' },
-  { value: '自分入力', label: '自分入力' },
+  { value: null, label: '自分入力' },
 ]
 
 export const fieldDistinctionOptions: { value: string; label: string }[] = [
@@ -36,13 +36,13 @@ export const fieldDistinctionOptions: { value: string; label: string }[] = [
   { value: 'グロース', label: 'グロース' },
 ]
 
-export const typesCompanyOptions: { value: string | null; label: string }[] = [
+export const typesCompanyOptions: { value: string; label: string }[] = [
   { value: '株式会社', label: '株式会社' },
   { value: '有限会社', label: '有限会社' },
   { value: '合同会社', label: '合同会社' },
   { value: '合名会社', label: '合名会社' },
   { value: '合資会社', label: '合資会社' },
-  { value: null, label: '自分入力' },
+  { value: 'other', label: '自分入力' },
 ]
 
 export const creditCheckOptions: { value: string; label: string }[] = [
@@ -273,4 +273,12 @@ export const countryOptions: { value: string; label: string }[] = [
   { label: 'レソト', value: 'レソト' },
   { label: 'レバノン', value: 'レバノン' },
   { label: 'ロシア', value: 'ロシア' },
+]
+
+export const settingMethodOptions: {
+  value: string
+  label: string
+}[] = [
+  { value: 'percentage', label: '掛率' },
+  { value: 'absolute', label: '絶対' },
 ]

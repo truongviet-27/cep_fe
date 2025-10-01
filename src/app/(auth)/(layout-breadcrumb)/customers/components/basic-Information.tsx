@@ -23,6 +23,7 @@ import {
 } from 'antd'
 
 import styles from '../styles.module.css'
+import React from 'react'
 
 const { Title } = Typography
 const { Panel } = Collapse
@@ -38,10 +39,11 @@ function BasicInformation(
     modalFormProps,
     codeGenData,
     form,
+    modalFormCorporate,
   } = props
 
   const isIndividual = Form.useWatch('customer_type', form) === 'individual'
-  const isJapan = Form.useWatch('country', form) === 'Japan'
+  const isJapan = Form.useWatch('country', form) === '日本'
   const isNameAfter =
     Form.useWatch('company_name_display_format', form) === 'after'
   const name = Form.useWatch('name', form)
@@ -50,7 +52,7 @@ function BasicInformation(
   const parts = isNameAfter ? [companyType, name] : [name, companyType]
   const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
 
-  const isOtherSelected = companyType === null
+  const isOtherSelected = companyType == 'other'
 
   const { selectProps: ranksSelectProps } = useSelect({
     resource: 'ranks',
@@ -126,7 +128,20 @@ function BasicInformation(
             {isIndividual && (
               <>
                 <Col>
+                  <Form.Item hidden={!isOtherSelected} name="temp_company_type">
+                    <Input
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          form.setFieldsValue({
+                            company_type: null,
+                          })
+                        }
+                      }}
+                    />
+                  </Form.Item>
+
                   <Form.Item
+                    hidden={isOtherSelected}
                     name="company_type"
                     rules={[
                       {
@@ -145,14 +160,10 @@ function BasicInformation(
                       },
                     ]}
                   >
-                    {isOtherSelected ? (
-                      <Input />
-                    ) : (
-                      <Select
-                        placeholder={t('placeholders.select')}
-                        options={typesCompanyOptions}
-                      />
-                    )}
+                    <Select
+                      placeholder={t('placeholders.select')}
+                      options={typesCompanyOptions}
+                    />
                   </Form.Item>
                 </Col>
 
@@ -241,7 +252,17 @@ function BasicInformation(
 
                 <Col>
                   <Form.Item name="corporate_number" rules={[rule]}>
-                    <Input style={{ maxWidth: 560 }} />
+                    <Input style={{ maxWidth: 300 }} />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item>
+                    <Button
+                      type={'primary'}
+                      onClick={() => modalFormCorporate.show()}
+                    >
+                      {t('customers.modal.title')}
+                    </Button>
                   </Form.Item>
                 </Col>
               </>

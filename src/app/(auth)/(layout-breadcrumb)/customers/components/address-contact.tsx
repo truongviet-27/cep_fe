@@ -28,13 +28,17 @@ const { Panel } = Collapse
 function AddressContact(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
-  const { t, rule } = props
+  const { t, rule, form } = props
+
+  const industry = Form.useWatch('industry', form)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'name',
   })
+
+  const isOtherSelected = industry === null
 
   return (
     <Collapse
@@ -102,8 +106,18 @@ function AddressContact(
 
         <Form.Item
           label={boldText(t('customers.show.industry'))}
+          name="temp_industry"
+          rules={[rule]}
+          hidden={!isOtherSelected}
+        >
+          <Input style={{ maxWidth: 560 }} />
+        </Form.Item>
+
+        <Form.Item
+          label={boldText(t('customers.show.industry'))}
           name="industry"
           rules={[rule]}
+          hidden={isOtherSelected}
         >
           <Select
             placeholder={t('placeholders.select')}

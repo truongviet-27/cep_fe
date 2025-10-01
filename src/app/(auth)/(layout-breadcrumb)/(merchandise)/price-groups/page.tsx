@@ -1,7 +1,9 @@
+/* eslint-disable */
 'use client'
 
 import { CloseOutlined, RightOutlined } from '@ant-design/icons'
 import usePriceGroups from '@app/(auth)/(layout-breadcrumb)/(merchandise)/price-groups/use-price-groups'
+import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -14,24 +16,26 @@ import {
 } from '@refinedev/antd'
 import { useCreate, useList } from '@refinedev/core'
 import type { PriceGroupItem, Rank } from '@sdk/hey-api'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { industryOptions } from '@utility/options'
+import { settingMethodOptions } from '@utility/options'
 import {
   Button,
   Col,
   Form,
   Input,
+  InputNumber,
+  Radio,
   Row,
   Select,
   Space,
-  Switch,
   Table,
   Typography,
 } from 'antd'
 import { includes } from 'lodash'
 import React, { useState } from 'react'
 
-const { Title, Text } = Typography
+const { Title } = Typography
 
 function Page() {
   const [editIds, setEditIds] = useState<number[]>([])
@@ -43,25 +47,54 @@ function Page() {
     searchFormProps,
     // mutationResult,
     form,
-  } = useEditableTable<PriceGroupItem>()
+  } = useEditableTable<PriceGroupItem>({
+    onSearch: (values: any) => [
+      {
+        field: 'q',
+        operator: 'null',
+        value: values?.q,
+      },
+      {
+        field: 'category_id',
+        operator: 'null',
+        value: values?.category_id,
+      },
+      {
+        field: 'setting_method',
+        operator: 'null',
+        value: values?.setting_method,
+      },
+    ],
+  })
 
   const { data: ranks, isLoading } = useList<Rank>({
     resource: 'ranks',
   })
 
-  const { mutate } = useCreate()
+  const { mutate, isLoading: loadingCreate } = useCreate()
 
   const handleSaveAll = () => {
-    const allData = Object.values(
-      form.getFieldsValue() as PriceGroupItem[],
-    )?.filter((item) => (item?.rank_prices || [])?.length > 0)
+    const flatIterator = Object.values(form.getFieldsValue())
 
-    console.log(form.getFieldsValue(), 'allData')
+    const allData = flatIterator as any[]
 
-    mutate({
-      resource: 'price-groups',
-      values: allData,
-    })
+    const values = allData.filter(
+      (item) => (item?.ranks_prices?.length ?? 0) > 0,
+    )
+
+    mutate(
+      {
+        resource: 'price-groups',
+        values,
+      },
+      {
+        onSuccess: () => {
+          values.forEach((item) => {
+            onEditRow(item.packaging_id)
+          })
+        },
+      },
+    )
   }
   const onEditRow = (id: number | undefined | null) => {
     if (id === null || id === undefined) {
@@ -104,7 +137,11 @@ function Page() {
       i18nHeading={'price_groups.list.list'}
       footer={
         <Col>
-          <Button type="primary" onClick={handleSaveAll}>
+          <Button
+            type="primary"
+            onClick={handleSaveAll}
+            loading={loadingCreate}
+          >
             {t('buttons.save_all')}
           </Button>
         </Col>
@@ -113,35 +150,48 @@ function Page() {
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
-            <Text strong>{t('departments.list.filters.search_label')}</Text>
-            <Form.Item name="q">
+            <Form.Item
+              label={boldText(t('products.list.searchArea.productInputLabel'))}
+              layout="vertical"
+              name="q"
+            >
               <Input
                 className={'mt-2'}
-                placeholder={t('departments.list.filters.search_placeholder')}
+                placeholder={t(
+                  'products.list.searchArea.productInputPlaceholder',
+                )}
               />
             </Form.Item>
           </Col>
           <Col xs={12} sm={6} md={6}>
-            <Text strong>{t('departments.list.filters.search_label')}</Text>
-            <Form.Item name="q">
-              <Input
-                className={'mt-2'}
-                placeholder={t('departments.list.filters.search_placeholder')}
+            <Form.Item
+              label={boldText(t('products.list.searchArea.categoryLabel'))}
+              layout="vertical"
+              name="category_id"
+            >
+              <ProductCategoryDropdown
+                placeholder={t('products.list.searchArea.categoryPlaceholder')}
+                onSelect={(_, __, ___, categoryId) => {
+                  searchFormProps.form?.setFieldValue('category_id', categoryId)
+                }}
               />
             </Form.Item>
           </Col>
           <Col xs={12} sm={6} md={6}>
-            <Text strong>{t('departments.list.filters.search_label')}</Text>
-            <Form.Item name="q">
+            <Form.Item
+              label={boldText(t('price_groups.fields.is_rate_based'))}
+              layout="vertical"
+              name="setting_method"
+            >
               <Select
                 placeholder={t('placeholders.select')}
                 style={{ minWidth: 300 }}
-                options={industryOptions}
+                options={settingMethodOptions}
               />
             </Form.Item>
           </Col>
           <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
-            <Space className={'mt-[22px]'}>
+            <Space className={'mt-[30px]'}>
               <Button htmlType="submit" type="primary">
                 {t('buttons.search')}
               </Button>
@@ -165,6 +215,7 @@ function Page() {
           {...tableProps}
           loading={tableProps.loading || isLoading}
           rowKey="id"
+          scroll={{ x: 'max-content' }}
         >
           <Table.Column
             dataIndex={['product_code']}
@@ -194,11 +245,43 @@ function Page() {
           <Table.Column
             dataIndex={['is_rate_based']}
             title={t('price-groups.fields.is_rate_based')}
-            render={(value, record, index) => (
-              <Form.Item initialValue={value} name={[index, 'is_rate_based']}>
-                <Switch />
-              </Form.Item>
-            )}
+            render={(value, record, index) => {
+              const currentVal = value
+                ? t('price_groups.fields.percentage')
+                : t('price_groups.fields.absolute')
+              return (
+                <>
+                  <Form.Item
+                    initialValue={value}
+                    name={[index, 'is_rate_based']}
+                    className={'!m-0 !h-fit !p-0'}
+                  >
+                    {record?.packaging_id &&
+                    !includes(editIds, record.packaging_id) ? (
+                      currentVal
+                    ) : (
+                      <Radio.Group>
+                        <Radio value={false}>
+                          {t('price_groups.fields.percentage')}
+                        </Radio>
+                        <Radio value={true}>
+                          {t('price_groups.fields.absolute')}
+                        </Radio>
+                      </Radio.Group>
+                    )}
+                  </Form.Item>
+
+                  <Form.Item
+                    className={'!p-0'}
+                    name={[index, `packaging_id`]}
+                    initialValue={record.packaging_id}
+                    style={{ display: 'none' }}
+                  >
+                    <Input hidden />
+                  </Form.Item>
+                </>
+              )
+            }}
           />
 
           {ranks?.data?.map((item, indexChild) => {
@@ -209,6 +292,8 @@ function Page() {
                 title={`${item.name} ${item.rate}% (円)`}
                 render={(value, record, index) => {
                   const rankPrices = getCurrentPrices(index)
+                  const currentPrice =
+                    rankPrices?.find((i) => i.rank_id === item.id)?.price ?? 0
                   if (
                     record?.packaging_id &&
                     includes(editIds, record.packaging_id)
@@ -216,6 +301,7 @@ function Page() {
                     return (
                       <>
                         <Form.Item
+                          className={'!p-0'}
                           name={[index, 'ranks_prices', indexChild, `rank_id`]}
                           initialValue={item.id}
                           style={{ display: 'none' }}
@@ -226,22 +312,21 @@ function Page() {
                         <Form.Item
                           name={[index, 'ranks_prices', indexChild, `price`]}
                           style={{ margin: 0 }}
+                          initialValue={currentPrice}
                         >
-                          <Input />
+                          <InputNumber min={0} />
                         </Form.Item>
                       </>
                     )
                   }
-                  return (
-                    rankPrices?.find((i) => i.rank_id === item.id)?.price ?? 0
-                  )
+                  return currentPrice
                 }}
               />
             )
           })}
 
           <Table.Column
-            title="Actions"
+            title={t('employees.fields.actions')}
             dataIndex="actions"
             fixed="right"
             render={(_, record) => {
@@ -250,7 +335,12 @@ function Page() {
               if (includes(editIds, record.packaging_id)) {
                 return (
                   <Space>
-                    <SaveButton onClick={handleSaveAll} hideText size="small" />
+                    <SaveButton
+                      onClick={handleSaveAll}
+                      loading={loadingCreate}
+                      hideText
+                      size="small"
+                    />
                     <DeleteButton
                       hideText
                       icon={<CloseOutlined />}
