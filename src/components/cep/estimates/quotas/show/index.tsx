@@ -17,7 +17,6 @@ import {
   useCustomMutation,
   useGo,
   useParsed,
-  useShow,
   useTranslate,
 } from '@refinedev/core'
 import { PRIMARY, WHITE } from '@utility/color'
@@ -47,8 +46,13 @@ function QuotaDetail() {
 
   const { mutate } = useCustomMutation()
 
-  const { query: queryBasic } = useShow({
-    id,
+  const {
+    data: queryBasic,
+    isFetching,
+    refetch,
+  } = useCustom({
+    url: `${apiUrl}/quotas/${id}`,
+    method: 'get',
   })
 
   const { data: dataProducts, isFetching: isFetchingProducts } = useCustom({
@@ -65,7 +69,7 @@ function QuotaDetail() {
 
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
-      queryBasic.refetch()
+      refetch()
       return {
         message: t('notifications.success'),
         description: message ?? 'Success',
@@ -89,17 +93,18 @@ function QuotaDetail() {
     [t],
   )
 
+  console.log(queryBasic, 'queryBasic')
+
   useEffect(() => {
-    if (queryBasic.data?.data) {
-      form.setFieldValue('reason', queryBasic.data.data.reason)
+    if (queryBasic?.data) {
+      console.log(queryBasic, 'xxxxxxxxxxxxxxxx')
+      form.setFieldValue('reason', queryBasic.data.reason)
     }
-  })
+  }, [queryBasic])
 
   return (
     <Show
-      isLoading={
-        queryBasic.isFetching || isFetchingProducts || isFetchingHistory
-      }
+      isLoading={isFetching || isFetchingProducts || isFetchingHistory}
       title={
         <Breadcrumb
           items={[
@@ -135,17 +140,17 @@ function QuotaDetail() {
         }}
         form={formProps.form}
       >
-        <BasicInfo data={queryBasic?.data?.data} />
+        <BasicInfo data={queryBasic?.data} />
         <DetailInfo
           data={dataProducts?.data?.main_product}
-          basicInfo={queryBasic?.data?.data}
+          basicInfo={queryBasic?.data}
         />
         <OptionalInfo data={dataProducts?.data?.optional_product} />
-        <Conditions note={queryBasic?.data?.data?.note} />
-        <Tags tags={queryBasic?.data?.data?.tags} />
+        <Conditions note={queryBasic?.data?.note} />
+        <Tags tags={queryBasic?.data?.tags} />
         <History />
 
-        <Reason display={!queryBasic?.data?.data.display} />
+        {queryBasic?.data?.display && <Reason />}
 
         <Divider />
         <ShowMoreInfo
@@ -153,20 +158,16 @@ function QuotaDetail() {
             {
               title: t('approve_routes.show.creator'),
               value:
-                (queryBasic.data?.data?.author?.name ?? '---') +
+                (queryBasic?.data?.author?.name ?? '---') +
                 ' ' +
-                dayjs(queryBasic.data?.data?.created_at).format(
-                  'YYYY/MM/DD HH:mm',
-                ),
+                dayjs(queryBasic?.data?.created_at).format('YYYY/MM/DD HH:mm'),
             },
             {
               title: t('approve_routes.show.updater'),
               value:
-                (queryBasic.data?.data?.editor?.name ?? '---') +
+                (queryBasic?.data?.editor?.name ?? '---') +
                 ' ' +
-                dayjs(queryBasic.data?.data?.updated_at).format(
-                  'YYYY/MM/DD HH:mm',
-                ),
+                dayjs(queryBasic?.data?.updated_at).format('YYYY/MM/DD HH:mm'),
             },
           ]}
         />
@@ -189,7 +190,7 @@ function QuotaDetail() {
           </Space>
 
           <Space>
-            {queryBasic?.data?.data.status === QuotaStatus.Creating && (
+            {queryBasic?.data?.status === QuotaStatus.Creating && (
               <Button
                 style={{
                   background: '#10B981',
@@ -199,15 +200,15 @@ function QuotaDetail() {
                 size={'middle'}
                 onClick={() => {
                   handleChangeStatus('send-to-approver', {
-                    quota_ids: [queryBasic.data?.data.id],
+                    quota_ids: [queryBasic?.data.id],
                   })
                 }}
               >
                 承認依頼
               </Button>
             )}
-            {queryBasic?.data?.data.status === QuotaStatus.WaitingApproval &&
-              queryBasic.data.data.display && (
+            {queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
+              queryBasic?.data?.display && (
                 <>
                   <Button
                     style={{
@@ -219,7 +220,7 @@ function QuotaDetail() {
                     onClick={() => {
                       handleChangeStatus('approval-steps', [
                         {
-                          quota_id: queryBasic.data?.data?.id,
+                          quota_id: queryBasic?.data?.id,
                           status: 'rejected',
                           comment: form.getFieldValue('reason'),
                         },
@@ -238,7 +239,7 @@ function QuotaDetail() {
                     onClick={() => {
                       handleChangeStatus('approval-steps', [
                         {
-                          quota_id: queryBasic.data?.data?.id,
+                          quota_id: queryBasic?.data?.id,
                           status: 'approved',
                           comment: '',
                         },
@@ -250,7 +251,7 @@ function QuotaDetail() {
                 </>
               )}
 
-            {queryBasic?.data?.data.status === QuotaStatus.Approved && (
+            {queryBasic?.data?.status === QuotaStatus.Approved && (
               <Button
                 style={{
                   background: '#10B981',
@@ -260,7 +261,8 @@ function QuotaDetail() {
                 size={'middle'}
                 onClick={() => {
                   handleChangeStatus('send-to-customer', {
-                    quota_ids: [queryBasic.data?.data.id],
+                    quota_ids: [queryBasic?.data.id],
+                    status: 'sent_to_customer',
                   })
                 }}
               >
@@ -268,7 +270,7 @@ function QuotaDetail() {
               </Button>
             )}
 
-            {queryBasic?.data?.data.status === QuotaStatus.SentToCustomer && (
+            {queryBasic?.data?.status === QuotaStatus.SentToCustomer && (
               <>
                 <Button
                   style={{
@@ -279,7 +281,7 @@ function QuotaDetail() {
                   size={'middle'}
                   onClick={() => {
                     handleChangeStatus('mark-completed', {
-                      quota_ids: [queryBasic.data?.data.id],
+                      quota_ids: [queryBasic?.data.id],
                     })
                   }}
                 >
@@ -294,7 +296,7 @@ function QuotaDetail() {
                   size={'middle'}
                   onClick={() => {
                     handleChangeStatus('cancel-quota', {
-                      quota_ids: [queryBasic.data?.data.id],
+                      quota_ids: [queryBasic?.data.id],
                     })
                   }}
                 >
@@ -303,8 +305,8 @@ function QuotaDetail() {
               </>
             )}
 
-            {(queryBasic?.data?.data.status === QuotaStatus.Completed ||
-              queryBasic?.data?.data.status === QuotaStatus.Cancelled) &&
+            {(queryBasic?.data?.status === QuotaStatus.Completed ||
+              queryBasic?.data?.status === QuotaStatus.Cancelled) &&
               queryBasic.data.data.display && (
                 <Button
                   style={{
@@ -315,7 +317,7 @@ function QuotaDetail() {
                   size={'middle'}
                   onClick={() => {
                     handleChangeStatus('send-to-approver', {
-                      quota_ids: [queryBasic.data?.data.id],
+                      quota_ids: [queryBasic?.data.id],
                     })
                   }}
                 >
@@ -335,8 +337,8 @@ function QuotaDetail() {
               {t('buttons.back')}
             </Button>
 
-            {(queryBasic?.data?.data.status === QuotaStatus.Creating ||
-              queryBasic?.data?.data.status === QuotaStatus.Rejected) && (
+            {(queryBasic?.data?.status === QuotaStatus.Creating ||
+              queryBasic?.data?.status === QuotaStatus.Rejected) && (
               <Button
                 type="primary"
                 onClick={() => {
