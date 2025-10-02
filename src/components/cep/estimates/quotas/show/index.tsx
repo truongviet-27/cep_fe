@@ -9,7 +9,7 @@ import Reason from '@components/cep/estimates/quotas/show/components/reason'
 import Tags from '@components/cep/estimates/quotas/show/components/tags'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Show } from '@components/crud/show'
-import { DeleteButton } from '@refinedev/antd'
+import { DeleteButton, useForm } from '@refinedev/antd'
 import {
   type OpenNotificationParams,
   useApiUrl,
@@ -31,12 +31,14 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 const { Title } = Typography
 
 function QuotaDetail() {
   const t = useTranslate()
+
+  const { form, formProps } = useForm()
 
   const { id } = useParsed()
   const apiUrl = useApiUrl()
@@ -87,6 +89,12 @@ function QuotaDetail() {
     [t],
   )
 
+  useEffect(() => {
+    if (queryBasic.data?.data) {
+      form.setFieldValue('reason', queryBasic.data.data.reason)
+    }
+  })
+
   return (
     <Show
       isLoading={
@@ -125,6 +133,7 @@ function QuotaDetail() {
         style={{
           marginTop: 30,
         }}
+        form={formProps.form}
       >
         <BasicInfo data={queryBasic?.data?.data} />
         <DetailInfo
@@ -136,7 +145,7 @@ function QuotaDetail() {
         <Tags tags={queryBasic?.data?.data?.tags} />
         <History />
 
-        <Reason reason="差戻の理由を入力してください" />
+        <Reason display={!queryBasic?.data?.data.display} />
 
         <Divider />
         <ShowMoreInfo
@@ -211,8 +220,8 @@ function QuotaDetail() {
                       handleChangeStatus('approval-steps', [
                         {
                           quota_id: queryBasic.data?.data?.id,
-                          status: 'approved',
-                          comment: '',
+                          status: 'rejected',
+                          comment: form.getFieldValue('reason'),
                         },
                       ])
                     }}
