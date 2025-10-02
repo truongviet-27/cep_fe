@@ -77,11 +77,11 @@ const authOptions: AuthOptions = {
     async jwt({ token, account, user }) {
       const credsUser = user as CredentialsUser
       if (account || credsUser) {
-        token.idToken = account?.id_token ?? credsUser.id_token
+        // token.idToken = account?.id_token ?? credsUser.id_token
         token.accessToken = account?.access_token ?? credsUser.access_token
-        token.refreshToken = account?.refresh_token ?? credsUser.refresh_token
+        // token.refreshToken = account?.refresh_token ?? credsUser.refresh_token
         token.expiresAt = account?.expires_at ?? credsUser.expires_at
-        token.error = undefined
+        // token.error = undefined
         return token
       }
 
