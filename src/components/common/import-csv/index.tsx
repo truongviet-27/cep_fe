@@ -1,4 +1,5 @@
 /* eslint-disable simple-import-sort/imports */
+import LoadingImport from '@/assets/svg/loading.svg'
 import {
   DownloadOutlined,
   FileAddOutlined,
@@ -12,16 +13,15 @@ import {
   useCustomMutation,
   useTranslate,
 } from '@refinedev/core'
+import { axiosInstance } from '@rest-data-provider/utils'
 import { cn } from '@utility/cn'
-import { BLACK, GREY, PRIMARY } from '@utility/color'
+import { BLACK, GREY } from '@utility/color'
 import { Breadcrumb, Button, Card, Form, List, Space, Typography } from 'antd'
 import Dragger from 'antd/es/upload/Dragger'
 import Title from 'antd/lib/typography/Title'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
-import LoadingImport from '@/assets/svg/loading.svg'
-import { axiosInstance } from '@rest-data-provider/utils'
 
 const { Text, Paragraph } = Typography
 
@@ -110,18 +110,12 @@ function ImportCsv({
       t('csv.step_1.noteItems.line5'),
     ]
   }, [t])
+
   return (
     <PageContainer
       breadcrumbs={
         <Breadcrumb
           items={[
-            {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('system_config.system_config')}
-                </Title>
-              ),
-            },
             {
               title: <Title level={5}>{t('csv.title')}</Title>,
             },
@@ -200,7 +194,7 @@ function ImportCsv({
               rules={[
                 {
                   required: true,
-                  message: 'Vui lòng upload file CSV!',
+                  message: t('csv.step_1.error.required'),
                 },
                 {
                   validator: (_, fileList) => {
@@ -210,15 +204,11 @@ function ImportCsv({
                     const isSize = file.size / 1024 / 1024 > 5
                     if (isSize) {
                       setIsError(true)
-                      return Promise.reject(
-                        '5MB以下のファイルのみアップロードできます',
-                      )
+                      return Promise.reject(t('csv.step_1.error.5mb'))
                     }
                     if (!isCSV) {
                       setIsError(true)
-                      return Promise.reject(
-                        'CSVファイルのみアップロードできます',
-                      )
+                      return Promise.reject(t('csv.step_1.error.pattern'))
                     }
 
                     return Promise.resolve()
@@ -265,7 +255,9 @@ function ImportCsv({
                 size="small"
                 split={false}
                 dataSource={dataSource}
-                renderItem={(item) => <List.Item>・{item}</List.Item>}
+                renderItem={(item) => (
+                  <List.Item style={{ padding: 2 }}>・{item}</List.Item>
+                )}
               />
             </Card>
           </Space>

@@ -17,7 +17,6 @@ function useImportHistory() {
     syncWithLocation: true,
     resource: 'csv-imports/history',
     onSearch: (data: any) => {
-      setFilters([], 'replace')
       const filters = [] as CrudFilters
       if (data.common_name) {
         filters.push({
@@ -43,11 +42,11 @@ function useImportHistory() {
         })
       }
 
-      if (data.created_by) {
+      if (data.creator_name) {
         filters.push({
-          field: 'created_by',
+          field: 'creator_name',
           operator: 'eq',
-          value: data.created_by,
+          value: data.creator_name,
         })
       }
       if (data.date) {

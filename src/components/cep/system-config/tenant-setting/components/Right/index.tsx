@@ -68,6 +68,8 @@ function Right() {
                 scale: 1.3,
                 padding: '0 40px',
               }}
+              valuePropName="checked"
+              name={'is_display_company_logo_image'}
             >
               <Checkbox>{t('tenant_settings.hide')}</Checkbox>
             </Form.Item>
@@ -110,6 +112,8 @@ function Right() {
                 scale: 1.3,
                 padding: '0 40px',
               }}
+              valuePropName="checked"
+              name={'is_display_company_seal_image'}
             >
               <Checkbox>{t('tenant_settings.hide')}</Checkbox>
             </Form.Item>

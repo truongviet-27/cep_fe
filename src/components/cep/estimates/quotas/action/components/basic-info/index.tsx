@@ -234,7 +234,6 @@ const BasicInfo = () => {
             <Form.Item name={'payment_due_date'}>
               <Select
                 allowClear
-                showSearch
                 options={[
                   {
                     value: 'monthly_25',
@@ -285,7 +284,6 @@ const BasicInfo = () => {
             <Form.Item name={'expiration_date'}>
               <Select
                 allowClear
-                showSearch
                 options={[
                   {
                     value: 'days_7',
