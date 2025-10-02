@@ -21,11 +21,11 @@ export const industryOptions: { value: string | null; label: string }[] = [
   { value: '食品', label: '食品' },
   { value: '卸-商社', label: '卸-商社' },
   { value: '製造・加工', label: '製造・加工' },
-  { value: '商売業', label: '選択してください' },
+  { value: '商売業', label: '商売業' },
   { value: 'ファッション', label: 'ファッション' },
   { value: '医療', label: '医療' },
   { value: '鉄鋼', label: '鉄鋼' },
-  { value: '鉄鋼', label: '鉄鋼' },
+  { value: 'ねじ', label: 'ねじ' },
   { value: null, label: '自分入力' },
 ]
 

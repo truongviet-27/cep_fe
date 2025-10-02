@@ -11,7 +11,12 @@ const { Panel } = Collapse
 function AccountingContact(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
-  const { t, rule, handleCopyContact } = props
+  const { t, rule, handleCopyContact, form } = props
+
+  console.log(
+    form.getFieldValue('person_in_charge_name'),
+    'person_in_charge_name',
+  )
 
   return (
     <Collapse

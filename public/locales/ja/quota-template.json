@@ -1,0 +1,53 @@
+{
+  "quota_templates": "見積テンプレート一覧",
+  "breadcrumb": {
+    "home": "見積",
+    "quotasList": "見積テンプレート一覧",
+    "quotasDetail": "見積詳細",
+    "quotasUpdate": "見積編集",
+    "quotasRegister": "見積登録"
+  },
+  "list": {
+    "title": "見積テンプレート一覧",
+    "templateName": "テンプレート名",
+    "creator": "作成者",
+    "placeholderPartialMatch": "部分一致",
+    "creationDate": "作成日",
+    "updateDate": "更新日",
+    "numberOfItems": "商品数",
+    "bassPrice": "基本金額",
+    "description": "説明",
+    "operation": "操作"
+  },
+  "button": {
+    "search": "検索",
+    "clear": "クリア",
+    "create": "新規作成"
+  },
+  "detail": {
+    "title": "見積詳細"
+  },
+  "form": {
+    "titleRegister": "見積登録",
+    "titleUpdate": "見積編集",
+    "titleBasicInfo": "基本情報",
+    "titleDetailInfo": "詳細情報",
+    "titleOptionalInfo": "オプション情報",
+    "titleSpecificationsAndConditions": "仕様・条件",
+    "titleTag": "タグ",
+    "label": {
+      "quote_number": "見積番号",
+      "quote_category": "見積区分",
+      "template_name": "テンプレート名",
+      "description": "説明",
+      "customer": "取引先",
+      "quote_date": "見積日",
+      "delivery_date": "納入期日",
+      "delivery_method": "納品方法",
+      "payment_due_date": "支払期日",
+      "validity_period": "有効期限",
+      "consumption_tax": "消費税",
+      "consumption_tax_rate": "消費税率"
+    }
+  }
+}

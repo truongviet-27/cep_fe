@@ -18,28 +18,6 @@ interface CorporateNumberSearchModalProps {
   modalProps: any
 }
 
-// Dữ liệu giả lập
-const mockData: ICorporateInfo[] = [
-  {
-    id: '1',
-    name: '株式会社サンプル商事',
-    address: '東京都千代田区丸の内1-1-1',
-    corporate_number: '0101356274984',
-  },
-  {
-    id: '2',
-    name: '株式会社テスト企業',
-    address: '大阪府大阪市中央区1-2-3',
-    corporate_number: '0203857398475',
-  },
-  {
-    id: '3',
-    name: 'デモ株式会社',
-    address: '福岡県福岡市博多区4-5-6',
-    corporate_number: '0309876543210',
-  },
-]
-
 export const CorporateNumberSearchModal: React.FC<
   CorporateNumberSearchModalProps
 > = ({ modalProps }) => {
@@ -48,11 +26,28 @@ export const CorporateNumberSearchModal: React.FC<
 
   const { visible, close } = modalProps
 
-  const { tableProps, setFilters } = useTable<ICorporateInfo>({
-    // queryFn: async () => ({
-    //   data: mockData,
-    //   total: mockData.length,
-    // }),
+  const params = {
+    name: '%E5%9B%BD%E7%A8%8E%E5%BA%81%0D%0A',
+    type: '02',
+    // mode: '1',
+    // target: '1',
+    // close: '0',
+    history: '0',
+  }
+
+  const { tableProps, setFilters, setCurrent } = useTable({
+    dataProviderName: 'corporationProvider',
+    resource: 'name',
+    filters: {
+      initial: [
+        { field: 'name', operator: 'eq', value: params.name },
+        { field: 'type', operator: 'eq', value: params.type },
+        // { field: 'mode', operator: 'eq', value: params.mode },
+        // { field: 'target', operator: 'eq', value: params.target },
+        // { field: 'close', operator: 'eq', value: params.close },
+        { field: 'history', operator: 'eq', value: params.history },
+      ],
+    },
   })
 
   const handleSelect = (record: ICorporateInfo) => {
@@ -84,6 +79,7 @@ export const CorporateNumberSearchModal: React.FC<
   ]
 
   const handleSearch = (values: { name: string; address: string }) => {
+    setCurrent(1)
     setFilters([
       { field: 'name', operator: 'contains', value: values.name },
       { field: 'address', operator: 'contains', value: values.address },

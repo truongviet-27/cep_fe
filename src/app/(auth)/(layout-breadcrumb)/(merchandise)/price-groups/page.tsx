@@ -187,6 +187,7 @@ function Page() {
                 placeholder={t('placeholders.select')}
                 style={{ minWidth: 300 }}
                 options={settingMethodOptions}
+                allowClear
               />
             </Form.Item>
           </Col>

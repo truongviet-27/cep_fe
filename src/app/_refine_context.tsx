@@ -18,6 +18,7 @@ import { SessionProvider } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
 import { useBootstrap } from './controller'
+import { corporationProvider } from '@providers/corporation-provider'
 
 type RefineContextProps = {
   defaultMode?: string
@@ -59,7 +60,7 @@ const App = (props: React.PropsWithChildren) => {
         <Refine
           i18nProvider={i18nProvider}
           routerProvider={routerProvider}
-          dataProvider={dataProvider}
+          dataProvider={{ default: dataProvider, corporationProvider }}
           notificationProvider={useNotificationProvider}
           authProvider={authProvider}
           resources={resource}

@@ -1,15 +1,6 @@
 /* eslint-disable */
 import { useTranslate } from '@refinedev/core'
-import {
-  Button,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Space,
-  Typography,
-} from 'antd'
+import { Button, Flex, Form, Input, InputNumber, Space } from 'antd'
 import React from 'react'
 import { Create } from '@components/crud/create'
 import { CreateButton, useForm } from '@refinedev/antd'
@@ -69,7 +60,12 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
       >
         <Form.Item required label={boldText(t('ranks.fields.code'))}>
           <Flex>
-            <Form.Item required name="code" rules={[validateRankRule(t)]}>
+            <Form.Item
+              required
+              name="code"
+              rules={[validateRankRule(t)]}
+              style={{ maxWidth: '180px' }}
+            >
               <Input />
             </Form.Item>
             &nbsp;

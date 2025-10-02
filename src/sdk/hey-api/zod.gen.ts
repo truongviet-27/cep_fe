@@ -1838,11 +1838,8 @@ export const zQuotaTemplateProduct = z.object({
   id: z.optional(z.int()),
   product_id: z.optional(z.int()),
   package_id: z.optional(z.int()),
-  package_name: z.optional(z.union([z.string(), z.null()])),
-  quantity_in_package: z.optional(z.union([z.int(), z.null()])),
   name: z.optional(z.union([z.string(), z.null()])),
   code: z.optional(z.union([z.string(), z.null()])),
-  unit_name: z.optional(z.union([z.string(), z.null()])),
   cost_price: z.optional(z.int()),
   selling_price: z.optional(z.int()),
   profit_margin: z.optional(z.int()),
@@ -1913,6 +1910,275 @@ export const zQuotaTemplateResource = z.object({
   updated_at: z.optional(z.iso.datetime()),
   author: z.optional(z.union([zSimpleUser, z.null()])),
   editor: z.optional(z.union([zSimpleUser, z.null()])),
+})
+
+export const zQuotaTemplateDeleteResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Response schema for quota template product
+ */
+export const zQuotaTemplateProductResponse = z.object({
+  id: z.optional(z.int()),
+  product_id: z.optional(z.int()),
+  package_id: z.optional(z.union([z.int(), z.null()])),
+  package_name: z.optional(z.union([z.string(), z.null()])),
+  quantity_in_package: z.optional(z.union([z.int(), z.null()])),
+  name: z.optional(z.string()),
+  code: z.optional(z.string()),
+  unit_name: z.optional(z.string()),
+  cost_price: z.optional(z.int()),
+  selling_price: z.optional(z.int()),
+  profit_margin: z.optional(z.int()),
+  is_add_total: z.optional(z.boolean()),
+  display_order: z.optional(z.int()),
+  quantity: z.optional(z.int()),
+})
+
+/**
+ * Response schema for quota template product group
+ */
+export const zQuotaTemplateProductGroupResponse = z.object({
+  id: z.optional(z.int()),
+  group_name: z.optional(z.string()),
+  display_order: z.optional(z.int()),
+  products: z.optional(z.array(zQuotaTemplateProductResponse)),
+})
+
+/**
+ * Response schema for quota template detail
+ */
+export const zQuotaTemplateDetailResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      tenant_id: z.optional(z.string()),
+      name: z.optional(z.string()),
+      description: z.optional(z.string()),
+      type: z.optional(z.enum(['normal', 'channel_limited'])),
+      delivery_method: z.optional(z.string()),
+      payment_due_date: z.optional(
+        z.enum([
+          'monthly_25',
+          'monthly_10',
+          'net_30_from_delivery',
+          'net_30_from_invoice',
+          'end_of_month_next',
+          'end_of_month_after_next',
+        ]),
+      ),
+      expiration_date: z.optional(
+        z.enum([
+          'days_7',
+          'days_14',
+          'days_45',
+          'days_60',
+          'months_3',
+          'months_6',
+          'years_1',
+        ]),
+      ),
+      consumption_tax: z.optional(
+        z.enum(['exclusive', 'inclusive', 'external']),
+      ),
+      tax_rate: z.optional(z.int()),
+      note: z.optional(z.string()),
+      number_product: z.optional(z.int()),
+      total_price: z.optional(z.int()),
+      tags: z.optional(
+        z.array(
+          z.object({
+            id: z.optional(z.int()),
+            name: z.optional(z.string()),
+          }),
+        ),
+      ),
+      main_product: z.optional(z.array(zQuotaTemplateProductGroupResponse)),
+      optional_product: z.optional(z.array(zQuotaTemplateProductGroupResponse)),
+      created_at: z.optional(z.iso.datetime()),
+      updated_at: z.optional(z.iso.datetime()),
+      author: z.optional(
+        z.union([
+          z.object({
+            id: z.optional(z.int()),
+            name: z.optional(z.string()),
+          }),
+          z.null(),
+        ]),
+      ),
+      editor: z.optional(
+        z.union([
+          z.object({
+            id: z.optional(z.int()),
+            name: z.optional(z.string()),
+          }),
+          z.null(),
+        ]),
+      ),
+    }),
+  ),
+})
+
+export const zQuotaTemplateListResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      items: z.optional(
+        z.array(
+          z.object({
+            id: z.optional(z.int()),
+            code: z.optional(z.string()),
+            name: z.optional(z.string()),
+            description: z.optional(z.string()),
+            number_product: z.optional(z.int()),
+            total_price: z.optional(z.string()),
+            created_at: z.optional(z.string()),
+            updated_at: z.optional(z.string()),
+            author: z.optional(
+              z.object({
+                id: z.optional(z.int()),
+                name: z.optional(z.string()),
+              }),
+            ),
+            editor: z.optional(
+              z.object({
+                id: z.optional(z.int()),
+                name: z.optional(z.string()),
+              }),
+            ),
+          }),
+        ),
+      ),
+      meta: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          to: z.optional(z.int()),
+          total: z.optional(z.int()),
+        }),
+      ),
+      links: z.optional(
+        z.object({
+          first: z.optional(z.string()),
+          last: z.optional(z.string()),
+          prev: z.optional(z.string()),
+          next: z.optional(z.string()),
+        }),
+      ),
+    }),
+  ),
+})
+
+/**
+ * Request schema for quota template product item
+ */
+export const zQuotaTemplateProductItemRequest = z.object({
+  id: z.optional(z.int()),
+  product_id: z.int(),
+  package_id: z.optional(z.int()),
+  name: z.optional(z.string()),
+  code: z.optional(z.string()),
+  cost_price: z.optional(z.int()),
+  selling_price: z.optional(z.int()),
+  profit_margin: z.int(),
+  is_add_total: z.boolean(),
+  display_order: z.optional(z.int()),
+  quantity: z.int(),
+})
+
+/**
+ * Request schema for quota template product group
+ */
+export const zQuotaTemplateProductGroupRequest = z.object({
+  id: z.optional(z.int()),
+  group_name: z.string(),
+  display_order: z.optional(z.int()),
+  products: z.array(zQuotaTemplateProductItemRequest),
+})
+
+/**
+ * Request schema for creating a new quota template
+ */
+export const zQuotaTemplateStoreRequest = z.object({
+  name: z.string().max(255),
+  description: z.string(),
+  type: z.enum(['normal', 'channel_limited']),
+  delivery_method: z.optional(z.string().max(100)),
+  payment_due_date: z.optional(
+    z.enum([
+      'monthly_25',
+      'monthly_10',
+      'net_30_from_delivery',
+      'net_30_from_invoice',
+      'end_of_month_next',
+      'end_of_month_after_next',
+    ]),
+  ),
+  expiration_date: z.optional(
+    z.enum([
+      'days_7',
+      'days_14',
+      'days_45',
+      'days_60',
+      'months_3',
+      'months_6',
+      'years_1',
+    ]),
+  ),
+  consumption_tax: z.optional(z.enum(['exclusive', 'inclusive', 'external'])),
+  tax_rate: z.optional(z.int().gte(0).lte(100)),
+  note: z.optional(z.string()),
+  number_product: z.optional(z.int()),
+  total_price: z.optional(z.int().gte(0)),
+  tags: z.optional(z.array(z.int())),
+  main_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
+  optional_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
+})
+
+/**
+ * Request schema for updating an existing quota template with differential update logic
+ */
+export const zQuotaTemplateUpdateRequest = z.object({
+  name: z.string().max(255),
+  description: z.string(),
+  type: z.enum(['normal', 'channel_limited']),
+  delivery_method: z.optional(z.string().max(100)),
+  payment_due_date: z.optional(
+    z.enum([
+      'monthly_25',
+      'monthly_10',
+      'net_30_from_delivery',
+      'net_30_from_invoice',
+      'end_of_month_next',
+      'end_of_month_after_next',
+    ]),
+  ),
+  expiration_date: z.optional(
+    z.enum([
+      'days_7',
+      'days_14',
+      'days_45',
+      'days_60',
+      'months_3',
+      'months_6',
+      'years_1',
+    ]),
+  ),
+  consumption_tax: z.optional(z.enum(['exclusive', 'inclusive', 'external'])),
+  tax_rate: z.optional(z.int().gte(0).lte(100)),
+  note: z.optional(z.string()),
+  number_product: z.optional(z.int()),
+  total_price: z.optional(z.int().gte(0)),
+  tags: z.optional(z.array(z.int())),
+  main_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
+  optional_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
 })
 
 /**
@@ -3545,6 +3811,22 @@ export const zProductUnitControllerUpdateResponse = z.object({
   data: z.optional(zProductUnit),
 })
 
+export const zQuotaAgreedPriceControllerDeleteMultipleData = z.object({
+  body: z.object({
+    ids: z.array(z.int().gte(1)),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota agreed prices deleted successfully
+ */
+export const zQuotaAgreedPriceControllerDeleteMultipleResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+})
+
 export const zQuotaAgreedPriceControllerIndexData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -3680,6 +3962,26 @@ export const zQuotaAgreedPriceControllerGetCustomerProductsResponse = z.object({
     }),
   ),
 })
+
+export const zQuotaAgreedPriceControllerUpdateExpirationDateData = z.object({
+  body: z.object({
+    expiration_date: z.iso.date(),
+  }),
+  path: z.object({
+    id: z.int().gte(1),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Expiration date updated successfully
+ */
+export const zQuotaAgreedPriceControllerUpdateExpirationDateResponse = z.object(
+  {
+    success: z.optional(z.boolean()),
+    message: z.optional(z.string()),
+  },
+)
 
 export const zQuotaControllerBulkDestroyData = z.object({
   body: z.object({
@@ -4047,7 +4349,7 @@ export const zF44B13Bc4971Acac4481E0A6B882787Response = z.object({
   message: z.optional(z.string()),
   data: z.optional(
     z.object({
-      html: z.optional(z.string()),
+      pdf: z.optional(z.string()),
     }),
   ),
 })
@@ -4066,92 +4368,28 @@ export const zA229A59B851Ad68435Ac0E91E98F32Data = z.object({
 export const zA229A59B851Ad68435Ac0E91E98F32Response =
   zUpdateQuotaFormSettingResponse
 
+export const zQuotaTemplateControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int()),
+      _per_page: z.optional(z.int()),
+      name_lk: z.optional(z.string()),
+      creator: z.optional(z.int()),
+      start_date: z.optional(z.string()),
+      end_date: z.optional(z.string()),
+    }),
+  ),
+})
+
+/**
+ * Quota templates retrieved successfully
+ */
+export const zQuotaTemplateControllerIndexResponse = zQuotaTemplateListResponse
+
 export const zQuotaTemplateControllerStoreData = z.object({
-  body: z.object({
-    name: z.string(),
-    description: z.string(),
-    type: z.enum(['normal', 'channel_limited']),
-    delivery_method: z.optional(z.string()),
-    payment_due_date: z.optional(
-      z.enum([
-        'monthly_25',
-        'monthly_10',
-        'net_30_from_delivery',
-        'net_30_from_invoice',
-        'end_of_month_next',
-        'end_of_month_after_next',
-      ]),
-    ),
-    expiration_date: z.optional(
-      z.enum([
-        'days_7',
-        'days_14',
-        'days_45',
-        'days_60',
-        'months_3',
-        'months_6',
-        'years_1',
-      ]),
-    ),
-    consumption_tax: z.optional(z.enum(['exclusive', 'inclusive', 'external'])),
-    tax_rate: z.optional(z.int()),
-    note: z.optional(z.string()),
-    number_product: z.optional(z.int()),
-    total_price: z.optional(z.int()),
-    tags: z.optional(z.array(z.int())),
-    main_product: z.optional(
-      z.array(
-        z.object({
-          id: z.optional(z.int()),
-          group_name: z.optional(z.string()),
-          display_order: z.optional(z.int()),
-          products: z.optional(
-            z.array(
-              z.object({
-                id: z.optional(z.int()),
-                product_id: z.int(),
-                package_id: z.optional(z.int()),
-                name: z.optional(z.string()),
-                code: z.optional(z.string()),
-                cost_price: z.optional(z.int()),
-                selling_price: z.optional(z.int()),
-                profit_margin: z.int(),
-                is_add_total: z.boolean(),
-                display_order: z.optional(z.int()),
-                quantity: z.int(),
-              }),
-            ),
-          ),
-        }),
-      ),
-    ),
-    optional_product: z.optional(
-      z.array(
-        z.object({
-          id: z.optional(z.int()),
-          group_name: z.optional(z.string()),
-          display_order: z.optional(z.int()),
-          products: z.optional(
-            z.array(
-              z.object({
-                id: z.optional(z.int()),
-                product_id: z.int(),
-                package_id: z.optional(z.int()),
-                name: z.optional(z.string()),
-                code: z.optional(z.string()),
-                cost_price: z.optional(z.int()),
-                selling_price: z.optional(z.int()),
-                profit_margin: z.int(),
-                is_add_total: z.boolean(),
-                display_order: z.optional(z.int()),
-                quantity: z.int(),
-              }),
-            ),
-          ),
-        }),
-      ),
-    ),
-  }),
+  body: zQuotaTemplateStoreRequest,
   path: z.optional(z.never()),
   query: z.optional(z.never()),
 })
@@ -4164,6 +4402,50 @@ export const zQuotaTemplateControllerStoreResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zQuotaTemplateResource),
 })
+
+export const zQuotaTemplateControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota template retrieved successfully
+ */
+export const zQuotaTemplateControllerShowResponse = zQuotaTemplateDetailResponse
+
+export const zQuotaTemplateControllerUpdateData = z.object({
+  body: zQuotaTemplateUpdateRequest,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota template partially updated successfully
+ */
+export const zQuotaTemplateControllerUpdateResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(zQuotaTemplateResource),
+})
+
+export const zQuotaTemplateControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota template deleted successfully
+ */
+export const zQuotaTemplateControllerDestroyResponse =
+  zQuotaTemplateDeleteResponse
 
 export const zRankControllerIndexData = z.object({
   body: z.optional(z.never()),
