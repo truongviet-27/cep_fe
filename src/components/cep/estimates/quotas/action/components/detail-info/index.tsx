@@ -4,6 +4,7 @@ import CoreAutoComplete from '@components/cep/estimates/quotas/action/components
 import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import { useSelect } from '@refinedev/antd'
+import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -25,6 +26,7 @@ import { useEffect, useState } from 'react'
 const { Text } = Typography
 
 function DetailInfo() {
+  const t = useTranslate()
   const form = Form.useFormInstance()
 
   const taxRateWatch = Form.useWatch('tax_rate', form)
@@ -171,6 +173,20 @@ function DetailInfo() {
                         style={{
                           marginBottom: 0,
                         }}
+                        rules={[
+                          {
+                            required: true,
+                            message: '',
+                          },
+                          {
+                            whitespace: true,
+                            message: '',
+                          },
+                          {
+                            max: 255,
+                            message: '',
+                          },
+                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -230,6 +246,7 @@ function DetailInfo() {
                         )
                         form.setFieldValue(
                           [
+                            'main_product',
                             record.index,
                             'products',
                             record.index2,
@@ -257,6 +274,59 @@ function DetailInfo() {
                           ],
                           item?.code,
                         )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'unit',
+                          ],
+                          item?.unit,
+                        )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'cost_price',
+                          ],
+                          item?.cost_price,
+                        )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          item?.sale_price,
+                        )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'quantity',
+                          ],
+                          1,
+                        )
+
+                        if (!value) {
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'quantity',
+                            ],
+                            0,
+                          )
+                        }
                       }}
                     />
                   </Form.Item>
@@ -316,6 +386,28 @@ function DetailInfo() {
                       resource={`products`}
                       style={{ width: 200 }}
                       parent="main_product"
+                      // onChange={() => {
+                      //   // form.setFieldValue(
+                      //   //   [
+                      //   //     'main_product',
+                      //   //     record.index,
+                      //   //     'products',
+                      //   //     record.index2,
+                      //   //     'cost_price',
+                      //   //   ],
+                      //   //   item?.cost_price,
+                      //   // )
+                      //   // form.setFieldValue(
+                      //   //   [
+                      //   //     'main_product',
+                      //   //     record.index,
+                      //   //     'products',
+                      //   //     record.index2,
+                      //   //     'selling_price',
+                      //   //   ],
+                      //   //   item?.sale_price,
+                      //   // )
+                      // }}
                     />
                   </Form.Item>
                 )
@@ -378,7 +470,7 @@ function DetailInfo() {
                       marginBottom: 0,
                     }}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber min={1} controls={false} />
                   </Form.Item>
                 )
               },

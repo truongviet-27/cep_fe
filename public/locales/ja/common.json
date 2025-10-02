@@ -383,7 +383,9 @@
     "permission_settings": "権限設定",
     "table": {
       "settingItem": "権限",
-      "employee": "管理者"
+      "manager": "管理者",
+      "employee": "一般",
+      "purpose": "説明"
     },
     "dataSource": {
       "clientMaster": {
@@ -540,6 +542,21 @@
         "select": "選択してください"
       }
     },
+    "label": {
+      "id": "タスクコード",
+      "status": "ステータス",
+      "common_name": "種別",
+      "created_by": "登録者",
+      "date": "開始日時"
+    },
+
+    "placeholder": {
+      "id": "部分一致",
+      "status": "選択してください",
+      "common_name": "選択してください",
+      "created_by": "部分一致"
+    },
+
     "table": {
       "headers": {
         "taskCode": "タスクコード",
@@ -564,13 +581,13 @@
         "FAILED": "エラー"
       },
       "category": {
-        "PRODUCTS": "製品",
-        "CATEGORY_PRODUCTS": "製品カテゴリー",
-        "CUSTOMERS": "顧客",
-        "DEPARTMENTS": "部門",
+        "PRODUCTS": "商品登録",
+        "CATEGORY_PRODUCTS": "商品カテゴリ登録",
+        "CUSTOMERS": "取引先登録",
+        "DEPARTMENTS": "部門登録",
         "OTHER": "その他"
       },
-      "error": "処理が途中で失敗しました"
+      "error": "処理が途中で失敗しました."
     }
   },
   "system_config": {
@@ -790,7 +807,11 @@
         "line4": "必須項目が不足する場合は取り込み不可です。",
         "line5": "空白行があってもスキップされます。"
       },
-
+      "error": {
+        "5mb": "5MB以下のファイルのみアップロードできます",
+        "pattern": "CSVファイルのみアップロードできます\nUTF-8またはShift_JISのファイルを選択してください。",
+        "required": "CSVファイルをアップロードしてください。"
+      },
       "result": {
         "title": "CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。",
         "redirect": "CSVタスク履歴画面"

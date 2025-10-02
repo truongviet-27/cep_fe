@@ -39,9 +39,17 @@ const { Title } = Typography
 
 function QuotaAction() {
   const t = useTranslate()
-  const methods = useForm()
+  const methods = useForm({
+    queryOptions: {
+      enabled: false,
+    },
+  })
 
-  const { id, action } = useParsed()
+  const { id, action, params } = useParsed()
+
+  const { actionType } = params as any
+  const isCloneVersion = actionType === 'VERSION'
+  const isClone = action === 'clone'
 
   const isUpdate = !!id
 
@@ -59,13 +67,20 @@ function QuotaAction() {
   const { form: formProps2 } = formProps
 
   const { resource } = useResource()
-  const { params } = useParsed()
 
   const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
     url: `${apiUrl}/quota-form-settings`,
     queryOptions: {
       enabled: !isUpdate,
+    },
+  })
+
+  const { data: dataBasicInfo, isFetching: isFetchingBasicInfo } = useCustom({
+    url: `${apiUrl}/quotas/${id}`,
+    method: 'get',
+    queryOptions: {
+      enabled: isUpdate,
     },
   })
 
@@ -86,22 +101,61 @@ function QuotaAction() {
   })
 
   useEffect(() => {
-    if (isUpdate) {
-      if (queryBasic?.data?.data && dataProducts?.data) {
+    if (isUpdate && isCloneVersion) {
+      if (dataBasicInfo?.data && dataProducts?.data && dataHistory?.data) {
         form.setFieldsValue({
-          ...queryBasic.data.data,
+          ...dataBasicInfo.data,
+          code: `${dataBasicInfo.data.code}-${dataHistory.data?.clone_history?.length ?? 0 + 1}`,
           customer: {
-            value: queryBasic.data.data.customer_id,
-            label: queryBasic.data.data.customer_name,
+            value: dataBasicInfo.data.customer_id,
+            label: dataBasicInfo.data.customer_name,
           },
-          delivery_date: queryBasic.data.data.delivery_date
-            ? dayjs(queryBasic.data.data.delivery_date)
+          delivery_date: dataBasicInfo.data.delivery_date
+            ? dayjs(dataBasicInfo.data.delivery_date)
             : null,
-          created_at: queryBasic.data.data.created_at
-            ? dayjs(queryBasic.data.data.created_at)
+          created_at: dataBasicInfo.data.created_at
+            ? dayjs(dataBasicInfo.data.created_at)
             : null,
           tags:
-            queryBasic.data.data.tags?.map((item: any) => ({
+            dataBasicInfo.data.tags?.map((item: any) => ({
+              value: item.id,
+              label: item.name,
+            })) || [],
+          main_product: dataProducts.data.main_product.map((item: any) => ({
+            ...item,
+            products: item.products.map((item2: any) => ({
+              ...item2,
+              unit: item2.unit_name,
+            })),
+          })),
+          optional_product: dataProducts.data.optional_product.map(
+            (item: any) => ({
+              ...item,
+              products: item.products.map((item2: any) => ({
+                ...item2,
+                unit: item2.unit_name,
+              })),
+            }),
+          ),
+          ...dataHistory?.data?.data,
+        })
+      }
+    } else {
+      if (dataBasicInfo?.data && dataProducts?.data) {
+        form.setFieldsValue({
+          ...dataBasicInfo.data,
+          customer: {
+            value: dataBasicInfo.data.customer_id,
+            label: dataBasicInfo.data.customer_name,
+          },
+          delivery_date: dataBasicInfo.data.delivery_date
+            ? dayjs(dataBasicInfo.data.delivery_date)
+            : null,
+          created_at: dataBasicInfo.data.created_at
+            ? dayjs(dataBasicInfo.data.created_at)
+            : null,
+          tags:
+            dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
               label: item.name,
             })) || [],
@@ -125,7 +179,7 @@ function QuotaAction() {
         })
       }
     }
-  }, [dataProducts, dataHistory, queryBasic])
+  }, [dataProducts, dataHistory, dataBasicInfo])
 
   useEffect(() => {
     if (!isUpdate && data?.data) {
@@ -133,7 +187,7 @@ function QuotaAction() {
         title: '',
         type: 'normal',
         customer: null,
-        status: 'waiting_approve',
+        status: 'creating',
         created_at: null,
         delivery_date: null,
         delivery_method: data?.data.default_delivery_method,
@@ -218,7 +272,7 @@ function QuotaAction() {
           resource: resource?.name,
           values: {
             ...values,
-            resource_id: action === 'clone' ? Number(id) : null,
+            resource_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             status: 'creating',
@@ -271,7 +325,7 @@ function QuotaAction() {
       <Spin
         spinning={
           isFetching ||
-          queryBasic?.isFetching ||
+          isFetchingBasicInfo ||
           isFetchingProduct ||
           isFetchingHistory
         }
@@ -297,10 +351,10 @@ function QuotaAction() {
             </Col>
           </Row>
           <Tags />
-          {isUpdate && <History />}
+          {isUpdate && !isClone && <History />}
 
           <Divider />
-          {isUpdate && (
+          {isUpdate && !isClone && (
             <ShowMoreInfo
               descriptions={[
                 {
@@ -332,7 +386,7 @@ function QuotaAction() {
             }}
           >
             <Space>
-              {isUpdate && (
+              {isUpdate && !isClone && (
                 <DeleteButton
                   icon={null}
                   size={'small'}

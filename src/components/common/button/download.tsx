@@ -1,6 +1,6 @@
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import DownloadIcon from '@../src/assets/svg/download.svg'
+import { DownloadOutlined } from '@ant-design/icons'
 import { type CloneButtonProps } from '@refinedev/antd'
 import { useCloneButton } from '@refinedev/core'
 import {
@@ -8,7 +8,6 @@ import {
   RefineButtonTestIds,
 } from '@refinedev/ui-types'
 import { Button } from 'antd'
-import Image from 'next/image'
 import React from 'react'
 
 /**
@@ -54,7 +53,7 @@ export const DownloadButton: React.FC<CloneButtonProps> = ({
       }}
     >
       <Button
-        icon={<Image src={DownloadIcon} alt="download-icon" />}
+        icon={<DownloadOutlined />}
         disabled={isDisabled}
         title={title}
         data-testid={RefineButtonTestIds.CloneButton}

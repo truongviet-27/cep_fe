@@ -167,6 +167,7 @@ function OptionalInfo() {
                         )
                         form.setFieldValue(
                           [
+                            'optional_product',
                             record.index,
                             'products',
                             record.index2,
@@ -194,6 +195,59 @@ function OptionalInfo() {
                           ],
                           item?.code,
                         )
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'unit',
+                          ],
+                          item?.unit,
+                        )
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'cost_price',
+                          ],
+                          item?.cost_price,
+                        )
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          item?.sale_price,
+                        )
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'quantity',
+                          ],
+                          1,
+                        )
+
+                        if (!value) {
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'quantity',
+                            ],
+                            0,
+                          )
+                        }
                       }}
                     />
                   </Form.Item>
@@ -315,7 +369,7 @@ function OptionalInfo() {
                       marginBottom: 0,
                     }}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber min={1} controls={false} />
                   </Form.Item>
                 )
               },

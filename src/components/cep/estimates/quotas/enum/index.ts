@@ -7,5 +7,6 @@ export enum QuotaStatus {
   SentToCustomer = 'sent_to_customer',
   Completed = 'completed',
   Cancelled = 'cancelled',
+  Total = 'total',
 }
 /* eslint-enable @typescript-eslint/no-duplicate-enum-values */

@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import { useModalForm, useSelect } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useParsed, useTranslate } from '@refinedev/core'
 import { type CodeIssueSetting } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
   Card,
@@ -19,6 +21,11 @@ import {
 
 const BasicInfo = () => {
   const t = useTranslate()
+
+  const { params } = useParsed()
+
+  const { actionType } = params as any
+  const isCloneVersion = actionType === 'VERSION'
 
   const form = Form.useFormInstance()
 
@@ -104,7 +111,7 @@ const BasicInfo = () => {
               name={'code'}
               required
             >
-              <Input style={{ width: 240 }} />
+              <Input style={{ width: 240 }} disabled={isCloneVersion} />
             </Form.Item>
           </Col>
           <Col>
@@ -114,6 +121,7 @@ const BasicInfo = () => {
                 loading={loadingQuota}
                 color="primary"
                 variant="outlined"
+                disabled={isCloneVersion}
               >
                 {t('departments.create.auto_number')}
               </Button>
@@ -128,6 +136,7 @@ const BasicInfo = () => {
                 onClick={() => {
                   show(codeIssueSetting?.data.id)
                 }}
+                disabled={isCloneVersion}
               >
                 {t('departments.create.popup_number_setting')}
               </Button>
@@ -182,7 +191,7 @@ const BasicInfo = () => {
                 },
               ]}
             >
-              <Input />
+              <Input disabled={isCloneVersion} />
             </Form.Item>
           </Col>
         </Row>
@@ -192,7 +201,13 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
-              <Select allowClear showSearch {...selectPropsCt} labelInValue />
+              <Select
+                allowClear
+                showSearch
+                disabled={isCloneVersion}
+                {...selectPropsCt}
+                labelInValue
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -202,7 +217,7 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'created_at'}>
-              <DatePicker style={{ width: '75%' }} />
+              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
         </Row>
@@ -212,7 +227,7 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_date'}>
-              <DatePicker style={{ width: '75%' }} />
+              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
         </Row>
@@ -234,7 +249,6 @@ const BasicInfo = () => {
             <Form.Item name={'payment_due_date'}>
               <Select
                 allowClear
-                showSearch
                 options={[
                   {
                     value: 'monthly_25',
@@ -285,7 +299,6 @@ const BasicInfo = () => {
             <Form.Item name={'expiration_date'}>
               <Select
                 allowClear
-                showSearch
                 options={[
                   {
                     value: 'days_7',

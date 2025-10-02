@@ -9,9 +9,10 @@ type HeaderType = {
   'x-tenant-id'?: string
 }
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
-    let accessToken = req.headers.get('token')
+    const { token } = await req.json()
+    let accessToken = token
     if (!accessToken) {
       const session = await getServerSession(authOptions)
 

@@ -34,6 +34,7 @@ const StatusDashboard = ({
           bodyStyle={{
             width: '100%',
             textAlign: 'center',
+            padding: '10px 10px',
           }}
         >
           <Statistic
