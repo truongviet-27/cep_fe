@@ -2,8 +2,8 @@
 import DOMPurify from 'dompurify'
 import parse from 'html-react-parser'
 
-function PreviewPdf({ htmlString }: { htmlString: string }) {
-  const prepared = htmlString
+function PreviewPdf({ previewPdf }: { previewPdf: string }) {
+  const prepared = previewPdf
     .replace(/<!doctype[^>]*>/i, '')
     .replace(/\n/g, '')
     .replace(/\\"/g, '"')

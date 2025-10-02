@@ -3,6 +3,7 @@ import {
   CommentOutlined,
   CopyOutlined,
   DeleteOutlined,
+  DownloadOutlined,
   DownOutlined,
   EditOutlined,
   EyeOutlined,
@@ -10,7 +11,6 @@ import {
 } from '@ant-design/icons'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
-import { DownloadButton } from '@components/common/button/download'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -84,6 +84,9 @@ function QuotaList() {
   const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange,
+    getCheckboxProps: (record) => ({
+      disabled: record?.display,
+    }),
   }
 
   const columns: ColumnsType<any> = useMemo(() => {
@@ -291,7 +294,9 @@ function QuotaList() {
                 recordItemId={record.id}
               />
             )}
-            <DownloadButton hideText size="small" recordItemId={record.id} />
+            <Link href={record?.pdf_path}>
+              <Button size="small" icon={<DownloadOutlined />} />
+            </Link>
 
             {record.status === QuotaStatus.Completed && (
               <Button type="default">決定移動</Button>

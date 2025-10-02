@@ -74,7 +74,6 @@ function CoreAutoComplete({
       allowClear
       onChange={(value) => {
         if (onChange) {
-          console.log(value, 'xxxxxxxxxxxxxx')
           onChange(value)
         }
         const option = data?.data.packagings.find(

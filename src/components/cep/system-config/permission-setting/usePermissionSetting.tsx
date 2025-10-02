@@ -59,7 +59,7 @@ function usePermissionSetting() {
 
   const handleChange = (
     key: number,
-    column: 'employee' | 'manager',
+    column: 'manager' | 'employee',
     checked: boolean,
   ) => {
     setCheckedValues((prev) => ({
@@ -152,33 +152,33 @@ function usePermissionSetting() {
       align: 'center',
     },
     {
-      title: t('permission_settings.table.employee'),
-      dataIndex: 'employee',
-      key: 'employee',
+      title: t('permission_settings.table.manager'),
+      dataIndex: 'manager',
+      key: 'manager',
       width: 200,
       align: 'center',
       render: (_, record) => {
         return (
           <Checkbox
-            checked={checkedValues[record.key]?.employee || false}
+            checked={checkedValues[record.key]?.manager || false}
             onChange={(e) =>
-              handleChange(record.key, 'employee', e.target.checked)
+              handleChange(record.key, 'manager', e.target.checked)
             }
           />
         )
       },
     },
     {
-      title: t('permission_settings.table.manager'),
-      dataIndex: 'manager',
-      key: 'manager',
+      title: t('permission_settings.table.employee'),
+      dataIndex: 'employee',
+      key: 'employee',
       width: 200,
       align: 'center',
       render: (_, record) => (
         <Checkbox
-          checked={checkedValues[record.key]?.manager || false}
+          checked={checkedValues[record.key]?.employee || false}
           onChange={(e) =>
-            handleChange(record.key, 'manager', e.target.checked)
+            handleChange(record.key, 'employee', e.target.checked)
           }
         />
       ),

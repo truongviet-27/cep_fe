@@ -12,7 +12,6 @@ const bareAxios = axios.create()
 const axiosInstance = axios.create()
 
 useTenantStore.subscribe((state) => {
-  console.log('Tenant store changed, new tenantId:', state.tenantId)
   if (state.tenantId) {
     axiosInstance.defaults.headers.common['x-tenant-id'] = state.tenantId
   } else {

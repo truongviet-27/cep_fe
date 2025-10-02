@@ -192,15 +192,7 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
-              <Select
-                allowClear
-                showSearch
-                {...selectPropsCt}
-                labelInValue
-                onChange={() => {
-                  console.log('xxxxxxxxxxxxxx')
-                }}
-              />
+              <Select allowClear showSearch {...selectPropsCt} labelInValue />
             </Form.Item>
           </Col>
         </Row>

@@ -383,8 +383,8 @@
     "permission_settings": "権限設定",
     "table": {
       "settingItem": "権限",
-      "employee": "管理者",
-      "manager": "一般",
+      "manager": "管理者",
+      "employee": "一般",
       "purpose": "説明"
     },
     "dataSource": {
