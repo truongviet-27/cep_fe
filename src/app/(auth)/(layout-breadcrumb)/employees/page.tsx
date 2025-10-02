@@ -42,7 +42,7 @@ function Page() {
     )
   }
 
-  const { tableProps, searchFormProps, setFilters } = useTable()
+  const { tableProps, searchFormProps, setFilters, setCurrent } = useTable()
   const breadcrumbItems = [
     {
       title: (
@@ -79,6 +79,7 @@ function Page() {
   }
 
   const handleSearch = (values: any) => {
+    setCurrent(1)
     setFilters([
       { field: 'q', operator: 'contains', value: values.q },
       { field: 'email', operator: 'null', value: values.email },
@@ -128,6 +129,7 @@ function Page() {
               name="department_id"
             >
               <Select
+                allowClear
                 {...departmentSelectProps}
                 placeholder={t('placeholders.partial_match')}
               />
@@ -139,6 +141,7 @@ function Page() {
               name="role_id"
             >
               <Select
+                allowClear
                 {...rolesSelectProps}
                 placeholder={t('placeholders.select')}
                 showSearch={false}
@@ -191,9 +194,9 @@ function Page() {
           render={(value) => <EmailField value={value} />}
         />
         <Table.Column
-          dataIndex={['role.display_name']}
+          dataIndex={['role']}
           title={t('employees.fields.role')}
-          render={(value) => renderFieldNotSet(value)}
+          render={(value) => renderFieldNotSet(value?.display_name)}
         />
         <Table.Column
           title={t('table.actions')}

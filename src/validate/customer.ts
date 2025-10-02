@@ -32,7 +32,7 @@ const zDeliveryAddressRule = (t: any) =>
       z
         .string({ error: t('validation.customer.phone.string') })
         .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-        .regex(/^\+[1-9]{1}[0-9]{3,14}$/, {
+        .regex(/^(?:0|\+84)(3|5|7|8|9)\d{8}$/, {
           error: t('validation.customer.phone.regex'),
         }),
     ),
@@ -107,8 +107,9 @@ export const validateCustomerRule = (t: any) => {
             }),
           })
           .regex(/^[ァ-ンヴ・ー]+$/, {
-            error: t('validation.customer.customer_name_by_kana.string'),
-          }),
+            error: t('validation.customer.customer_name_by_kana.regex'),
+          })
+          .or(z.literal('')),
       ),
       customer_type: z.optional(
         z.enum(['individual', 'company'], {
@@ -143,46 +144,57 @@ export const validateCustomerRule = (t: any) => {
           error: t('validation.customer.country.max', { max: 50 }),
         }),
       ),
-      post_code: z.optional(
-        z.string({ error: t('validation.customer.post_code.string') }).max(10, {
+      post_code: z
+        .string({ error: t('validation.required') })
+        .max(10, {
           error: t('validation.customer.post_code.max', { max: 10 }),
-        }),
-      ),
+        })
+        .min(1, { error: t('validation.required') }),
       address: z.optional(
-        z.string({ error: t('validation.customer.address.string') }).max(255, {
-          error: t('validation.customer.address.max', { max: 255 }),
-        }),
+        z
+          .string({ error: t('validation.required') })
+          .max(255, {
+            error: t('validation.customer.address.max', { max: 255 }),
+          })
+          .min(1, { error: t('validation.required') }),
       ),
       building: z.optional(
-        z.string({ error: t('validation.customer.building.string') }).max(255, {
-          error: t('validation.customer.building.max', { max: 255 }),
-        }),
+        z
+          .string({ error: t('validation.customer.building.string') })
+          .max(255, {
+            error: t('validation.customer.building.max', { max: 255 }),
+          })
+          .nullable(),
       ),
 
       phone: z.optional(
         z
           .string({ error: t('validation.customer.phone.string') })
           .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-          .regex(/^\+[1-9]{1}[0-9]{3,14}$/, {
+          .regex(/^(?:0|\+84)(3|5|7|8|9)\d{8}$/, {
             error: t('validation.customer.phone.regex'),
           }),
       ),
       fax: z.optional(
         z
           .string({ error: t('validation.customer.fax.string') })
-          .max(20, { error: t('validation.customer.fax.max', { max: 20 }) }),
+          .max(20, { error: t('validation.customer.fax.max', { max: 20 }) })
+          .or(z.literal(''))
+          .nullable(),
       ),
       mail: z.optional(
         z
-          .string()
+          .string({ error: t('validation.required') })
           .email({ error: t('validation.customer.mail.email') })
           .max(255, { error: t('validation.customer.mail.max', { max: 255 }) }),
       ),
 
       listing_classification: z.optional(
-        z.enum(['未上場', 'プライム', 'スタンダード', 'グロース'], {
-          error: t('validation.customer.listing_classification.in'),
-        }),
+        z
+          .enum(['未上場', 'プライム', 'スタンダード', 'グロース'], {
+            error: t('validation.customer.listing_classification.in'),
+          })
+          .nullable(),
       ),
       industry: z.optional(
         z.string({ error: t('validation.customer.industry.string') }).max(255, {
@@ -191,17 +203,15 @@ export const validateCustomerRule = (t: any) => {
       ),
       date_of_establishment: z.any().optional(),
 
-      department_in_charge: z.optional(
-        z
-          .string({
-            error: t('validation.customer.department_in_charge.string'),
-          })
-          .max(100, {
-            error: t('validation.customer.department_in_charge.max', {
-              max: 100,
-            }),
+      department_in_charge: z
+        .string({
+          error: t('validation.customer.department_in_charge.string'),
+        })
+        .max(100, {
+          error: t('validation.customer.department_in_charge.max', {
+            max: 100,
           }),
-      ),
+        }),
       person_in_charge_name: z.optional(
         z
           .string({
@@ -222,7 +232,8 @@ export const validateCustomerRule = (t: any) => {
             error: t('validation.customer.person_in_charge_department.max', {
               max: 100,
             }),
-          }),
+          })
+          .min(1, { error: t('validation.required') }),
       ),
       person_in_charge_mail: z.optional(
         z
@@ -234,7 +245,8 @@ export const validateCustomerRule = (t: any) => {
             error: t('validation.customer.person_in_charge_mail.max', {
               max: 100,
             }),
-          }),
+          })
+          .min(1, { error: t('validation.required') }),
       ),
       person_in_charge_phone: z.optional(
         z
@@ -246,11 +258,12 @@ export const validateCustomerRule = (t: any) => {
               max: 20,
             }),
           })
-          .regex(/^\+[1-9]{1}[0-9]{3,14}$/, {
+          .regex(/^(?:0|\+84)(3|5|7|8|9)\d{8}$/, {
             error: t('validation.customer.person_in_charge_phone.regex'),
-          }),
+          })
+          .or(z.literal(''))
+          .nullable(),
       ),
-
       company_research_information: z.optional(
         z.array(zCompanyResearchInformationRule(t)),
       ),

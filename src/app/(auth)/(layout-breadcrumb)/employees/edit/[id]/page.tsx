@@ -229,6 +229,7 @@ export default function EmployeeEdit() {
           rules={[{ required: true, message: 'このフィールドは必須です' }]}
         >
           <Select
+            allowClear
             placeholder={t('placeholders.select')}
             {...departmentSelectProps}
           />

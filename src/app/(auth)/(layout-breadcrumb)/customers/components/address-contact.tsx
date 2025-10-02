@@ -3,7 +3,7 @@
 import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
-import { useSelect } from '@refinedev/antd'
+import { SelectPagination } from '@components/common/select-pagination'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
 import { fieldDistinctionOptions, industryOptions } from '@utility/options'
@@ -32,12 +32,6 @@ function AddressContact(
 
   const industry = Form.useWatch('industry', form)
 
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'name',
-  })
-
   const isOtherSelected = industry === null
 
   return (
@@ -57,21 +51,21 @@ function AddressContact(
         key="1"
       >
         <Form.Item
+          required
           label={boldText(t('customers.show.postal_code'))}
           name="post_code"
           rules={[rule]}
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-
         <Form.Item
+          required
           label={boldText(t('customers.show.address'))}
           name="address"
           rules={[rule]}
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('customers.show.building_name'))}
           name="building"
@@ -79,15 +73,14 @@ function AddressContact(
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-
         <Form.Item
+          required
           label={boldText(t('customers.show.phone'))}
           name="phone"
           rules={[rule]}
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('customers.show.fax'))}
           name="fax"
@@ -95,15 +88,14 @@ function AddressContact(
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('customers.delivery.email'))}
           name="mail"
           rules={[rule]}
+          required
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('customers.show.industry'))}
           name="temp_industry"
@@ -112,7 +104,6 @@ function AddressContact(
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('customers.show.industry'))}
           name="industry"
@@ -123,9 +114,9 @@ function AddressContact(
             placeholder={t('placeholders.select')}
             options={industryOptions}
             style={{ maxWidth: 560 }}
+            allowClear
           />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('customers.show.listing_classification'))}
           name="listing_classification"
@@ -135,9 +126,9 @@ function AddressContact(
             placeholder={t('placeholders.select')}
             options={fieldDistinctionOptions}
             style={{ maxWidth: 560 }}
+            allowClear
           />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('customers.show.date_of_establishment'))}
           name="date_of_establishment"
@@ -154,17 +145,28 @@ function AddressContact(
             }
           />
         </Form.Item>
-
-        <Form.Item label={boldText(t('customers.show.department_in_charge'))}>
+        <Form.Item
+          label={boldText(t('customers.show.department_in_charge'))}
+          required
+        >
           <Row gutter={8} align={'middle'}>
             <Col>
-              <Form.Item name="department_in_charge" rules={[rule]}>
-                <Select
-                  {...departmentSelectProps}
-                  placeholder={t('placeholders.select')}
-                  style={{ minWidth: 300 }}
-                />
-              </Form.Item>
+              <SelectPagination
+                selectProps={{
+                  resource: 'departments',
+                }}
+                formItemProps={{
+                  name: 'department_in_charge',
+                  rules: [rule],
+                  required: true,
+                }}
+                optionLabel={'name'}
+                optionValue={'name'}
+                selectComponentProps={{
+                  placeholder: t('placeholders.select'),
+                  style: { maxWidth: 560, minWidth: '150px' },
+                }}
+              />
             </Col>
             <Col>
               <Form.Item>※当社の部署</Form.Item>

@@ -79,7 +79,7 @@ function DeliveryDestinations(
                     key: 'name',
                     render: (field) => (
                       <Form.Item
-                        name={[field.name, 'name']}
+                        name={[field.name, 'delivery_address_name']}
                         rules={[rule]}
                         required
                         noStyle

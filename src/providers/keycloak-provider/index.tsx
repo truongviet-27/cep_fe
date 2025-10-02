@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line simple-import-sort/imports
 import { type AuthProvider } from '@refinedev/core'
-import { axiosInstance } from '@rest-data-provider/utils'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 import { useUserStore } from '@stores/useUserStore'
 import { signIn, signOut } from 'next-auth/react'
 

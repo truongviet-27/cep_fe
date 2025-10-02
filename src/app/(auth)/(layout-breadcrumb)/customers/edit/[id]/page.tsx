@@ -80,7 +80,13 @@ export default function CustomerEditPage() {
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
 
-      <Modal open={visible} onCancel={close} footer={null}>
+      <Modal
+        title={t('customers.modal.title')}
+        open={visible}
+        onCancel={close}
+        width={800}
+        footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
+      >
         <CorporateNumberSearchModal modalProps={modalFormProps} />
       </Modal>
     </Edit>
