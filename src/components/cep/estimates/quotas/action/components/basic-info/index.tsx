@@ -3,6 +3,7 @@ import { useModalForm, useSelect } from '@refinedev/antd'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import { type CodeIssueSetting } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
   Card,
@@ -202,7 +203,7 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'created_at'}>
-              <DatePicker style={{ width: '75%' }} />
+              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
         </Row>
@@ -212,7 +213,7 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_date'}>
-              <DatePicker style={{ width: '75%' }} />
+              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
         </Row>
