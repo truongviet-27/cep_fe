@@ -3,6 +3,18 @@ import axios from 'axios'
 
 const axiosInstance = axios.create()
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    config.params = {
+      ...(config.params || {}),
+      id: 'Kd4y5Y2BQgn52',
+    }
+
+    return config
+  },
+  (error) => Promise.reject(error),
+)
+
 axiosInstance.interceptors.response.use(
   (response) => {
     return response

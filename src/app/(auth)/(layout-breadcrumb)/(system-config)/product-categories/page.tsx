@@ -53,6 +53,7 @@ export default function Page() {
             <div style={{ marginTop: 8 }}>
               <Form.Item name="level" noStyle>
                 <Select
+                  allowClear
                   size="middle"
                   placeholder="選択してください"
                   style={{ width: 240 }}

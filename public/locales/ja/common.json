@@ -160,7 +160,7 @@
       "email": "メールアドレス"
     },
     "enums": {
-      "corporation": "法人",
+      "corporation": "個人",
       "individual": "会社"
     },
     "filters": {

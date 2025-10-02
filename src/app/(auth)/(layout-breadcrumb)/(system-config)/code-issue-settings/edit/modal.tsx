@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  Flex,
   Form,
   Input,
   Radio,
@@ -23,6 +24,8 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import AutoHeading from '@components/common/auto-heading'
 import { validateCodeIssueSettingsRule } from '@validate/code-issue-settings'
+import boldText from '@utility/bold-text'
+import { PRIMARY, RED } from '@utility/color'
 
 type Props = {
   modalProps: any
@@ -72,7 +75,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
       isAutoHeading={false}
     >
       <AutoHeading
-        style={{ marginTop: -40 }}
+        style={{ marginTop: -40, color: PRIMARY, fontSize: 20 }}
         i18n={'code_issue_settings.edit.edit'}
       />
       <Form
@@ -85,7 +88,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         style={{ marginTop: 30 }}
       >
         <Form.Item
-          label={t('code_issue_settings.fields.name')}
+          label={boldText(t('code_issue_settings.fields.name'))}
           name="name"
           rules={[rule]}
         >
@@ -93,7 +96,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.issue_method')}
+          label={boldText(t('code_issue_settings.fields.issue_method'))}
           name="issue_method"
           rules={[rule]}
         >
@@ -108,7 +111,13 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.prefix')}
+          label={
+            <Flex>
+              {boldText(t('code_issue_settings.fields.prefix'))}
+              &nbsp;
+              <span style={{ color: RED }}>*</span>
+            </Flex>
+          }
           name="prefix"
           rules={[rule]}
         >
@@ -128,7 +137,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.segment')}
+          label={boldText(t('code_issue_settings.fields.segment'))}
           name="segment"
           rules={[rule]}
         >
@@ -136,15 +145,20 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
             placeholder={t('placeholders.select')}
             options={segmentOptions}
             disabled={isManual}
+            allowClear
           />
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.serial_length')}
+          label={boldText(t('code_issue_settings.fields.serial_length'))}
           name="serial_length"
           rules={[rule]}
         >
-          <Select placeholder={t('placeholders.select')} disabled={isManual}>
+          <Select
+            allowClear
+            placeholder={t('placeholders.select')}
+            disabled={isManual}
+          >
             {[...Array(10)].map((_, i) => (
               <Select.Option key={i + 1} value={i + 1}>
                 {i + 1}
@@ -153,12 +167,15 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label={t('code_issue_settings.fields.total')} name="total">
+        <Form.Item
+          label={boldText(t('code_issue_settings.fields.total'))}
+          name="total"
+        >
           {record?.total}
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.preview_code')}
+          label={boldText(t('code_issue_settings.fields.preview_code'))}
           name="preview_code"
         >
           <Tag>{previewCode}</Tag>

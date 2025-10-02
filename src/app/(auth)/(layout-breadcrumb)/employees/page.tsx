@@ -129,6 +129,7 @@ function Page() {
               name="department_id"
             >
               <Select
+                allowClear
                 {...departmentSelectProps}
                 placeholder={t('placeholders.partial_match')}
               />
@@ -140,6 +141,7 @@ function Page() {
               name="role_id"
             >
               <Select
+                allowClear
                 {...rolesSelectProps}
                 placeholder={t('placeholders.select')}
                 showSearch={false}

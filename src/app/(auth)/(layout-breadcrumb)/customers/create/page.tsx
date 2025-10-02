@@ -71,6 +71,11 @@ export default function CustomerCreatePage() {
           person_in_charge_mail: null,
           name: null,
           price_rank_id: null,
+          department_in_charge: null,
+          post_code: null,
+          address: null,
+          phone: null,
+          mail: null,
         }}
         labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
         wrapperCol={{ xs: 24, sm: 16, md: 14 }}

@@ -67,7 +67,13 @@ const TreeRow: React.FC<TreeRowProps> = ({
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-md bg-white px-3 py-2">
+    <div
+      className="flex items-center gap-3 rounded-md bg-white px-3 py-2"
+      onClick={(e) => {
+        e.stopPropagation()
+        onToggle(cat.id)
+      }}
+    >
       <Space size={8} className="min-w-0 flex-1">
         <Tag
           color="blue-inverse"

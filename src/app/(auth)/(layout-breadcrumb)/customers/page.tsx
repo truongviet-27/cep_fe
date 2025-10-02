@@ -9,7 +9,6 @@ import {
   CreateButton,
   DeleteButton,
   EditButton,
-  useSelect,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -49,6 +48,7 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 import AutoHeading from '@components/common/auto-heading'
+import { SelectPagination } from '@components/common/select-pagination'
 
 const { RangePicker } = DatePicker
 const { Title } = Typography
@@ -77,21 +77,6 @@ export default function CustomerListPage() {
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
   const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
-
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
-
-  const { selectProps: ranksSelectProps } = useSelect({
-    resource: 'ranks',
-    optionLabel: 'name',
-    optionValue: 'id',
-    queryOptions: {
-      enabled: allowRankResource,
-    },
-  })
 
   const { tableProps, setFilters, searchFormProps, setCurrent } =
     useTable<ICustomer>({
@@ -405,6 +390,7 @@ export default function CustomerListPage() {
               name="country"
             >
               <Select
+                allowClear
                 placeholder={t('placeholders.select')}
                 options={countryOptions}
                 showSearch
@@ -414,28 +400,42 @@ export default function CustomerListPage() {
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
-            <Form.Item
-              label={boldText(t('customers.fields.department'))}
-              name="department_id"
-            >
-              <Select
-                {...departmentSelectProps}
-                placeholder={t('placeholders.select')}
-                style={{ maxWidth: 560 }}
-              />
-            </Form.Item>
+            <SelectPagination
+              selectProps={{
+                resource: 'departments',
+              }}
+              formItemProps={{
+                label: boldText(t('customers.fields.department')),
+                name: 'department_id',
+              }}
+              optionLabel={'name'}
+              optionValue={'id'}
+              selectComponentProps={{
+                placeholder: t('placeholders.select'),
+                style: { maxWidth: 560, minWidth: '150px' },
+              }}
+            />
           </Col>
           {allowRankResource && (
             <Col xs={24} md={4}>
-              <Form.Item
-                label={boldText(t('ranks.fields.code'))}
-                name="unit_price_rank"
-              >
-                <Select
-                  {...ranksSelectProps}
-                  placeholder={t('placeholders.select')}
-                />
-              </Form.Item>
+              <SelectPagination
+                formItemProps={{
+                  label: boldText(t('ranks.fields.code')),
+                  name: 'unit_price_rank',
+                }}
+                selectProps={{
+                  resource: 'ranks',
+                  queryOptions: {
+                    enabled: allowRankResource,
+                  },
+                }}
+                optionLabel={'name'}
+                optionValue={'id'}
+                selectComponentProps={{
+                  placeholder: t('placeholders.select'),
+                  style: { maxWidth: 560, minWidth: '150px' },
+                }}
+              />
             </Col>
           )}
           <Col xs={24} md={4}>
@@ -444,6 +444,7 @@ export default function CustomerListPage() {
               name="credit_rank"
             >
               <Select
+                allowClear
                 placeholder={t('placeholders.select')}
                 options={creditCheckOptions}
               />
@@ -455,6 +456,7 @@ export default function CustomerListPage() {
               name="anti_social_rank"
             >
               <Select
+                allowClear
                 placeholder={t('placeholders.select')}
                 options={antiSocialCheckOptions}
               />
@@ -469,6 +471,7 @@ export default function CustomerListPage() {
               name="search_date_type"
             >
               <Select
+                allowClear
                 placeholder={t('customers.fields.registration_date')}
                 options={searchDateTypeOptions}
               />

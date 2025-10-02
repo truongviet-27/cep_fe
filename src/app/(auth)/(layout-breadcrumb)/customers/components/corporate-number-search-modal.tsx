@@ -27,12 +27,11 @@ export const CorporateNumberSearchModal: React.FC<
   const { visible, close } = modalProps
 
   const params = {
-    id: process.env.NEXT_PUBLIC_CORPORATE_NUMBER_ID || '',
-    name: '',
+    name: '%E5%9B%BD%E7%A8%8E%E5%BA%81%0D%0A',
     type: '02',
-    mode: '1',
-    target: '1',
-    close: '0',
+    // mode: '1',
+    // target: '1',
+    // close: '0',
     history: '0',
   }
 
@@ -41,12 +40,11 @@ export const CorporateNumberSearchModal: React.FC<
     resource: 'name',
     filters: {
       initial: [
-        { field: 'id', operator: 'eq', value: params.id },
         { field: 'name', operator: 'eq', value: params.name },
         { field: 'type', operator: 'eq', value: params.type },
-        { field: 'mode', operator: 'eq', value: params.mode },
-        { field: 'target', operator: 'eq', value: params.target },
-        { field: 'close', operator: 'eq', value: params.close },
+        // { field: 'mode', operator: 'eq', value: params.mode },
+        // { field: 'target', operator: 'eq', value: params.target },
+        // { field: 'close', operator: 'eq', value: params.close },
         { field: 'history', operator: 'eq', value: params.history },
       ],
     },
