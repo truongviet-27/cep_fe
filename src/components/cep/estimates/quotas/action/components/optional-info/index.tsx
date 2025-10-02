@@ -369,7 +369,7 @@ function OptionalInfo() {
                       marginBottom: 0,
                     }}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber min={1} controls={false} />
                   </Form.Item>
                 )
               },

@@ -145,7 +145,7 @@ function QuotaList() {
         render: (_, record) => (
           <div className="flex flex-col gap-[2px]">
             <div>{record.title}</div>
-            <div style={{ color: '#888' }}>{record.customer_name}</div>
+            <div>{record.customer_name}</div>
           </div>
         ),
       },
@@ -155,11 +155,8 @@ function QuotaList() {
         key: 'creator',
         render: (_, record) => (
           <div>
-            <div>{record.author?.name}</div>
-            <div
-              className="flex flex-col flex-wrap items-center justify-center gap-[2px]"
-              style={{ color: '#888' }}
-            >
+            <div>{record?.author}</div>
+            <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: string) => item)}
             </div>
           </div>
@@ -171,7 +168,7 @@ function QuotaList() {
         key: 'department',
         render: (_, record) => (
           <div className="flex flex-col gap-2">
-            <div>{record.department}</div>
+            <div>{record.author_department_name}</div>
             <div>{record?.total_price}</div>
           </div>
         ),
@@ -183,9 +180,10 @@ function QuotaList() {
         render: (_, record) => (
           <div>
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
-            <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
-
-            {/* <div>{record.expiration_date}</div> */}
+            <div>
+              {record.expiration_date &&
+                dayjs(record.created_at).format('YYYY/MM/DD')}
+            </div>
           </div>
         ),
       },
@@ -200,19 +198,16 @@ function QuotaList() {
             record.customer_cancelled_date
           ) {
             return (
-              <div>
-                <div>
-                  {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
-                    '-'}
-                </div>
-                <div>
-                  {dayjs(record.customer_accepted_date).format('YYYY/MM/DD') ||
-                    dayjs(record.customer_cancelled_date).format('YYYY/MM/DD')}
-                </div>
-              </div>
-            )
-          } else {
-            return (
+              // <div>
+              //   <div>
+              //     {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
+              //       '-'}
+              //   </div>
+              //   <div>
+              //     {dayjs(record.customer_accepted_date).format('YYYY/MM/DD') ||
+              //       dayjs(record.customer_cancelled_date).format('YYYY/MM/DD')}
+              //   </div>
+              // </div>
               <div>
                 <div>{dayjs().format('YYYY/MM/DD')}</div>
                 <div>{dayjs().format('YYYY/MM/DD')}</div>
@@ -260,6 +255,20 @@ function QuotaList() {
             <Link href={record?.pdf_path} target="_blank">
               <Button size="small" icon={<DownloadOutlined />} />
             </Link>
+
+            {record.status === QuotaStatus.SentToCustomer && (
+              <Button
+                type="default"
+                size="small"
+                onClick={() => {
+                  go({
+                    to: `/clone/${record.id}?actionType=VERSION`,
+                  })
+                }}
+              >
+                再見積
+              </Button>
+            )}
 
             {record.status === QuotaStatus.Completed && (
               <Button
