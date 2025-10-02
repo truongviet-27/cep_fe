@@ -13,7 +13,7 @@ const NoteForm: React.FC = () => {
         style={{ color: PRIMARY }}
         className="!mt-6 !mb-2 border-b-1 border-gray-200 pb-2 text-[14px]"
       >
-        {t('quota_templates.form.titleDetailInfo')}
+        {t('quota_templates.form.titleSpecificationsAndConditions')}
       </Title>
       <Form.Item name={'note'}>
         <Input.TextArea

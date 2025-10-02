@@ -105,8 +105,12 @@ const QuoteTemplateFormEditContainer: FC = () => {
             )}
           </Space>
           <Space className="items-end">
+            <Button {...methods.saveButtonProps} type="primary">
+              {isUpdateMode ? t('buttons.save') : t('buttons.create')}
+            </Button>
             <Button
-              type="default"
+              color="primary"
+              variant="outlined"
               onClick={() => {
                 go({
                   to: '/quota-templates',
@@ -114,10 +118,6 @@ const QuoteTemplateFormEditContainer: FC = () => {
               }}
             >
               {t('buttons.back')}
-            </Button>
-
-            <Button {...methods.saveButtonProps} type="primary">
-              {isUpdateMode ? t('buttons.save') : t('buttons.create')}
             </Button>
           </Space>
         </Flex>

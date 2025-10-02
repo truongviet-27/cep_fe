@@ -52,8 +52,6 @@ const OptionalInfo: FC = () => {
     },
   })
 
-  console.log(query)
-
   const handleAddProduct = (groupIndex: number) => {
     const values = optionalProducts || []
     const products = (values[groupIndex].products ||
