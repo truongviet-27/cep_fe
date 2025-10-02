@@ -4,6 +4,7 @@ import CoreAutoComplete from '@components/cep/estimates/quotas/action/components
 import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import { useSelect } from '@refinedev/antd'
+import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -25,6 +26,7 @@ import { useEffect, useState } from 'react'
 const { Text } = Typography
 
 function DetailInfo() {
+  const t = useTranslate()
   const form = Form.useFormInstance()
 
   const taxRateWatch = Form.useWatch('tax_rate', form)
@@ -171,6 +173,20 @@ function DetailInfo() {
                         style={{
                           marginBottom: 0,
                         }}
+                        rules={[
+                          {
+                            required: true,
+                            message: '',
+                          },
+                          {
+                            whitespace: true,
+                            message: '',
+                          },
+                          {
+                            max: 255,
+                            message: '',
+                          },
+                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -454,7 +470,7 @@ function DetailInfo() {
                       marginBottom: 0,
                     }}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber min={1} controls={false} />
                   </Form.Item>
                 )
               },

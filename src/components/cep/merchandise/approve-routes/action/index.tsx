@@ -114,6 +114,10 @@ function ApproveAction() {
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
     onSearch: (value) => {
       return [
         {

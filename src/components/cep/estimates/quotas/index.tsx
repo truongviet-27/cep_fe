@@ -261,6 +261,20 @@ function QuotaList() {
               <Button size="small" icon={<DownloadOutlined />} />
             </Link>
 
+            {record.status === QuotaStatus.SentToCustomer && (
+              <Button
+                type="default"
+                size="small"
+                onClick={() => {
+                  go({
+                    to: `/clone/${record.id}?actionType=VERSION`,
+                  })
+                }}
+              >
+                再見積
+              </Button>
+            )}
+
             {record.status === QuotaStatus.Completed && (
               <Button
                 type="default"
