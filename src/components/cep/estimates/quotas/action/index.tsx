@@ -39,7 +39,11 @@ const { Title } = Typography
 
 function QuotaAction() {
   const t = useTranslate()
-  const methods = useForm()
+  const methods = useForm({
+    queryOptions: {
+      enabled: false,
+    },
+  })
 
   const { id, action } = useParsed()
 
@@ -69,6 +73,14 @@ function QuotaAction() {
     },
   })
 
+  const { data: dataBasicInfo, isFetching: isFetchingBasicInfo } = useCustom({
+    url: `${apiUrl}/quotas/${id}`,
+    method: 'get',
+    queryOptions: {
+      enabled: isUpdate,
+    },
+  })
+
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -87,21 +99,21 @@ function QuotaAction() {
 
   useEffect(() => {
     if (isUpdate) {
-      if (queryBasic?.data?.data && dataProducts?.data) {
+      if (dataBasicInfo?.data && dataProducts?.data) {
         form.setFieldsValue({
-          ...queryBasic.data.data,
+          ...dataBasicInfo.data,
           customer: {
-            value: queryBasic.data.data.customer_id,
-            label: queryBasic.data.data.customer_name,
+            value: dataBasicInfo.data.customer_id,
+            label: dataBasicInfo.data.customer_name,
           },
-          delivery_date: queryBasic.data.data.delivery_date
-            ? dayjs(queryBasic.data.data.delivery_date)
+          delivery_date: dataBasicInfo.data.delivery_date
+            ? dayjs(dataBasicInfo.data.delivery_date)
             : null,
-          created_at: queryBasic.data.data.created_at
-            ? dayjs(queryBasic.data.data.created_at)
+          created_at: dataBasicInfo.data.created_at
+            ? dayjs(dataBasicInfo.data.created_at)
             : null,
           tags:
-            queryBasic.data.data.tags?.map((item: any) => ({
+            dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
               label: item.name,
             })) || [],
@@ -125,7 +137,7 @@ function QuotaAction() {
         })
       }
     }
-  }, [dataProducts, dataHistory, queryBasic])
+  }, [dataProducts, dataHistory, dataBasicInfo])
 
   useEffect(() => {
     if (!isUpdate && data?.data) {
@@ -133,7 +145,7 @@ function QuotaAction() {
         title: '',
         type: 'normal',
         customer: null,
-        status: 'waiting_approve',
+        status: 'creating',
         created_at: null,
         delivery_date: null,
         delivery_method: data?.data.default_delivery_method,
@@ -271,7 +283,7 @@ function QuotaAction() {
       <Spin
         spinning={
           isFetching ||
-          queryBasic?.isFetching ||
+          isFetchingBasicInfo ||
           isFetchingProduct ||
           isFetchingHistory
         }

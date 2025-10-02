@@ -185,7 +185,6 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       dataIndex: 'is_add_total',
       key: 'is_add_total',
       render: (_, record) => {
-        console.log(record.is_add_total, 'record')
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }

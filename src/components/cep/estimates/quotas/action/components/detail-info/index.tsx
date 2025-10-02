@@ -230,6 +230,7 @@ function DetailInfo() {
                         )
                         form.setFieldValue(
                           [
+                            'main_product',
                             record.index,
                             'products',
                             record.index2,
@@ -257,6 +258,59 @@ function DetailInfo() {
                           ],
                           item?.code,
                         )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'unit',
+                          ],
+                          item?.unit,
+                        )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'cost_price',
+                          ],
+                          item?.cost_price,
+                        )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          item?.sale_price,
+                        )
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'quantity',
+                          ],
+                          1,
+                        )
+
+                        if (!value) {
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'quantity',
+                            ],
+                            0,
+                          )
+                        }
                       }}
                     />
                   </Form.Item>
@@ -316,6 +370,28 @@ function DetailInfo() {
                       resource={`products`}
                       style={{ width: 200 }}
                       parent="main_product"
+                      // onChange={() => {
+                      //   // form.setFieldValue(
+                      //   //   [
+                      //   //     'main_product',
+                      //   //     record.index,
+                      //   //     'products',
+                      //   //     record.index2,
+                      //   //     'cost_price',
+                      //   //   ],
+                      //   //   item?.cost_price,
+                      //   // )
+                      //   // form.setFieldValue(
+                      //   //   [
+                      //   //     'main_product',
+                      //   //     record.index,
+                      //   //     'products',
+                      //   //     record.index2,
+                      //   //     'selling_price',
+                      //   //   ],
+                      //   //   item?.sale_price,
+                      //   // )
+                      // }}
                     />
                   </Form.Item>
                 )
