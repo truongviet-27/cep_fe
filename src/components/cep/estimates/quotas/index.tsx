@@ -11,6 +11,8 @@ import {
 } from '@ant-design/icons'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
+import getQuotaStatusStyle from '@components/cep/estimates/quotas/utils'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -19,6 +21,7 @@ import {
   DeleteButton,
   EditButton,
   ShowButton,
+  useModal,
   useSelect,
   useTable,
 } from '@refinedev/antd'
@@ -30,7 +33,9 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
   Col,
@@ -38,6 +43,7 @@ import {
   Dropdown,
   Form,
   Input,
+  Modal,
   Row,
   Select,
   Space,
@@ -85,9 +91,11 @@ function QuotaList() {
     selectedRowKeys,
     onChange: onSelectChange,
     getCheckboxProps: (record) => ({
-      disabled: record?.display,
+      disabled: !record?.display,
     }),
   }
+
+  const { modalProps, close, show } = useModal()
 
   const columns: ColumnsType<any> = useMemo(() => {
     return [
@@ -96,63 +104,15 @@ function QuotaList() {
         dataIndex: 'status',
         key: 'status',
         render: (value, record) => {
-          let background = ''
-          let color = ''
-          let text = ''
-          switch (value as QuotaStatus) {
-            case QuotaStatus.Creating:
-              background = '#E2E2E2'
-              color = '#666666'
-              text = '下書き'
-              break
-
-            case QuotaStatus.WaitingApproval:
-              background = '#FFFFC7'
-              color = '#D2A904'
-              text = '承認待'
-              break
-
-            case QuotaStatus.Approved:
-              background = '#DAEDFF'
-              color = '#0066CC'
-              text = '承認済'
-              break
-
-            case QuotaStatus.Rejected:
-              background = '#FFDFBF'
-              color = '#FF8400'
-              text = '差戻'
-              break
-
-            case QuotaStatus.SentToCustomer:
-              background = '#DAEDFF'
-              color = '#0066CC'
-              text = '送信済'
-              break
-
-            case QuotaStatus.Completed:
-              background = '#DFFFEB'
-              color = '#22874D'
-              text = '受注'
-              break
-
-            case QuotaStatus.Cancelled:
-              background = '#FFDFDF'
-              color = '#FF0000'
-              text = '失注'
-              break
-
-            default:
-              background = '#FFFFFF'
-              color = '#000000'
-              text = ''
-              break
-          }
+          const result = getQuotaStatusStyle(value)
 
           return (
             <div className="flex flex-col items-center justify-center gap-1">
-              <Tag color={background} style={{ color, marginRight: 0 }}>
-                {text}
+              <Tag
+                color={result.background}
+                style={{ color: result.color, marginRight: 0 }}
+              >
+                {result.text}
               </Tag>
               {record.latest_approval_comment?.comment && (
                 <Tooltip
@@ -196,7 +156,10 @@ function QuotaList() {
         render: (_, record) => (
           <div>
             <div>{record.author?.name}</div>
-            <div className="flex flex-wrap gap-[2px]" style={{ color: '#888' }}>
+            <div
+              className="flex flex-col flex-wrap items-center justify-center gap-[2px]"
+              style={{ color: '#888' }}
+            >
               {record.approvers?.map((item: string) => item)}
             </div>
           </div>
@@ -294,12 +257,21 @@ function QuotaList() {
                 recordItemId={record.id}
               />
             )}
-            <Link href={record?.pdf_path}>
+            <Link href={record?.pdf_path} target="_blank">
               <Button size="small" icon={<DownloadOutlined />} />
             </Link>
 
             {record.status === QuotaStatus.Completed && (
-              <Button type="default">決定移動</Button>
+              <Button
+                type="default"
+                size="small"
+                onClick={() => {
+                  show()
+                  setDataAgreedPrice(record)
+                }}
+              >
+                決定移動
+              </Button>
             )}
           </Space>
         ),
@@ -499,6 +471,7 @@ function QuotaList() {
     (message: string): OpenNotificationParams | false | undefined => {
       refetch()
       setSelectedRowKeys([])
+      setOptions([])
       return {
         message: t('notifications.success'),
         description: message ?? 'Success',
@@ -595,6 +568,8 @@ function QuotaList() {
       })
     }
   }
+
+  const [dataAgreedPrice, setDataAgreedPrice] = useState()
 
   return (
     <List
@@ -740,7 +715,7 @@ function QuotaList() {
                 <RangePicker
                   allowClear
                   className="w-full"
-                  placeholder={['YYYY/MM/DD', 'YYYY/MM/DD']}
+                  placeholder={[FORMAT_DATE, FORMAT_DATE]}
                 />
               </Form.Item>
             </Col>
@@ -780,7 +755,7 @@ function QuotaList() {
                 disabled={!options || options.length === 0}
               >
                 <Button
-                  size="large"
+                  size="middle"
                   style={{
                     width: '100%',
                   }}
@@ -829,6 +804,13 @@ function QuotaList() {
           {...tableProps}
         />
       </Form>
+      <Modal
+        {...modalProps}
+        footer={false}
+        title={boldText('決定見積へ移動', PRIMARY, 16)}
+      >
+        <ModalAgreePrice data={dataAgreedPrice} close={close} />
+      </Modal>
     </List>
   )
 }

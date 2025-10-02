@@ -4,7 +4,6 @@
 'use client'
 import { RightOutlined } from '@ant-design/icons'
 import Left from '@components/cep/system-config/tenant-setting/components/Left'
-import PreviewPdf from '@components/cep/system-config/tenant-setting/components/preview'
 import Right from '@components/cep/system-config/tenant-setting/components/Right'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -26,7 +25,7 @@ import {
 } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
-import { Button, Form, Modal, Row, Space, Typography } from 'antd'
+import { Button, Form, Modal, Row, Space, Spin, Typography } from 'antd'
 import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -97,7 +96,8 @@ function TenantSetting() {
     )
   }
 
-  const { mutate: mutatePreviewPdf } = useCustomMutation()
+  const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
+    useCustomMutation()
 
   const handlePreviewPdf = () => {
     const customValues: QuotaFormSettingResponse = {
@@ -188,7 +188,20 @@ function TenantSetting() {
             type="default"
             size="large"
             onClick={() => {
-              form.setFieldsValue(data?.data as QuotaFormSettingResponse)
+              form.setFieldsValue({
+                ...data?.data,
+                is_enable_delivery: !data?.data.is_enable_delivery,
+                is_enable_delivery_method:
+                  !data?.data.is_enable_delivery_method,
+                is_enable_payment_due_date:
+                  !data?.data.is_enable_payment_due_date,
+                is_enable_expiration_date:
+                  !data?.data.is_enable_expiration_date,
+                is_display_company_logo_image:
+                  !data?.data.is_display_company_logo_image,
+                is_display_company_seal_image:
+                  !data?.data.is_display_company_seal_image,
+              } as QuotaFormSettingResponse)
             }}
           >
             {'キャンセル'}
@@ -232,26 +245,24 @@ function TenantSetting() {
             setIsPdf(false)
           }}
           footer={null}
-          style={{ top: 20, bottom: 20 }}
+          style={{ top: 20 }}
           width={{
             xs: '90%',
             sm: '80%',
-            md: '70%',
-            lg: '50%',
+            xxl: '50%',
           }}
         >
-          <div
-            style={{
-              border: '1px solid rgba(0, 0, 0, 0.3)',
-              borderRadius: 8,
-            }}
-          >
-            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-              <Viewer
-                fileUrl={previewPdf}
-                plugins={[defaultLayoutPluginInstance]}
-              />
-            </Worker>
+          <div>
+            <Spin spinning={isPendingPreviewPdf}>
+              {!isPendingPreviewPdf && (
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                  <Viewer
+                    fileUrl={`data:application/pdf;base64,${previewPdf}`}
+                    plugins={[defaultLayoutPluginInstance]}
+                  />
+                </Worker>
+              )}
+            </Spin>
 
             {/* <PreviewPdf previewPdf={previewPdf} /> */}
           </div>
