@@ -2288,6 +2288,10 @@ export type QuotaResource = {
    */
   consumption_tax?: string
   /**
+   * Path to the generated PDF document
+   */
+  pdf_path?: string
+  /**
    * Tax rate percentage
    */
   tax_rate?: number
@@ -2578,6 +2582,7 @@ export type SimpleQuota = {
   sent_to_customer_date?: string
   customer_accepted_date?: string
   customer_cancelled_date?: string
+  pdf_path?: string
   author?: string | null
   /**
    * List of approver names
@@ -6987,6 +6992,152 @@ export type QuotaAgreedPriceControllerStoreResponses = {
 
 export type QuotaAgreedPriceControllerStoreResponse =
   QuotaAgreedPriceControllerStoreResponses[keyof QuotaAgreedPriceControllerStoreResponses]
+
+export type QuotaAgreedPriceControllerGetCustomerListData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Page number. Defaults to 1.
+     */
+    _page?: number
+    /**
+     * Number of items per page (max 100). Defaults to 10.
+     */
+    _per_page?: number
+    /**
+     * Filter by customer name
+     */
+    customer_name?: string
+    /**
+     * Filter by department IDs (array)
+     */
+    'department_id_in[]'?: Array<number>
+    /**
+     * Filter by rank IDs (array)
+     */
+    'rank_id_in[]'?: Array<number>
+  }
+  url: '/api/v1/quota/agreed-prices/customers'
+}
+
+export type QuotaAgreedPriceControllerGetCustomerListErrors = {
+  /**
+   * Validation error
+   */
+  422: {
+    success?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type QuotaAgreedPriceControllerGetCustomerListError =
+  QuotaAgreedPriceControllerGetCustomerListErrors[keyof QuotaAgreedPriceControllerGetCustomerListErrors]
+
+export type QuotaAgreedPriceControllerGetCustomerListResponses = {
+  /**
+   * Customer list retrieved successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      data?: Array<{
+        customer_id?: number
+        customer_name?: string
+        department_name?: string
+        rank_code?: string
+        total_products?: number
+      }>
+      pagination?: {
+        current_page?: number
+        per_page?: number
+        total?: number
+        last_page?: number
+        from?: number
+        to?: number
+      }
+    }
+  }
+}
+
+export type QuotaAgreedPriceControllerGetCustomerListResponse =
+  QuotaAgreedPriceControllerGetCustomerListResponses[keyof QuotaAgreedPriceControllerGetCustomerListResponses]
+
+export type QuotaAgreedPriceControllerGetCustomerProductsData = {
+  body?: never
+  path: {
+    /**
+     * Customer ID
+     */
+    customer_id: number
+  }
+  query?: never
+  url: '/api/v1/quota/agreed-prices/customers/{customer_id}/products'
+}
+
+export type QuotaAgreedPriceControllerGetCustomerProductsErrors = {
+  /**
+   * Validation error
+   */
+  422: {
+    success?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type QuotaAgreedPriceControllerGetCustomerProductsError =
+  QuotaAgreedPriceControllerGetCustomerProductsErrors[keyof QuotaAgreedPriceControllerGetCustomerProductsErrors]
+
+export type QuotaAgreedPriceControllerGetCustomerProductsResponses = {
+  /**
+   * Customer products retrieved successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      customer_id?: number
+      customer_code?: string
+      customer_name?: string
+      department_name?: string
+      rank_code?: string
+      total_products?: number
+      products?: Array<{
+        product_id?: number
+        product_name?: string
+        unit_name?: string
+        selling_price?: number
+        quantity?: number
+        start_date?: string
+        end_date?: string
+      }>
+    }
+  }
+}
+
+export type QuotaAgreedPriceControllerGetCustomerProductsResponse =
+  QuotaAgreedPriceControllerGetCustomerProductsResponses[keyof QuotaAgreedPriceControllerGetCustomerProductsResponses]
 
 export type QuotaControllerBulkDestroyData = {
   body: {
