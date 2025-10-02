@@ -97,7 +97,6 @@ function QuotaDetail() {
 
   useEffect(() => {
     if (queryBasic?.data) {
-      console.log(queryBasic, 'xxxxxxxxxxxxxxxx')
       form.setFieldValue('reason', queryBasic.data.reason)
     }
   }, [queryBasic])
@@ -307,7 +306,7 @@ function QuotaDetail() {
 
             {(queryBasic?.data?.status === QuotaStatus.Completed ||
               queryBasic?.data?.status === QuotaStatus.Cancelled) &&
-              queryBasic.data.data.display && (
+              queryBasic.data?.display && (
                 <Button
                   style={{
                     background: '#721C24',
