@@ -7,6 +7,7 @@ import { useUserStore } from '@stores/useUserStore'
 import { signIn, signOut } from 'next-auth/react'
 
 import { dataProvider } from '@/providers/data-provider'
+import { getSessionOnce } from '@/lib/get-session-once'
 
 const authProvider: AuthProvider = {
   login: async () => {
@@ -18,13 +19,49 @@ const authProvider: AuthProvider = {
     return { success: true }
   },
   logout: async () => {
-    await signOut({
-      redirect: true,
-      callbackUrl: '/login',
-    })
-    delete axiosInstance.defaults.headers.common['Authorization']
-    useUserStore.getState().logout?.()
-    return { success: true, redirectTo: '/login' }
+    const clearSessionData = () => {
+      delete axiosInstance.defaults.headers.common['Authorization']
+      useUserStore.getState().logout?.()
+    }
+
+    try {
+      const sessionData = await getSessionOnce()
+
+      if (sessionData?.idToken) {
+        const keycloakUrl = process.env.NEXT_PUBLIC_ISSUER || ''
+        const endSessionEndpoint = `${keycloakUrl}/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}&id_token_hint=${sessionData.idToken}`
+
+        await signOut({ redirect: false })
+        clearSessionData()
+
+        window.location.href = endSessionEndpoint
+      } else {
+        await signOut({ redirect: true, callbackUrl: '/login' })
+        clearSessionData()
+      }
+
+      return { success: true, redirectTo: '/login' }
+    } catch (error) {
+      console.error('Logout error:', error)
+
+      try {
+        await signOut({ redirect: false })
+        clearSessionData()
+
+        if (typeof window !== 'undefined') {
+          window.sessionStorage.clear()
+          window.localStorage.clear()
+          window.location.href = '/login'
+        }
+      } catch (fallbackError) {
+        console.error('Fallback logout error:', fallbackError)
+      }
+
+      return {
+        success: false,
+        error: new Error('Failed to logout completely'),
+      }
+    }
   },
   onError: async (error) => {
     if (error?.response?.status === 401) {
