@@ -217,6 +217,12 @@ import type {
   QuotaAgreedPriceControllerStoreData,
   QuotaAgreedPriceControllerStoreResponses,
   QuotaAgreedPriceControllerStoreErrors,
+  QuotaAgreedPriceControllerGetCustomerListData,
+  QuotaAgreedPriceControllerGetCustomerListResponses,
+  QuotaAgreedPriceControllerGetCustomerListErrors,
+  QuotaAgreedPriceControllerGetCustomerProductsData,
+  QuotaAgreedPriceControllerGetCustomerProductsResponses,
+  QuotaAgreedPriceControllerGetCustomerProductsErrors,
   QuotaControllerBulkDestroyData,
   QuotaControllerBulkDestroyResponses,
   QuotaControllerBulkDestroyErrors,
@@ -383,6 +389,8 @@ import {
   zProductUnitControllerUpdateData,
   zQuotaAgreedPriceControllerIndexData,
   zQuotaAgreedPriceControllerStoreData,
+  zQuotaAgreedPriceControllerGetCustomerListData,
+  zQuotaAgreedPriceControllerGetCustomerProductsData,
   zQuotaControllerBulkDestroyData,
   zQuotaControllerIndexData,
   zQuotaControllerStoreData,
@@ -2503,6 +2511,72 @@ export const quotaAgreedPriceControllerStore = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get customer list from quota agreed prices
+ * Retrieve a paginated list of customers from quota agreed prices with filtering options.
+ */
+export const quotaAgreedPriceControllerGetCustomerList = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<
+    QuotaAgreedPriceControllerGetCustomerListData,
+    ThrowOnError
+  >,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaAgreedPriceControllerGetCustomerListResponses,
+    QuotaAgreedPriceControllerGetCustomerListErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerGetCustomerListData.parseAsync(
+        data,
+      )
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices/customers',
+    ...options,
+  })
+}
+
+/**
+ * Get customer products from quota agreed prices
+ * Retrieve products for a specific customer from quota agreed prices.
+ */
+export const quotaAgreedPriceControllerGetCustomerProducts = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    QuotaAgreedPriceControllerGetCustomerProductsData,
+    ThrowOnError
+  >,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaAgreedPriceControllerGetCustomerProductsResponses,
+    QuotaAgreedPriceControllerGetCustomerProductsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerGetCustomerProductsData.parseAsync(
+        data,
+      )
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices/customers/{customer_id}/products',
+    ...options,
   })
 }
 

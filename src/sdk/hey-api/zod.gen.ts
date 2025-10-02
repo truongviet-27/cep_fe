@@ -1508,6 +1508,7 @@ export const zQuotaResource = z.object({
   payment_due_date: z.optional(z.string()),
   expiration_date: z.optional(z.string()),
   consumption_tax: z.optional(z.string()),
+  pdf_path: z.optional(z.string()),
   tax_rate: z.optional(z.int()),
   total_cost: z.optional(z.number()),
   consumption_tax_amount: z.optional(z.number()),
@@ -1656,6 +1657,7 @@ export const zSimpleQuota = z.object({
   sent_to_customer_date: z.optional(z.iso.date()),
   customer_accepted_date: z.optional(z.iso.date()),
   customer_cancelled_date: z.optional(z.iso.date()),
+  pdf_path: z.optional(z.string()),
   author: z.optional(z.union([z.string(), z.null()])),
   approvers: z.optional(z.array(z.string())),
   latest_approval_comment: z.optional(
@@ -3589,6 +3591,92 @@ export const zQuotaAgreedPriceControllerStoreResponse = z.object({
   data: z.optional(
     z.object({
       id: z.optional(z.int()),
+    }),
+  ),
+})
+
+export const zQuotaAgreedPriceControllerGetCustomerListData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      _page: z.optional(z.int().gte(1)).default(1),
+      _per_page: z.optional(z.int().gte(1).lte(100)).default(10),
+      customer_name: z.optional(z.string().max(255)),
+      'department_id_in[]': z.optional(z.array(z.int().gte(1))),
+      'rank_id_in[]': z.optional(z.array(z.int().gte(1))),
+    }),
+  ),
+})
+
+/**
+ * Customer list retrieved successfully
+ */
+export const zQuotaAgreedPriceControllerGetCustomerListResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      data: z.optional(
+        z.array(
+          z.object({
+            customer_id: z.optional(z.int()),
+            customer_name: z.optional(z.string()),
+            department_name: z.optional(z.string()),
+            rank_code: z.optional(z.string()),
+            total_products: z.optional(z.int()),
+          }),
+        ),
+      ),
+      pagination: z.optional(
+        z.object({
+          current_page: z.optional(z.int()),
+          per_page: z.optional(z.int()),
+          total: z.optional(z.int()),
+          last_page: z.optional(z.int()),
+          from: z.optional(z.int()),
+          to: z.optional(z.int()),
+        }),
+      ),
+    }),
+  ),
+})
+
+export const zQuotaAgreedPriceControllerGetCustomerProductsData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    customer_id: z.int().gte(1),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer products retrieved successfully
+ */
+export const zQuotaAgreedPriceControllerGetCustomerProductsResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      customer_id: z.optional(z.int()),
+      customer_code: z.optional(z.string()),
+      customer_name: z.optional(z.string()),
+      department_name: z.optional(z.string()),
+      rank_code: z.optional(z.string()),
+      total_products: z.optional(z.int()),
+      products: z.optional(
+        z.array(
+          z.object({
+            product_id: z.optional(z.int()),
+            product_name: z.optional(z.string()),
+            unit_name: z.optional(z.string()),
+            selling_price: z.optional(z.number()),
+            quantity: z.optional(z.int()),
+            start_date: z.optional(z.iso.datetime()),
+            end_date: z.optional(z.iso.datetime()),
+          }),
+        ),
+      ),
     }),
   ),
 })
