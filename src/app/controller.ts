@@ -60,14 +60,15 @@ export const useBootstrap = () => {
   const getProfile = async () => {
     try {
       setIsLoading(true)
-      const headers = {
+      const requestBody = {
         token: '',
       }
       if (pathname === '/' && token && refreshToken) {
-        headers.token = token
+        requestBody.token = token
       }
       const response = await fetch('/api/me', {
-        headers,
+        method: 'POST',
+        body: JSON.stringify(requestBody),
       })
       const { permission, parameterSettings } = await response.json()
 
