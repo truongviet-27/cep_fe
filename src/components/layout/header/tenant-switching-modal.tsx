@@ -4,13 +4,17 @@ import { SearchOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { useTable } from '@refinedev/antd'
 import {
+  type CrudFilters,
+  type HttpError,
   useInvalidate,
   type useModalReturnType,
   useResource,
 } from '@refinedev/core'
+import type { Tenant } from '@sdk/hey-api'
 import useTenantStore from '@stores/useTenantStore'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Table } from 'antd'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
@@ -21,12 +25,24 @@ function TenantSwitchingModal({
 }) {
   const t = useTranslations('tenant')
   const t_btn = useTranslations('buttons')
+  const router = useRouter()
 
   const { resource } = useResource()
 
-  const { searchFormProps, tableProps, setFilters } = useTable({
+  const { searchFormProps, tableProps, setFilters } = useTable<
+    Tenant,
+    HttpError,
+    { q?: string }
+  >({
     syncWithLocation: true,
     resource: 'tenants',
+    onSearch: (values) => {
+      const filters: CrudFilters = []
+      if (values?.q) {
+        filters.push({ field: 'q', operator: 'eq', value: values.q })
+      }
+      return filters
+    },
   })
 
   // const dataSource = tableProps?.dataSource || []
@@ -47,7 +63,7 @@ function TenantSwitchingModal({
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[24, 24]} style={{ width: '100%' }}>
           <Col md={16}>
-            <Form.Item name="customer" label={t('filters.label')}>
+            <Form.Item name="q" label={t('filters.label')}>
               <Input
                 placeholder={t('filters.placeholder')}
                 prefix={<SearchOutlined />}
@@ -72,53 +88,32 @@ function TenantSwitchingModal({
         </Row>
       </Form>
 
-      <CommonTable
-        className={'mt-6'}
-        {...tableProps}
-        loading={false}
-        dataSource={[
-          {
-            id: 1,
-            tenantCode: 'company_pionero',
-            tenantName: '株式会社ピオネロ',
-          },
-          {
-            id: 2,
-            tenantCode: 'company_a',
-            tenantName: '株式会社A',
-          },
-          {
-            id: 3,
-            tenantCode: 'company_b',
-            tenantName: '株式会社B',
-          },
-          {
-            id: 4,
-            tenantCode: 'company_c',
-            tenantName: '株式会社C',
-          },
-          {
-            id: 5,
-            tenantCode: 'company_d',
-            tenantName: '株式会社D',
-          },
-        ]}
-        rowKey="id"
-      >
-        <Table.Column title={t('columns.tenant_code')} dataIndex="tenantCode" />
-        <Table.Column title={t('columns.tenant_name')} dataIndex="tenantName" />
-        <Table.Column
+      <CommonTable className={'mt-6'} {...tableProps} rowKey="id">
+        <Table.Column<Tenant>
+          title={t('columns.tenant_code')}
+          dataIndex="code"
+          render={(_value: Tenant['code'], record: Tenant) => record?.code}
+        />
+        <Table.Column<Tenant>
+          title={t('columns.tenant_name')}
+          dataIndex="name"
+          render={(_value: Tenant['name'], record: Tenant) => record?.name}
+        />
+        <Table.Column<Tenant>
           title={t('columns.actions')}
           dataIndex="action"
-          render={(_, record) => (
+          render={(_value: unknown, record: Tenant) => (
             <Button
               onClick={() => {
-                useTenantStore.setState({ tenantId: record.id })
+                const id: string | null = record?.id ?? null
+                const name: string | null = record?.name ?? null
+                useTenantStore.setState({ tenantId: id, tenantName: name })
                 modalProps.close()
                 invalidate({
-                  dataProviderName: resource?.name ?? 'default',
+                  resource: resource?.name,
                   invalidates: ['all'],
                 })
+                router.refresh()
               }}
             >
               {t_btn('select')}

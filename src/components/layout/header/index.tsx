@@ -7,11 +7,12 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
-import { useModal } from '@refinedev/core'
+import { useLogout, useModal } from '@refinedev/core'
+import useTenantStore from '@stores/useTenantStore'
 import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
 import { Avatar, Badge, Dropdown, Input, Layout, Modal, Space } from 'antd'
 import { useKBar } from 'kbar'
-import { signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
@@ -28,13 +29,16 @@ export default function AuthHeader({
   const { query } = useKBar()
   const session = useSession()
   const modalProps = useModal()
+  const { mutate: logout } = useLogout()
 
   const isAdmin = isSupperAdmin(session.data?.accessToken)
-  const tenantName = getOrgFromToken(session.data?.accessToken)?.name
+  const storeTenantName = useTenantStore((s) => s.tenantName)
+  const tokenTenantName = getOrgFromToken(session.data?.accessToken)?.name
+  const tenantName = isAdmin ? storeTenantName : tokenTenantName
   const menuItems = [{ key: 'logout', label: t_menu('logout') }]
   const onMenuClick = ({ key }: { key: string }) => {
     if (key === 'logout') {
-      signOut({ callbackUrl: '/login' })
+      logout()
     }
   }
 
