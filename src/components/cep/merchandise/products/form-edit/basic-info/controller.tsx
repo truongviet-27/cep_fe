@@ -37,7 +37,7 @@ export const useBasicInfoController = (
   const handleAutoNumber = () => {
     refetch().then(() => {
       const codeGen = codeIssueSetting?.data
-      form?.setFieldsValue({ code: codeGen?.preview_code, name: codeGen?.name })
+      form?.setFieldsValue({ code: codeGen?.preview_code })
     })
   }
 
