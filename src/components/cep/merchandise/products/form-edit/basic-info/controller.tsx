@@ -1,10 +1,12 @@
 import { useDebounce } from '@hook/use-debounce'
 import { useModalForm } from '@refinedev/antd'
+import type { GetListResponse } from '@refinedev/core'
 import { useApiUrl, useCustom, useList } from '@refinedev/core'
 import type {
   CodeIssueSetting,
   ProductPackagingInput,
   ProductUnit,
+  Rank,
 } from '@sdk/hey-api'
 import type { Category } from '@utility/renderCategories'
 import type { FormInstance } from 'antd'
@@ -19,10 +21,10 @@ export const useBasicInfoController = (
   addRef: MutableRefObject<
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >,
+  ranks?: GetListResponse<Rank>,
 ) => {
   const apiUrl = useApiUrl()
   const [productUnitSearchText, setProductUnitSearchText] = useState<string>('')
-  const [isAppend, setIsAppend] = useState<boolean>(false)
   const { getFieldValue, setFieldValue, setFieldsValue } = form
 
   const {
@@ -122,9 +124,16 @@ export const useBasicInfoController = (
 
   const handleAppendPackaging = async () => {
     await form.validateFields()
-    setIsAppend(true)
-    const packagings: ProductPackagingInput[] =
-      getFieldValue('packagings') ?? []
+    const packagings: ProductPackagingInput[] = (getFieldValue('packagings') ??
+      []) as ProductPackagingInput[]
+
+    const rankObject: Record<string, number> = {}
+
+    ranks?.data?.forEach(({ id, rate }) => {
+      rankObject[`rank_${id}`] = Math.round(
+        ((rate ?? 0) / 100) * getFieldValue('selling_price'),
+      )
+    })
 
     if (!packagings.length) {
       if (addRef.current) {
@@ -139,6 +148,34 @@ export const useBasicInfoController = (
           is_standard_price: true,
           is_active: true,
           is_rate_based: true,
+          barcode: getFieldValue('barcode'),
+          ...rankObject,
+        })
+        //eslint-disable-next-line
+        setFieldsValue({
+          packagings: [
+            {
+              code: getFieldValue('code'),
+              name: 'ピース（冊）',
+              quantity_in_package: 1,
+              unit_id: getFieldValue('unit_id'),
+              selling_price: getFieldValue('selling_price'),
+              is_standard_price: true,
+              is_rate_based: true,
+              barcode: getFieldValue('barcode'),
+              ...rankObject,
+            },
+            {
+              code: `${getFieldValue('code')}-1`,
+              name: '',
+              quantity_in_package: 1,
+              unit_id: getFieldValue('unit_id'),
+              selling_price: getFieldValue(`selling_price`),
+              is_standard_price: true,
+              is_rate_based: true,
+              ...rankObject,
+            },
+          ],
         })
       }
       return
@@ -150,11 +187,12 @@ export const useBasicInfoController = (
           ? {
               ...item,
               code: getFieldValue('code'),
-              name: getFieldValue('name'),
               quantity_in_package: 1,
               unit_id: getFieldValue('unit_id'),
               cost_price: getFieldValue('cost_price') * 1,
               selling_price: getFieldValue('selling_price'),
+              barcode: getFieldValue('barcode'),
+              ...rankObject,
             }
           : {
               ...item,
@@ -171,7 +209,7 @@ export const useBasicInfoController = (
                 getFieldValue('selling_price') *
                 getFieldValue(['packagings', index, 'quantity_in_package']),
               is_rate_based: true,
-              is_active: true,
+              ...rankObject,
             }
       }),
     })
@@ -189,7 +227,6 @@ export const useBasicInfoController = (
 
   return [
     {
-      isAppend,
       loadingPd,
       isFetchingProductUnits,
       modalFormCategory,
@@ -202,7 +239,6 @@ export const useBasicInfoController = (
       handleChooseCategory,
       handleSearchProductUnit,
       handleAppendPackaging,
-      setIsAppend,
     },
   ] as const
 }
