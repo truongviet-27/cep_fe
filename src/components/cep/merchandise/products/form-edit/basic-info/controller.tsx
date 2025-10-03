@@ -46,8 +46,13 @@ export const useBasicInfoController = (
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
+    id: codeIssueSetting?.data?.id,
     defaultFormValues: {
       hash_dash: true,
+    },
+    redirect: false,
+    onMutationSuccess: () => {
+      refetch()
     },
   })
 

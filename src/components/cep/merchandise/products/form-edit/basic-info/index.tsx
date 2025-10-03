@@ -1,4 +1,5 @@
 import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
+import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import { useTranslate } from '@refinedev/core'
@@ -7,7 +8,6 @@ import { Button, Col, Form, Modal, Row, Select, Spin, Typography } from 'antd'
 import { Empty, type FormInstance } from 'antd/lib'
 import { type MutableRefObject, useMemo } from 'react'
 
-import { CategoryModal } from '../modal/code-issue'
 import { ProductCategoryModal } from '../modal/product-category'
 import type { ProductFormType } from '../use-product-form'
 import { useBasicInfoController } from './controller'
@@ -294,9 +294,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'70vw'}
+        width="650px"
       >
-        <CategoryModal modalProps={modalFormProps} />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
       <Modal
         open={isOpenCategoryModal}
