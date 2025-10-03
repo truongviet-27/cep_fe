@@ -23,7 +23,6 @@ import {
 
 import styles from '../styles.module.css'
 import React from 'react'
-import { useSelect } from '@refinedev/antd'
 import { SelectPagination } from '@components/common/select-pagination'
 
 const { Title } = Typography
@@ -55,12 +54,6 @@ function BasicInformation(
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const parts = isNameAfter ? [nameDisplay, name] : [name, nameDisplay]
   const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
-
-  const { selectProps: ranksSelectProps } = useSelect({
-    resource: 'ranks',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
 
   return (
     <Collapse
