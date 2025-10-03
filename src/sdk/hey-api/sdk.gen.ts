@@ -52,6 +52,9 @@ import type {
   CodeIssueSettingControllerShowByCodeData,
   CodeIssueSettingControllerShowByCodeResponses,
   CodeIssueSettingControllerShowByCodeErrors,
+  GetCorporateNumberData,
+  GetCorporateNumberResponses,
+  GetCorporateNumberErrors,
   CustomerControllerIndexData,
   CustomerControllerIndexResponses,
   CustomerControllerStoreData,
@@ -211,18 +214,27 @@ import type {
   ProductUnitControllerUpdateData,
   ProductUnitControllerUpdateResponses,
   ProductUnitControllerUpdateErrors,
+  QuotaAgreedPriceControllerDeleteMultipleData,
+  QuotaAgreedPriceControllerDeleteMultipleResponses,
+  QuotaAgreedPriceControllerDeleteMultipleErrors,
   QuotaAgreedPriceControllerIndexData,
   QuotaAgreedPriceControllerIndexResponses,
   QuotaAgreedPriceControllerIndexErrors,
   QuotaAgreedPriceControllerStoreData,
   QuotaAgreedPriceControllerStoreResponses,
   QuotaAgreedPriceControllerStoreErrors,
+  QuotaAgreedPriceControllerCountData,
+  QuotaAgreedPriceControllerCountResponses,
+  QuotaAgreedPriceControllerCountErrors,
   QuotaAgreedPriceControllerGetCustomerListData,
   QuotaAgreedPriceControllerGetCustomerListResponses,
   QuotaAgreedPriceControllerGetCustomerListErrors,
   QuotaAgreedPriceControllerGetCustomerProductsData,
   QuotaAgreedPriceControllerGetCustomerProductsResponses,
   QuotaAgreedPriceControllerGetCustomerProductsErrors,
+  QuotaAgreedPriceControllerUpdateExpirationDateData,
+  QuotaAgreedPriceControllerUpdateExpirationDateResponses,
+  QuotaAgreedPriceControllerUpdateExpirationDateErrors,
   QuotaControllerBulkDestroyData,
   QuotaControllerBulkDestroyResponses,
   QuotaControllerBulkDestroyErrors,
@@ -261,6 +273,9 @@ import type {
   QuotaControllerCancelQuotaResponses,
   QuotaControllerSendToApproverData,
   QuotaControllerSendToApproverResponses,
+  QuotaControllerPreviewPdfData,
+  QuotaControllerPreviewPdfResponses,
+  QuotaControllerPreviewPdfErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
@@ -270,9 +285,21 @@ import type {
   A229A59B851Ad68435Ac0E91E98F32Data,
   A229A59B851Ad68435Ac0E91E98F32Responses,
   A229A59B851Ad68435Ac0E91E98F32Errors,
+  QuotaTemplateControllerIndexData,
+  QuotaTemplateControllerIndexResponses,
+  QuotaTemplateControllerIndexErrors,
   QuotaTemplateControllerStoreData,
   QuotaTemplateControllerStoreResponses,
   QuotaTemplateControllerStoreErrors,
+  QuotaTemplateControllerShowData,
+  QuotaTemplateControllerShowResponses,
+  QuotaTemplateControllerShowErrors,
+  QuotaTemplateControllerUpdateData,
+  QuotaTemplateControllerUpdateResponses,
+  QuotaTemplateControllerUpdateErrors,
+  QuotaTemplateControllerDestroyData,
+  QuotaTemplateControllerDestroyResponses,
+  QuotaTemplateControllerDestroyErrors,
   RankControllerIndexData,
   RankControllerIndexResponses,
   RankControllerIndexErrors,
@@ -333,6 +360,7 @@ import {
   zCodeIssueSettingControllerShowData,
   zEed87Adddef6126Fa051Bd6Cd2D733E6Data,
   zCodeIssueSettingControllerShowByCodeData,
+  zGetCorporateNumberData,
   zCustomerControllerIndexData,
   zCustomerControllerStoreData,
   zCustomerControllerDestroyData,
@@ -387,10 +415,13 @@ import {
   zProductUnitControllerDestroyData,
   zProductUnitControllerShowData,
   zProductUnitControllerUpdateData,
+  zQuotaAgreedPriceControllerDeleteMultipleData,
   zQuotaAgreedPriceControllerIndexData,
   zQuotaAgreedPriceControllerStoreData,
+  zQuotaAgreedPriceControllerCountData,
   zQuotaAgreedPriceControllerGetCustomerListData,
   zQuotaAgreedPriceControllerGetCustomerProductsData,
+  zQuotaAgreedPriceControllerUpdateExpirationDateData,
   zQuotaControllerBulkDestroyData,
   zQuotaControllerIndexData,
   zQuotaControllerStoreData,
@@ -405,10 +436,15 @@ import {
   zQuotaControllerMarkCompletedData,
   zQuotaControllerCancelQuotaData,
   zQuotaControllerSendToApproverData,
+  zQuotaControllerPreviewPdfData,
   zQuotaFormSettingControllerShowData,
   zF44B13Bc4971Acac4481E0A6B882787Data,
   zA229A59B851Ad68435Ac0E91E98F32Data,
+  zQuotaTemplateControllerIndexData,
   zQuotaTemplateControllerStoreData,
+  zQuotaTemplateControllerShowData,
+  zQuotaTemplateControllerUpdateData,
+  zQuotaTemplateControllerDestroyData,
   zRankControllerIndexData,
   zRankControllerStoreData,
   zRankControllerDestroyData,
@@ -907,6 +943,32 @@ export const codeIssueSettingControllerShowByCode = <
       },
     ],
     url: '/api/v1/code-issue-settings/by-code/{code}',
+    ...options,
+  })
+}
+
+/**
+ * Search Japanese Corporate Registry
+ * Retrieve corporate number information from the Japanese Corporate Registry API based on company name
+ */
+export const getCorporateNumber = <ThrowOnError extends boolean = false>(
+  options: Options<GetCorporateNumberData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetCorporateNumberResponses,
+    GetCorporateNumberErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zGetCorporateNumberData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/corporate-number',
     ...options,
   })
 }
@@ -2455,6 +2517,40 @@ export const productUnitControllerUpdate = <
 }
 
 /**
+ * Delete multiple quota agreed prices
+ * Delete multiple quota agreed prices by IDs
+ */
+export const quotaAgreedPriceControllerDeleteMultiple = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaAgreedPriceControllerDeleteMultipleData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    QuotaAgreedPriceControllerDeleteMultipleResponses,
+    QuotaAgreedPriceControllerDeleteMultipleErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerDeleteMultipleData.parseAsync(
+        data,
+      )
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get list of quota agreed prices
  * Retrieve a paginated list of quota agreed prices with filtering options.
  */
@@ -2511,6 +2607,34 @@ export const quotaAgreedPriceControllerStore = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get quota agreed prices count by status
+ * Get count of quota agreed prices by status.
+ */
+export const quotaAgreedPriceControllerCount = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<QuotaAgreedPriceControllerCountData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaAgreedPriceControllerCountResponses,
+    QuotaAgreedPriceControllerCountErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerCountData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices/count',
+    ...options,
   })
 }
 
@@ -2577,6 +2701,43 @@ export const quotaAgreedPriceControllerGetCustomerProducts = <
     ],
     url: '/api/v1/quota/agreed-prices/customers/{customer_id}/products',
     ...options,
+  })
+}
+
+/**
+ * Update quota agreed price expiration date
+ * Update expiration date for a quota agreed price
+ */
+export const quotaAgreedPriceControllerUpdateExpirationDate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    QuotaAgreedPriceControllerUpdateExpirationDateData,
+    ThrowOnError
+  >,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaAgreedPriceControllerUpdateExpirationDateResponses,
+    QuotaAgreedPriceControllerUpdateExpirationDateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerUpdateExpirationDateData.parseAsync(
+        data,
+      )
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices/{id}/expiration-date',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 
@@ -2991,6 +3152,36 @@ export const quotaControllerSendToApprover = <
 }
 
 /**
+ * Preview quota PDF
+ * Preview quota PDF as base64 string. Useful for displaying PDF in browser or download.
+ */
+export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerPreviewPdfData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerPreviewPdfResponses,
+    QuotaControllerPreviewPdfErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerPreviewPdfData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}/preview-pdf',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get quota form setting detail
  * Retrieve a specific quota form setting by its ID
  */
@@ -3083,6 +3274,34 @@ export const a229A59B851Ad68435Ac0E91E98F32 = <
 }
 
 /**
+ * Get quota templates list
+ * Get paginated list of quota templates with filtering capabilities. Returns basic template information including author and editor details.
+ */
+export const quotaTemplateControllerIndex = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<QuotaTemplateControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaTemplateControllerIndexResponses,
+    QuotaTemplateControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaTemplateControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota-templates',
+    ...options,
+  })
+}
+
+/**
  * Create quota template
  * Create a new quota template with products. Product information (name, code, cost_price, selling_price) will be automatically fetched from database based on product_id and package_id. Only product_id, package_id (optional), profit_margin, is_add_total, and quantity are required for each product.
  */
@@ -3111,6 +3330,94 @@ export const quotaTemplateControllerStore = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Get quota template detail
+ * Get a specific quota template by ID with all product details including package information. Returns complete template data with main products, optional products, tags, and author/editor information.
+ */
+export const quotaTemplateControllerShow = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaTemplateControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    QuotaTemplateControllerShowResponses,
+    QuotaTemplateControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaTemplateControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota_template/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Update quota template (differential update)
+ * Partially update an existing quota template with differential update logic. Product information (name, code, cost_price, selling_price) will be automatically fetched from database based on product_id and package_id. Use group/product IDs for updates, omit IDs for new records. Only product_id, package_id (optional), profit_margin, is_add_total, and quantity are required for each product.
+ */
+export const quotaTemplateControllerUpdate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaTemplateControllerUpdateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    QuotaTemplateControllerUpdateResponses,
+    QuotaTemplateControllerUpdateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaTemplateControllerUpdateData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota_template/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Delete quota template
+ * Delete a quota template and all its related data including product groups and products. This operation will permanently remove the template and cannot be undone.
+ */
+export const quotaTemplateControllerDestroy = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaTemplateControllerDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    QuotaTemplateControllerDestroyResponses,
+    QuotaTemplateControllerDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaTemplateControllerDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota-templates/{id}',
+    ...options,
   })
 }
 
