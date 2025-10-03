@@ -13,7 +13,6 @@ import {
   useCustomMutation,
   useTranslate,
 } from '@refinedev/core'
-import { axiosInstance } from '@rest-data-provider/utils'
 import { cn } from '@utility/cn'
 import { BLACK, GREY } from '@utility/color'
 import { Breadcrumb, Button, Card, Form, List, Space, Typography } from 'antd'
@@ -22,6 +21,7 @@ import Title from 'antd/lib/typography/Title'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 
 const { Text, Paragraph } = Typography
 
