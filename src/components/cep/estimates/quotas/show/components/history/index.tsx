@@ -80,7 +80,7 @@ function History({ data }: { data: any }) {
         dataIndex: 'sent_to_customer_date',
         key: 'sent_to_customer_date',
         render(value) {
-          return dayjs(value).format(FORMAT_DATE)
+          return value ? dayjs(value).format(FORMAT_DATE) : ''
         },
       },
       {
@@ -97,10 +97,10 @@ function History({ data }: { data: any }) {
         title: 'PDF',
         dataIndex: 'pdf',
         key: 'pdf',
-        render: (text: string, record) => (
+        render: (value: string, record) => (
           <Button
             type="link"
-            href={text}
+            href={value}
             target="_blank"
             rel="noopener noreferrer"
             icon={
