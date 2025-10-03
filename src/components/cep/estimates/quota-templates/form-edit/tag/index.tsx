@@ -24,7 +24,7 @@ const TagForm: React.FC = () => {
       </Title>
       <Row>
         <Col xs={12} md={6}>
-          <Form.Item name={'tags'}>
+          <Form.Item name="tags">
             <Select
               allowClear
               showSearch
@@ -33,7 +33,6 @@ const TagForm: React.FC = () => {
                 marginTop: 20,
                 width: '100%',
               }}
-              labelInValue
               mode="multiple"
               {...selectProps}
             />

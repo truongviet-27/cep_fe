@@ -15,7 +15,7 @@ const NoteForm: React.FC = () => {
       >
         {t('quota_templates.form.titleSpecificationsAndConditions')}
       </Title>
-      <Form.Item name={'note'}>
+      <Form.Item name="note">
         <Input.TextArea
           style={{ marginTop: 20 }}
           rows={6}

@@ -33,9 +33,16 @@ const BasicInfo: React.FC = () => {
         label={boldText(t('quota_templates.form.label.quote_category'))}
         colon={false}
         required
+        name="type"
+        rules={[
+          {
+            required: true,
+            message: t('validation.required'),
+          },
+        ]}
       >
         <Radio.Group
-          defaultValue={'exclusive'}
+          defaultValue={'normal'}
           options={[
             {
               value: 'normal',
@@ -49,6 +56,7 @@ const BasicInfo: React.FC = () => {
         />
       </Form.Item>
       <CoreInput
+        name="name"
         label={t('quota_templates.form.label.template_name')}
         required={true}
         layout="horizontal"
@@ -61,6 +69,7 @@ const BasicInfo: React.FC = () => {
         ]}
       />
       <CoreInput
+        name="description"
         label={t('quota_templates.form.label.description')}
         layout="horizontal"
         classNameInput="!w-96"
@@ -96,11 +105,13 @@ const BasicInfo: React.FC = () => {
         <DatePicker placeholder="YYYY/MM/DD" className="!w-64" disabled />
       </Form.Item>
       <CoreInput
+        name="delivery_method"
         label={t('quota_templates.form.label.delivery_method')}
         layout="horizontal"
         classNameInput="!w-96"
       />
       <Form.Item
+        name="payment_due_date"
         label={boldText(t('quota_templates.form.label.payment_due_date'))}
         colon={false}
       >
@@ -143,6 +154,7 @@ const BasicInfo: React.FC = () => {
         />
       </Form.Item>
       <Form.Item
+        name="expiration_date"
         label={boldText(t('quota_templates.form.label.validity_period'))}
         colon={false}
       >
@@ -189,6 +201,7 @@ const BasicInfo: React.FC = () => {
       <Flex gap={16}>
         <div>
           <Form.Item
+            name="consumption_tax"
             label={boldText(t('quota_templates.form.label.consumption_tax'))}
             colon={false}
             labelCol={{ span: 10, flex: '0 0 175px' }}
@@ -213,6 +226,7 @@ const BasicInfo: React.FC = () => {
         </div>
         <div>
           <CoreInput
+            name="tax_rate"
             label={t('quota_templates.form.label.consumption_tax_rate')}
             layout="horizontal"
             classNameInput="!w-[70px] !mr-2"
