@@ -17,6 +17,8 @@ import ActionButtons from '@/components/common/action-button'
 import CommonTable from '@/components/common/table'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { PRIMARY } from '@/utility/color'
+import { ParameterSettingType } from '@interfaces/permission'
+import { useUserStore } from '@stores/useUserStore'
 import { PARAMETER_SETTING_EXCLUDE } from '@utility/permission'
 import { sortBy } from 'lodash'
 
@@ -46,10 +48,27 @@ export default function Page() {
     },
   })
 
-  const { formProps, formLoading, saveButtonProps, onFinish, form } =
-    useForm<ParameterSettingControllerIndexResponse>({
-      action: 'create',
-    })
+  const { formProps, formLoading, saveButtonProps, onFinish, form } = useForm({
+    action: 'create',
+    onMutationSuccess: ({ data }) => {
+      const parameterSettingUpdated: ParameterSettingType =
+        new Map() as ParameterSettingType
+      const dataResponse = data?.items || []
+      dataResponse.forEach(
+        ({
+          resource,
+          is_manage,
+        }: {
+          resource: ParameterResourceEnum
+          is_manage: boolean
+        }) => {
+          parameterSettingUpdated.set(resource, is_manage)
+        },
+      )
+
+      useUserStore.getState().setParameterSettings(parameterSettingUpdated)
+    },
+  })
 
   const handleOnFinish = (values: any) => {
     onFinish(values?.data)
