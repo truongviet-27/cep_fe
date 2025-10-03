@@ -1,7 +1,7 @@
 import StatusDashboard from '@components/cep/estimates/agreed-price/components/status-dashboard'
 import CommonTable from '@components/common/table'
 import { useSelect, useTable } from '@refinedev/antd'
-import { useCustom, useGo, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type {
   QuotaAgreedPrice,
   QuotaAgreedPricesPaginatedResponse,
@@ -16,6 +16,7 @@ const { RangePicker } = DatePicker
 const AgreedPriceQuotaTab = () => {
   const t = useTranslate()
   const go = useGo()
+  const apiUrl = useApiUrl()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [status, setStatus] = useState<string | null>(null)
@@ -40,7 +41,7 @@ const AgreedPriceQuotaTab = () => {
     isLoading,
     error,
   } = useCustom<QuotaAgreedPricesPaginatedResponse>({
-    url: '/api/v1/quota/agreed-prices',
+    url: `${apiUrl}/quota/agreed-prices`,
     method: 'get',
   })
 
@@ -146,7 +147,6 @@ const AgreedPriceQuotaTab = () => {
     [status],
   )
 
-  // Summary cards data từ API
   const statusData = useMemo(() => {
     const total = quotaAgreedPrices.length
     const valid = quotaAgreedPrices.filter(
