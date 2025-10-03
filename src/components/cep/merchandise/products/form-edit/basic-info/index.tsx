@@ -80,6 +80,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 size="small"
                 onClick={handleAutoNumber}
                 loading={loadingPd}
+                disabled={codeIssueSetting?.data?.issue_method !== 'automatic'}
               >
                 {t('products.buttons.autoNumbering')}
               </Button>
