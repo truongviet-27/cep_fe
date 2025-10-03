@@ -40,6 +40,7 @@ function BasicInformation(
     codeGenData,
     form,
     modalFormCorporate,
+    isAutomatic,
   } = props
 
   const isIndividual = Form.useWatch('customer_type', form) === 'individual'
@@ -78,19 +79,23 @@ function BasicInformation(
                 <Input style={{ width: 240 }} />
               </Form.Item>
             </Col>
-            <Col>
-              <Button onClick={handleAutoNumber} loading={isCodeGenLoading}>
-                {t('departments.create.auto_number')}
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                type="link"
-                onClick={() => modalFormProps.show(codeGenData?.data?.id)}
-              >
-                {t('departments.create.popup_number_setting')}
-              </Button>
-            </Col>
+            {isAutomatic && (
+              <>
+                <Col>
+                  <Button onClick={handleAutoNumber} loading={isCodeGenLoading}>
+                    {t('departments.create.auto_number')}
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    type="link"
+                    onClick={() => modalFormProps.show(codeGenData?.data?.id)}
+                  >
+                    {t('departments.create.popup_number_setting')}
+                  </Button>
+                </Col>
+              </>
+            )}
           </Row>
         </Form.Item>
 

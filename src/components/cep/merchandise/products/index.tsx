@@ -94,7 +94,7 @@ function ProductContainer() {
               </Link>
               <Link href={'products/csv'}>
                 <Button
-                  className="!px-0"
+                  className="!px-0 !text-[#721C24] underline"
                   type="link"
                   icon={null}
                   disabled={!isFullAccess}

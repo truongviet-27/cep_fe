@@ -88,6 +88,7 @@ function AddressContact(
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
+
         <Form.Item
           label={boldText(t('customers.delivery.email'))}
           name="mail"
@@ -96,28 +97,33 @@ function AddressContact(
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-        <Form.Item
-          label={boldText(t('customers.show.industry'))}
-          name="temp_industry"
-          rules={[rule]}
-          hidden={!isOtherSelected}
-        >
-          <Input style={{ maxWidth: 560 }} />
+
+        <Form.Item label={boldText(t('customers.show.industry'))}>
+          <Row align="middle" gutter={8}>
+            <Col>
+              <Form.Item name="industry" rules={[rule]}>
+                <Select
+                  placeholder={t('placeholders.select')}
+                  options={industryOptions}
+                  style={{ minWidth: 200 }}
+                  allowClear
+                />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item
+                name="temp_industry"
+                rules={[rule]}
+                hidden={!isOtherSelected}
+              >
+                <Input style={{ maxWidth: 260 }} />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form.Item>
+
         <Form.Item
-          label={boldText(t('customers.show.industry'))}
-          name="industry"
-          rules={[rule]}
-          hidden={isOtherSelected}
-        >
-          <Select
-            placeholder={t('placeholders.select')}
-            options={industryOptions}
-            style={{ maxWidth: 560 }}
-            allowClear
-          />
-        </Form.Item>
-        <Form.Item
+          className={'!-mt-6'}
           label={boldText(t('customers.show.listing_classification'))}
           name="listing_classification"
           rules={[rule]}

@@ -7,7 +7,7 @@ import {
 } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import type { ColumnsType } from 'antd/es/table'
-import { forEach } from 'lodash'
+import { forEach, sortBy } from 'lodash'
 import { useMemo } from 'react'
 
 interface PriceGroupProps {
@@ -37,14 +37,13 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
       },
       {
         title: t('products.unitPriceGroup.settingMethod'),
-        dataIndex: 'is_active',
-        key: 'is_active',
-        render: (value: boolean) =>
-          value ? t('products.text.active') : t('products.text.inactive'),
+        dataIndex: 'is_rate_based',
+        key: 'is_rate_based',
+        render: (value: boolean) => (value ? '掛率' : '絶対'),
       },
     ] as ColumnsType
 
-    const ranks = product?.packagings?.[0]?.rank_prices
+    const ranks = sortBy(product?.packagings?.[0]?.rank_prices || [], 'rate')
 
     if (ranks) {
       forEach(ranks, (rank) => {
@@ -71,7 +70,7 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
       const rankItem: { [key: string]: number } = {}
       if (ranks && parameterSettings.get(ParameterResourceEnum.RANKS)) {
         forEach(ranks, (rank) => {
-          rankItem[`rank_${rank.rank_id}`] = Number((rank.price || 0) / 100)
+          rankItem[`rank_${rank.rank_id}`] = Number(rank.price)
         })
       }
 

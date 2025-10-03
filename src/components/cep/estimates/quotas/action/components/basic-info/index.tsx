@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import { IssueMethod } from '@components/cep/estimates/quotas/enum'
 import { useModalForm, useSelect } from '@refinedev/antd'
 import { useApiUrl, useCustom, useParsed, useTranslate } from '@refinedev/core'
 import { type CodeIssueSetting } from '@sdk/hey-api'
@@ -35,13 +36,29 @@ const BasicInfo = () => {
     resource: 'customers',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
 
-  const { data: codeIssueSetting, isLoading: loadingQuota } =
-    useCustom<CodeIssueSetting>({
-      url: `${apiUrl}/code-issue-settings/by-code/quotas`,
-      method: 'get',
-    })
+  const {
+    data: codeIssueSetting,
+    isLoading: loadingQuota,
+    refetch: refetchIssueSetting,
+  } = useCustom<CodeIssueSetting>({
+    url: `${apiUrl}/code-issue-settings/by-code/quotas`,
+    method: 'get',
+  })
 
   const modalFormProps = useModalForm({
     action: 'edit',
@@ -50,6 +67,11 @@ const BasicInfo = () => {
     warnWhenUnsavedChanges: false,
     defaultFormValues: {
       hash_dash: true,
+    },
+    redirect: false,
+    onMutationSuccess: () => {
+      modalFormProps.close()
+      refetchIssueSetting()
     },
   })
 
@@ -81,6 +103,11 @@ const BasicInfo = () => {
         required
         style={{ marginTop: 20 }}
       >
+        <Row>
+          <Col>
+            <Form.Item name={'tax_rounding_method'} hidden />
+          </Col>
+        </Row>
         <Row align="middle" gutter={20}>
           <Col>
             <Form.Item
@@ -121,7 +148,10 @@ const BasicInfo = () => {
                 loading={loadingQuota}
                 color="primary"
                 variant="outlined"
-                disabled={isCloneVersion}
+                disabled={
+                  isCloneVersion ||
+                  codeIssueSetting?.data.issue_method === IssueMethod.Manual
+                }
               >
                 {t('departments.create.auto_number')}
               </Button>

@@ -40,12 +40,14 @@ export const useCustomerCreate = () => {
     url: `${apiUrl}/code-issue-settings/by-code/customers`,
     method: 'get',
   })
+  const isAutomatic = codeGenData?.data?.issue_method === 'automatic'
 
   const modalFormProps = useModalForm({
     action: 'edit',
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     redirect: false,
+    warnWhenUnsavedChanges: false,
   })
 
   const modalFormCorporate = useModal()
@@ -82,5 +84,6 @@ export const useCustomerCreate = () => {
     saveButtonProps,
     modalFormCorporate,
     handleFinish,
+    isAutomatic,
   }
 }

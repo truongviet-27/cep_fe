@@ -12,7 +12,7 @@ import {
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
-import getQuotaStatusStyle from '@components/cep/estimates/quotas/utils'
+import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -41,6 +41,7 @@ import {
   Col,
   DatePicker,
   Dropdown,
+  Empty,
   Form,
   Input,
   Modal,
@@ -243,6 +244,10 @@ function QuotaList() {
               recordItemId={record.id}
             />
 
+            <Link href={record?.pdf_path} target="_blank">
+              <Button size="small" icon={<DownloadOutlined />} />
+            </Link>
+
             {(record.status === QuotaStatus.Rejected ||
               record.status === QuotaStatus.Cancelled) && (
               <DeleteButton
@@ -252,9 +257,6 @@ function QuotaList() {
                 recordItemId={record.id}
               />
             )}
-            <Link href={record?.pdf_path} target="_blank">
-              <Button size="small" icon={<DownloadOutlined />} />
-            </Link>
 
             {record.status === QuotaStatus.SentToCustomer && (
               <Button
@@ -262,7 +264,7 @@ function QuotaList() {
                 size="small"
                 onClick={() => {
                   go({
-                    to: `/clone/${record.id}?actionType=VERSION`,
+                    to: `quotas/clone/${record.id}?actionType=VERSION`,
                   })
                 }}
               >
@@ -297,6 +299,15 @@ function QuotaList() {
     tableQuery: { refetch },
   } = useTable({
     syncWithLocation: true,
+    filters: {
+      initial: [
+        {
+          field: 'status',
+          operator: 'eq',
+          value: status,
+        },
+      ],
+    },
     onSearch(values: any) {
       return [
         {
@@ -356,6 +367,13 @@ function QuotaList() {
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
+      setFilters([
+        {
+          field: 'status',
+          operator: 'eq',
+          value: status,
+        },
+      ])
     },
     [status],
   )
@@ -364,6 +382,19 @@ function QuotaList() {
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
 
   const handleOptions = (data: any[]) => {
@@ -388,7 +419,7 @@ function QuotaList() {
   })
 
   const statusData = [
-    { title: 'すべて', value: 0, key: QuotaStatus.Total },
+    { title: 'すべて', value: 0, key: null },
     { title: '作成中', value: 0, key: QuotaStatus.Creating },
     {
       title: '承認待',
@@ -411,7 +442,7 @@ function QuotaList() {
   const statusDashboard = useMemo(() => {
     return statusData.map((item) => ({
       ...item,
-      value: data?.data[item.key],
+      value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
   }, [data])
 
@@ -739,7 +770,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    setStatus('total')
+                    setStatus(null)
                   }}
                 >
                   {t('buttons.clear')}
@@ -758,10 +789,26 @@ function QuotaList() {
               </Form.Item> */}
               <Dropdown
                 menu={{
-                  items: options,
+                  items: options ?? [
+                    {
+                      key: 0,
+                      label: (
+                        <Empty
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                          description={false}
+                          style={{
+                            height: 1,
+                            alignItems: 'center',
+                            display: 'flex',
+                            justifyContent: 'center',
+                          }}
+                        />
+                      ),
+                    },
+                  ],
                   onClick: handleClick,
                 }}
-                disabled={!options || options.length === 0}
+                // disabled={!options || options.length === 0}
               >
                 <Button
                   size="middle"

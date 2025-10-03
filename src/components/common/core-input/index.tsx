@@ -27,6 +27,8 @@ function CoreInput({
   classNameInput,
   className,
   disabled = false,
+  defaultValue,
+  value,
   ...field
 }: {
   name?: string | (string | number)[]
@@ -51,6 +53,8 @@ function CoreInput({
   classNameInput?: string
   className?: string
   disabled?: boolean
+  defaultValue?: any
+  value?: any
 }) {
   const Component = type === 'number' ? InputNumber : Input
 
@@ -95,6 +99,8 @@ function CoreInput({
           }
         }}
         disabled={disabled}
+        defaultValue={defaultValue}
+        value={value}
       />
 
       {children}

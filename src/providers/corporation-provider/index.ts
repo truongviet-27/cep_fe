@@ -1,7 +1,5 @@
 import { corporationCustomRest } from '@providers/corporation-provider/rest-data-provider'
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_CORPORATION_URL ||
-  'https://api.houjin-bangou.nta.go.jp/4'
+const API_URL = 'http://localhost:3000'
 
 export const corporationProvider = corporationCustomRest(API_URL)
