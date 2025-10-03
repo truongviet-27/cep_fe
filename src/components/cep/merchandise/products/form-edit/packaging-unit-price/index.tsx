@@ -20,6 +20,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
   const { form, addRef } = props
   const t = useTranslate()
   const { getFieldValue, setFieldValue } = form
+  const packagings = Form.useWatch('packagings', form)
 
   return (
     <div className="px-2">
@@ -226,6 +227,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     styleForm={{
                       marginBottom: '0px',
                     }}
+                    disabled={packagings?.[index]?.is_standard_price}
                   />
                 )
               },

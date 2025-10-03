@@ -84,14 +84,22 @@ function useProduct() {
         key: 'unit',
       },
       {
-        title: t('products.list.table.headers.costPrice'), // cost_price (JPY)
+        title: (
+          <>
+            {t('products.list.table.headers.costPrice')} <br /> (円)
+          </>
+        ), // cost_price (JPY)
         dataIndex: 'cost_price',
         key: 'cost_price',
         align: 'center',
         render: (item: number) => item.toLocaleString(),
       },
       {
-        title: t('products.list.table.headers.sellingPrice'), // sale_price (JPY)
+        title: (
+          <>
+            {t('products.list.table.headers.sellingPrice')} <br /> (円)
+          </>
+        ), // sale_price (JPY)
         dataIndex: 'sale_price',
         key: 'sale_price',
         render: (item: number) => item.toLocaleString(),

@@ -44,10 +44,10 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                 marginBottom: 0,
               }}
             >
-              {(
+              {Math.round(
                 getFieldValue(['packagings', index, 'selling_price']) *
-                ((rank.rate ?? 0) / 100)
-              ).toFixed(2)}
+                  ((rank.rate ?? 0) / 100),
+              )}
             </Form.Item>
           )
         },
