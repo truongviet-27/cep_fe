@@ -203,7 +203,10 @@ export default function Page() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <CodeIssueSettingEdit modalProps={modalFormProps} />
+        <CodeIssueSettingEdit
+          modalProps={modalFormProps}
+          refetchParent={refetch}
+        />
       </Modal>
     </Create>
   )

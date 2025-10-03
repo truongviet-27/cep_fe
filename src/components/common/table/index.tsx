@@ -5,7 +5,7 @@ import { Table } from 'antd'
 import { has } from 'lodash'
 import React from 'react'
 
-type CustomTableProps<T> = TableProps<T>
+export type CustomTableProps<T> = TableProps<T>
 
 function CommonTable<T extends object>(
   tableProps: Readonly<CustomTableProps<T>>,

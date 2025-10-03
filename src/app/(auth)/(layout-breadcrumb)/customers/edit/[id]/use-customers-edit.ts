@@ -1,9 +1,11 @@
 /* eslint-disable */
+'use client'
+
 import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
+import { useLayoutEffect } from 'react'
 
 export const useCustomerEdit = () => {
   const t = useTranslate()
@@ -13,29 +15,13 @@ export const useCustomerEdit = () => {
     form,
     onFinish,
     formLoading: isLoading,
+    queryResult,
   } = useForm({
     action: 'edit',
     redirect: 'edit',
-    defaultFormValues: {
-      company_research_information: defaultCustomerCompanyResearchInformation,
-      customer_code: null,
-      person_in_charge_name: null,
-      person_in_charge_department: null,
-      person_in_charge_mail: null,
-      name: null,
-      price_rank_id: null,
-      department_in_charge: null,
-      post_code: null,
-      address: null,
-      phone: null,
-      mail: null,
-    } as any,
   })
 
   const handleFinish = async (values: any) => {
-    const val = form.getFieldsValue()
-
-    console.log('here', val)
     let company_type = values?.company_type
     let temp_industry = values?.temp_industry
     if (values?.temp_company_type) {
@@ -45,7 +31,7 @@ export const useCustomerEdit = () => {
       temp_industry = values?.temp_industry
     }
 
-    console.log(values, 'values')
+    console.log('eee')
 
     await onFinish({ ...values, company_type, temp_industry })
   }
@@ -60,12 +46,14 @@ export const useCustomerEdit = () => {
     url: `${apiUrl}/code-issue-settings/by-code/customers`,
     method: 'get',
   })
+  const isAutomatic = codeGenData?.data?.issue_method === 'automatic'
 
   const modalFormProps = useModalForm({
     action: 'edit',
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     redirect: false,
+    warnWhenUnsavedChanges: false,
   })
 
   const modalFormCorporate = useModal()
@@ -87,6 +75,16 @@ export const useCustomerEdit = () => {
     })
   }
 
+  const record = queryResult?.data?.data
+
+  useLayoutEffect(() => {
+    if (record) {
+      form.setFieldsValue(record)
+    }
+  }, [record])
+
+  console.log(saveButtonProps.disabled, 'form')
+
   return {
     t,
     form,
@@ -102,5 +100,6 @@ export const useCustomerEdit = () => {
     saveButtonProps,
     modalFormCorporate,
     handleFinish,
+    isAutomatic,
   }
 }

@@ -31,10 +31,10 @@ export type UnitRow = {
   _isEditing?: boolean
   _key?: string
 }
-
-type FormValues = { rows: UnitRow[] }
-
 export type RowVM = UnitRow & { __index: string }
+
+type FormValues = { rows: RowVM[] }
+
 const EditableNameCell = React.memo(
   ({ control, index, t }: { control: any; index: number; t: any }) => {
     const isEditing = useWatch({ control, name: `rows.${index}._isEditing` })
@@ -76,38 +76,44 @@ const EditableNameCell = React.memo(
   },
 )
 
-function useProductUnits() {
+export default function useProductUnits() {
   const t = useTranslate()
   const { resource } = useResource()
   const { hasFullAccessModule } = useUserStore.getState()
+  const [pageSize, setPageSize] = React.useState(10)
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_UNIT_EDIT)
-  const { tableProps, searchFormProps, setFilters, current, setPageSize } =
-    useTable<UnitRow>({
-      syncWithLocation: true,
-      onSearch: (values: any) => {
-        if (values.name_lk) {
-          return [
-            {
-              field: 'name_lk',
-              value: values.name_lk,
-              operator: 'null',
-            },
-          ]
-        }
-        return []
-      },
-    })
+  const {
+    tableProps,
+    searchFormProps,
+    setFilters,
+    setPageSize: setPageSize2,
+    current,
+  } = useTable<UnitRow>({
+    syncWithLocation: true,
+    onSearch: (values: any) => {
+      if (values.name_lk) {
+        return [
+          {
+            field: 'name_lk',
+            value: values.name_lk,
+            operator: 'null',
+          },
+        ]
+      }
+      return []
+    },
+  })
 
   const apiUrl = useApiUrl()
 
-  const { control, getValues, resetField, setFocus, setValue } =
+  const { control, getValues, resetField, setFocus, setValue, reset } =
     useForm<FormValues>({
       defaultValues: { rows: [{ name: '', is_disable: true, order: 0 }] },
       mode: 'onTouched',
     })
 
-  const { insert, remove, update, move, replace, fields } = useFieldArray({
+  const { remove, update, move, fields } = useFieldArray({
     control,
     name: 'rows',
     keyName: '_key',
@@ -121,8 +127,14 @@ function useProductUnits() {
       method: 'post',
       values,
       successNotification: (data) => {
-        fields.forEach((_, index) => {
-          setValue(`rows.${index}._isEditing`, false)
+        reset({
+          rows: values.map((r, index) => ({
+            ...r,
+            name: watchedRows?.[index]?.name,
+            _isNew: false,
+            _isEditing: false,
+            __index: String(index),
+          })),
         })
 
         return {
@@ -155,14 +167,22 @@ function useProductUnits() {
 
   const originalRef = useRef<Record<string, UnitRow>>({})
 
-  const keyOf = (row: UnitRow, idx: number): string =>
-    row.id?.toString() ?? row._key ?? `tmp-${idx}`
+  const keyOf = (row: RowVM, idx: number): string =>
+    row?.id?.toString() ?? row?._key ?? row?.__index ?? `tmp-${idx}`
 
   useEffect(() => {
+    setPageSize(10)
+    setPageSize2(10)
     const ds = (tableProps?.dataSource as UnitRow[]) ?? []
-    // server rows come in as read-only
-    replace(ds.map((r) => ({ ...r, _isNew: false, _isEditing: false })))
-  }, [tableProps?.dataSource, replace])
+    reset({
+      rows: ds.map((r, index) => ({
+        _isNew: false,
+        _isEditing: false,
+        __index: String(index),
+        ...r,
+      })),
+    })
+  }, [tableProps?.dataSource, current])
 
   const breadcrumbItems = [
     {
@@ -178,9 +198,14 @@ function useProductUnits() {
   ]
 
   const addNew = () => {
-    const order = fields?.[1]?.order ?? 0
-    insert(
-      0,
+    setPageSize((total) => total + 1)
+    const order = tableProps?.dataSource?.[1]?.order ?? 0
+    const oldRows = fields.map((r) => ({
+      ...r,
+      __index: String(Number(r.__index) + 1),
+    }))
+
+    setValue('rows', [
       {
         id: crypto?.randomUUID?.(),
         name: '',
@@ -188,12 +213,11 @@ function useProductUnits() {
         is_disable: false,
         _isNew: true,
         _isEditing: true,
+        __index: '0',
       },
-      { focusIndex: 0 },
-    )
-    setTimeout(() => {
-      setFocus(`rows.0.name`)
-    }, 0)
+      ...oldRows,
+    ])
+    setFocus(`rows.0.name`)
   }
 
   const startEdit = (index: number) => {
@@ -205,14 +229,20 @@ function useProductUnits() {
 
   const cancelEdit = (index: number) => {
     const row = getValues(`rows.${index}`)
-    if (row._isNew) {
+    if (row?._isNew) {
       remove(index)
+      setPageSize((total) => total - 1)
       return
     }
     const stableKey = keyOf(row, index)
     const orig = originalRef.current[stableKey]
     if (orig) {
-      update(index, { ...orig, _isNew: false, _isEditing: false })
+      update(index, {
+        ...orig,
+        _isNew: false,
+        _isEditing: false,
+        __index: String(index),
+      })
     } else {
       resetField(`rows.${index}.name`)
       resetField(`rows.${index}.is_disable`)
@@ -244,6 +274,7 @@ function useProductUnits() {
               is_disable,
               _isNew: false,
               _isEditing: false,
+              __index: String(index),
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
@@ -266,6 +297,7 @@ function useProductUnits() {
               is_disable,
               _isNew: false,
               _isEditing: false,
+              __index: String(index),
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
@@ -287,14 +319,7 @@ function useProductUnits() {
     )
   }
 
-  const dataSource: RowVM[] = useMemo(
-    () =>
-      fields.map((_, i) => {
-        const v = (watchedRows[i] as UnitRow | undefined) ?? ({} as UnitRow)
-        return { ...v, __index: String(i) } as RowVM
-      }),
-    [fields, watchedRows],
-  )
+  const dataSource: RowVM[] = useMemo(() => fields, [fields, watchedRows])
 
   const getRowIdForDnd = (r: RowVM): string => {
     const idx = Number(r.__index)
@@ -332,6 +357,8 @@ function useProductUnits() {
             name={`rows.${index}.is_disable`}
             render={({ field }) => (
               <Switch
+                disabled={!fields?.[index]?._isEditing}
+                style={{ opacity: fields?.[index]?._isEditing ? 1 : 0.3 }}
                 {...field}
                 checked={!field.value}
                 onChange={(checked) => field.onChange(!checked)}
@@ -395,7 +422,13 @@ function useProductUnits() {
     saveAll: onSaveAll,
     columns,
     dataSource,
-    tableProps,
+    tableProps: {
+      ...tableProps,
+      pagination: {
+        ...tableProps?.pagination,
+        pageSize,
+      },
+    },
     searchFormProps,
     savingAll,
     saving,
@@ -405,5 +438,3 @@ function useProductUnits() {
     setFilters,
   }
 }
-
-export default useProductUnits
