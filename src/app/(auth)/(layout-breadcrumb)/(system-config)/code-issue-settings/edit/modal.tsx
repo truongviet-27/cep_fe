@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  Flex,
   Form,
   Input,
   Radio,
@@ -15,7 +16,7 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import React, { useMemo } from 'react'
+import React, { useLayoutEffect, useMemo } from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
@@ -23,26 +24,32 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import AutoHeading from '@components/common/auto-heading'
 import { validateCodeIssueSettingsRule } from '@validate/code-issue-settings'
+import boldText from '@utility/bold-text'
+import { PRIMARY, RED } from '@utility/color'
 
 type Props = {
   modalProps: any
+  refetchParent?: () => void
 }
 
-export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
+export const CodeIssueSettingEdit: React.FC<Props> = ({
+  modalProps,
+  refetchParent,
+}) => {
   const t = useTranslate()
   const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
     modalProps
 
   const record = queryResult?.data?.data
 
-  const issueMethod = Form.useWatch('issue_method', formProps.form)
+  const issueMethod = Form.useWatch('issue_method', form)
   const isManual = issueMethod === 'manual'
-  const total = Form.useWatch('total', formProps.form)
-  const segment = Form.useWatch('segment', formProps.form)
-  const updated_at = Form.useWatch('updated_at', formProps.form)
-  const serial_length = Form.useWatch('serial_length', formProps.form)
-  const hash_dash = Form.useWatch('hash_dash', formProps.form)
-  const prefix = Form.useWatch('prefix', formProps.form)
+  const total = Form.useWatch('total', form)
+  const segment = Form.useWatch('segment', form)
+  const updated_at = Form.useWatch('updated_at', form)
+  const serial_length = Form.useWatch('serial_length', form)
+  const hash_dash = Form.useWatch('hash_dash', form)
+  const prefix = Form.useWatch('prefix', form)
 
   const previewCode = useMemo(
     () =>
@@ -59,6 +66,12 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
 
   const rule = validateCodeIssueSettingsRule(t)
 
+  useLayoutEffect(() => {
+    if (record) {
+      form.setFieldsValue(record)
+    }
+  }, [record])
+
   return (
     <Edit
       {...formProps}
@@ -72,7 +85,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
       isAutoHeading={false}
     >
       <AutoHeading
-        style={{ marginTop: -40 }}
+        style={{ marginTop: -40, color: PRIMARY, fontSize: 20 }}
         i18n={'code_issue_settings.edit.edit'}
       />
       <Form
@@ -85,7 +98,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         style={{ marginTop: 30 }}
       >
         <Form.Item
-          label={t('code_issue_settings.fields.name')}
+          label={boldText(t('code_issue_settings.fields.name'))}
           name="name"
           rules={[rule]}
         >
@@ -93,7 +106,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.issue_method')}
+          label={boldText(t('code_issue_settings.fields.issue_method'))}
           name="issue_method"
           rules={[rule]}
         >
@@ -108,7 +121,13 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.prefix')}
+          label={
+            <Flex>
+              {boldText(t('code_issue_settings.fields.prefix'))}
+              &nbsp;
+              <span style={{ color: RED }}>*</span>
+            </Flex>
+          }
           name="prefix"
           rules={[rule]}
         >
@@ -128,7 +147,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.segment')}
+          label={boldText(t('code_issue_settings.fields.segment'))}
           name="segment"
           rules={[rule]}
         >
@@ -136,15 +155,20 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
             placeholder={t('placeholders.select')}
             options={segmentOptions}
             disabled={isManual}
+            allowClear
           />
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.serial_length')}
+          label={boldText(t('code_issue_settings.fields.serial_length'))}
           name="serial_length"
           rules={[rule]}
         >
-          <Select placeholder={t('placeholders.select')} disabled={isManual}>
+          <Select
+            allowClear
+            placeholder={t('placeholders.select')}
+            disabled={isManual}
+          >
             {[...Array(10)].map((_, i) => (
               <Select.Option key={i + 1} value={i + 1}>
                 {i + 1}
@@ -153,12 +177,15 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label={t('code_issue_settings.fields.total')} name="total">
+        <Form.Item
+          label={boldText(t('code_issue_settings.fields.total'))}
+          name="total"
+        >
           {record?.total}
         </Form.Item>
 
         <Form.Item
-          label={t('code_issue_settings.fields.preview_code')}
+          label={boldText(t('code_issue_settings.fields.preview_code'))}
           name="preview_code"
         >
           <Tag>{previewCode}</Tag>
@@ -188,7 +215,14 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
 
       <Space className={'mt-4 flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
-        <Button {...saveButtonProps} type="primary">
+        <Button
+          {...saveButtonProps}
+          onClick={async (e) => {
+            await saveButtonProps.onClick?.(e)
+            refetchParent?.()
+          }}
+          type="primary"
+        >
           {t('permission_settings.buttons.save')}
         </Button>
       </Space>

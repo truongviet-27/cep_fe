@@ -1,23 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CoreAutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
+import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import { useSelect } from '@refinedev/antd'
-import { Button, Card, Flex, Form, Input, InputNumber, Select } from 'antd'
+import { useTranslate } from '@refinedev/core'
+import {
+  Button,
+  Card,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+} from 'antd'
 import { type ColumnsType } from 'antd/es/table'
+import { useState } from 'react'
 
 function OptionalInfo() {
+  const t = useTranslate()
   const form = Form.useFormInstance()
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
     onSearch(value) {
       return [
         {
-          field: 'name',
-          operator: 'contains',
+          field: 'q',
+          operator: 'eq',
           value,
         },
       ]
@@ -39,7 +56,7 @@ function OptionalInfo() {
         cost_price: 0,
         selling_price: 0,
         profit_margin: 0,
-        is_add_total: false,
+        is_add_total: true,
       },
     ]
 
@@ -55,6 +72,12 @@ function OptionalInfo() {
     )
 
     form.setFieldsValue({ optional_product: values })
+  }
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleClose = () => {
+    setIsModalOpen(false)
   }
 
   return (
@@ -108,6 +131,20 @@ function OptionalInfo() {
                         style={{
                           marginBottom: 0,
                         }}
+                        rules={[
+                          {
+                            required: true,
+                            message: '',
+                          },
+                          {
+                            whitespace: true,
+                            message: '',
+                          },
+                          {
+                            max: 255,
+                            message: '',
+                          },
+                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -348,6 +385,12 @@ function OptionalInfo() {
                     style={{
                       marginBottom: 0,
                     }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>
@@ -368,8 +411,14 @@ function OptionalInfo() {
                     style={{
                       marginBottom: 0,
                     }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber min={1} precision={0} controls={false} />
                   </Form.Item>
                 )
               },
@@ -484,7 +533,7 @@ function OptionalInfo() {
                             cost_price: 0,
                             selling_price: 0,
                             profit_margin: 0,
-                            is_add_total: false,
+                            is_add_total: true,
                           },
                         ],
                       },
@@ -523,7 +572,9 @@ function OptionalInfo() {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary">カテゴリから入力</Button>
+                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                  カテゴリから入力
+                </Button>
               </Flex>
               <CommonTable
                 columns={columns}
@@ -537,6 +588,16 @@ function OptionalInfo() {
           )
         }}
       </Form.List>
+      <Modal
+        open={isModalOpen}
+        onCancel={handleClose}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        title={t('products.productCategoryEdit')}
+        footer={null}
+      >
+        <ProductCategoryModal name="optional_product" close={handleClose} />
+      </Modal>
     </Card>
   )
 }

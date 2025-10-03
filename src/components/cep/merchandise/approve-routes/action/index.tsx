@@ -98,6 +98,10 @@ function ApproveAction() {
         value: true,
       },
     ],
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
     // defaultValue: query.data?.data.departments.map((item: any) => item?.id),
     onSearch: (value) => {
       return [
@@ -114,6 +118,10 @@ function ApproveAction() {
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
     onSearch: (value) => {
       return [
         {

@@ -272,7 +272,8 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 <Table.Summary.Cell index={5}></Table.Summary.Cell>
                 <Table.Summary.Cell index={6}></Table.Summary.Cell>
                 <Table.Summary.Cell align="center" index={7}>
-                  {0}
+                  {(basicInfo?.total_price_tax_included ?? 0) /
+                    (basicInfo?.tax_rate / 100 + 1)}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             )

@@ -1,7 +1,7 @@
 import {
+  CloseOutlined,
   DownOutlined,
   PlusOutlined,
-  RollbackOutlined,
   SaveOutlined,
 } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
@@ -67,7 +67,13 @@ const TreeRow: React.FC<TreeRowProps> = ({
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-md bg-white px-3 py-2">
+    <div
+      className="flex items-center gap-3 rounded-md bg-white px-3 py-2"
+      onClick={(e) => {
+        e.stopPropagation()
+        onToggle(cat.id)
+      }}
+    >
       <Space size={8} className="min-w-0 flex-1">
         <Tag
           color="blue-inverse"
@@ -102,7 +108,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
         {isEditing ? (
           <>
             <Button
-              type="primary"
+              type="default"
               size="middle"
               loading={Boolean(saving)}
               onClick={() => onSave(cat.id)}
@@ -111,7 +117,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             <Button
               size="middle"
               onClick={() => (isNew ? onDelete() : onCancel(cat.id))}
-              icon={<RollbackOutlined />}
+              icon={<CloseOutlined />}
             />
           </>
         ) : (
@@ -127,6 +133,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
           onClick={() => onAddChild(cat.id)}
           icon={<PlusOutlined />}
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
+          type={'default'}
         />
         {/* <CommonButton
           hideText

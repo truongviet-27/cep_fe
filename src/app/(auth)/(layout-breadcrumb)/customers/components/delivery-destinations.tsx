@@ -79,7 +79,7 @@ function DeliveryDestinations(
                     key: 'name',
                     render: (field) => (
                       <Form.Item
-                        name={[field.name, 'name']}
+                        name={[field.name, 'delivery_address_name']}
                         rules={[rule]}
                         required
                         noStyle
@@ -112,10 +112,10 @@ function DeliveryDestinations(
                         {t('customers.delivery.contact_person')}
                       </span>
                     ),
-                    key: 'contact_person',
+                    key: 'contact_person_name',
                     render: (field) => (
                       <Form.Item
-                        name={[field.name, 'contact_person']}
+                        name={[field.name, 'contact_person_name']}
                         rules={[rule]}
                         noStyle
                       >

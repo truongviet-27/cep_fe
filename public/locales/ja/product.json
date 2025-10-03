@@ -78,10 +78,10 @@
         "productName": "商品名",
         "packagingQuantity": "荷姿数",
         "barcode": "バーコード",
-        "subcategory": "カテゴリ(小)",
+        "subcategory": "カテゴリ",
         "unit": "単位",
-        "costPrice": "原価(円)",
-        "sellingPrice": "販売単価(円)",
+        "costPrice": "原価",
+        "sellingPrice": "販売単価",
         "actions": "操作"
       },
       "text": {

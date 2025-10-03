@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import { IssueMethod } from '@components/cep/estimates/quotas/enum'
 import { useModalForm, useSelect } from '@refinedev/antd'
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useParsed, useTranslate } from '@refinedev/core'
 import { type CodeIssueSetting } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
   Card,
@@ -20,6 +23,11 @@ import {
 const BasicInfo = () => {
   const t = useTranslate()
 
+  const { params } = useParsed()
+
+  const { actionType } = params as any
+  const isCloneVersion = actionType === 'VERSION'
+
   const form = Form.useFormInstance()
 
   const apiUrl = useApiUrl()
@@ -28,13 +36,29 @@ const BasicInfo = () => {
     resource: 'customers',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
 
-  const { data: codeIssueSetting, isLoading: loadingQuota } =
-    useCustom<CodeIssueSetting>({
-      url: `${apiUrl}/code-issue-settings/by-code/quotas`,
-      method: 'get',
-    })
+  const {
+    data: codeIssueSetting,
+    isLoading: loadingQuota,
+    refetch: refetchIssueSetting,
+  } = useCustom<CodeIssueSetting>({
+    url: `${apiUrl}/code-issue-settings/by-code/quotas`,
+    method: 'get',
+  })
 
   const modalFormProps = useModalForm({
     action: 'edit',
@@ -43,6 +67,11 @@ const BasicInfo = () => {
     warnWhenUnsavedChanges: false,
     defaultFormValues: {
       hash_dash: true,
+    },
+    redirect: false,
+    onMutationSuccess: () => {
+      modalFormProps.close()
+      refetchIssueSetting()
     },
   })
 
@@ -74,6 +103,11 @@ const BasicInfo = () => {
         required
         style={{ marginTop: 20 }}
       >
+        <Row>
+          <Col>
+            <Form.Item name={'tax_rounding_method'} hidden />
+          </Col>
+        </Row>
         <Row align="middle" gutter={20}>
           <Col>
             <Form.Item
@@ -104,7 +138,7 @@ const BasicInfo = () => {
               name={'code'}
               required
             >
-              <Input style={{ width: 240 }} />
+              <Input style={{ width: 240 }} disabled={isCloneVersion} />
             </Form.Item>
           </Col>
           <Col>
@@ -114,6 +148,10 @@ const BasicInfo = () => {
                 loading={loadingQuota}
                 color="primary"
                 variant="outlined"
+                disabled={
+                  isCloneVersion ||
+                  codeIssueSetting?.data.issue_method === IssueMethod.Manual
+                }
               >
                 {t('departments.create.auto_number')}
               </Button>
@@ -128,6 +166,7 @@ const BasicInfo = () => {
                 onClick={() => {
                   show(codeIssueSetting?.data.id)
                 }}
+                disabled={isCloneVersion}
               >
                 {t('departments.create.popup_number_setting')}
               </Button>
@@ -182,7 +221,7 @@ const BasicInfo = () => {
                 },
               ]}
             >
-              <Input />
+              <Input disabled={isCloneVersion} />
             </Form.Item>
           </Col>
         </Row>
@@ -192,7 +231,13 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
-              <Select allowClear showSearch {...selectPropsCt} labelInValue />
+              <Select
+                allowClear
+                showSearch
+                disabled={isCloneVersion}
+                {...selectPropsCt}
+                labelInValue
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -202,7 +247,7 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'created_at'}>
-              <DatePicker style={{ width: '75%' }} />
+              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
         </Row>
@@ -212,7 +257,7 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_date'}>
-              <DatePicker style={{ width: '75%' }} />
+              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
         </Row>

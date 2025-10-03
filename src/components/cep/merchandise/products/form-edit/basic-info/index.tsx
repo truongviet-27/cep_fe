@@ -1,13 +1,15 @@
 import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
+import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
+import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
+import type { Rank } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { Button, Col, Form, Modal, Row, Select, Spin, Typography } from 'antd'
 import { Empty, type FormInstance } from 'antd/lib'
-import { type MutableRefObject, useMemo } from 'react'
+import { type MutableRefObject } from 'react'
 
-import { CategoryModal } from '../modal/code-issue'
 import { ProductCategoryModal } from '../modal/product-category'
 import type { ProductFormType } from '../use-product-form'
 import { useBasicInfoController } from './controller'
@@ -17,14 +19,18 @@ interface BasicInfoProps {
   addRef: MutableRefObject<
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >
+  isAllowedSaveButton: boolean
+
+  ranks?: GetListResponse<Rank>
+  setIsAllowedSaveButton: (value: boolean) => void
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
-  const { form, addRef } = props
+  const { form, addRef, isAllowedSaveButton, ranks, setIsAllowedSaveButton } =
+    props
   const t = useTranslate()
   const [
     {
-      isAppend,
       loadingPd,
       modalFormProps,
       modalFormCategory,
@@ -37,9 +43,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       handleChooseCategory,
       handleSearchProductUnit,
       handleAppendPackaging,
-      setIsAppend,
     },
-  ] = useBasicInfoController(form, addRef)
+  ] = useBasicInfoController(form, addRef, ranks)
 
   const { show, close, open } = modalFormProps
   const {
@@ -48,9 +53,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
     open: isOpenCategoryModal,
   } = modalFormCategory
 
-  const allowShowForm = useMemo(() => {
-    return isAppend
-  }, [isAppend])
+  const allowShowForm = isAllowedSaveButton
 
   return (
     <div className="px-2">
@@ -80,6 +83,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 size="small"
                 onClick={handleAutoNumber}
                 loading={loadingPd}
+                disabled={codeIssueSetting?.data?.issue_method !== 'automatic'}
               >
                 {t('products.buttons.autoNumbering')}
               </Button>
@@ -258,10 +262,10 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         </Col>
         <Col>
           <div className="mt-1 ml-10">
-            {isAppend ? (
+            {isAllowedSaveButton ? (
               <EditFilled
                 onClick={() => {
-                  setIsAppend(false)
+                  setIsAllowedSaveButton(false)
                 }}
               />
             ) : (
@@ -269,7 +273,10 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 size="small"
                 color="blue"
                 variant="outlined"
-                onClick={handleAppendPackaging}
+                onClick={() => {
+                  setIsAllowedSaveButton(true)
+                  handleAppendPackaging()
+                }}
               >
                 {t('更新')}
               </Button>
@@ -293,9 +300,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'70vw'}
+        width="650px"
       >
-        <CategoryModal modalProps={modalFormProps} />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
       <Modal
         open={isOpenCategoryModal}

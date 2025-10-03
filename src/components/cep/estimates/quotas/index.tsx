@@ -11,6 +11,8 @@ import {
 } from '@ant-design/icons'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
+import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -19,6 +21,7 @@ import {
   DeleteButton,
   EditButton,
   ShowButton,
+  useModal,
   useSelect,
   useTable,
 } from '@refinedev/antd'
@@ -30,14 +33,18 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
   Col,
   DatePicker,
   Dropdown,
+  Empty,
   Form,
   Input,
+  Modal,
   Row,
   Select,
   Space,
@@ -85,9 +92,11 @@ function QuotaList() {
     selectedRowKeys,
     onChange: onSelectChange,
     getCheckboxProps: (record) => ({
-      disabled: record?.display,
+      disabled: !record?.display,
     }),
   }
+
+  const { modalProps, close, show } = useModal()
 
   const columns: ColumnsType<any> = useMemo(() => {
     return [
@@ -96,63 +105,15 @@ function QuotaList() {
         dataIndex: 'status',
         key: 'status',
         render: (value, record) => {
-          let background = ''
-          let color = ''
-          let text = ''
-          switch (value as QuotaStatus) {
-            case QuotaStatus.Creating:
-              background = '#E2E2E2'
-              color = '#666666'
-              text = '下書き'
-              break
-
-            case QuotaStatus.WaitingApproval:
-              background = '#FFFFC7'
-              color = '#D2A904'
-              text = '承認待'
-              break
-
-            case QuotaStatus.Approved:
-              background = '#DAEDFF'
-              color = '#0066CC'
-              text = '承認済'
-              break
-
-            case QuotaStatus.Rejected:
-              background = '#FFDFBF'
-              color = '#FF8400'
-              text = '差戻'
-              break
-
-            case QuotaStatus.SentToCustomer:
-              background = '#DAEDFF'
-              color = '#0066CC'
-              text = '送信済'
-              break
-
-            case QuotaStatus.Completed:
-              background = '#DFFFEB'
-              color = '#22874D'
-              text = '受注'
-              break
-
-            case QuotaStatus.Cancelled:
-              background = '#FFDFDF'
-              color = '#FF0000'
-              text = '失注'
-              break
-
-            default:
-              background = '#FFFFFF'
-              color = '#000000'
-              text = ''
-              break
-          }
+          const result = getQuotaStatusStyle(value)
 
           return (
             <div className="flex flex-col items-center justify-center gap-1">
-              <Tag color={background} style={{ color, marginRight: 0 }}>
-                {text}
+              <Tag
+                color={result.background}
+                style={{ color: result.color, marginRight: 0 }}
+              >
+                {result.text}
               </Tag>
               {record.latest_approval_comment?.comment && (
                 <Tooltip
@@ -185,7 +146,7 @@ function QuotaList() {
         render: (_, record) => (
           <div className="flex flex-col gap-[2px]">
             <div>{record.title}</div>
-            <div style={{ color: '#888' }}>{record.customer_name}</div>
+            <div>{record.customer_name}</div>
           </div>
         ),
       },
@@ -195,8 +156,8 @@ function QuotaList() {
         key: 'creator',
         render: (_, record) => (
           <div>
-            <div>{record.author?.name}</div>
-            <div className="flex flex-wrap gap-[2px]" style={{ color: '#888' }}>
+            <div>{record?.author}</div>
+            <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: string) => item)}
             </div>
           </div>
@@ -208,7 +169,7 @@ function QuotaList() {
         key: 'department',
         render: (_, record) => (
           <div className="flex flex-col gap-2">
-            <div>{record.department}</div>
+            <div>{record.author_department_name}</div>
             <div>{record?.total_price}</div>
           </div>
         ),
@@ -220,9 +181,10 @@ function QuotaList() {
         render: (_, record) => (
           <div>
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
-            <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
-
-            {/* <div>{record.expiration_date}</div> */}
+            <div>
+              {record.expiration_date &&
+                dayjs(record.created_at).format('YYYY/MM/DD')}
+            </div>
           </div>
         ),
       },
@@ -237,19 +199,16 @@ function QuotaList() {
             record.customer_cancelled_date
           ) {
             return (
-              <div>
-                <div>
-                  {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
-                    '-'}
-                </div>
-                <div>
-                  {dayjs(record.customer_accepted_date).format('YYYY/MM/DD') ||
-                    dayjs(record.customer_cancelled_date).format('YYYY/MM/DD')}
-                </div>
-              </div>
-            )
-          } else {
-            return (
+              // <div>
+              //   <div>
+              //     {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
+              //       '-'}
+              //   </div>
+              //   <div>
+              //     {dayjs(record.customer_accepted_date).format('YYYY/MM/DD') ||
+              //       dayjs(record.customer_cancelled_date).format('YYYY/MM/DD')}
+              //   </div>
+              // </div>
               <div>
                 <div>{dayjs().format('YYYY/MM/DD')}</div>
                 <div>{dayjs().format('YYYY/MM/DD')}</div>
@@ -285,6 +244,10 @@ function QuotaList() {
               recordItemId={record.id}
             />
 
+            <Link href={record?.pdf_path} target="_blank">
+              <Button size="small" icon={<DownloadOutlined />} />
+            </Link>
+
             {(record.status === QuotaStatus.Rejected ||
               record.status === QuotaStatus.Cancelled) && (
               <DeleteButton
@@ -294,12 +257,32 @@ function QuotaList() {
                 recordItemId={record.id}
               />
             )}
-            <Link href={record?.pdf_path}>
-              <Button size="small" icon={<DownloadOutlined />} />
-            </Link>
+
+            {record.status === QuotaStatus.SentToCustomer && (
+              <Button
+                type="default"
+                size="small"
+                onClick={() => {
+                  go({
+                    to: `quotas/clone/${record.id}?actionType=VERSION`,
+                  })
+                }}
+              >
+                再見積
+              </Button>
+            )}
 
             {record.status === QuotaStatus.Completed && (
-              <Button type="default">決定移動</Button>
+              <Button
+                type="default"
+                size="small"
+                onClick={() => {
+                  show()
+                  setDataAgreedPrice(record)
+                }}
+              >
+                決定移動
+              </Button>
             )}
           </Space>
         ),
@@ -316,6 +299,15 @@ function QuotaList() {
     tableQuery: { refetch },
   } = useTable({
     syncWithLocation: true,
+    filters: {
+      initial: [
+        {
+          field: 'status',
+          operator: 'eq',
+          value: status,
+        },
+      ],
+    },
     onSearch(values: any) {
       return [
         {
@@ -375,6 +367,13 @@ function QuotaList() {
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
+      setFilters([
+        {
+          field: 'status',
+          operator: 'eq',
+          value: status,
+        },
+      ])
     },
     [status],
   )
@@ -383,6 +382,19 @@ function QuotaList() {
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
 
   const handleOptions = (data: any[]) => {
@@ -407,7 +419,7 @@ function QuotaList() {
   })
 
   const statusData = [
-    { title: 'すべて', value: 0, key: QuotaStatus.Total },
+    { title: 'すべて', value: 0, key: null },
     { title: '作成中', value: 0, key: QuotaStatus.Creating },
     {
       title: '承認待',
@@ -430,7 +442,7 @@ function QuotaList() {
   const statusDashboard = useMemo(() => {
     return statusData.map((item) => ({
       ...item,
-      value: data?.data[item.key],
+      value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
   }, [data])
 
@@ -499,6 +511,7 @@ function QuotaList() {
     (message: string): OpenNotificationParams | false | undefined => {
       refetch()
       setSelectedRowKeys([])
+      setOptions([])
       return {
         message: t('notifications.success'),
         description: message ?? 'Success',
@@ -595,6 +608,8 @@ function QuotaList() {
       })
     }
   }
+
+  const [dataAgreedPrice, setDataAgreedPrice] = useState()
 
   return (
     <List
@@ -740,7 +755,7 @@ function QuotaList() {
                 <RangePicker
                   allowClear
                   className="w-full"
-                  placeholder={['YYYY/MM/DD', 'YYYY/MM/DD']}
+                  placeholder={[FORMAT_DATE, FORMAT_DATE]}
                 />
               </Form.Item>
             </Col>
@@ -755,7 +770,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    setStatus('total')
+                    setStatus(null)
                   }}
                 >
                   {t('buttons.clear')}
@@ -774,13 +789,29 @@ function QuotaList() {
               </Form.Item> */}
               <Dropdown
                 menu={{
-                  items: options,
+                  items: options ?? [
+                    {
+                      key: 0,
+                      label: (
+                        <Empty
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                          description={false}
+                          style={{
+                            height: 1,
+                            alignItems: 'center',
+                            display: 'flex',
+                            justifyContent: 'center',
+                          }}
+                        />
+                      ),
+                    },
+                  ],
                   onClick: handleClick,
                 }}
-                disabled={!options || options.length === 0}
+                // disabled={!options || options.length === 0}
               >
                 <Button
-                  size="large"
+                  size="middle"
                   style={{
                     width: '100%',
                   }}
@@ -829,6 +860,13 @@ function QuotaList() {
           {...tableProps}
         />
       </Form>
+      <Modal
+        {...modalProps}
+        footer={false}
+        title={boldText('決定見積へ移動', PRIMARY, 16)}
+      >
+        <ModalAgreePrice data={dataAgreedPrice} close={close} />
+      </Modal>
     </List>
   )
 }

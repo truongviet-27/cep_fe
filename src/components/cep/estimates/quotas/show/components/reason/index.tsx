@@ -4,7 +4,7 @@ import { Card, Form } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import React from 'react'
 
-function Reason({ reason }: { reason: string }) {
+function Reason() {
   return (
     <Card
       title={boldText('差戻の理由', PRIMARY, 16)}
@@ -20,8 +20,8 @@ function Reason({ reason }: { reason: string }) {
         marginTop: 40,
       }}
     >
-      <Form.Item style={{ marginTop: 20 }}>
-        <TextArea value={reason} rows={6} readOnly className="!resize-none" />
+      <Form.Item name={'reason'} style={{ marginTop: 20 }}>
+        <TextArea rows={6} className="!resize-none" />
       </Form.Item>
     </Card>
   )

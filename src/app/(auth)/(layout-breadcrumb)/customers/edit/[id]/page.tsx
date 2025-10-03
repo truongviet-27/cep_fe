@@ -29,6 +29,7 @@ export default function CustomerEditPage() {
     modalFormProps,
     modalFormCorporate,
     handleFinish,
+    refetchCodeGen,
   } = hookProps
   const { close: closeModal, open: modalOpen } = modalFormProps
 
@@ -48,8 +49,9 @@ export default function CustomerEditPage() {
   return (
     <Edit
       isLoading={isLoading}
+      saveButtonProps={saveButtonProps}
       rightFooterButtons={
-        <Button {...saveButtonProps} type="primary">
+        <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
           {t('buttons.save')}
         </Button>
       }
@@ -77,10 +79,19 @@ export default function CustomerEditPage() {
       </Form>
 
       <Modal open={modalOpen} onCancel={closeModal} footer={null}>
-        <CodeIssueSettingEdit modalProps={modalFormProps} />
+        <CodeIssueSettingEdit
+          modalProps={modalFormProps}
+          refetchParent={refetchCodeGen}
+        />
       </Modal>
 
-      <Modal open={visible} onCancel={close} footer={null}>
+      <Modal
+        title={t('customers.modal.title')}
+        open={visible}
+        onCancel={close}
+        width={800}
+        footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
+      >
         <CorporateNumberSearchModal modalProps={modalFormProps} />
       </Modal>
     </Edit>

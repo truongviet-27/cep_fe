@@ -1,8 +1,11 @@
 /* eslint-disable */
+'use client'
+
 import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
+import { useLayoutEffect } from 'react'
 
 export const useCustomerEdit = () => {
   const t = useTranslate()
@@ -12,8 +15,10 @@ export const useCustomerEdit = () => {
     form,
     onFinish,
     formLoading: isLoading,
+    queryResult,
   } = useForm({
     action: 'edit',
+    redirect: 'edit',
   })
 
   const handleFinish = async (values: any) => {
@@ -25,6 +30,8 @@ export const useCustomerEdit = () => {
     if (values?.temp_industry) {
       temp_industry = values?.temp_industry
     }
+
+    console.log('eee')
 
     await onFinish({ ...values, company_type, temp_industry })
   }
@@ -39,11 +46,14 @@ export const useCustomerEdit = () => {
     url: `${apiUrl}/code-issue-settings/by-code/customers`,
     method: 'get',
   })
+  const isAutomatic = codeGenData?.data?.issue_method === 'automatic'
 
   const modalFormProps = useModalForm({
     action: 'edit',
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
+    redirect: false,
+    warnWhenUnsavedChanges: false,
   })
 
   const modalFormCorporate = useModal()
@@ -65,6 +75,16 @@ export const useCustomerEdit = () => {
     })
   }
 
+  const record = queryResult?.data?.data
+
+  useLayoutEffect(() => {
+    if (record) {
+      form.setFieldsValue(record)
+    }
+  }, [record])
+
+  console.log(saveButtonProps.disabled, 'form')
+
   return {
     t,
     form,
@@ -80,5 +100,6 @@ export const useCustomerEdit = () => {
     saveButtonProps,
     modalFormCorporate,
     handleFinish,
+    isAutomatic,
   }
 }

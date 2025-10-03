@@ -24,6 +24,11 @@ function CoreInput({
   children,
   labelCol,
   wrapperCol,
+  classNameInput,
+  className,
+  disabled = false,
+  defaultValue,
+  value,
   ...field
 }: {
   name?: string | (string | number)[]
@@ -45,6 +50,11 @@ function CoreInput({
   children?: ReactNode
   labelCol?: ColProps
   wrapperCol?: ColProps
+  classNameInput?: string
+  className?: string
+  disabled?: boolean
+  defaultValue?: any
+  value?: any
 }) {
   const Component = type === 'number' ? InputNumber : Input
 
@@ -61,8 +71,10 @@ function CoreInput({
       colon={colon}
       style={styleForm}
       hidden={hidden}
+      className={className}
     >
       <Component
+        className={classNameInput}
         placeholder={placeholder}
         readOnly={isView ?? readOnly}
         style={{
@@ -86,6 +98,9 @@ function CoreInput({
             onChangeValue(value as object)
           }
         }}
+        disabled={disabled}
+        defaultValue={defaultValue}
+        value={value}
       />
 
       {children}

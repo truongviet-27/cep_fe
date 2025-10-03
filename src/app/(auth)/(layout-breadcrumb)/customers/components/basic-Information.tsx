@@ -4,7 +4,6 @@
 import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
-import { useSelect } from '@refinedev/antd'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -24,6 +23,7 @@ import {
 
 import styles from '../styles.module.css'
 import React from 'react'
+import { SelectPagination } from '@components/common/select-pagination'
 
 const { Title } = Typography
 const { Panel } = Collapse
@@ -40,6 +40,7 @@ function BasicInformation(
     codeGenData,
     form,
     modalFormCorporate,
+    isAutomatic,
   } = props
 
   const isIndividual = Form.useWatch('customer_type', form) === 'individual'
@@ -48,20 +49,12 @@ function BasicInformation(
     Form.useWatch('company_name_display_format', form) === 'after'
   const name = Form.useWatch('name', form)
   const companyType = Form.useWatch('company_type', form)
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const parts = isNameAfter ? [companyType, name] : [name, companyType]
-  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
-
   const isOtherSelected = companyType == 'other'
-
-  const { selectProps: ranksSelectProps } = useSelect({
-    resource: 'ranks',
-    optionLabel: 'name',
-    optionValue: 'id',
-    queryOptions: {
-      enabled: allowRankResource,
-    },
-  })
+  const tempCompanyType = Form.useWatch('temp_company_type', form)
+  const nameDisplay = isOtherSelected ? tempCompanyType : companyType
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const parts = isNameAfter ? [nameDisplay, name] : [name, nameDisplay]
+  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
 
   return (
     <Collapse
@@ -86,19 +79,23 @@ function BasicInformation(
                 <Input style={{ width: 240 }} />
               </Form.Item>
             </Col>
-            <Col>
-              <Button onClick={handleAutoNumber} loading={isCodeGenLoading}>
-                {t('departments.create.auto_number')}
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                type="link"
-                onClick={() => modalFormProps.show(codeGenData?.data?.id)}
-              >
-                {t('departments.create.popup_number_setting')}
-              </Button>
-            </Col>
+            {isAutomatic && (
+              <>
+                <Col>
+                  <Button onClick={handleAutoNumber} loading={isCodeGenLoading}>
+                    {t('departments.create.auto_number')}
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    type="link"
+                    onClick={() => modalFormProps.show(codeGenData?.data?.id)}
+                  >
+                    {t('departments.create.popup_number_setting')}
+                  </Button>
+                </Col>
+              </>
+            )}
           </Row>
         </Form.Item>
 
@@ -128,20 +125,7 @@ function BasicInformation(
             {isIndividual && (
               <>
                 <Col>
-                  <Form.Item hidden={!isOtherSelected} name="temp_company_type">
-                    <Input
-                      onChange={(e) => {
-                        if (!e.target.value) {
-                          form.setFieldsValue({
-                            company_type: null,
-                          })
-                        }
-                      }}
-                    />
-                  </Form.Item>
-
                   <Form.Item
-                    hidden={isOtherSelected}
                     name="company_type"
                     rules={[
                       {
@@ -161,6 +145,7 @@ function BasicInformation(
                     ]}
                   >
                     <Select
+                      allowClear
                       placeholder={t('placeholders.select')}
                       options={typesCompanyOptions}
                     />
@@ -178,6 +163,20 @@ function BasicInformation(
                       <Radio value="after">前</Radio>
                       <Radio value="before">後</Radio>
                     </Radio.Group>
+                  </Form.Item>
+                </Col>
+
+                <Col>
+                  <Form.Item hidden={!isOtherSelected} name="temp_company_type">
+                    <Input
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          form.setFieldsValue({
+                            company_type: null,
+                          })
+                        }
+                      }}
+                    />
                   </Form.Item>
                 </Col>
               </>
@@ -230,6 +229,7 @@ function BasicInformation(
             <Col>
               <Form.Item name="country" rules={[rule]}>
                 <Select
+                  allowClear
                   style={{ minWidth: 200 }}
                   placeholder={t('placeholders.select')}
                   options={countryOptions}
@@ -270,20 +270,28 @@ function BasicInformation(
           </Row>
         </Form.Item>
 
-        <Form.Item
-          label={boldText(t('ranks.fields.code'))}
-          name="price_rank_id"
-          rules={[rule]}
-          required
-          style={{ marginTop: -26 }}
-          hidden={!allowRankResource}
-        >
-          <Select
-            {...ranksSelectProps}
-            placeholder={t('placeholders.select')}
-            style={{ maxWidth: 560 }}
-          />
-        </Form.Item>
+        <SelectPagination
+          selectProps={{
+            resource: 'ranks',
+            queryOptions: {
+              enabled: allowRankResource,
+            },
+          }}
+          formItemProps={{
+            label: boldText(t('ranks.fields.code')),
+            name: 'price_rank_id',
+            rules: [rule],
+            required: true,
+            style: { marginTop: -26 },
+            hidden: !allowRankResource,
+          }}
+          optionLabel={'code'}
+          optionValue={'id'}
+          selectComponentProps={{
+            placeholder: t('placeholders.select'),
+            style: { maxWidth: 560, minWidth: '150px' },
+          }}
+        />
       </Panel>
     </Collapse>
   )

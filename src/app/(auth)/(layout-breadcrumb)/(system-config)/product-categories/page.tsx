@@ -1,6 +1,6 @@
 'use client'
 
-import { DownOutlined, RightOutlined, UpOutlined } from '@ant-design/icons'
+import { RightOutlined } from '@ant-design/icons'
 import useProductCategories from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-categories/use-product-categories'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -40,16 +40,6 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       hiddenButtonBack
-      rightFooterButtons={
-        <Button
-          type="primary"
-          disabled={!dirty || !isFullAccess}
-          onClick={save}
-          className="shadow-sm disabled:opacity-60"
-        >
-          {t('buttons.save_all')}
-        </Button>
-      }
     >
       <Form
         form={form}
@@ -57,62 +47,54 @@ export default function Page() {
         colon={false}
         onFinish={handleSearch}
       >
-        <Row
-          align="middle"
-          justify="space-between"
-          wrap={false}
-          gutter={[16, 16]}
-          style={{ width: '100%' }}
-        >
-          <Col flex="auto">
-            <Row align="middle" gutter={24} wrap={false}>
-              <Col>
-                <div style={{ fontWeight: 600 }}>カテゴリレベル</div>
-                <div style={{ marginTop: 8 }}>
-                  <Form.Item name="level" noStyle>
-                    <Select
-                      size="middle"
-                      placeholder="選択してください"
-                      style={{ width: 240 }}
-                      options={[
-                        { label: '大', value: 1 },
-                        { label: '中', value: 2 },
-                        { label: '小', value: 3 },
-                      ]}
-                    />
-                  </Form.Item>
-                </div>
-              </Col>
-              <Col>
-                <div style={{ fontWeight: 600 }}>カテゴリ名</div>
-                <div style={{ marginTop: 8 }}>
-                  <Form.Item name="name" noStyle>
-                    <Input
-                      size="middle"
-                      placeholder="部分一致"
-                      allowClear
-                      style={{ width: 360 }}
-                      maxLength={255}
-                    />
-                  </Form.Item>
-                </div>
-              </Col>
-              <Col>
-                <div style={{ height: 28 }} />
-                <div style={{ marginTop: 4 }}>
-                  <Space size="middle">
-                    <Button type="primary" size="middle" htmlType={'submit'}>
-                      検索
-                    </Button>
-                    <Button size="middle" type="default" onClick={handleClear}>
-                      クリア
-                    </Button>
-                  </Space>
-                </div>
-              </Col>
-            </Row>
+        <Row align="middle" gutter={24} wrap={false}>
+          <Col>
+            <div style={{ fontWeight: 600 }}>カテゴリレベル</div>
+            <div style={{ marginTop: 8 }}>
+              <Form.Item name="level" noStyle>
+                <Select
+                  allowClear
+                  size="middle"
+                  placeholder="選択してください"
+                  style={{ width: 240 }}
+                  options={[
+                    { label: '大', value: 1 },
+                    { label: '中', value: 2 },
+                    { label: '小', value: 3 },
+                  ]}
+                />
+              </Form.Item>
+            </div>
           </Col>
-          <Col className="mt-6">
+          <Col>
+            <div style={{ fontWeight: 600 }}>カテゴリ名</div>
+            <div style={{ marginTop: 8 }}>
+              <Form.Item name="name" noStyle>
+                <Input
+                  size="middle"
+                  placeholder="部分一致"
+                  allowClear
+                  style={{ width: 360 }}
+                  maxLength={255}
+                />
+              </Form.Item>
+            </div>
+          </Col>
+          <Col>
+            <div style={{ height: 28 }} />
+            <div style={{ marginTop: 4 }}>
+              <Space size="middle">
+                <Button type="primary" size="middle" htmlType={'submit'}>
+                  検索
+                </Button>
+                <Button size="middle" type="default" onClick={handleClear}>
+                  クリア
+                </Button>
+              </Space>
+            </div>
+          </Col>
+          <Col style={{ flex: 1 }} />
+          <div style={{ marginTop: 4, display: 'block' }}>
             <CreateButton
               type="primary"
               size="middle"
@@ -121,33 +103,41 @@ export default function Page() {
             >
               新規登録
             </CreateButton>
-          </Col>
+            <Button
+              disabled={!isFullAccess}
+              type="link"
+              onClick={() => {
+                go({
+                  to: '/product-categories/csv',
+                })
+              }}
+              style={{ color: CSV_LINK }}
+              className={'!underline'}
+            >
+              {t('projects.list.buttons.csv_export')}
+            </Button>
+          </div>
         </Row>
       </Form>
 
       <div className="space-y-3">
         <div className="flex items-center justify-end">
           <Button
+            type="primary"
+            disabled={!dirty || !isFullAccess}
+            onClick={save}
+            className="shadow-sm disabled:opacity-60"
+          >
+            {t('buttons.save_all')}
+          </Button>
+          <Button
             type="text"
             onClick={() => openAll(!allOpen)}
-            icon={allOpen ? <UpOutlined /> : <DownOutlined />}
+            // icon={allOpen ? <UpOutlined /> : <DownOutlined />}
           >
             {allOpen
               ? t('product_categories.all_open')
               : t('product_categories.all_close')}
-          </Button>
-          <Button
-            disabled={!isFullAccess}
-            type="link"
-            onClick={() => {
-              go({
-                to: '/product-categories/csv',
-              })
-            }}
-            style={{ color: CSV_LINK }}
-            className={'!underline'}
-          >
-            {t('projects.list.buttons.csv_export')}
           </Button>
         </div>
 

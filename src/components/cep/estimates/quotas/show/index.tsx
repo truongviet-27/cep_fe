@@ -7,9 +7,11 @@ import Conditions from '@components/cep/estimates/quotas/show/components/note'
 import OptionalInfo from '@components/cep/estimates/quotas/show/components/optional-info'
 import Reason from '@components/cep/estimates/quotas/show/components/reason'
 import Tags from '@components/cep/estimates/quotas/show/components/tags'
+import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { Show } from '@components/crud/show'
-import { DeleteButton } from '@refinedev/antd'
+import { Viewer, Worker } from '@react-pdf-viewer/core'
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
+import { DeleteButton, useForm } from '@refinedev/antd'
 import {
   type OpenNotificationParams,
   useApiUrl,
@@ -17,7 +19,6 @@ import {
   useCustomMutation,
   useGo,
   useParsed,
-  useShow,
   useTranslate,
 } from '@refinedev/core'
 import { PRIMARY, WHITE } from '@utility/color'
@@ -27,16 +28,25 @@ import {
   Divider,
   Flex,
   Form,
+  Modal,
   Space,
+  Spin,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const { Title } = Typography
 
 function QuotaDetail() {
   const t = useTranslate()
+
+  const { form, formProps } = useForm()
+
+  const [isPdf, setIsPdf] = useState(false)
+  const [previewPdf, setPreviewPdf] = useState('')
+
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
   const { id } = useParsed()
   const apiUrl = useApiUrl()
@@ -45,8 +55,13 @@ function QuotaDetail() {
 
   const { mutate } = useCustomMutation()
 
-  const { query: queryBasic } = useShow({
-    id,
+  const {
+    data: queryBasic,
+    isFetching,
+    refetch,
+  } = useCustom({
+    url: `${apiUrl}/quotas/${id}`,
+    method: 'get',
   })
 
   const { data: dataProducts, isFetching: isFetchingProducts } = useCustom({
@@ -63,7 +78,7 @@ function QuotaDetail() {
 
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
-      queryBasic.refetch()
+      refetch()
       return {
         message: t('notifications.success'),
         description: message ?? 'Success',
@@ -87,12 +102,38 @@ function QuotaDetail() {
     [t],
   )
 
+  useEffect(() => {
+    if (queryBasic?.data) {
+      form.setFieldValue('reason', queryBasic.data.reason)
+    }
+  }, [queryBasic])
+
+  const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
+    useCustomMutation()
+
+  const handlePreviewPdf = () => {
+    const customValues = {
+      ...queryBasic?.data,
+      ...dataProducts?.data,
+    }
+
+    mutatePreviewPdf(
+      {
+        values: customValues,
+        url: `${apiUrl}/preivew-pdf`,
+        method: 'post',
+      },
+      {
+        onSuccess(data) {
+          setPreviewPdf(data.data?.pdf ?? '')
+        },
+      },
+    )
+  }
+
   return (
-    <Show
-      isLoading={
-        queryBasic.isFetching || isFetchingProducts || isFetchingHistory
-      }
-      title={
+    <PageContainer
+      breadcrumbs={
         <Breadcrumb
           items={[
             {
@@ -113,112 +154,88 @@ function QuotaDetail() {
           ]}
         />
       }
-      hiddenButtonBack
-      i18nHeading={t('quotas.detail')}
+      title={
+        <div className="flex justify-between">
+          <span>{t('quotas.detail')}</span>
+          <Button
+            onClick={() => {
+              setIsPdf(!isPdf)
+              handlePreviewPdf()
+            }}
+          >
+            プレビュー
+          </Button>
+        </div>
+      }
     >
-      <Form
-        labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
-        labelAlign="left"
-        layout="horizontal"
-        colon={false}
-        autoComplete="off"
-        style={{
-          marginTop: 30,
-        }}
-      >
-        <BasicInfo data={queryBasic?.data?.data} />
-        <DetailInfo
-          data={dataProducts?.data?.main_product}
-          basicInfo={queryBasic?.data?.data}
-        />
-        <OptionalInfo data={dataProducts?.data?.optional_product} />
-        <Conditions note={queryBasic?.data?.data?.note} />
-        <Tags tags={queryBasic?.data?.data?.tags} />
-        <History />
-
-        <Reason reason="差戻の理由を入力してください" />
-
-        <Divider />
-        <ShowMoreInfo
-          descriptions={[
-            {
-              title: t('approve_routes.show.creator'),
-              value:
-                (queryBasic.data?.data?.author?.name ?? '---') +
-                ' ' +
-                dayjs(queryBasic.data?.data?.created_at).format(
-                  'YYYY/MM/DD HH:mm',
-                ),
-            },
-            {
-              title: t('approve_routes.show.updater'),
-              value:
-                (queryBasic.data?.data?.editor?.name ?? '---') +
-                ' ' +
-                dayjs(queryBasic.data?.data?.updated_at).format(
-                  'YYYY/MM/DD HH:mm',
-                ),
-            },
-          ]}
-        />
-        <Flex
-          justify="space-between"
+      <Spin spinning={isFetching || isFetchingProducts || isFetchingHistory}>
+        <Form
+          labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
+          labelAlign="left"
+          layout="horizontal"
+          colon={false}
+          autoComplete="off"
           style={{
-            marginTop: 40,
+            marginTop: 30,
           }}
+          form={formProps.form}
         >
-          <Space>
-            <DeleteButton
-              icon={null}
-              size={'small'}
-              onSuccess={() => {
-                go({
-                  to: '/quotas',
-                })
-              }}
-            />
-          </Space>
+          <BasicInfo data={queryBasic?.data} />
+          <DetailInfo
+            data={dataProducts?.data?.main_product}
+            basicInfo={queryBasic?.data}
+          />
+          <OptionalInfo data={dataProducts?.data?.optional_product} />
+          <Conditions note={queryBasic?.data?.note} />
+          <Tags tags={queryBasic?.data?.tags} />
+          <History data={dataHistory?.data} />
 
-          <Space>
-            {queryBasic?.data?.data.status === QuotaStatus.Creating && (
-              <Button
-                style={{
-                  background: '#10B981',
-                  color: WHITE,
-                }}
+          {queryBasic?.data?.display && <Reason />}
+
+          <Divider />
+          <ShowMoreInfo
+            descriptions={[
+              {
+                title: t('approve_routes.show.creator'),
+                value:
+                  (queryBasic?.data?.author?.name ?? '---') +
+                  ' ' +
+                  dayjs(queryBasic?.data?.created_at).format(
+                    'YYYY/MM/DD HH:mm',
+                  ),
+              },
+              {
+                title: t('approve_routes.show.updater'),
+                value:
+                  (queryBasic?.data?.editor?.name ?? '---') +
+                  ' ' +
+                  dayjs(queryBasic?.data?.updated_at).format(
+                    'YYYY/MM/DD HH:mm',
+                  ),
+              },
+            ]}
+          />
+          <Flex
+            justify="space-between"
+            style={{
+              marginTop: 40,
+            }}
+          >
+            <Space>
+              <DeleteButton
                 icon={null}
-                size={'middle'}
-                onClick={() => {
-                  handleChangeStatus('send-to-approver', {
-                    quota_ids: [queryBasic.data?.data.id],
+                size={'small'}
+                onSuccess={() => {
+                  go({
+                    to: '/quotas',
                   })
                 }}
-              >
-                承認依頼
-              </Button>
-            )}
-            {queryBasic?.data?.data.status === QuotaStatus.WaitingApproval &&
-              queryBasic.data.data.display && (
-                <>
-                  <Button
-                    style={{
-                      background: '#721C24',
-                      color: WHITE,
-                    }}
-                    icon={null}
-                    size={'middle'}
-                    onClick={() => {
-                      handleChangeStatus('approval-steps', [
-                        {
-                          quota_id: queryBasic.data?.data?.id,
-                          status: 'approved',
-                          comment: '',
-                        },
-                      ])
-                    }}
-                  >
-                    差戻
-                  </Button>
+              />
+            </Space>
+
+            <Space>
+              {queryBasic?.data?.status === QuotaStatus.Creating &&
+                !queryBasic?.data?.display && (
                   <Button
                     style={{
                       background: '#10B981',
@@ -227,122 +244,195 @@ function QuotaDetail() {
                     icon={null}
                     size={'middle'}
                     onClick={() => {
-                      handleChangeStatus('approval-steps', [
-                        {
-                          quota_id: queryBasic.data?.data?.id,
-                          status: 'approved',
-                          comment: '',
-                        },
-                      ])
+                      handleChangeStatus('send-to-approver', {
+                        quota_ids: [queryBasic?.data.id],
+                      })
                     }}
                   >
-                    承認
+                    承認依頼
                   </Button>
-                </>
-              )}
+                )}
+              {queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
+                queryBasic?.data?.display && (
+                  <>
+                    <Button
+                      style={{
+                        background: '#721C24',
+                        color: WHITE,
+                      }}
+                      icon={null}
+                      size={'middle'}
+                      onClick={() => {
+                        handleChangeStatus('approval-steps', [
+                          {
+                            quota_id: queryBasic?.data?.id,
+                            status: 'rejected',
+                            comment: form.getFieldValue('reason'),
+                          },
+                        ])
+                      }}
+                    >
+                      差戻
+                    </Button>
+                    <Button
+                      style={{
+                        background: '#10B981',
+                        color: WHITE,
+                      }}
+                      icon={null}
+                      size={'middle'}
+                      onClick={() => {
+                        handleChangeStatus('approval-steps', [
+                          {
+                            quota_id: queryBasic?.data?.id,
+                            status: 'approved',
+                            comment: '',
+                          },
+                        ])
+                      }}
+                    >
+                      承認
+                    </Button>
+                  </>
+                )}
 
-            {queryBasic?.data?.data.status === QuotaStatus.Approved && (
+              {queryBasic?.data?.status === QuotaStatus.Approved &&
+                !queryBasic?.data?.display && (
+                  <Button
+                    style={{
+                      background: '#10B981',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('send-to-customer', {
+                        quota_ids: [queryBasic?.data.id],
+                        status: 'sent_to_customer',
+                      })
+                    }}
+                  >
+                    送信
+                  </Button>
+                )}
+
+              {queryBasic?.data?.status === QuotaStatus.SentToCustomer &&
+                queryBasic.data?.display && (
+                  <>
+                    <Button
+                      style={{
+                        background: '#721C24',
+                        color: WHITE,
+                      }}
+                      icon={null}
+                      size={'middle'}
+                      onClick={() => {
+                        handleChangeStatus('mark-completed', {
+                          quota_ids: [queryBasic?.data.id],
+                        })
+                      }}
+                    >
+                      失注へ移動
+                    </Button>
+                    <Button
+                      style={{
+                        background: '#10B981',
+                        color: WHITE,
+                      }}
+                      icon={null}
+                      size={'middle'}
+                      onClick={() => {
+                        handleChangeStatus('cancel-quota', {
+                          quota_ids: [queryBasic?.data.id],
+                        })
+                      }}
+                    >
+                      受注へ移動
+                    </Button>
+                  </>
+                )}
+
+              {(queryBasic?.data?.status === QuotaStatus.Completed ||
+                queryBasic?.data?.status === QuotaStatus.Cancelled) &&
+                queryBasic.data?.display && (
+                  <Button
+                    style={{
+                      background: '#721C24',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('send-to-approver', {
+                        quota_ids: [queryBasic?.data.id],
+                      })
+                    }}
+                  >
+                    送信へ移動
+                  </Button>
+                )}
+            </Space>
+            <Space className="items-end">
               <Button
-                style={{
-                  background: '#10B981',
-                  color: WHITE,
-                }}
-                icon={null}
-                size={'middle'}
-                onClick={() => {
-                  handleChangeStatus('send-to-customer', {
-                    quota_ids: [queryBasic.data?.data.id],
-                  })
-                }}
-              >
-                送信
-              </Button>
-            )}
-
-            {queryBasic?.data?.data.status === QuotaStatus.SentToCustomer && (
-              <>
-                <Button
-                  style={{
-                    background: '#721C24',
-                    color: WHITE,
-                  }}
-                  icon={null}
-                  size={'middle'}
-                  onClick={() => {
-                    handleChangeStatus('mark-completed', {
-                      quota_ids: [queryBasic.data?.data.id],
-                    })
-                  }}
-                >
-                  失注へ移動
-                </Button>
-                <Button
-                  style={{
-                    background: '#10B981',
-                    color: WHITE,
-                  }}
-                  icon={null}
-                  size={'middle'}
-                  onClick={() => {
-                    handleChangeStatus('cancel-quota', {
-                      quota_ids: [queryBasic.data?.data.id],
-                    })
-                  }}
-                >
-                  受注へ移動
-                </Button>
-              </>
-            )}
-
-            {(queryBasic?.data?.data.status === QuotaStatus.Completed ||
-              queryBasic?.data?.data.status === QuotaStatus.Cancelled) &&
-              queryBasic.data.data.display && (
-                <Button
-                  style={{
-                    background: '#721C24',
-                    color: WHITE,
-                  }}
-                  icon={null}
-                  size={'middle'}
-                  onClick={() => {
-                    handleChangeStatus('send-to-approver', {
-                      quota_ids: [queryBasic.data?.data.id],
-                    })
-                  }}
-                >
-                  送信へ移動
-                </Button>
-              )}
-          </Space>
-          <Space className="items-end">
-            <Button
-              type="default"
-              onClick={() => {
-                go({
-                  to: '/quotas',
-                })
-              }}
-            >
-              {t('buttons.back')}
-            </Button>
-
-            {(queryBasic?.data?.data.status === QuotaStatus.Creating ||
-              queryBasic?.data?.data.status === QuotaStatus.Rejected) && (
-              <Button
-                type="primary"
+                type="default"
                 onClick={() => {
                   go({
-                    to: `/quotas/edit/${id}`,
+                    to: '/quotas',
                   })
                 }}
               >
-                {t('buttons.edit')}
+                {t('buttons.back')}
               </Button>
+
+              {(queryBasic?.data?.status === QuotaStatus.Creating ||
+                queryBasic?.data?.status === QuotaStatus.Rejected) &&
+                !queryBasic.data?.display && (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      go({
+                        to: `/quotas/edit/${id}`,
+                      })
+                    }}
+                  >
+                    {t('buttons.edit')}
+                  </Button>
+                )}
+            </Space>
+          </Flex>
+        </Form>
+      </Spin>
+      <Modal
+        title="Preview PDF"
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isPdf}
+        onCancel={() => {
+          setIsPdf(false)
+        }}
+        footer={null}
+        style={{ top: 20 }}
+        width={{
+          xs: '90%',
+          sm: '80%',
+          xxl: '50%',
+        }}
+      >
+        <div>
+          <Spin spinning={isPendingPreviewPdf}>
+            {!isPendingPreviewPdf && (
+              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                <Viewer
+                  fileUrl={`data:application/pdf;base64,${previewPdf}`}
+                  plugins={[defaultLayoutPluginInstance]}
+                />
+              </Worker>
             )}
-          </Space>
-        </Flex>
-      </Form>
-    </Show>
+          </Spin>
+
+          {/* <PreviewPdf previewPdf={previewPdf} /> */}
+        </div>
+      </Modal>
+    </PageContainer>
   )
 }
 

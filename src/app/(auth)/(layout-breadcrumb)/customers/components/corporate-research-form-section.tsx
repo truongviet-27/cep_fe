@@ -18,7 +18,7 @@ import styles from '../styles.module.css'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
 import { useModal } from '@refinedev/core'
 import { antiSocialCheckOptions, creditCheckOptions } from '@utility/options'
-import { DeleteButton, EditButton } from '@refinedev/antd'
+import { EditButton } from '@refinedev/antd'
 import { InputUploadFile } from '@components/common/input-upload-file'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -108,8 +108,8 @@ export const CorporateResearchFormSection = (
       render: (_: any, record: any) => {
         return (
           <>
-            {record?.files?.map((file: any) => (
-              <div key={file.name}>{file.name}</div>
+            {record?.files?.map((file: any, index: number) => (
+              <div key={file?.url ?? file.name ?? index}>{file.name}</div>
             ))}
           </>
         )
@@ -180,19 +180,20 @@ export const CorporateResearchFormSection = (
           >
             {t('buttons.edit')}
           </EditButton>
-          <DeleteButton
+          <Button
             icon={null}
             danger
             size="small"
             onClick={() => {
               form.setFieldValue(['company_research_information', index], {
                 material_name: record.material_name,
+                judgement: '未定',
               })
               formTrigger()
             }}
           >
             {t('buttons.clear')}
-          </DeleteButton>
+          </Button>
         </Space>
       ),
     },
@@ -263,6 +264,10 @@ export const CorporateResearchFormSection = (
             form.setFieldValue(
               ['company_research_information', currentType.index],
               {
+                ...form.getFieldValue([
+                  'company_research_information',
+                  currentType.index,
+                ]),
                 files: currentType.fileList,
                 judgement: currentType.judgement,
                 material_name: currentType.name,
@@ -300,6 +305,7 @@ export const CorporateResearchFormSection = (
             >
               {currentType.type !== 'certified' ? (
                 <Select
+                  allowClear
                   style={{ maxWidth: 235 }}
                   placeholder={t('placeholders.select')}
                   options={options()}

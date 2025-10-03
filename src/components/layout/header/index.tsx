@@ -9,6 +9,7 @@ import {
 import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
 import { useLogout, useModal } from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
+import { useUserStore } from '@stores/useUserStore'
 import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
 import { Avatar, Badge, Dropdown, Input, Layout, Modal, Space } from 'antd'
 import { useKBar } from 'kbar'
@@ -30,6 +31,7 @@ export default function AuthHeader({
   const session = useSession()
   const modalProps = useModal()
   const { mutate: logout } = useLogout()
+  const { permission } = useUserStore()
 
   const isAdmin = isSupperAdmin(session.data?.accessToken)
   const storeTenantName = useTenantStore((s) => s.tenantName)
@@ -92,7 +94,9 @@ export default function AuthHeader({
                 </div>
               </Dropdown>
 
-              <div className="text-[11px] text-gray-400">テナント管理者</div>
+              <div className="text-[11px] text-gray-400">
+                {permission?.role?.display_name}
+              </div>
             </div>
           </div>
         ) : (

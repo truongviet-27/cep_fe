@@ -4769,22 +4769,9 @@ export type CodeIssueSettingControllerShowByCodeResponse =
   CodeIssueSettingControllerShowByCodeResponses[keyof CodeIssueSettingControllerShowByCodeResponses]
 
 export type GetCorporateNumberData = {
-  body?: never
+  body: CorporateNumberRequest
   path?: never
-  query: {
-    /**
-     * Company name to search for
-     */
-    name: string
-    /**
-     * Response format type: 01 (CSV Shift-JIS), 02 (CSV Unicode), 12 (XML Unicode)
-     */
-    type?: '01' | '02' | '12'
-    /**
-     * Include historical data: 0 (no history), 1 (include history)
-     */
-    history?: 0 | 1
-  }
+  query?: never
   url: '/api/v1/corporate-number'
 }
 

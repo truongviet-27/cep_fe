@@ -70,6 +70,14 @@ function useProductCategories() {
       url: `${apiUrl}/${resource}/update-tree`,
       method: 'post',
       values,
+      successNotification: () => {
+        setEditing({})
+        return {
+          message: t('notifications.success'),
+          description: t('notifications.success'),
+          type: 'success',
+        }
+      },
     })
   }
   const { mutate: updateRow, isLoading: saving } = useUpdate({

@@ -8,10 +8,13 @@ import OptionalInfo from '@components/cep/estimates/quotas/action/components/opt
 import Tags from '@components/cep/estimates/quotas/action/components/tags'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
+import { Viewer, Worker } from '@react-pdf-viewer/core'
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { DeleteButton, useForm } from '@refinedev/antd'
 import {
   useApiUrl,
   useCustom,
+  useCustomMutation,
   useGo,
   useParsed,
   useResource,
@@ -26,13 +29,14 @@ import {
   Divider,
   Flex,
   Form,
+  Modal,
   Row,
   Space,
   Spin,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 
 const { Title } = Typography
@@ -45,7 +49,11 @@ function QuotaAction() {
     },
   })
 
-  const { id, action } = useParsed()
+  const { id, action, params } = useParsed()
+
+  const { actionType } = params as any
+  const isCloneVersion = actionType === 'VERSION'
+  const isClone = action === 'clone'
 
   const isUpdate = !!id
 
@@ -63,7 +71,11 @@ function QuotaAction() {
   const { form: formProps2 } = formProps
 
   const { resource } = useResource()
-  const { params } = useParsed()
+
+  const [isPdf, setIsPdf] = useState(false)
+  const [previewPdf, setPreviewPdf] = useState('')
+
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
   const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
@@ -97,8 +109,69 @@ function QuotaAction() {
     },
   })
 
+  const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
+    useCustomMutation()
+
+  const handlePreviewPdf = () => {
+    const customValues = {
+      ...form.getFieldsValue(),
+    }
+
+    mutatePreviewPdf(
+      {
+        values: customValues,
+        url: `${apiUrl}/preivew-pdf`,
+        method: 'post',
+      },
+      {
+        onSuccess(data) {
+          setPreviewPdf(data.data?.pdf ?? '')
+        },
+      },
+    )
+  }
+
   useEffect(() => {
-    if (isUpdate) {
+    if (isUpdate && isCloneVersion) {
+      if (dataBasicInfo?.data && dataProducts?.data && dataHistory?.data) {
+        form.setFieldsValue({
+          ...dataBasicInfo.data,
+          code: `${dataBasicInfo.data.code}-${(dataHistory.data?.clone_history?.length ?? 0) + 1}`,
+          customer: {
+            value: dataBasicInfo.data.customer_id,
+            label: dataBasicInfo.data.customer_name,
+          },
+          delivery_date: dataBasicInfo.data.delivery_date
+            ? dayjs(dataBasicInfo.data.delivery_date)
+            : null,
+          created_at: dataBasicInfo.data.created_at
+            ? dayjs(dataBasicInfo.data.created_at)
+            : null,
+          tags:
+            dataBasicInfo.data.tags?.map((item: any) => ({
+              value: item.id,
+              label: item.name,
+            })) || [],
+          main_product: dataProducts.data.main_product.map((item: any) => ({
+            ...item,
+            products: item.products.map((item2: any) => ({
+              ...item2,
+              unit: item2.unit_name,
+            })),
+          })),
+          optional_product: dataProducts.data.optional_product.map(
+            (item: any) => ({
+              ...item,
+              products: item.products.map((item2: any) => ({
+                ...item2,
+                unit: item2.unit_name,
+              })),
+            }),
+          ),
+          ...dataHistory?.data?.data,
+        })
+      }
+    } else {
       if (dataBasicInfo?.data && dataProducts?.data) {
         form.setFieldsValue({
           ...dataBasicInfo.data,
@@ -146,7 +219,7 @@ function QuotaAction() {
         type: 'normal',
         customer: null,
         status: 'creating',
-        created_at: null,
+        created_at: dayjs(),
         delivery_date: null,
         delivery_method: data?.data.default_delivery_method,
         payment_due_date: data?.data.default_payment_due_date,
@@ -159,6 +232,7 @@ function QuotaAction() {
         consumption_tax_amount: 0,
         total_profit_margin: 0,
         total_price_tax_included: 0,
+        tax_rounding_method: data.data?.tax_rounding_method,
         main_product: [
           {
             group_name: '',
@@ -172,7 +246,7 @@ function QuotaAction() {
                 quantity: 0,
                 selling_price: 0,
                 profit_margin: 0,
-                is_add_total: false,
+                is_add_total: true,
               },
             ],
           },
@@ -230,7 +304,7 @@ function QuotaAction() {
           resource: resource?.name,
           values: {
             ...values,
-            resource_id: action === 'clone' ? Number(id) : null,
+            source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             status: 'creating',
@@ -276,7 +350,14 @@ function QuotaAction() {
       title={
         <div className="flex justify-between">
           <span>{isUpdate ? t('quotas.edit') : t('quotas.create')}</span>
-          <Button>プレビュー</Button>
+          <Button
+            onClick={() => {
+              setIsPdf(!isPdf)
+              handlePreviewPdf()
+            }}
+          >
+            プレビュー
+          </Button>
         </div>
       }
     >
@@ -309,10 +390,10 @@ function QuotaAction() {
             </Col>
           </Row>
           <Tags />
-          {isUpdate && <History />}
+          {isUpdate && !isClone && <History />}
 
           <Divider />
-          {isUpdate && (
+          {isUpdate && !isClone && (
             <ShowMoreInfo
               descriptions={[
                 {
@@ -344,7 +425,7 @@ function QuotaAction() {
             }}
           >
             <Space>
-              {isUpdate && (
+              {isUpdate && !isClone && (
                 <DeleteButton
                   icon={null}
                   size={'small'}
@@ -375,6 +456,36 @@ function QuotaAction() {
           </Flex>
         </Form>
       </Spin>
+      <Modal
+        title="Preview PDF"
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isPdf}
+        onCancel={() => {
+          setIsPdf(false)
+        }}
+        footer={null}
+        style={{ top: 20 }}
+        width={{
+          xs: '90%',
+          sm: '80%',
+          xxl: '50%',
+        }}
+      >
+        <div>
+          <Spin spinning={isPendingPreviewPdf}>
+            {!isPendingPreviewPdf && (
+              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                <Viewer
+                  fileUrl={`data:application/pdf;base64,${previewPdf}`}
+                  plugins={[defaultLayoutPluginInstance]}
+                />
+              </Worker>
+            )}
+          </Spin>
+
+          {/* <PreviewPdf previewPdf={previewPdf} /> */}
+        </div>
+      </Modal>
     </PageContainer>
   )
 }

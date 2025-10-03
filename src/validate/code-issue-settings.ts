@@ -12,7 +12,10 @@ export const validateCodeIssueSettingsRule = (t: any) => {
       ),
       prefix: z.optional(
         z
-          .string({ error: t('validation.code_issue_settings.prefix.string') })
+          .string({
+            error: t('validation.code_issue_settings.prefix.required'),
+          })
+          .min(1, { error: t('validation.required') })
           .regex(/^[A-Z]+$/, {
             error: t('validation.code_issue_settings.prefix.numeric'),
           })

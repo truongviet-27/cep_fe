@@ -2758,13 +2758,9 @@ export const zCodeIssueSettingControllerShowByCodeResponse =
   zCodeIssueSettingDetailResponse
 
 export const zGetCorporateNumberData = z.object({
-  body: z.optional(z.never()),
+  body: zCorporateNumberRequest,
   path: z.optional(z.never()),
-  query: z.object({
-    name: z.string().max(255),
-    type: z.optional(z.enum(['01', '02', '12'])),
-    history: z.optional(z.unknown()),
-  }),
+  query: z.optional(z.never()),
 })
 
 /**

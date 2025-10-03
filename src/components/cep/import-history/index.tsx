@@ -3,6 +3,7 @@ import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import { PRIMARY } from '@utility/color'
+import { FORMAT_DATE_TIME } from '@utility/instances'
 import {
   Breadcrumb,
   Button,
@@ -156,7 +157,7 @@ function ImportHistory() {
                   width: '100%',
                 }}
                 showTime
-                placeholder={['YYYY/MM/DD HH:mm:ss', 'YYYY/MM/DD HH:mm:ss']}
+                placeholder={[FORMAT_DATE_TIME, FORMAT_DATE_TIME]}
               />
             </Form.Item>
           </Col>
