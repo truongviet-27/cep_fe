@@ -65,6 +65,11 @@ export const useBasicInfoController = (
           operator: 'eq',
           value: false,
         },
+        {
+          field: '_per_page',
+          operator: 'eq',
+          value: 30,
+        },
       ],
     })
 
