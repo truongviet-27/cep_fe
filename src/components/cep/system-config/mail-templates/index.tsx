@@ -75,7 +75,9 @@ function MailTemplate() {
                   form.setFieldsValue(
                     indexTab === 1
                       ? {
-                          [`title_${indexTab}`]: t('mail_templates.form.title'),
+                          [`title_${indexTab}`]: t(
+                            'mail_templates.form.titleMail',
+                          ),
                           [`content_${indexTab}`]: t(
                             'mail_templates.form.quotationMailTemplate',
                           ),
@@ -84,7 +86,9 @@ function MailTemplate() {
                           ),
                         }
                       : {
-                          [`title_${indexTab}`]: t('mail_templates.form.title'),
+                          [`title_${indexTab}`]: t(
+                            'mail_templates.form.titlePassword',
+                          ),
                           [`content_${indexTab}`]: t(
                             'mail_templates.form.quotationPasswordTemplate',
                           ),

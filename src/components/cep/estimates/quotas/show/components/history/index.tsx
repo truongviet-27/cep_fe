@@ -95,8 +95,8 @@ function History({ data }: { data: any }) {
       },
       {
         title: 'PDF',
-        dataIndex: 'pdf',
-        key: 'pdf',
+        dataIndex: 'pdf_path',
+        key: 'pdf_path',
         render: (value: string, record) => (
           <Button
             type="link"
