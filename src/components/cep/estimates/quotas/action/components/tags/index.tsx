@@ -6,6 +6,19 @@ function Tags() {
     resource: 'tags',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'name',
+          operator: 'contains',
+          value,
+        },
+      ]
+    },
   })
 
   return (

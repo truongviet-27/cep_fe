@@ -12,7 +12,7 @@ import {
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
-import getQuotaStatusStyle from '@components/cep/estimates/quotas/utils'
+import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'

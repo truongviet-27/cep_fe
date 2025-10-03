@@ -1,42 +1,55 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable simple-import-sort/imports */
-import { DownOutlined } from '@ant-design/icons'
+import { DownOutlined, FilePdfFilled } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
-import { Button, Card, Collapse, Typography } from 'antd'
+import { FORMAT_DATE } from '@utility/instances'
+import { Button, Card, Collapse, Tag, Typography } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import '../../../style/style-history.css'
+import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
+import { type QuotaStatus } from '@components/cep/estimates/quotas/enum'
 
 const { Title } = Typography
 
-function History() {
+function History({ data }: { data: any }) {
   const t = useTranslate()
   const columnsApprove = useMemo(() => {
     return [
       {
         title: 'ステップ',
-        dataIndex: 'step',
-        key: 'step',
+        dataIndex: 'step_order',
+        key: 'step_order',
       },
       {
         title: '処理日',
         dataIndex: 'date',
         key: 'date',
+        render(value) {
+          return dayjs(value).format(FORMAT_DATE)
+        },
       },
       {
-        title: '操作', // Thao tác
-        dataIndex: 'action',
-        key: 'action',
-        render: (text: string) => {
-          if (text === '承認') {
-            return <span style={{ color: 'green' }}>{text}</span>
-          }
-          if (text === '差戻し') {
-            return <span style={{ color: 'red' }}>{text}</span>
-          }
-          return text
+        title: '操作',
+        dataIndex: 'status',
+        key: 'status',
+        render: (value: QuotaStatus) => {
+          const result = getQuotaStatusStyle(value)
+
+          return (
+            <div className="flex flex-col items-center justify-center gap-1">
+              <Tag
+                color={result.background}
+                style={{ color: result.color, marginRight: 0 }}
+              >
+                {result.text}
+              </Tag>
+            </div>
+          )
         },
       },
       {
@@ -46,8 +59,8 @@ function History() {
       },
       {
         title: '承認者',
-        dataIndex: 'approver',
-        key: 'approver',
+        dataIndex: 'approver_name',
+        key: 'approver_name',
       },
     ] as ColumnsType
   }, [t])
@@ -56,36 +69,53 @@ function History() {
     return [
       {
         title: '作成日',
-        dataIndex: 'createdDate',
-        key: 'createdDate',
+        dataIndex: 'created_at',
+        key: 'created_at',
+        render(value) {
+          return dayjs(value).format(FORMAT_DATE)
+        },
       },
       {
         title: '送信日',
-        dataIndex: 'sentDate',
-        key: 'sentDate',
+        dataIndex: 'sent_to_customer_date',
+        key: 'sent_to_customer_date',
+        render(value) {
+          return value ? dayjs(value).format(FORMAT_DATE) : ''
+        },
       },
       {
         title: '見積番号',
-        dataIndex: 'estimateNo',
-        key: 'estimateNo',
+        dataIndex: 'code',
+        key: 'code',
       },
       {
         title: '作成者',
-        dataIndex: 'creator',
-        key: 'creator',
+        dataIndex: 'author.name',
+        key: 'author',
       },
       {
         title: 'PDF',
         dataIndex: 'pdf',
         key: 'pdf',
-        render: (text: string) => (
+        render: (value: string, record) => (
           <Button
             type="link"
-            href={text}
+            href={value}
             target="_blank"
             rel="noopener noreferrer"
+            icon={
+              <FilePdfFilled
+                style={{
+                  color: 'black',
+                }}
+              />
+            }
+            iconPosition="start"
+            style={{
+              textDecoration: 'underline',
+            }}
           >
-            PDF
+            {record?.code}
           </Button>
         ),
       },
@@ -114,11 +144,19 @@ function History() {
             <Card style={{ marginTop: 10, background: '#F8F9FA' }}>
               <div className="mb-4">
                 <Title level={5}>承認履歴</Title>
-                <CommonTable columns={columnsApprove} />
+                <CommonTable
+                  columns={columnsApprove}
+                  dataSource={data?.approval_history}
+                  pagination={false}
+                />
               </div>
               <div>
                 <Title level={5}>作成履歴</Title>
-                <CommonTable columns={columnsCreation} />
+                <CommonTable
+                  columns={columnsCreation}
+                  dataSource={data?.clone_history}
+                  pagination={false}
+                />
               </div>
             </Card>
           ),

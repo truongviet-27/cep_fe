@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import getQuotaStatusStyle from '@components/cep/estimates/quotas/utils'
+import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
