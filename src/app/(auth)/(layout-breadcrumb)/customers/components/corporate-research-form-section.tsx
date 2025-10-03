@@ -264,6 +264,10 @@ export const CorporateResearchFormSection = (
             form.setFieldValue(
               ['company_research_information', currentType.index],
               {
+                ...form.getFieldValue([
+                  'company_research_information',
+                  currentType.index,
+                ]),
                 files: currentType.fileList,
                 judgement: currentType.judgement,
                 material_name: currentType.name,

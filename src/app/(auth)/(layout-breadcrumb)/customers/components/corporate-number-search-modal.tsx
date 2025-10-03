@@ -1,26 +1,23 @@
 /* eslint-disable */
-import CommonTable from '@components/common/table'
-import { useTable } from '@refinedev/antd'
-import { useTranslate } from '@refinedev/core'
+import { useCustom, useTranslate } from '@refinedev/core'
 import { Button, Col, Form, Input, Row, Space, TableColumnsType } from 'antd'
 import React from 'react'
 
 // Type cho dữ liệu của popup
 interface ICorporateInfo {
-  id: string
   name: string
-  address: string
   corporate_number: string
 }
 
 // Props cho component modal
 interface CorporateNumberSearchModalProps {
   modalProps: any
+  onSelect?: (record: ICorporateInfo) => void
 }
 
 export const CorporateNumberSearchModal: React.FC<
   CorporateNumberSearchModalProps
-> = ({ modalProps }) => {
+> = ({ modalProps, onSelect }) => {
   const t = useTranslate()
   const [searchForm] = Form.useForm()
 
@@ -29,24 +26,19 @@ export const CorporateNumberSearchModal: React.FC<
   const params = {
     name: '%E5%9B%BD%E7%A8%8E%E5%BA%81%0D%0A',
     type: '02',
-    // mode: '1',
-    // target: '1',
-    // close: '0',
     history: '0',
   }
 
-  const { tableProps, setFilters, setCurrent } = useTable({
-    dataProviderName: 'corporationProvider',
-    resource: 'name',
-    filters: {
-      initial: [
+  const { data } = useCustom({
+    url: `/api/corporate-number`,
+    method: 'post',
+    config: {
+      filters: [
         { field: 'name', operator: 'eq', value: params.name },
         { field: 'type', operator: 'eq', value: params.type },
-        // { field: 'mode', operator: 'eq', value: params.mode },
-        // { field: 'target', operator: 'eq', value: params.target },
-        // { field: 'close', operator: 'eq', value: params.close },
         { field: 'history', operator: 'eq', value: params.history },
       ],
+      payload: params,
     },
   })
 
@@ -59,36 +51,41 @@ export const CorporateNumberSearchModal: React.FC<
     { title: t('customers.modal.name'), dataIndex: 'name', key: 'name' },
     {
       title: t('customers.modal.address'),
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'address_outside',
+      key: 'address_outside',
     },
     {
       title: t('customers.modal.corporate_number'),
       dataIndex: 'corporate_number',
       key: 'corporate_number',
-      render: (_, record) => (
-        <Button
-          type="primary"
-          onClick={() => handleSelect(record)}
-          size="small"
-        >
-          {t('buttons.select')}
-        </Button>
-      ),
+      render: (_, record) => {
+        return (
+          <Space size={20} direction={'vertical'}>
+            {record.corporate_number}
+            <Button
+              type="primary"
+              onClick={() => handleSelect(record)}
+              size="small"
+            >
+              {t('buttons.select')}
+            </Button>
+          </Space>
+        )
+      },
     },
   ]
 
   const handleSearch = (values: { name: string; address: string }) => {
-    setCurrent(1)
-    setFilters([
-      { field: 'name', operator: 'contains', value: values.name },
-      { field: 'address', operator: 'contains', value: values.address },
-    ])
+    // setCurrent(1)
+    // setFilters([
+    //   { field: 'name', operator: 'contains', value: values.name },
+    //   { field: 'address', operator: 'contains', value: values.address },
+    // ])
   }
 
   const handleClear = () => {
     searchForm.resetFields()
-    setFilters([])
+    // setFilters([])
   }
 
   return (
@@ -125,7 +122,12 @@ export const CorporateNumberSearchModal: React.FC<
           </Col>
         </Row>
       </Form>
-      <CommonTable {...tableProps} columns={columns as any} rowKey="id" />
+      {/*<CommonTable*/}
+      {/*  dataSource={data?.data}*/}
+      {/*  columns={columns as any}*/}
+      {/*  rowKey="id"*/}
+      {/*  pagination={false}*/}
+      {/*/>*/}
     </div>
   )
 }
