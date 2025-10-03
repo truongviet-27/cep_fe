@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CoreAutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
+import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
+import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
-import { useSelect } from '@refinedev/antd'
+import { useModalForm, useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import {
@@ -15,6 +17,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Row,
   Select,
   Typography,
@@ -29,7 +32,9 @@ function DetailInfo() {
   const t = useTranslate()
   const form = Form.useFormInstance()
 
+  const mainProductWatch = Form.useWatch('main_product', form)
   const taxRateWatch = Form.useWatch('tax_rate', form)
+  const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
@@ -49,7 +54,14 @@ function DetailInfo() {
       })
     })
 
-    const taxTotal = (sellTotal * tax_rate) / 100
+    let taxTotal = 0
+    if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+      taxTotal = Math.floor((sellTotal * tax_rate) / 100)
+    } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+      taxTotal = Math.ceil((sellTotal * tax_rate) / 100)
+    } else {
+      taxTotal = Number(((sellTotal * tax_rate) / 100).toFixed(0))
+    }
     const sellTotalWithTax = sellTotal + taxTotal
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
@@ -72,17 +84,21 @@ function DetailInfo() {
       form.getFieldValue('main_product'),
       form.getFieldValue('tax_rate'),
     )
-  }, [taxRateWatch])
+  }, [taxRateWatch, mainProductWatch])
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
     onSearch(value) {
       return [
         {
-          field: 'name',
-          operator: 'contains',
+          field: 'q',
+          operator: 'eq',
           value,
         },
       ]
@@ -104,7 +120,7 @@ function DetailInfo() {
         cost_price: 0,
         selling_price: 0,
         profit_margin: 0,
-        is_add_total: false,
+        is_add_total: true,
       },
     ]
 
@@ -120,6 +136,12 @@ function DetailInfo() {
     )
 
     form.setFieldsValue({ main_product: values })
+  }
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleClose = () => {
+    setIsModalOpen(false)
   }
 
   return (
@@ -449,6 +471,12 @@ function DetailInfo() {
                     style={{
                       marginBottom: 0,
                     }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>
@@ -469,8 +497,14 @@ function DetailInfo() {
                     style={{
                       marginBottom: 0,
                     }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
-                    <InputNumber min={1} controls={false} />
+                    <InputNumber min={1} precision={0} controls={false} />
                   </Form.Item>
                 )
               },
@@ -509,10 +543,12 @@ function DetailInfo() {
                     record.index2,
                     'profit_margin',
                   ],
-                  (selling > 0
-                    ? ((selling - cost) / selling) * 100
-                    : 0
-                  ).toFixed(2),
+                  Number(
+                    (selling > 0
+                      ? ((selling - cost) / selling) * 100
+                      : 0
+                    ).toFixed(2),
+                  ),
                 )
 
                 return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
@@ -625,7 +661,7 @@ function DetailInfo() {
                             cost_price: 0,
                             selling_price: 0,
                             profit_margin: 0,
-                            is_add_total: false,
+                            is_add_total: true,
                           },
                         ],
                       },
@@ -664,7 +700,9 @@ function DetailInfo() {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary">カテゴリから入力</Button>
+                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                  カテゴリから入力
+                </Button>
               </Flex>
               <CommonTable
                 columns={columns}
@@ -828,6 +866,16 @@ function DetailInfo() {
           </Col>
         </Row>
       </Card>
+      <Modal
+        open={isModalOpen}
+        onCancel={handleClose}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        title={'カテゴリから商品を追加'}
+        footer={null}
+      >
+        <ProductCategoryModal name="main_product" close={handleClose} />
+      </Modal>
     </Card>
   )
 }

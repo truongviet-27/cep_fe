@@ -10,3 +10,14 @@ export enum QuotaStatus {
   Total = 'total',
 }
 /* eslint-enable @typescript-eslint/no-duplicate-enum-values */
+
+export enum TaxRoundingMethod {
+  RoundDown = 'round_down',
+  RoundUp = 'round_up',
+  RoundNearest = 'round_nearest',
+}
+
+export enum IssueMethod {
+  Manual = 'manual',
+  Automatic = 'automatic',
+}
