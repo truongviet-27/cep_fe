@@ -1,8 +1,7 @@
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
-import type { ProductDetail, ProductPackaging } from '@sdk/hey-api'
+import type { ProductDetail } from '@sdk/hey-api'
 import type { ColumnsType } from 'antd/es/table'
-import { useMemo } from 'react'
 
 interface PackagingUnitPriceProps {
   product: ProductDetail
@@ -41,12 +40,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = ({ product }) => {
     },
   ] as ColumnsType
 
-  const dataSource = useMemo(() => {
-    return (product?.packagings || []).map((item: ProductPackaging) => ({
-      ...item,
-      barcode: product.barcode || '',
-    }))
-  }, [product])
+  const dataSource = product?.packagings || []
 
   return (
     <div>
@@ -59,6 +53,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = ({ product }) => {
         dataSource={dataSource}
         pagination={false}
         scroll={{ y: 55 * 5 }}
+        rowClassName={(_, index) => (!index ? 'hidden' : '')}
       />
     </div>
   )

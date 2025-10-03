@@ -1,9 +1,11 @@
 import { Action } from '@components/common/action'
 import CoreInput from '@components/common/core-input'
 import CommonTable from '@components/common/table'
+import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
+import type { Rank } from '@sdk/hey-api'
 import type { FormInstance } from 'antd'
-import { Button, Checkbox, Form, Radio } from 'antd'
+import { Button, Checkbox, Form } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { MutableRefObject } from 'react'
 
@@ -14,10 +16,12 @@ interface PackagingUnitPriceProps {
   addRef: MutableRefObject<
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >
+
+  ranks?: GetListResponse<Rank>
 }
 
 const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
-  const { form, addRef } = props
+  const { form, addRef, ranks } = props
   const t = useTranslate()
   const { getFieldValue, setFieldValue } = form
   const packagings = Form.useWatch('packagings', form)
@@ -55,20 +59,14 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.packagingName'),
               dataIndex: 'name',
-              width: '20%',
+              width: '15%',
               align: 'left',
               render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'name']}
-                  readOnly={
-                    index === 0 ||
-                    getFieldValue(['packagings', index, 'is_active']) ===
-                      'inactive'
-                  }
+                  readOnly={!index}
                   style={{
-                    ...(index === 0 ||
-                    getFieldValue(['packagings', index, 'is_active']) ===
-                      'inactive'
+                    ...(!index
                       ? {
                           background: 'transparent',
                           paddingLeft: 0,
@@ -87,33 +85,31 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               ),
             },
             {
-              title: t('products.fields.status'),
-              dataIndex: 'is_active',
-              width: '10%',
-              render: (_: unknown, __: unknown, index: number) =>
-                index === 0 ? (
-                  <div>{t('products.text.active')}</div>
-                ) : (
-                  <Form.Item
-                    name={[index, 'is_active']}
-                    style={{
-                      marginBottom: 0,
-                    }}
-                  >
-                    <Radio.Group
-                      options={[
-                        {
-                          value: true,
-                          label: t('products.text.active'),
-                        },
-                        {
-                          value: false,
-                          label: t('products.text.inactive'),
-                        },
-                      ]}
-                    />
-                  </Form.Item>
-                ),
+              title: t('products.fields.barcode'),
+              dataIndex: 'barcode',
+              width: '15%',
+              render: (_: unknown, __: unknown, index: number) => (
+                <CoreInput
+                  name={[index, 'barcode']}
+                  readOnly={!index}
+                  style={{
+                    ...(!index
+                      ? {
+                          background: 'transparent',
+                          paddingLeft: 0,
+                          color: 'inherit',
+                          border: 'none',
+                          boxShadow: 'none',
+                          cursor: 'default',
+                        }
+                      : {}),
+                    width: '100%',
+                  }}
+                  styleForm={{
+                    marginBottom: '0px',
+                  }}
+                />
+              ),
             },
             {
               title: t('products.fields.quantity'),
@@ -122,16 +118,10 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput
                   name={[index, 'quantity_in_package']}
-                  readOnly={
-                    index === 0 ||
-                    getFieldValue(['packagings', index, 'is_active']) ===
-                      'inactive'
-                  }
+                  readOnly={!index}
                   type="number"
                   style={{
-                    ...(index === 0 ||
-                    getFieldValue(['packagings', index, 'is_active']) ===
-                      'inactive'
+                    ...(!index
                       ? {
                           background: 'transparent',
                           paddingLeft: 0,
@@ -155,6 +145,23 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       ['packagings', index, 'selling_price'],
                       (value as number) * getFieldValue('selling_price'),
                     )
+
+                    const rankObject: Record<string, number> = {}
+
+                    ranks?.data?.forEach(({ id, rate }) => {
+                      rankObject[`rank_${id}`] = Math.round(
+                        ((rate ?? 0) / 100) * getFieldValue('selling_price'),
+                      )
+
+                      setFieldValue(
+                        ['packagings', index, `rank_${id}` as keyof object],
+                        Math.round(
+                          ((rate ?? 0) / 100) *
+                            (value as number) *
+                            getFieldValue('selling_price'),
+                        ),
+                      )
+                    })
                   }}
                 />
               ),
@@ -177,21 +184,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               className: 'p-[0px !important]',
               render: (value: string, __: unknown, index: number) => {
                 return (
-                  <CoreInput
-                    name={[index, 'cost_price']}
-                    readOnly={true}
-                    style={{
-                      background: 'transparent',
-                      paddingLeft: 0,
-                      color: 'inherit',
-                      border: 'none',
-                      boxShadow: 'none',
-                      cursor: 'default',
-                    }}
-                    styleForm={{
-                      marginBottom: '0px',
-                    }}
-                  />
+                  getFieldValue('selling_price') *
+                  getFieldValue(['packagings', index, 'quantity_in_package'])
                 )
               },
             },
@@ -203,16 +197,10 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                 return (
                   <CoreInput
                     name={[index, 'selling_price']}
-                    readOnly={
-                      index === 0 ||
-                      getFieldValue(['packagings', index, 'is_active']) ===
-                        t('products.text.inactive')
-                    }
+                    readOnly={!index}
                     type="number"
                     style={{
-                      ...(index === 0 ||
-                      getFieldValue(['packagings', index, 'is_active']) ===
-                        t('products.text.inactive')
+                      ...(!index
                         ? {
                             background: 'transparent',
                             paddingLeft: 0,
@@ -253,10 +241,6 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                         index,
                         'is_standard_price',
                       ])}
-                      disabled={
-                        getFieldValue(['packagings', index, 'is_active']) ===
-                        'inactive'
-                      }
                     />
                   </Form.Item>
                 ),
@@ -284,13 +268,9 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   columns={columns}
                   dataSource={fields}
                   pagination={false}
-                  rowClassName={(_, index) =>
-                    getFieldValue(['packagings', index, 'is_active']) ===
-                    t('products.text.inactive')
-                      ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
-                      : ''
-                  }
+                  // rowClassName="bg-[#BBBBBB] hover:!bg-[#ccc]"
                   scroll={{ y: 55 * 5 }}
+                  rowClassName={(_, index) => (!index ? 'hidden' : '')}
                 />
               </Form.Item>
               <div className="mt-4 text-right">
