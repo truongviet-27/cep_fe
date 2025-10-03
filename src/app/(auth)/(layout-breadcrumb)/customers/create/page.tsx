@@ -30,6 +30,7 @@ export default function CustomerCreatePage() {
     saveButtonProps,
     modalFormCorporate,
     handleFinish,
+    refetchCodeGen,
   } = hookProps
 
   const { close: closeModal, open: modalOpen } = modalFormProps
@@ -104,7 +105,10 @@ export default function CustomerCreatePage() {
       </Form>
 
       <Modal open={modalOpen} onCancel={closeModal} footer={null}>
-        <CodeIssueSettingEdit modalProps={modalFormProps} />
+        <CodeIssueSettingEdit
+          modalProps={modalFormProps}
+          refetchParent={refetchCodeGen}
+        />
       </Modal>
 
       <Modal

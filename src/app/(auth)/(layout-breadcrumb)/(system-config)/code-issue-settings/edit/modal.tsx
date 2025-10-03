@@ -16,7 +16,7 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import React, { useMemo } from 'react'
+import React, { useLayoutEffect, useMemo } from 'react'
 
 import { Edit } from '@/components/crud/edit'
 import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
@@ -29,23 +29,27 @@ import { PRIMARY, RED } from '@utility/color'
 
 type Props = {
   modalProps: any
+  refetchParent?: () => void
 }
 
-export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
+export const CodeIssueSettingEdit: React.FC<Props> = ({
+  modalProps,
+  refetchParent,
+}) => {
   const t = useTranslate()
   const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
     modalProps
 
   const record = queryResult?.data?.data
 
-  const issueMethod = Form.useWatch('issue_method', formProps.form)
+  const issueMethod = Form.useWatch('issue_method', form)
   const isManual = issueMethod === 'manual'
-  const total = Form.useWatch('total', formProps.form)
-  const segment = Form.useWatch('segment', formProps.form)
-  const updated_at = Form.useWatch('updated_at', formProps.form)
-  const serial_length = Form.useWatch('serial_length', formProps.form)
-  const hash_dash = Form.useWatch('hash_dash', formProps.form)
-  const prefix = Form.useWatch('prefix', formProps.form)
+  const total = Form.useWatch('total', form)
+  const segment = Form.useWatch('segment', form)
+  const updated_at = Form.useWatch('updated_at', form)
+  const serial_length = Form.useWatch('serial_length', form)
+  const hash_dash = Form.useWatch('hash_dash', form)
+  const prefix = Form.useWatch('prefix', form)
 
   const previewCode = useMemo(
     () =>
@@ -61,6 +65,12 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
   )
 
   const rule = validateCodeIssueSettingsRule(t)
+
+  useLayoutEffect(() => {
+    if (record) {
+      form.setFieldsValue(record)
+    }
+  }, [record])
 
   return (
     <Edit
@@ -205,7 +215,14 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({ modalProps }) => {
 
       <Space className={'mt-4 flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
-        <Button {...saveButtonProps} type="primary">
+        <Button
+          {...saveButtonProps}
+          onClick={async (e) => {
+            await saveButtonProps.onClick?.(e)
+            refetchParent?.()
+          }}
+          type="primary"
+        >
           {t('permission_settings.buttons.save')}
         </Button>
       </Space>

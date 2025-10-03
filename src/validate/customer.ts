@@ -38,7 +38,7 @@ const zDeliveryAddressRule = (t: any) =>
     ),
     mail: z.optional(
       z
-        .string()
+        .string({ error: t('validation.customer.mail.email') })
         .email({ error: t('validation.customer.mail.email') })
         .max(100, { error: t('validation.customer.mail.max', { max: 100 }) }),
     ),
@@ -121,28 +121,36 @@ export const validateCustomerRule = (t: any) => {
           .string({ error: t('validation.customer.company_type.string') })
           .max(50, {
             error: t('validation.customer.company_type.max', { max: 50 }),
+          })
+          .nullable(),
+      ),
+      company_name_display_format: z
+        .optional(
+          z.enum(['before', 'after'], {
+            error: t('validation.customer.company_name_display_format.in'),
           }),
-      ),
-      company_name_display_format: z.optional(
-        z.enum(['before', 'after'], {
-          error: t('validation.customer.company_name_display_format.in'),
-        }),
-      ),
+        )
+        .nullable(),
       corporate_number: z.optional(
         z
           .string({ error: t('validation.customer.corporate_number.string') })
           .max(50, {
             error: t('validation.customer.corporate_number.max', { max: 50 }),
-          }),
+          })
+          .nullable(),
       ),
       price_rank_id: z.optional(
         z.int({ error: t('validation.customer.price_rank_id.integer') }),
       ),
 
       country: z.optional(
-        z.string({ error: t('validation.customer.country.string') }).max(50, {
-          error: t('validation.customer.country.max', { max: 50 }),
-        }),
+        z
+          .string({ error: t('validation.customer.country.string') })
+          .max(50, {
+            error: t('validation.customer.country.max', { max: 50 }),
+          })
+          .or(z.literal(''))
+          .nullable(),
       ),
       post_code: z
         .string({ error: t('validation.required') })
@@ -196,11 +204,15 @@ export const validateCustomerRule = (t: any) => {
           })
           .nullable(),
       ),
-      industry: z.optional(
-        z.string({ error: t('validation.customer.industry.string') }).max(255, {
-          error: t('validation.customer.industry.max', { max: 255 }),
-        }),
-      ),
+      industry: z
+        .optional(
+          z
+            .string({ error: t('validation.customer.industry.string') })
+            .max(255, {
+              error: t('validation.customer.industry.max', { max: 255 }),
+            }),
+        )
+        .nullable(),
       date_of_establishment: z.any().optional(),
 
       department_in_charge: z

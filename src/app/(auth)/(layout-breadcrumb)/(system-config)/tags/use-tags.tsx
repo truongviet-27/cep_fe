@@ -38,7 +38,14 @@ function useTags() {
   const t = useTranslate()
   const { resource } = useResource()
   const apiUrl = useApiUrl()
-  const { tableProps, searchFormProps, setFilters } = useTable<TagRow>({
+  const [pageSize, setPageSize] = React.useState(10)
+  const {
+    tableProps,
+    searchFormProps,
+    setFilters,
+    setPageSize: setPageSize2,
+    current,
+  } = useTable<TagRow>({
     syncWithLocation: true,
     onSearch: (values: any) => [
       {
@@ -69,9 +76,11 @@ function useTags() {
     row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
   useEffect(() => {
+    setPageSize(10)
+    setPageSize2(10)
     const ds = (tableProps?.dataSource as TagRow[]) ?? []
-    replace(ds.map((r) => ({ ...r, _isNew: false, _isEditing: false })))
-  }, [tableProps?.dataSource, replace])
+    replace(ds.map((r) => ({ _isNew: false, _isEditing: false, ...r })))
+  }, [tableProps?.dataSource, current])
 
   const breadcrumbItems = [
     {
@@ -87,6 +96,7 @@ function useTags() {
   ]
 
   const addNew = () => {
+    setPageSize((total) => total + 1)
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
     insert(0, {
       name: '',
@@ -330,7 +340,13 @@ function useTags() {
     onSaveAll,
     savingAll,
     searchFormProps,
-    tableProps,
+    tableProps: {
+      ...tableProps,
+      pagination: {
+        ...tableProps?.pagination,
+        pageSize,
+      },
+    },
     getRowIdForDnd,
     setFilters,
   }

@@ -222,7 +222,10 @@ export default function EmployeeEdit() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <CodeIssueSettingEdit modalProps={modalFormProps} />
+        <CodeIssueSettingEdit
+          modalProps={modalFormProps}
+          refetchParent={refetch}
+        />
       </Modal>
     </Edit>
   )
