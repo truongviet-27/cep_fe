@@ -136,7 +136,7 @@ function QuotaAction() {
       if (dataBasicInfo?.data && dataProducts?.data && dataHistory?.data) {
         form.setFieldsValue({
           ...dataBasicInfo.data,
-          code: `${dataBasicInfo.data.code}-${dataHistory.data?.clone_history?.length ?? 0 + 1}`,
+          code: `${dataBasicInfo.data.code}-${(dataHistory.data?.clone_history?.length ?? 0) + 1}`,
           customer: {
             value: dataBasicInfo.data.customer_id,
             label: dataBasicInfo.data.customer_name,
@@ -304,7 +304,7 @@ function QuotaAction() {
           resource: resource?.name,
           values: {
             ...values,
-            resource_id: isCloneVersion ? Number(id) : null,
+            source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             status: 'creating',

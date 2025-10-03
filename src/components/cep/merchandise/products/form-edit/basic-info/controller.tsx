@@ -37,7 +37,7 @@ export const useBasicInfoController = (
   const handleAutoNumber = () => {
     refetch().then(() => {
       const codeGen = codeIssueSetting?.data
-      form?.setFieldsValue({ code: codeGen?.preview_code, name: codeGen?.name })
+      form?.setFieldsValue({ code: codeGen?.preview_code })
     })
   }
 
@@ -46,8 +46,13 @@ export const useBasicInfoController = (
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
+    id: codeIssueSetting?.data?.id,
     defaultFormValues: {
       hash_dash: true,
+    },
+    redirect: false,
+    onMutationSuccess: () => {
+      refetch()
     },
   })
 
@@ -64,6 +69,11 @@ export const useBasicInfoController = (
           field: 'is_disable',
           operator: 'eq',
           value: false,
+        },
+        {
+          field: '_per_page',
+          operator: 'eq',
+          value: 30,
         },
       ],
     })

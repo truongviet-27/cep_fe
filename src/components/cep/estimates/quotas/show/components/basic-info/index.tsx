@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  getExpirationDate,
+  getPaymentDueDateLabel,
+} from '@components/cep/estimates/quotas/utils'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -102,7 +106,7 @@ function BasicInfo({ data }: { data: any }) {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'payment_due_date'}>
-              {data?.payment_due_date}
+              {getPaymentDueDateLabel(data?.payment_due_date, t)}
             </Form.Item>
           </Col>
         </Row>
@@ -112,7 +116,7 @@ function BasicInfo({ data }: { data: any }) {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'expiration_date'}>
-              {data?.expiration_date}
+              {getExpirationDate(data?.expiration_date, t)}
             </Form.Item>
           </Col>
         </Row>
