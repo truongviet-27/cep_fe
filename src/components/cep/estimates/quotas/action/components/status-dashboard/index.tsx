@@ -1,3 +1,4 @@
+import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import { Card, Statistic } from 'antd'
 
 const StatusDashboard = ({
@@ -29,7 +30,7 @@ const StatusDashboard = ({
             background: status === item.key ? '#E6F7FF' : '',
           }}
           onClick={() => {
-            onChangeStatus(item.key)
+            onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
           }}
           bodyStyle={{
             width: '100%',
