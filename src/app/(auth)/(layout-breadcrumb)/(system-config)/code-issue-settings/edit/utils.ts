@@ -3,7 +3,7 @@ import type { CodeIssueSettingResponse } from '@sdk/hey-api'
 const pad = (n: number, len: number) =>
   String(Math.max(0, n)).padStart(Math.max(1, len), '0')
 
-const Y = (d: Date) => d.getFullYear().toString() // 2025
+const Y = (d: Date) => d.getFullYear().toString().slice(2)
 const YM = (d: Date, dash: boolean) =>
   dash
     ? `${Y(d)}-${(d.getMonth() + 1).toString().padStart(2, '0')}`
@@ -38,7 +38,7 @@ export function buildCodePreviewFromSetting({
       break
     }
     case 'year_range': {
-      segmentPart = Y(today)
+      segmentPart = `${Y(today)}-`
       break
     }
     case 'year_month': {
@@ -46,7 +46,7 @@ export function buildCodePreviewFromSetting({
       break
     }
     case 'year_month_range': {
-      segmentPart = YM(today, useDash)
+      segmentPart = `${YM(today, useDash)}-`
       break
     }
     case 'year_month_day': {
@@ -54,7 +54,7 @@ export function buildCodePreviewFromSetting({
       break
     }
     case 'year_month_day_range': {
-      segmentPart = YMD(today, useDash)
+      segmentPart = `${YMD(today, useDash)}-`
       break
     }
     case 'none':

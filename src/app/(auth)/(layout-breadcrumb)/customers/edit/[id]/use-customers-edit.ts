@@ -65,6 +65,7 @@ export const useCustomerEdit = () => {
     action: 'edit',
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
+    redirect: false,
   })
 
   const modalFormCorporate = useModal()
