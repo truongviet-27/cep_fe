@@ -143,7 +143,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     )
                     setFieldValue(
                       ['packagings', index, 'selling_price'],
-                      (value as number) * getFieldValue('selling_price'),
+                      (value as number) *
+                        getFieldValue(['packagings', index, 'selling_price']),
                     )
 
                     const rankObject: Record<string, number> = {}

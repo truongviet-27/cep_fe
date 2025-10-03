@@ -1,17 +1,9 @@
+import type { ProductPackagingInputType } from '@interfaces/products'
 import { useForm } from '@refinedev/antd'
 import { useList, useParsed } from '@refinedev/core'
-import type {
-  ProductDetail,
-  ProductPackagingInput,
-  Rank,
-  StoreProductInput,
-} from '@sdk/hey-api'
+import type { ProductDetail, Rank, StoreProductInput } from '@sdk/hey-api'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-
-type ProductPackagingInputType = ProductPackagingInput & {
-  [key: `rank_${number}`]: number | undefined
-}
 
 export type ProductFormType = {
   unit: string
