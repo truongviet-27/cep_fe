@@ -188,7 +188,7 @@ function QuotaDetail() {
           <OptionalInfo data={dataProducts?.data?.optional_product} />
           <Conditions note={queryBasic?.data?.note} />
           <Tags tags={queryBasic?.data?.tags} />
-          <History />
+          <History data={dataHistory?.data} />
 
           {queryBasic?.data?.display && <Reason />}
 
