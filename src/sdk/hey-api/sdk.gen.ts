@@ -52,6 +52,9 @@ import type {
   CodeIssueSettingControllerShowByCodeData,
   CodeIssueSettingControllerShowByCodeResponses,
   CodeIssueSettingControllerShowByCodeErrors,
+  GetCorporateNumberData,
+  GetCorporateNumberResponses,
+  GetCorporateNumberErrors,
   CustomerControllerIndexData,
   CustomerControllerIndexResponses,
   CustomerControllerStoreData,
@@ -267,6 +270,9 @@ import type {
   QuotaControllerCancelQuotaResponses,
   QuotaControllerSendToApproverData,
   QuotaControllerSendToApproverResponses,
+  QuotaControllerPreviewPdfData,
+  QuotaControllerPreviewPdfResponses,
+  QuotaControllerPreviewPdfErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
@@ -351,6 +357,7 @@ import {
   zCodeIssueSettingControllerShowData,
   zEed87Adddef6126Fa051Bd6Cd2D733E6Data,
   zCodeIssueSettingControllerShowByCodeData,
+  zGetCorporateNumberData,
   zCustomerControllerIndexData,
   zCustomerControllerStoreData,
   zCustomerControllerDestroyData,
@@ -425,6 +432,7 @@ import {
   zQuotaControllerMarkCompletedData,
   zQuotaControllerCancelQuotaData,
   zQuotaControllerSendToApproverData,
+  zQuotaControllerPreviewPdfData,
   zQuotaFormSettingControllerShowData,
   zF44B13Bc4971Acac4481E0A6B882787Data,
   zA229A59B851Ad68435Ac0E91E98F32Data,
@@ -932,6 +940,36 @@ export const codeIssueSettingControllerShowByCode = <
     ],
     url: '/api/v1/code-issue-settings/by-code/{code}',
     ...options,
+  })
+}
+
+/**
+ * Search Japanese Corporate Registry
+ * Retrieve corporate number information from the Japanese Corporate Registry API based on company name
+ */
+export const getCorporateNumber = <ThrowOnError extends boolean = false>(
+  options: Options<GetCorporateNumberData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    GetCorporateNumberResponses,
+    GetCorporateNumberErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zGetCorporateNumberData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/corporate-number',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 
@@ -3077,6 +3115,36 @@ export const quotaControllerSendToApprover = <
       },
     ],
     url: '/api/v1/quotas/send-to-approver',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Preview quota PDF
+ * Preview quota PDF as base64 string. Useful for displaying PDF in browser or download.
+ */
+export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
+  options: Options<QuotaControllerPreviewPdfData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerPreviewPdfResponses,
+    QuotaControllerPreviewPdfErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerPreviewPdfData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/{id}/preview-pdf',
     ...options,
     headers: {
       'Content-Type': 'application/json',

@@ -19,7 +19,7 @@ import {
 import type { FormInstance } from 'antd/lib'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import BasicInfo from './basic-info'
 import PackagingUnitPrice from './packaging-unit-price'
@@ -32,10 +32,14 @@ const { Title } = Typography
 const ProductFormContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const [{ methods, isLoadingSubmit, isUpdateMode }] = useProductForm()
+  const [
+    { ranks, methods, isLoadingSubmit, isUpdateMode },
+    { handleOnSubmit },
+  ] = useProductForm()
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
+  const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(false)
 
   return (
     <PageContainer
@@ -79,6 +83,7 @@ const ProductFormContainer: React.FC = () => {
           labelCol={{ span: 6 }}
           labelAlign="left"
           className="mb-[24px]"
+          onFinish={handleOnSubmit}
         >
           <Collapse
             items={[
@@ -93,6 +98,9 @@ const ProductFormContainer: React.FC = () => {
                   <BasicInfo
                     form={form as unknown as FormInstance<ProductFormType>}
                     addRef={addRef}
+                    isAllowedSaveButton={isAllowedSaveButton}
+                    setIsAllowedSaveButton={setIsAllowedSaveButton}
+                    ranks={ranks}
                   />
                 ),
               },
@@ -152,6 +160,7 @@ const ProductFormContainer: React.FC = () => {
                 children: (
                   <PriceGroup
                     form={form as unknown as FormInstance<ProductFormType>}
+                    ranks={ranks}
                   />
                 ),
               },
@@ -216,6 +225,7 @@ const ProductFormContainer: React.FC = () => {
                 type="primary"
                 htmlType="submit"
                 loading={isLoadingSubmit}
+                disabled={!isAllowedSaveButton}
               >
                 {isUpdateMode
                   ? t('products.buttons.save')
