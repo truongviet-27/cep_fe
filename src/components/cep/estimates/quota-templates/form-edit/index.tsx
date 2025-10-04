@@ -11,6 +11,7 @@ import {
   Flex,
   Form,
   Space,
+  Spin,
   Typography,
 } from 'antd'
 import Link from 'next/link'
@@ -28,7 +29,7 @@ const { Title } = Typography
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const { isUpdateMode, methods } = useController()
+  const { isUpdateMode, isLoading, methods } = useController()
 
   return (
     <PageContainer
@@ -63,72 +64,67 @@ const QuoteTemplateFormEditContainer: FC = () => {
           : t('quota_templates.form.titleRegister')
       }
     >
-      <Form
-        {...methods.formProps}
-        labelCol={{ span: 2 }}
-        labelAlign="left"
-        onFinish={(values) => {
-          console.log('values', values)
-        }}
-      >
-        <BasicInfo />
-        <DetailInfo />
-        <OptionalInfo />
-        <NoteForm />
-        <TagForm />
-        <Divider />
-        {isUpdateMode && (
-          <ShowMoreInfo
-            descriptions={[
-              {
-                title: t('approve_routes.show.creator'),
-                value: '---',
-              },
-              {
-                title: t('approve_routes.show.updater'),
-                value: '---',
-              },
-            ]}
-          />
-        )}
+      <Spin spinning={isLoading}>
+        <Form {...methods.formProps} labelCol={{ span: 2 }} labelAlign="left">
+          <BasicInfo />
+          <DetailInfo />
+          <OptionalInfo />
+          <NoteForm />
+          <TagForm />
+          <Divider />
+          {isUpdateMode && (
+            <ShowMoreInfo
+              descriptions={[
+                {
+                  title: t('approve_routes.show.creator'),
+                  value: '---',
+                },
+                {
+                  title: t('approve_routes.show.updater'),
+                  value: '---',
+                },
+              ]}
+            />
+          )}
 
-        <Flex
-          justify="space-between"
-          style={{
-            marginTop: 40,
-          }}
-        >
-          <Space>
-            {isUpdateMode && (
-              <DeleteButton
-                icon={null}
-                size={'small'}
-                onSuccess={() => {
+          <Flex
+            justify="space-between"
+            style={{
+              marginTop: 40,
+            }}
+          >
+            <Space>
+              {isUpdateMode && (
+                <DeleteButton
+                  icon={null}
+                  size={'small'}
+                  onSuccess={() => {
+                    go({
+                      to: '/quota-templates',
+                    })
+                  }}
+                />
+              )}
+            </Space>
+            <Space className="items-end">
+              <Button {...methods.saveButtonProps} type="primary">
+                {isUpdateMode ? t('buttons.save') : t('buttons.create')}
+              </Button>
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={() => {
                   go({
                     to: '/quota-templates',
                   })
                 }}
-              />
-            )}
-          </Space>
-          <Space className="items-end">
-            <Button {...methods.saveButtonProps} type="primary">
-              {isUpdateMode ? t('buttons.save') : t('buttons.create')}
-            </Button>
-            <Button
-              color="primary"
-              variant="outlined"
-              onClick={() => {
-                go({
-                  to: '/quota-templates',
-                })
-              }}
-            >
-              {t('buttons.back')}
-            </Button>
-          </Space>
-        </Flex>
-      </Form>
+              >
+                {t('buttons.back')}
+              </Button>
+            </Space>
+          </Flex>
+        </Form>
+      </Spin>
     </PageContainer>
   )
 }

@@ -24,12 +24,16 @@ const TagForm: React.FC = () => {
       </Title>
       <Form.Item name="tags">
         <Select
+          {...selectProps}
           className="!w-96"
           allowClear
           showSearch
           placeholder={'選択してください'}
           mode="multiple"
-          {...selectProps}
+          defaultValue={{
+            value: 1,
+            label: '選択してください',
+          }}
         />
       </Form.Item>
     </>

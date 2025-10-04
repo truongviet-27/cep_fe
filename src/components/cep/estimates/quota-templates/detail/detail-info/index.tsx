@@ -1,15 +1,12 @@
 import CommonTable from '@components/common/table'
-import type {
-  QuotaTemplateMainProductType,
-  QuotaTemplateProductType,
-} from '@interfaces/quota-templates'
+import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import type {
-  QuotaTemplateProductGroupRequest,
-  QuotaTemplateProductItemRequest,
+  QuotaTemplateProductGroupResponse,
+  QuotaTemplateProductResponse,
 } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { Col, Flex, Form, InputNumber, Row, Typography } from 'antd'
+import { Checkbox, Col, Flex, Form, InputNumber, Row, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 import type { FC } from 'react'
@@ -17,9 +14,12 @@ import { useState } from 'react'
 
 const { Title, Text } = Typography
 
-const DetailInfo: FC = () => {
-  const taxRateWatch = 1
-  const mainProducts = [] as QuotaTemplateMainProductType[]
+interface Props {
+  detail: QuoteTemplateDetailType
+}
+
+const DetailInfo: FC<Props> = (props) => {
+  const { detail } = props
 
   const [costTotal] = useState(0)
   const [profitRate] = useState(0)
@@ -27,8 +27,8 @@ const DetailInfo: FC = () => {
   const [sellTotalWithTax] = useState(0)
   const t = useTranslate()
 
-  const dataSource = mainProducts.flatMap(
-    (item: QuotaTemplateProductGroupRequest, index: number) => [
+  const dataSource = (detail?.main_product ?? []).flatMap(
+    (item: QuotaTemplateProductGroupResponse, index: number) => [
       {
         index,
         key: `header-${index}`,
@@ -36,7 +36,7 @@ const DetailInfo: FC = () => {
         title: item.group_name,
       },
       ...(item.products ?? []).flatMap(
-        (item2: QuotaTemplateProductItemRequest, index2: number) => [
+        (item2: QuotaTemplateProductResponse, index2: number) => [
           {
             index,
             index2,
@@ -54,15 +54,15 @@ const DetailInfo: FC = () => {
       key: 'code',
       align: 'left',
       width: 200,
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return {
-            children: <></>,
-            props: { colSpan: columns.length - 1 },
+            children: record.title,
+            props: { colSpan: columns.length },
           }
         }
 
-        return <></>
+        return value
       },
     },
     {
@@ -71,81 +71,92 @@ const DetailInfo: FC = () => {
       key: 'name',
       align: 'left',
       width: 200,
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
+        return value
       },
     },
     {
       title: '単位',
-      dataIndex: 'unit',
-      key: 'unit',
-      render: (_, record) => {
+      dataIndex: 'unit_name',
+      key: 'unit_name',
+      render: (unit_name, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return unit_name
       },
     },
     {
       title: '荷姿',
-      dataIndex: 'package_id',
-      key: 'package_id',
+      dataIndex: 'package_name',
+      key: 'package_name',
       width: 200,
       align: 'left',
-      render: (_, record) => {
+      render: (package_name, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return package_name
       },
     },
     {
       title: '原価',
       dataIndex: 'cost_price',
       key: 'cost_price',
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return value
       },
     },
     {
       title: '売単価',
       dataIndex: 'selling_price',
       key: 'selling_price',
-      render: (_, record) => {
+      render: (selling_price, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return selling_price
       },
     },
     {
       title: '数量',
       dataIndex: 'quantity',
       key: 'quantity',
-      render: (_, record) => {
+      render: (quantity, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return quantity
       },
     },
     {
       title: '利益率',
       dataIndex: 'profit_margin',
       key: 'profit_margin',
-      render: (_, record) => {
+      render: (profit_margin, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
+        return profit_margin
+      },
+    },
+    {
+      title: '合計計算',
+      dataIndex: 'is_add_total',
+      key: 'is_add_total',
+      render: (value, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return <Checkbox checked={value} disabled />
       },
     },
     {
@@ -157,18 +168,7 @@ const DetailInfo: FC = () => {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
-      },
-    },
-    {
-      title: '合計計算',
-      dataIndex: 'is_add_total',
-      key: 'is_add_total',
-      render: (_, record) => {
-        if (record.isHeader) {
-          return { props: { colSpan: 0 } }
-        }
-        return <></>
+        return record.quantity * record.selling_price
       },
     },
   ]
@@ -191,10 +191,10 @@ const DetailInfo: FC = () => {
           }
           pagination={false}
           summary={() => {
-            const total = (mainProducts ?? []).reduce(
-              (accGroup: number, group: QuotaTemplateMainProductType) => {
+            const total = (detail?.main_product ?? []).reduce(
+              (accGroup: number, group: QuotaTemplateProductGroupResponse) => {
                 const groupTotal = (group.products ?? []).reduce(
-                  (accProd: number, prod: QuotaTemplateProductType) => {
+                  (accProd: number, prod: QuotaTemplateProductResponse) => {
                     if (prod.is_add_total) {
                       return (
                         accProd +
@@ -272,7 +272,7 @@ const DetailInfo: FC = () => {
                 fontWeight: 700,
               }}
             >
-              消費税金額（{taxRateWatch}%）
+              消費税金額（{detail?.tax_rate}%）
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 500 }}>
               {taxTotal || 0}

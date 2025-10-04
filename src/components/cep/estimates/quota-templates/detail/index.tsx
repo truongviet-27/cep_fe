@@ -1,11 +1,22 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
+import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { DeleteButton } from '@refinedev/antd'
-import { useGo, useTranslate } from '@refinedev/core'
+import { useGo, useShow, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Divider, Flex, Space, Typography } from 'antd'
+import {
+  Breadcrumb,
+  Button,
+  Divider,
+  Flex,
+  Space,
+  Spin,
+  Typography,
+} from 'antd'
+import dayjs from 'dayjs'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import type { FC } from 'react'
 
 import BasicInfo from './basic-info'
@@ -19,6 +30,17 @@ const { Title } = Typography
 const QuoteTemplateDetailContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
+  const { id } = useParams<{ id: string }>()
+
+  const { query } = useShow<QuoteTemplateDetailType>({
+    resource: 'quota-templates',
+    id: Number(id),
+    queryOptions: {
+      enabled: !!id,
+    },
+  })
+
+  const quoteTemplateDetail = query.data?.data
 
   return (
     <PageContainer
@@ -47,71 +69,81 @@ const QuoteTemplateDetailContainer: FC = () => {
       }
       title={t('quota_templates.detail.title')}
     >
-      <>
-        <BasicInfo />
-        <DetailInfo />
-        <OptionalInfo />
-        <NoteForm />
-        <TagForm />
-        <Divider />
-        <ShowMoreInfo
-          descriptions={[
-            {
-              title: t('approve_routes.show.creator'),
-              value: '',
-            },
-            {
-              title: t('approve_routes.show.updater'),
-              value: '',
-            },
-          ]}
-        />
-        <Flex
-          justify="space-between"
-          style={{
-            marginTop: 40,
-          }}
-        >
-          <Space>
-            <DeleteButton
-              icon={null}
-              size={'small'}
-              onSuccess={() => {
-                go({
-                  to: '/quota-templates',
-                })
-              }}
-            />
-          </Space>
-          <Space className="items-end">
-            <Button color="primary" variant="outlined">
-              見積作成
-            </Button>
+      {quoteTemplateDetail ? (
+        <Spin spinning={query.isLoading}>
+          <BasicInfo detail={quoteTemplateDetail} />
+          <DetailInfo detail={quoteTemplateDetail} />
+          <OptionalInfo
+            optionalProducts={quoteTemplateDetail?.optional_product ?? []}
+          />
+          <NoteForm note={quoteTemplateDetail?.note ?? ''} />
+          <TagForm tags={quoteTemplateDetail?.tags ?? []} />
+          <Divider />
+          <ShowMoreInfo
+            descriptions={[
+              {
+                title: t('common.created_by'),
+                value: quoteTemplateDetail?.author?.name
+                  ? `${quoteTemplateDetail.author.name} ${dayjs(quoteTemplateDetail?.created_at).format('YYYY/MM/DD HH:mm')}`
+                  : '---',
+              },
+              {
+                title: t('common.updated_by'),
+                value: quoteTemplateDetail?.editor?.name
+                  ? `${quoteTemplateDetail.editor.name} ${dayjs(quoteTemplateDetail?.updated_at).format('YYYY/MM/DD HH:mm')}`
+                  : '---',
+              },
+            ]}
+          />
+          <Flex
+            justify="space-between"
+            style={{
+              marginTop: 40,
+            }}
+          >
+            <Space>
+              <DeleteButton
+                icon={null}
+                size={'small'}
+                onSuccess={() => {
+                  go({
+                    to: '/quota-templates',
+                  })
+                }}
+              />
+            </Space>
+            <Space className="items-end">
+              <Button color="primary" variant="outlined">
+                見積作成
+              </Button>
 
-            <Button
-              type="primary"
-              onClick={() => {
-                go({
-                  to: `/quota-templates/edit/1`,
-                })
-              }}
-            >
-              {t('buttons.edit')}
-            </Button>
-            <Button
-              color="primary"
-              variant="outlined"
-              onClick={() => {
-                go({
-                  to: '/quotas',
-                })
-              }}
-            >
-              {t('buttons.back')}
-            </Button>
-          </Space>
-        </Flex>
-      </>
+              <Button
+                type="primary"
+                onClick={() => {
+                  go({
+                    to: `/quota-templates/edit/${quoteTemplateDetail.id}`,
+                  })
+                }}
+              >
+                {t('buttons.edit')}
+              </Button>
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={() => {
+                  go({
+                    to: '/quotas',
+                  })
+                }}
+              >
+                {t('buttons.back')}
+              </Button>
+            </Space>
+          </Flex>
+        </Spin>
+      ) : (
+        <></>
+      )}
     </PageContainer>
   )
 }

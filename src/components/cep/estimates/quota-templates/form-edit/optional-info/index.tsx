@@ -30,6 +30,7 @@ const OptionalInfo: FC = () => {
   const t = useTranslate()
   const {
     form,
+    optionalProducts,
     selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
@@ -155,13 +156,22 @@ const OptionalInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'unit',
-                ])
+                return (
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'unit',
+                  ]) ??
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'unit_name',
+                  ])
+                )
               },
             },
             {
@@ -207,6 +217,17 @@ const OptionalInfo: FC = () => {
                           value,
                         )
                       }
+                      defaultOptions={
+                        optionalProducts?.[record.index].products[record.index2]
+                          ?.packagings ?? []
+                      }
+                      defaultValue={form.getFieldValue([
+                        'optional_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'package_id',
+                      ])}
                     />
                   </Form.Item>
                 )
@@ -220,13 +241,15 @@ const OptionalInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'cost_price',
-                ])
+                return form
+                  .getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ])
+                  .toLocaleString()
               },
             },
             {
@@ -342,7 +365,7 @@ const OptionalInfo: FC = () => {
                     record.index2,
                     'selling_price',
                   ]) || 0
-                return quantity * selling
+                return (quantity * selling).toLocaleString()
               },
             },
             {

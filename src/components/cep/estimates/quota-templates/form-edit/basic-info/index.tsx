@@ -4,6 +4,11 @@ import { ConsumptionTaxEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
+  CONSUMPTION_TAX,
+  EXPIRATION_DATE,
+  PAYMENT_DUE_DATE,
+} from '@utility/constant'
+import {
   DatePicker,
   Flex,
   Form,
@@ -128,38 +133,7 @@ const BasicInfo: React.FC = () => {
           className="!w-64"
           allowClear
           showSearch
-          options={[
-            {
-              value: 'monthly_25',
-              label: t('tenant_settings.paymentDueDate.options.monthly_25th'),
-            },
-            {
-              value: 'monthly_10',
-              label: t('tenant_settings.paymentDueDate.options.monthly_10th'),
-            },
-            {
-              value: 'net_30_from_delivery',
-              label: t(
-                'tenant_settings.paymentDueDate.options.30_days_after_delivery',
-              ),
-            },
-            {
-              value: 'net_30_from_invoice',
-              label: t(
-                'tenant_settings.paymentDueDate.options.30_days_after_invoice',
-              ),
-            },
-            {
-              value: 'end_of_month_next',
-              label: t('tenant_settings.paymentDueDate.options.eom_next_eom'),
-            },
-            {
-              value: 'end_of_month_after_next',
-              label: t(
-                'tenant_settings.paymentDueDate.options.eom_next_next_eom',
-              ),
-            },
-          ]}
+          options={Object.values(PAYMENT_DUE_DATE)}
         />
       </Form.Item>
       <Form.Item
@@ -171,40 +145,7 @@ const BasicInfo: React.FC = () => {
           className="!w-64"
           allowClear
           showSearch
-          options={[
-            {
-              value: 'days_7',
-              label: t('tenant_settings.validityPeriod.options.days_7'),
-            },
-            {
-              value: 'days_14',
-              label: t('tenant_settings.validityPeriod.options.days_14'),
-            },
-            {
-              value: 'days_30',
-              label: t('tenant_settings.validityPeriod.options.days_30'),
-            },
-            {
-              value: 'days_45',
-              label: t('tenant_settings.validityPeriod.options.days_45'),
-            },
-            {
-              value: 'days_60',
-              label: t('tenant_settings.validityPeriod.options.days_60'),
-            },
-            {
-              value: 'months_3',
-              label: t('tenant_settings.validityPeriod.options.months_3'),
-            },
-            {
-              value: 'months_6',
-              label: t('tenant_settings.validityPeriod.options.months_6'),
-            },
-            {
-              value: 'years_1',
-              label: t('tenant_settings.validityPeriod.options.year_1'),
-            },
-          ]}
+          options={Object.values(EXPIRATION_DATE)}
         />
       </Form.Item>
       <Flex gap={16}>
@@ -217,20 +158,7 @@ const BasicInfo: React.FC = () => {
           >
             <Radio.Group
               defaultValue={ConsumptionTaxEnum.EXCLUSIVE}
-              options={[
-                {
-                  value: ConsumptionTaxEnum.EXCLUSIVE,
-                  label: '外税',
-                },
-                {
-                  value: ConsumptionTaxEnum.INCLUSIVE,
-                  label: '内税',
-                },
-                {
-                  value: ConsumptionTaxEnum.EXTERNAL,
-                  label: '税抜',
-                },
-              ]}
+              options={Object.values(CONSUMPTION_TAX)}
             />
           </Form.Item>
         </div>

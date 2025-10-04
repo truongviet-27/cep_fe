@@ -130,6 +130,15 @@ const DetailInfo: FC = () => {
                   return { props: { colSpan: 0 } }
                 }
 
+                const defaultValue = {
+                  value:
+                    mainProducts?.[record.index]?.products?.[record.index2]
+                      ?.product_id || null,
+                  label:
+                    mainProducts?.[record.index]?.products?.[record.index2]
+                      ?.product_name || null,
+                }
+
                 return (
                   <Form.Item
                     name={[
@@ -152,14 +161,7 @@ const DetailInfo: FC = () => {
                       onChange={(value) =>
                         onChangeProductName(value, record.index, record.index2)
                       }
-                      defaultValue={{
-                        value:
-                          mainProducts[record.index].products[record.index2]
-                            .product_id || null,
-                        label:
-                          mainProducts[record.index].products[record.index2]
-                            ?.product_name || null,
-                      }}
+                      defaultValue={defaultValue}
                     />
                   </Form.Item>
                 )
@@ -173,13 +175,22 @@ const DetailInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return form.getFieldValue([
-                  'main_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'unit',
-                ])
+                return (
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'unit',
+                  ]) ??
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'unit_name',
+                  ])
+                )
               },
             },
             {
@@ -227,6 +238,13 @@ const DetailInfo: FC = () => {
                         mainProducts[record.index].products[record.index2]
                           ?.packagings ?? []
                       }
+                      defaultValue={form.getFieldValue([
+                        'main_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'package_id',
+                      ])}
                     />
                   </Form.Item>
                 )
@@ -240,13 +258,15 @@ const DetailInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return form.getFieldValue([
-                  'main_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'cost_price',
-                ])
+                return form
+                  .getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ])
+                  .toLocaleString()
               },
             },
             {
@@ -362,7 +382,7 @@ const DetailInfo: FC = () => {
                     record.index2,
                     'selling_price',
                   ]) || 0
-                return quantity * selling
+                return (quantity * selling).toLocaleString()
               },
             },
             {
@@ -506,7 +526,7 @@ const DetailInfo: FC = () => {
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
                       <Table.Summary.Cell index={6} align="center">
-                        {totalPriceWatch}
+                        {totalPriceWatch?.toLocaleString()}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
@@ -538,8 +558,8 @@ const DetailInfo: FC = () => {
             >
               原価合計
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {totalPriceWatch || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(totalPriceWatch || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_price" hidden>
               <InputNumber />
@@ -564,8 +584,8 @@ const DetailInfo: FC = () => {
             >
               消費税金額（{taxRateWatch}%）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {taxTotal || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(taxTotal || 0).toLocaleString()}
             </Text>
             <Form.Item name="consumption_tax_amount" hidden>
               <InputNumber />
@@ -590,7 +610,7 @@ const DetailInfo: FC = () => {
             >
               合計利益率
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               {profitRate.toFixed(2) || 0}%
             </Text>
             <Form.Item name="total_profit_margin" hidden>
@@ -616,8 +636,8 @@ const DetailInfo: FC = () => {
             >
               合計金額（税込）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {sellTotalWithTax || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{sellTotalWithTax.toLocaleString() || 0}
             </Text>
             <Form.Item name="total_price_tax_included" hidden>
               <InputNumber />

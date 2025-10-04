@@ -1,5 +1,6 @@
 import type {
   QuotaTemplateProductGroupRequest,
+  QuotaTemplateProductGroupResponse,
   QuotaTemplateProductItemRequest,
   QuotaTemplateStoreRequest,
 } from '@sdk/hey-api'
@@ -20,6 +21,7 @@ export type QuotaTemplateMainProductType = QuotaTemplateProductGroupRequest & {
 
 export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
   unit?: string
+  unit_name?: string
   product_id?: number | null
   product_name?: string
   packagings?: Array<{
@@ -75,4 +77,49 @@ export type SearchQuotaTemplateType = {
   start_to_end_date?: [Dayjs, Dayjs]
   start_date?: string
   end_date?: string
+}
+
+export type QuoteTemplateDetailType = {
+  id?: number
+  tenant_id?: string
+  name?: string
+  description?: string
+  type?: 'normal' | 'channel_limited'
+  delivery_method?: string
+  payment_due_date?:
+    | 'monthly_25'
+    | 'monthly_10'
+    | 'net_30_from_delivery'
+    | 'net_30_from_invoice'
+    | 'end_of_month_next'
+    | 'end_of_month_after_next'
+  expiration_date?:
+    | 'days_7'
+    | 'days_14'
+    | 'days_45'
+    | 'days_60'
+    | 'months_3'
+    | 'months_6'
+    | 'years_1'
+  consumption_tax?: 'exclusive' | 'inclusive' | 'external'
+  tax_rate?: number
+  note?: string
+  number_product?: number
+  total_price?: number
+  tags?: Array<{
+    id?: number
+    name?: string
+  }>
+  main_product?: Array<QuotaTemplateProductGroupResponse>
+  optional_product?: Array<QuotaTemplateProductGroupResponse>
+  created_at?: string
+  updated_at?: string
+  author?: {
+    id?: number
+    name?: string
+  } | null
+  editor?: {
+    id?: number
+    name?: string
+  } | null
 }

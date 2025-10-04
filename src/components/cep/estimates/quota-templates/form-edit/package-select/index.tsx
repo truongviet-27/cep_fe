@@ -6,11 +6,12 @@ import { useMemo } from 'react'
 interface Props {
   productId?: number
   defaultOptions?: { id: number; name: string }[]
+  defaultValue?: number
   onChange?: (value: number) => void
 }
 
 const PackageSelect: React.FC<Props> = (props) => {
-  const { productId, defaultOptions, onChange } = props
+  const { productId, defaultOptions, defaultValue, onChange } = props
 
   const { query: productResponse } = useShow<ProductDetail>({
     resource: 'products',
@@ -47,6 +48,7 @@ const PackageSelect: React.FC<Props> = (props) => {
           .toLowerCase()
           .localeCompare((optionB?.label ?? '').toLowerCase())
       }
+      defaultValue={defaultValue}
       onChange={onChange}
     />
   )

@@ -111,6 +111,7 @@ export const useController = () => {
 
   return {
     form,
+    optionalProducts,
     selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
