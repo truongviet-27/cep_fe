@@ -780,12 +780,6 @@
       "actions": "操作"
     }
   },
-  "common": {
-    "created_by": "登録者",
-    "updated_by": "更新者",
-    "created_at": "作成日",
-    "not_set": "未設定"
-  },
   "csv": {
     "title": "[マスタ名] CSV一括登録",
     "step_1": {
@@ -946,15 +940,15 @@
       "percentage": "掛率"
     }
   },
-  "agreed_price": {
-    "agreed_price": "決定見積",
+  "agreed_prices": {
+    "agreed_prices": "決定見積",
     "tab": {
       "decided_estimate_list": "決定見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
     },
     "summary": {
       "all": "すべて",
-      "valid": "有効",
+      "active": "有効",
       "nearing_expiration": "期限間近",
       "expired": "期限切れ"
     },
@@ -981,7 +975,7 @@
       "operation": "操作"
     },
     "status": {
-      "valid": "有効",
+      "active": "有効",
       "expired": "期限切れ",
       "nearing_expiration": "期限間近"
     },
@@ -990,6 +984,17 @@
       "clear": "クリア",
       "add_from_estimate_list": "見積一覧から追加",
       "update": "更新"
+    },
+    "modal": {
+      "update_title": "決定見積更新",
+      "estimate_no": "見積番号",
+      "title": "タイトル",
+      "customer": "取引先",
+      "applicable_start": "適用開始日",
+      "applicable_end": "適用終了日",
+      "note_next_day": "自動で終了日の翌日",
+      "registry": "登録者：",
+      "updater": "更新者："
     },
     "customer_tab": {
       "search": {
@@ -1006,6 +1011,9 @@
         "operation": "操作"
       }
     }
+  },
+  "validation": {
+    "required": "必須項目です"
   },
   "common": {
     "created_by": "登録者",

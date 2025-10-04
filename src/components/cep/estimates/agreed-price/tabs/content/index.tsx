@@ -18,7 +18,7 @@ function TabsAgreedPriceContent({ index }: { index: number }) {
   return (
     <div className="space-y-6">
       <div className="py-8 text-center text-gray-500">
-        {t('agreed_price.tab.agreed_price_by_customer')} -{' '}
+        {t('agreed_prices.tab.agreed_price_by_customer')} -{' '}
         {t('common.coming_soon')}
       </div>
     </div>

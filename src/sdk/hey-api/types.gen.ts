@@ -1836,6 +1836,7 @@ export type ProductCustomerPricingPackaging = {
   is_active?: boolean
   is_rate_based?: boolean
   is_standard_price?: boolean
+  is_default_packaging?: boolean
   /**
    * Customer-specific rank price for this packaging
    */
@@ -1899,6 +1900,7 @@ export type ProductPackaging = {
   selling_price?: number
   is_rate_based?: boolean
   is_standard_price?: boolean
+  is_default_packaging?: boolean
   rank_prices?: Array<PackagingRankPrice>
 }
 
@@ -2147,6 +2149,68 @@ export type ApproveQuotaStepRequest = Array<{
    */
   comment?: string | null
 }>
+
+/**
+ * Product item for a specific customer from quota agreed prices
+ */
+export type QuotaAgreedPriceCustomerProduct = {
+  product_id?: number
+  product_name?: string
+  unit_name?: string
+  selling_price?: number
+  quantity?: number
+  start_date?: string
+  end_date?: string
+}
+
+/**
+ * Response containing customer info and list of products from quota agreed prices
+ */
+export type QuotaAgreedPriceCustomerProductsResponse = {
+  data?: {
+    customer_id?: number
+    customer_code?: string
+    customer_name?: string
+    department_name?: string
+    rank_code?: string
+    total_products?: number
+    products?: Array<QuotaAgreedPriceCustomerProduct>
+  }
+  message?: string
+}
+
+/**
+ * Customer item from quota agreed prices list
+ */
+export type QuotaAgreedPriceCustomer = {
+  customer_id?: number
+  customer_code?: string
+  customer_name?: string
+  department_name?: string
+  rank_code?: string
+  total_products?: number
+}
+
+/**
+ * Paginated response for customers from quota agreed prices
+ */
+export type QuotaAgreedPriceCustomersPaginatedResponse = {
+  /**
+   * Paginated data and links for customers
+   */
+  data?: {
+    /**
+     * Array of customers
+     */
+    items?: Array<QuotaAgreedPriceCustomer>
+    meta?: Meta
+    links?: QuotaAgreedPriceLinks
+  }
+  /**
+   * Response message
+   */
+  message?: string
+}
 
 /**
  * Quota agreed price details
@@ -4769,9 +4833,22 @@ export type CodeIssueSettingControllerShowByCodeResponse =
   CodeIssueSettingControllerShowByCodeResponses[keyof CodeIssueSettingControllerShowByCodeResponses]
 
 export type GetCorporateNumberData = {
-  body: CorporateNumberRequest
+  body?: never
   path?: never
-  query?: never
+  query: {
+    /**
+     * Company name to search for
+     */
+    name: string
+    /**
+     * Response format type: 01 (CSV Shift-JIS), 02 (CSV Unicode), 12 (XML Unicode)
+     */
+    type?: '01' | '02' | '12'
+    /**
+     * Include historical data: 0 (no history), 1 (include history)
+     */
+    history?: 0 | 1
+  }
   url: '/api/v1/corporate-number'
 }
 
@@ -7759,28 +7836,7 @@ export type QuotaAgreedPriceControllerGetCustomerListResponses = {
   /**
    * Customer list retrieved successfully
    */
-  200: {
-    success?: boolean
-    message?: string
-    data?: {
-      data?: Array<{
-        customer_id?: number
-        customer_code?: string
-        customer_name?: string
-        department_name?: string
-        rank_code?: string
-        total_products?: number
-      }>
-      pagination?: {
-        current_page?: number
-        per_page?: number
-        total?: number
-        last_page?: number
-        from?: number
-        to?: number
-      }
-    }
-  }
+  200: QuotaAgreedPriceCustomersPaginatedResponse
 }
 
 export type QuotaAgreedPriceControllerGetCustomerListResponse =
@@ -7825,27 +7881,7 @@ export type QuotaAgreedPriceControllerGetCustomerProductsResponses = {
   /**
    * Customer products retrieved successfully
    */
-  200: {
-    success?: boolean
-    message?: string
-    data?: {
-      customer_id?: number
-      customer_code?: string
-      customer_name?: string
-      department_name?: string
-      rank_code?: string
-      total_products?: number
-      products?: Array<{
-        product_id?: number
-        product_name?: string
-        unit_name?: string
-        selling_price?: number
-        quantity?: number
-        start_date?: string
-        end_date?: string
-      }>
-    }
-  }
+  200: QuotaAgreedPriceCustomerProductsResponse
 }
 
 export type QuotaAgreedPriceControllerGetCustomerProductsResponse =
@@ -8543,14 +8579,9 @@ export type QuotaControllerSendToApproverResponse =
 
 export type QuotaControllerPreviewPdfData = {
   body: QuotaUpdateRequest
-  path: {
-    /**
-     * Quota ID
-     */
-    id: number
-  }
+  path?: never
   query?: never
-  url: '/api/v1/quotas/{id}/preview-pdf'
+  url: '/api/v1/quotas/preview-pdf'
 }
 
 export type QuotaControllerPreviewPdfErrors = {

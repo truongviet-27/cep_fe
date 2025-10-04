@@ -8,19 +8,20 @@ function TabsAgreedPrice({
   isEdit,
   onChange,
   isLoading,
+  activeKey,
 }: {
   isEdit: boolean
   onChange: (value: string) => void
   isLoading: boolean
-  indexTab: number
+  activeKey?: string
 }) {
   const t = useTranslate()
 
   const items = useMemo(() => {
     return [
       {
-        key: 'decided_estimate_list',
-        label: t('agreed_price.tab.decided_estimate_list'),
+        key: 'agreed_price_quota',
+        label: t('agreed_prices.tab.decided_estimate_list'),
         children: (
           <Card
             styles={{
@@ -36,7 +37,7 @@ function TabsAgreedPrice({
                     color: '#1890FF',
                   }}
                 />
-                {t('agreed_price.tab.decided_estimate_list')}
+                {t('agreed_prices.tab.decided_estimate_list')}
               </div>
             }
           >
@@ -45,8 +46,8 @@ function TabsAgreedPrice({
         ),
       },
       {
-        key: 'agreed_price_by_customer',
-        label: t('agreed_price.tab.agreed_price_by_customer'),
+        key: 'agreed_price_customer',
+        label: t('agreed_prices.tab.agreed_price_by_customer'),
         children: (
           <Card
             styles={{
@@ -62,7 +63,7 @@ function TabsAgreedPrice({
                     color: '#1890FF',
                   }}
                 />
-                {t('agreed_price.tab.agreed_price_by_customer')}
+                {t('agreed_prices.tab.agreed_price_by_customer')}
               </div>
             }
           >
@@ -73,7 +74,14 @@ function TabsAgreedPrice({
     ]
   }, [isEdit, isLoading, t])
 
-  return <Tabs destroyOnHidden items={items} onChange={onChange} />
+  return (
+    <Tabs
+      destroyOnHidden
+      items={items}
+      onChange={onChange}
+      activeKey={activeKey}
+    />
+  )
 }
 
 export default TabsAgreedPrice

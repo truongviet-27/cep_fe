@@ -954,7 +954,7 @@ export const codeIssueSettingControllerShowByCode = <
 export const getCorporateNumber = <ThrowOnError extends boolean = false>(
   options: Options<GetCorporateNumberData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).post<
+  return (options.client ?? _heyApiClient).get<
     GetCorporateNumberResponses,
     GetCorporateNumberErrors,
     ThrowOnError
@@ -970,10 +970,6 @@ export const getCorporateNumber = <ThrowOnError extends boolean = false>(
     ],
     url: '/api/v1/corporate-number',
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   })
 }
 
@@ -3176,7 +3172,7 @@ export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
         type: 'http',
       },
     ],
-    url: '/api/v1/quotas/{id}/preview-pdf',
+    url: '/api/v1/quotas/preview-pdf',
     ...options,
     headers: {
       'Content-Type': 'application/json',

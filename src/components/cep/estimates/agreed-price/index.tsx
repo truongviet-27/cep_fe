@@ -1,22 +1,38 @@
+'use client'
+/* eslint-disable simple-import-sort/imports */
+
 import { RightOutlined } from '@ant-design/icons'
+import { useTranslate } from '@refinedev/core'
+import { Typography } from 'antd'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React, { useMemo, useState } from 'react'
+
 import TabsAgreedPrice from '@components/cep/estimates/agreed-price/tabs'
 import PageContainer from '@components/common/page-container'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Typography } from 'antd'
-import React, { useState } from 'react'
 
 const { Title } = Typography
 
 function AgreedPriceList() {
   const t = useTranslate()
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [isEdit] = useState(false)
   const [isLoading] = useState(false)
-  const [indexTab, setIndexTab] = useState(1)
+
+  const currentTabKey = useMemo(() => {
+    const urlTab = searchParams?.get('tab')
+    return urlTab === 'agreed_price_customer'
+      ? 'agreed_price_customer'
+      : 'agreed_price_quota'
+  }, [searchParams])
 
   const onChangeTabs = (value: string) => {
-    setIndexTab(value === 'decided_estimate_list' ? 1 : 2)
+    const params = new URLSearchParams(searchParams?.toString())
+    params.set('tab', value)
+    router.replace(`${pathname}?${params.toString()}`)
   }
 
   const breadcrumbItems = [
@@ -28,7 +44,7 @@ function AgreedPriceList() {
       ),
     },
     {
-      title: <Title level={5}>{t('agreed_price.agreed_price')}</Title>,
+      title: <Title level={5}>{t('agreed_prices.agreed_prices')}</Title>,
     },
   ]
 
@@ -37,13 +53,13 @@ function AgreedPriceList() {
       breadcrumbs={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      title={t('agreed_price.agreed_price')}
+      title={t('agreed_prices.agreed_prices')}
     >
       <TabsAgreedPrice
         isEdit={isEdit}
         onChange={onChangeTabs}
         isLoading={isLoading}
-        indexTab={indexTab}
+        activeKey={currentTabKey}
       />
     </PageContainer>
   )

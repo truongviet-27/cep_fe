@@ -1,13 +1,17 @@
-import CommonTable from '@components/common/table'
-import { List, useSelect, useTable } from '@refinedev/antd'
-import { useGo, useTranslate } from '@refinedev/core'
+/* eslint-disable simple-import-sort/imports */
+import React, { useMemo } from 'react'
+
 import { Button, Col, Form, Input, Row, Select, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useMemo } from 'react'
+import { List, useSelect, useTable } from '@refinedev/antd'
+import { type HttpError, useGo, useTranslate } from '@refinedev/core'
+import CommonTable from '@components/common/table'
+import type { QuotaAgreedPriceCustomer } from '@sdk/hey-api/types.gen'
 
 const AgreedPriceByCustomerTab = () => {
   const t = useTranslate()
   const go = useGo()
+  const [form] = Form.useForm()
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -21,73 +25,49 @@ const AgreedPriceByCustomerTab = () => {
     optionValue: 'id',
   })
 
-  // Customer tab data and columns
-  const customerMockData = [
-    {
-      id: '1',
-      businessPartnerCode: 'CUST001',
-      businessPartnerName: 'ABC Company Ltd',
-      responsibleDepartment: 'Sales Department',
-      unitPriceRank: 'Rank A',
-      productCount: 15,
-    },
-    {
-      id: '2',
-      businessPartnerCode: 'CUST002',
-      businessPartnerName: 'XYZ Corporation',
-      responsibleDepartment: 'Marketing Department',
-      unitPriceRank: 'Rank B',
-      productCount: 8,
-    },
-    {
-      id: '3',
-      businessPartnerCode: 'CUST003',
-      businessPartnerName: 'DEF Industries',
-      responsibleDepartment: 'Sales Department',
-      unitPriceRank: 'Rank A',
-      productCount: 22,
-    },
-  ]
+  type CustomerRow = QuotaAgreedPriceCustomer
 
-  const customerColumns: ColumnsType<Record<string, unknown>> = useMemo(
+  const customerColumns: ColumnsType<CustomerRow> = useMemo(
     () => [
       {
-        title: t('agreed_price.customer_tab.table.business_partner_code'),
-        dataIndex: 'businessPartnerCode',
-        key: 'businessPartnerCode',
+        title: t('agreed_prices.customer_tab.table.business_partner_code'),
+        dataIndex: 'customer_code',
+        key: 'customer_code',
       },
       {
-        title: t('agreed_price.customer_tab.table.business_partner_name'),
-        dataIndex: 'businessPartnerName',
-        key: 'businessPartnerName',
+        title: t('agreed_prices.customer_tab.table.business_partner_name'),
+        dataIndex: 'customer_name',
+        key: 'customer_name',
       },
       {
-        title: t('agreed_price.customer_tab.table.responsible_department'),
-        dataIndex: 'responsibleDepartment',
-        key: 'responsibleDepartment',
+        title: t('agreed_prices.customer_tab.table.responsible_department'),
+        dataIndex: 'department_name',
+        key: 'department_name',
       },
       {
-        title: t('agreed_price.customer_tab.table.unit_price_rank'),
-        dataIndex: 'unitPriceRank',
-        key: 'unitPriceRank',
+        title: t('agreed_prices.customer_tab.table.unit_price_rank'),
+        dataIndex: 'rank_code',
+        key: 'rank_code',
       },
       {
-        title: t('agreed_price.customer_tab.table.product_count'),
-        dataIndex: 'productCount',
-        key: 'productCount',
+        title: t('agreed_prices.customer_tab.table.product_count'),
+        dataIndex: 'total_products',
+        key: 'total_products',
         align: 'right',
+        render: (value: number | string | undefined) =>
+          Number(value ?? 0).toLocaleString(),
       },
       {
-        title: t('agreed_price.customer_tab.table.operation'),
+        title: t('agreed_prices.customer_tab.table.operation'),
         key: 'operation',
         render: (_, record) => (
           <Button
             type="link"
             onClick={() =>
-              go({ to: `/agreed-prices/customer/${record.id}/edit` })
+              go({ to: `/agreed-prices/customer/${record.customer_id}/edit` })
             }
           >
-            {t('agreed_price.action.update')}
+            {t('agreed_prices.action.update')}
           </Button>
         ),
       },
@@ -95,71 +75,77 @@ const AgreedPriceByCustomerTab = () => {
     [t, go],
   )
 
-  const { searchFormProps, setFilters } = useTable({
+  const { tableProps, searchFormProps, setFilters } = useTable<
+    CustomerRow,
+    HttpError,
+    Record<string, unknown>
+  >({
+    resource: 'quota/agreed-prices/customers',
     syncWithLocation: true,
+    filters: {
+      initial: [],
+    },
+    onSearch(values) {
+      const v = values as Record<string, unknown>
+      const depId = v.responsible_department as number | undefined
+      const rankId = v.unit_price_rank_code as number | undefined
+      return [
+        {
+          field: 'customer_name',
+          operator: 'contains',
+          value: v.business_partner_code_name,
+        },
+        {
+          field: 'department_id_in[]',
+          operator: 'in',
+          value: depId ? [depId] : undefined,
+        },
+        {
+          field: 'rank_id_in[]',
+          operator: 'in',
+          value: rankId ? [rankId] : undefined,
+        },
+      ]
+    },
   })
 
-  const handleCustomerSearch = (values: unknown) => {
-    const formValues = values as Record<string, unknown>
-    setFilters([
-      {
-        field: 'business_partner_code_name',
-        operator: 'contains',
-        value: formValues.business_partner_code_name,
-      },
-      {
-        field: 'responsible_department',
-        operator: 'eq',
-        value: formValues.responsible_department,
-      },
-      {
-        field: 'unit_price_rank_code',
-        operator: 'eq',
-        value: formValues.unit_price_rank_code,
-      },
-    ])
-  }
-
   const handleCustomerClear = () => {
-    searchFormProps.form?.resetFields()
+    form.resetFields()
     setFilters([], 'replace')
   }
 
   return (
     <List title="">
-      <Form
-        colon={false}
-        {...searchFormProps}
-        layout="vertical"
-        onFinish={handleCustomerSearch}
-      >
+      <Form colon={false} form={form} layout="vertical" {...searchFormProps}>
         <Row gutter={[16, 16]}>
           <Col xs={24} md={4}>
             <Form.Item
               label={
                 <span className="font-bold">
                   {t(
-                    'agreed_price.customer_tab.search.business_partner_code_name',
+                    'agreed_prices.customer_tab.search.business_partner_code_name',
                   )}
                 </span>
               }
               name="business_partner_code_name"
             >
-              <Input placeholder={t('agreed_price.search.partial_match')} />
+              <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
             <Form.Item
               label={
                 <span className="font-bold">
-                  {t('agreed_price.customer_tab.search.responsible_department')}
+                  {t(
+                    'agreed_prices.customer_tab.search.responsible_department',
+                  )}
                 </span>
               }
               name="responsible_department"
             >
               <Select
                 {...departmentSelectProps}
-                placeholder={t('agreed_price.search.please_select')}
+                placeholder={t('agreed_prices.search.please_select')}
               />
             </Form.Item>
           </Col>
@@ -167,14 +153,14 @@ const AgreedPriceByCustomerTab = () => {
             <Form.Item
               label={
                 <span className="font-bold">
-                  {t('agreed_price.customer_tab.search.unit_price_rank_code')}
+                  {t('agreed_prices.customer_tab.search.unit_price_rank_code')}
                 </span>
               }
               name="unit_price_rank_code"
             >
               <Select
                 {...rankSelectProps}
-                placeholder={t('agreed_price.search.please_select')}
+                placeholder={t('agreed_prices.search.please_select')}
                 showSearch={false}
               />
             </Form.Item>
@@ -183,10 +169,10 @@ const AgreedPriceByCustomerTab = () => {
             <Form.Item label={<></>}>
               <Space>
                 <Button type="primary" htmlType="submit">
-                  {t('agreed_price.action.search')}
+                  {t('agreed_prices.action.search')}
                 </Button>
                 <Button onClick={handleCustomerClear}>
-                  {t('agreed_price.action.clear')}
+                  {t('agreed_prices.action.clear')}
                 </Button>
               </Space>
             </Form.Item>
@@ -194,19 +180,11 @@ const AgreedPriceByCustomerTab = () => {
         </Row>
       </Form>
 
-      <CommonTable
+      <CommonTable<CustomerRow>
         className={'mt-6'}
-        rowKey="id"
+        rowKey={(record) => String(record.customer_id ?? '')}
         columns={customerColumns}
-        dataSource={customerMockData}
-        pagination={{
-          current: 1,
-          pageSize: 10,
-          total: 18,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}件`,
-        }}
+        {...tableProps}
       />
     </List>
   )
