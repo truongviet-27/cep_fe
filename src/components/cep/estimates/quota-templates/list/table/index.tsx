@@ -7,7 +7,7 @@ import {
   EditButton,
   ShowButton,
 } from '@refinedev/antd'
-import { useTranslate } from '@refinedev/core'
+import { useGo, useTranslate } from '@refinedev/core'
 import { Button, Flex, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableProps } from 'antd/lib'
@@ -21,6 +21,7 @@ interface Props {
 
 const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
   const t = useTranslate()
+  const go = useGo()
 
   const columns: ColumnsType<QuotaTemplateListItemType> = [
     {
@@ -104,7 +105,15 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
             recordItemId={record.id}
             resource="quota-templates"
           />
-          <Button size="small" icon={<ReconciliationOutlined />} />
+          <Button
+            size="small"
+            icon={<ReconciliationOutlined />}
+            onClick={() => {
+              go({
+                to: '/quotas/create?templateId=' + record.id,
+              })
+            }}
+          />
           <DeleteButton
             hideText
             size="small"
