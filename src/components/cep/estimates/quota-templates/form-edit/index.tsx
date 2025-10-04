@@ -63,7 +63,14 @@ const QuoteTemplateFormEditContainer: FC = () => {
           : t('quota_templates.form.titleRegister')
       }
     >
-      <Form {...methods.formProps} labelCol={{ span: 2 }} labelAlign="left">
+      <Form
+        {...methods.formProps}
+        labelCol={{ span: 2 }}
+        labelAlign="left"
+        onFinish={(values) => {
+          console.log('values', values)
+        }}
+      >
         <BasicInfo />
         <DetailInfo />
         <OptionalInfo />

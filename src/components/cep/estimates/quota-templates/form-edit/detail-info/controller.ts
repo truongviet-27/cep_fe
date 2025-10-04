@@ -15,13 +15,13 @@ import { useEffect, useState } from 'react'
 export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
 
+  const totalPriceWatch = Form.useWatch('total_price', form)
   const taxRateWatch = Form.useWatch('tax_rate', form)
   const mainProducts = Form.useWatch(
     'main_product',
     form,
   ) as QuotaTemplateMainProductType[]
 
-  const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
@@ -74,36 +74,33 @@ export const useController = () => {
     form?.setFieldsValue({ main_product: values })
   }
 
-  const calculateSummary = (
-    main_product_groups: QuotaTemplateProductGroupRequest[] | undefined,
-    tax_rate: number,
-  ) => {
+  const calculateSummary = () => {
     let costTotal = 0
     let sellTotal = 0
 
-    ;(main_product_groups ?? []).forEach(
-      (group: QuotaTemplateProductGroupRequest) => {
-        ;(group.products ?? []).forEach(
-          (product: QuotaTemplateProductItemRequest) => {
-            if (product.is_add_total) {
-              costTotal += (product.cost_price || 0) * (product.quantity || 0)
-              sellTotal +=
-                (product.selling_price || 0) * (product.quantity || 0)
-            }
-          },
-        )
-      },
-    )
+    ;(mainProducts ?? []).forEach((group: QuotaTemplateProductGroupRequest) => {
+      ;(group.products ?? []).forEach(
+        (product: QuotaTemplateProductItemRequest) => {
+          if (product.is_add_total) {
+            costTotal += (product.cost_price || 0) * (product.quantity || 0)
+            sellTotal += (product.selling_price || 0) * (product.quantity || 0)
+          }
+        },
+      )
+    })
 
-    const taxTotal = (sellTotal * tax_rate) / 100
+    const taxTotal = (sellTotal * Number(taxRateWatch ?? 0)) / 100
     const sellTotalWithTax = sellTotal + taxTotal
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 
-    setCostTotal(costTotal)
     setTaxTotal(taxTotal)
     setProfitRate(profitRate)
     setSellTotalWithTax(sellTotalWithTax)
+    form.setFieldValue('total_price', sellTotal)
+    form.setFieldValue('consumption_tax_amount', taxTotal)
+    form.setFieldValue('total_profit_margin', profitRate)
+    form.setFieldValue('total_price_tax_included', sellTotalWithTax)
   }
 
   const onChangeProductName = (
@@ -127,27 +124,40 @@ export const useController = () => {
       ['main_product', index, 'products', index2, 'code'],
       item?.code,
     )
+    form.setFieldValue(
+      ['main_product', index, 'products', index2, 'unit'],
+      item?.unit,
+    )
+    form.setFieldValue(
+      ['main_product', index, 'products', index2, 'cost_price'],
+      item?.cost_price,
+    )
+    form.setFieldValue(
+      ['main_product', index, 'products', index2, 'selling_price'],
+      item?.sale_price,
+    )
+    form.setFieldValue(
+      ['main_product', index, 'products', index2, 'quantity'],
+      1,
+    )
+
+    if (!value) {
+      form.setFieldValue(
+        ['main_product', index, 'products', index, 'quantity'],
+        0,
+      )
+    }
   }
 
   useEffect(() => {
-    form.setFieldValue('total_cost', costTotal)
-    form.setFieldValue('consumption_tax_amount', taxTotal)
-    form.setFieldValue('total_profit_margin', profitRate)
-    form.setFieldValue('total_price_tax_included', sellTotalWithTax)
-  }, [costTotal, profitRate, taxTotal, sellTotalWithTax])
-
-  useEffect(() => {
-    calculateSummary(
-      form.getFieldValue('main_product'),
-      form.getFieldValue('tax_rate'),
-    )
-  }, [taxRateWatch])
+    calculateSummary()
+  }, [mainProducts, taxRateWatch])
 
   return {
     form,
     mainProducts,
     taxRateWatch,
-    costTotal,
+    totalPriceWatch,
     taxTotal,
     profitRate,
     sellTotalWithTax,
@@ -155,6 +165,5 @@ export const useController = () => {
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
-    calculateSummary,
   }
 }

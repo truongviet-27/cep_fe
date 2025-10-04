@@ -1,16 +1,8 @@
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
-import CoreAutoComplete from '@components/common/auto-complete'
 import CommonTable from '@components/common/table'
-import type {
-  QuotaTemplateFormType,
-  QuotaTemplateMainProductType,
-  QuotaTemplateProductType,
-} from '@interfaces/quota-templates'
-import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import type {
-  ProductListItem,
   QuotaTemplateProductGroupRequest,
   QuotaTemplateProductItemRequest,
 } from '@sdk/hey-api'
@@ -21,69 +13,29 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Select,
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { FC } from 'react'
+import { type FC, useState } from 'react'
+
+import { ProductCategoryModal } from '../modal/product-category'
+import PackageSelect from '../package-select'
+import { useController } from './controller'
 
 const { Title } = Typography
 
 const OptionalInfo: FC = () => {
-  const form = Form.useFormInstance<QuotaTemplateFormType>()
-  const optionalProducts = Form.useWatch(
-    'optional_product',
-    form,
-  ) as QuotaTemplateMainProductType[]
   const t = useTranslate()
-
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-    onSearch(value) {
-      return [
-        {
-          field: 'name',
-          operator: 'contains',
-          value,
-        },
-      ]
-    },
-  })
-
-  const handleAddProduct = (groupIndex: number) => {
-    const values = optionalProducts || []
-    const products = (values[groupIndex].products ||
-      []) as QuotaTemplateProductType[]
-
-    values[groupIndex].products = [
-      ...products,
-      {
-        product_id: 0,
-        name: '',
-        code: '自動採番',
-        quantity: 0,
-        cost_price: 0,
-        selling_price: 0,
-        profit_margin: 0,
-        is_add_total: false,
-      },
-    ]
-
-    form?.setFieldsValue({ optional_product: values })
-  }
-
-  const handleRemoveProduct = (groupIndex: number, productIndex: number) => {
-    const values = form.getFieldValue('optional_product') || []
-    const products = values[groupIndex].products || []
-
-    values[groupIndex].products = products.filter(
-      (_: unknown, idx: number) => idx !== productIndex,
-    )
-
-    form?.setFieldsValue({ optional_product: values })
-  }
+  const {
+    form,
+    selectPropsProduct,
+    handleAddProduct,
+    handleRemoveProduct,
+    onChangeProductName,
+  } = useController()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <>
@@ -187,42 +139,9 @@ const OptionalInfo: FC = () => {
                         width: 200,
                       }}
                       {...selectPropsProduct}
-                      onChange={(value) => {
-                        const item = query.data?.data.find(
-                          (item) => item.id === value,
-                        ) as ProductListItem
-
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'package_id',
-                          ],
-                          null,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'name',
-                          ],
-                          item?.name,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'code',
-                          ],
-                          item?.code,
-                        )
-                      }}
+                      onChange={(value) =>
+                        onChangeProductName(value, record.index, record.index2)
+                      }
                     />
                   </Form.Item>
                 )
@@ -268,21 +187,26 @@ const OptionalInfo: FC = () => {
                       marginBottom: 0,
                     }}
                   >
-                    <CoreAutoComplete
-                      nameFilter="package_name"
-                      filterPath={[
+                    <PackageSelect
+                      productId={form.getFieldValue([
                         'optional_product',
                         record.index,
                         'products',
                         record.index2,
                         'product_id',
-                      ]}
-                      // index={record.index}
-                      // index2={record.index2}
-                      // filterPath2={['customer']}
-                      resource={`products`}
-                      style={{ width: 200 }}
-                      // parent="optional_product"
+                      ])}
+                      onChange={(value) =>
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'package_id',
+                          ],
+                          value,
+                        )
+                      }
                     />
                   </Form.Item>
                 )
@@ -498,7 +422,9 @@ const OptionalInfo: FC = () => {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary">カテゴリから入力</Button>
+                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                  カテゴリから入力
+                </Button>
               </Flex>
               <CommonTable
                 columns={columns}
@@ -512,6 +438,19 @@ const OptionalInfo: FC = () => {
           )
         }}
       </Form.List>
+      <Modal
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        title={'カテゴリから商品を追加'}
+        footer={null}
+      >
+        <ProductCategoryModal
+          name="optional_product"
+          close={() => setIsModalOpen(false)}
+        />
+      </Modal>
     </>
   )
 }

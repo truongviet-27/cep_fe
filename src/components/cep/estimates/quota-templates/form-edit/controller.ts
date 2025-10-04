@@ -32,7 +32,7 @@ export function useController() {
         delivery_method: data?.data.default_delivery_method,
         payment_due_date: data?.data.default_payment_due_date,
         expiration_date: data?.data.default_expiration_date,
-        consumption_tax: data?.data.consumption_tax,
+        consumption_tax: data?.data.consumption_tax ?? '0',
         tax_rate: data?.data.tax_rate,
         note: null,
         tags: [],

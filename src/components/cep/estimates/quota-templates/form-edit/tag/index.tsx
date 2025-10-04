@@ -1,7 +1,7 @@
 import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Col, Form, Row, Select, Typography } from 'antd'
+import { Form, Select, Typography } from 'antd'
 
 const { Title } = Typography
 
@@ -22,23 +22,16 @@ const TagForm: React.FC = () => {
       >
         {t('quota_templates.form.titleTag')}
       </Title>
-      <Row>
-        <Col xs={12} md={6}>
-          <Form.Item name="tags">
-            <Select
-              allowClear
-              showSearch
-              placeholder={'選択してください'}
-              style={{
-                marginTop: 20,
-                width: '100%',
-              }}
-              mode="multiple"
-              {...selectProps}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
+      <Form.Item name="tags">
+        <Select
+          className="!w-96"
+          allowClear
+          showSearch
+          placeholder={'選択してください'}
+          mode="multiple"
+          {...selectProps}
+        />
+      </Form.Item>
     </>
   )
 }

@@ -1,8 +1,17 @@
 import CoreInput from '@components/common/core-input'
 import { useTranslate } from '@refinedev/core'
+import { ConsumptionTaxEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { DatePicker, Flex, Form, Radio, Select, Typography } from 'antd'
+import {
+  DatePicker,
+  Flex,
+  Form,
+  InputNumber,
+  Radio,
+  Select,
+  Typography,
+} from 'antd'
 
 const { Title } = Typography
 
@@ -207,17 +216,18 @@ const BasicInfo: React.FC = () => {
             labelCol={{ span: 10, flex: '0 0 175px' }}
           >
             <Radio.Group
+              defaultValue={ConsumptionTaxEnum.EXCLUSIVE}
               options={[
                 {
-                  value: '1',
+                  value: ConsumptionTaxEnum.EXCLUSIVE,
                   label: '外税',
                 },
                 {
-                  value: '2',
+                  value: ConsumptionTaxEnum.INCLUSIVE,
                   label: '内税',
                 },
                 {
-                  value: '3',
+                  value: ConsumptionTaxEnum.EXTERNAL,
                   label: '税抜',
                 },
               ]}
@@ -225,17 +235,20 @@ const BasicInfo: React.FC = () => {
           </Form.Item>
         </div>
         <div>
-          <CoreInput
+          <Form.Item
             name="tax_rate"
-            label={t('quota_templates.form.label.consumption_tax_rate')}
             layout="horizontal"
-            classNameInput="!w-[70px] !mr-2"
-            colon={true}
-            type="number"
+            label={t('quota_templates.form.label.consumption_tax_rate')}
             labelCol={{ flex: '0 0 70px' }}
           >
-            %
-          </CoreInput>
+            <InputNumber
+              controls={false}
+              min={0}
+              max={100}
+              className="!mr-2 !w-[75px]"
+              suffix="%"
+            />
+          </Form.Item>
         </div>
       </Flex>
     </>
