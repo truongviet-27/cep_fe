@@ -10,7 +10,7 @@ import { Checkbox, Col, Flex, Form, InputNumber, Row, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const { Title, Text } = Typography
 
@@ -21,10 +21,11 @@ interface Props {
 const DetailInfo: FC<Props> = (props) => {
   const { detail } = props
 
-  const [costTotal] = useState(0)
-  const [profitRate] = useState(0)
-  const [taxTotal] = useState(0)
-  const [sellTotalWithTax] = useState(0)
+  const [costTotal, setCostTotal] = useState(0)
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [profitRate, setProfitRate] = useState(0)
+  const [taxTotal, setTaxTotal] = useState(0)
+  const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
   const t = useTranslate()
 
   const dataSource = (detail?.main_product ?? []).flatMap(
@@ -46,6 +47,40 @@ const DetailInfo: FC<Props> = (props) => {
       ),
     ],
   )
+
+  const calculateSummary = () => {
+    let costTotal = 0
+    let sellTotal = 0
+
+    ;(detail?.main_product ?? []).forEach(
+      (group: QuotaTemplateProductGroupResponse) => {
+        ;(group.products ?? []).forEach(
+          (product: QuotaTemplateProductResponse) => {
+            if (product.is_add_total) {
+              costTotal += (product.cost_price || 0) * (product.quantity || 0)
+              sellTotal +=
+                (product.selling_price || 0) * (product.quantity || 0)
+            }
+          },
+        )
+      },
+    )
+
+    const taxTotal = (sellTotal * Number(detail?.tax_rate ?? 0)) / 100
+    const sellTotalWithTax = sellTotal + taxTotal
+    const profitRate =
+      costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
+
+    setCostTotal(costTotal)
+    setTotalPrice(sellTotal)
+    setTaxTotal(taxTotal)
+    setProfitRate(profitRate)
+    setSellTotalWithTax(sellTotalWithTax)
+  }
+
+  useEffect(() => {
+    calculateSummary()
+  }, [detail])
 
   const columns: ColumnsType = [
     {
@@ -191,24 +226,6 @@ const DetailInfo: FC<Props> = (props) => {
           }
           pagination={false}
           summary={() => {
-            const total = (detail?.main_product ?? []).reduce(
-              (accGroup: number, group: QuotaTemplateProductGroupResponse) => {
-                const groupTotal = (group.products ?? []).reduce(
-                  (accProd: number, prod: QuotaTemplateProductResponse) => {
-                    if (prod.is_add_total) {
-                      return (
-                        accProd +
-                        (prod.selling_price || 0) * (prod.quantity || 0)
-                      )
-                    }
-                    return accProd
-                  },
-                  0,
-                )
-                return accGroup + groupTotal
-              },
-              0,
-            )
             return (
               <Table.Summary.Row
                 style={{
@@ -221,7 +238,7 @@ const DetailInfo: FC<Props> = (props) => {
                   小計
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="center">
-                  {total || 0}
+                  {(totalPrice || 0).toLocaleString()}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             )
@@ -249,7 +266,7 @@ const DetailInfo: FC<Props> = (props) => {
               原価合計
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {costTotal || 0}
+              ¥{(costTotal || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_cost" hidden>
               <InputNumber />
@@ -274,8 +291,8 @@ const DetailInfo: FC<Props> = (props) => {
             >
               消費税金額（{detail?.tax_rate}%）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {taxTotal || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(taxTotal || 0).toLocaleString()}
             </Text>
             <Form.Item name="consumption_tax_amount" hidden>
               <InputNumber />
@@ -300,7 +317,7 @@ const DetailInfo: FC<Props> = (props) => {
             >
               合計利益率
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               {profitRate.toFixed(2) || 0}%
             </Text>
             <Form.Item name="total_profit_margin" hidden>
@@ -326,8 +343,8 @@ const DetailInfo: FC<Props> = (props) => {
             >
               合計金額（税込）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {sellTotalWithTax || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(sellTotalWithTax || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_price_tax_included" hidden>
               <InputNumber />

@@ -22,6 +22,7 @@ export const useController = () => {
     form,
   ) as QuotaTemplateMainProductType[]
 
+  const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
@@ -94,6 +95,7 @@ export const useController = () => {
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 
+    setCostTotal(costTotal)
     setTaxTotal(taxTotal)
     setProfitRate(profitRate)
     setSellTotalWithTax(sellTotalWithTax)
@@ -158,6 +160,7 @@ export const useController = () => {
     mainProducts,
     taxRateWatch,
     totalPriceWatch,
+    costTotal,
     taxTotal,
     profitRate,
     sellTotalWithTax,

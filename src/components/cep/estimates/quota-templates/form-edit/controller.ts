@@ -100,6 +100,6 @@ export function useController() {
   return {
     isUpdateMode,
     methods,
-    isLoading: query?.isLoading,
+    isLoading: isUpdateMode && query?.isLoading,
   }
 }

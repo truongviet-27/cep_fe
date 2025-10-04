@@ -113,7 +113,15 @@ const QuoteTemplateDetailContainer: FC = () => {
               />
             </Space>
             <Space className="items-end">
-              <Button color="primary" variant="outlined">
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={() => {
+                  go({
+                    to: `/quotas/create?templateId=${quoteTemplateDetail.id}`,
+                  })
+                }}
+              >
                 見積作成
               </Button>
 

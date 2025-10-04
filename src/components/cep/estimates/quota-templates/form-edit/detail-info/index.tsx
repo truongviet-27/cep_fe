@@ -37,6 +37,7 @@ const DetailInfo: FC = () => {
     taxRateWatch,
     totalPriceWatch,
     taxTotal,
+    costTotal,
     profitRate,
     sellTotalWithTax,
     selectPropsProduct,
@@ -235,7 +236,7 @@ const DetailInfo: FC = () => {
                         )
                       }
                       defaultOptions={
-                        mainProducts[record.index].products[record.index2]
+                        mainProducts?.[record.index]?.products?.[record.index2]
                           ?.packagings ?? []
                       }
                       defaultValue={form.getFieldValue([
@@ -559,7 +560,7 @@ const DetailInfo: FC = () => {
               原価合計
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-              ¥{(totalPriceWatch || 0).toLocaleString()}
+              ¥{(costTotal || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_price" hidden>
               <InputNumber />
