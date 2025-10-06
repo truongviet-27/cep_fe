@@ -229,8 +229,8 @@ function QuotaDetail() {
               marginTop: 40,
             }}
           >
-            {queryBasic?.data?.is_author && (
-              <Space>
+            <Space>
+              {queryBasic?.data?.is_author && (
                 <DeleteButton
                   icon={null}
                   size={'small'}
@@ -240,8 +240,8 @@ function QuotaDetail() {
                     })
                   }}
                 />
-              </Space>
-            )}
+              )}
+            </Space>
 
             <Space>
               {queryBasic?.data?.status === QuotaStatus.Creating &&

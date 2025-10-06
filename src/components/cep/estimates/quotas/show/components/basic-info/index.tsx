@@ -130,16 +130,18 @@ function BasicInfo({ data }: { data: any }) {
 
       <Form.Item label={boldText('有効期限')} style={{ marginBottom: 0 }}>
         <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Col xs={24} sm={16} md={10} lg={8} xl={1}>
             <Form.Item name={'expiration_date'}>
               {getExpirationDate(data?.expiration_date, t)}
             </Form.Item>
           </Col>
           <Col xl={8}>
             <Form.Item>
+              (
               {dayjs(
                 getExpiryDate(data?.expiration_date, data?.created_at),
               ).format('YYYY/MM/DD')}
+              )
             </Form.Item>
           </Col>
         </Row>

@@ -765,7 +765,7 @@ function QuotaList() {
 
             <Col xs={12} md={6}>
               <Form.Item
-                label={<span className="font-bold">タグ名</span>}
+                label={<span hidden className="font-bold"></span>}
                 layout="vertical"
                 name={'date'}
               >
