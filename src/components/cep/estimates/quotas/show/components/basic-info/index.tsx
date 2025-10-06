@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   getExpirationDate,
+  getExpiryDate,
   getPaymentDueDateLabel,
+  getQuotaStatusStyle,
 } from '@components/cep/estimates/quotas/utils'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Card, Col, Form, Row } from 'antd'
+import { Card, Col, Form, Row, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
 
@@ -45,6 +47,20 @@ function BasicInfo({ data }: { data: any }) {
           <Col>
             <Form.Item>{data?.code}</Form.Item>
           </Col>
+
+          <Col>
+            <Form.Item>
+              <Tag
+                color={getQuotaStatusStyle(data?.status).background}
+                style={{
+                  color: getQuotaStatusStyle(data?.status).color,
+                  marginRight: 0,
+                }}
+              >
+                {getQuotaStatusStyle(data?.status).text}
+              </Tag>
+            </Form.Item>
+          </Col>
         </Row>
       </Form.Item>
 
@@ -78,7 +94,7 @@ function BasicInfo({ data }: { data: any }) {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>
-              {dayjs(data?.delivery_date).format('YYYY/MM/DD')}
+              {dayjs(data?.created_at).format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
         </Row>
@@ -117,6 +133,13 @@ function BasicInfo({ data }: { data: any }) {
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'expiration_date'}>
               {getExpirationDate(data?.expiration_date, t)}
+            </Form.Item>
+          </Col>
+          <Col xl={8}>
+            <Form.Item>
+              {dayjs(
+                getExpiryDate(data?.expiration_date, data?.created_at),
+              ).format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
         </Row>

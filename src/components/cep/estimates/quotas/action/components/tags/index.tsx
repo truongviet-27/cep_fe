@@ -1,4 +1,6 @@
 import { useSelect } from '@refinedev/antd'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { Card, Col, Form, Row, Select } from 'antd'
 
 function Tags() {
@@ -23,7 +25,7 @@ function Tags() {
 
   return (
     <Card
-      title={'タグ'}
+      title={boldText('タグ', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,

@@ -3,6 +3,7 @@ import {
   PaymentDueDate,
   QuotaStatus,
 } from '@components/cep/estimates/quotas/enum'
+import dayjs from 'dayjs'
 
 type QuotaStatusInfo = {
   background: string
@@ -84,4 +85,66 @@ export function getExpirationDate(
     default:
       return value // fallback
   }
+}
+
+export function getExpiryDate(
+  value: string,
+  baseDate?: string | Date | null,
+): Date {
+  const start = dayjs(baseDate ?? new Date())
+
+  if (!value) return start.toDate()
+
+  const [unit, amountStr] = value.split('_')
+  const amount = parseInt(amountStr, 10)
+
+  if (isNaN(amount)) return start.toDate()
+
+  switch (unit) {
+    case 'days':
+      return start.add(amount, 'day').toDate()
+    case 'months':
+      return start.add(amount, 'month').toDate()
+    case 'years':
+      return start.add(amount, 'year').toDate()
+    default:
+      return start.toDate()
+  }
+}
+
+export const getActionPermissions = (
+  status: QuotaStatus,
+  isAuthor: boolean,
+  isApprover: boolean,
+) => {
+  let permissions = true
+
+  switch (status) {
+    case QuotaStatus.Creating:
+    case QuotaStatus.Approved:
+    case QuotaStatus.Rejected:
+      if (isAuthor) {
+        permissions = false
+      }
+      break
+
+    case QuotaStatus.WaitingApproval:
+    case QuotaStatus.Completed:
+    case QuotaStatus.Cancelled:
+      if (isApprover) {
+        permissions = false
+      }
+      break
+
+    case QuotaStatus.SentToCustomer:
+      if (isAuthor || isApprover) {
+        permissions = false
+      }
+      break
+
+    default:
+      break
+  }
+
+  return permissions
 }

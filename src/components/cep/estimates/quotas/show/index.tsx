@@ -113,19 +113,25 @@ function QuotaDetail() {
 
   const handlePreviewPdf = () => {
     const customValues = {
-      ...queryBasic?.data,
-      ...dataProducts?.data,
+      ...form.getFieldsValue(),
+      tags: form.getFieldValue('tags').map((item: any) => ({
+        id: item?.value,
+        name: item?.label,
+      })),
+      customer_id: form.getFieldValue('customer')?.value,
+      customer_name: form.getFieldValue('customer')?.label,
+      status: QuotaStatus.Creating,
     }
 
     mutatePreviewPdf(
       {
         values: customValues,
-        url: `${apiUrl}/preivew-pdf`,
+        url: `${apiUrl}/quotas/preview-pdf`,
         method: 'post',
       },
       {
         onSuccess(data) {
-          setPreviewPdf(data.data?.pdf ?? '')
+          setPreviewPdf(data.data?.pdf_base64 ?? '')
         },
       },
     )
@@ -158,6 +164,8 @@ function QuotaDetail() {
         <div className="flex justify-between">
           <span>{t('quotas.detail')}</span>
           <Button
+            color="primary"
+            variant="outlined"
             onClick={() => {
               setIsPdf(!isPdf)
               handlePreviewPdf()
@@ -221,21 +229,23 @@ function QuotaDetail() {
               marginTop: 40,
             }}
           >
-            <Space>
-              <DeleteButton
-                icon={null}
-                size={'small'}
-                onSuccess={() => {
-                  go({
-                    to: '/quotas',
-                  })
-                }}
-              />
-            </Space>
+            {queryBasic?.data?.is_author && (
+              <Space>
+                <DeleteButton
+                  icon={null}
+                  size={'small'}
+                  onSuccess={() => {
+                    go({
+                      to: '/quotas',
+                    })
+                  }}
+                />
+              </Space>
+            )}
 
             <Space>
               {queryBasic?.data?.status === QuotaStatus.Creating &&
-                !queryBasic?.data?.display && (
+                queryBasic?.data?.is_author && (
                   <Button
                     style={{
                       background: '#10B981',
@@ -286,7 +296,7 @@ function QuotaDetail() {
                           {
                             quota_id: queryBasic?.data?.id,
                             status: 'approved',
-                            comment: '',
+                            comment: form.getFieldValue('reason'),
                           },
                         ])
                       }}
@@ -297,7 +307,7 @@ function QuotaDetail() {
                 )}
 
               {queryBasic?.data?.status === QuotaStatus.Approved &&
-                !queryBasic?.data?.display && (
+                queryBasic?.data?.is_author && (
                   <Button
                     style={{
                       background: '#10B981',
@@ -317,7 +327,7 @@ function QuotaDetail() {
                 )}
 
               {queryBasic?.data?.status === QuotaStatus.SentToCustomer &&
-                queryBasic.data?.display && (
+                (queryBasic.data?.display || queryBasic?.data?.is_author) && (
                   <>
                     <Button
                       style={{
@@ -372,6 +382,7 @@ function QuotaDetail() {
                   </Button>
                 )}
             </Space>
+
             <Space className="items-end">
               <Button
                 type="default"
@@ -386,7 +397,7 @@ function QuotaDetail() {
 
               {(queryBasic?.data?.status === QuotaStatus.Creating ||
                 queryBasic?.data?.status === QuotaStatus.Rejected) &&
-                !queryBasic.data?.display && (
+                queryBasic.data?.is_author && (
                   <Button
                     type="primary"
                     onClick={() => {
