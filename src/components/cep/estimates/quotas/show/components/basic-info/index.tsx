@@ -130,16 +130,18 @@ function BasicInfo({ data }: { data: any }) {
 
       <Form.Item label={boldText('有効期限')} style={{ marginBottom: 0 }}>
         <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Col xs={24} sm={10} md={6} lg={4} xl={2}>
             <Form.Item name={'expiration_date'}>
               {getExpirationDate(data?.expiration_date, t)}
             </Form.Item>
           </Col>
           <Col xl={8}>
             <Form.Item>
+              (
               {dayjs(
                 getExpiryDate(data?.expiration_date, data?.created_at),
               ).format('YYYY/MM/DD')}
+              )
             </Form.Item>
           </Col>
         </Row>
@@ -147,22 +149,17 @@ function BasicInfo({ data }: { data: any }) {
 
       <Form.Item label={boldText('消費税')} style={{ marginBottom: 0 }}>
         <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Col xs={24} sm={10} md={6} lg={4} xl={2}>
             <Form.Item>
               {consumptionTax[data?.consumption_tax as ConsumptionTaxKey]}
             </Form.Item>
           </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item
-        label={boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
-        style={{ marginBottom: 0 }}
-      >
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8}>
-            <Form.Item layout="horizontal">{data?.tax_rate}</Form.Item>
-          </Col>
+          <Form.Item
+            label={t('tenant_settings.consumptionTax.taxRateLabel')}
+            layout="horizontal"
+          >
+            {data?.tax_rate}%
+          </Form.Item>
         </Row>
       </Form.Item>
     </Card>
