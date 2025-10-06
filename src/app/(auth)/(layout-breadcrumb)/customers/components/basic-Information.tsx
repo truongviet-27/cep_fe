@@ -25,7 +25,7 @@ import styles from '../styles.module.css'
 import React from 'react'
 import { SelectPagination } from '@components/common/select-pagination'
 
-const { Title } = Typography
+const { Title, Text } = Typography
 const { Panel } = Collapse
 
 function BasicInformation(
@@ -78,6 +78,9 @@ function BasicInformation(
               <Form.Item rules={[rule]} name="customer_code" required noStyle>
                 <Input style={{ width: 240 }} />
               </Form.Item>
+            </Col>
+            <Col flex="none">
+              <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
             {isAutomatic && (
               <>

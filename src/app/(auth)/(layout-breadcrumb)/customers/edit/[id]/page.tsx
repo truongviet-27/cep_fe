@@ -10,6 +10,7 @@ import { CorporateResearchFormSection } from '@app/(auth)/(layout-breadcrumb)/cu
 import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/customers/components/delivery-destinations'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space, Typography } from 'antd'
 import React from 'react'
@@ -30,6 +31,7 @@ export default function CustomerEditPage() {
     modalFormCorporate,
     handleFinish,
     refetchCodeGen,
+    form,
   } = hookProps
   const { close: closeModal, open: modalOpen } = modalFormProps
 
@@ -86,13 +88,18 @@ export default function CustomerEditPage() {
       </Modal>
 
       <Modal
-        title={t('customers.modal.title')}
+        title={boldText(t('customers.research.modal.title'), PRIMARY)}
         open={visible}
         onCancel={close}
         width={800}
         footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
       >
-        <CorporateNumberSearchModal modalProps={modalFormProps} />
+        <CorporateNumberSearchModal
+          modalProps={modalFormProps}
+          onSelect={(record) =>
+            form.setFieldValue('corporate_number', record.corporateNumber)
+          }
+        />
       </Modal>
     </Edit>
   )

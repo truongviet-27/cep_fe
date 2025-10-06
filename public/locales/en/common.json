@@ -296,6 +296,78 @@
       "number_of_employee": "Employees"
     }
   },
+  "agreed_prices": {
+    "agreed_prices": "Agreed Price",
+    "tab": {
+      "decided_estimate_list": "Decided Estimate List",
+      "agreed_price_by_customer": "Agreed Price by Customer"
+    },
+    "summary": {
+      "all": "All",
+      "active": "Active",
+      "nearing_expiration": "About to expire",
+      "expired": "Expired"
+    },
+    "search": {
+      "estimate_number": "Estimate Number",
+      "business_partner": "Business Partner",
+      "creator": "Creator",
+      "department": "Department (Branch/Division/Section)",
+      "tag_name": "Tag Name",
+      "application_completion": "Application Completion",
+      "partial_match": "Partial Match",
+      "please_select": "Please select"
+    },
+    "table": {
+      "status": "Status",
+      "estimate_number": "Estimate Number",
+      "business_partner": "Business Partner",
+      "creator": "Creator",
+      "product_count": "Product Count",
+      "department_amount": "Department Amount (JPY)",
+      "estimate_date_application_end": "Estimate Date / Application End",
+      "reference_count": "Reference Count",
+      "update": "Update",
+      "operation": "Operation"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "nearing_expiration": "About to expire"
+    },
+    "action": {
+      "search": "Search",
+      "clear": "Clear",
+      "add_from_estimate_list": "Add from Estimate List",
+      "update": "Update"
+    },
+    "modal": {
+      "update_title": "Update Agreed Estimate",
+      "estimate_no": "Estimate Number",
+      "title": "Title",
+      "customer": "Customer",
+      "applicable_start": "Applicable Start Date",
+      "applicable_end": "Applicable End Date",
+      "note_next_day": "Automatically set to the day after the end date",
+      "registry": "Registrant:",
+      "updater": "Updater:"
+    },
+    "customer_tab": {
+      "search": {
+        "business_partner_code_name": "Customer Code / Name",
+        "responsible_department": "Responsible Department",
+        "unit_price_rank_code": "Unit Price Rank Code"
+      },
+      "table": {
+        "business_partner_code": "Customer Code",
+        "business_partner_name": "Customer Name",
+        "responsible_department": "Responsible Department",
+        "unit_price_rank": "Unit Price Rank",
+        "product_count": "Product Count",
+        "operation": "Operation"
+      }
+    }
+  },
   "tenant": {
     "tenant": "Tenant Selection",
     "filters": {

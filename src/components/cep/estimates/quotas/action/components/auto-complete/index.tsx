@@ -79,7 +79,7 @@ function CoreAutoComplete({
         const option = data?.data.packagings.find(
           (item: any) => item?.id === value,
         )
-
+        console.log(option, 'option')
         form.setFieldValue(
           [parent, index, 'products', index2, 'unit'],
           option?.unit ?? data?.data?.unit?.name,
@@ -87,14 +87,16 @@ function CoreAutoComplete({
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'cost_price'],
-          option?.standard_price ?? data?.data?.cost_price,
+          data?.data?.cost_price * option?.quantity_in_package
+            ? data?.data?.cost_price * option?.quantity_in_package
+            : data?.data?.cost_price,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'selling_price'],
-          option?.rank_prices ??
-            option?.selling_price ??
-            data?.data?.selling_price,
+          option?.rank_prices * option?.quantity_in_package
+            ? option?.rank_prices * option?.quantity_in_package
+            : data?.data?.selling_price,
         )
 
         form.setFieldValue(

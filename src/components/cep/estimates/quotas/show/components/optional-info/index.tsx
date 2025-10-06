@@ -172,7 +172,7 @@ function OptionalInfo({ data }: { data: any }) {
               marginBottom: 0,
             }}
           >
-            {record?.profit_margin}
+            {record?.profit_margin}%
           </Form.Item>
         )
       },
@@ -199,7 +199,7 @@ function OptionalInfo({ data }: { data: any }) {
   ]
   return (
     <Card
-      title={boldText('詳細情報', PRIMARY, 16)}
+      title={boldText('オプション情報', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,

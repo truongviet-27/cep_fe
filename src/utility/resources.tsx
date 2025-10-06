@@ -39,6 +39,19 @@ export const resource: ResourceProps[] = [
     },
   },
   {
+    name: 'agreed-prices',
+    list: '/agreed-prices',
+    show: '/agreed-prices/show/:id',
+    create: '/agreed-prices/create',
+    edit: '/agreed-prices/edit/:id',
+    meta: {
+      parent: 'estimates',
+      // canDelete: true,
+      // canCreate: true,
+      // canEdit: true,
+    },
+  },
+  {
     name: 'business_partner',
   },
   {

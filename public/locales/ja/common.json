@@ -780,12 +780,6 @@
       "actions": "操作"
     }
   },
-  "common": {
-    "created_by": "登録者",
-    "updated_by": "更新者",
-    "created_at": "作成日",
-    "not_set": "未設定"
-  },
   "csv": {
     "title": "[マスタ名] CSV一括登録",
     "step_1": {
@@ -929,7 +923,8 @@
     "detail": "見積詳細"
   },
   "price_groups": {
-    "price_groups": "取引先",
+    "price_groups": "単価グループ設定",
+    "business_partner": "取引先",
     "list": {
       "list": "単価グループ設定"
     },
@@ -945,5 +940,107 @@
       "absolute": "絶対",
       "percentage": "掛率"
     }
+  },
+  "agreed_prices": {
+    "agreed_prices": "決定見積",
+    "tab": {
+      "decided_estimate_list": "決定見積一覧",
+      "agreed_price_by_customer": "顧客別決定単価"
+    },
+    "summary": {
+      "all": "すべて",
+      "active": "有効",
+      "nearing_expiration": "期限間近",
+      "expired": "期限切れ"
+    },
+    "search": {
+      "estimate_number": "見積番号",
+      "business_partner": "取引先",
+      "creator": "作成者",
+      "department": "部門(支社/部/課)",
+      "tag_name": "タグ名",
+      "application_completion": "適用完了",
+      "partial_match": "部分一致",
+      "please_select": "選択してください"
+    },
+    "table": {
+      "status": "状態",
+      "estimate_number": "見積番号",
+      "business_partner": "取引先",
+      "creator": "作成者",
+      "product_count": "商品数",
+      "department_amount": "部門金額(円)",
+      "estimate_date_application_end": "見積日適用終了",
+      "reference_count": "参照回数",
+      "update": "更新",
+      "operation": "操作"
+    },
+    "status": {
+      "active": "有効",
+      "expired": "期限切れ",
+      "nearing_expiration": "期限間近"
+    },
+    "action": {
+      "search": "検索",
+      "clear": "クリア",
+      "add_from_estimate_list": "見積一覧から追加",
+      "update": "更新"
+    },
+    "modal": {
+      "update_title": "決定見積更新",
+      "estimate_no": "見積番号",
+      "title": "タイトル",
+      "customer": "取引先",
+      "applicable_start": "適用開始日",
+      "applicable_end": "適用終了日",
+      "note_next_day": "自動で終了日の翌日",
+      "registry": "登録者：",
+      "updater": "更新者："
+    },
+    "customer_tab": {
+      "search": {
+        "business_partner_code_name": "取引先コード・取引先名",
+        "responsible_department": "担当部署",
+        "unit_price_rank_code": "単価ランクコード"
+      },
+      "table": {
+        "business_partner_code": "取引先コード",
+        "business_partner_name": "取引先名",
+        "responsible_department": "担当部署",
+        "unit_price_rank": "単価ランク",
+        "product_count": "商品数",
+        "operation": "操作"
+      }
+    },
+    "customer_detail": {
+      "title": "顧客別決定単価",
+      "basic_info": "基本情報",
+      "customer_code": "取引先コード",
+      "customer_name": "取引先名",
+      "department_in_charge": "担当部署",
+      "unit_price_rank": "単価ランク",
+      "number_of_products": "商品数",
+      "determined_unit_price_list": "決定単価一覧",
+      "table": {
+        "product_code": "商品コード",
+        "product_name": "商品・サービス名",
+        "quantity": "数量",
+        "unit": "単位",
+        "determined_unit_price": "決定単価",
+        "application_start": "適用開始",
+        "application_end": "適用終了"
+      }
+    }
+  },
+  "validation": {
+    "required": "必須項目です"
+  },
+  "common": {
+    "created_by": "登録者",
+    "updated_by": "更新者",
+    "created_at": "作成日",
+    "not_set": "未設定",
+    "coming_soon": "近日公開",
+    "error_loading_data": "データの読み込み中にエラーが発生しました"
   }
 }

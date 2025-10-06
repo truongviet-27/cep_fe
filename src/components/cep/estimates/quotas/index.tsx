@@ -12,7 +12,11 @@ import {
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
-import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
+import {
+  getActionPermissions,
+  getExpiryDate,
+  getQuotaStatusStyle,
+} from '@components/cep/estimates/quotas/utils'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -92,7 +96,11 @@ function QuotaList() {
     selectedRowKeys,
     onChange: onSelectChange,
     getCheckboxProps: (record) => ({
-      disabled: !record?.display,
+      disabled: getActionPermissions(
+        record.status,
+        record?.is_author,
+        record?.display,
+      ),
     }),
   }
 
@@ -158,7 +166,7 @@ function QuotaList() {
           <div>
             <div>{record?.author}</div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
-              {record.approvers?.map((item: string) => item)}
+              {record.approvers?.map((item: string) => item).join(', ')}
             </div>
           </div>
         ),
@@ -169,7 +177,7 @@ function QuotaList() {
         key: 'department',
         render: (_, record) => (
           <div className="flex flex-col gap-2">
-            <div>{record.author_department_name}</div>
+            <div>{record.department_in_charge}</div>
             <div>{record?.total_price}</div>
           </div>
         ),
@@ -183,7 +191,9 @@ function QuotaList() {
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
             <div>
               {record.expiration_date &&
-                dayjs(record.created_at).format('YYYY/MM/DD')}
+                dayjs(
+                  getExpiryDate(record.expiration_date, record.created_at),
+                ).format('YYYY/MM/DD')}
             </div>
           </div>
         ),
@@ -199,19 +209,20 @@ function QuotaList() {
             record.customer_cancelled_date
           ) {
             return (
-              // <div>
-              //   <div>
-              //     {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
-              //       '-'}
-              //   </div>
-              //   <div>
-              //     {dayjs(record.customer_accepted_date).format('YYYY/MM/DD') ||
-              //       dayjs(record.customer_cancelled_date).format('YYYY/MM/DD')}
-              //   </div>
-              // </div>
               <div>
-                <div>{dayjs().format('YYYY/MM/DD')}</div>
-                <div>{dayjs().format('YYYY/MM/DD')}</div>
+                <div>
+                  {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
+                    '-'}
+                </div>
+                <div>
+                  {dayjs(record.customer_accepted_date).isValid()
+                    ? dayjs(record.customer_accepted_date).format('YYYY/MM/DD')
+                    : dayjs(record.customer_cancelled_date).isValid()
+                      ? dayjs(record.customer_cancelled_date).format(
+                          'YYYY/MM/DD',
+                        )
+                      : ''}
+                </div>
               </div>
             )
           }
@@ -228,7 +239,7 @@ function QuotaList() {
               icon={<EyeOutlined />}
               recordItemId={record.id}
             />
-            {record.status === QuotaStatus.Creating && (
+            {record.status === QuotaStatus.Creating && record.is_author && (
               <EditButton
                 hideText
                 size="small"
@@ -319,6 +330,11 @@ function QuotaList() {
           field: 'code',
           operator: 'eq',
           value: values.code,
+        },
+        {
+          field: 'title',
+          operator: 'eq',
+          value: values.title,
         },
         {
           field: 'customer_name',
@@ -698,6 +714,7 @@ function QuotaList() {
                   {...selectProps}
                   labelInValue
                   placeholder={'選択してください'}
+                  optionFilterProp="label"
                 />
               </Form.Item>
             </Col>
@@ -725,7 +742,7 @@ function QuotaList() {
                       label: '作成日',
                     },
                     {
-                      value: '',
+                      value: 'sent_to_customer_date',
                       label: '送信日',
                     },
                     {
@@ -733,11 +750,11 @@ function QuotaList() {
                       label: '有効期限',
                     },
                     {
-                      value: '',
+                      value: 'customer_accepted_date',
                       label: '受注日 ',
                     },
                     {
-                      value: '',
+                      value: 'customer_cancelled_date',
                       label: '失注日',
                     },
                   ]}
@@ -748,7 +765,7 @@ function QuotaList() {
 
             <Col xs={12} md={6}>
               <Form.Item
-                label={<span className="font-bold">タグ名</span>}
+                label={<span hidden className="font-bold"></span>}
                 layout="vertical"
                 name={'date'}
               >

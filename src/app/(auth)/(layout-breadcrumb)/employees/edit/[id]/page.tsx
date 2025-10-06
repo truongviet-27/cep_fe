@@ -21,7 +21,6 @@ import {
   Modal,
   Radio,
   Row,
-  Select,
   Space,
   Typography,
 } from 'antd'
@@ -29,7 +28,8 @@ import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import { isArray } from 'lodash'
 import { useSession } from 'next-auth/react'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
+import { SelectPagination } from '@components/common/select-pagination'
 
 const { Text, Title } = Typography
 
@@ -180,7 +180,7 @@ export default function EmployeeEdit() {
               <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
             <Col xs={24} sm="auto" flex="none">
-              <Space direction="vertical" size={2}>
+              <Space direction="horizontal" size={12}>
                 <Button
                   size="middle"
                   type="default"
@@ -196,7 +196,7 @@ export default function EmployeeEdit() {
                 <Button
                   type="link"
                   onClick={() => show(data?.data?.id)}
-                  className="text-blue-500"
+                  className="text-blue-500 !underline"
                   style={{ marginLeft: -16, marginTop: -10 }}
                 >
                   {t('departments.create.popup_number_setting')}
@@ -222,19 +222,21 @@ export default function EmployeeEdit() {
           <Text>{form.getFieldValue('email')}</Text>
         </Form.Item>
 
-        <Form.Item
-          style={{ marginTop: -10 }}
-          label={boldText(t('employees.fields.department'))}
-          name="department_id"
-          rules={[{ required: true, message: 'このフィールドは必須です' }]}
-        >
-          <Select
-            allowClear
-            placeholder={t('placeholders.select')}
-            {...departmentSelectProps}
-          />
-        </Form.Item>
-
+        <SelectPagination
+          selectProps={{
+            resource: 'departments',
+          }}
+          formItemProps={{
+            name: 'department_id',
+            rules: [{ required: true, message: 'このフィールドは必須です' }],
+            required: true,
+            label: boldText(t('employees.fields.department')),
+          }}
+          selectComponentProps={{
+            placeholder: t('placeholders.select'),
+            style: { maxWidth: 560, minWidth: '150px' },
+          }}
+        />
         <Form.Item
           style={{ marginTop: -4 }}
           label={boldText(t('employees.fields.role'))}

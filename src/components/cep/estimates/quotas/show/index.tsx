@@ -64,12 +64,20 @@ function QuotaDetail() {
     method: 'get',
   })
 
-  const { data: dataProducts, isFetching: isFetchingProducts } = useCustom({
+  const {
+    data: dataProducts,
+    isFetching: isFetchingProducts,
+    refetch: refetchProducts,
+  } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
   })
 
-  const { data: dataHistory, isFetching: isFetchingHistory } = useCustom({
+  const {
+    data: dataHistory,
+    isFetching: isFetchingHistory,
+    refetch: refetchHistory,
+  } = useCustom({
     url: `${apiUrl}/quotas/${id}/history`,
     method: 'get',
   })
@@ -79,6 +87,8 @@ function QuotaDetail() {
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
       refetch()
+      refetchProducts()
+      refetchHistory()
       return {
         message: t('notifications.success'),
         description: message ?? 'Success',
@@ -114,18 +124,17 @@ function QuotaDetail() {
   const handlePreviewPdf = () => {
     const customValues = {
       ...queryBasic?.data,
-      ...dataProducts?.data,
     }
 
     mutatePreviewPdf(
       {
         values: customValues,
-        url: `${apiUrl}/preivew-pdf`,
+        url: `${apiUrl}/quotas/preview-pdf`,
         method: 'post',
       },
       {
         onSuccess(data) {
-          setPreviewPdf(data.data?.pdf ?? '')
+          setPreviewPdf(data.data?.pdf_base64 ?? '')
         },
       },
     )
@@ -158,6 +167,8 @@ function QuotaDetail() {
         <div className="flex justify-between">
           <span>{t('quotas.detail')}</span>
           <Button
+            color="primary"
+            variant="outlined"
             onClick={() => {
               setIsPdf(!isPdf)
               handlePreviewPdf()
@@ -222,20 +233,22 @@ function QuotaDetail() {
             }}
           >
             <Space>
-              <DeleteButton
-                icon={null}
-                size={'small'}
-                onSuccess={() => {
-                  go({
-                    to: '/quotas',
-                  })
-                }}
-              />
+              {queryBasic?.data?.is_author && (
+                <DeleteButton
+                  icon={null}
+                  size={'small'}
+                  onSuccess={() => {
+                    go({
+                      to: '/quotas',
+                    })
+                  }}
+                />
+              )}
             </Space>
 
             <Space>
               {queryBasic?.data?.status === QuotaStatus.Creating &&
-                !queryBasic?.data?.display && (
+                queryBasic?.data?.is_author && (
                   <Button
                     style={{
                       background: '#10B981',
@@ -286,7 +299,7 @@ function QuotaDetail() {
                           {
                             quota_id: queryBasic?.data?.id,
                             status: 'approved',
-                            comment: '',
+                            comment: form.getFieldValue('reason'),
                           },
                         ])
                       }}
@@ -297,7 +310,7 @@ function QuotaDetail() {
                 )}
 
               {queryBasic?.data?.status === QuotaStatus.Approved &&
-                !queryBasic?.data?.display && (
+                queryBasic?.data?.is_author && (
                   <Button
                     style={{
                       background: '#10B981',
@@ -317,7 +330,7 @@ function QuotaDetail() {
                 )}
 
               {queryBasic?.data?.status === QuotaStatus.SentToCustomer &&
-                queryBasic.data?.display && (
+                (queryBasic.data?.display || queryBasic?.data?.is_author) && (
                   <>
                     <Button
                       style={{
@@ -327,7 +340,7 @@ function QuotaDetail() {
                       icon={null}
                       size={'middle'}
                       onClick={() => {
-                        handleChangeStatus('mark-completed', {
+                        handleChangeStatus('cancel-quota', {
                           quota_ids: [queryBasic?.data.id],
                         })
                       }}
@@ -342,7 +355,7 @@ function QuotaDetail() {
                       icon={null}
                       size={'middle'}
                       onClick={() => {
-                        handleChangeStatus('cancel-quota', {
+                        handleChangeStatus('mark-completed', {
                           quota_ids: [queryBasic?.data.id],
                         })
                       }}
@@ -372,6 +385,7 @@ function QuotaDetail() {
                   </Button>
                 )}
             </Space>
+
             <Space className="items-end">
               <Button
                 type="default"
@@ -386,7 +400,7 @@ function QuotaDetail() {
 
               {(queryBasic?.data?.status === QuotaStatus.Creating ||
                 queryBasic?.data?.status === QuotaStatus.Rejected) &&
-                !queryBasic.data?.display && (
+                queryBasic.data?.is_author && (
                   <Button
                     type="primary"
                     onClick={() => {
