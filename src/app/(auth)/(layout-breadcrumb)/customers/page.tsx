@@ -9,6 +9,7 @@ import {
   CreateButton,
   DeleteButton,
   EditButton,
+  useModalForm,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -20,6 +21,7 @@ import {
 import {
   ParameterResourceEnum,
   PermissionEnum,
+  Rank,
   SimpleCustomer,
 } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -38,6 +40,7 @@ import {
   DatePicker,
   Form,
   Input,
+  Modal,
   Row,
   Select,
   Space,
@@ -46,12 +49,13 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import AutoHeading from '@components/common/auto-heading'
 import { SelectPagination } from '@components/common/select-pagination'
+import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 
 const { RangePicker } = DatePicker
-const { Title } = Typography
+const { Title, Text } = Typography
 
 interface ICustomer {
   id: string
@@ -69,6 +73,7 @@ interface ICustomer {
 export default function CustomerListPage() {
   const t = useTranslate()
   const go = useGo()
+  const [isShow, setIsShow] = useState(false)
 
   const { mutate, isLoading } = useUpdate()
   const { parameterSettings, hasFullAccessModule } = useUserStore(
@@ -77,6 +82,20 @@ export default function CustomerListPage() {
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
   const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+
+  const modalFormProps = useModalForm<Rank>({
+    action: 'edit',
+    resource: 'ranks',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+    autoResetForm: true,
+  })
+
+  const {
+    show: editModalShow,
+    close: editModalClose,
+    open: editModalOpen,
+  } = modalFormProps
 
   const { tableProps, setFilters, searchFormProps, setCurrent } =
     useTable<ICustomer>({
@@ -226,11 +245,18 @@ export default function CustomerListPage() {
       },
       {
         title: t('customers.fields.unit_price_rank'),
-        dataIndex: 'price_rank_code',
-        key: 'price_rank_code',
-        render: (text, record) => (
-          <Link href={`/customers/show/${record.id}`} className="!underline">
-            {text}
+        dataIndex: 'rank',
+        key: 'rank',
+        render: (rank, record) => (
+          <Link
+            href={`/ranks`}
+            className="!underline"
+            onClick={(event) => {
+              event.preventDefault()
+              editModalShow(rank.id)
+            }}
+          >
+            {rank?.name}
           </Link>
         ),
       },
@@ -249,6 +275,16 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'credit_rank',
         key: 'credit_rank',
+        render: (_, record) => (
+          <Space direction={'vertical'}>
+            <Text strong>{record?.credit_rank}</Text>
+
+            <Text className={'!font-light !italic'}>
+              {record?.credit_rank_update_at &&
+                dayjs(record?.credit_rank_update_at).format(FORMAT_DATE)}
+            </Text>
+          </Space>
+        ),
       },
       {
         title: (
@@ -266,12 +302,33 @@ export default function CustomerListPage() {
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
         width: 150,
+        render: (_, record) => (
+          <Space direction={'vertical'}>
+            <Text strong>
+              {record?.anti_social_rank == 'T' ? '△' : record?.anti_social_rank}
+            </Text>
+
+            <Text className={'!font-light !italic'}>
+              {dayjs(record?.anti_social_rank_update_at).format(FORMAT_DATE)}
+            </Text>
+          </Space>
+        ),
       },
       {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        render: (_, record) => dayjs(record?.created_at).format(FORMAT_DATE),
+        render: (_, record) => (
+          <Space direction={'vertical'}>
+            <Text strong>
+              {record?.anti_social_rank == 'T' ? '△' : record?.anti_social_rank}
+            </Text>
+
+            <Text className={'!font-light !italic'}>
+              {dayjs(record?.created_at).format(FORMAT_DATE)}
+            </Text>
+          </Space>
+        ),
       },
       {
         title: t('customers.fields.suspension_date'),
@@ -512,6 +569,20 @@ export default function CustomerListPage() {
           </Link>
         </Space>
       </Row>
+
+      <Modal
+        open={editModalOpen}
+        onCancel={editModalClose}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        width={'70vh'}
+      >
+        <RankModalEdit
+          modalFormProps={modalFormProps}
+          setIsShow={setIsShow}
+          isShow={isShow}
+        />
+      </Modal>
 
       <CommonTable
         onRow={(record) => ({

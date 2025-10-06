@@ -120,7 +120,7 @@ function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('price_groups.price_groups')}
+          {t('price_groups.business_partner')}
         </Title>
       ),
     },
