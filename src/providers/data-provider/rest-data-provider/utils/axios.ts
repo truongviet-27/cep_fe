@@ -24,7 +24,8 @@ axiosInstance.interceptors.request.use(
     const session = await getSessionOnce()
     const { tenantId } = useTenantStore.getState()
     const cepId = getOrgFromToken(session?.accessToken)?.id
-
+    console.log('tenantId:', tenantId)
+    console.log('cepId:', cepId)
     if (session?.accessToken) {
       request.headers = request.headers ?? {}
       request.headers['Authorization'] = `Bearer ${session.accessToken}`
