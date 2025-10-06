@@ -1,34 +1,35 @@
 import CommonTable from '@components/common/table'
-import type {
-  QuotaTemplateMainProductType,
-  QuotaTemplateProductType,
-} from '@interfaces/quota-templates'
+import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import type {
-  QuotaTemplateProductGroupRequest,
-  QuotaTemplateProductItemRequest,
+  QuotaTemplateProductGroupResponse,
+  QuotaTemplateProductResponse,
 } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { Col, Flex, Form, InputNumber, Row, Typography } from 'antd'
+import { Checkbox, Col, Flex, Form, InputNumber, Row, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const { Title, Text } = Typography
 
-const DetailInfo: FC = () => {
-  const taxRateWatch = 1
-  const mainProducts = [] as QuotaTemplateMainProductType[]
+interface Props {
+  detail: QuoteTemplateDetailType
+}
 
-  const [costTotal] = useState(0)
-  const [profitRate] = useState(0)
-  const [taxTotal] = useState(0)
-  const [sellTotalWithTax] = useState(0)
+const DetailInfo: FC<Props> = (props) => {
+  const { detail } = props
+
+  const [costTotal, setCostTotal] = useState(0)
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [profitRate, setProfitRate] = useState(0)
+  const [taxTotal, setTaxTotal] = useState(0)
+  const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
   const t = useTranslate()
 
-  const dataSource = mainProducts.flatMap(
-    (item: QuotaTemplateProductGroupRequest, index: number) => [
+  const dataSource = (detail?.main_product ?? []).flatMap(
+    (item: QuotaTemplateProductGroupResponse, index: number) => [
       {
         index,
         key: `header-${index}`,
@@ -36,7 +37,7 @@ const DetailInfo: FC = () => {
         title: item.group_name,
       },
       ...(item.products ?? []).flatMap(
-        (item2: QuotaTemplateProductItemRequest, index2: number) => [
+        (item2: QuotaTemplateProductResponse, index2: number) => [
           {
             index,
             index2,
@@ -47,6 +48,40 @@ const DetailInfo: FC = () => {
     ],
   )
 
+  const calculateSummary = () => {
+    let costTotal = 0
+    let sellTotal = 0
+
+    ;(detail?.main_product ?? []).forEach(
+      (group: QuotaTemplateProductGroupResponse) => {
+        ;(group.products ?? []).forEach(
+          (product: QuotaTemplateProductResponse) => {
+            if (product.is_add_total) {
+              costTotal += (product.cost_price || 0) * (product.quantity || 0)
+              sellTotal +=
+                (product.selling_price || 0) * (product.quantity || 0)
+            }
+          },
+        )
+      },
+    )
+
+    const taxTotal = (sellTotal * Number(detail?.tax_rate ?? 0)) / 100
+    const sellTotalWithTax = sellTotal + taxTotal
+    const profitRate =
+      costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
+
+    setCostTotal(costTotal)
+    setTotalPrice(sellTotal)
+    setTaxTotal(taxTotal)
+    setProfitRate(profitRate)
+    setSellTotalWithTax(sellTotalWithTax)
+  }
+
+  useEffect(() => {
+    calculateSummary()
+  }, [detail])
+
   const columns: ColumnsType = [
     {
       title: '商品コード',
@@ -54,15 +89,15 @@ const DetailInfo: FC = () => {
       key: 'code',
       align: 'left',
       width: 200,
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return {
-            children: <></>,
-            props: { colSpan: columns.length - 1 },
+            children: record.title,
+            props: { colSpan: columns.length },
           }
         }
 
-        return <></>
+        return value
       },
     },
     {
@@ -71,81 +106,92 @@ const DetailInfo: FC = () => {
       key: 'name',
       align: 'left',
       width: 200,
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
+        return value
       },
     },
     {
       title: '単位',
-      dataIndex: 'unit',
-      key: 'unit',
-      render: (_, record) => {
+      dataIndex: 'unit_name',
+      key: 'unit_name',
+      render: (unit_name, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return unit_name
       },
     },
     {
       title: '荷姿',
-      dataIndex: 'package_id',
-      key: 'package_id',
+      dataIndex: 'package_name',
+      key: 'package_name',
       width: 200,
       align: 'left',
-      render: (_, record) => {
+      render: (package_name, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return package_name
       },
     },
     {
       title: '原価',
       dataIndex: 'cost_price',
       key: 'cost_price',
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return value.toLocaleString()
       },
     },
     {
       title: '売単価',
       dataIndex: 'selling_price',
       key: 'selling_price',
-      render: (_, record) => {
+      render: (selling_price, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return selling_price.toLocaleString()
       },
     },
     {
       title: '数量',
       dataIndex: 'quantity',
       key: 'quantity',
-      render: (_, record) => {
+      render: (quantity, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return quantity
       },
     },
     {
       title: '利益率',
       dataIndex: 'profit_margin',
       key: 'profit_margin',
-      render: (_, record) => {
+      render: (profit_margin, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
+        return `${profit_margin}%`
+      },
+    },
+    {
+      title: '合計計算',
+      dataIndex: 'is_add_total',
+      key: 'is_add_total',
+      render: (value, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return <Checkbox checked={value} disabled />
       },
     },
     {
@@ -157,18 +203,7 @@ const DetailInfo: FC = () => {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
-      },
-    },
-    {
-      title: '合計計算',
-      dataIndex: 'is_add_total',
-      key: 'is_add_total',
-      render: (_, record) => {
-        if (record.isHeader) {
-          return { props: { colSpan: 0 } }
-        }
-        return <></>
+        return (record.quantity * record.selling_price).toLocaleString()
       },
     },
   ]
@@ -191,24 +226,6 @@ const DetailInfo: FC = () => {
           }
           pagination={false}
           summary={() => {
-            const total = (mainProducts ?? []).reduce(
-              (accGroup: number, group: QuotaTemplateMainProductType) => {
-                const groupTotal = (group.products ?? []).reduce(
-                  (accProd: number, prod: QuotaTemplateProductType) => {
-                    if (prod.is_add_total) {
-                      return (
-                        accProd +
-                        (prod.selling_price || 0) * (prod.quantity || 0)
-                      )
-                    }
-                    return accProd
-                  },
-                  0,
-                )
-                return accGroup + groupTotal
-              },
-              0,
-            )
             return (
               <Table.Summary.Row
                 style={{
@@ -221,7 +238,7 @@ const DetailInfo: FC = () => {
                   小計
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="center">
-                  {total || 0}
+                  {(totalPrice || 0).toLocaleString()}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             )
@@ -249,7 +266,7 @@ const DetailInfo: FC = () => {
               原価合計
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {costTotal || 0}
+              ¥{(costTotal || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_cost" hidden>
               <InputNumber />
@@ -272,10 +289,10 @@ const DetailInfo: FC = () => {
                 fontWeight: 700,
               }}
             >
-              消費税金額（{taxRateWatch}%）
+              消費税金額（{detail?.tax_rate}%）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {taxTotal || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(taxTotal || 0).toLocaleString()}
             </Text>
             <Form.Item name="consumption_tax_amount" hidden>
               <InputNumber />
@@ -300,7 +317,7 @@ const DetailInfo: FC = () => {
             >
               合計利益率
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               {profitRate.toFixed(2) || 0}%
             </Text>
             <Form.Item name="total_profit_margin" hidden>
@@ -326,8 +343,8 @@ const DetailInfo: FC = () => {
             >
               合計金額（税込）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {sellTotalWithTax || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(sellTotalWithTax || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_price_tax_included" hidden>
               <InputNumber />

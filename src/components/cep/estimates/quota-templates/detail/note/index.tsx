@@ -4,7 +4,11 @@ import { Typography } from 'antd'
 
 const { Title } = Typography
 
-const NoteForm: React.FC = () => {
+interface Props {
+  note: string
+}
+
+const NoteForm: React.FC<Props> = ({ note }) => {
   const t = useTranslate()
   return (
     <>
@@ -15,7 +19,7 @@ const NoteForm: React.FC = () => {
       >
         {t('quota_templates.form.titleSpecificationsAndConditions')}
       </Title>
-      <div className="p-4">なし</div>
+      <div className="p-4">{note}</div>
     </>
   )
 }

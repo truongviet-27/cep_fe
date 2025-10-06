@@ -7,7 +7,13 @@ import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { IDepartments } from '@interfaces/departments'
-import { DeleteButton, EditButton, EmailField, useTable } from '@refinedev/antd'
+import {
+  DeleteButton,
+  EditButton,
+  EmailField,
+  ShowButton,
+  useTable,
+} from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
@@ -150,6 +156,7 @@ export default function Page() {
               dataIndex="actions"
               render={(_, record: BaseRecord) => (
                 <Space>
+                  <ShowButton hideText size="small" recordItemId={record.id} />
                   <EditButton hideText size="small" recordItemId={record.id} />
                 </Space>
               )}

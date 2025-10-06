@@ -1132,6 +1132,7 @@ export const zProductCustomerPricingPackaging = z.object({
   is_active: z.optional(z.boolean()),
   is_rate_based: z.optional(z.boolean()),
   is_standard_price: z.optional(z.boolean()),
+  is_default_packaging: z.optional(z.boolean()),
   rank_prices: z.optional(z.union([z.int(), z.null()])),
 })
 
@@ -1181,6 +1182,7 @@ export const zProductPackaging = z.object({
   selling_price: z.optional(z.int()),
   is_rate_based: z.optional(z.boolean()),
   is_standard_price: z.optional(z.boolean()),
+  is_default_packaging: z.optional(z.boolean()),
   rank_prices: z.optional(z.array(zPackagingRankPrice)),
 })
 
@@ -1398,10 +1400,78 @@ export const zApproveQuotaStepRequest = z.array(
 )
 
 /**
+ * Product item for a specific customer from quota agreed prices
+ */
+export const zQuotaAgreedPriceCustomerProduct = z.object({
+  product_id: z.optional(z.int()),
+  product_name: z.optional(z.string()),
+  unit_name: z.optional(z.string()),
+  selling_price: z.optional(z.number()),
+  quantity: z.optional(z.int()),
+  start_date: z.optional(z.iso.datetime()),
+  end_date: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Response containing customer info and list of products from quota agreed prices
+ */
+export const zQuotaAgreedPriceCustomerProductsResponse = z.object({
+  data: z.optional(
+    z.object({
+      customer_id: z.optional(z.int()),
+      customer_code: z.optional(z.string()),
+      customer_name: z.optional(z.string()),
+      department_name: z.optional(z.string()),
+      rank_code: z.optional(z.string()),
+      total_products: z.optional(z.int()),
+      products: z.optional(z.array(zQuotaAgreedPriceCustomerProduct)),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Customer item from quota agreed prices list
+ */
+export const zQuotaAgreedPriceCustomer = z.object({
+  customer_id: z.optional(z.int()),
+  customer_code: z.optional(z.string()),
+  customer_name: z.optional(z.string()),
+  department_name: z.optional(z.string()),
+  rank_code: z.optional(z.string()),
+  total_products: z.optional(z.int()),
+})
+
+/**
+ * Pagination links for quota agreed prices
+ */
+export const zQuotaAgreedPriceLinks = z.object({
+  first: z.optional(z.string()),
+  last: z.optional(z.string()),
+  prev: z.optional(z.union([z.string(), z.null()])),
+  next: z.optional(z.union([z.string(), z.null()])),
+})
+
+/**
+ * Paginated response for customers from quota agreed prices
+ */
+export const zQuotaAgreedPriceCustomersPaginatedResponse = z.object({
+  data: z.optional(
+    z.object({
+      items: z.optional(z.array(zQuotaAgreedPriceCustomer)),
+      meta: z.optional(zMeta),
+      links: z.optional(zQuotaAgreedPriceLinks),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
  * Quota agreed price details
  */
 export const zQuotaAgreedPrice = z.object({
   id: z.optional(z.int()),
+  status: z.optional(z.string()),
   quota_id: z.optional(z.int()),
   quota_code: z.optional(z.string()),
   number_products: z.optional(z.int()),
@@ -1420,6 +1490,7 @@ export const zQuotaAgreedPrice = z.object({
         id: z.optional(z.int()),
         name: z.optional(z.string()),
         email: z.optional(z.string()),
+        department_name: z.optional(z.string()),
       }),
       z.null(),
     ]),
@@ -1434,16 +1505,6 @@ export const zQuotaAgreedPrice = z.object({
       z.null(),
     ]),
   ),
-})
-
-/**
- * Pagination links for quota agreed prices
- */
-export const zQuotaAgreedPriceLinks = z.object({
-  first: z.optional(z.string()),
-  last: z.optional(z.string()),
-  prev: z.optional(z.union([z.string(), z.null()])),
-  next: z.optional(z.union([z.string(), z.null()])),
 })
 
 /**
@@ -1474,6 +1535,7 @@ export const zQuotaCloneHistoryResource = z.object({
   created_at: z.optional(z.iso.datetime()),
   sent_to_customer_date: z.optional(z.union([z.iso.datetime(), z.null()])),
   code: z.optional(z.string()),
+  pdf_path: z.optional(z.string()),
   author: z.optional(
     z.object({
       id: z.optional(z.int()),
@@ -2755,9 +2817,13 @@ export const zCodeIssueSettingControllerShowByCodeResponse =
   zCodeIssueSettingDetailResponse
 
 export const zGetCorporateNumberData = z.object({
-  body: zCorporateNumberRequest,
+  body: z.optional(z.never()),
   path: z.optional(z.never()),
-  query: z.optional(z.never()),
+  query: z.object({
+    name: z.string().max(255),
+    type: z.optional(z.enum(['01', '02', '12'])),
+    history: z.optional(z.unknown()),
+  }),
 })
 
 /**
@@ -3948,6 +4014,34 @@ export const zQuotaAgreedPriceControllerStoreResponse = z.object({
   ),
 })
 
+export const zQuotaAgreedPriceControllerCountData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quota agreed prices count retrieved successfully
+ */
+export const zQuotaAgreedPriceControllerCountResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      total: z.optional(z.int()),
+      status_counts: z.optional(
+        z.array(
+          z.object({
+            status: z.optional(z.string()),
+            label: z.optional(z.string()),
+            count: z.optional(z.int()),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
 export const zQuotaAgreedPriceControllerGetCustomerListData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -3965,35 +4059,8 @@ export const zQuotaAgreedPriceControllerGetCustomerListData = z.object({
 /**
  * Customer list retrieved successfully
  */
-export const zQuotaAgreedPriceControllerGetCustomerListResponse = z.object({
-  success: z.optional(z.boolean()),
-  message: z.optional(z.string()),
-  data: z.optional(
-    z.object({
-      data: z.optional(
-        z.array(
-          z.object({
-            customer_id: z.optional(z.int()),
-            customer_name: z.optional(z.string()),
-            department_name: z.optional(z.string()),
-            rank_code: z.optional(z.string()),
-            total_products: z.optional(z.int()),
-          }),
-        ),
-      ),
-      pagination: z.optional(
-        z.object({
-          current_page: z.optional(z.int()),
-          per_page: z.optional(z.int()),
-          total: z.optional(z.int()),
-          last_page: z.optional(z.int()),
-          from: z.optional(z.int()),
-          to: z.optional(z.int()),
-        }),
-      ),
-    }),
-  ),
-})
+export const zQuotaAgreedPriceControllerGetCustomerListResponse =
+  zQuotaAgreedPriceCustomersPaginatedResponse
 
 export const zQuotaAgreedPriceControllerGetCustomerProductsData = z.object({
   body: z.optional(z.never()),
@@ -4006,33 +4073,8 @@ export const zQuotaAgreedPriceControllerGetCustomerProductsData = z.object({
 /**
  * Customer products retrieved successfully
  */
-export const zQuotaAgreedPriceControllerGetCustomerProductsResponse = z.object({
-  success: z.optional(z.boolean()),
-  message: z.optional(z.string()),
-  data: z.optional(
-    z.object({
-      customer_id: z.optional(z.int()),
-      customer_code: z.optional(z.string()),
-      customer_name: z.optional(z.string()),
-      department_name: z.optional(z.string()),
-      rank_code: z.optional(z.string()),
-      total_products: z.optional(z.int()),
-      products: z.optional(
-        z.array(
-          z.object({
-            product_id: z.optional(z.int()),
-            product_name: z.optional(z.string()),
-            unit_name: z.optional(z.string()),
-            selling_price: z.optional(z.number()),
-            quantity: z.optional(z.int()),
-            start_date: z.optional(z.iso.datetime()),
-            end_date: z.optional(z.iso.datetime()),
-          }),
-        ),
-      ),
-    }),
-  ),
-})
+export const zQuotaAgreedPriceControllerGetCustomerProductsResponse =
+  zQuotaAgreedPriceCustomerProductsResponse
 
 export const zQuotaAgreedPriceControllerUpdateExpirationDateData = z.object({
   body: z.object({
@@ -4397,9 +4439,7 @@ export const zQuotaControllerSendToApproverResponse = z.object({
 
 export const zQuotaControllerPreviewPdfData = z.object({
   body: zQuotaUpdateRequest,
-  path: z.object({
-    id: z.int(),
-  }),
+  path: z.optional(z.never()),
   query: z.optional(z.never()),
 })
 

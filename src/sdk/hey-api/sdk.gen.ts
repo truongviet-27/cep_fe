@@ -223,6 +223,9 @@ import type {
   QuotaAgreedPriceControllerStoreData,
   QuotaAgreedPriceControllerStoreResponses,
   QuotaAgreedPriceControllerStoreErrors,
+  QuotaAgreedPriceControllerCountData,
+  QuotaAgreedPriceControllerCountResponses,
+  QuotaAgreedPriceControllerCountErrors,
   QuotaAgreedPriceControllerGetCustomerListData,
   QuotaAgreedPriceControllerGetCustomerListResponses,
   QuotaAgreedPriceControllerGetCustomerListErrors,
@@ -415,6 +418,7 @@ import {
   zQuotaAgreedPriceControllerDeleteMultipleData,
   zQuotaAgreedPriceControllerIndexData,
   zQuotaAgreedPriceControllerStoreData,
+  zQuotaAgreedPriceControllerCountData,
   zQuotaAgreedPriceControllerGetCustomerListData,
   zQuotaAgreedPriceControllerGetCustomerProductsData,
   zQuotaAgreedPriceControllerUpdateExpirationDateData,
@@ -950,7 +954,7 @@ export const codeIssueSettingControllerShowByCode = <
 export const getCorporateNumber = <ThrowOnError extends boolean = false>(
   options: Options<GetCorporateNumberData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).post<
+  return (options.client ?? _heyApiClient).get<
     GetCorporateNumberResponses,
     GetCorporateNumberErrors,
     ThrowOnError
@@ -966,10 +970,6 @@ export const getCorporateNumber = <ThrowOnError extends boolean = false>(
     ],
     url: '/api/v1/corporate-number',
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   })
 }
 
@@ -2611,6 +2611,34 @@ export const quotaAgreedPriceControllerStore = <
 }
 
 /**
+ * Get quota agreed prices count by status
+ * Get count of quota agreed prices by status.
+ */
+export const quotaAgreedPriceControllerCount = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<QuotaAgreedPriceControllerCountData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaAgreedPriceControllerCountResponses,
+    QuotaAgreedPriceControllerCountErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaAgreedPriceControllerCountData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quota/agreed-prices/count',
+    ...options,
+  })
+}
+
+/**
  * Get customer list from quota agreed prices
  * Retrieve a paginated list of customers from quota agreed prices with filtering options.
  */
@@ -3144,7 +3172,7 @@ export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
         type: 'http',
       },
     ],
-    url: '/api/v1/quotas/{id}/preview-pdf',
+    url: '/api/v1/quotas/preview-pdf',
     ...options,
     headers: {
       'Content-Type': 'application/json',

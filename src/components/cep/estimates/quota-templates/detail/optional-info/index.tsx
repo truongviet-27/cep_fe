@@ -1,9 +1,8 @@
 import CommonTable from '@components/common/table'
-import type { QuotaTemplateMainProductType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import type {
-  QuotaTemplateProductGroupRequest,
-  QuotaTemplateProductItemRequest,
+  QuotaTemplateProductGroupResponse,
+  QuotaTemplateProductResponse,
 } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
 import { Flex, Typography } from 'antd'
@@ -12,12 +11,16 @@ import type { FC } from 'react'
 
 const { Title } = Typography
 
-const OptionalInfo: FC = () => {
-  const mainProducts = [] as QuotaTemplateMainProductType[]
+interface Props {
+  optionalProducts?: Array<QuotaTemplateProductGroupResponse>
+}
+
+const OptionalInfo: FC<Props> = (props) => {
+  const { optionalProducts } = props
   const t = useTranslate()
 
-  const dataSource = mainProducts.flatMap(
-    (item: QuotaTemplateProductGroupRequest, index: number) => [
+  const dataSource = (optionalProducts ?? []).flatMap(
+    (item: QuotaTemplateProductGroupResponse, index: number) => [
       {
         index,
         key: `header-${index}`,
@@ -25,7 +28,7 @@ const OptionalInfo: FC = () => {
         title: item.group_name,
       },
       ...(item.products ?? []).flatMap(
-        (item2: QuotaTemplateProductItemRequest, index2: number) => [
+        (item2: QuotaTemplateProductResponse, index2: number) => [
           {
             index,
             index2,
@@ -43,15 +46,15 @@ const OptionalInfo: FC = () => {
       key: 'code',
       align: 'left',
       width: 200,
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return {
-            children: <></>,
-            props: { colSpan: columns.length - 1 },
+            children: record.title,
+            props: { colSpan: columns.length },
           }
         }
 
-        return <></>
+        return value
       },
     },
     {
@@ -60,81 +63,81 @@ const OptionalInfo: FC = () => {
       key: 'name',
       align: 'left',
       width: 200,
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
+        return value
       },
     },
     {
       title: '単位',
-      dataIndex: 'unit',
-      key: 'unit',
-      render: (_, record) => {
+      dataIndex: 'unit_name',
+      key: 'unit_name',
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return value
       },
     },
     {
       title: '荷姿',
-      dataIndex: 'package_id',
-      key: 'package_id',
+      dataIndex: 'package_name',
+      key: 'package_name',
       width: 200,
       align: 'left',
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return value
       },
     },
     {
       title: '原価',
       dataIndex: 'cost_price',
       key: 'cost_price',
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return value.toLocaleString()
       },
     },
     {
       title: '売単価',
       dataIndex: 'selling_price',
       key: 'selling_price',
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return value.toLocaleString()
       },
     },
     {
       title: '数量',
       dataIndex: 'quantity',
       key: 'quantity',
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <></>
+        return value
       },
     },
     {
       title: '利益率',
       dataIndex: 'profit_margin',
       key: 'profit_margin',
-      render: (_, record) => {
+      render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
+        return `${value}%`
       },
     },
     {
@@ -146,7 +149,7 @@ const OptionalInfo: FC = () => {
           return { props: { colSpan: 0 } }
         }
 
-        return <></>
+        return (record.quantity * record.selling_price).toLocaleString()
       },
     },
   ]

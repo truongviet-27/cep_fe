@@ -39,7 +39,7 @@ const ProductFormContainer: React.FC = () => {
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
-  const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(false)
+  const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
 
   return (
     <PageContainer

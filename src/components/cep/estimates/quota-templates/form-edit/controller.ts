@@ -1,4 +1,6 @@
+import type { QuotaTemplateFormType } from '@interfaces/quota-templates'
 import { useForm } from '@refinedev/antd'
+import type { GetOneResponse } from '@refinedev/core'
 import { useApiUrl, useCustom, useParsed } from '@refinedev/core'
 import type { QuotaFormSettingResponse } from '@sdk/hey-api'
 import { useEffect } from 'react'
@@ -6,11 +8,26 @@ import { useEffect } from 'react'
 export function useController() {
   const { params } = useParsed()
   const isUpdateMode = !!params?.id
-  const methods = useForm()
+  const methods = useForm<QuotaTemplateFormType>({
+    resource: 'quota-templates',
+    queryOptions: {
+      select: (data) => {
+        const tags = (data.data?.tags ?? []) as unknown as { id: number }[]
+
+        return {
+          ...data,
+          data: {
+            ...data.data,
+            tags: tags.map(({ id }) => id),
+          },
+        } as unknown as GetOneResponse<QuotaTemplateFormType>
+      },
+    },
+  })
 
   const apiUrl = useApiUrl()
 
-  const { form } = methods
+  const { form, query } = methods
 
   const { data } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
@@ -32,7 +49,7 @@ export function useController() {
         delivery_method: data?.data.default_delivery_method,
         payment_due_date: data?.data.default_payment_due_date,
         expiration_date: data?.data.default_expiration_date,
-        consumption_tax: data?.data.consumption_tax,
+        consumption_tax: data?.data.consumption_tax ?? '0',
         tax_rate: data?.data.tax_rate,
         note: null,
         tags: [],
@@ -83,5 +100,6 @@ export function useController() {
   return {
     isUpdateMode,
     methods,
+    isLoading: isUpdateMode && query?.isLoading,
   }
 }
