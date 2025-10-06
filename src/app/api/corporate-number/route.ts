@@ -1,7 +1,7 @@
+import { parseHoujinCsv } from '@utility/csv-parsing-function'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-// URL cơ sở của API bên ngoài
 const HOUJIN_API_BASE_URL = 'https://api.houjin-bangou.nta.go.jp/4/name'
 
 export async function POST(req: NextRequest) {
@@ -43,17 +43,21 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    console.log('here')
+
     if (!apiResponse.ok) {
       throw new Error(`External API failed with status: ${apiResponse.status}`)
     }
 
-    const data = await apiResponse.json()
+    const csvData = await apiResponse.text()
 
-    return NextResponse.json(data)
+    const jsonData = parseHoujinCsv(csvData)
+
+    return NextResponse.json(jsonData)
   } catch (error) {
     console.error('Error in search-houjin API route:', error)
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: '検索結果件数が多いため結果をお返しできません。' },
       { status: 500 },
     )
   }

@@ -4,29 +4,14 @@ import { RightOutlined, WarningOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import {
-  EditButton,
-  EmailField,
-  ShowButton,
-  useSelect,
-  useTable,
-} from '@refinedev/antd'
+import { EditButton, EmailField, ShowButton, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Row,
-  Select,
-  Space,
-  Table,
-  Typography,
-} from 'antd'
+import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
 import Link from 'next/link'
+import { SelectPagination } from '@components/common/select-pagination'
 
 const { Title, Text } = Typography
 
@@ -53,26 +38,6 @@ function Page() {
     },
     { title: <Title level={5}>{t('employees.list.list')}</Title> },
   ]
-
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-    // @ts-ignore
-    onSearch: (value) => [
-      {
-        field: 'q',
-        operator: 'null',
-        value,
-      },
-    ],
-  })
-
-  const { selectProps: rolesSelectProps } = useSelect({
-    resource: 'roles',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
 
   const getRowClassName = (record: BaseRecord) => {
     return !record.email || !record.code ? 'bg-gray-200' : ''
@@ -124,29 +89,34 @@ function Page() {
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
-            <Form.Item
-              label={boldText(t('departments.departments'))}
-              name="department_id"
-            >
-              <Select
-                allowClear
-                {...departmentSelectProps}
-                placeholder={t('placeholders.partial_match')}
-              />
-            </Form.Item>
+            <SelectPagination
+              selectProps={{
+                resource: 'departments',
+              }}
+              formItemProps={{
+                name: 'department_id',
+                label: boldText(t('departments.departments')),
+              }}
+              selectComponentProps={{
+                placeholder: t('placeholders.partial_match'),
+              }}
+            />
           </Col>
           <Col xs={24} md={4}>
-            <Form.Item
-              label={boldText(t('employees.fields.role'))}
-              name="role_id"
-            >
-              <Select
-                allowClear
-                {...rolesSelectProps}
-                placeholder={t('placeholders.select')}
-                showSearch={false}
-              />
-            </Form.Item>
+            <SelectPagination
+              selectProps={{
+                resource: 'roles',
+              }}
+              optionLabel={'display_name'}
+              optionValue={'id'}
+              formItemProps={{
+                name: 'role_id',
+                label: boldText(t('employees.fields.role')),
+              }}
+              selectComponentProps={{
+                placeholder: t('placeholders.select'),
+              }}
+            />
           </Col>
 
           <Col xs={24} md={4}>
