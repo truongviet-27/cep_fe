@@ -87,7 +87,9 @@ function CoreAutoComplete({
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'cost_price'],
-          option?.standard_price ?? data?.data?.cost_price,
+          data?.data?.cost_price * option?.quantity_in_package
+            ? data?.data?.cost_price * option?.quantity_in_package
+            : data?.data?.cost_price,
         )
 
         form.setFieldValue(

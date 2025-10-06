@@ -7,6 +7,7 @@ import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import { useModalForm, useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -35,6 +36,7 @@ function DetailInfo() {
   const mainProductWatch = Form.useWatch('main_product', form)
   const taxRateWatch = Form.useWatch('tax_rate', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
+  const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
@@ -55,14 +57,30 @@ function DetailInfo() {
     })
 
     let taxTotal = 0
-    if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-      taxTotal = Math.floor((sellTotal * tax_rate) / 100)
-    } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-      taxTotal = Math.ceil((sellTotal * tax_rate) / 100)
+    let sellTotalWithTax = 0
+    if (consumptionTaxWatch === 'inclusive') {
+      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        taxTotal = Math.floor(sellTotal - sellTotal / 1.1)
+      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        taxTotal = Math.ceil(sellTotal - sellTotal / 1.1)
+      } else {
+        taxTotal = Number((sellTotal - sellTotal / 1.1).toFixed(0))
+      }
     } else {
-      taxTotal = Number(((sellTotal * tax_rate) / 100).toFixed(0))
+      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        taxTotal = Math.floor((sellTotal * tax_rate) / 100)
+      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        taxTotal = Math.ceil((sellTotal * tax_rate) / 100)
+      } else {
+        taxTotal = Number(((sellTotal * tax_rate) / 100).toFixed(0))
+      }
     }
-    const sellTotalWithTax = sellTotal + taxTotal
+
+    if (consumptionTaxWatch === 'exclusive') {
+      sellTotalWithTax = sellTotal + taxTotal
+    } else {
+      sellTotalWithTax = sellTotal
+    }
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 
@@ -84,7 +102,7 @@ function DetailInfo() {
       form.getFieldValue('main_product'),
       form.getFieldValue('tax_rate'),
     )
-  }, [taxRateWatch, mainProductWatch])
+  }, [taxRateWatch, mainProductWatch, consumptionTaxWatch])
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
@@ -146,7 +164,7 @@ function DetailInfo() {
 
   return (
     <Card
-      title={'詳細情報'}
+      title={boldText('詳細情報', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,
@@ -650,7 +668,7 @@ function DetailInfo() {
                   if (isHeader) {
                     add(
                       {
-                        group_name: '',
+                        group_name: 'エアロン利用料',
                         products: [
                           {
                             product_id: null,
@@ -854,7 +872,8 @@ function DetailInfo() {
                   fontWeight: 700,
                 }}
               >
-                合計金額（税込）
+                合計金額（
+                {consumptionTaxWatch === 'external' ? '税抜）' : '税込）'}
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                 {sellTotalWithTax || 0}

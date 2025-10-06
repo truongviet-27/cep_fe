@@ -5,6 +5,8 @@ import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import {
   Button,
   Card,
@@ -21,6 +23,9 @@ import { useState } from 'react'
 function OptionalInfo() {
   const t = useTranslate()
   const form = Form.useFormInstance()
+
+  // const taxRateWatch = Form.useWatch('tax_rate', form)
+  // const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
@@ -82,7 +87,7 @@ function OptionalInfo() {
 
   return (
     <Card
-      title={'オプション情報'}
+      title={boldText('オプション情報', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,
@@ -190,6 +195,7 @@ function OptionalInfo() {
                     }}
                   >
                     <Select
+                      {...selectPropsProduct}
                       placeholder="商品名・サービス名で検索"
                       allowClear
                       showSearch
@@ -197,7 +203,6 @@ function OptionalInfo() {
                       style={{
                         width: 200,
                       }}
-                      {...selectPropsProduct}
                       onChange={(value) => {
                         const item: any = query.data?.data.find(
                           (item: any) => item.id === value,
@@ -522,7 +527,7 @@ function OptionalInfo() {
                   if (isHeader) {
                     add(
                       {
-                        group_name: '',
+                        group_name: 'エアロン利用料',
                         products: [
                           {
                             product_id: null,

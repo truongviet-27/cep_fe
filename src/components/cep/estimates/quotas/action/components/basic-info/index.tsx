@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import { IssueMethod } from '@components/cep/estimates/quotas/enum'
+import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import { useModalForm, useSelect } from '@refinedev/antd'
 import { useApiUrl, useCustom, useParsed, useTranslate } from '@refinedev/core'
 import { type CodeIssueSetting } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
@@ -19,6 +21,7 @@ import {
   Row,
   Select,
 } from 'antd'
+import dayjs from 'dayjs'
 
 const BasicInfo = () => {
   const t = useTranslate()
@@ -40,6 +43,7 @@ const BasicInfo = () => {
       mode: 'server',
       pageSize: 100,
     },
+
     onSearch(value) {
       return [
         {
@@ -86,7 +90,7 @@ const BasicInfo = () => {
 
   return (
     <Card
-      title={'基本情報'}
+      title={boldText('基本情報', PRIMARY, 16)}
       style={{
         border: 'none',
       }}
@@ -180,7 +184,7 @@ const BasicInfo = () => {
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'type'}>
               <Radio.Group
-                defaultValue={'exclusive'}
+                defaultValue={'normal'}
                 options={[
                   {
                     value: 'normal',
@@ -232,10 +236,10 @@ const BasicInfo = () => {
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
               <Select
+                {...selectPropsCt}
                 allowClear
                 showSearch
                 disabled={isCloneVersion}
-                {...selectPropsCt}
                 labelInValue
               />
             </Form.Item>
@@ -257,7 +261,11 @@ const BasicInfo = () => {
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_date'}>
-              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
+              <DatePicker
+                style={{ width: '75%' }}
+                placeholder={FORMAT_DATE}
+                minDate={Form.useWatch('created_at', form)}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -324,7 +332,7 @@ const BasicInfo = () => {
       </Form.Item>
 
       <Form.Item label={boldText('有効期限')}>
-        <Row>
+        <Row gutter={[16, 0]}>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'expiration_date'}>
               <Select
@@ -366,6 +374,16 @@ const BasicInfo = () => {
               />
             </Form.Item>
           </Col>
+          <Col xl={8}>
+            <Form.Item>
+              {dayjs(
+                getExpiryDate(
+                  Form.useWatch('expiration_date', form),
+                  Form.useWatch('created_at', form),
+                ),
+              ).format('YYYY/MM/DD')}
+            </Form.Item>
+          </Col>
         </Row>
       </Form.Item>
 
@@ -399,9 +417,18 @@ const BasicInfo = () => {
         label={boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
       >
         <Row>
-          <Col xs={24} sm={16} md={10} lg={8}>
-            <Form.Item name="tax_rate" layout="horizontal">
-              <InputNumber controls={false} min={0} max={100} addonAfter="%" />
+          <Col xs={24} md={6}>
+            <Form.Item
+              label={boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
+              name="tax_rate"
+            >
+              <InputNumber
+                controls={false}
+                min={0}
+                max={100}
+                addonAfter="%"
+                style={{ minWidth: '75%' }}
+              />
             </Form.Item>
           </Col>
         </Row>
