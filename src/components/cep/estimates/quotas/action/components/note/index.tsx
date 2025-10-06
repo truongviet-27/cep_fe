@@ -1,10 +1,12 @@
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { Card, Form, Input } from 'antd'
 import React from 'react'
 
 function Note() {
   return (
     <Card
-      title={'詳細情報'}
+      title={boldText('仕様・条件', PRIMARY, 16)}
       headStyle={{
         padding: 0,
         minHeight: 0,

@@ -6,8 +6,10 @@ import History from '@components/cep/estimates/quotas/action/components/history'
 import Note from '@components/cep/estimates/quotas/action/components/note'
 import OptionalInfo from '@components/cep/estimates/quotas/action/components/optional-info'
 import Tags from '@components/cep/estimates/quotas/action/components/tags'
+import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
+import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { DeleteButton, useForm } from '@refinedev/antd'
@@ -39,7 +41,6 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
-import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 
 const { Title } = Typography
 
@@ -55,7 +56,8 @@ function QuotaAction() {
 
   const { actionType } = params as any
   const isCloneVersion = actionType === 'VERSION'
-  const isClone = action === 'clone'
+  const isCloneNew = !isCloneVersion
+  const isEdit = action === 'edit'
 
   const isUpdate = !!id
 
@@ -69,13 +71,8 @@ function QuotaAction() {
       enabled: !!params?.templateId,
     },
   })
-  const {
-    formProps,
-    form,
-    saveButtonProps,
-    mutation,
-    query: queryBasic,
-  } = methods
+
+  const { formProps, form, saveButtonProps, mutation } = methods
 
   const { form: formProps2 } = formProps
 
@@ -114,7 +111,7 @@ function QuotaAction() {
     url: `${apiUrl}/quotas/${id}/history`,
     method: 'get',
     queryOptions: {
-      enabled: isUpdate,
+      enabled: isUpdate && !isCloneNew,
     },
   })
 
@@ -124,24 +121,31 @@ function QuotaAction() {
   const handlePreviewPdf = () => {
     const customValues = {
       ...form.getFieldsValue(),
+      tags: form.getFieldValue('tags').map((item: any) => ({
+        id: item?.value,
+        name: item?.label,
+      })),
+      customer_id: form.getFieldValue('customer')?.value,
+      customer_name: form.getFieldValue('customer')?.label,
+      status: QuotaStatus.Creating,
     }
 
     mutatePreviewPdf(
       {
         values: customValues,
-        url: `${apiUrl}/preivew-pdf`,
+        url: `${apiUrl}/quotas/preview-pdf`,
         method: 'post',
       },
       {
         onSuccess(data) {
-          setPreviewPdf(data.data?.pdf ?? '')
+          setPreviewPdf(data.data?.pdf_base64 ?? '')
         },
       },
     )
   }
 
   useEffect(() => {
-    if (isUpdate && isCloneVersion) {
+    if (isCloneVersion) {
       if (dataBasicInfo?.data && dataProducts?.data && dataHistory?.data) {
         form.setFieldsValue({
           ...dataBasicInfo.data,
@@ -184,6 +188,7 @@ function QuotaAction() {
       if (dataBasicInfo?.data && dataProducts?.data) {
         form.setFieldsValue({
           ...dataBasicInfo.data,
+          code: isEdit ? dataBasicInfo.data.code : '',
           customer: {
             value: dataBasicInfo.data.customer_id,
             label: dataBasicInfo.data.customer_name,
@@ -264,7 +269,7 @@ function QuotaAction() {
         tax_rounding_method: data.data?.tax_rounding_method,
         main_product: [
           {
-            group_name: '',
+            group_name: 'エアロン利用料',
             products: [
               {
                 product_id: null,
@@ -282,7 +287,7 @@ function QuotaAction() {
         ],
         optional_product: [
           {
-            group_name: '',
+            group_name: 'エアロン利用料',
             products: [
               {
                 product_id: null,
@@ -380,6 +385,9 @@ function QuotaAction() {
         <div className="flex justify-between">
           <span>{isUpdate ? t('quotas.edit') : t('quotas.create')}</span>
           <Button
+            color="primary"
+            variant="outlined"
+            disabled={!Form.useWatch('code', form)}
             onClick={() => {
               setIsPdf(!isPdf)
               handlePreviewPdf()
@@ -420,27 +428,27 @@ function QuotaAction() {
             </Col>
           </Row>
           <Tags />
-          {isUpdate && !isClone && <History />}
+          {isUpdate && !isCloneNew && <History data={dataHistory?.data} />}
 
           <Divider />
-          {isUpdate && !isClone && (
+          {isUpdate && !isCloneNew && (
             <ShowMoreInfo
               descriptions={[
                 {
                   title: t('approve_routes.show.creator'),
                   value:
-                    (queryBasic?.data?.data.author?.name ?? '---') +
+                    (dataBasicInfo?.data.author?.name ?? '---') +
                     ' ' +
-                    dayjs(queryBasic?.data?.data.created_at).format(
+                    dayjs(dataBasicInfo?.data.created_at).format(
                       'YYYY/MM/DD HH:mm',
                     ),
                 },
                 {
                   title: t('approve_routes.show.updater'),
                   value:
-                    (queryBasic?.data?.data.editor?.name ?? '---') +
+                    (dataBasicInfo?.data.editor?.name ?? '---') +
                     ' ' +
-                    dayjs(queryBasic?.data?.data.updated_at).format(
+                    dayjs(dataBasicInfo?.data?.updated_at).format(
                       'YYYY/MM/DD HH:mm',
                     ),
                 },
@@ -455,7 +463,7 @@ function QuotaAction() {
             }}
           >
             <Space>
-              {isUpdate && !isClone && (
+              {isUpdate && !isCloneNew && (
                 <DeleteButton
                   icon={null}
                   size={'small'}

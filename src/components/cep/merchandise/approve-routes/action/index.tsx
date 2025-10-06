@@ -104,6 +104,7 @@ function ApproveAction() {
     },
     // defaultValue: query.data?.data.departments.map((item: any) => item?.id),
     onSearch: (value) => {
+      console.log(value, 'valuexxx')
       return [
         {
           field: 'q',
@@ -370,6 +371,7 @@ function ApproveAction() {
 
                     return newOptions
                   })()}
+                  onChange={() => {}}
                 />
               </Form.Item>
             </Col>
