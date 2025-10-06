@@ -47,6 +47,19 @@ const AgreedPriceQuotaTab = () => {
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -159,7 +172,16 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'total_price',
         key: 'total_price',
         align: 'right',
-        render: (totalPrice: number) => totalPrice?.toLocaleString() || '0',
+        render: (totalPrice: number, record: QuotaAgreedPrice) => (
+          <div>
+            {record.creator?.department_name && (
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                {record.creator?.department_name}
+              </div>
+            )}
+            <div>{totalPrice?.toLocaleString() || '0'}</div>
+          </div>
+        ),
       },
       {
         title: t('agreed_prices.table.estimate_date_application_end'),
@@ -266,17 +288,17 @@ const AgreedPriceQuotaTab = () => {
         {
           field: 'quota_code',
           operator: 'eq',
-          value: v.estimate_number,
+          value: v.quota_code,
         },
         {
           field: 'customer_name',
           operator: 'eq',
-          value: v.business_partner,
+          value: v.customer_name,
         },
         {
           field: 'creator_name',
           operator: 'eq',
-          value: v.creator,
+          value: v.creator_name,
         },
         {
           field: 'department_id_in[]',
@@ -373,7 +395,7 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'estimate_number'}
+              name={'quota_code'}
             >
               <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
@@ -386,7 +408,7 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'business_partner'}
+              name={'customer_name'}
             >
               <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
@@ -399,7 +421,7 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'creator'}
+              name={'creator_name'}
             >
               <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
@@ -477,7 +499,7 @@ const AgreedPriceQuotaTab = () => {
         <Row gutter={[24, 24]}>
           <Col xs={24}>
             <div className="mt-7 flex justify-end gap-2">
-              <Button type="primary">
+              <Button type="primary" onClick={() => go({ to: '/quotas' })}>
                 {t('agreed_prices.action.add_from_estimate_list')}
               </Button>
             </div>
