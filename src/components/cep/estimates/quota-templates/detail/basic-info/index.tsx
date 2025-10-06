@@ -1,10 +1,21 @@
+import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
+import {
+  CONSUMPTION_TAX,
+  EXPIRATION_DATE,
+  PAYMENT_DUE_DATE,
+} from '@utility/constant'
 import { Flex, Typography } from 'antd'
 
 const { Title } = Typography
 
-const BasicInfo: React.FC = () => {
+interface Props {
+  detail: QuoteTemplateDetailType
+}
+
+const BasicInfo: React.FC<Props> = (props) => {
+  const { detail } = props
   const t = useTranslate()
 
   return (
@@ -25,19 +36,19 @@ const BasicInfo: React.FC = () => {
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.quote_category')}
         </label>
-        <span>普通</span>
+        <span>{detail.type === 'normal' ? '通常' : '販路限定'}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.template_name')}
         </label>
-        <span>システムカスタマイズ</span>
+        <span>{detail.name}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.description')}
         </label>
-        <span>デザイン・開発・保守込み</span>
+        <span>{detail.description}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold text-gray-400">
@@ -58,29 +69,29 @@ const BasicInfo: React.FC = () => {
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.delivery_method')}
         </label>
-        <span>システム反映型納品</span>
+        <span>{detail.delivery_method}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.payment_due_date')}
         </label>
-        <span>月末締め翌月末現金払い</span>
+        <span>{PAYMENT_DUE_DATE?.[detail.payment_due_date ?? '']?.label}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.validity_period')}
         </label>
-        <span>45日</span>
+        <span>{EXPIRATION_DATE?.[detail.expiration_date ?? '']?.label}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.consumption_tax')}
         </label>
-        <span>外税</span>
+        <span>{CONSUMPTION_TAX?.[detail.consumption_tax ?? '']?.label}</span>
         <label className="ml-10">
           {t('quota_templates.form.label.consumption_tax_rate')}:
         </label>
-        <span>10%</span>
+        <span>{detail.tax_rate}%</span>
       </Flex>
     </>
   )

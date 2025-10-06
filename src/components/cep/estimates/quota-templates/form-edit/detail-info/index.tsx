@@ -1,16 +1,8 @@
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
-import CoreAutoComplete from '@components/common/auto-complete'
 import CommonTable from '@components/common/table'
-import type {
-  QuotaTemplateFormType,
-  QuotaTemplateMainProductType,
-  QuotaTemplateProductType,
-} from '@interfaces/quota-templates'
-import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import type {
-  ProductListItem,
   QuotaTemplateProductGroupRequest,
   QuotaTemplateProductItemRequest,
 } from '@sdk/hey-api'
@@ -23,127 +15,40 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Row,
   Select,
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import type { FC } from 'react'
-import { useEffect, useState } from 'react'
+import { type FC, useState } from 'react'
+
+import { ProductCategoryModal } from '../modal/product-category'
+import PackageSelect from '../package-select'
+import { useController } from './controller'
 
 const { Title, Text } = Typography
 
 const DetailInfo: FC = () => {
-  const form = Form.useFormInstance<QuotaTemplateFormType>()
-
-  const taxRateWatch = Form.useWatch('tax_rate', form)
-  const mainProducts = Form.useWatch(
-    'main_product',
+  const {
     form,
-  ) as QuotaTemplateMainProductType[]
+    mainProducts,
+    taxRateWatch,
+    totalPriceWatch,
+    taxTotal,
+    costTotal,
+    profitRate,
+    sellTotalWithTax,
+    selectPropsProduct,
+    handleAddProduct,
+    handleRemoveProduct,
+    onChangeProductName,
+  } = useController()
 
-  const [costTotal, setCostTotal] = useState(0)
-  const [profitRate, setProfitRate] = useState(0)
-  const [taxTotal, setTaxTotal] = useState(0)
-  const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const t = useTranslate()
-
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-    onSearch(value) {
-      return [
-        {
-          field: 'name',
-          operator: 'contains',
-          value,
-        },
-      ]
-    },
-  })
-
-  console.log(query)
-
-  const handleAddProduct = (groupIndex: number) => {
-    const values = mainProducts || []
-    const products = (values[groupIndex].products ||
-      []) as QuotaTemplateProductType[]
-
-    values[groupIndex].products = [
-      ...products,
-      {
-        product_id: 0,
-        name: '',
-        code: '自動採番',
-        quantity: 0,
-        cost_price: 0,
-        selling_price: 0,
-        profit_margin: 0,
-        is_add_total: false,
-      },
-    ]
-
-    form?.setFieldsValue({ main_product: values })
-  }
-
-  const handleRemoveProduct = (groupIndex: number, productIndex: number) => {
-    const values = form.getFieldValue('main_product') || []
-    const products = values[groupIndex].products || []
-
-    values[groupIndex].products = products.filter(
-      (_: unknown, idx: number) => idx !== productIndex,
-    )
-
-    form?.setFieldsValue({ main_product: values })
-  }
-
-  const calculateSummary = (
-    main_product_groups: QuotaTemplateProductGroupRequest[] | undefined,
-    tax_rate: number,
-  ) => {
-    let costTotal = 0
-    let sellTotal = 0
-
-    ;(main_product_groups ?? []).forEach(
-      (group: QuotaTemplateProductGroupRequest) => {
-        ;(group.products ?? []).forEach(
-          (product: QuotaTemplateProductItemRequest) => {
-            if (product.is_add_total) {
-              costTotal += (product.cost_price || 0) * (product.quantity || 0)
-              sellTotal +=
-                (product.selling_price || 0) * (product.quantity || 0)
-            }
-          },
-        )
-      },
-    )
-
-    const taxTotal = (sellTotal * tax_rate) / 100
-    const sellTotalWithTax = sellTotal + taxTotal
-    const profitRate =
-      costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
-
-    setCostTotal(costTotal)
-    setTaxTotal(taxTotal)
-    setProfitRate(profitRate)
-    setSellTotalWithTax(sellTotalWithTax)
-  }
-
-  useEffect(() => {
-    form.setFieldValue('total_cost', costTotal)
-    form.setFieldValue('consumption_tax_amount', taxTotal)
-    form.setFieldValue('total_profit_margin', profitRate)
-    form.setFieldValue('total_price_tax_included', sellTotalWithTax)
-  }, [costTotal, profitRate, taxTotal, sellTotalWithTax])
-
-  useEffect(() => {
-    calculateSummary(
-      form.getFieldValue('main_product'),
-      form.getFieldValue('tax_rate'),
-    )
-  }, [taxRateWatch])
 
   return (
     <>
@@ -226,6 +131,15 @@ const DetailInfo: FC = () => {
                   return { props: { colSpan: 0 } }
                 }
 
+                const defaultValue = {
+                  value:
+                    mainProducts?.[record.index]?.products?.[record.index2]
+                      ?.product_id || null,
+                  label:
+                    mainProducts?.[record.index]?.products?.[record.index2]
+                      ?.product_name || null,
+                }
+
                 return (
                   <Form.Item
                     name={[
@@ -234,11 +148,10 @@ const DetailInfo: FC = () => {
                       record.index2,
                       'product_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="!mb-0"
                   >
                     <Select
+                      {...selectPropsProduct}
                       placeholder="商品名・サービス名で検索"
                       allowClear
                       showSearch
@@ -246,43 +159,10 @@ const DetailInfo: FC = () => {
                       style={{
                         width: 200,
                       }}
-                      {...selectPropsProduct}
-                      onChange={(value) => {
-                        const item = query.data?.data.find(
-                          (item) => item.id === value,
-                        ) as ProductListItem
-
-                        form.setFieldValue(
-                          [
-                            'main_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'package_id',
-                          ],
-                          null,
-                        )
-                        form.setFieldValue(
-                          [
-                            'main_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'name',
-                          ],
-                          item?.name,
-                        )
-                        form.setFieldValue(
-                          [
-                            'main_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'code',
-                          ],
-                          item?.code,
-                        )
-                      }}
+                      onChange={(value) =>
+                        onChangeProductName(value, record.index, record.index2)
+                      }
+                      defaultValue={defaultValue}
                     />
                   </Form.Item>
                 )
@@ -296,13 +176,22 @@ const DetailInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return form.getFieldValue([
-                  'main_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'unit',
-                ])
+                return (
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'unit',
+                  ]) ??
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'unit_name',
+                  ])
+                )
               },
             },
             {
@@ -324,25 +213,39 @@ const DetailInfo: FC = () => {
                       record.index2,
                       'package_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="!mb-0"
                   >
-                    <CoreAutoComplete
-                      nameFilter="package_name"
-                      filterPath={[
+                    <PackageSelect
+                      productId={form.getFieldValue([
                         'main_product',
                         record.index,
                         'products',
                         record.index2,
                         'product_id',
-                      ]}
-                      // index={record.index}
-                      // index2={record.index2}
-                      // filterPath2={['customer']}
-                      resource={`products`}
-                      style={{ width: 200 }}
-                      // parent="main_product"
+                      ])}
+                      onChange={(value) =>
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'package_id',
+                          ],
+                          value,
+                        )
+                      }
+                      defaultOptions={
+                        mainProducts?.[record.index]?.products?.[record.index2]
+                          ?.packagings ?? []
+                      }
+                      defaultValue={form.getFieldValue([
+                        'main_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'package_id',
+                      ])}
                     />
                   </Form.Item>
                 )
@@ -356,13 +259,15 @@ const DetailInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                return form.getFieldValue([
-                  'main_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'cost_price',
-                ])
+                return form
+                  .getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ])
+                  .toLocaleString()
               },
             },
             {
@@ -478,7 +383,7 @@ const DetailInfo: FC = () => {
                     record.index2,
                     'selling_price',
                   ]) || 0
-                return quantity * selling
+                return (quantity * selling).toLocaleString()
               },
             },
             {
@@ -514,12 +419,6 @@ const DetailInfo: FC = () => {
                         record.index2,
                         'is_add_total',
                       ])}
-                      onChange={() => {
-                        calculateSummary(
-                          form.getFieldValue('main_product'),
-                          form.getFieldValue('tax_rate'),
-                        )
-                      }}
                     />
                   </Form.Item>
                 )
@@ -599,7 +498,9 @@ const DetailInfo: FC = () => {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary">カテゴリから入力</Button>
+                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                  カテゴリから入力
+                </Button>
               </Flex>
               <CommonTable
                 columns={columns}
@@ -609,24 +510,6 @@ const DetailInfo: FC = () => {
                 }
                 pagination={false}
                 summary={() => {
-                  const total = (mainProducts ?? []).reduce(
-                    (accGroup: number, group: QuotaTemplateMainProductType) => {
-                      const groupTotal = (group.products ?? []).reduce(
-                        (accProd: number, prod: QuotaTemplateProductType) => {
-                          if (prod.is_add_total) {
-                            return (
-                              accProd +
-                              (prod.selling_price || 0) * (prod.quantity || 0)
-                            )
-                          }
-                          return accProd
-                        },
-                        0,
-                      )
-                      return accGroup + groupTotal
-                    },
-                    0,
-                  )
                   return (
                     <Table.Summary.Row
                       style={{
@@ -644,7 +527,7 @@ const DetailInfo: FC = () => {
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
                       <Table.Summary.Cell index={6} align="center">
-                        {total || 0}
+                        {totalPriceWatch?.toLocaleString()}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
@@ -676,10 +559,10 @@ const DetailInfo: FC = () => {
             >
               原価合計
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {costTotal || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(costTotal || 0).toLocaleString()}
             </Text>
-            <Form.Item name="total_cost" hidden>
+            <Form.Item name="total_price" hidden>
               <InputNumber />
             </Form.Item>
           </div>
@@ -702,8 +585,8 @@ const DetailInfo: FC = () => {
             >
               消費税金額（{taxRateWatch}%）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {taxTotal || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(taxTotal || 0).toLocaleString()}
             </Text>
             <Form.Item name="consumption_tax_amount" hidden>
               <InputNumber />
@@ -728,7 +611,7 @@ const DetailInfo: FC = () => {
             >
               合計利益率
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               {profitRate.toFixed(2) || 0}%
             </Text>
             <Form.Item name="total_profit_margin" hidden>
@@ -754,8 +637,8 @@ const DetailInfo: FC = () => {
             >
               合計金額（税込）
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              {sellTotalWithTax || 0}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{sellTotalWithTax.toLocaleString() || 0}
             </Text>
             <Form.Item name="total_price_tax_included" hidden>
               <InputNumber />
@@ -763,6 +646,19 @@ const DetailInfo: FC = () => {
           </div>
         </Col>
       </Row>
+      <Modal
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+        title={'カテゴリから商品を追加'}
+        footer={null}
+      >
+        <ProductCategoryModal
+          name="main_product"
+          close={() => setIsModalOpen(false)}
+        />
+      </Modal>
     </>
   )
 }

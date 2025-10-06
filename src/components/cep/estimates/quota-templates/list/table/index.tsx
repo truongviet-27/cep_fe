@@ -1,27 +1,29 @@
 import { ReconciliationOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
+import type { QuotaTemplateListItemType } from '@interfaces/quota-templates'
 import {
   CreateButton,
   DeleteButton,
   EditButton,
   ShowButton,
 } from '@refinedev/antd'
-import type { BaseRecord } from '@refinedev/core'
-import { useTranslate } from '@refinedev/core'
+import { useGo, useTranslate } from '@refinedev/core'
 import { Button, Flex, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableProps } from 'antd/lib'
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import type { FC } from 'react'
 
 interface Props {
-  tableProps: TableProps<BaseRecord>
+  tableProps: TableProps<QuotaTemplateListItemType>
 }
 
 const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
   const t = useTranslate()
+  const go = useGo()
 
-  const columns: ColumnsType<BaseRecord> = [
+  const columns: ColumnsType<QuotaTemplateListItemType> = [
     {
       key: 'name',
       dataIndex: 'name',
@@ -36,9 +38,10 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       ),
     },
     {
-      key: 'creator',
-      dataIndex: 'creator',
+      key: 'author',
+      dataIndex: 'author',
       title: t('quota_templates.list.creator'),
+      render: (_, record) => <span>{record.author?.name ?? '-'}</span>,
     },
     {
       key: 'creationDate',
@@ -50,15 +53,32 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
           {t('quota_templates.list.updateDate')}
         </>
       ),
+      render(_, record) {
+        return (
+          <div>
+            <span>
+              {record.created_at
+                ? dayjs(record.created_at).format('YYYY/MM/DD')
+                : '-'}
+            </span>
+            <br />
+            <span>
+              {record.updated_at
+                ? dayjs(record.updated_at).format('YYYY/MM/DD')
+                : '-'}
+            </span>
+          </div>
+        )
+      },
     },
     {
-      key: 'numberOfItems',
-      dataIndex: 'numberOfItems',
+      key: 'number_product',
+      dataIndex: 'number_product',
       title: t('quota_templates.list.numberOfItems'),
     },
     {
-      key: 'bassPrice',
-      dataIndex: 'bassPrice',
+      key: 'total_price',
+      dataIndex: 'total_price',
       title: t('quota_templates.list.bassPrice'),
     },
     {
@@ -70,8 +90,9 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'operation',
       dataIndex: 'operation',
       title: t('quota_templates.list.operation'),
+      width: 200,
       render: (_, record) => (
-        <Space>
+        <Space size={8}>
           <ShowButton
             hideText
             size="small"
@@ -84,7 +105,15 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
             recordItemId={record.id}
             resource="quota-templates"
           />
-          <Button size="small" icon={<ReconciliationOutlined />} />
+          <Button
+            size="small"
+            icon={<ReconciliationOutlined />}
+            onClick={() => {
+              go({
+                to: '/quotas/create?templateId=' + record.id,
+              })
+            }}
+          />
           <DeleteButton
             hideText
             size="small"
@@ -107,23 +136,10 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       <CommonTable
         {...tableProps}
         columns={columns}
-        dataSource={[
-          {
-            id: 1,
-            name: '標準見積テンプレート',
-            creator: '伊藤太郎',
-            creationDate: '2025/05/31',
-            updateDate: '2025/05/31',
-            numberOfItems: '1',
-            bassPrice: '1,111,111',
-            description: '工程別の標準開発項目',
-          },
-        ]}
         pagination={{
           ...tableProps.pagination,
           showSizeChanger: true,
         }}
-        loading={false}
       />
     </>
   )

@@ -18,6 +18,7 @@ import {
   useGo,
   useParsed,
   useResource,
+  useShow,
   useTranslate,
 } from '@refinedev/core'
 import { type QuotaFormSettingResponse } from '@sdk/hey-api'
@@ -38,6 +39,7 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
+import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 
 const { Title } = Typography
 
@@ -60,6 +62,13 @@ function QuotaAction() {
   const go = useGo()
   const apiUrl = useApiUrl()
 
+  const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
+    resource: 'quota-templates',
+    id: Number(params?.templateId),
+    queryOptions: {
+      enabled: !!params?.templateId,
+    },
+  })
   const {
     formProps,
     form,
@@ -213,7 +222,27 @@ function QuotaAction() {
   }, [dataProducts, dataHistory, dataBasicInfo])
 
   useEffect(() => {
-    if (!isUpdate && data?.data) {
+    const quoteTemplate = quoteTemplateQuery?.data?.data
+    if (quoteTemplate) {
+      delete quoteTemplate.created_at
+      delete quoteTemplate.updated_at
+      delete quoteTemplate.author
+      delete quoteTemplate.editor
+      console.log(quoteTemplate)
+      form.setFieldsValue({
+        ...form.getFieldsValue(),
+        type: quoteTemplate?.type,
+        delivery_method: quoteTemplate?.delivery_method,
+        payment_due_date: quoteTemplate?.payment_due_date,
+        expiration_date: quoteTemplate?.expiration_date,
+        consumption_tax: quoteTemplate?.consumption_tax,
+        tax_rate: quoteTemplate?.tax_rate,
+        note: quoteTemplate?.note,
+        main_product: quoteTemplate?.main_product,
+        optional_product: quoteTemplate?.optional_product,
+        tags: (quoteTemplate?.tags ?? []).map(({ id }) => id),
+      })
+    } else if (!isUpdate && data?.data) {
       form.setFieldsValue({
         title: '',
         type: 'normal',
@@ -271,7 +300,7 @@ function QuotaAction() {
         ],
       })
     }
-  }, [data])
+  }, [data, quoteTemplateQuery?.data?.data])
 
   const onFinish = (values: any) => {
     if (isUpdate && action === 'edit') {
@@ -366,7 +395,8 @@ function QuotaAction() {
           isFetching ||
           isFetchingBasicInfo ||
           isFetchingProduct ||
-          isFetchingHistory
+          isFetchingHistory ||
+          quoteTemplateQuery.isFetching
         }
       >
         <Form
