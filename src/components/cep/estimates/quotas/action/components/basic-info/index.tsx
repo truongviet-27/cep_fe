@@ -94,12 +94,9 @@ const BasicInfo = () => {
       style={{
         border: 'none',
       }}
-      headStyle={{
-        padding: 0,
-        minHeight: 0,
-      }}
-      bodyStyle={{
-        padding: 0,
+      styles={{
+        body: { padding: 0 },
+        header: { padding: 0, minHeight: 0 },
       }}
     >
       <Form.Item

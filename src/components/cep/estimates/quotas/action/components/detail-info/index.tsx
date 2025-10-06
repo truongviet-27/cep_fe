@@ -165,16 +165,13 @@ function DetailInfo() {
   return (
     <Card
       title={boldText('詳細情報', PRIMARY, 16)}
-      headStyle={{
-        padding: 0,
-        minHeight: 0,
-      }}
-      bodyStyle={{
-        padding: 0,
-      }}
       style={{
         border: 'none',
         marginTop: 40,
+      }}
+      styles={{
+        body: { padding: 0 },
+        header: { padding: 0, minHeight: 0 },
       }}
     >
       <Form.List name={'main_product'}>

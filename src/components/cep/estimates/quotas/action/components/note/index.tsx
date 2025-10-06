@@ -7,12 +7,9 @@ function Note() {
   return (
     <Card
       title={boldText('仕様・条件', PRIMARY, 16)}
-      headStyle={{
-        padding: 0,
-        minHeight: 0,
-      }}
-      bodyStyle={{
-        padding: 0,
+      styles={{
+        body: { padding: 0 },
+        header: { padding: 0, minHeight: 0 },
       }}
       style={{
         border: 'none',

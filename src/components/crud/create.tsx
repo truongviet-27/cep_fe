@@ -113,8 +113,8 @@ export const Create: React.FC<CreateProps & CustomProps> = ({
         <Spin spinning={isLoading}>
           <Card
             bordered={false}
-            bodyStyle={{
-              padding: 32,
+            styles={{
+              body: { padding: 32 },
             }}
             actions={[
               <Space

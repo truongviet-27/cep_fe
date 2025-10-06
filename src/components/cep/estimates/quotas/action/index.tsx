@@ -494,36 +494,38 @@ function QuotaAction() {
           </Flex>
         </Form>
       </Spin>
-      <Modal
-        title="Preview PDF"
-        closable={{ 'aria-label': 'Custom Close Button' }}
-        open={isPdf}
-        onCancel={() => {
-          setIsPdf(false)
-        }}
-        footer={null}
-        style={{ top: 20 }}
-        width={{
-          xs: '90%',
-          sm: '80%',
-          xxl: '50%',
-        }}
-      >
-        <div>
-          <Spin spinning={isPendingPreviewPdf}>
-            {!isPendingPreviewPdf && (
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                <Viewer
-                  fileUrl={`data:application/pdf;base64,${previewPdf}`}
-                  plugins={[defaultLayoutPluginInstance]}
-                />
-              </Worker>
-            )}
-          </Spin>
+      {
+        <Modal
+          title="Preview PDF"
+          closable={{ 'aria-label': 'Custom Close Button' }}
+          open={isPdf}
+          onCancel={() => {
+            setIsPdf(false)
+          }}
+          footer={null}
+          style={{ top: 20 }}
+          width={{
+            xs: '90%',
+            sm: '80%',
+            xxl: '50%',
+          }}
+        >
+          <div>
+            <Spin spinning={isPendingPreviewPdf}>
+              {!isPendingPreviewPdf && (
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                  <Viewer
+                    fileUrl={`data:application/pdf;base64,${previewPdf}`}
+                    plugins={[defaultLayoutPluginInstance]}
+                  />
+                </Worker>
+              )}
+            </Spin>
 
-          {/* <PreviewPdf previewPdf={previewPdf} /> */}
-        </div>
-      </Modal>
+            {/* <PreviewPdf previewPdf={previewPdf} /> */}
+          </div>
+        </Modal>
+      }
     </PageContainer>
   )
 }

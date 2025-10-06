@@ -357,9 +357,9 @@ function QuotaList() {
           value: values.approver_name,
         },
         {
-          field: 'creator_department_name',
+          field: 'department_in_charge',
           operator: 'eq',
-          value: values.creator_department_name?.label,
+          value: values.department_in_charge?.label,
         },
         {
           field: 'search_date_type',
@@ -706,15 +706,14 @@ function QuotaList() {
               <Form.Item
                 label={<span className="font-bold">部門（支社/部/課）</span>}
                 layout="vertical"
-                name={'creator_department_name'}
+                name={'department_in_charge'}
               >
                 <Select
+                  {...selectProps}
                   allowClear
                   showSearch
-                  {...selectProps}
                   labelInValue
                   placeholder={'選択してください'}
-                  optionFilterProp="label"
                 />
               </Form.Item>
             </Col>
