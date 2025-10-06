@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 
 import { Button, Col, Form, Input, Row, Select, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { List, useSelect, useTable } from '@refinedev/antd'
+import { List, ShowButton, useSelect, useTable } from '@refinedev/antd'
 import { type HttpError, useGo, useTranslate } from '@refinedev/core'
 import CommonTable from '@components/common/table'
 import type { QuotaAgreedPriceCustomer } from '@sdk/hey-api/types.gen'
@@ -17,12 +17,38 @@ const AgreedPriceByCustomerTab = () => {
     resource: 'departments',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
 
   const { selectProps: rankSelectProps } = useSelect({
     resource: 'ranks',
     optionLabel: 'name',
     optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+    onSearch(value) {
+      return [
+        {
+          field: 'q',
+          operator: 'eq',
+          value,
+        },
+      ]
+    },
   })
 
   type CustomerRow = QuotaAgreedPriceCustomer
@@ -61,14 +87,14 @@ const AgreedPriceByCustomerTab = () => {
         title: t('agreed_prices.customer_tab.table.operation'),
         key: 'operation',
         render: (_, record) => (
-          <Button
-            type="link"
-            onClick={() =>
-              go({ to: `/agreed-prices/customer/${record.customer_id}/edit` })
-            }
-          >
-            {t('agreed_prices.action.update')}
-          </Button>
+          <Space>
+            <ShowButton
+              hideText
+              size="small"
+              recordItemId={record.customer_id as number}
+              resource="agreed-prices/customer"
+            />
+          </Space>
         ),
       },
     ],
@@ -161,7 +187,6 @@ const AgreedPriceByCustomerTab = () => {
               <Select
                 {...rankSelectProps}
                 placeholder={t('agreed_prices.search.please_select')}
-                showSearch={false}
               />
             </Form.Item>
           </Col>

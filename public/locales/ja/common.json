@@ -1010,6 +1010,25 @@
         "product_count": "商品数",
         "operation": "操作"
       }
+    },
+    "customer_detail": {
+      "title": "顧客別決定単価",
+      "basic_info": "基本情報",
+      "customer_code": "取引先コード",
+      "customer_name": "取引先名",
+      "department_in_charge": "担当部署",
+      "unit_price_rank": "単価ランク",
+      "number_of_products": "商品数",
+      "determined_unit_price_list": "決定単価一覧",
+      "table": {
+        "product_code": "商品コード",
+        "product_name": "商品・サービス名",
+        "quantity": "数量",
+        "unit": "単位",
+        "determined_unit_price": "決定単価",
+        "application_start": "適用開始",
+        "application_end": "適用終了"
+      }
     }
   },
   "validation": {

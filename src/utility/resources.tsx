@@ -40,7 +40,7 @@ export const resource: ResourceProps[] = [
   },
   {
     name: 'agreed-prices',
-    list: '/quota/agreed-prices',
+    list: '/agreed-prices',
     show: '/agreed-prices/show/:id',
     create: '/agreed-prices/create',
     edit: '/agreed-prices/edit/:id',
@@ -164,6 +164,7 @@ export const resource: ResourceProps[] = [
   },
   {
     name: 'code-issue-settings',
+    list: '/code-issue-settings',
     show: '/code-issue-settings/show/:id',
     edit: '/code-issue-settings/edit/:id',
     meta: {
