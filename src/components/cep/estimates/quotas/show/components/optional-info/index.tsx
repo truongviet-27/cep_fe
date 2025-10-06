@@ -172,7 +172,7 @@ function OptionalInfo({ data }: { data: any }) {
               marginBottom: 0,
             }}
           >
-            {record?.profit_margin}
+            {record?.profit_margin}%
           </Form.Item>
         )
       },

@@ -61,6 +61,8 @@ function QuotaAction() {
 
   const isUpdate = !!id
 
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+
   const go = useGo()
   const apiUrl = useApiUrl()
 
@@ -80,8 +82,6 @@ function QuotaAction() {
 
   const [isPdf, setIsPdf] = useState(false)
   const [previewPdf, setPreviewPdf] = useState('')
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
   const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
