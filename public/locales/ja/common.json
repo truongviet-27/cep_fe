@@ -923,7 +923,8 @@
     "detail": "見積詳細"
   },
   "price_groups": {
-    "price_groups": "取引先",
+    "price_groups": "単価グループ設定",
+    "business_partner": "取引先",
     "list": {
       "list": "単価グループ設定"
     },

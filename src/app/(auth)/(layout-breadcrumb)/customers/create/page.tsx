@@ -11,6 +11,7 @@ import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/customers/comp
 import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space, Typography } from 'antd'
 import React from 'react'
@@ -31,6 +32,7 @@ export default function CustomerCreatePage() {
     modalFormCorporate,
     handleFinish,
     refetchCodeGen,
+    form,
   } = hookProps
 
   const { close: closeModal, open: modalOpen } = modalFormProps
@@ -112,13 +114,18 @@ export default function CustomerCreatePage() {
       </Modal>
 
       <Modal
-        title={t('customers.modal.title')}
+        title={boldText(t('customers.research.modal.title'), PRIMARY)}
         open={visible}
         onCancel={close}
         width={800}
         footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
       >
-        <CorporateNumberSearchModal modalProps={modalFormCorporate} />
+        <CorporateNumberSearchModal
+          modalProps={modalFormCorporate}
+          onSelect={(record) =>
+            form.setFieldValue('corporate_number', record.corporateNumber)
+          }
+        />
       </Modal>
     </Create>
   )
