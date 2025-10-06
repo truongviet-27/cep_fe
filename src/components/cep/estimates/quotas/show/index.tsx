@@ -64,12 +64,20 @@ function QuotaDetail() {
     method: 'get',
   })
 
-  const { data: dataProducts, isFetching: isFetchingProducts } = useCustom({
+  const {
+    data: dataProducts,
+    isFetching: isFetchingProducts,
+    refetch: refetchProducts,
+  } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
   })
 
-  const { data: dataHistory, isFetching: isFetchingHistory } = useCustom({
+  const {
+    data: dataHistory,
+    isFetching: isFetchingHistory,
+    refetch: refetchHistory,
+  } = useCustom({
     url: `${apiUrl}/quotas/${id}/history`,
     method: 'get',
   })
@@ -79,6 +87,8 @@ function QuotaDetail() {
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
       refetch()
+      refetchProducts()
+      refetchHistory()
       return {
         message: t('notifications.success'),
         description: message ?? 'Success',
@@ -113,14 +123,7 @@ function QuotaDetail() {
 
   const handlePreviewPdf = () => {
     const customValues = {
-      ...form.getFieldsValue(),
-      tags: form.getFieldValue('tags').map((item: any) => ({
-        id: item?.value,
-        name: item?.label,
-      })),
-      customer_id: form.getFieldValue('customer')?.value,
-      customer_name: form.getFieldValue('customer')?.label,
-      status: QuotaStatus.Creating,
+      ...queryBasic?.data,
     }
 
     mutatePreviewPdf(
@@ -337,7 +340,7 @@ function QuotaDetail() {
                       icon={null}
                       size={'middle'}
                       onClick={() => {
-                        handleChangeStatus('mark-completed', {
+                        handleChangeStatus('cancel-quota', {
                           quota_ids: [queryBasic?.data.id],
                         })
                       }}
@@ -352,7 +355,7 @@ function QuotaDetail() {
                       icon={null}
                       size={'middle'}
                       onClick={() => {
-                        handleChangeStatus('cancel-quota', {
+                        handleChangeStatus('mark-completed', {
                           quota_ids: [queryBasic?.data.id],
                         })
                       }}

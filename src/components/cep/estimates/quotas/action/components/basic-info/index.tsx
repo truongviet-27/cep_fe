@@ -389,7 +389,7 @@ const BasicInfo = () => {
 
       <Form.Item label={boldText('消費税')}>
         <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+          <Col xs={24} sm={16} md={10} lg={8} xl={5}>
             <Form.Item name="consumption_tax">
               <Radio.Group
                 defaultValue={'exclusive'}
@@ -410,16 +410,9 @@ const BasicInfo = () => {
               />
             </Form.Item>
           </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item
-        label={boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
-      >
-        <Row>
           <Col xs={24} md={6}>
             <Form.Item
-              label={boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
+              label={t('tenant_settings.consumptionTax.taxRateLabel')}
               name="tax_rate"
             >
               <InputNumber

@@ -90,8 +90,11 @@ function History({ data }: { data: any }) {
       },
       {
         title: '作成者',
-        dataIndex: 'author.name',
+        dataIndex: 'author',
         key: 'author',
+        render(value) {
+          return value?.name
+        },
       },
       {
         title: 'PDF',
