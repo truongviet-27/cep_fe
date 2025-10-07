@@ -3,7 +3,6 @@ import type {
   QuotaTemplateMainProductType,
   QuotaTemplateProductType,
 } from '@interfaces/quota-templates'
-import { useSelect } from '@refinedev/antd'
 import type {
   ProductListItem,
   QuotaTemplateProductGroupRequest,
@@ -26,21 +25,6 @@ export const useController = () => {
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
-
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-    onSearch(value) {
-      return [
-        {
-          field: 'name',
-          operator: 'contains',
-          value,
-        },
-      ]
-    },
-  })
 
   const handleAddProduct = (groupIndex: number) => {
     const values = mainProducts || []
@@ -106,37 +90,37 @@ export const useController = () => {
   }
 
   const onChangeProductName = (
-    value: unknown,
+    value: ProductListItem,
     index: number,
     index2: number,
   ) => {
-    const item = query.data?.data.find(
-      (item) => item.id === value,
-    ) as ProductListItem
-
+    form.setFieldValue(
+      ['main_product', index, 'products', index2, 'product_id'],
+      value?.id,
+    )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'package_id'],
       null,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'name'],
-      item?.name,
+      value?.name,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'code'],
-      item?.code,
+      value?.code,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'unit'],
-      item?.unit,
+      value?.unit,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'cost_price'],
-      item?.cost_price,
+      value?.cost_price,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'selling_price'],
-      item?.sale_price,
+      value?.sale_price,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'quantity'],
@@ -164,7 +148,6 @@ export const useController = () => {
     taxTotal,
     profitRate,
     sellTotalWithTax,
-    selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,

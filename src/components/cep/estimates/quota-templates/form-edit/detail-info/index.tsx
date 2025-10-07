@@ -1,5 +1,6 @@
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
+import ProductSelect from '@components/common/product-select'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import type {
@@ -17,7 +18,6 @@ import {
   InputNumber,
   Modal,
   Row,
-  Select,
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -40,7 +40,6 @@ const DetailInfo: FC = () => {
     costTotal,
     profitRate,
     sellTotalWithTax,
-    selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
@@ -131,14 +130,26 @@ const DetailInfo: FC = () => {
                   return { props: { colSpan: 0 } }
                 }
 
-                const defaultValue = {
-                  value:
-                    mainProducts?.[record.index]?.products?.[record.index2]
-                      ?.product_id || null,
-                  label:
-                    mainProducts?.[record.index]?.products?.[record.index2]
-                      ?.product_name || null,
-                }
+                const productId = form.getFieldValue([
+                  'main_product',
+                  record.index,
+                  'products',
+                  record.index2,
+                  'product_id',
+                ])
+
+                const defaultValue = productId
+                  ? {
+                      value: productId,
+                      label: form.getFieldValue([
+                        'main_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'name',
+                      ]),
+                    }
+                  : null
 
                 return (
                   <Form.Item
@@ -150,19 +161,11 @@ const DetailInfo: FC = () => {
                     ]}
                     className="!mb-0"
                   >
-                    <Select
-                      {...selectPropsProduct}
-                      placeholder="商品名・サービス名で検索"
-                      allowClear
-                      showSearch
-                      filterOption={false}
-                      style={{
-                        width: 200,
-                      }}
+                    <ProductSelect
+                      defaultValue={defaultValue}
                       onChange={(value) =>
                         onChangeProductName(value, record.index, record.index2)
                       }
-                      defaultValue={defaultValue}
                     />
                   </Form.Item>
                 )
@@ -204,6 +207,27 @@ const DetailInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+
+                const packageId = form.getFieldValue([
+                  'main_product',
+                  record.index,
+                  'products',
+                  record.index2,
+                  'package_id',
+                ])
+
+                const defaultValue = packageId
+                  ? {
+                      value: packageId,
+                      label: form.getFieldValue([
+                        'main_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'package_name',
+                      ]),
+                    }
+                  : null
                 return (
                   <Form.Item
                     name={[
@@ -216,6 +240,14 @@ const DetailInfo: FC = () => {
                     className="!mb-0"
                   >
                     <PackageSelect
+                      key={
+                        record.index +
+                        '-' +
+                        record.index2 +
+                        '-' +
+                        mainProducts?.[record.index]?.products?.[record.index2]
+                          .product_id
+                      }
                       productId={form.getFieldValue([
                         'main_product',
                         record.index,
@@ -239,13 +271,7 @@ const DetailInfo: FC = () => {
                         mainProducts?.[record.index]?.products?.[record.index2]
                           ?.packagings ?? []
                       }
-                      defaultValue={form.getFieldValue([
-                        'main_product',
-                        record.index,
-                        'products',
-                        record.index2,
-                        'package_id',
-                      ])}
+                      defaultValue={defaultValue}
                     />
                   </Form.Item>
                 )

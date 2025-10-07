@@ -18,6 +18,7 @@ export function useController() {
           ...data,
           data: {
             ...data.data,
+            tags_response: tags,
             tags: tags.map(({ id }) => id),
           },
         } as unknown as GetOneResponse<QuotaTemplateFormType>
