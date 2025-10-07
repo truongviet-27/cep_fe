@@ -23,8 +23,8 @@ const PageContainer = ({
             ? `calc( 100vh - 168px)`
             : `calc( 100vh - 80px)`,
         }}
-        bodyStyle={{
-          padding: 32,
+        styles={{
+          body: { padding: 32 },
         }}
       >
         <div>

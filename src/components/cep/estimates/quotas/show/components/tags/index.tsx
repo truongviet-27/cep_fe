@@ -6,12 +6,12 @@ function Tags({ tags }: { tags: { id: number; name: string }[] }) {
   return (
     <Card
       title={boldText('タグ', PRIMARY, 16)}
-      headStyle={{
-        padding: 0,
-        minHeight: 0,
-      }}
-      bodyStyle={{
-        padding: 0,
+      styles={{
+        header: {
+          padding: 0,
+          minHeight: 0,
+        },
+        body: { padding: 0 },
       }}
       style={{
         border: 'none',

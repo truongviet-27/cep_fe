@@ -31,12 +31,12 @@ function BasicInfo({ data }: { data: any }) {
       style={{
         border: 'none',
       }}
-      headStyle={{
-        padding: 0,
-        minHeight: 0,
-      }}
-      bodyStyle={{
-        padding: 0,
+      styles={{
+        header: {
+          padding: 0,
+          minHeight: 0,
+        },
+        body: { padding: 0 },
       }}
     >
       <Form.Item

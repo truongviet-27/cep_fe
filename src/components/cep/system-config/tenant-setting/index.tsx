@@ -8,9 +8,7 @@ import Right from '@components/cep/system-config/tenant-setting/components/Right
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import '@react-pdf-viewer/core/lib/styles/index.css'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
-import '@react-pdf-viewer/default-layout/lib/styles/index.css'
 import { useForm } from '@refinedev/antd'
 import {
   useApiUrl,
