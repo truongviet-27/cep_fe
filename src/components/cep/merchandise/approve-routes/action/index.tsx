@@ -301,6 +301,10 @@ function ApproveAction() {
                       'approve_routes.validation.route_code.invalid_format',
                     ),
                   },
+                  {
+                    max: 20,
+                    message: '',
+                  },
                 ]}
               />
             </Col>
