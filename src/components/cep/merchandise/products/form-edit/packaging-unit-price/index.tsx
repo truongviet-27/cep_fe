@@ -7,6 +7,7 @@ import type { Rank } from '@sdk/hey-api'
 import type { FormInstance } from 'antd'
 import { Button, Checkbox, Form } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import type { CheckboxChangeEvent } from 'antd/lib'
 import type { MutableRefObject } from 'react'
 
 import type { ProductFormType } from '../use-product-form'
@@ -25,6 +26,19 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
   const t = useTranslate()
   const { getFieldValue, setFieldValue } = form
   const packagings = Form.useWatch('packagings', form)
+
+  const onStandardPriceChange = (event: CheckboxChangeEvent, index: number) => {
+    const isChecked = event.target.checked
+
+    if (isChecked) {
+      const quantityInPackage =
+        getFieldValue(['packagings', index, 'quantity_in_package']) || 1
+      setFieldValue(
+        ['packagings', index, 'selling_price'],
+        (quantityInPackage as number) * getFieldValue('selling_price'),
+      )
+    }
+  }
 
   return (
     <div className="px-2">
@@ -242,6 +256,9 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                         index,
                         'is_standard_price',
                       ])}
+                      onChange={(event: CheckboxChangeEvent) =>
+                        onStandardPriceChange(event, index)
+                      }
                     />
                   </Form.Item>
                 ),
