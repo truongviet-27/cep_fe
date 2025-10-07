@@ -24,6 +24,7 @@ export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
   unit_name?: string
   product_id?: number | null
   product_name?: string
+  package_name?: string
   packagings?: Array<{
     id: number
     name: string
