@@ -95,7 +95,7 @@ export default function AuthHeader({
               </Dropdown>
 
               <div className="text-[11px] text-gray-400">
-                {permission?.role?.display_name}
+                {permission?.role?.display_name ?? 'テナント管理者'}
               </div>
             </div>
           </div>
