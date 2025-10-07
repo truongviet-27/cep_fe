@@ -302,7 +302,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 原価合計
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {basicInfo?.total_cost}
+                ¥{basicInfo?.total_cost}
               </Text>
             </div>
           </Col>
@@ -325,7 +325,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 消費税金額（{basicInfo?.tax_rate}%）
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {basicInfo?.consumption_tax_amount}
+                ¥{basicInfo?.consumption_tax_amount}
               </Text>
             </div>
           </Col>
@@ -371,7 +371,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 合計金額（税込）
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {basicInfo?.total_price_tax_included}
+                ¥{basicInfo?.total_price_tax_included}
               </Text>
             </div>
           </Col>

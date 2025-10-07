@@ -794,7 +794,7 @@ function DetailInfo() {
                 原価合計
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {costTotal || 0}
+                ¥{costTotal || 0}
               </Text>
               <Form.Item name="total_cost" hidden>
                 <InputNumber />
@@ -820,7 +820,7 @@ function DetailInfo() {
                 消費税金額（{taxRateWatch}%）
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {taxTotal || 0}
+                ¥{taxTotal || 0}
               </Text>
               <Form.Item name="consumption_tax_amount" hidden>
                 <InputNumber />
@@ -873,7 +873,7 @@ function DetailInfo() {
                 {consumptionTaxWatch === 'external' ? '税抜）' : '税込）'}
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {sellTotalWithTax || 0}
+                ¥{sellTotalWithTax || 0}
               </Text>
               <Form.Item name="total_price_tax_included" hidden>
                 <InputNumber />
