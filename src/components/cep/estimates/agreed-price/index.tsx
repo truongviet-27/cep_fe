@@ -44,7 +44,7 @@ function AgreedPriceList() {
       ),
     },
     {
-      title: <Title level={5}>{t('agreed_prices.agreed_prices')}</Title>,
+      title: <Title level={5}>{t('agreed_prices.parent')}</Title>,
     },
   ]
 
@@ -53,7 +53,7 @@ function AgreedPriceList() {
       breadcrumbs={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      title={t('agreed_prices.agreed_prices')}
+      title={t('agreed_prices.parent')}
     >
       <TabsAgreedPrice
         isEdit={isEdit}

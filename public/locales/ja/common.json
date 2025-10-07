@@ -170,6 +170,9 @@
       "date_range": "日付"
     }
   },
+  "partners": {
+    "partners": "ランク一覧"
+  },
   "products": {
     "products": "商品一覧",
     "sections": {
@@ -298,7 +301,8 @@
     "merchandise": "商品"
   },
   "approve_routes": {
-    "approve_routes": "承認ルート",
+    "parent": "承認ルート",
+    "approve_routes": "承認ルート一覧",
     "list": "承認ルート一覧",
     "detail": "承認ルート詳細",
     "create": "承認ルート登録",
@@ -484,7 +488,6 @@
       "titlePassword": "【見積書パスワード送付】お知らせメール",
       "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付の通りお見積りを送付いたします。\nよろしくご査収ください。",
       "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先程と送付致しましたお見積書のパスワードを送付致します。\nパスワードは\n\n[[パスワード]]\n\nです。\nよろしくお願い致します。",
-
       "signature": {
         "label": "署名（自動挿入）",
         "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team mail: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"
@@ -552,14 +555,12 @@
       "created_by": "登録者",
       "date": "開始日時"
     },
-
     "placeholder": {
       "id": "部分一致",
       "status": "選択してください",
       "common_name": "選択してください",
       "created_by": "部分一致"
     },
-
     "table": {
       "headers": {
         "taskCode": "タスクコード",
@@ -917,8 +918,11 @@
   },
   "forbiddenMessage": "申し訳ありませんが、このページへのアクセス権限がありません。",
   "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
+  "list_received": {
+    "list_received": "確定見積一覧"
+  },
   "quotas": {
-    "quotas": "見積",
+    "quotas": "見積一覧",
     "list": "見積一覧",
     "create": "見積新規作成",
     "edit": "見積編集",
@@ -944,6 +948,7 @@
     }
   },
   "agreed_prices": {
+    "parent": "決定見積",
     "agreed_prices": "決定見積",
     "tab": {
       "decided_estimate_list": "決定見積一覧",

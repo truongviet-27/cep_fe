@@ -79,7 +79,7 @@ function ApproveDetail() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.approve_routes')}
+                  {t('approve_routes.parent')}
                 </Title>
               ),
             },

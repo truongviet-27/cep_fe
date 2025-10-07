@@ -6,14 +6,19 @@ import {
   FileImageOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
+import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/styles.module.css'
 import { DetailItem } from '@components/common/detail-item'
 import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { EditButton } from '@refinedev/antd'
-import { useGo, useShow, useTranslate } from '@refinedev/core'
+import {
+  useGo,
+  useParse,
+  useParsed,
+  useShow,
+  useTranslate,
+} from '@refinedev/core'
 import { type Customer, ParameterResourceEnum } from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
@@ -33,6 +38,7 @@ export default function CustomerShowPage() {
   const { data, isLoading } = queryResult
   const record = data?.data
   const go = useGo()
+  const { params } = useParsed()
 
   const researchColumns = [
     {
@@ -41,7 +47,7 @@ export default function CustomerShowPage() {
           {t('customers.research.document_name')}
         </span>
       ),
-      dataIndex: 'material_name', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'material_name',
       key: 'material_name',
     },
     {
@@ -140,10 +146,9 @@ export default function CustomerShowPage() {
       }
       rightFooterButtons={
         <Space>
-          <EditButton
-            icon={null}
-            resource="customers"
+          <Button
             type="primary"
+            disabled={params?.disable}
             onClick={() =>
               data?.data.id &&
               go({
@@ -156,7 +161,7 @@ export default function CustomerShowPage() {
             }
           >
             {t('buttons.edit')}
-          </EditButton>
+          </Button>
         </Space>
       }
       footerButtons={
@@ -199,7 +204,7 @@ export default function CustomerShowPage() {
               <DetailItem label={t('customers.fields.corporate_number')}>
                 {record?.corporate_number}
               </DetailItem>
-              {parameterSettings?.get?.(ParameterResourceEnum.RANKS) && (
+              {parameterSettings.get(ParameterResourceEnum.RANKS) && (
                 <DetailItem label={t('customers.fields.unit_price_rank')}>
                   {record?.rank?.name}
                 </DetailItem>
