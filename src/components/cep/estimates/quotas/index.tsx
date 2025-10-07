@@ -259,7 +259,8 @@ function QuotaList() {
               <Button size="small" icon={<DownloadOutlined />} />
             </Link>
 
-            {(record.status === QuotaStatus.Rejected ||
+            {(record.status === QuotaStatus.Creating ||
+              record.status === QuotaStatus.Rejected ||
               record.status === QuotaStatus.Cancelled) && (
               <DeleteButton
                 hideText
@@ -283,7 +284,7 @@ function QuotaList() {
               </Button>
             )}
 
-            {record.status === QuotaStatus.Completed && (
+            {record.status === QuotaStatus.Completed && record.is_author && (
               <Button
                 type="default"
                 size="small"
@@ -426,7 +427,7 @@ function QuotaList() {
       }
     }
 
-    return filter
+    return filter as QuotaStatus
   }
 
   const { data } = useCustom({
@@ -463,59 +464,59 @@ function QuotaList() {
   }, [data])
 
   const statusButton = useCallback(
-    (status: string) => {
+    (status: QuotaStatus) => {
       if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
         return [
           {
             key: 1,
-            label: '削除',
+            label: '削除', // delete
           },
           {
             key: 2,
-            label: '承認依頼（作成者）',
+            label: '承認依頼（作成者）', // gửi duyệt
           },
         ]
       } else if (status === QuotaStatus.WaitingApproval) {
         return [
           {
             key: 3,
-            label: '承認（承認者）',
+            label: '承認（承認者）', //  duyệt
           },
         ]
       } else if (status === QuotaStatus.Approved) {
         return [
           {
             key: 4,
-            label: '送信（作成者）',
+            label: '送信（作成者）', // gửi khách
           },
         ]
       } else if (status === QuotaStatus.SentToCustomer) {
         return [
           {
             key: 5,
-            label: '受注へ移動',
+            label: '受注へ移動', // chuyển thành công
           },
           {
             key: 6,
-            label: '注へ移動',
+            label: '失注へ移動', // chuyển thất bại
           },
         ]
       } else if (status === QuotaStatus.Completed) {
         return [
           {
             key: 7,
-            label: '送信へ移動',
+            label: '送信へ移動', // chuyển trạng thái quản lý
           },
         ]
       } else if (status === QuotaStatus.Cancelled) {
         return [
           {
             key: 1,
-            label: '削除',
+            label: '削除', // delete
           },
           {
             key: 7,
-            label: '送信へ移動',
+            label: '送信へ移動', // gửi duyệt
           },
         ]
       }
@@ -577,19 +578,6 @@ function QuotaList() {
       })
     } else if (Number(info.key) === 4) {
       mutate({
-        values: selectedRows.map((item: any) => ({
-          quota_id: item?.id,
-          status: 'rejected',
-          comment: '',
-        })),
-        method: 'put',
-        url: `${apiUrl}/quotas/approval-steps`,
-        successNotification: (data) => {
-          return notificationFunction(data?.data.message)
-        },
-      })
-    } else if (Number(info.key) === 5) {
-      mutate({
         values: {
           quota_ids: selectedRows?.map((item: any) => item?.id),
           status: 'sent_to_customer',
@@ -600,13 +588,24 @@ function QuotaList() {
           return notificationFunction(data?.data.message)
         },
       })
-    } else if (Number(info.key) === 6) {
+    } else if (Number(info.key) === 5) {
       mutate({
         values: {
           quota_ids: selectedRows?.map((item: any) => item?.id),
         },
         method: 'put',
         url: `${apiUrl}/quotas/mark-completed`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 6) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'put',
+        url: `${apiUrl}/quotas/cancel-quota`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
         },

@@ -41,6 +41,7 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
+import { RightOutlined } from '@ant-design/icons'
 
 const { Title } = Typography
 
@@ -379,6 +380,7 @@ function QuotaAction() {
               ),
             },
           ]}
+          separator={<RightOutlined />}
         />
       }
       title={
