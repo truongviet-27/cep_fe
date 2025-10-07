@@ -81,7 +81,9 @@ export default function CustomerListPage() {
   )
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
-  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+  const allowRankResource = parameterSettings?.get?.(
+    ParameterResourceEnum.RANKS,
+  )
 
   const modalFormProps = useModalForm<Rank>({
     action: 'edit',
