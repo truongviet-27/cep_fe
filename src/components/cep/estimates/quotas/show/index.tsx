@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { RightOutlined } from '@ant-design/icons'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import BasicInfo from '@components/cep/estimates/quotas/show/components/basic-info'
 import DetailInfo from '@components/cep/estimates/quotas/show/components/detail-info'
@@ -161,6 +162,7 @@ function QuotaDetail() {
               title: <Title level={5}>{t('quotas.detail')}</Title>,
             },
           ]}
+          separator={<RightOutlined />}
         />
       }
       title={
