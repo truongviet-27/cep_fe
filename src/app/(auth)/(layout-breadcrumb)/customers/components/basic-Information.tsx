@@ -54,7 +54,9 @@ function BasicInformation(
   const nameDisplay = isOtherSelected ? tempCompanyType : companyType
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const parts = isNameAfter ? [nameDisplay, name] : [name, nameDisplay]
-  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+  const allowRankResource = parameterSettings?.get?.(
+    ParameterResourceEnum.RANKS,
+  )
 
   return (
     <Collapse

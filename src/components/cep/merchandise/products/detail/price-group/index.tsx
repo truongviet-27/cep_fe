@@ -68,7 +68,7 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
     return (product?.packagings || []).map((item: ProductPackaging) => {
       const ranks = item.rank_prices
       const rankItem: { [key: string]: number } = {}
-      if (ranks && parameterSettings.get(ParameterResourceEnum.RANKS)) {
+      if (ranks && parameterSettings?.get?.(ParameterResourceEnum.RANKS)) {
         forEach(ranks, (rank) => {
           rankItem[`rank_${rank.rank_id}`] = Number(rank.price)
         })
