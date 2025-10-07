@@ -9,7 +9,7 @@ import { useGo } from '@refinedev/core'
 import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import { CSV_LINK, LAYOUT_BG } from '@utility/color'
-import { Button, Col, Form, Input, Row, Select, Space, Tree } from 'antd'
+import { Button, Col, Empty, Form, Input, Row, Select, Space, Tree } from 'antd'
 
 export default function Page() {
   const {
@@ -144,21 +144,25 @@ export default function Page() {
         <div
           className={`relative rounded-lg border border-zinc-200 bg-white transition-colors`}
         >
-          <Tree
-            className={`draggable-tree [&_.ant-tree-list-holder-inner]:!w-full [&_.ant-tree-switcher]:hidden`}
-            style={{
-              backgroundColor: LAYOUT_BG,
-              paddingTop: 4,
-            }}
-            blockNode
-            draggable
-            selectable={false}
-            expandedKeys={expandedKeys}
-            onDrop={onDrop}
-            treeData={toTreeData(filteredTree)}
-            virtual={false}
-            showLine
-          />
+          {filteredTree.length === 0 ? (
+            <Empty description={t('table.noData')} />
+          ) : (
+            <Tree
+              className={`draggable-tree [&_.ant-tree-list-holder-inner]:!w-full [&_.ant-tree-switcher]:hidden`}
+              style={{
+                backgroundColor: LAYOUT_BG,
+                paddingTop: 4,
+              }}
+              blockNode
+              draggable
+              selectable={false}
+              expandedKeys={expandedKeys}
+              onDrop={onDrop}
+              treeData={toTreeData(filteredTree)}
+              virtual={false}
+              showLine
+            />
+          )}
         </div>
       </div>
     </Create>

@@ -271,7 +271,7 @@ function useProductCategories() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
+          {t('merchandise.merchandise')}
         </Title>
       ),
     },
