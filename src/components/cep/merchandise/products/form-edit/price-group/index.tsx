@@ -47,8 +47,15 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                 name={[index, 'rank_' + rank.id]}
                 hidden={isRateBased}
                 className="!mb-0"
+                required
+                rules={[{ required: true, message: t('validation.required') }]}
               >
-                <InputNumber defaultValue={caculator} className="text-center" />
+                <InputNumber
+                  defaultValue={caculator}
+                  className="text-center"
+                  min={0}
+                  controls={false}
+                />
               </Form.Item>
               {isRateBased ? caculator : ''}
               {costPriceWatch < value ? (

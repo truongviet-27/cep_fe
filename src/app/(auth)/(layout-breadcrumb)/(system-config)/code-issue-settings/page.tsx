@@ -33,7 +33,7 @@ export default function Page() {
             (item) =>
               !(
                 item.code === 'products' &&
-                !parameterSettings.get(ParameterResourceEnum.PRODUCTS)
+                !parameterSettings?.get?.(ParameterResourceEnum.PRODUCTS)
               ),
           ),
         }

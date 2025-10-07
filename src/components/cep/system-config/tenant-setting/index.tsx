@@ -40,7 +40,7 @@ function TenantSetting() {
 
   const [previewPdf, setPreviewPdf] = useState('')
 
-  if (!parameterSettings.get(ParameterResourceEnum.QUOTATION_FORMS)) {
+  if (!parameterSettings?.get?.(ParameterResourceEnum.QUOTATION_FORMS)) {
     redirect('/403')
   }
 

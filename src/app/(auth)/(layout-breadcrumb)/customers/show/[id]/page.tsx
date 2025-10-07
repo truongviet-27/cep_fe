@@ -12,6 +12,7 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { EditButton } from '@refinedev/antd'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
 import { type Customer, ParameterResourceEnum } from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
@@ -139,7 +140,9 @@ export default function CustomerShowPage() {
       }
       rightFooterButtons={
         <Space>
-          <Button
+          <EditButton
+            icon={null}
+            resource="customers"
             type="primary"
             onClick={() =>
               data?.data.id &&
@@ -153,7 +156,7 @@ export default function CustomerShowPage() {
             }
           >
             {t('buttons.edit')}
-          </Button>
+          </EditButton>
         </Space>
       }
       footerButtons={
@@ -196,7 +199,7 @@ export default function CustomerShowPage() {
               <DetailItem label={t('customers.fields.corporate_number')}>
                 {record?.corporate_number}
               </DetailItem>
-              {parameterSettings.get(ParameterResourceEnum.RANKS) && (
+              {parameterSettings?.get?.(ParameterResourceEnum.RANKS) && (
                 <DetailItem label={t('customers.fields.unit_price_rank')}>
                   {record?.rank?.name}
                 </DetailItem>
