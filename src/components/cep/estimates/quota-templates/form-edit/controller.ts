@@ -52,6 +52,7 @@ export function useController() {
         expiration_date: data?.data.default_expiration_date,
         consumption_tax: data?.data.consumption_tax ?? '0',
         tax_rate: data?.data.tax_rate,
+        tax_rounding_method: data.data?.tax_rounding_method,
         note: null,
         tags: [],
         total_cost: 0,
