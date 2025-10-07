@@ -53,21 +53,10 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               width: '10%',
               align: 'center',
               render: (_: unknown, __: unknown, index: number) => (
-                <CoreInput
-                  name={[index, 'code']}
-                  readOnly={true}
-                  style={{
-                    background: 'transparent',
-                    paddingLeft: 0,
-                    color: 'inherit',
-                    border: 'none',
-                    boxShadow: 'none',
-                    cursor: 'default',
-                  }}
-                  styleForm={{
-                    marginBottom: '0px',
-                  }}
-                />
+                <>
+                  <CoreInput name={[index, 'code']} readOnly={true} hidden />
+                  {getFieldValue(['packagings', index, 'code'])}
+                </>
               ),
             },
             {
@@ -76,26 +65,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               width: '15%',
               align: 'left',
               render: (_: unknown, __: unknown, index: number) => (
-                <CoreInput
-                  name={[index, 'name']}
-                  readOnly={!index}
-                  style={{
-                    ...(!index
-                      ? {
-                          background: 'transparent',
-                          paddingLeft: 0,
-                          color: 'inherit',
-                          border: 'none',
-                          boxShadow: 'none',
-                          cursor: 'default',
-                        }
-                      : {}),
-                    width: '100%',
-                  }}
-                  styleForm={{
-                    marginBottom: '0px',
-                  }}
-                />
+                <CoreInput name={[index, 'name']} />
               ),
             },
             {
@@ -103,26 +73,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'barcode',
               width: '15%',
               render: (_: unknown, __: unknown, index: number) => (
-                <CoreInput
-                  name={[index, 'barcode']}
-                  readOnly={!index}
-                  style={{
-                    ...(!index
-                      ? {
-                          background: 'transparent',
-                          paddingLeft: 0,
-                          color: 'inherit',
-                          border: 'none',
-                          boxShadow: 'none',
-                          cursor: 'default',
-                        }
-                      : {}),
-                    width: '100%',
-                  }}
-                  styleForm={{
-                    marginBottom: '0px',
-                  }}
-                />
+                <CoreInput name={[index, 'barcode']} />
               ),
             },
             {
@@ -134,22 +85,6 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   name={[index, 'quantity_in_package']}
                   readOnly={!index}
                   type="number"
-                  style={{
-                    ...(!index
-                      ? {
-                          background: 'transparent',
-                          paddingLeft: 0,
-                          color: 'inherit',
-                          border: 'none',
-                          boxShadow: 'none',
-                          cursor: 'default',
-                        }
-                      : {}),
-                    width: '100%',
-                  }}
-                  styleForm={{
-                    marginBottom: '0px',
-                  }}
                   onChangeValue={(value) => {
                     setFieldValue(
                       ['packagings', index, 'cost_price' as keyof object],
@@ -214,22 +149,6 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     name={[index, 'selling_price']}
                     readOnly={!index}
                     type="number"
-                    style={{
-                      ...(!index
-                        ? {
-                            background: 'transparent',
-                            paddingLeft: 0,
-                            color: 'inherit',
-                            border: 'none',
-                            boxShadow: 'none',
-                            cursor: 'default',
-                          }
-                        : {}),
-                      width: '100%',
-                    }}
-                    styleForm={{
-                      marginBottom: '0px',
-                    }}
                     disabled={packagings?.[index]?.is_standard_price}
                   />
                 )
