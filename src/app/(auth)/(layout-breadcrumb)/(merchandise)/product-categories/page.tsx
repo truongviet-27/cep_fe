@@ -1,7 +1,7 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import useProductCategories from '@app/(auth)/(layout-breadcrumb)/(system-config)/product-categories/use-product-categories'
+import useProductCategories from '@app/(auth)/(layout-breadcrumb)/(merchandise)/product-categories/use-product-categories'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { CreateButton } from '@refinedev/antd'

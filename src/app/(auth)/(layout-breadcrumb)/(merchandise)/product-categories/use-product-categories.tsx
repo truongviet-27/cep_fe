@@ -24,6 +24,7 @@ import {
   useApiUrl,
   useCreate,
   useCustomMutation,
+  useNotification,
   useResource,
   useUpdate,
 } from '@refinedev/core'
@@ -53,6 +54,8 @@ function useProductCategories() {
   const [category, setCategory] = useState<string | null>(null)
 
   const [form] = Form.useForm()
+  const [formFields] = Form.useForm()
+  const noti = useNotification()
 
   const { resource: rs } = useResource()
   const resource = String(rs?.name)
@@ -156,7 +159,19 @@ function useProductCategories() {
     const patched = mergeEditingIntoTree(tree, editing)
 
     setDirty(false)
-    handleUpdateAll(toSaveTree(patched))
+    formFields
+      .validateFields()
+      .then(() => {
+        handleUpdateAll(toSaveTree(patched))
+      })
+      .catch(() => {
+        noti.open?.({
+          type: 'success',
+          message: t('product_categories.validate.name_required'),
+          description: t('product_categories.validate.name_required'),
+          key: 'my-notification',
+        })
+      })
   }
 
   const startEdit = (id: string | number) => {
@@ -334,6 +349,7 @@ function useProductCategories() {
           key: String(n.id),
           title: (
             <TreeRow
+              formFields={formFields}
               isNew={n._isNew}
               cat={n}
               hasChildren={Boolean(n.children?.length)}

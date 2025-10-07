@@ -98,7 +98,7 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('merchandise.merchandise')}
+          {t('business_partner.business_partner')}
         </Title>
       ),
     },
