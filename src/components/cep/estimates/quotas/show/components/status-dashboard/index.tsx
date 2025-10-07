@@ -32,9 +32,8 @@ const StatusDashboard: React.FC = () => {
           onClick={() => {
             setStatus(item.key)
           }}
-          bodyStyle={{
-            width: '100%',
-            textAlign: 'center',
+          styles={{
+            body: { width: '100%', textAlign: 'center' },
           }}
         >
           <Statistic

@@ -32,10 +32,8 @@ const StatusDashboard = ({
           onClick={() => {
             onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
           }}
-          bodyStyle={{
-            width: '100%',
-            textAlign: 'center',
-            padding: '10px 10px',
+          styles={{
+            body: { width: '100%', textAlign: 'center', padding: '10px 10px' },
           }}
         >
           <Statistic

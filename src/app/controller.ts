@@ -5,7 +5,40 @@ import { useUserStore } from '@stores/useUserStore'
 import { hasForbiddenRoute } from '@utility/permission'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { getSessionOnce } from '@lib/get-session-once'
+import useTenantStore from '@stores/useTenantStore'
+import { isSupperAdmin } from '@utility/decode-token'
 import { useEffect, useState } from 'react'
+
+// Fetch and set a tenant for super admin users when no org is present in token
+const getTenantForSuperAdmin = async () => {
+  try {
+    const { tenantId, setTenant } = useTenantStore.getState()
+    if (tenantId) return
+
+    const session = await getSessionOnce()
+    const accessToken = session?.accessToken
+    if (!accessToken) return
+
+    const API_URL =
+      process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8001/api/v1'
+    const res = await fetch(`${API_URL}/tenants/`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+    })
+    if (!res.ok) return
+
+    const data = await res.json()
+    const firstTenant = data?.data?.items?.[0]
+    const fallbackId = firstTenant?.id as string | undefined
+    if (fallbackId) {
+      const fallbackName = (firstTenant?.name as string) || null
+      setTenant(fallbackId, fallbackName)
+    }
+  } catch (e) {
+    console.error('Failed to bootstrap superadmin tenant:', e)
+  }
+}
 
 export const useBootstrap = () => {
   const session = useSession()
@@ -60,8 +93,10 @@ export const useBootstrap = () => {
   const getProfile = async () => {
     try {
       setIsLoading(true)
+      const { tenantId } = useTenantStore.getState()
       const requestBody = {
         token: '',
+        tenantId,
       }
       if (pathname === '/' && token && refreshToken) {
         requestBody.token = token
@@ -120,6 +155,11 @@ export const useBootstrap = () => {
       if (pathname === '/login') return
 
       await validateToken()
+      const sessionOnce = await getSessionOnce()
+      const accessToken = sessionOnce?.accessToken
+      if (isSupperAdmin(accessToken)) {
+        await getTenantForSuperAdmin()
+      }
       await getProfile()
 
       if (hasForbiddenRoute(pathname)) {
