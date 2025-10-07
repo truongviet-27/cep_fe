@@ -5,7 +5,7 @@ import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
 import type { FormInstance } from 'antd'
-import { Button, Checkbox, Form } from 'antd'
+import { Button, Checkbox, Form, Input, InputNumber } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { CheckboxChangeEvent } from 'antd/lib'
 import type { MutableRefObject } from 'react'
@@ -65,7 +65,16 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               width: '15%',
               align: 'left',
               render: (_: unknown, __: unknown, index: number) => (
-                <CoreInput name={[index, 'name']} />
+                <Form.Item
+                  name={[index, 'name']}
+                  required
+                  rules={[
+                    { required: true, message: t('validation.required') },
+                  ]}
+                  className="!mb-0"
+                >
+                  <Input />
+                </Form.Item>
               ),
             },
             {
@@ -81,39 +90,47 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'quantity_in_package',
               width: '10%',
               render: (_: unknown, __: unknown, index: number) => (
-                <CoreInput
+                <Form.Item
                   name={[index, 'quantity_in_package']}
-                  readOnly={!index}
-                  type="number"
-                  onChangeValue={(value) => {
-                    setFieldValue(
-                      ['packagings', index, 'cost_price' as keyof object],
-                      (value as number) * getFieldValue('selling_price'),
-                    )
-                    setFieldValue(
-                      ['packagings', index, 'selling_price'],
-                      (value as number) *
-                        getFieldValue(['packagings', index, 'selling_price']),
-                    )
-
-                    const rankObject: Record<string, number> = {}
-
-                    ranks?.data?.forEach(({ id, rate }) => {
-                      rankObject[`rank_${id}`] = Math.round(
-                        ((rate ?? 0) / 100) * getFieldValue('selling_price'),
-                      )
-
+                  required
+                  rules={[
+                    { required: true, message: t('validation.required') },
+                  ]}
+                  className="!mb-0"
+                >
+                  <InputNumber
+                    min={1}
+                    controls={false}
+                    onChange={(value) => {
                       setFieldValue(
-                        ['packagings', index, `rank_${id}` as keyof object],
-                        Math.round(
-                          ((rate ?? 0) / 100) *
-                            (value as number) *
-                            getFieldValue('selling_price'),
-                        ),
+                        ['packagings', index, 'cost_price' as keyof object],
+                        (value as number) * getFieldValue('selling_price'),
                       )
-                    })
-                  }}
-                />
+                      setFieldValue(
+                        ['packagings', index, 'selling_price'],
+                        (value as number) *
+                          getFieldValue(['packagings', index, 'selling_price']),
+                      )
+
+                      const rankObject: Record<string, number> = {}
+
+                      ranks?.data?.forEach(({ id, rate }) => {
+                        rankObject[`rank_${id}`] = Math.round(
+                          ((rate ?? 0) / 100) * getFieldValue('selling_price'),
+                        )
+
+                        setFieldValue(
+                          ['packagings', index, `rank_${id}` as keyof object],
+                          Math.round(
+                            ((rate ?? 0) / 100) *
+                              (value as number) *
+                              getFieldValue('selling_price'),
+                          ),
+                        )
+                      })
+                    }}
+                  />
+                </Form.Item>
               ),
             },
             {
@@ -145,12 +162,20 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               width: '10%',
               render: (_: unknown, __: unknown, index: number) => {
                 return (
-                  <CoreInput
+                  <Form.Item
+                    className="!mb-0"
                     name={[index, 'selling_price']}
-                    readOnly={!index}
-                    type="number"
-                    disabled={packagings?.[index]?.is_standard_price}
-                  />
+                    required
+                    rules={[
+                      { required: true, message: t('validation.required') },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      controls={false}
+                      disabled={packagings?.[index]?.is_standard_price}
+                    />
+                  </Form.Item>
                 )
               },
             },
@@ -164,6 +189,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     name={[index, 'is_standard_price']}
                     valuePropName="checked"
                     noStyle
+                    className="!mb-0"
                   >
                     <Checkbox
                       style={{
