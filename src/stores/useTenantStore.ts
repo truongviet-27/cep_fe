@@ -6,6 +6,7 @@ interface TenantStore {
   tenantName: string | null
   setTenant: (tenantId: string, tenantName?: string | null) => void
   setTenantName: (tenantName: string | null) => void
+  clearTenant: () => void
 }
 
 const useTenantStore = create<TenantStore>()(
@@ -19,6 +20,7 @@ const useTenantStore = create<TenantStore>()(
           tenantName: tenantName ?? state.tenantName,
         })),
       setTenantName: (tenantName) => set({ tenantName }),
+      clearTenant: () => set({ tenantId: null, tenantName: null }),
     }),
     { name: 'tenant-store' },
   ),

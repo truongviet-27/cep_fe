@@ -150,7 +150,6 @@ const AgreedPriceQuotaTab = () => {
         ),
       },
       {
-        title: t('agreed_prices.table.business_partner'),
         key: 'customer_name',
         render: (_: unknown, record: QuotaAgreedPrice) =>
           record.customer?.name ?? '-',
@@ -209,7 +208,7 @@ const AgreedPriceQuotaTab = () => {
             <ShowButton
               hideText
               size="small"
-              recordItemId={record.id as number}
+              recordItemId={(record as any).quota_id as number}
               resource="agreed-prices"
             />
             <DeleteButton
@@ -241,7 +240,7 @@ const AgreedPriceQuotaTab = () => {
   const { tableProps, searchFormProps, setFilters, tableQuery } = useTable<
     QuotaAgreedPrice,
     HttpError,
-    Record<string, unknown>
+    any
   >({
     resource: 'quota/agreed-prices',
     syncWithLocation: true,
@@ -256,23 +255,7 @@ const AgreedPriceQuotaTab = () => {
     },
     onSearch(values) {
       const v = values as Record<string, unknown>
-      const depInput = v.department as
-        | Array<{ value: string | number; label: string }>
-        | { value?: string | number; label?: string }
-        | undefined
-      const deptIds: number[] = Array.isArray(depInput)
-        ? depInput
-            .map((d) =>
-              typeof d.value === 'number' ? d.value : Number(d.value),
-            )
-            .filter((n) => !Number.isNaN(n))
-        : depInput && depInput.value !== undefined
-          ? [
-              typeof depInput.value === 'number'
-                ? depInput.value
-                : Number(depInput.value),
-            ].filter((n) => !Number.isNaN(n))
-          : []
+      console.log('values: ', values)
 
       const range = v.application_completion as
         | [Dayjs | null, Dayjs | null]
@@ -301,9 +284,11 @@ const AgreedPriceQuotaTab = () => {
           value: v.creator_name,
         },
         {
-          field: 'department_id_in[]',
-          operator: 'in',
-          value: deptIds.length > 0 ? deptIds : undefined,
+          field: 'department_id',
+          operator: 'eq',
+          value: v.department_id
+            ? (v.department_id as { id?: number }).id
+            : undefined,
         },
         {
           field: 'expiration_date_gte',
@@ -434,13 +419,13 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'department'}
+              name={'department_id'}
             >
               <Select
                 allowClear
                 showSearch
                 {...departmentSelectProps}
-                labelInValue
+                labelInValue={true}
                 placeholder={t('agreed_prices.search.please_select')}
               />
             </Form.Item>
