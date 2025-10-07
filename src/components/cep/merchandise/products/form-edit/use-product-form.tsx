@@ -31,7 +31,7 @@ function useProductForm() {
   const methods = useForm<ProductFormType>({
     resource: 'products',
     id: params?.id,
-    redirect: params?.id ? false : 'list',
+    redirect: 'show',
     queryOptions: {
       select: (response) => {
         const data = response.data as unknown as ProductDetail

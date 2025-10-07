@@ -84,6 +84,7 @@ const ProductFormContainer: React.FC = () => {
           labelAlign="left"
           className="mb-[24px]"
           onFinish={handleOnSubmit}
+          scrollToFirstError
         >
           <Collapse
             items={[
