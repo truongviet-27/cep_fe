@@ -15,7 +15,7 @@ import {
 import { PRIMARY } from '@utility/color'
 import { Button, Input, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
 
@@ -39,6 +39,7 @@ function useTags() {
   const { resource } = useResource()
   const apiUrl = useApiUrl()
   const [pageSize, setPageSize] = React.useState(10)
+  const [forceUpdate, setForceUpdate] = React.useState(false)
   const {
     tableProps,
     searchFormProps,
@@ -75,9 +76,11 @@ function useTags() {
   const keyOf = (row: TagRow, idx: number): string =>
     row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
-  useEffect(() => {
-    setPageSize(10)
-    setPageSize2(10)
+  useLayoutEffect(() => {
+    if (forceUpdate) {
+      setPageSize(10)
+      setPageSize2(10)
+    }
     const ds = (tableProps?.dataSource as TagRow[]) ?? []
     replace(ds.map((r) => ({ _isNew: false, _isEditing: false, ...r })))
   }, [tableProps?.dataSource, current])
@@ -97,6 +100,7 @@ function useTags() {
 
   const addNew = () => {
     setPageSize((total) => total + 1)
+    setForceUpdate(true)
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
     insert(0, {
       name: '',
@@ -145,7 +149,7 @@ function useTags() {
         setValue('rows', values as any)
         return {
           message: t('notifications.success'),
-          description: data?.data?.message ?? 'Success',
+          description: t('notifications.success'),
           type: 'success',
         }
       },
@@ -345,6 +349,9 @@ function useTags() {
       pagination: {
         ...tableProps?.pagination,
         pageSize,
+        onShowSizeChange: (current: number, size: number) => {
+          setPageSize(size)
+        },
       },
     },
     getRowIdForDnd,

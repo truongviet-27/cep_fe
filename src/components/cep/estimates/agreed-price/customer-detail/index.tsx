@@ -41,7 +41,7 @@ const AgreedPriceCustomerDetail = () => {
       ),
     },
     {
-      title: <Title level={5}>{t('agreed_prices.agreed_prices')}</Title>,
+      title: <Title level={5}>{t('agreed_prices.parent')}</Title>,
     },
     {
       title: (

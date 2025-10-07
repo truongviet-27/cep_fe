@@ -98,7 +98,7 @@ export default function Page() {
     {
       title: (
         <Title level={5} style={{ color: PRIMARY }}>
-          {t('merchandise.merchandise')}
+          {t('business_partner.business_partner')}
         </Title>
       ),
     },
@@ -135,7 +135,7 @@ export default function Page() {
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
-            <Text strong>{t('departments.list.filters.search_label')}</Text>
+            <Text strong>{t('ranks.list.filters.search_label')}</Text>
             <Form.Item name="q">
               <Input
                 className={'mt-2'}

@@ -206,7 +206,7 @@ function ApproveAction() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.approve_routes')}
+                  {t('approve_routes.parent')}
                 </Title>
               ),
             },
@@ -300,6 +300,10 @@ function ApproveAction() {
                     message: t(
                       'approve_routes.validation.route_code.invalid_format',
                     ),
+                  },
+                  {
+                    max: 20,
+                    message: '',
                   },
                 ]}
               />

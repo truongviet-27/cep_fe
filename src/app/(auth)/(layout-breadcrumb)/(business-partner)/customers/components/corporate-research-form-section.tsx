@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import CommonTable from '@components/common/table'
 import {
   Button,
@@ -15,14 +15,14 @@ import {
 import React from 'react'
 
 import styles from '../styles.module.css'
-import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { useModal } from '@refinedev/core'
 import { antiSocialCheckOptions, creditCheckOptions } from '@utility/options'
 import { EditButton } from '@refinedev/antd'
 import { InputUploadFile } from '@components/common/input-upload-file'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
+import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/instances'
 import dayjs from 'dayjs'
 import { FORMAT_DATE } from '@utility/instances'
 import { useSession } from 'next-auth/react'

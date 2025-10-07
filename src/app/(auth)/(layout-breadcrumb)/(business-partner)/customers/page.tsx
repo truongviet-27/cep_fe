@@ -222,7 +222,11 @@ export default function CustomerListPage() {
         key: 'customer_code',
         render: (text, record) => (
           <Link
-            href={`/customers/show/${record.id}`}
+            href={
+              record.deleted_at
+                ? `/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/show/${record.id}?disable=true`
+                : `/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/show/${record.id}`
+            }
             key={record.id}
             style={{ textDecoration: 'underline' }}
           >
@@ -563,7 +567,11 @@ export default function CustomerListPage() {
             {t('buttons.create_new')}
           </CreateButton>
           <Link
-            href={isFullAccess ? '/customers/csv' : '#'}
+            href={
+              isFullAccess
+                ? '/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/csv'
+                : '#'
+            }
             className={isFullAccess ? '!underline' : '!text-gray-400'}
             style={{ color: CSV_LINK }}
           >
