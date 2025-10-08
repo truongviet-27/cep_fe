@@ -224,8 +224,8 @@ export default function CustomerListPage() {
           <Link
             href={
               record.deleted_at
-                ? `/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/show/${record.id}?disable=true`
-                : `/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/show/${record.id}`
+                ? `/customers/show/${record.id}?disable=true`
+                : `/customers/show/${record.id}`
             }
             key={record.id}
             style={{ textDecoration: 'underline' }}
@@ -253,7 +253,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.unit_price_rank'),
         dataIndex: 'rank',
         key: 'rank',
-        render: (rank, record) => (
+        render: (rank) => (
           <Link
             href={`/ranks`}
             className="!underline"
