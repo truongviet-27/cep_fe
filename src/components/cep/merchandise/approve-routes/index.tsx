@@ -14,6 +14,7 @@ import {
 import type { BaseRecord, CrudFilters } from '@refinedev/core'
 import { Link, useGo, useTranslate } from '@refinedev/core'
 import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   Breadcrumb,
   Button,
@@ -74,7 +75,8 @@ function Approve() {
     optionLabel: 'name',
     optionValue: 'id',
     pagination: {
-      mode: 'off',
+      mode: 'server',
+      pageSize: 100,
     },
   })
 
@@ -92,11 +94,13 @@ function Approve() {
         key: 'name',
         dataIndex: 'name',
         title: t('approve_routes.table.routeName'),
+        width: 300,
       },
       {
         key: 'departments',
         dataIndex: 'departments',
         title: t('approve_routes.table.department'),
+        width: 300,
         render: (value) => {
           return value?.map((item: any) => item?.name).join(', ')
         },
@@ -129,7 +133,7 @@ function Approve() {
         dataIndex: 'updated_at',
         title: t('approve_routes.table.updatedAt'),
         render(value) {
-          return dayjs(value).format('YYYY/MM/DD HH:mm')
+          return dayjs(value).format(FORMAT_DATE)
         },
       },
       {
