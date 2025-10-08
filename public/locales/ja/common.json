@@ -65,7 +65,9 @@
     "createSuccess": "登録しました",
     "error": "エラー",
     "editError": "編集エラー",
-    "createError": "作成エラー"
+    "createError": "作成エラー",
+    "uploadSuccess": "ファイルのアップロードに成功しました。",
+    "uploadFail": "ファイルのアップロードに失敗しました。"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -162,8 +164,8 @@
       "email": "メールアドレス"
     },
     "enums": {
-      "corporation": "個人",
-      "individual": "会社"
+      "corporation": "会社",
+      "individual": "個人"
     },
     "filters": {
       "code_name": "取引先コード・取引先名",

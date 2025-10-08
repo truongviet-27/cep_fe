@@ -115,7 +115,6 @@ export const RankModalEdit: React.FC<Props> = ({
         </Form.Item>
 
         <Form.Item
-          required={isShow ? undefined : true}
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
           rules={[validateRankRule(t)]}
@@ -152,7 +151,14 @@ export const RankModalEdit: React.FC<Props> = ({
           {t('buttons.delete')}
         </DeleteButton>
         <Space className={'flex justify-end'}>
-          <Button onClick={close}>{t('buttons.cancel')}</Button>
+          <Button
+            onClick={() => {
+              setIsShow(true)
+              close()
+            }}
+          >
+            {t('buttons.cancel')}
+          </Button>
           {isShow ? (
             <Button
               onClick={() => {

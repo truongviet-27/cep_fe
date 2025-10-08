@@ -40,6 +40,9 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       hiddenButtonBack
+      contentProps={{
+        className: 'no-actions-border',
+      }}
     >
       <Form
         form={form}
