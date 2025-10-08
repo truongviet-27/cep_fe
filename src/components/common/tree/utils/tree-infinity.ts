@@ -4,6 +4,7 @@ import type {
   SaveFlatRow,
   SavePayloadNode,
 } from '@interfaces/tree'
+import type { FormInstance } from 'antd'
 import { isNumber } from 'lodash'
 
 function toggleAll(arr: ITree[], open: boolean): ITree[] {
@@ -31,7 +32,7 @@ function toggleOpen(arr: ITree[], id: string | number): ITree[] {
   })
 }
 
-function removeById(arr: ITree[], id: string | number): ITree[] {
+function removeById(arr: CatNode[], id: string | number): ITree[] {
   return arr
     .filter((c) => c.id !== id)
     .map((c) =>
@@ -86,6 +87,34 @@ const findParentAndIndex = (
     }
   }
   return null
+}
+function removeNodeUsingId(
+  tree: CatNode[],
+  idToRemove: string | number,
+): CatNode[] {
+  return tree.reduce((accumulator, node) => {
+    // 1. Nếu ID của node hiện tại trùng với ID cần xóa, bỏ qua nó.
+    if (node.id == idToRemove) {
+      return accumulator // Bỏ node này ra khỏi kết quả cuối cùng
+    }
+
+    // 2. Nếu node hiện tại có children, gọi đệ quy để xử lý mảng children.
+    if (node.children && node.children.length > 0) {
+      const newChildren = removeNodeUsingId(
+        node.children as CatNode[],
+        idToRemove,
+      )
+
+      // Tạo một node mới với children đã được cập nhật để đảm bảo immutability
+      const newNode = { ...node, children: newChildren }
+      accumulator.push(newNode)
+    } else {
+      // 3. Nếu không phải node cần xóa và không có children, giữ lại nó.
+      accumulator.push(node)
+    }
+
+    return accumulator
+  }, [] as CatNode[])
 }
 
 const removeNodeById = (
@@ -269,15 +298,22 @@ const normalize = (s?: string) => (s ?? '').trim()
 const mergeEditingIntoTree = (
   nodes: readonly CatNode[],
   editing: Record<string, { name: string; original: string }>,
+  formField: FormInstance,
 ): CatNode[] =>
   (nodes as CatNode[]).map((n) => {
     const eid = String(n.id)
     const draft = editing[eid]
-    const name = normalize(draft?.name) || normalize(n.name)
+    const name =
+      formField.getFieldValue(eid) ??
+      (normalize(draft?.name) || normalize(n.name))
 
     const clone: CatNode = { ...n, name }
     if (n.children?.length) {
-      clone.children = mergeEditingIntoTree(n.children as CatNode[], editing)
+      clone.children = mergeEditingIntoTree(
+        n.children as CatNode[],
+        editing,
+        formField,
+      )
     }
     return clone
   })
@@ -415,6 +451,7 @@ export {
   mergeEditingIntoTree,
   removeById,
   removeNodeById,
+  removeNodeUsingId,
   toggleAll,
   toggleOpen,
   toSaveFlat,

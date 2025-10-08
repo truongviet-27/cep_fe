@@ -6,6 +6,7 @@ import {
   Button,
   Collapse,
   Form,
+  message,
   Modal,
   Select,
   Space,
@@ -133,6 +134,7 @@ export const CorporateResearchFormSection = (
       key: 'updated_at',
       width: 180,
       render: (_: any, record: any) =>
+        (record?.updated_at || record?.created_at) &&
         dayjs(record?.updated_at ?? record?.created_at ?? '').format(
           FORMAT_DATE,
         ),
@@ -263,23 +265,31 @@ export const CorporateResearchFormSection = (
           title={boldText(t('customers.research.modal.title'), PRIMARY)}
           open={visible}
           onOk={() => {
-            form.setFieldValue(
-              ['company_research_information', currentType.index],
-              {
-                ...form.getFieldValue([
-                  'company_research_information',
-                  currentType.index,
-                ]),
-                files: currentType.fileList,
-                judgement: currentType.judgement,
-                material_name: currentType.name,
-                updated_at: dayjs().format(FORMAT_DATE),
-                editor: {
-                  name: session.data?.user?.name,
+            console.log(currentType, 'currentType')
+
+            if (
+              currentType.fileList.some((item) => item.status == 'uploading')
+            ) {
+              message.warning(t('notifications.uploading'))
+            } else {
+              form.setFieldValue(
+                ['company_research_information', currentType.index],
+                {
+                  ...form.getFieldValue([
+                    'company_research_information',
+                    currentType.index,
+                  ]),
+                  files: currentType.fileList,
+                  judgement: currentType.judgement,
+                  material_name: currentType.name,
+                  updated_at: dayjs().format(FORMAT_DATE),
+                  editor: {
+                    name: session.data?.user?.name,
+                  },
                 },
-              },
-            )
-            close()
+              )
+              close()
+            }
           }}
           onCancel={close}
           okText={t('buttons.save')}
