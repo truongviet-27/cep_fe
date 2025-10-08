@@ -20,7 +20,7 @@ import {
 } from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
+import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Collapse, Space, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -98,9 +98,10 @@ export default function CustomerShowPage() {
           {t('customers.research.last_updated')}
         </span>
       ),
-      dataIndex: 'updated_at', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'updated_at',
       key: 'updated_at',
       width: 180,
+      render: (date: string) => date && dayjs(date).format(FORMAT_DATE),
     },
   ]
 
@@ -251,7 +252,7 @@ export default function CustomerShowPage() {
                 {record?.industry}
               </DetailItem>
               <DetailItem label={t('customers.show.date_of_establishment')}>
-                {record?.date_of_establishment}
+                {dayjs(record?.date_of_establishment).format(FORMAT_DATE)}
               </DetailItem>
               <DetailItem label={t('customers.show.department_in_charge')}>
                 {record?.department_in_charge}
