@@ -55,6 +55,7 @@ function ApproveDetail() {
 
   const methods = useForm<Form>({
     resource: 'approve-routes',
+    queryOptions: { enabled: false },
   })
 
   const { formProps, saveButtonProps, form } = methods
@@ -64,6 +65,8 @@ function ApproveDetail() {
   const { query } = useShow({
     queryOptions: { enabled: isUpdate },
   })
+
+  // const query = {} as any
 
   useEffect(() => {
     if (query?.data?.data) {
@@ -252,14 +255,20 @@ function ApproveDetail() {
                                           item2.name,
                                           'name',
                                         ])}
-                                        -
-                                        {form.getFieldValue([
+                                        {` (${form.getFieldValue([
+                                          'steps',
+                                          item.name,
+                                          'employees',
+                                          item2.name,
+                                          'department',
+                                        ])}
+                                        ${form.getFieldValue([
                                           'steps',
                                           item.name,
                                           'employees',
                                           item2.name,
                                           'code',
-                                        ])}
+                                        ])})`}
                                       </Space>
                                     </Col>
                                   </Row>

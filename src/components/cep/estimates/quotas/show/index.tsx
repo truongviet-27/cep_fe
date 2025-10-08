@@ -92,7 +92,7 @@ function QuotaDetail() {
       refetchHistory()
       return {
         message: t('notifications.success'),
-        description: message ?? 'Success',
+        description: message ?? t('notifications.success'),
         type: 'success',
       }
     },
@@ -249,7 +249,7 @@ function QuotaDetail() {
             </Space>
 
             <Space>
-              {queryBasic?.data?.has_approval_routes &&
+              {queryBasic?.data?.has_approval_route &&
                 queryBasic?.data?.status === QuotaStatus.Creating &&
                 queryBasic?.data?.is_author && (
                   <Button
@@ -268,7 +268,7 @@ function QuotaDetail() {
                     承認依頼
                   </Button>
                 )}
-              {queryBasic?.data?.has_approval_routes &&
+              {queryBasic?.data?.has_approval_route &&
                 queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
                 queryBasic?.data?.display && (
                   <>

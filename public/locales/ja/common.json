@@ -591,7 +591,7 @@
         "DEPARTMENTS": "部門登録",
         "OTHER": "その他"
       },
-      "error": "処理が途中で失敗しました."
+      "error": "処理が途中で失敗しました。"
     }
   },
   "system_config": {
@@ -926,7 +926,10 @@
     "list": "見積一覧",
     "create": "見積新規作成",
     "edit": "見積編集",
-    "detail": "見積詳細"
+    "detail": "見積詳細",
+    "page_list": {},
+    "page_detail": {},
+    "page_action": {}
   },
   "price_groups": {
     "price_groups": "単価グループ設定",
