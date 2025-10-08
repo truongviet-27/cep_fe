@@ -72,12 +72,12 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
         if (xhr.status === 200) {
           if (onSuccess) {
             onSuccess({ file_key, url: presigned_url, name: file_name }, xhr)
-            notification.success({ message: 'File uploaded successfully!' })
+            notification.success({ message: t('notifications.uploadSuccess') })
           }
         } else {
           if (onError) {
             onError(new Error('Upload failed.'))
-            notification.error({ message: 'File upload failed.' })
+            notification.error({ message: t('notifications.uploadFail') })
           }
         }
       }
@@ -85,7 +85,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
       xhr.onerror = () => {
         if (onError) {
           onError(new Error('Upload failed due to a network error.'))
-          notification.error({ message: 'File upload failed.' })
+          notification.error({ message: t('notifications.uploadFail') })
         }
       }
 
@@ -94,7 +94,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
       if (onError) {
         onError(error)
         notification.error({
-          message: error.message || 'Could not get presigned URL.',
+          message: error.message || t('notifications.uploadFail'),
         })
       }
     }
