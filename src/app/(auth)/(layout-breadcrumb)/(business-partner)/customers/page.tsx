@@ -114,9 +114,9 @@ export default function CustomerListPage() {
           value: values?.country,
         },
         {
-          field: 'person_in_charge_department',
+          field: 'department_in_charge_id',
           operator: 'contains',
-          value: values?.person_in_charge_department,
+          value: values?.department_in_charge_id,
         },
         {
           field: 'price_rank_id',
@@ -169,9 +169,9 @@ export default function CustomerListPage() {
         value: values?.country,
       },
       {
-        field: 'person_in_charge_department',
+        field: 'department_in_charge_id',
         operator: 'contains',
-        value: values?.person_in_charge_department,
+        value: values?.department_in_charge_id,
       },
       {
         field: 'price_rank_id',
@@ -224,8 +224,8 @@ export default function CustomerListPage() {
           <Link
             href={
               record.deleted_at
-                ? `/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/show/${record.id}?disable=true`
-                : `/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/show/${record.id}`
+                ? `/customers/show/${record.id}?disable=true`
+                : `/customers/show/${record.id}`
             }
             key={record.id}
             style={{ textDecoration: 'underline' }}
@@ -253,7 +253,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.unit_price_rank'),
         dataIndex: 'rank',
         key: 'rank',
-        render: (rank, record) => (
+        render: (rank) => (
           <Link
             href={`/ranks`}
             className="!underline"
@@ -469,10 +469,8 @@ export default function CustomerListPage() {
               }}
               formItemProps={{
                 label: boldText(t('customers.fields.department')),
-                name: 'department_id',
+                name: 'department_in_charge_id',
               }}
-              optionLabel={'name'}
-              optionValue={'id'}
               selectComponentProps={{
                 placeholder: t('placeholders.select'),
                 style: { maxWidth: 560, minWidth: '150px' },
