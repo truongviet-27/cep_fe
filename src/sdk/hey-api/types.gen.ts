@@ -980,7 +980,7 @@ export type CustomerStoreRequest = {
   listing_classification?: '未上場' | 'プライム' | 'スタンダード' | 'グロース'
   industry?: string | null
   date_of_establishment?: string | null
-  department_in_charge?: string | null
+  department_in_charge_id?: number | null
   person_in_charge_name: string
   person_in_charge_department: string
   person_in_charge_mail: string
@@ -1024,7 +1024,7 @@ export type CustomerUpdateRequest = {
   listing_classification?: '未上場' | 'プライム' | 'スタンダード' | 'グロース'
   industry?: string | null
   date_of_establishment?: string | null
-  department_in_charge?: string | null
+  department_in_charge_id?: number | null
   person_in_charge_name: string | null
   person_in_charge_department: string | null
   person_in_charge_mail: string | null
@@ -1853,6 +1853,7 @@ export type ProductCustomerPricingResponse = {
  * Detailed product information
  */
 export type ProductDetail = {
+  id?: number
   category?: {
     id?: number
     name?: string
@@ -1868,6 +1869,7 @@ export type ProductDetail = {
   }
   cost_price?: number
   selling_price?: number
+  note?: string | null
   author?: {
     id?: number
     name?: string
@@ -2568,6 +2570,10 @@ export type QuotaResource = {
    */
   display?: boolean
   /**
+   * Flag indicating if the current user is author.
+   */
+  is_author?: boolean
+  /**
    * Quota tags
    */
   tags?: Array<{
@@ -2831,6 +2837,8 @@ export type SimpleQuota = {
   customer_accepted_date?: string
   customer_cancelled_date?: string
   pdf_path?: string
+  display?: boolean
+  is_author?: boolean
   author?: string | null
   /**
    * List of approver names
@@ -2841,7 +2849,7 @@ export type SimpleQuota = {
     approver_name?: string
     approval_date?: string
   } | null
-  author_department_name?: string | null
+  department_in_charge?: string | null
 }
 
 /**
@@ -4910,7 +4918,7 @@ export type CustomerControllerIndexData = {
     /**
      * Search by department in charge
      */
-    department_in_charge?: string
+    department_in_charge_id?: number
     /**
      * Filter by price rank ID
      */
@@ -7208,10 +7216,6 @@ export type ProductUnitControllerIndexData = {
      */
     _per_page?: number
     /**
-     * Filter by a specific order number.
-     */
-    order?: number
-    /**
      * Filter by status (true for disabled, false for enabled).
      */
     is_disable?: boolean
@@ -7624,6 +7628,22 @@ export type QuotaAgreedPriceControllerIndexData = {
      */
     'department_id_in[]'?: Array<number>
     /**
+     * Filter by department ID
+     */
+    department_id?: number
+    /**
+     * Filter by creator ID
+     */
+    created_by?: number
+    /**
+     * Filter by tag ID
+     */
+    tag_id?: number
+    /**
+     * Filter by tag IDs (array)
+     */
+    'tag_id_in[]'?: Array<number>
+    /**
      * Filter by status
      */
     status?: 'all' | 'active' | 'expired' | 'about_to_expire'
@@ -7798,9 +7818,17 @@ export type QuotaAgreedPriceControllerGetCustomerListData = {
      */
     customer_name?: string
     /**
+     * Filter by department ID
+     */
+    department_id?: number
+    /**
      * Filter by department IDs (array)
      */
     'department_id_in[]'?: Array<number>
+    /**
+     * Filter by rank ID
+     */
+    rank_id?: number
     /**
      * Filter by rank IDs (array)
      */
@@ -8020,6 +8048,10 @@ export type QuotaControllerIndexData = {
      */
     code?: string
     /**
+     * Search by quota title
+     */
+    title?: string
+    /**
      * Search by customer name
      */
     customer_name?: string
@@ -8036,9 +8068,9 @@ export type QuotaControllerIndexData = {
      */
     approver_name?: string
     /**
-     * Search by the creator's department name
+     * Search by the customer's department name
      */
-    creator_department_name?: string
+    department_in_charge?: string
     /**
      * Type of date to filter
      */
@@ -8798,6 +8830,16 @@ export type QuotaTemplateControllerIndexData = {
 
 export type QuotaTemplateControllerIndexErrors = {
   /**
+   * Validation error
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      end_date?: Array<string>
+    }
+  }
+  /**
    * Internal server error
    */
   500: {
@@ -8967,13 +9009,20 @@ export type QuotaTemplateControllerDestroyData = {
     /**
      * Quota template ID
      */
-    id: number
+    id: string
   }
   query?: never
   url: '/api/v1/quota-templates/{id}'
 }
 
 export type QuotaTemplateControllerDestroyErrors = {
+  /**
+   * Invalid ID format
+   */
+  400: {
+    success?: boolean
+    message?: string
+  }
   /**
    * Quota template not found
    */

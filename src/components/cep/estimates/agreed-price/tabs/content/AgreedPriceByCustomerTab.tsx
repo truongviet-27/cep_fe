@@ -122,12 +122,12 @@ const AgreedPriceByCustomerTab = () => {
           value: v.business_partner_code_name,
         },
         {
-          field: 'department_id_in[]',
+          field: 'department_id',
           operator: 'in',
           value: depId ? [depId] : undefined,
         },
         {
-          field: 'rank_id_in[]',
+          field: 'rank_id',
           operator: 'in',
           value: rankId ? [rankId] : undefined,
         },
