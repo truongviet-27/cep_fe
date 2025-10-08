@@ -162,12 +162,10 @@ function AddressContact(
                   resource: 'departments',
                 }}
                 formItemProps={{
-                  name: 'department_in_charge',
+                  name: 'department_in_charge_id',
                   rules: [rule],
                   required: true,
                 }}
-                optionLabel={'name'}
-                optionValue={'name'}
                 selectComponentProps={{
                   placeholder: t('placeholders.select'),
                   style: { maxWidth: 560, width: '250px' },

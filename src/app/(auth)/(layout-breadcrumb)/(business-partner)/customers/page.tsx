@@ -114,9 +114,9 @@ export default function CustomerListPage() {
           value: values?.country,
         },
         {
-          field: 'person_in_charge_department',
+          field: 'department_in_charge_id',
           operator: 'contains',
-          value: values?.person_in_charge_department,
+          value: values?.department_in_charge_id,
         },
         {
           field: 'price_rank_id',
@@ -169,9 +169,9 @@ export default function CustomerListPage() {
         value: values?.country,
       },
       {
-        field: 'person_in_charge_department',
+        field: 'department_in_charge_id',
         operator: 'contains',
-        value: values?.person_in_charge_department,
+        value: values?.department_in_charge_id,
       },
       {
         field: 'price_rank_id',
@@ -469,10 +469,8 @@ export default function CustomerListPage() {
               }}
               formItemProps={{
                 label: boldText(t('customers.fields.department')),
-                name: 'department_id',
+                name: 'department_in_charge_id',
               }}
-              optionLabel={'name'}
-              optionValue={'id'}
               selectComponentProps={{
                 placeholder: t('placeholders.select'),
                 style: { maxWidth: 560, minWidth: '150px' },
