@@ -74,7 +74,7 @@ export default function CustomerCreatePage() {
           person_in_charge_mail: null,
           name: null,
           price_rank_id: null,
-          department_in_charge: null,
+          department_in_charge_id: null,
           post_code: null,
           address: null,
           phone: null,

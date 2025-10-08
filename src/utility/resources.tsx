@@ -56,19 +56,6 @@ export const resource: ResourceProps[] = [
     },
   },
   {
-    name: 'approve-routes',
-    list: '/approve-routes',
-    show: '/approve-routes/show/:id',
-    create: '/approve-routes/create',
-    edit: '/approve-routes/edit/:id',
-    meta: {
-      parent: 'estimates',
-      canDelete: true,
-      canCreate: true,
-      canEdit: true,
-    },
-  },
-  {
     name: 'business_partner',
   },
   {
@@ -81,6 +68,19 @@ export const resource: ResourceProps[] = [
       parent: 'business_partner',
       canDelete: true,
       canCreate: true,
+    },
+  },
+  {
+    name: 'approve-routes',
+    list: '/approve-routes',
+    show: '/approve-routes/show/:id',
+    create: '/approve-routes/create',
+    edit: '/approve-routes/edit/:id',
+    meta: {
+      parent: 'business_partner',
+      canDelete: true,
+      canCreate: true,
+      canEdit: true,
     },
   },
   {
