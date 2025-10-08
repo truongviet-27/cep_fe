@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable simple-import-sort/imports */
 import StatusDashboard from '@components/cep/estimates/agreed-price/components/status-dashboard'
+import { AgreedPriceStatus } from '@components/cep/estimates/agreed-price/enum'
+import { getAgreedPriceStatusStyle } from '@components/cep/estimates/agreed-price/utils'
 import CommonTable from '@components/common/table'
 import { DeleteButton, ShowButton, useSelect, useTable } from '@refinedev/antd'
 import {
@@ -71,21 +73,17 @@ const AgreedPriceQuotaTab = () => {
     onChange: onSelectChange,
   }
 
-  type DisplayStatus = 'active' | 'expired' | 'nearing_expiration'
-
   const getStatusTag = (status?: string) => {
-    const statusMap: Record<DisplayStatus, { color: string; text: string }> = {
-      active: { color: 'green', text: t('agreed_prices.status.active') },
-      expired: { color: 'red', text: t('agreed_prices.status.expired') },
-      nearing_expiration: {
-        color: 'orange',
-        text: t('agreed_prices.status.nearing_expiration'),
-      },
-    }
-    const statusInfo = statusMap[(status as DisplayStatus) ?? 'active']
-    const color = statusInfo?.color ?? '#999'
-    const text = statusInfo?.text ?? (status || '-')
-    return <span style={{ color }}>{text}</span>
+    const statusEnum = status as AgreedPriceStatus
+    const result = getAgreedPriceStatusStyle(statusEnum, t)
+    return (
+      <Tag
+        color={result.background}
+        style={{ color: result.color, marginRight: 0 }}
+      >
+        {result.text}
+      </Tag>
+    )
   }
 
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
@@ -255,7 +253,6 @@ const AgreedPriceQuotaTab = () => {
     },
     onSearch(values) {
       const v = values as Record<string, unknown>
-      console.log('values: ', values)
 
       const range = v.application_completion as
         | [Dayjs | null, Dayjs | null]
@@ -316,21 +313,23 @@ const AgreedPriceQuotaTab = () => {
         key: null as string | null,
       },
       {
-        title: t('agreed_prices.summary.active'),
+        title: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).text,
         value: get('active'),
-        color: '#52c41a',
+        color: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).color,
         key: 'active',
       },
       {
-        title: t('agreed_prices.summary.nearing_expiration'),
+        title: getAgreedPriceStatusStyle(AgreedPriceStatus.NearingExpiration, t)
+          .text,
         value: get('about_to_expire'),
-        color: '#faad14',
+        color: getAgreedPriceStatusStyle(AgreedPriceStatus.NearingExpiration, t)
+          .color,
         key: 'about_to_expire',
       },
       {
-        title: t('agreed_prices.summary.expired'),
+        title: getAgreedPriceStatusStyle(AgreedPriceStatus.Expired, t).text,
         value: get('expired'),
-        color: '#ff4d4f',
+        color: getAgreedPriceStatusStyle(AgreedPriceStatus.Expired, t).color,
         key: 'expired',
       },
     ]
