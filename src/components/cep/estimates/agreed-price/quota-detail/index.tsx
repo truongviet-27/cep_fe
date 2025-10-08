@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RightOutlined } from '@ant-design/icons'
+import BasicInfoExtended from '@components/cep/estimates/agreed-price/basic-info-extended'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
-import BasicInfo from '@components/cep/estimates/quotas/show/components/basic-info'
 import DetailInfo from '@components/cep/estimates/quotas/show/components/detail-info'
 import Conditions from '@components/cep/estimates/quotas/show/components/note'
 import OptionalInfo from '@components/cep/estimates/quotas/show/components/optional-info'
@@ -76,12 +76,35 @@ function AgreedPriceQuotaDetail() {
   const { mutate: mutateUpdateExpiration, isPending: isUpdatingExpiration } =
     useCustomMutation()
 
-  const openUpdateExpiration = () => {
-    const start = agreedPriceExpiration
-      ? dayjs(agreedPriceExpiration).add(1, 'day')
-      : null
-    updateForm.setFieldsValue({ start_date: start, end_date: null })
-    setIsUpdateOpen(true)
+  const openUpdateExpiration = (newEndDate?: dayjs.Dayjs) => {
+    if (newEndDate) {
+      if (!agreedPriceId) return
+      const expiration = newEndDate.format('YYYY/MM/DD')
+      mutateUpdateExpiration(
+        {
+          method: 'put',
+          url: `${apiUrl}/quota/agreed-prices/${agreedPriceId}/expiration-date`,
+          values: { expiration_date: expiration },
+          successNotification: () => ({
+            message: t('notifications.success'),
+            description: t('notifications.editSuccess'),
+            type: 'success',
+          }),
+        },
+        {
+          onSuccess: () => {
+            refetchAgreedPrice?.()
+          },
+        },
+      )
+    } else {
+      // Open modal for update (fallback)
+      const start = agreedPriceExpiration
+        ? dayjs(agreedPriceExpiration).add(1, 'day')
+        : null
+      updateForm.setFieldsValue({ start_date: start, end_date: null })
+      setIsUpdateOpen(true)
+    }
   }
 
   const handleSubmitUpdateExpiration = () => {
@@ -244,30 +267,13 @@ function AgreedPriceQuotaDetail() {
           }}
           form={formProps.form}
         >
-          <BasicInfo data={queryBasic?.data} />
-          {/* Applicable period with Update button (after delivery_date display) */}
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <span className="mr-2 font-medium">適用期間</span>
-              <span>
-                {queryBasic?.data?.created_at
-                  ? dayjs(queryBasic?.data?.created_at).format('YYYY/MM/DD')
-                  : '---'}{' '}
-                〜{' '}
-                {agreedPriceExpiration
-                  ? dayjs(agreedPriceExpiration).format('YYYY/MM/DD')
-                  : '---'}
-              </span>
-            </div>
-            <Button
-              type="link"
-              size="small"
-              onClick={openUpdateExpiration}
-              disabled={!agreedPriceId}
-            >
-              更新
-            </Button>
-          </div>
+          <BasicInfoExtended
+            data={queryBasic?.data}
+            showApplicablePeriod={true}
+            agreedPriceExpiration={agreedPriceExpiration || undefined}
+            agreedPriceId={agreedPriceId}
+            onUpdateExpiration={openUpdateExpiration}
+          />
           <DetailInfo
             data={dataProducts?.data?.main_product}
             basicInfo={queryBasic?.data}
@@ -281,15 +287,6 @@ function AgreedPriceQuotaDetail() {
           <Divider />
           <ShowMoreInfo
             descriptions={[
-              {
-                title: t('approve_routes.show.creator'),
-                value:
-                  (queryBasic?.data?.author?.name ?? '---') +
-                  ' ' +
-                  dayjs(queryBasic?.data?.created_at).format(
-                    'YYYY/MM/DD HH:mm',
-                  ),
-              },
               {
                 title: t('approve_routes.show.updater'),
                 value:
@@ -491,7 +488,6 @@ function AgreedPriceQuotaDetail() {
           </Flex>
         </Form>
       </Spin>
-      {/* Update expiration modal */}
       <Modal
         title={t('agreed_prices.modal.update_title') || '有効期限の更新'}
         open={isUpdateOpen}
