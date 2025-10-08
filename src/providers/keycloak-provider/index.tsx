@@ -8,6 +8,7 @@ import { signIn, signOut } from 'next-auth/react'
 
 import { dataProvider } from '@/providers/data-provider'
 import { getSessionOnce } from '@/lib/get-session-once'
+import useTenantStore from '@stores/useTenantStore'
 
 const authProvider: AuthProvider = {
   login: async () => {
@@ -22,6 +23,7 @@ const authProvider: AuthProvider = {
     const clearSessionData = () => {
       delete axiosInstance.defaults.headers.common['Authorization']
       useUserStore.getState().logout?.()
+      useTenantStore.getState().clearTenant()
     }
 
     try {

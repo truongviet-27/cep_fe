@@ -589,7 +589,7 @@ export const zCustomerStoreRequest = z.object({
   ),
   industry: z.optional(z.union([z.string().max(50), z.null()])),
   date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
-  department_in_charge: z.optional(z.union([z.string().max(100), z.null()])),
+  department_in_charge_id: z.optional(z.union([z.int(), z.null()])),
   person_in_charge_name: z.string().max(50),
   person_in_charge_department: z.string().max(100),
   person_in_charge_mail: z.email().max(100),
@@ -627,7 +627,7 @@ export const zCustomerUpdateRequest = z.object({
   ),
   industry: z.optional(z.union([z.string().max(50), z.null()])),
   date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
-  department_in_charge: z.optional(z.union([z.string().max(100), z.null()])),
+  department_in_charge_id: z.optional(z.union([z.int(), z.null()])),
   person_in_charge_name: z.union([z.string().max(50), z.null()]),
   person_in_charge_department: z.union([z.string().max(100), z.null()]),
   person_in_charge_mail: z.union([z.email().max(100), z.null()]),
@@ -1190,6 +1190,7 @@ export const zProductPackaging = z.object({
  * Detailed product information
  */
 export const zProductDetail = z.object({
+  id: z.optional(z.int()),
   category: z.optional(
     z.object({
       id: z.optional(z.int()),
@@ -1209,6 +1210,7 @@ export const zProductDetail = z.object({
   ),
   cost_price: z.optional(z.int()),
   selling_price: z.optional(z.int()),
+  note: z.optional(z.union([z.string(), z.null()])),
   author: z.optional(
     z.union([
       z.object({
@@ -1636,6 +1638,7 @@ export const zQuotaResource = z.object({
   total_price_tax_included: z.optional(z.number()),
   note: z.optional(z.string()),
   display: z.optional(z.boolean()),
+  is_author: z.optional(z.boolean()),
   tags: z.optional(
     z.array(
       z.object({
@@ -1778,6 +1781,8 @@ export const zSimpleQuota = z.object({
   customer_accepted_date: z.optional(z.iso.date()),
   customer_cancelled_date: z.optional(z.iso.date()),
   pdf_path: z.optional(z.string()),
+  display: z.optional(z.boolean()),
+  is_author: z.optional(z.boolean()),
   author: z.optional(z.union([z.string(), z.null()])),
   approvers: z.optional(z.array(z.string())),
   latest_approval_comment: z.optional(
@@ -1790,7 +1795,7 @@ export const zSimpleQuota = z.object({
       z.null(),
     ]),
   ),
-  author_department_name: z.optional(z.union([z.string(), z.null()])),
+  department_in_charge: z.optional(z.union([z.string(), z.null()])),
 })
 
 /**
@@ -2840,7 +2845,7 @@ export const zCustomerControllerIndexData = z.object({
       _per_page: z.optional(z.int()).default(10),
       q: z.optional(z.string()),
       country: z.optional(z.string()),
-      department_in_charge: z.optional(z.string()),
+      department_in_charge_id: z.optional(z.int()),
       price_rank_id: z.optional(z.int()),
       credit_rank: z.optional(z.enum(['A', 'B', 'C', 'D', 'E'])),
       anti_social_rank: z.optional(z.enum(['O', 'T', 'X'])),
@@ -3826,7 +3831,6 @@ export const zProductUnitControllerIndexData = z.object({
       name_lk: z.optional(z.string()),
       _page: z.optional(z.int()),
       _per_page: z.optional(z.int()),
-      order: z.optional(z.int()),
       is_disable: z.optional(z.boolean()),
     }),
   ),
@@ -3977,6 +3981,10 @@ export const zQuotaAgreedPriceControllerIndexData = z.object({
       creator_name: z.optional(z.string().max(255)),
       'created_by_in[]': z.optional(z.array(z.int().gte(1))),
       'department_id_in[]': z.optional(z.array(z.int().gte(1))),
+      department_id: z.optional(z.int().gte(1)),
+      created_by: z.optional(z.int().gte(1)),
+      tag_id: z.optional(z.int().gte(1)),
+      'tag_id_in[]': z.optional(z.array(z.int().gte(1))),
       status: z.optional(
         z.enum(['all', 'active', 'expired', 'about_to_expire']),
       ),
@@ -4050,7 +4058,9 @@ export const zQuotaAgreedPriceControllerGetCustomerListData = z.object({
       _page: z.optional(z.int().gte(1)).default(1),
       _per_page: z.optional(z.int().gte(1).lte(100)).default(10),
       customer_name: z.optional(z.string().max(255)),
+      department_id: z.optional(z.int().gte(1)),
       'department_id_in[]': z.optional(z.array(z.int().gte(1))),
+      rank_id: z.optional(z.int().gte(1)),
       'rank_id_in[]': z.optional(z.array(z.int().gte(1))),
     }),
   ),
@@ -4136,11 +4146,12 @@ export const zQuotaControllerIndexData = z.object({
         ]),
       ),
       code: z.optional(z.string()),
+      title: z.optional(z.string()),
       customer_name: z.optional(z.string()),
       creator_name: z.optional(z.string()),
       tag_name: z.optional(z.string()),
       approver_name: z.optional(z.string()),
-      creator_department_name: z.optional(z.string()),
+      department_in_charge: z.optional(z.string()),
       search_date_type: z.optional(
         z.enum([
           'created_at',
@@ -4568,7 +4579,7 @@ export const zQuotaTemplateControllerUpdateResponse = z.object({
 export const zQuotaTemplateControllerDestroyData = z.object({
   body: z.optional(z.never()),
   path: z.object({
-    id: z.int(),
+    id: z.string(),
   }),
   query: z.optional(z.never()),
 })
