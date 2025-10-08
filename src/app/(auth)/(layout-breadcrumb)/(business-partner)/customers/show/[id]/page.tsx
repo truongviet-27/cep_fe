@@ -12,14 +12,12 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
 import {
-  useGo,
-  useParse,
-  useParsed,
-  useShow,
-  useTranslate,
-} from '@refinedev/core'
-import { type Customer, ParameterResourceEnum } from '@sdk/hey-api/types.gen'
+  type Customer,
+  ParameterResourceEnum,
+  PermissionEnum,
+} from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
@@ -32,7 +30,9 @@ const { Panel } = Collapse
 
 export default function CustomerShowPage() {
   const t = useTranslate()
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const { parameterSettings, hasFullAccessModule } = useUserStore(
+    (state) => state,
+  )
 
   const { queryResult } = useShow<Customer>()
   const { data, isLoading } = queryResult
@@ -148,7 +148,10 @@ export default function CustomerShowPage() {
         <Space>
           <Button
             type="primary"
-            disabled={params?.disable}
+            disabled={
+              params?.disable ||
+              !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
+            }
             onClick={() =>
               data?.data.id &&
               go({
@@ -204,7 +207,7 @@ export default function CustomerShowPage() {
               <DetailItem label={t('customers.fields.corporate_number')}>
                 {record?.corporate_number}
               </DetailItem>
-              {parameterSettings.get(ParameterResourceEnum.RANKS) && (
+              {parameterSettings?.get?.(ParameterResourceEnum.RANKS) && (
                 <DetailItem label={t('customers.fields.unit_price_rank')}>
                   {record?.rank?.name}
                 </DetailItem>
