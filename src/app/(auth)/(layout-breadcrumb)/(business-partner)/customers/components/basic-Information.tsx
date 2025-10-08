@@ -2,8 +2,8 @@
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
-import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -43,7 +43,7 @@ function BasicInformation(
     isAutomatic,
   } = props
 
-  const isIndividual = Form.useWatch('customer_type', form) === 'individual'
+  const isCompany = Form.useWatch('customer_type', form) === 'company'
   const isJapan = Form.useWatch('country', form) === '日本'
   const isNameAfter =
     Form.useWatch('company_name_display_format', form) === 'after'
@@ -54,7 +54,9 @@ function BasicInformation(
   const nameDisplay = isOtherSelected ? tempCompanyType : companyType
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const parts = isNameAfter ? [nameDisplay, name] : [name, nameDisplay]
-  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+  const allowRankResource = parameterSettings?.get?.(
+    ParameterResourceEnum.RANKS,
+  )
 
   return (
     <Collapse
@@ -111,21 +113,21 @@ function BasicInformation(
               <Form.Item
                 name="customer_type"
                 rules={[rule]}
-                initialValue="company"
+                initialValue="individual"
                 required
               >
                 <Radio.Group>
-                  <Radio value="company">
-                    {t('customers.enums.corporation')}
-                  </Radio>
                   <Radio value="individual">
                     {t('customers.enums.individual')}
+                  </Radio>
+                  <Radio value="company">
+                    {t('customers.enums.corporation')}
                   </Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
 
-            {isIndividual && (
+            {isCompany && (
               <>
                 <Col>
                   <Form.Item
@@ -199,7 +201,7 @@ function BasicInformation(
               </Form.Item>
             </Col>
 
-            {isIndividual && name && companyType && (
+            {isCompany && name && companyType && (
               <Col>
                 <Space direction={'horizontal'}>
                   <Form.Item>

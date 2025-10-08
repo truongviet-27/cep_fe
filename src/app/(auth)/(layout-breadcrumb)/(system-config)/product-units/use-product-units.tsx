@@ -81,7 +81,7 @@ export default function useProductUnits() {
   const { resource } = useResource()
   const { hasFullAccessModule } = useUserStore.getState()
   const [pageSize, setPageSize] = React.useState(10)
-
+  const [forceUpdate, setForceUpdate] = React.useState(false)
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_UNIT_EDIT)
   const {
     tableProps,
@@ -171,8 +171,10 @@ export default function useProductUnits() {
     row?.id?.toString() ?? row?._key ?? row?.__index ?? `tmp-${idx}`
 
   useEffect(() => {
-    setPageSize(10)
-    setPageSize2(10)
+    if (forceUpdate) {
+      setPageSize(10)
+      setPageSize2(10)
+    }
     const ds = (tableProps?.dataSource as UnitRow[]) ?? []
     reset({
       rows: ds.map((r, index) => ({
@@ -199,6 +201,7 @@ export default function useProductUnits() {
 
   const addNew = () => {
     setPageSize((total) => total + 1)
+    setForceUpdate(true)
     const order = tableProps?.dataSource?.[1]?.order ?? 0
     const oldRows = fields.map((r) => ({
       ...r,

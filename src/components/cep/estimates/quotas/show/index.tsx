@@ -92,7 +92,7 @@ function QuotaDetail() {
       refetchHistory()
       return {
         message: t('notifications.success'),
-        description: message ?? 'Success',
+        description: message ?? t('notifications.success'),
         type: 'success',
       }
     },
@@ -154,7 +154,7 @@ function QuotaDetail() {
                     color: PRIMARY,
                   }}
                 >
-                  {t('quotas.quotas')}
+                  {t('estimates.estimates')}
                 </Title>
               ),
             },
@@ -249,7 +249,8 @@ function QuotaDetail() {
             </Space>
 
             <Space>
-              {queryBasic?.data?.status === QuotaStatus.Creating &&
+              {queryBasic?.data?.has_approval_route &&
+                queryBasic?.data?.status === QuotaStatus.Creating &&
                 queryBasic?.data?.is_author && (
                   <Button
                     style={{
@@ -267,7 +268,8 @@ function QuotaDetail() {
                     承認依頼
                   </Button>
                 )}
-              {queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
+              {queryBasic?.data?.has_approval_route &&
+                queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
                 queryBasic?.data?.display && (
                   <>
                     <Button
@@ -378,7 +380,7 @@ function QuotaDetail() {
                     icon={null}
                     size={'middle'}
                     onClick={() => {
-                      handleChangeStatus('send-to-approver', {
+                      handleChangeStatus('back-to-send-customer', {
                         quota_ids: [queryBasic?.data.id],
                       })
                     }}

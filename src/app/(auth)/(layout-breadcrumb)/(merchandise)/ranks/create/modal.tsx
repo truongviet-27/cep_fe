@@ -93,7 +93,6 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          required
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
           rules={[validateRankRule(t)]}

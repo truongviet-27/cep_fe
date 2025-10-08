@@ -4,13 +4,6 @@ export const resource: ResourceProps[] = [
   {
     name: 'estimates',
   },
-  // {
-  //   name: 'estimates',
-  //   list: '/estimates',
-  //   meta: {
-  //     parent: 'estimates',
-  //   },
-  // },
   {
     name: 'quotas',
     list: '/quotas',
@@ -18,6 +11,30 @@ export const resource: ResourceProps[] = [
     create: '/quotas/create',
     edit: '/quotas/edit/:id',
     clone: '/quotas/clone/:id',
+    meta: {
+      parent: 'estimates',
+      // canDelete: true,
+      // canCreate: true,
+      // canEdit: true,
+    },
+  },
+  {
+    name: 'list-received',
+    list: '/list-received',
+    show: '/list-received/show/:id',
+    create: '/list-received/create',
+    edit: '/list-received/edit/:id',
+    clone: '/list-received/clone/:id',
+    meta: {
+      parent: 'estimates',
+    },
+  },
+  {
+    name: 'agreed-prices',
+    list: '/agreed-prices',
+    show: '/agreed-prices/show/:id',
+    create: '/agreed-prices/create',
+    edit: '/agreed-prices/edit/:id',
     meta: {
       parent: 'estimates',
       // canDelete: true,
@@ -71,6 +88,40 @@ export const resource: ResourceProps[] = [
     },
   },
   {
+    name: 'approve-routes',
+    list: '/approve-routes',
+    show: '/approve-routes/show/:id',
+    create: '/approve-routes/create',
+    edit: '/approve-routes/edit/:id',
+    meta: {
+      parent: 'business_partner',
+      canDelete: true,
+      canCreate: true,
+      canEdit: true,
+    },
+  },
+  {
+    name: 'ranks',
+    list: '/ranks',
+    show: '/ranks/show:id',
+    create: '/ranks/create',
+    edit: '/ranks/edit:id',
+    meta: {
+      parent: 'business_partner',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
+    name: 'price-groups',
+    list: '/price-groups',
+    meta: {
+      parent: 'business_partner',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
     name: 'merchandise',
     list: '/merchandise',
   },
@@ -88,24 +139,11 @@ export const resource: ResourceProps[] = [
     },
   },
   {
-    name: 'approve-routes',
-    list: '/approve-routes',
-    show: '/approve-routes/show/:id',
-    create: '/approve-routes/create',
-    edit: '/approve-routes/edit/:id',
-    meta: {
-      parent: 'merchandise',
-      canDelete: true,
-      canCreate: true,
-      canEdit: true,
-    },
-  },
-  {
-    name: 'ranks',
-    list: '/ranks',
-    show: '/ranks/show:id',
-    create: '/ranks/create',
-    edit: '/ranks/edit:id',
+    name: 'product-units',
+    list: '/product-units',
+    show: '/product-units/:id',
+    create: '/product-units/:id',
+    edit: '/product-units/:id',
     meta: {
       parent: 'merchandise',
       canDelete: true,
@@ -113,8 +151,11 @@ export const resource: ResourceProps[] = [
     },
   },
   {
-    name: 'price-groups',
-    list: '/price-groups',
+    name: 'product-categories',
+    list: '/product-categories',
+    show: '/product-categories/:id',
+    create: '/product-categories/:id',
+    edit: '/product-categories/:id',
     meta: {
       parent: 'merchandise',
       canDelete: true,
@@ -173,30 +214,6 @@ export const resource: ResourceProps[] = [
     edit: '/code-issue-settings/edit/:id',
     meta: {
       parent: 'system-config',
-    },
-  },
-  {
-    name: 'product-units',
-    list: '/product-units',
-    show: '/product-units/:id',
-    create: '/product-units/:id',
-    edit: '/product-units/:id',
-    meta: {
-      parent: 'system-config',
-      canDelete: true,
-      canCreate: true,
-    },
-  },
-  {
-    name: 'product-categories',
-    list: '/product-categories',
-    show: '/product-categories/:id',
-    create: '/product-categories/:id',
-    edit: '/product-categories/:id',
-    meta: {
-      parent: 'system-config',
-      canDelete: true,
-      canCreate: true,
     },
   },
   {

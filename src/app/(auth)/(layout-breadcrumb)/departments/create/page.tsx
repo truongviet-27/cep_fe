@@ -167,6 +167,7 @@ export default function Page() {
                       handleAutoNumber()
                     })
                   }}
+                  disabled={data?.data?.issue_method === 'manual'}
                 >
                   {t('departments.create.auto_number')}
                 </Button>

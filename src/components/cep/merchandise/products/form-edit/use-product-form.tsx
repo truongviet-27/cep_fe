@@ -4,6 +4,7 @@ import { useList, useParsed } from '@refinedev/core'
 import type { ProductDetail, Rank, StoreProductInput } from '@sdk/hey-api'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import { isNumber } from 'lodash'
 
 export type ProductFormType = {
   unit: string
@@ -31,7 +32,7 @@ function useProductForm() {
   const methods = useForm<ProductFormType>({
     resource: 'products',
     id: params?.id,
-    redirect: params?.id ? false : 'list',
+    redirect: 'show',
     queryOptions: {
       select: (response) => {
         const data = response.data as unknown as ProductDetail
@@ -44,10 +45,20 @@ function useProductForm() {
             category_id: data?.category?.id,
             unit: data?.unit?.name,
             unit_id: data?.unit?.id,
-            packagings: packagings.map((packaging) => ({
-              ...packaging,
-              cost_price: data.cost_price || 0,
-            })),
+            packagings: packagings.map((packaging) => {
+              const ranks: Record<string, number> = {}
+              ;(packaging.rank_prices || []).forEach(({ rank_id, price }) => {
+                if (rank_id && isNumber(rank_id) && isNumber(price)) {
+                  ranks[`rank_${rank_id}`] = price
+                }
+              })
+
+              return {
+                ...packaging,
+                ...ranks,
+                cost_price: data.cost_price || 0,
+              }
+            }),
           } as unknown as ProductFormType,
         }
       },

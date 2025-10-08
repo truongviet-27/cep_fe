@@ -73,7 +73,7 @@ interface ICustomer {
 export default function CustomerListPage() {
   const t = useTranslate()
   const go = useGo()
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(true)
 
   const { mutate, isLoading } = useUpdate()
   const { parameterSettings, hasFullAccessModule } = useUserStore(
@@ -81,7 +81,9 @@ export default function CustomerListPage() {
   )
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
-  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+  const allowRankResource = parameterSettings?.get?.(
+    ParameterResourceEnum.RANKS,
+  )
 
   const modalFormProps = useModalForm<Rank>({
     action: 'edit',
@@ -112,9 +114,9 @@ export default function CustomerListPage() {
           value: values?.country,
         },
         {
-          field: 'person_in_charge_department',
+          field: 'department_in_charge_id',
           operator: 'contains',
-          value: values?.person_in_charge_department,
+          value: values?.department_in_charge_id,
         },
         {
           field: 'price_rank_id',
@@ -167,9 +169,9 @@ export default function CustomerListPage() {
         value: values?.country,
       },
       {
-        field: 'person_in_charge_department',
+        field: 'department_in_charge_id',
         operator: 'contains',
-        value: values?.person_in_charge_department,
+        value: values?.department_in_charge_id,
       },
       {
         field: 'price_rank_id',
@@ -220,7 +222,11 @@ export default function CustomerListPage() {
         key: 'customer_code',
         render: (text, record) => (
           <Link
-            href={`/customers/show/${record.id}`}
+            href={
+              record.deleted_at
+                ? `/customers/show/${record.id}?disable=true`
+                : `/customers/show/${record.id}`
+            }
             key={record.id}
             style={{ textDecoration: 'underline' }}
           >
@@ -247,7 +253,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.unit_price_rank'),
         dataIndex: 'rank',
         key: 'rank',
-        render: (rank, record) => (
+        render: (rank) => (
           <Link
             href={`/ranks`}
             className="!underline"
@@ -265,7 +271,7 @@ export default function CustomerListPage() {
           <div>
             <AutoHeading
               i18n={'customers.fields.credit_rank'}
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
@@ -291,7 +297,7 @@ export default function CustomerListPage() {
           <div>
             <AutoHeading
               i18n={'customers.fields.anti_social_check_date'}
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
@@ -463,10 +469,8 @@ export default function CustomerListPage() {
               }}
               formItemProps={{
                 label: boldText(t('customers.fields.department')),
-                name: 'department_id',
+                name: 'department_in_charge_id',
               }}
-              optionLabel={'name'}
-              optionValue={'id'}
               selectComponentProps={{
                 placeholder: t('placeholders.select'),
                 style: { maxWidth: 560, minWidth: '150px' },
@@ -478,7 +482,7 @@ export default function CustomerListPage() {
               <SelectPagination
                 formItemProps={{
                   label: boldText(t('ranks.fields.code')),
-                  name: 'unit_price_rank',
+                  name: 'price_rank_id',
                 }}
                 selectProps={{
                   resource: 'ranks',
@@ -486,8 +490,6 @@ export default function CustomerListPage() {
                     enabled: allowRankResource,
                   },
                 }}
-                optionLabel={'name'}
-                optionValue={'id'}
                 selectComponentProps={{
                   placeholder: t('placeholders.select'),
                   style: { maxWidth: 560, minWidth: '150px' },
@@ -572,7 +574,10 @@ export default function CustomerListPage() {
 
       <Modal
         open={editModalOpen}
-        onCancel={editModalClose}
+        onCancel={() => {
+          setIsShow(true)
+          editModalClose()
+        }}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}

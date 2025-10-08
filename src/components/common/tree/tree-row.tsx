@@ -8,7 +8,8 @@ import { CommonButton } from '@components/common/common-button'
 import type { ITree } from '@interfaces/tree'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
-import { Button, Input, Space, Tag, Typography } from 'antd'
+import type { FormInstance } from 'antd'
+import { Button, Form, Input, Space, Tag, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 const { Text } = Typography
@@ -26,6 +27,7 @@ export type TreeRowProps = {
   onCancel: (id: Id) => void
   onDelete: () => void
   tag: string
+  formFields: FormInstance
   isNew?: boolean
   editingName?: string
   saving?: boolean
@@ -49,6 +51,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
   canAddChild,
   tag,
   isNew,
+  formFields,
 }) => {
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
@@ -57,7 +60,8 @@ const TreeRow: React.FC<TreeRowProps> = ({
   const [localName, setLocalName] = useState(editingName || '')
 
   useEffect(() => {
-    setLocalName(editingName || '')
+    setLocalName(editingName ?? '')
+    formFields.setFieldValue(cat.id, editingName ?? null)
   }, [editingName])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,14 +71,15 @@ const TreeRow: React.FC<TreeRowProps> = ({
   }
 
   return (
-    <div
-      className="flex items-center gap-3 rounded-md bg-white px-3 py-2"
-      onClick={(e) => {
-        e.stopPropagation()
-        onToggle(cat.id)
-      }}
-    >
-      <Space size={8} className="min-w-0 flex-1">
+    <div className="flex items-center gap-3 rounded-md bg-white px-3 py-2">
+      <Space
+        size={8}
+        className="min-w-0 flex-1"
+        onClick={(event) => {
+          event.stopPropagation()
+          onToggle(cat.id)
+        }}
+      >
         <Tag
           color="blue-inverse"
           className="m-0 rounded-md px-2 py-0.5 text-[14px] font-medium"
@@ -83,16 +88,28 @@ const TreeRow: React.FC<TreeRowProps> = ({
         </Tag>
 
         {isEditing ? (
-          // THAY ĐỔI 3: Input giờ sẽ dùng state đệm
-          <Input
-            size="middle"
-            value={localName}
-            onChange={handleChange}
-            onPressEnter={() => onSave(cat.id)}
-            allowClear
-            className="min-w-[320px]"
-            autoFocus
-          />
+          <Form
+            form={formFields}
+            initialValues={{
+              [cat.id]: localName ?? null,
+            }}
+          >
+            <Form.Item
+              className={'!h-3'}
+              name={cat.id}
+              validateTrigger="onBlur"
+              rules={[{ required: true, message: '' }]}
+            >
+              <Input
+                size="middle"
+                onChange={handleChange}
+                onPressEnter={() => onSave(cat.id)}
+                allowClear
+                className="min-w-[320px]"
+                autoFocus
+              />
+            </Form.Item>
+          </Form>
         ) : (
           <Text className="truncate font-medium">{cat.name}</Text>
         )}
@@ -113,6 +130,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
               loading={Boolean(saving)}
               onClick={() => onSave(cat.id)}
               icon={<SaveOutlined />}
+              disabled={!localName}
             />
             <Button
               size="middle"
@@ -159,7 +177,10 @@ const TreeRow: React.FC<TreeRowProps> = ({
           className={`flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 ${
             hasChildren ? '' : 'pointer-events-none opacity-0'
           }`}
-          onClick={() => onToggle(cat.id)}
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggle(cat.id)
+          }}
           aria-label="toggle"
           type="button"
         >

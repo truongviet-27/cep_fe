@@ -270,7 +270,7 @@ function QuotaAction() {
         tax_rounding_method: data.data?.tax_rounding_method,
         main_product: [
           {
-            group_name: 'エアロン利用料',
+            group_name: '商品リスト名入力',
             products: [
               {
                 product_id: null,
@@ -288,7 +288,7 @@ function QuotaAction() {
         ],
         optional_product: [
           {
-            group_name: 'エアロン利用料',
+            group_name: '商品リスト名入力',
             products: [
               {
                 product_id: null,
@@ -309,7 +309,7 @@ function QuotaAction() {
   }, [data, quoteTemplateQuery?.data?.data])
 
   const onFinish = (values: any) => {
-    if (isUpdate && action === 'edit') {
+    if (isUpdate && isEdit) {
       mutation.mutate(
         {
           resource: resource?.name,
@@ -368,7 +368,7 @@ function QuotaAction() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('quotas.quotas')}
+                  {t('estimates.estimates')}
                 </Title>
               ),
             },
@@ -465,7 +465,7 @@ function QuotaAction() {
             }}
           >
             <Space>
-              {isUpdate && !isCloneNew && (
+              {isEdit && (
                 <DeleteButton
                   icon={null}
                   size={'small'}

@@ -86,8 +86,7 @@ function QuotaList() {
     setSelectedRows(selectedRows)
 
     const status = handleOptions(selectedRows)
-
-    const options = statusButton(status)
+    const options = statusButton(status, selectedRows?.[0]?.has_approval_route)
     setOptions(options)
     setSelectedRowKeys(newSelectedRowKeys)
   }
@@ -464,62 +463,37 @@ function QuotaList() {
   }, [data])
 
   const statusButton = useCallback(
-    (status: QuotaStatus) => {
+    (
+      status: QuotaStatus,
+      hasApprovalRoutes: boolean,
+    ): { key: number; label: string }[] => {
       if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
         return [
-          {
-            key: 1,
-            label: '削除', // delete
-          },
-          {
-            key: 2,
-            label: '承認依頼（作成者）', // gửi duyệt
-          },
+          { key: 1, label: '削除' },
+          ...(hasApprovalRoutes
+            ? [{ key: 2, label: '承認依頼（作成者）' }]
+            : []),
         ]
       } else if (status === QuotaStatus.WaitingApproval) {
         return [
-          {
-            key: 3,
-            label: '承認（承認者）', //  duyệt
-          },
+          ...(hasApprovalRoutes ? [{ key: 3, label: '承認（承認者）' }] : []),
         ]
       } else if (status === QuotaStatus.Approved) {
-        return [
-          {
-            key: 4,
-            label: '送信（作成者）', // gửi khách
-          },
-        ]
+        return [{ key: 4, label: '送信（作成者）' }]
       } else if (status === QuotaStatus.SentToCustomer) {
         return [
-          {
-            key: 5,
-            label: '受注へ移動', // chuyển thành công
-          },
-          {
-            key: 6,
-            label: '失注へ移動', // chuyển thất bại
-          },
+          { key: 5, label: '受注へ移動' },
+          { key: 6, label: '失注へ移動' },
         ]
       } else if (status === QuotaStatus.Completed) {
-        return [
-          {
-            key: 7,
-            label: '送信へ移動', // chuyển trạng thái quản lý
-          },
-        ]
+        return [{ key: 7, label: '送信へ移動' }]
       } else if (status === QuotaStatus.Cancelled) {
         return [
-          {
-            key: 1,
-            label: '削除', // delete
-          },
-          {
-            key: 7,
-            label: '送信へ移動', // gửi duyệt
-          },
+          { key: 1, label: '削除' },
+          ...(hasApprovalRoutes ? [{ key: 7, label: '送信へ移動' }] : []),
         ]
       }
+      return []
     },
     [t],
   )
@@ -531,7 +505,7 @@ function QuotaList() {
       setOptions([])
       return {
         message: t('notifications.success'),
-        description: message ?? 'Success',
+        description: message ?? t('notifications.success'),
         type: 'success',
       }
     },
@@ -616,7 +590,7 @@ function QuotaList() {
           quota_ids: selectedRows?.map((item: any) => item?.id),
         },
         method: 'put',
-        url: `${apiUrl}/quotas/cancel-quota`,
+        url: `${apiUrl}/quotas/back-to-send-customer`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
         },
@@ -634,7 +608,7 @@ function QuotaList() {
             {
               title: (
                 <Title level={5} style={{ color: PRIMARY }}>
-                  {t('quotas.quotas')}
+                  {t('estimates.estimates')}
                 </Title>
               ),
             },

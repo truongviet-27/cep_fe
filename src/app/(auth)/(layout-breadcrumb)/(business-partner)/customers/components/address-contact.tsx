@@ -1,8 +1,8 @@
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
-import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { SelectPagination } from '@components/common/select-pagination'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
@@ -162,15 +162,13 @@ function AddressContact(
                   resource: 'departments',
                 }}
                 formItemProps={{
-                  name: 'department_in_charge',
+                  name: 'department_in_charge_id',
                   rules: [rule],
                   required: true,
                 }}
-                optionLabel={'name'}
-                optionValue={'name'}
                 selectComponentProps={{
                   placeholder: t('placeholders.select'),
-                  style: { maxWidth: 560, minWidth: '150px' },
+                  style: { maxWidth: 560, width: '250px' },
                 }}
               />
             </Col>

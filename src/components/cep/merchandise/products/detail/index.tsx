@@ -96,7 +96,7 @@ const ProductDetailContainer: React.FC = () => {
                 >
                   {t('products.buttons.back')}
                 </Button>
-                <EditButton type="primary" icon={null}>
+                <EditButton resource="products" type="primary" icon={null}>
                   {t('products.buttons.edit')}
                 </EditButton>
               </Space>

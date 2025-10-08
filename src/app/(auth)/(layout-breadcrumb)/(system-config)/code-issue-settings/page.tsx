@@ -3,11 +3,15 @@
 
 import { RightOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
-import { CommonButton } from '@components/common/common-button'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
+import {
+  BooleanField,
+  EditButton,
+  useModalForm,
+  useTable,
+} from '@refinedev/antd'
 import { BaseRecord, useResource } from '@refinedev/core'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -33,7 +37,7 @@ export default function Page() {
             (item) =>
               !(
                 item.code === 'products' &&
-                !parameterSettings.get(ParameterResourceEnum.PRODUCTS)
+                !parameterSettings?.get?.(ParameterResourceEnum.PRODUCTS)
               ),
           ),
         }
@@ -143,17 +147,17 @@ export default function Page() {
           title={t('code_issue_settings.fields.preview_code')}
         />
         <Table.Column
+          align={'center'}
           title={t('table.actions')}
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
-            <div className={'w-8'}>
-              <CommonButton
-                type={'edit'}
-                onClick={() => {
-                  show(record.id)
-                }}
-              />
-            </div>
+            <EditButton
+              size={'small'}
+              onClick={() => {
+                show(record.id)
+              }}
+              hideText
+            />
           )}
         />
       </CommonTable>

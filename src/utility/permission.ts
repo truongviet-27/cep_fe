@@ -88,7 +88,7 @@ export const hasForbiddenRoute = (pathName: string) => {
       return !hasFullAccessModule(PermissionEnum.EMPLOYEE_EDIT)
     case '/approve-routes/create':
     case '/approve-routes/edit':
-      return true
+      return !hasFullAccessModule(PermissionEnum.APPROVE_ROUTE_EDIT)
     default:
       return false
   }
