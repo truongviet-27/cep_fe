@@ -190,6 +190,12 @@ function OptionalInfo() {
                     style={{
                       marginBottom: 0,
                     }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
                     <Select
                       {...selectPropsProduct}

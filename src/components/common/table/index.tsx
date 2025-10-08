@@ -34,7 +34,6 @@ function CommonTable<T extends object>(
                 color: PRIMARY,
                 textAlign: 'center',
                 padding: 11,
-                borderInlineEnd: '1px solid rgb(220, 220, 220)',
               }}
             />
           ),

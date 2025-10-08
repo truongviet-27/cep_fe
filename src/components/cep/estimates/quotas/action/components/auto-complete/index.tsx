@@ -45,24 +45,30 @@ function CoreAutoComplete({
 
   const form = useFormInstance()
 
-  const [options, setOptions] = useState<{ label: string; value: number }[]>()
+  const [options, setOptions] =
+    useState<{ label: string | undefined; value: number | undefined }[]>()
 
-  const filter1 = Form.useWatch(filterPath1, form)
-  const filter2 = Form.useWatch(filterPath2, form)
+  const product = Form.useWatch(filterPath1, form)
+  const customer = Form.useWatch(filterPath2, form)
+
+  const package_id = Form.useWatch(
+    ['main_product', index, 'products', index2, 'package_id'],
+    form,
+  )
 
   const { data } = useCustom({
-    url: `${apiUrl}/${resource}/${filter1}/customer-pricing/${filter2?.value}`,
+    url: `${apiUrl}/${resource}/${product}/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      enabled: !!filter1 && !!filter2,
+      enabled: !!product && !!customer,
     },
   })
 
   const { query: productResponse } = useShow<ProductDetail>({
     resource: 'products',
-    id: filter1,
+    id: product,
     queryOptions: {
-      enabled: !!filter1 && !filter2,
+      enabled: !!product && !customer,
     },
   })
 
@@ -76,13 +82,33 @@ function CoreAutoComplete({
       )
     } else if (productResponse?.data?.data) {
       setOptions(
-        productResponse.data?.data?.packagings.map((item) => ({
-          label: item.name,
-          value: item.id,
+        productResponse.data?.data?.packagings?.map((item) => ({
+          label: item?.name,
+          value: item?.id,
         })),
       )
     }
   }, [data, productResponse?.data?.data])
+
+  useEffect(() => {
+    const option = data?.data.packagings?.find(
+      (item: any) => item?.id === package_id,
+    )
+
+    if (option) {
+      form.setFieldValue(
+        [parent, index, 'products', index2, 'selling_price'],
+        option?.rank_prices * option?.quantity_in_package
+          ? option?.rank_prices * option?.quantity_in_package
+          : data?.data?.selling_price * option?.quantity_in_package,
+      )
+    } else {
+      form.setFieldValue(
+        [parent, index, 'products', index2, 'selling_price'],
+        data?.data?.selling_price * 1,
+      )
+    }
+  }, [data, customer])
 
   return (
     <Select
@@ -98,39 +124,34 @@ function CoreAutoComplete({
         if (onChange) {
           onChange(value)
         }
-        const option = (
-          !!filter2
-            ? data?.data.packagings
-            : productResponse.data?.data.packagings
-        ).find((item: any) => item?.id === value)
+        const option = (data?.data.packagings).find(
+          (item: any) => item?.id === value,
+        )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'unit'],
           option?.unit ?? data?.data?.unit?.name,
         )
 
-        if (!value || (!!filter2 && value)) {
-          form.setFieldValue(
-            [parent, index, 'products', index2, 'cost_price'],
-            data?.data?.cost_price * option?.quantity_in_package
-              ? data?.data?.cost_price * option?.quantity_in_package
-              : data?.data?.cost_price,
-          )
+        form.setFieldValue(
+          [parent, index, 'products', index2, 'cost_price'],
+          (data?.data?.cost_price ?? 0) * (option?.quantity_in_package ?? 1),
+        )
 
-          form.setFieldValue(
-            [parent, index, 'products', index2, 'selling_price'],
-            option?.rank_prices * option?.quantity_in_package
-              ? option?.rank_prices * option?.quantity_in_package
-              : data?.data?.selling_price,
-          )
+        form.setFieldValue(
+          [parent, index, 'products', index2, 'selling_price'],
+          option?.rank_prices * option?.quantity_in_package
+            ? (option?.rank_prices ?? 0) * (option?.quantity_in_package ?? 1)
+            : (data?.data?.selling_price ?? 0) *
+                (option?.quantity_in_package ?? 1),
+        )
 
-          form.setFieldValue(
-            [parent, index, 'products', index2, 'quantity'],
-            option?.quantity_in_package ?? 1,
-          )
-        }
+        form.setFieldValue(
+          [parent, index, 'products', index2, 'quantity'],
+          option?.quantity_in_package ?? 1,
+        )
       }}
-      disabled={!filter1}
+      disabled={!product}
     />
   )
 }

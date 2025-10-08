@@ -179,7 +179,26 @@
     background-color: #d9d9d9 !important;
   }
 
-  /* .ant-form-item {
-    margin-bottom: '12px' !important;
-  } */
+  .ant-table-bordered .ant-table-content table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+
+  .ant-table-bordered .ant-table-cell {
+    border-bottom: 1px solid #d9d9d9 !important;
+    border-right: 1px solid #d9d9d9 !important;
+    box-sizing: border-box;
+  }
+
+  .ant-table-bordered tr > th:last-child,
+  .ant-table-bordered tr > td:last-child {
+    border-right: none !important;
+  }
+
+  .ant-table-bordered .ant-table-container {
+    border: 1px solid #d9d9d9 !important;
+    border-bottom: none !important;
+    border-radius: 6px;
+    overflow: hidden;
+  }
 }

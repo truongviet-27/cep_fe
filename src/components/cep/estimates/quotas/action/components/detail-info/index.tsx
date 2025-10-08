@@ -5,7 +5,7 @@ import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/co
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
-import { useModalForm, useSelect } from '@refinedev/antd'
+import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -37,6 +37,7 @@ function DetailInfo() {
   const taxRateWatch = Form.useWatch('tax_rate', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
+  const customerWatch = Form.useWatch('customer', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
@@ -268,8 +269,15 @@ function DetailInfo() {
                     style={{
                       marginBottom: 0,
                     }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
                     <Select
+                      {...selectPropsProduct}
                       placeholder="商品名・サービス名で検索"
                       allowClear
                       showSearch
@@ -277,7 +285,7 @@ function DetailInfo() {
                       style={{
                         width: 200,
                       }}
-                      {...selectPropsProduct}
+                      disabled={!customerWatch}
                       onChange={(value) => {
                         const item: any = query.data?.data.find(
                           (item: any) => item.id === value,
