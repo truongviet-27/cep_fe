@@ -86,8 +86,7 @@ function QuotaList() {
     setSelectedRows(selectedRows)
 
     const status = handleOptions(selectedRows)
-
-    const options = statusButton(status, selectedRows?.has_approval_routes)
+    const options = statusButton(status, selectedRows?.[0]?.has_approval_route)
     setOptions(options)
     setSelectedRowKeys(newSelectedRowKeys)
   }
@@ -506,7 +505,7 @@ function QuotaList() {
       setOptions([])
       return {
         message: t('notifications.success'),
-        description: message ?? 'Success',
+        description: message ?? t('notifications.success'),
         type: 'success',
       }
     },
