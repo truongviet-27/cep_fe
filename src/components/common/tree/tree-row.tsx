@@ -5,24 +5,23 @@ import {
   SaveOutlined,
 } from '@ant-design/icons'
 import { CommonButton } from '@components/common/common-button'
-import type { ITree } from '@interfaces/tree'
+import type { CatNode } from '@interfaces/tree'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import type { FormInstance } from 'antd'
 import { Button, Form, Input, Space, Tag, Typography } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 const { Text } = Typography
 
 type Id = string | number
 
 export type TreeRowProps = {
-  cat: ITree
+  cat: CatNode
   hasChildren: boolean
   onToggle: (id: Id) => void
   onAddChild: (id: Id) => void
   onStartEdit: (id: Id) => void
-  onChangeName: (id: Id, name: string) => void
   onSave: (id: Id) => void
   onCancel: (id: Id) => void
   onDelete: () => void
@@ -42,7 +41,6 @@ const TreeRow: React.FC<TreeRowProps> = ({
   onToggle,
   onAddChild,
   onStartEdit,
-  onChangeName,
   onSave,
   onCancel,
   onDelete,
@@ -57,18 +55,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
 
   const t = useTranslate()
 
-  const [localName, setLocalName] = useState(editingName || '')
-
-  useEffect(() => {
-    setLocalName(editingName ?? '')
-    formFields.setFieldValue(cat.id, editingName ?? null)
-  }, [editingName])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value
-    setLocalName(newName)
-    onChangeName(cat.id, newName)
-  }
+  const localName = Form.useWatch(cat.id, formFields)
 
   return (
     <div className="flex items-center gap-3 rounded-md bg-white px-3 py-2">
@@ -91,7 +78,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
           <Form
             form={formFields}
             initialValues={{
-              [cat.id]: localName ?? null,
+              [cat.id]: null,
             }}
           >
             <Form.Item
@@ -102,7 +89,6 @@ const TreeRow: React.FC<TreeRowProps> = ({
             >
               <Input
                 size="middle"
-                onChange={handleChange}
                 onPressEnter={() => onSave(cat.id)}
                 allowClear
                 className="min-w-[320px]"
@@ -161,13 +147,15 @@ const TreeRow: React.FC<TreeRowProps> = ({
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
         /> */}
 
-        {typeof cat.id === 'number' ? (
+        {!cat?._isNew ? (
           <DeleteButton
             hideText
             recordItemId={cat.id}
             confirmTitle={
               hasChildren ? t('buttons.confirm_delete_parent') : undefined
             }
+            invalidates={[]}
+            onSuccess={onDelete}
           />
         ) : (
           <CommonButton hideText onClick={onDelete} type="delete" />
