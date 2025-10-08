@@ -185,6 +185,7 @@ export default function EmployeeEdit() {
                       handleAutoNumber()
                     })
                   }}
+                  disabled={data?.data?.issue_method === 'manual'}
                 >
                   {t('departments.create.auto_number')}
                 </Button>

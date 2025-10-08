@@ -563,11 +563,7 @@ export default function CustomerListPage() {
             {t('buttons.create_new')}
           </CreateButton>
           <Link
-            href={
-              isFullAccess
-                ? '/src/app/(auth)/(layout-breadcrumb)/(business-partner)/customers/csv'
-                : '#'
-            }
+            href={isFullAccess ? '/customers/csv' : '#'}
             className={isFullAccess ? '!underline' : '!text-gray-400'}
             style={{ color: CSV_LINK }}
           >
