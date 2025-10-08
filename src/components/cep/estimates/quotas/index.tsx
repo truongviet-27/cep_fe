@@ -254,6 +254,19 @@ function QuotaList() {
               recordItemId={record.id}
             />
 
+            {record.status === QuotaStatus.Completed && (
+              <Button
+                type="default"
+                size="small"
+                onClick={() => {
+                  show()
+                  setDataAgreedPrice(record)
+                }}
+              >
+                決定移動
+              </Button>
+            )}
+
             <Link href={record?.pdf_path} target="_blank">
               <Button size="small" icon={<DownloadOutlined />} />
             </Link>
@@ -280,19 +293,6 @@ function QuotaList() {
                 }}
               >
                 再見積
-              </Button>
-            )}
-
-            {record.status === QuotaStatus.Completed && record.is_author && (
-              <Button
-                type="default"
-                size="small"
-                onClick={() => {
-                  show()
-                  setDataAgreedPrice(record)
-                }}
-              >
-                決定移動
               </Button>
             )}
           </Space>

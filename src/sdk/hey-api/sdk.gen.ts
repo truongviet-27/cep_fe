@@ -276,6 +276,9 @@ import type {
   QuotaControllerPreviewPdfData,
   QuotaControllerPreviewPdfResponses,
   QuotaControllerPreviewPdfErrors,
+  QuotaControllerBackToSentToCustomerData,
+  QuotaControllerBackToSentToCustomerResponses,
+  QuotaControllerBackToSentToCustomerErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
@@ -437,6 +440,7 @@ import {
   zQuotaControllerCancelQuotaData,
   zQuotaControllerSendToApproverData,
   zQuotaControllerPreviewPdfData,
+  zQuotaControllerBackToSentToCustomerData,
   zQuotaFormSettingControllerShowData,
   zF44B13Bc4971Acac4481E0A6B882787Data,
   zA229A59B851Ad68435Ac0E91E98F32Data,
@@ -3173,6 +3177,38 @@ export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/api/v1/quotas/preview-pdf',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Revert quotas to Sent to Customer status
+ * Update multiple quotas status from completed or cancelled to sent_to_customer. Requires current user to be an approver of the quota.
+ */
+export const quotaControllerBackToSentToCustomer = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerBackToSentToCustomerData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaControllerBackToSentToCustomerResponses,
+    QuotaControllerBackToSentToCustomerErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerBackToSentToCustomerData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/back-to-send-customer',
     ...options,
     headers: {
       'Content-Type': 'application/json',
