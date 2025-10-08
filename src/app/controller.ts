@@ -42,7 +42,7 @@ const getTenantForSuperAdmin = async () => {
 
 export const useBootstrap = () => {
   const session = useSession()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -92,7 +92,6 @@ export const useBootstrap = () => {
 
   const getProfile = async () => {
     try {
-      setIsLoading(true)
       const { tenantId } = useTenantStore.getState()
       const requestBody = {
         token: '',
@@ -145,14 +144,16 @@ export const useBootstrap = () => {
         router.push('/login')
       }
       throw error
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const initSetup = async () => {
     try {
-      if (pathname === '/login') return
+      setIsLoading(true)
+      if (pathname === '/login') {
+        setIsLoading(false)
+        return
+      }
 
       await validateToken()
       const sessionOnce = await getSessionOnce()
@@ -167,6 +168,8 @@ export const useBootstrap = () => {
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
