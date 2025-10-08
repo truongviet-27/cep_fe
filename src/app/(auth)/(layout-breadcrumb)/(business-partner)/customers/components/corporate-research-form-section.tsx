@@ -133,7 +133,9 @@ export const CorporateResearchFormSection = (
       key: 'updated_at',
       width: 180,
       render: (_: any, record: any) =>
-        record?.updated_at ?? dayjs(record?.created_at, FORMAT_DATE),
+        dayjs(record?.updated_at ?? record?.created_at ?? '').format(
+          FORMAT_DATE,
+        ),
     },
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
@@ -327,19 +329,24 @@ export const CorporateResearchFormSection = (
               />
             </Form.Item>
             <Typography.Text type="secondary">
-              {t('common.updated_by')}:
+              {t('common.updated_by')}:&nbsp;
               {
                 form.getFieldValue([
                   'company_research_information',
                   currentType.index,
                 ])?.author?.name
               }
-              {
-                form.getFieldValue([
-                  'company_research_information',
-                  currentType.index,
-                ])?.updated_at
-              }
+              &nbsp;
+              {form.getFieldValue([
+                'company_research_information',
+                currentType.index,
+              ])?.updated_at &&
+                dayjs(
+                  form.getFieldValue([
+                    'company_research_information',
+                    currentType.index,
+                  ])?.updated_at,
+                ).format(FORMAT_DATE)}
             </Typography.Text>
           </Form>
         </Modal>

@@ -43,7 +43,7 @@ function BasicInformation(
     isAutomatic,
   } = props
 
-  const isIndividual = Form.useWatch('customer_type', form) === 'individual'
+  const isCompany = Form.useWatch('customer_type', form) === 'company'
   const isJapan = Form.useWatch('country', form) === '日本'
   const isNameAfter =
     Form.useWatch('company_name_display_format', form) === 'after'
@@ -113,21 +113,21 @@ function BasicInformation(
               <Form.Item
                 name="customer_type"
                 rules={[rule]}
-                initialValue="company"
+                initialValue="individual"
                 required
               >
                 <Radio.Group>
-                  <Radio value="company">
-                    {t('customers.enums.corporation')}
-                  </Radio>
                   <Radio value="individual">
                     {t('customers.enums.individual')}
+                  </Radio>
+                  <Radio value="company">
+                    {t('customers.enums.corporation')}
                   </Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
 
-            {isIndividual && (
+            {isCompany && (
               <>
                 <Col>
                   <Form.Item
@@ -201,7 +201,7 @@ function BasicInformation(
               </Form.Item>
             </Col>
 
-            {isIndividual && name && companyType && (
+            {isCompany && name && companyType && (
               <Col>
                 <Space direction={'horizontal'}>
                   <Form.Item>

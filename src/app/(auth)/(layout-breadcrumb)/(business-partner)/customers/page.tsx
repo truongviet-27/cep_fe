@@ -73,7 +73,7 @@ interface ICustomer {
 export default function CustomerListPage() {
   const t = useTranslate()
   const go = useGo()
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(true)
 
   const { mutate, isLoading } = useUpdate()
   const { parameterSettings, hasFullAccessModule } = useUserStore(
@@ -271,7 +271,7 @@ export default function CustomerListPage() {
           <div>
             <AutoHeading
               i18n={'customers.fields.credit_rank'}
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
@@ -297,7 +297,7 @@ export default function CustomerListPage() {
           <div>
             <AutoHeading
               i18n={'customers.fields.anti_social_check_date'}
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
@@ -482,7 +482,7 @@ export default function CustomerListPage() {
               <SelectPagination
                 formItemProps={{
                   label: boldText(t('ranks.fields.code')),
-                  name: 'unit_price_rank',
+                  name: 'price_rank_id',
                 }}
                 selectProps={{
                   resource: 'ranks',
@@ -490,8 +490,6 @@ export default function CustomerListPage() {
                     enabled: allowRankResource,
                   },
                 }}
-                optionLabel={'name'}
-                optionValue={'id'}
                 selectComponentProps={{
                   placeholder: t('placeholders.select'),
                   style: { maxWidth: 560, minWidth: '150px' },
@@ -580,7 +578,10 @@ export default function CustomerListPage() {
 
       <Modal
         open={editModalOpen}
-        onCancel={editModalClose}
+        onCancel={() => {
+          setIsShow(true)
+          editModalClose()
+        }}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}

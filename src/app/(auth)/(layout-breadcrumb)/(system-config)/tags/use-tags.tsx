@@ -15,7 +15,7 @@ import {
 import { PRIMARY } from '@utility/color'
 import { Button, Input, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import React, { useLayoutEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
 
@@ -315,11 +315,11 @@ function useTags() {
               <>
                 <EditButton
                   hideText
-                  size="middle"
+                  size="small"
                   onClick={() => startEdit(index)}
                 />
                 <DeleteButton
-                  size="middle"
+                  size="small"
                   hideText
                   recordItemId={dataSource[index]?.id}
                   onClick={() =>
