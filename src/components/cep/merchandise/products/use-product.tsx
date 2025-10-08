@@ -18,7 +18,7 @@ function useProduct() {
   const { hasFullAccessModule } = useUserStore.getState()
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
 
-  const { tableProps, searchFormProps } = useTable<
+  const { tableProps, searchFormProps, setFilters } = useTable<
     ProductListItem,
     HttpError,
     ISearch
@@ -129,7 +129,7 @@ function useProduct() {
       tableProps,
       searchFormProps,
     },
-    { t },
+    { t, setFilters },
   ] as const
 }
 

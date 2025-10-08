@@ -12,8 +12,10 @@ import Link from 'next/link'
 const { Title } = Typography
 
 function ProductContainer() {
-  const [{ columns, tableProps, searchFormProps, isFullAccess }, { t }] =
-    useProduct()
+  const [
+    { columns, tableProps, searchFormProps, isFullAccess },
+    { t, setFilters },
+  ] = useProduct()
 
   return (
     <PageContainer
@@ -79,7 +81,10 @@ function ProductContainer() {
                 {t('buttons.search')}
               </Button>
               <Button
-                onClick={() => searchFormProps.form?.resetFields?.()}
+                onClick={() => {
+                  searchFormProps.form?.resetFields?.()
+                  setFilters([], 'replace')
+                }}
                 color="primary"
                 variant="outlined"
               >
