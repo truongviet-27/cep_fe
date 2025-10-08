@@ -167,7 +167,7 @@ function QuotaDetail() {
       }
       title={
         <div className="flex justify-between">
-          <span>{t('quotas.detail')}</span>
+          {/* <span className="size-[18px]">{t('quotas.detail')}</span> */}
           <Button
             color="primary"
             variant="outlined"

@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelect } from '@refinedev/antd'
-import { useApiUrl, useCustom, useList, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useList,
+  useShow,
+  useTranslate,
+} from '@refinedev/core'
+import type { ProductDetail } from '@sdk/hey-api'
 import { AutoComplete, Form, Select } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { useEffect, useState } from 'react'
@@ -38,7 +45,7 @@ function CoreAutoComplete({
 
   const form = useFormInstance()
 
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState<{ label: string; value: number }[]>()
 
   const filter1 = Form.useWatch(filterPath1, form)
   const filter2 = Form.useWatch(filterPath2, form)
@@ -51,6 +58,14 @@ function CoreAutoComplete({
     },
   })
 
+  const { query: productResponse } = useShow<ProductDetail>({
+    resource: 'products',
+    id: filter1,
+    queryOptions: {
+      enabled: !!filter1 && !filter2,
+    },
+  })
+
   useEffect(() => {
     if (data?.data) {
       setOptions(
@@ -59,8 +74,15 @@ function CoreAutoComplete({
           value: item.id,
         })),
       )
+    } else if (productResponse?.data?.data) {
+      setOptions(
+        productResponse.data?.data?.packagings.map((item) => ({
+          label: item.name,
+          value: item.id,
+        })),
+      )
     }
-  }, [data])
+  }, [data, productResponse?.data?.data])
 
   return (
     <Select
@@ -76,35 +98,39 @@ function CoreAutoComplete({
         if (onChange) {
           onChange(value)
         }
-        const option = data?.data.packagings.find(
-          (item: any) => item?.id === value,
-        )
-        console.log(option, 'option')
+        const option = (
+          !!filter2
+            ? data?.data.packagings
+            : productResponse.data?.data.packagings
+        ).find((item: any) => item?.id === value)
+
         form.setFieldValue(
           [parent, index, 'products', index2, 'unit'],
           option?.unit ?? data?.data?.unit?.name,
         )
 
-        form.setFieldValue(
-          [parent, index, 'products', index2, 'cost_price'],
-          data?.data?.cost_price * option?.quantity_in_package
-            ? data?.data?.cost_price * option?.quantity_in_package
-            : data?.data?.cost_price,
-        )
+        if (!value || (!!filter2 && value)) {
+          form.setFieldValue(
+            [parent, index, 'products', index2, 'cost_price'],
+            data?.data?.cost_price * option?.quantity_in_package
+              ? data?.data?.cost_price * option?.quantity_in_package
+              : data?.data?.cost_price,
+          )
 
-        form.setFieldValue(
-          [parent, index, 'products', index2, 'selling_price'],
-          option?.rank_prices * option?.quantity_in_package
-            ? option?.rank_prices * option?.quantity_in_package
-            : data?.data?.selling_price,
-        )
+          form.setFieldValue(
+            [parent, index, 'products', index2, 'selling_price'],
+            option?.rank_prices * option?.quantity_in_package
+              ? option?.rank_prices * option?.quantity_in_package
+              : data?.data?.selling_price,
+          )
 
-        form.setFieldValue(
-          [parent, index, 'products', index2, 'quantity'],
-          option?.quantity_in_package ?? 1,
-        )
+          form.setFieldValue(
+            [parent, index, 'products', index2, 'quantity'],
+            option?.quantity_in_package ?? 1,
+          )
+        }
       }}
-      disabled={!filter1 || !filter2}
+      disabled={!filter1}
     />
   )
 }

@@ -1,8 +1,7 @@
-import { PRIMARY, WHITE } from '@utility/color'
-import { Card, Typography } from 'antd'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { WHITE } from '@utility/color'
+import { Card } from 'antd'
 import type { ReactNode } from 'react'
-
-const { Title } = Typography
 
 const PageContainer = ({
   title,
@@ -15,7 +14,7 @@ const PageContainer = ({
 }) => {
   return (
     <div className="h-full w-full overflow-hidden">
-      <div className="mt-[12px] mb-[6px] px-[32px]">{breadcrumbs}</div>
+      <div className="mt-[12px] mb-[6px] px-[18px]">{breadcrumbs}</div>
       <Card
         style={{
           backgroundColor: WHITE,
@@ -24,11 +23,11 @@ const PageContainer = ({
             : `calc( 100vh - 80px)`,
         }}
         styles={{
-          body: { padding: 32 },
+          body: { padding: 18 },
         }}
       >
         <div>
-          <div className="mb-5 flex">
+          {/* <div className="mb-5 flex">
             <Title
               style={{
                 color: PRIMARY,
@@ -38,7 +37,7 @@ const PageContainer = ({
             >
               {title}
             </Title>
-          </div>
+          </div> */}
           {children}
         </div>
       </Card>

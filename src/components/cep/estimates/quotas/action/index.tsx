@@ -412,7 +412,7 @@ function QuotaAction() {
         <Form
           form={formProps2}
           onFinish={onFinish}
-          labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
+          labelCol={{ xs: 24, sm: 8, md: 6, lg: 4, xl: 2 }}
           labelAlign="left"
           layout="horizontal"
           colon={false}
@@ -432,7 +432,12 @@ function QuotaAction() {
           <Tags />
           {isUpdate && !isCloneNew && <History data={dataHistory?.data} />}
 
-          <Divider />
+          <Divider
+            size="large"
+            style={{
+              background: '#d9d9d9',
+            }}
+          />
           {isUpdate && !isCloneNew && (
             <ShowMoreInfo
               descriptions={[
@@ -461,7 +466,7 @@ function QuotaAction() {
           <Flex
             justify="space-between"
             style={{
-              marginTop: 40,
+              marginTop: 20,
             }}
           >
             <Space>

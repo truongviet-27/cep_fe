@@ -229,6 +229,7 @@ function DetailInfo() {
                           placeholder="商品リスト名入力"
                           style={{
                             width: 400,
+                            marginBottom: 0,
                           }}
                         />
                       </Form.Item>
