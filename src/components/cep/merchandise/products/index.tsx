@@ -5,15 +5,16 @@ import PageContainer from '@components/common/page-container'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
 import { CreateButton } from '@refinedev/antd'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Col, Form, Row, Typography } from 'antd'
+import { Breadcrumb, Button, Col, Form, Row } from 'antd'
 import Link from 'next/link'
 
-const { Title } = Typography
-
 function ProductContainer() {
-  const [{ columns, tableProps, searchFormProps, isFullAccess }, { t }] =
-    useProduct()
+  const [
+    { columns, tableProps, searchFormProps, isFullAccess },
+    { t, setFilters },
+  ] = useProduct()
 
   return (
     <PageContainer
@@ -21,16 +22,10 @@ function ProductContainer() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('products.breadcrumb.home')}
-                </Title>
-              ),
+              title: boldText(t('products.breadcrumb.home')),
             },
             {
-              title: (
-                <Title level={5}>{t('products.breadcrumb.productList')}</Title>
-              ),
+              title: boldText(t('products.breadcrumb.productList'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -79,7 +74,10 @@ function ProductContainer() {
                 {t('buttons.search')}
               </Button>
               <Button
-                onClick={() => searchFormProps.form?.resetFields?.()}
+                onClick={() => {
+                  searchFormProps.form?.resetFields?.()
+                  setFilters([], 'replace')
+                }}
                 color="primary"
                 variant="outlined"
               >

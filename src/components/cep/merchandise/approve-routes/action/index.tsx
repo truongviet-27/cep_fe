@@ -19,7 +19,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { GREY_TAG, PRIMARY, WHITE } from '@utility/color'
+import { BLACK, GREY_TAG, PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -204,19 +204,14 @@ function ApproveAction() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.parent')}
-                </Title>
-              ),
+              title: boldText(t('approve_routes.parent')),
             },
             {
-              title: (
-                <Title level={5}>
-                  {isUpdate
-                    ? t('approve_routes.edit')
-                    : t('approve_routes.create')}
-                </Title>
+              title: boldText(
+                isUpdate
+                  ? t('approve_routes.edit')
+                  : t('approve_routes.create'),
+                PRIMARY,
               ),
             },
           ]}

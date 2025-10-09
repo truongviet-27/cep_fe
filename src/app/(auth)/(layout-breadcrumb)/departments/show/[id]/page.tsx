@@ -10,14 +10,14 @@ import type { IDepartments } from '@interfaces/departments'
 import { DeleteButton, EditButton, EmailField, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Space, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import React from 'react'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 export default function Page() {
   const t = useTranslate()
@@ -54,13 +54,11 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('departments.departments')}
-        </Title>
-      ),
+      title: boldText(t('departments.departments')),
     },
-    { title: <Title level={5}>{t('departments.show.show')}</Title> },
+    {
+      title: boldText(t('departments.show.show'), PRIMARY),
+    },
   ]
 
   return (

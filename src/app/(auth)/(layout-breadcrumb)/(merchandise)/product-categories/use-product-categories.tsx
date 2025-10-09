@@ -10,8 +10,8 @@ import {
   isDescendant,
   maxDepthOf,
   mergeEditingIntoTree,
-  removeById,
   removeNodeById,
+  removeNodeUsingId,
   toggleAll,
   toggleOpen,
   toSaveTree,
@@ -24,22 +24,14 @@ import {
   useApiUrl,
   useCreate,
   useCustomMutation,
-  useNotification,
   useResource,
   useUpdate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Form,
-  message,
-  type TreeDataNode,
-  type TreeProps,
-  Typography,
-} from 'antd'
+import { Form, message, type TreeDataNode, type TreeProps } from 'antd'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useMemo, useState } from 'react'
-
-const { Title } = Typography
 
 const TEMP_PREFIX = 'tmp-'
 const MAX_DEPTH = 3
@@ -55,7 +47,6 @@ function useProductCategories() {
 
   const [form] = Form.useForm()
   const [formFields] = Form.useForm()
-  const noti = useNotification()
 
   const { resource: rs } = useResource()
   const resource = String(rs?.name)
@@ -64,6 +55,7 @@ function useProductCategories() {
   const { tableProps } = useTable<ITree>()
   const { mutate: createRow } = useCreate({
     resource,
+    invalidates: [],
   })
   const apiUrl = useApiUrl()
   const { mutate: updateAll } = useCustomMutation()
@@ -151,26 +143,22 @@ function useProductCategories() {
   }
 
   const del = (id: string | number) => {
-    setTree((prev) => removeById(prev, id))
+    setTree((prev) => removeNodeUsingId(prev, id))
     setDirty(true)
   }
 
   const save = () => {
-    const patched = mergeEditingIntoTree(tree, editing)
+    const patched = mergeEditingIntoTree(tree, editing, formFields)
 
     setDirty(false)
     formFields
       .validateFields()
       .then(() => {
         handleUpdateAll(toSaveTree(patched))
+        setTree(patched)
       })
       .catch(() => {
-        noti.open?.({
-          type: 'success',
-          message: t('product_categories.validate.name_required'),
-          description: t('product_categories.validate.name_required'),
-          key: 'my-notification',
-        })
+        message.warning(t('product_categories.validate.name_required'))
       })
   }
 
@@ -181,6 +169,7 @@ function useProductCategories() {
       ...prev,
       [id]: { name: node.name, original: node.name },
     }))
+    formFields.setFieldValue(node.id, node.name)
     setDirty(true)
   }
 
@@ -200,11 +189,9 @@ function useProductCategories() {
     const node = findNode(tree, id)
     if (!node) return
 
-    const draft = editing[id]
-    const name = (draft?.name ?? '').trim()
+    const name = formFields.getFieldValue(node.id)
     if (!name) {
       message.warning(t('product_categories.validate.name_required'))
-      return
       return
     }
 
@@ -269,22 +256,18 @@ function useProductCategories() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('merchandise.merchandise')}
-        </Title>
-      ),
+      title: boldText(t('merchandise.merchandise')),
     },
     {
-      title: (
-        <Title level={5}>{t('product_categories.product_categories')}</Title>
-      ),
+      title: boldText(t('product_categories.product_categories'), PRIMARY),
     },
   ]
 
   // load initial data
   useEffect(() => {
-    if (tableProps?.dataSource) setTree(tableProps.dataSource as CatNode[])
+    if (tableProps?.dataSource) {
+      setTree(tableProps.dataSource as CatNode[])
+    }
   }, [tableProps?.dataSource])
 
   const onDrop: NonNullable<TreeProps['onDrop']> = (info) => {
@@ -356,7 +339,6 @@ function useProductCategories() {
               onToggle={toggle}
               onAddChild={addChild}
               onStartEdit={startEdit}
-              onChangeName={changeName}
               onSave={saveEdit}
               onCancel={cancelEdit}
               editingName={editing?.[String(n.id)]?.name}

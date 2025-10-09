@@ -54,7 +54,6 @@ import {
   Space,
   Tag,
   Tooltip,
-  Typography,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { type TableRowSelection } from 'antd/es/table/interface'
@@ -63,8 +62,6 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { type MenuInfo } from 'rc-menu/lib/interface'
 import React, { useCallback, useMemo, useState } from 'react'
-
-const { Title } = Typography
 
 const { RangePicker } = DatePicker
 
@@ -143,7 +140,18 @@ function QuotaList() {
         dataIndex: 'code',
         key: 'code',
         render: (value, record) => (
-          <Link href={`/quotas/show/${record.id}`}>{value}</Link>
+          <Button
+            type="link"
+            className="underline"
+            title={value}
+            onClick={() => {
+              go({
+                to: `/quotas/show/${record.id}`,
+              })
+            }}
+          >
+            {value}
+          </Button>
         ),
       },
       {
@@ -295,13 +303,28 @@ function QuotaList() {
                 再見積
               </Button>
             )}
+
+            {record.status === QuotaStatus.Completed &&
+              record.is_author &&
+              !record?.has_agreed_price && (
+                <Button
+                  type="default"
+                  size="small"
+                  onClick={() => {
+                    show()
+                    setDataAgreedPrice(record)
+                  }}
+                >
+                  決定移動
+                </Button>
+              )}
           </Space>
         ),
       },
     ]
   }, [t])
 
-  const [status, setStatus] = useState<string | null>(null)
+  const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
 
   const {
     tableProps,
@@ -435,7 +458,6 @@ function QuotaList() {
   })
 
   const statusData = [
-    { title: 'すべて', value: 0, key: null },
     { title: '作成中', value: 0, key: QuotaStatus.Creating },
     {
       title: '承認待',
@@ -453,6 +475,7 @@ function QuotaList() {
     { title: '差戻', value: 0, color: '#fa541c', key: QuotaStatus.Rejected }, // cam
     { title: '受注', value: 0, color: '#52c41a', key: QuotaStatus.Completed }, // xanh lá
     { title: '失注', value: 0, color: '#ff4d4f', key: QuotaStatus.Cancelled }, // đỏ
+    { title: 'すべて', value: 0, key: null },
   ]
 
   const statusDashboard = useMemo(() => {
@@ -606,14 +629,10 @@ function QuotaList() {
         <Breadcrumbs
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('estimates.estimates')}
-                </Title>
-              ),
+              title: boldText(t('estimates.estimates')),
             },
             {
-              title: <Title level={5}>{t('quotas.list')}</Title>,
+              title: boldText(t('quotas.list'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -718,7 +737,7 @@ function QuotaList() {
                       label: '送信日',
                     },
                     {
-                      value: 'expiration_date',
+                      value: 'expired_date',
                       label: '有効期限',
                     },
                     {
@@ -759,7 +778,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    setStatus(null)
+                    setStatus(QuotaStatus.Creating)
                   }}
                 >
                   {t('buttons.clear')}
@@ -825,8 +844,17 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="mt-7 flex justify-end gap-2">
-                <Button type="default">見積テンプレート一覧</Button>
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="default"
+                  onClick={() => {
+                    go({
+                      to: 'quota-templates',
+                    })
+                  }}
+                >
+                  見積テンプレート一覧
+                </Button>
                 <Button
                   type="primary"
                   onClick={() => {

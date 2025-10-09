@@ -4,6 +4,7 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -49,19 +50,16 @@ const ProductFormContainer: React.FC = () => {
             {
               title: (
                 <Link href="/products">
-                  <Title level={5} style={{ color: PRIMARY }}>
-                    {t('products.breadcrumb.home')}
-                  </Title>
+                  {boldText(t('products.breadcrumb.home'))}
                 </Link>
               ),
             },
             {
-              title: (
-                <Title level={5}>
-                  {isUpdateMode
-                    ? t('products.breadcrumb.productEdit')
-                    : t('products.breadcrumb.productCreate')}
-                </Title>
+              title: boldText(
+                isUpdateMode
+                  ? t('products.breadcrumb.productEdit')
+                  : t('products.breadcrumb.productCreate'),
+                PRIMARY,
               ),
             },
           ]}
@@ -132,6 +130,7 @@ const ProductFormContainer: React.FC = () => {
                   <PackagingUnitPrice
                     form={form as unknown as FormInstance<ProductFormType>}
                     addRef={addRef}
+                    ranks={ranks}
                   />
                 ),
               },

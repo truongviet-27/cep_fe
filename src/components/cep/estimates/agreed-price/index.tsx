@@ -3,16 +3,14 @@
 
 import { RightOutlined } from '@ant-design/icons'
 import { useTranslate } from '@refinedev/core'
-import { Typography } from 'antd'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import TabsAgreedPrice from '@components/cep/estimates/agreed-price/tabs'
 import PageContainer from '@components/common/page-container'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-
-const { Title } = Typography
 
 function AgreedPriceList() {
   const t = useTranslate()
@@ -37,14 +35,10 @@ function AgreedPriceList() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('estimates.estimates')}
-        </Title>
-      ),
+      title: boldText(t('estimates.estimates')),
     },
     {
-      title: <Title level={5}>{t('agreed_prices.parent')}</Title>,
+      title: boldText(t('agreed_prices.parent'), PRIMARY),
     },
   ]
 

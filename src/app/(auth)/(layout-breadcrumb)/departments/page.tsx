@@ -25,6 +25,7 @@ import {
 } from '@refinedev/core'
 import { Department, PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { CSV_LINK, PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -174,14 +175,10 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('departments.departments')}
-        </Title>
-      ),
+      title: boldText(t('departments.departments')),
     },
     {
-      title: <Title level={5}>{t('departments.list.list')}</Title>,
+      title: boldText(t('departments.list.list'), PRIMARY),
     },
   ]
 
@@ -257,15 +254,13 @@ export default function Page() {
         </Row>
       </Form>
 
-      <div className="mt-6">
-        <TableDnd<RowVM>
-          tableProps={tableProps}
-          dataSource={rows.map((r, i) => ({ ...r, __index: i }))}
-          columns={columns}
-          getRowId={(r) => getRowId(r)}
-          onDragEnd={onDragEnd}
-        />
-      </div>
+      <TableDnd<RowVM>
+        tableProps={tableProps}
+        dataSource={rows.map((r, i) => ({ ...r, __index: i }))}
+        columns={columns}
+        getRowId={(r) => getRowId(r)}
+        onDragEnd={onDragEnd}
+      />
     </List>
   )
 }

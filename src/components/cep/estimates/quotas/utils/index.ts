@@ -14,7 +14,7 @@ type QuotaStatusInfo = {
 export function getQuotaStatusStyle(status: QuotaStatus): QuotaStatusInfo {
   switch (status) {
     case QuotaStatus.Creating:
-      return { background: '#E2E2E2', color: '#666666', text: '下書き' }
+      return { background: '#E2E2E2', color: '#666666', text: '作成中' }
 
     case QuotaStatus.WaitingApproval:
       return { background: '#FFFFC7', color: '#D2A904', text: '承認待' }

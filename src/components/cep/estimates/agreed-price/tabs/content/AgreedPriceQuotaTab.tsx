@@ -42,7 +42,7 @@ const AgreedPriceQuotaTab = () => {
   const apiUrl = useApiUrl()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
-  const [status, setStatus] = useState<string | null>(null)
+  const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -491,7 +491,7 @@ const AgreedPriceQuotaTab = () => {
                 type="default"
                 onClick={() => {
                   setFilters([], 'replace')
-                  setStatus(null)
+                  setStatus(AgreedPriceStatus.Active)
                 }}
               >
                 {t('agreed_prices.action.clear')}

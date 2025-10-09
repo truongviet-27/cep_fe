@@ -21,6 +21,7 @@ import { ParameterSettingType } from '@interfaces/permission'
 import { useUserStore } from '@stores/useUserStore'
 import { PARAMETER_SETTING_EXCLUDE } from '@utility/permission'
 import { sortBy } from 'lodash'
+import boldText from '@utility/bold-text'
 
 type ParameterItemType = {
   parameter_id?: number
@@ -76,16 +77,10 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: (
-        <Title level={5}>{t('parameter_settings.parameter_settings')}</Title>
-      ),
+      title: boldText(t('parameter_settings.parameter_settings'), PRIMARY),
     },
   ]
 

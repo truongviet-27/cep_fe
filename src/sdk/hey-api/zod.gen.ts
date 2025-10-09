@@ -4172,7 +4172,7 @@ export const zQuotaControllerIndexData = z.object({
       search_date_type: z.optional(
         z.enum([
           'created_at',
-          'expired_date',
+          'expiration_date',
           'sent_to_customer_date',
           'customer_accepted_date',
           'customer_cancelled_date',

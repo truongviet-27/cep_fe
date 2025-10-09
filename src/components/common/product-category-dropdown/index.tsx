@@ -13,6 +13,7 @@ interface Props {
   hidden?: boolean
   valueOnly?: boolean
   defaultValue?: string
+  disabled?: boolean
   onSelect?: (
     level: number,
     currentPath: string[],
@@ -22,7 +23,8 @@ interface Props {
 }
 
 const ProductCategoryDropdown: React.FC<Props> = (props) => {
-  const { placeholder, hidden, valueOnly, defaultValue, onSelect } = props
+  const { placeholder, hidden, valueOnly, defaultValue, disabled, onSelect } =
+    props
   const [
     { options, debounceFetcher, isLoading, categories },
     { setSearchText, setAllowFetchData },
@@ -49,6 +51,7 @@ const ProductCategoryDropdown: React.FC<Props> = (props) => {
       trigger={['click']}
       placement="bottomRight"
       open={isOpenDropdown}
+      disabled={disabled}
       onOpenChange={(visible) => {
         setTimeout(() => {
           setIsOpenDropdown(visible)

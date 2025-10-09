@@ -8138,7 +8138,7 @@ export type QuotaControllerIndexData = {
      */
     search_date_type?:
       | 'created_at'
-      | 'expired_date'
+      | 'expiration_date'
       | 'sent_to_customer_date'
       | 'customer_accepted_date'
       | 'customer_cancelled_date'

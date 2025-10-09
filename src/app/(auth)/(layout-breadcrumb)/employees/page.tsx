@@ -30,13 +30,9 @@ function Page() {
   const { tableProps, searchFormProps, setFilters, setCurrent } = useTable()
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>{t('employees.list.list')}</Title> },
+    { title: boldText(t('employees.list.list'), PRIMARY) },
   ]
 
   const getRowClassName = (record: BaseRecord) => {

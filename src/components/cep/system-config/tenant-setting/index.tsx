@@ -22,6 +22,7 @@ import {
   type QuotaFormSettingResponse,
 } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Row, Space, Spin, Typography } from 'antd'
 import { redirect } from 'next/navigation'
@@ -164,16 +165,10 @@ function TenantSetting() {
         <Breadcrumbs
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('system_config.system_config')}
-                </Title>
-              ),
+              title: boldText(t('system_config.system_config')),
             },
             {
-              title: (
-                <Title level={5}>{t('tenant_settings.tenant_settings')}</Title>
-              ),
+              title: boldText(t('tenant_settings.tenant_settings'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
