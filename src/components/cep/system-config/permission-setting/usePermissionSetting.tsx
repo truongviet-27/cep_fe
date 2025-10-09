@@ -1,9 +1,9 @@
 import { useApiUrl, useCreate, useCustom, useTranslate } from '@refinedev/core'
 import { useForm } from '@refinedev/react-hook-form'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Checkbox, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import Title from 'antd/lib/typography/Title'
 import { useEffect, useState } from 'react'
 
 type Permission = {
@@ -73,14 +73,10 @@ function usePermissionSetting() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: <Title level={5}>{t('system_config.permission_settings')}</Title>,
+      title: boldText(t('system_config.permission_settings'), PRIMARY),
     },
   ]
 

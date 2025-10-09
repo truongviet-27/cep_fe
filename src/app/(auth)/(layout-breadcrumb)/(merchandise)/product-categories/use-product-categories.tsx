@@ -27,18 +27,11 @@ import {
   useResource,
   useUpdate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Form,
-  message,
-  type TreeDataNode,
-  type TreeProps,
-  Typography,
-} from 'antd'
+import { Form, message, type TreeDataNode, type TreeProps } from 'antd'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useMemo, useState } from 'react'
-
-const { Title } = Typography
 
 const TEMP_PREFIX = 'tmp-'
 const MAX_DEPTH = 3
@@ -263,16 +256,10 @@ function useProductCategories() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('merchandise.merchandise')}
-        </Title>
-      ),
+      title: boldText(t('merchandise.merchandise')),
     },
     {
-      title: (
-        <Title level={5}>{t('product_categories.product_categories')}</Title>
-      ),
+      title: boldText(t('product_categories.product_categories'), PRIMARY),
     },
   ]
 

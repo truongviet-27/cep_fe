@@ -15,6 +15,7 @@ import {
 import { BaseRecord, useResource } from '@refinedev/core'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { DARK_RED, GREY, PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
 import { Modal, Table, Tag, Typography } from 'antd'
@@ -67,16 +68,10 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: (
-        <Title level={5}>{t('code_issue_settings.code_issue_settings')}</Title>
-      ),
+      title: boldText(t('code_issue_settings.code_issue_settings'), PRIMARY),
     },
   ]
 

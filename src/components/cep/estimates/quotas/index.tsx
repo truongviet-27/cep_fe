@@ -280,25 +280,27 @@ function QuotaList() {
               </Button>
             )}
 
-            {record.status === QuotaStatus.Completed && record.is_author && (
-              <Button
-                type="default"
-                size="small"
-                onClick={() => {
-                  show()
-                  setDataAgreedPrice(record)
-                }}
-              >
-                決定移動
-              </Button>
-            )}
+            {record.status === QuotaStatus.Completed &&
+              record.is_author &&
+              !record?.has_agreed_price && (
+                <Button
+                  type="default"
+                  size="small"
+                  onClick={() => {
+                    show()
+                    setDataAgreedPrice(record)
+                  }}
+                >
+                  決定移動
+                </Button>
+              )}
           </Space>
         ),
       },
     ]
   }, [t])
 
-  const [status, setStatus] = useState<string | null>(null)
+  const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
 
   const {
     tableProps,
@@ -711,7 +713,7 @@ function QuotaList() {
                       label: '送信日',
                     },
                     {
-                      value: 'expiration_date',
+                      value: 'expired_date',
                       label: '有効期限',
                     },
                     {
@@ -752,7 +754,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    setStatus(null)
+                    setStatus(QuotaStatus.Creating)
                   }}
                 >
                   {t('buttons.clear')}

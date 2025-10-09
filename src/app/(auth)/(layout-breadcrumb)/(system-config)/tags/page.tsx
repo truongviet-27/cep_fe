@@ -5,6 +5,7 @@ import useTags from '@app/(auth)/(layout-breadcrumb)/(system-config)/tags/use-ta
 import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import boldText from '@utility/bold-text'
 import { Button, Col, Form, Input, Row, Space } from 'antd'
 import React from 'react'
 
@@ -54,53 +55,42 @@ export default function Page() {
       }
     >
       <Form {...searchFormProps} layout="vertical" colon={false}>
-        <Row
-          align="middle"
-          justify="space-between"
-          wrap={false}
-          gutter={[16, 16]}
-          style={{ width: '100%' }}
-        >
-          <Col flex="auto">
-            <Row align="middle" gutter={16} wrap={false}>
-              <Col>
-                <div style={{ fontWeight: 600 }}>
-                  {t('tags.filters.search_label')}
-                </div>
-              </Col>
-              <Col flex="360px">
-                <Form.Item name="name_lk" style={{ margin: 0 }}>
-                  <Input placeholder="部分一致" allowClear size="middle" />
-                </Form.Item>
-              </Col>
-              <Col>
-                <Space size="middle">
-                  <Button htmlType="submit" type="primary" size="middle">
-                    検索
-                  </Button>
-                  <Button
-                    size="middle"
-                    type="default"
-                    onClick={() => {
-                      searchFormProps.form?.resetFields()
-                      setFilters([], 'replace')
-                    }}
-                  >
-                    クリア
-                  </Button>
-                </Space>
-              </Col>
-            </Row>
+        <Row align="middle" gutter={[16, 0]}>
+          <Col xs={24} sm={12} md={4}>
+            <Form.Item
+              name="name_lk"
+              style={{ margin: 0 }}
+              label={boldText(t('tags.filters.search_label'))}
+            >
+              <Input placeholder="部分一致" allowClear size="middle" />
+            </Form.Item>
           </Col>
-          <Col>
-            <Button type="primary" size="middle" onClick={addNew}>
-              新規登録
-            </Button>
+          <Col xs={24} sm={12} md={20}>
+            <Space className="mt-4 w-full justify-between">
+              <Space>
+                <Button htmlType="submit" type="primary" size="middle">
+                  検索
+                </Button>
+                <Button
+                  size="middle"
+                  type="default"
+                  onClick={() => {
+                    searchFormProps.form?.resetFields()
+                    setFilters([], 'replace')
+                  }}
+                >
+                  クリア
+                </Button>
+              </Space>
+              <Button type="primary" size="middle" onClick={addNew}>
+                新規登録
+              </Button>
+            </Space>
           </Col>
         </Row>
       </Form>
 
-      <div className="mt-8">
+      <div className="mt-2">
         <TableDnd<RowVM>
           tableProps={tableProps}
           dataSource={dataSource}
