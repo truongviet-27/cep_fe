@@ -41,12 +41,15 @@ const QuoteTemplateDetailContainer: FC = () => {
             {
               title: (
                 <Link href="/quota-templates">
-                  {boldText(t('quota_templates.breadcrumb.home'), PRIMARY)}
+                  {boldText(t('quota_templates.breadcrumb.home'))}
                 </Link>
               ),
             },
             {
-              title: boldText(t('quota_templates.breadcrumb.quotasDetail')),
+              title: boldText(
+                t('quota_templates.breadcrumb.quotasDetail'),
+                PRIMARY,
+              ),
             },
           ]}
           separator={<RightOutlined />}

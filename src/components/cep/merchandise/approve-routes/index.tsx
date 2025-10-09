@@ -12,9 +12,9 @@ import {
   useTable,
 } from '@refinedev/antd'
 import type { BaseRecord, CrudFilters } from '@refinedev/core'
-import { Link, useGo, useTranslate } from '@refinedev/core'
+import { useGo, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { BLACK, GREEN, GREY_TAG, PRIMARY } from '@utility/color'
+import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Breadcrumb,
@@ -94,9 +94,18 @@ function Approve() {
         }),
         render: (value, record) => {
           return (
-            <div title={value}>
-              <Link to={`/approve-routes/show/${record.id}`}>{value}</Link>
-            </div>
+            <Button
+              type="link"
+              className="underline"
+              title={value}
+              onClick={() => {
+                go({
+                  to: `/approve-routes/show/${record.id}`,
+                })
+              }}
+            >
+              {value}
+            </Button>
           )
         },
       },
@@ -191,10 +200,10 @@ function Approve() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('approve_routes.parent'), PRIMARY),
+              title: boldText(t('approve_routes.parent')),
             },
             {
-              title: boldText(t('approve_routes.list'), BLACK),
+              title: boldText(t('approve_routes.list'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -211,7 +220,10 @@ function Approve() {
       >
         <Row gutter={[16, 16]}>
           <Col md={8} xl={4}>
-            <Form.Item label={t('approve_routes.filters.searchLabel')} name="q">
+            <Form.Item
+              label={boldText(t('approve_routes.filters.searchLabel'))}
+              name="q"
+            >
               <Input
                 className={'mt-2'}
                 placeholder={t('departments.list.filters.search_placeholder')}
@@ -220,7 +232,7 @@ function Approve() {
           </Col>
           <Col md={8} xl={4}>
             <Form.Item
-              label={t('approve_routes.filters.departmentLabel')}
+              label={boldText(t('approve_routes.filters.departmentLabel'))}
               name="department"
             >
               <Select
@@ -232,7 +244,7 @@ function Approve() {
           </Col>
           <Col md={8} xl={4}>
             <Form.Item
-              label={t('approve_routes.filters.statusLabel')}
+              label={boldText(t('approve_routes.filters.statusLabel'))}
               name="status"
             >
               <Select

@@ -17,10 +17,13 @@ const QuotaTemplateListContainer: React.FC = () => {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('quota_templates.breadcrumb.home', PRIMARY)),
+              title: boldText(t('quota_templates.breadcrumb.home')),
             },
             {
-              title: boldText(t('quota_templates.breadcrumb.quotasList')),
+              title: boldText(
+                t('quota_templates.breadcrumb.quotasList'),
+                PRIMARY,
+              ),
             },
           ]}
           separator={<RightOutlined />}

@@ -364,10 +364,13 @@ function QuotaAction() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('estimates.estimates'), PRIMARY),
+              title: boldText(t('estimates.estimates')),
             },
             {
-              title: boldText(isUpdate ? t('quotas.edit') : t('quotas.create')),
+              title: boldText(
+                isUpdate ? t('quotas.edit') : t('quotas.create'),
+                PRIMARY,
+              ),
             },
           ]}
           separator={<RightOutlined />}
