@@ -8,7 +8,7 @@ interface Props {
   productId?: number
   defaultOptions?: { id: number; name: string }[]
   defaultValue?: any
-  onChange?: (value: number) => void
+  onChange?: (value: number, option: any) => void
 }
 
 const PackageSelect: React.FC<Props> = (props) => {

@@ -96,6 +96,13 @@ const DetailInfo: FC = () => {
                       <Form.Item
                         name={[record.index, 'group_name']}
                         className="ant-form-item-hidden-margin"
+                        required
+                        rules={[
+                          {
+                            required: true,
+                            message: t('validation.required'),
+                          },
+                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -253,7 +260,7 @@ const DetailInfo: FC = () => {
                         record.index2,
                         'product_id',
                       ])}
-                      onChange={(value) =>
+                      onChange={(value, option) => {
                         form.setFieldValue(
                           [
                             'main_product',
@@ -264,7 +271,18 @@ const DetailInfo: FC = () => {
                           ],
                           value,
                         )
-                      }
+
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          option.selling_price,
+                        )
+                      }}
                       defaultOptions={
                         mainProducts?.[record.index]?.products?.[record.index2]
                           ?.packagings ?? []

@@ -234,7 +234,7 @@ const OptionalInfo: FC = () => {
                         record.index2,
                         'product_id',
                       ])}
-                      onChange={(value) =>
+                      onChange={(value, option) => {
                         form.setFieldValue(
                           [
                             'optional_product',
@@ -245,7 +245,18 @@ const OptionalInfo: FC = () => {
                           ],
                           value,
                         )
-                      }
+
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          option.selling_price,
+                        )
+                      }}
                       defaultOptions={
                         optionalProducts?.[record.index].products[record.index2]
                           ?.packagings ?? []
