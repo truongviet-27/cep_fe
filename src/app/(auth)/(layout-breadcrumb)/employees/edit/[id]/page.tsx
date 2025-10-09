@@ -41,6 +41,8 @@ export default function EmployeeEdit() {
   const userEmail = session.data?.user?.email
   const { permission } = useUserStore.getState()
 
+  const EXCLUDED_ROLES = ['module_admin', 'super_admin']
+
   const { data: roles } = useCustom({ method: 'get', url: `${apiUrl}/roles` })
 
   const { formProps, saveButtonProps, queryResult, form, formLoading } =
@@ -121,23 +123,17 @@ export default function EmployeeEdit() {
           descriptions={[
             {
               title: t('common.created_by'),
-              value:
-                (employeeData as any)?.created_by?.name ??
-                '---' +
-                  ' ' +
-                  dayjs((employeeData as any)?.created_by?.date).format(
-                    FORMAT_DATE_TIME,
-                  ),
+              value: `${(employeeData as any)?.created_by?.name ?? '---'} ${dayjs(
+                (employeeData as any)?.created_at,
+              ).format(FORMAT_DATE_TIME)}`,
             },
             {
               title: t('common.updated_by'),
-              value:
-                (employeeData as any)?.updated_by?.name ??
-                '---' +
-                  ' ' +
-                  dayjs((employeeData as any)?.updated_by?.date).format(
-                    FORMAT_DATE_TIME,
-                  ),
+              value: (employeeData as any)?.editor
+                ? `${(employeeData as any).editor.name} ${dayjs(
+                    (employeeData as any).updated_at,
+                  ).format(FORMAT_DATE_TIME)}`
+                : '---',
             },
           ]}
         />
@@ -245,11 +241,13 @@ export default function EmployeeEdit() {
         >
           <Radio.Group buttonStyle="solid">
             {isArray(roles?.data) &&
-              roles?.data.map(({ id, name }) => (
-                <Radio key={name} value={id}>
-                  {t(`employees.roles.${name}`)}
-                </Radio>
-              ))}
+              roles?.data
+                .filter(({ name }) => !EXCLUDED_ROLES.includes(name))
+                .map(({ id, name }) => (
+                  <Radio key={name} value={id}>
+                    {t(`employees.roles.${name}`)}
+                  </Radio>
+                ))}
           </Radio.Group>
         </Form.Item>
       </Form>
