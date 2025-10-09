@@ -44,7 +44,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       handleSearchProductUnit,
       handleAppendPackaging,
     },
-  ] = useBasicInfoController(form, addRef, ranks)
+  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton, ranks)
 
   const { show, close, open } = modalFormProps
   const {
@@ -68,7 +68,16 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「商品コードは必須です。」',
+              },
+              {
+                max: 20,
+                message: '「商品コードは20文字以内で入力してください」',
+              },
+              {
+                pattern: /^[A-Z0-9-]+$/,
+                message:
+                  '商品コードには A〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
               },
             ]}
           />
@@ -113,7 +122,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「商品名は必須です。」',
+              },
+              {
+                max: 100,
+                message: '「商品名は100文字以内で入力してください」',
               },
             ]}
           />
@@ -130,6 +143,12 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               </span>
             }
             layout="horizontal"
+            rules={[
+              {
+                max: 50,
+                message: '「略称は50文字以内で入力してください」',
+              },
+            ]}
           />
         </Col>
       </Row>
@@ -155,7 +174,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「カテゴリは必須です。」',
               },
             ]}
           >
@@ -193,7 +212,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「単位は必須です。」',
               },
             ]}
           >
@@ -230,7 +249,22 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「原価は必須です。」',
+              },
+              {
+                validator: (_, value) => {
+                  if (value === undefined || value === null) {
+                    return Promise.resolve()
+                  }
+
+                  if (value < 0) {
+                    return Promise.reject(
+                      '「原価は0以上の数字で入力してください」',
+                    )
+                  }
+
+                  return Promise.resolve()
+                },
               },
             ]}
             style={{
@@ -252,7 +286,34 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「販売単価は必須です。」',
+              },
+              {
+                validator: (_, value) => {
+                  if (value === undefined || value === null) {
+                    return Promise.resolve()
+                  }
+
+                  console.log(value, typeof value)
+
+                  if (value < 0) {
+                    return Promise.reject(
+                      '「原価は0以上の数字で入力してください」',
+                    )
+                  }
+
+                  if (value < form.getFieldValue('cost_price')) {
+                    return Promise.reject(
+                      '「販売単価は原価以上で入力してください」',
+                    )
+                  }
+
+                  if (!Number.isInteger(value)) {
+                    return Promise.reject('「整数で入力してください」')
+                  }
+
+                  return Promise.resolve()
+                },
               },
             ]}
             style={{
@@ -273,10 +334,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 size="small"
                 color="blue"
                 variant="outlined"
-                onClick={() => {
-                  setIsAllowedSaveButton(true)
-                  handleAppendPackaging()
-                }}
+                onClick={handleAppendPackaging}
               >
                 {t('更新')}
               </Button>
