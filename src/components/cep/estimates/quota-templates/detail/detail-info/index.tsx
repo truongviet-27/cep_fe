@@ -21,11 +21,7 @@ interface Props {
 const DetailInfo: FC<Props> = (props) => {
   const { detail } = props
 
-  const [costTotal, setCostTotal] = useState(0)
-  const [totalPrice, setTotalPrice] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
-  const [taxTotal, setTaxTotal] = useState(0)
-  const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
   const t = useTranslate()
 
   const dataSource = (detail?.main_product ?? []).flatMap(
@@ -66,16 +62,10 @@ const DetailInfo: FC<Props> = (props) => {
       },
     )
 
-    const taxTotal = (sellTotal * Number(detail?.tax_rate ?? 0)) / 100
-    const sellTotalWithTax = sellTotal + taxTotal
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 
-    setCostTotal(costTotal)
-    setTotalPrice(sellTotal)
-    setTaxTotal(taxTotal)
     setProfitRate(profitRate)
-    setSellTotalWithTax(sellTotalWithTax)
   }
 
   useEffect(() => {
@@ -238,7 +228,11 @@ const DetailInfo: FC<Props> = (props) => {
                   小計
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="center">
-                  {(totalPrice || 0).toLocaleString()}
+                  {(detail?.consumption_tax === 'exclusive'
+                    ? +detail?.total_price_tax_included -
+                      +detail?.consumption_tax_amount
+                    : +detail?.total_price_tax_included
+                  ).toLocaleString()}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             )
@@ -265,8 +259,8 @@ const DetailInfo: FC<Props> = (props) => {
             >
               原価合計
             </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-              ¥{(costTotal || 0).toLocaleString()}
+            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+              ¥{(detail?.total_price || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_cost" hidden>
               <InputNumber />
@@ -292,7 +286,7 @@ const DetailInfo: FC<Props> = (props) => {
               消費税金額（{detail?.tax_rate}%）
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-              ¥{(taxTotal || 0).toLocaleString()}
+              ¥{(detail.consumption_tax_amount || 0).toLocaleString()}
             </Text>
             <Form.Item name="consumption_tax_amount" hidden>
               <InputNumber />
@@ -344,7 +338,7 @@ const DetailInfo: FC<Props> = (props) => {
               合計金額（税込）
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-              ¥{(sellTotalWithTax || 0).toLocaleString()}
+              ¥{(detail?.total_price_tax_included || 0).toLocaleString()}
             </Text>
             <Form.Item name="total_price_tax_included" hidden>
               <InputNumber />

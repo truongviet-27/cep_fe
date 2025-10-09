@@ -9,7 +9,7 @@ import QuotaTemplateFilterForm from './filter-form'
 import QuotaTemplateTable from './table'
 
 const QuotaTemplateListContainer: React.FC = () => {
-  const { tableProps, searchFormProps, t } = useController()
+  const { tableProps, searchFormProps, t, setFilters } = useController()
 
   return (
     <PageContainer
@@ -31,7 +31,10 @@ const QuotaTemplateListContainer: React.FC = () => {
       }
       title={t('quota_templates.list.title')}
     >
-      <QuotaTemplateFilterForm searchFormProps={searchFormProps} />
+      <QuotaTemplateFilterForm
+        searchFormProps={searchFormProps}
+        clearFilters={() => setFilters([], 'replace')}
+      />
       <QuotaTemplateTable tableProps={tableProps} />
     </PageContainer>
   )

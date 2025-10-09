@@ -9,7 +9,7 @@ import { useTranslate } from '@refinedev/core'
 export const useController = () => {
   const t = useTranslate()
 
-  const { tableProps, searchFormProps } = useTable<
+  const { tableProps, searchFormProps, setFilters } = useTable<
     QuotaTemplateListItemType,
     HttpError,
     SearchQuotaTemplateType
@@ -54,5 +54,6 @@ export const useController = () => {
     tableProps,
     searchFormProps,
     t,
+    setFilters,
   } as const
 }
