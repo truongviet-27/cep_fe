@@ -40,7 +40,8 @@ function useTags() {
   const { resource } = useResource()
   const apiUrl = useApiUrl()
   const [pageSize, setPageSize] = React.useState(10)
-  const [forceUpdate, setForceUpdate] = React.useState(false)
+  const [totalPage, setTotalPage] = React.useState(0)
+  const forceUpdate = useRef(false)
   const {
     tableProps,
     searchFormProps,
@@ -58,7 +59,7 @@ function useTags() {
     ],
   })
 
-  const { control, getValues, resetField, setValue, setFocus } =
+  const { control, getValues, resetField, setValue, setError } =
     useForm<FormValues>({
       defaultValues: { rows: [] },
       mode: 'onTouched',
@@ -78,7 +79,7 @@ function useTags() {
     row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
   useLayoutEffect(() => {
-    if (forceUpdate) {
+    if (forceUpdate.current) {
       setPageSize(10)
       setPageSize2(10)
     }
@@ -97,7 +98,8 @@ function useTags() {
 
   const addNew = () => {
     setPageSize((total) => total + 1)
-    setForceUpdate(true)
+    setTotalPage((tableProps?.pagination as any)?.total + 1)
+    forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
     insert(0, {
       name: '',
@@ -132,8 +134,12 @@ function useTags() {
     delete originalRef.current[stableKey]
   }
 
-  const { mutate: createRow } = useCreate()
-  const { mutate: updateRow, isLoading: saving } = useUpdate()
+  const { mutate: createRow } = useCreate({
+    invalidates: [],
+  })
+  const { mutate: updateRow, isLoading: saving } = useUpdate({
+    invalidates: [],
+  })
   const { mutate: deleteRow } = useDelete()
 
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
@@ -175,7 +181,12 @@ function useTags() {
     const row = getValues(`rows.${index}`)
     const order = getValues(`rows.0`)?.order ?? index
     const name = (row.name ?? '').trim()
-    if (!name) return
+    if (!name) {
+      setError(`rows.${index}.name`, {
+        message: '',
+      })
+      return
+    }
 
     if (row._isNew) {
       createRow(
@@ -349,6 +360,8 @@ function useTags() {
         onShowSizeChange: (current: number, size: number) => {
           setPageSize(size)
         },
+        total:
+          totalPage === 0 ? (tableProps.pagination as any)?.total : totalPage,
       },
     },
     getRowIdForDnd,

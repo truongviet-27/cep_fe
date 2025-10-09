@@ -6,7 +6,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useForm, useModalForm, useSelect } from '@refinedev/antd'
+import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -48,12 +48,6 @@ export default function EmployeeEdit() {
       redirect: 'show',
     })
   const employeeData = queryResult?.data?.data
-
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
 
   const codeRules: Rule[] = useMemo(
     () => [
@@ -145,7 +139,7 @@ export default function EmployeeEdit() {
           </Button>
         </Space>
       }
-      i18nHeading={'社員編集'}
+      i18nHeading={'employees.edit.title'}
     >
       <Form
         {...formProps}

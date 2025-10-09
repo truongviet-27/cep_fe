@@ -31,14 +31,14 @@ export const SelectPagination = ({
     optionLabel,
     optionValue,
     pagination: {
-      pageSize: 20,
+      pageSize: 100,
       current: page,
       mode: 'server',
     },
     onSearch: (value) => {
-      setPage(1)
-      hasMore.current = true
-      setSearch(value)
+      // setPage(1)
+      // hasMore.current = true
+      // setSearch(value)
       return [
         {
           field: fieldSearch,

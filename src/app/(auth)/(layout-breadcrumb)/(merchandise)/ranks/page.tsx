@@ -27,7 +27,6 @@ import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
-import Link from 'next/link'
 import boldText from '@utility/bold-text'
 
 const { Title, Text } = Typography
@@ -65,7 +64,10 @@ export default function Page() {
     },
     { dataIndex: 'name', title: t('ranks.fields.name') },
     { dataIndex: 'rate', title: t('ranks.fields.rate') },
-    { dataIndex: 'customer', title: t('ranks.fields.number_of_customers') },
+    {
+      dataIndex: 'number_of_customers',
+      title: t('ranks.fields.number_of_customers'),
+    },
     { dataIndex: 'note', title: t('ranks.fields.remarks') },
     {
       title: t('table.actions'),
