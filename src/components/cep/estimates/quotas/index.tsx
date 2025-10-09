@@ -821,7 +821,16 @@ function QuotaList() {
 
             <Col xs={16} md={18} lg={20}>
               <div className="flex justify-end gap-2">
-                <Button type="default">見積テンプレート一覧</Button>
+                <Button
+                  type="default"
+                  onClick={() => {
+                    go({
+                      to: 'quota-templates',
+                    })
+                  }}
+                >
+                  見積テンプレート一覧
+                </Button>
                 <Button
                   type="primary"
                   onClick={() => {
