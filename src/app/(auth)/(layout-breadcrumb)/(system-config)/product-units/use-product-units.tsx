@@ -13,6 +13,7 @@ import {
 } from '@refinedev/core'
 import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Input, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -188,14 +189,10 @@ export default function useProductUnits() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: <Title level={5}>{t('product_units.product_units')}</Title>,
+      title: boldText(t('product_units.product_units'), PRIMARY),
     },
   ]
 

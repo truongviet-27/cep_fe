@@ -1,13 +1,12 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Typography } from 'antd'
+import { Breadcrumb } from 'antd'
 
 import { useController } from './controller'
 import QuotaTemplateFilterForm from './filter-form'
 import QuotaTemplateTable from './table'
-
-const { Title } = Typography
 
 const QuotaTemplateListContainer: React.FC = () => {
   const { tableProps, searchFormProps, t } = useController()
@@ -18,18 +17,10 @@ const QuotaTemplateListContainer: React.FC = () => {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('quota_templates.breadcrumb.home')}
-                </Title>
-              ),
+              title: boldText(t('quota_templates.breadcrumb.home', PRIMARY)),
             },
             {
-              title: (
-                <Title level={5}>
-                  {t('quota_templates.breadcrumb.quotasList')}
-                </Title>
-              ),
+              title: boldText(t('quota_templates.breadcrumb.quotasList')),
             },
           ]}
           separator={<RightOutlined />}

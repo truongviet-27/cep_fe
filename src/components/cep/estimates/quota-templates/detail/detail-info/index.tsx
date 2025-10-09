@@ -146,7 +146,7 @@ const DetailInfo: FC<Props> = (props) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return value.toLocaleString()
+        return value?.toLocaleString()
       },
     },
     {
@@ -157,7 +157,7 @@ const DetailInfo: FC<Props> = (props) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return selling_price.toLocaleString()
+        return selling_price?.toLocaleString()
       },
     },
     {
