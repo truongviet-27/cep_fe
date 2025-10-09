@@ -18,6 +18,7 @@ import type { ColumnsType } from 'antd/es/table'
 import React, { useLayoutEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
+import boldText from '@utility/bold-text'
 
 const { Title } = Typography
 
@@ -87,14 +88,10 @@ function useTags() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: <Title level={5}>{t('tags.tags')}</Title>,
+      title: boldText(t('tags.tags'), PRIMARY),
     },
   ]
 

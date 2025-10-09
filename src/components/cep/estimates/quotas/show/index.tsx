@@ -128,7 +128,7 @@ function QuotaDetail() {
     mutatePreviewPdf(
       {
         values: customValues,
-        url: `${apiUrl}/quotas/preview-pdf`,
+        url: `${apiUrl}/quotas/preview-pdf/${customValues?.id}`,
         method: 'post',
       },
       {

@@ -196,7 +196,7 @@ export const Show: React.FC<ShowProps & CustomProps> = ({
           <Card
             bordered={false}
             styles={{
-              body: { padding: 32 },
+              body: { padding: 18 },
             }}
             actions={[
               <Space

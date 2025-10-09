@@ -11,6 +11,8 @@ export const accessControlProvider: AccessControlProvider = {
   can: async ({ action, resource }: CanParams): Promise<CanReturnType> => {
     const { permission, hasFullAccessModule } = useUserStore.getState()
 
+    console.log(permission, 'permission')
+
     if (permission?.is_module_admin) {
       return { can: true }
     }
@@ -52,6 +54,7 @@ export const accessControlProvider: AccessControlProvider = {
         return {
           can: true,
         }
+
       default:
         return { can: false }
     }
