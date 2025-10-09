@@ -192,20 +192,24 @@ const AgreedPriceQuotaTab = () => {
           </div>
         ),
         key: 'estimateDateApplicationEnd',
-        render: (_, record) => (
-          <div>
+        render: (_, record: any) => {
+          const statusEnum = (record as any).status as AgreedPriceStatus
+          const style = getAgreedPriceStatusStyle(statusEnum, t)
+          return (
             <div>
-              {(record as any).valid_from
-                ? dayjs((record as any).valid_from).format('YYYY/MM/DD')
-                : '---'}
+              <div>
+                {(record as any).valid_from
+                  ? dayjs((record as any).valid_from).format('YYYY/MM/DD')
+                  : '---'}
+              </div>
+              <div style={{ color: style.color }}>
+                {(record as any).valid_to
+                  ? dayjs((record as any).valid_to).format('YYYY/MM/DD')
+                  : '---'}
+              </div>
             </div>
-            <div>
-              {(record as any).valid_to
-                ? dayjs((record as any).valid_to).format('YYYY/MM/DD')
-                : '---'}
-            </div>
-          </div>
-        ),
+          )
+        },
       },
       {
         title: t('agreed_prices.table.reference_count'),
@@ -229,6 +233,7 @@ const AgreedPriceQuotaTab = () => {
               size="small"
               recordItemId={record.id as number}
               resource="quota/agreed-prices"
+              meta={{ idsBody: true, method: 'delete' }}
               onSuccess={() => tableQuery?.refetch?.()}
             />
             <Button
@@ -323,11 +328,6 @@ const AgreedPriceQuotaTab = () => {
 
     return [
       {
-        title: t('agreed_prices.summary.all'),
-        value: c?.total ?? 0,
-        key: null as string | null,
-      },
-      {
         title: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).text,
         value: get('active'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).color,
@@ -346,6 +346,11 @@ const AgreedPriceQuotaTab = () => {
         value: get('expired'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Expired, t).color,
         key: 'expired',
+      },
+      {
+        title: t('agreed_prices.summary.all'),
+        value: c?.total ?? 0,
+        key: null as string | null,
       },
     ]
   }, [count, t])
