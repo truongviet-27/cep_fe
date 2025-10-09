@@ -84,25 +84,57 @@ function Approve() {
         key: 'code',
         dataIndex: 'code',
         title: t('approve_routes.table.routeCode'),
+        onCell: () => ({
+          style: {
+            width: 200,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'wrap',
+          },
+        }),
         render: (value, record) => {
-          return <Link to={`/approve-routes/show/${record.id}`}>{value}</Link>
+          return (
+            <div title={value}>
+              <Link to={`/approve-routes/show/${record.id}`}>{value}</Link>
+            </div>
+          )
         },
       },
       {
         key: 'name',
         dataIndex: 'name',
         title: t('approve_routes.table.routeName'),
-        width: 300,
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (value) => {
+          return <span title={value}>{value}</span>
+        },
       },
       {
         key: 'departments',
         dataIndex: 'departments',
         title: t('approve_routes.table.department'),
-        width: 300,
+        ellipsis: true,
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (value) => {
-          return value?.map((item: any) => item?.name).join(', ')
+          const text = value?.map((item: any) => item?.name).join(', ')
+          return <span title={text}>{text}</span>
         },
       },
+
       {
         key: 'status',
         dataIndex: 'status',
