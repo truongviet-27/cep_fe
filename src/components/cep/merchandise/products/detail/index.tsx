@@ -31,12 +31,12 @@ const ProductDetailContainer: React.FC = () => {
             {
               title: (
                 <Link href="/products">
-                  {boldText(t('products.breadcrumb.home'), PRIMARY)}
+                  {boldText(t('products.breadcrumb.home'))}
                 </Link>
               ),
             },
             {
-              title: boldText(t('products.breadcrumb.productDetail')),
+              title: boldText(t('products.breadcrumb.productDetail'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}

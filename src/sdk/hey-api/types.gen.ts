@@ -2236,9 +2236,13 @@ export type QuotaAgreedPrice = {
    */
   number_updating?: number
   /**
-   * Expiration date of the agreed price
+   * Start time of the agreed price
    */
-  expiration_date?: string | null
+  valid_from?: string | null
+  /**
+   * End time of the agreed price
+   */
+  valid_to?: string | null
   created_by?: number | null
   updated_by?: number | null
   created_at?: string
@@ -2534,6 +2538,10 @@ export type QuotaResource = {
    */
   expiration_date?: string
   /**
+   * Specific expiration date for the quota
+   */
+  expired_date?: string
+  /**
    * Consumption tax type
    */
   consumption_tax?: string
@@ -2573,6 +2581,10 @@ export type QuotaResource = {
    * Flag indicating if the current user is author.
    */
   is_author?: boolean
+  /**
+   * Flag indicating if the current user has the route to approve the quota.
+   */
+  has_approval_route?: boolean
   /**
    * Quota tags
    */
@@ -2839,6 +2851,8 @@ export type SimpleQuota = {
   pdf_path?: string
   display?: boolean
   is_author?: boolean
+  has_approval_route?: boolean
+  has_agreed_price?: boolean
   author?: string | null
   /**
    * List of approver names
@@ -3302,6 +3316,18 @@ export type QuotaTemplateResource = {
    */
   total_price?: number | null
   /**
+   * Consumption tax amount
+   */
+  consumption_tax_amount?: number | null
+  /**
+   * Total profit margin
+   */
+  total_profit_margin?: number | null
+  /**
+   * Total price including tax
+   */
+  total_price_tax_included?: number | null
+  /**
    * Associated tags
    */
   tags?: Array<{
@@ -3670,6 +3696,18 @@ export type QuotaTemplateStoreRequest = {
    */
   total_price?: number
   /**
+   * Consumption tax amount
+   */
+  consumption_tax_amount?: number
+  /**
+   * Total profit margin
+   */
+  total_profit_margin?: number
+  /**
+   * Total price including tax
+   */
+  total_price_tax_included?: number
+  /**
    * Array of tag IDs
    */
   tags?: Array<number>
@@ -3719,6 +3757,18 @@ export type QuotaTemplateUpdateRequest = {
    * Total price amount
    */
   total_price?: number
+  /**
+   * Consumption tax amount
+   */
+  consumption_tax_amount?: number
+  /**
+   * Total profit margin
+   */
+  total_profit_margin?: number
+  /**
+   * Total price including tax
+   */
+  total_price_tax_included?: number
   /**
    * Array of tag IDs
    */
@@ -7636,6 +7686,10 @@ export type QuotaAgreedPriceControllerIndexData = {
      */
     created_by?: number
     /**
+     * Filter by tag name
+     */
+    tag_name?: string
+    /**
      * Filter by tag ID
      */
     tag_id?: number
@@ -7648,11 +7702,11 @@ export type QuotaAgreedPriceControllerIndexData = {
      */
     status?: 'all' | 'active' | 'expired' | 'about_to_expire'
     /**
-     * Filter by expiration date start (Y-m-d format)
+     * Filter by expiration date start (Y/m/d format)
      */
     expiration_date_gte?: string
     /**
-     * Filter by expiration date end (Y-m-d format)
+     * Filter by expiration date end (Y/m/d format)
      */
     expiration_date_lte?: string
   }
@@ -7699,9 +7753,13 @@ export type QuotaAgreedPriceControllerStoreData = {
      */
     quota_id: number
     /**
-     * Expiration date of the agreed price (Y-m-d H:i:s format)
+     * Start date of the agreed price (Y/m/d format)
      */
-    expiration_date?: string | null
+    valid_from?: string | null
+    /**
+     * End date of the agreed price (Y/m/d format)
+     */
+    valid_to?: string | null
   }
   path?: never
   query?: never
@@ -7920,7 +7978,11 @@ export type QuotaAgreedPriceControllerUpdateExpirationDateData = {
     /**
      * New expiration date (Y/m/d format)
      */
-    expiration_date: string
+    valid_from?: string
+    /**
+     * New expiration date (Y/m/d format)
+     */
+    valid_to?: string
   }
   path: {
     /**
@@ -8659,6 +8721,102 @@ export type QuotaControllerPreviewPdfResponses = {
 export type QuotaControllerPreviewPdfResponse =
   QuotaControllerPreviewPdfResponses[keyof QuotaControllerPreviewPdfResponses]
 
+export type QuotaControllerPreviewUpdatePdfData = {
+  body: QuotaUpdateRequest
+  path?: never
+  query?: never
+  url: '/api/v1/quotas/preview-pdf/{id}'
+}
+
+export type QuotaControllerPreviewUpdatePdfErrors = {
+  /**
+   * Invalid ID format or value
+   */
+  400: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Quota not found
+   */
+  404: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type QuotaControllerPreviewUpdatePdfError =
+  QuotaControllerPreviewUpdatePdfErrors[keyof QuotaControllerPreviewUpdatePdfErrors]
+
+export type QuotaControllerPreviewUpdatePdfResponses = {
+  /**
+   * PDF preview (base64)
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      pdf_base64?: string
+    }
+  }
+}
+
+export type QuotaControllerPreviewUpdatePdfResponse =
+  QuotaControllerPreviewUpdatePdfResponses[keyof QuotaControllerPreviewUpdatePdfResponses]
+
+export type QuotaControllerBackToSentToCustomerData = {
+  body: {
+    /**
+     * Array of quota IDs to revert
+     */
+    quota_ids: Array<number>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/quotas/back-to-send-customer'
+}
+
+export type QuotaControllerBackToSentToCustomerErrors = {
+  /**
+   * Invalid request data or unauthorized user
+   */
+  400: unknown
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type QuotaControllerBackToSentToCustomerResponses = {
+  /**
+   * Quotas reverted successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      processed?: number
+      failed?: number
+      results?: Array<{
+        [key: string]: unknown
+      }>
+      errors?: Array<{
+        [key: string]: unknown
+      }>
+    }
+  }
+}
+
+export type QuotaControllerBackToSentToCustomerResponse =
+  QuotaControllerBackToSentToCustomerResponses[keyof QuotaControllerBackToSentToCustomerResponses]
+
 export type QuotaFormSettingControllerShowData = {
   body?: never
   path?: never
@@ -8813,9 +8971,9 @@ export type QuotaTemplateControllerIndexData = {
      */
     name_lk?: string
     /**
-     * Filter by creator ID
+     * Filter by creator name
      */
-    creator?: number
+    creator?: string
     /**
      * Filter templates created from date (YYYY-MM-DD)
      */

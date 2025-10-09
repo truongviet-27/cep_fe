@@ -7,9 +7,13 @@ import type { FC } from 'react'
 
 interface Props {
   searchFormProps: FormProps<SearchQuotaTemplateType>
+  clearFilters: () => void
 }
 
-const QuotaTemplateFilterForm: FC<Props> = ({ searchFormProps }) => {
+const QuotaTemplateFilterForm: FC<Props> = ({
+  searchFormProps,
+  clearFilters,
+}) => {
   const t = useTranslate()
 
   return (
@@ -61,7 +65,12 @@ const QuotaTemplateFilterForm: FC<Props> = ({ searchFormProps }) => {
             <Button type="primary" htmlType="submit">
               {t('quota_templates.button.search')}
             </Button>
-            <Button color="primary" variant="outlined" htmlType="reset">
+            <Button
+              color="primary"
+              variant="outlined"
+              htmlType="reset"
+              onClick={clearFilters}
+            >
               {t('quota_templates.button.clear')}
             </Button>
           </Space>

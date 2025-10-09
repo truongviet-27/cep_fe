@@ -28,7 +28,7 @@ function ImportHistory() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('import_history.import_history', PRIMARY)),
+              title: boldText(t('import_history.import_history'), PRIMARY),
             },
           ]}
         />
