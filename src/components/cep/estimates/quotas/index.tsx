@@ -38,7 +38,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { PRIMARY } from '@utility/color'
+import { BLACK, PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
@@ -54,7 +54,6 @@ import {
   Space,
   Tag,
   Tooltip,
-  Typography,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { type TableRowSelection } from 'antd/es/table/interface'
@@ -63,8 +62,6 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { type MenuInfo } from 'rc-menu/lib/interface'
 import React, { useCallback, useMemo, useState } from 'react'
-
-const { Title } = Typography
 
 const { RangePicker } = DatePicker
 
@@ -435,7 +432,6 @@ function QuotaList() {
   })
 
   const statusData = [
-    { title: 'すべて', value: 0, key: null },
     { title: '作成中', value: 0, key: QuotaStatus.Creating },
     {
       title: '承認待',
@@ -453,6 +449,7 @@ function QuotaList() {
     { title: '差戻', value: 0, color: '#fa541c', key: QuotaStatus.Rejected }, // cam
     { title: '受注', value: 0, color: '#52c41a', key: QuotaStatus.Completed }, // xanh lá
     { title: '失注', value: 0, color: '#ff4d4f', key: QuotaStatus.Cancelled }, // đỏ
+    { title: 'すべて', value: 0, key: null },
   ]
 
   const statusDashboard = useMemo(() => {
@@ -606,14 +603,10 @@ function QuotaList() {
         <Breadcrumbs
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('estimates.estimates')}
-                </Title>
-              ),
+              title: boldText(t('estimates.estimates'), PRIMARY, 14),
             },
             {
-              title: <Title level={5}>{t('quotas.list')}</Title>,
+              title: boldText(t('quotas.list'), BLACK, 14),
             },
           ]}
           separator={<RightOutlined />}
@@ -825,7 +818,7 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="mt-7 flex justify-end gap-2">
+              <div className="flex justify-end gap-2">
                 <Button type="default">見積テンプレート一覧</Button>
                 <Button
                   type="primary"

@@ -1,5 +1,6 @@
 'use client'
 
+import { useGo } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Grid, Typography } from 'antd'
 import React, { useLayoutEffect } from 'react'
@@ -20,6 +21,8 @@ export const AppIcon: React.FC<AppIconProps> = ({
 }) => {
   const screens = useBreakpoint()
   const [text, setText] = React.useState<string>(fullText)
+
+  const go = useGo()
 
   function countFalse<T extends Record<string, boolean>>(obj: T): number {
     let n = 0
@@ -43,10 +46,16 @@ export const AppIcon: React.FC<AppIconProps> = ({
         display: 'flex',
         alignItems: 'center',
         margin: 0,
-        marginRight: 30,
+        marginRight: 20,
+        cursor: 'pointer',
       }}
       aria-label={fullText}
       title={fullText}
+      onClick={() => {
+        go({
+          to: '/',
+        })
+      }}
     >
       {text}
     </Title>
