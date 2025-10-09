@@ -52,14 +52,16 @@ function ImportCsv({
 
     if (!response?.data) return
 
+    const filename = `${name.toLowerCase()}_example.csv`
+
     const url = URL.createObjectURL(response.data)
     const downloadLink = document.createElement('a')
-    document.body.appendChild(downloadLink)
     downloadLink.href = url
-    downloadLink.target = '_self'
-    downloadLink.download = 'example'
+    downloadLink.download = filename
+    document.body.appendChild(downloadLink)
     downloadLink.click()
     document.body.removeChild(downloadLink)
+    URL.revokeObjectURL(url)
   }
 
   useEffect(() => {
