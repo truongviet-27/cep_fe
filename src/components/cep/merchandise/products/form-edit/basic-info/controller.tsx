@@ -21,6 +21,7 @@ export const useBasicInfoController = (
   addRef: MutableRefObject<
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >,
+  setIsAllowedSaveButton: (value: boolean) => void,
   ranks?: GetListResponse<Rank>,
 ) => {
   const apiUrl = useApiUrl()
@@ -123,7 +124,21 @@ export const useBasicInfoController = (
   )
 
   const handleAppendPackaging = async () => {
-    await form.validateFields()
+    try {
+      await form.validateFields([
+        'code',
+        'name',
+        'category',
+        'unit_id',
+        'cost_price',
+        'selling_price',
+      ])
+      setIsAllowedSaveButton(true)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
+      return
+    }
+
     const packagings: ProductPackagingInput[] = (getFieldValue('packagings') ??
       []) as ProductPackagingInput[]
 

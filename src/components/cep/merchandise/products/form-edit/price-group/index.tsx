@@ -46,7 +46,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               <Form.Item
                 name={[index, 'rank_' + rank.id]}
                 hidden={isRateBased}
-                className="!mb-0"
+                className="ant-form-item-hidden-margin"
                 required
                 rules={[{ required: true, message: t('validation.required') }]}
               >
@@ -79,13 +79,12 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.fields.packagingCode'),
               dataIndex: 'code',
               key: 'code',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
                     shouldUpdate
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     {() => getFieldValue(['packagings', index, 'code'])}
                   </Form.Item>
@@ -96,13 +95,12 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.fields.packagingName'),
               dataIndex: 'name',
               key: 'name',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
                     shouldUpdate
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     {() => getFieldValue(['packagings', index, 'name'])}
                   </Form.Item>
@@ -113,13 +111,12 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.unitPriceGroup.sellingPrice'),
               dataIndex: 'selling_price',
               key: 'selling_price',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
                     shouldUpdate
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     {() =>
                       getFieldValue(['packagings', index, 'selling_price'])
@@ -132,12 +129,11 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.unitPriceGroup.settingMethod'),
               dataIndex: 'is_rate_based',
               key: 'is_rate_based',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => (
                 <Form.Item
                   name={[index, 'is_rate_based']}
-                  style={{
-                    marginBottom: 0,
-                  }}
+                  className="ant-form-item-hidden-margin"
                 >
                   <Radio.Group
                     options={[
@@ -171,7 +167,16 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                         ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
                         : ''
                     }}
-                    scroll={{ y: 55 * 5 }}
+                    scroll={
+                      fields.length ? { y: 55 * 5, x: 1500 } : { x: 1000 }
+                    }
+                    locale={{
+                      emptyText: (
+                        <div className="text-center text-gray-300">
+                          データがありません。
+                        </div>
+                      ),
+                    }}
                   />
                 )
               }}

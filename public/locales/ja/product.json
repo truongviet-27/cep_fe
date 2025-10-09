@@ -69,7 +69,7 @@
       "clearButton": "クリア"
     },
     "actions": {
-      "createNewButton": "新規作成",
+      "createNewButton": "新規登録",
       "csvBulkUploadLink": "CSV一括登録"
     },
     "table": {
