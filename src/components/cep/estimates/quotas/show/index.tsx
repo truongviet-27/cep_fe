@@ -22,7 +22,8 @@ import {
   useParsed,
   useTranslate,
 } from '@refinedev/core'
-import { PRIMARY, WHITE } from '@utility/color'
+import boldText from '@utility/bold-text'
+import { BLACK, PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -32,12 +33,9 @@ import {
   Modal,
   Space,
   Spin,
-  Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
-
-const { Title } = Typography
 
 function QuotaDetail() {
   const t = useTranslate()
@@ -147,19 +145,10 @@ function QuotaDetail() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title
-                  level={5}
-                  style={{
-                    color: PRIMARY,
-                  }}
-                >
-                  {t('estimates.estimates')}
-                </Title>
-              ),
+              title: boldText(t('estimates.estimates'), PRIMARY),
             },
             {
-              title: <Title level={5}>{t('quotas.detail')}</Title>,
+              title: boldText(t('quotas.detail'), BLACK),
             },
           ]}
           separator={<RightOutlined />}
@@ -167,7 +156,7 @@ function QuotaDetail() {
       }
       title={
         <div className="flex justify-between">
-          {/* <span className="size-[18px]">{t('quotas.detail')}</span> */}
+          {t('quotas.detail')}
           <Button
             color="primary"
             variant="outlined"
@@ -188,9 +177,6 @@ function QuotaDetail() {
           layout="horizontal"
           colon={false}
           autoComplete="off"
-          style={{
-            marginTop: 30,
-          }}
           form={formProps.form}
         >
           <BasicInfo data={queryBasic?.data} />

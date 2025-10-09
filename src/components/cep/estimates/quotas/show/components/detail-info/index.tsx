@@ -2,7 +2,7 @@
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Card, Checkbox, Col, Flex, Form, Row, Typography } from 'antd'
+import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 
@@ -29,16 +29,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       render: (_, record) => {
         if (record.isHeader) {
           return {
-            children: (
-              <Form.Item
-                name={[record.index, 'group_name']}
-                style={{
-                  marginBottom: 0,
-                }}
-              >
-                {record.title}
-              </Form.Item>
-            ),
+            children: record.title,
             props: { colSpan: columns.length },
           }
         }
@@ -54,15 +45,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
           return { props: { colSpan: 0 } }
         }
 
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record.name}
-          </Form.Item>
-        )
+        return record.name
       },
     },
     {
@@ -73,15 +56,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.unit_name}
-          </Form.Item>
-        )
+        return record?.unit_name
       },
     },
     {
@@ -93,15 +68,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.package_name}
-          </Form.Item>
-        )
+        return record?.package_name
       },
     },
     {
@@ -112,15 +79,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.cost_price}
-          </Form.Item>
-        )
+        return record?.cost_price
       },
     },
     {
@@ -131,15 +90,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.selling_price}
-          </Form.Item>
-        )
+        return record?.selling_price
       },
     },
     {
@@ -150,15 +101,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.quantity}
-          </Form.Item>
-        )
+        return record?.quantity
       },
     },
     {
@@ -169,15 +112,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.profit_margin}%
-          </Form.Item>
-        )
+        return `${record?.profit_margin}%`
       },
     },
     {
@@ -189,19 +124,13 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
           return { props: { colSpan: 0 } }
         }
         return (
-          <Form.Item
+          <Checkbox
             style={{
+              transform: 'scale(1.3)',
               marginBottom: 0,
             }}
-          >
-            <Checkbox
-              style={{
-                transform: 'scale(1.3)',
-                marginBottom: 0,
-              }}
-              checked={record.is_add_total}
-            />
-          </Form.Item>
+            checked={record.is_add_total}
+          />
         )
       },
     },
@@ -213,15 +142,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {(record?.selling_price || 0) * (record?.quantity || 1)}
-          </Form.Item>
-        )
+        return (record?.selling_price || 0) * (record?.quantity || 1)
       },
     },
   ]
@@ -282,100 +203,102 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
           }}
         />
 
-        <Row gutter={[16, 16]} style={{ marginTop: 20, marginBottom: 40 }}>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
+        <Card bordered={false}>
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <div
                 style={{
-                  fontWeight: 700,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 12px',
+                  border: '1px solid #f0f0f0',
+                  borderRadius: 6,
+                  background: '#F8F9FA',
                 }}
               >
-                原価合計
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{basicInfo?.total_cost}
-              </Text>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
+                <Text
+                  style={{
+                    fontWeight: 700,
+                  }}
+                >
+                  原価合計
+                </Text>
+                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                  ¥{basicInfo?.total_cost}
+                </Text>
+              </div>
+            </Col>
+            <Col span={12}>
+              <div
                 style={{
-                  fontWeight: 700,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 12px',
+                  border: '1px solid #f0f0f0',
+                  borderRadius: 6,
+                  background: '#F8F9FA',
                 }}
               >
-                消費税金額（{basicInfo?.tax_rate}%）
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{basicInfo?.consumption_tax_amount}
-              </Text>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
+                <Text
+                  style={{
+                    fontWeight: 700,
+                  }}
+                >
+                  消費税金額（{basicInfo?.tax_rate}%）
+                </Text>
+                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                  ¥{basicInfo?.consumption_tax_amount}
+                </Text>
+              </div>
+            </Col>
+            <Col span={12}>
+              <div
                 style={{
-                  fontWeight: 700,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 12px',
+                  border: '1px solid #f0f0f0',
+                  borderRadius: 6,
+                  background: '#F8F9FA',
                 }}
               >
-                合計利益率
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {basicInfo?.total_profit_margin}%
-              </Text>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
+                <Text
+                  style={{
+                    fontWeight: 700,
+                  }}
+                >
+                  合計利益率
+                </Text>
+                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                  {basicInfo?.total_profit_margin}%
+                </Text>
+              </div>
+            </Col>
+            <Col span={12}>
+              <div
                 style={{
-                  fontWeight: 700,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 12px',
+                  border: '1px solid #f0f0f0',
+                  borderRadius: 6,
+                  background: '#F8F9FA',
                 }}
               >
-                合計金額（税込）
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{basicInfo?.total_price_tax_included}
-              </Text>
-            </div>
-          </Col>
-        </Row>
+                <Text
+                  style={{
+                    fontWeight: 700,
+                  }}
+                >
+                  合計金額（税込）
+                </Text>
+                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                  ¥{basicInfo?.total_price_tax_included}
+                </Text>
+              </div>
+            </Col>
+          </Row>
+        </Card>
       </Flex>
     </Card>
   )

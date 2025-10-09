@@ -211,6 +211,7 @@ function DetailInfo() {
                         style={{
                           marginBottom: 0,
                         }}
+                        className="ant-form-item-hidden-margin"
                         rules={[
                           {
                             required: true,
@@ -260,15 +261,13 @@ function DetailInfo() {
 
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'product_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     rules={[
                       {
                         required: true,
@@ -408,15 +407,13 @@ function DetailInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'package_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                   >
                     <CoreAutoComplete
                       filterPath1={[
@@ -432,28 +429,6 @@ function DetailInfo() {
                       resource={`products`}
                       style={{ width: 200 }}
                       parent="main_product"
-                      // onChange={() => {
-                      //   // form.setFieldValue(
-                      //   //   [
-                      //   //     'main_product',
-                      //   //     record.index,
-                      //   //     'products',
-                      //   //     record.index2,
-                      //   //     'cost_price',
-                      //   //   ],
-                      //   //   item?.cost_price,
-                      //   // )
-                      //   // form.setFieldValue(
-                      //   //   [
-                      //   //     'main_product',
-                      //   //     record.index,
-                      //   //     'products',
-                      //   //     record.index2,
-                      //   //     'selling_price',
-                      //   //   ],
-                      //   //   item?.sale_price,
-                      //   // )
-                      // }}
                     />
                   </Form.Item>
                 )
@@ -486,15 +461,13 @@ function DetailInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'selling_price',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     rules={[
                       {
                         required: true,
@@ -517,10 +490,8 @@ function DetailInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     rules={[
                       {
                         required: true,
@@ -622,10 +593,8 @@ function DetailInfo() {
                       record.index2,
                       'is_add_total',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     valuePropName="checked"
+                    className="ant-form-item-hidden-margin"
                   >
                     <Checkbox
                       style={{

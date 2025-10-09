@@ -13,7 +13,8 @@ import {
 } from '@refinedev/antd'
 import type { BaseRecord, CrudFilters } from '@refinedev/core'
 import { Link, useGo, useTranslate } from '@refinedev/core'
-import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
+import boldText from '@utility/bold-text'
+import { BLACK, GREEN, GREY_TAG, PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Breadcrumb,
@@ -25,13 +26,10 @@ import {
   Select,
   Space,
   Tag,
-  Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
-
-const { Title } = Typography
 
 function Approve() {
   const t = useTranslate()
@@ -161,14 +159,10 @@ function Approve() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.parent')}
-                </Title>
-              ),
+              title: boldText(t('approve_routes.parent'), PRIMARY),
             },
             {
-              title: <Title level={5}>{t('approve_routes.list')}</Title>,
+              title: boldText(t('approve_routes.list'), BLACK),
             },
           ]}
           separator={<RightOutlined />}

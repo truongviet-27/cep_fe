@@ -27,7 +27,7 @@ export default function AutoHeading({ i18n, ...props }: AutoHeadingProps) {
     slugs.length <= 2 ? `${slug}.${slug}` : `${slug}.${last(slugs)}`
 
   return (
-    <h1 style={{ color: PRIMARY, fontWeight: 700, fontSize: 16 }} {...props}>
+    <h1 style={{ color: PRIMARY, fontWeight: 700, fontSize: 18 }} {...props}>
       {t(i18n ?? defaultKey)}
     </h1>
   )

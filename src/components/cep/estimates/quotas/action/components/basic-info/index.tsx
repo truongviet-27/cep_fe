@@ -90,7 +90,7 @@ const BasicInfo = () => {
 
   return (
     <Card
-      title={boldText('基本情報', PRIMARY, 18)}
+      title={boldText('基本情報', PRIMARY, 16)}
       style={{
         border: 'none',
       }}

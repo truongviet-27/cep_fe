@@ -1,15 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useSelect } from '@refinedev/antd'
-import {
-  useApiUrl,
-  useCustom,
-  useList,
-  useShow,
-  useTranslate,
-} from '@refinedev/core'
+import { useApiUrl, useCustom, useShow, useTranslate } from '@refinedev/core'
 import type { ProductDetail } from '@sdk/hey-api'
-import { AutoComplete, Form, Select } from 'antd'
+import { Form, Select } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { useEffect, useState } from 'react'
 
@@ -105,7 +98,7 @@ function CoreAutoComplete({
     } else {
       form.setFieldValue(
         [parent, index, 'products', index2, 'selling_price'],
-        data?.data?.selling_price * 1,
+        (data?.data?.selling_price ?? 0) * 1,
       )
     }
   }, [data, customer])
