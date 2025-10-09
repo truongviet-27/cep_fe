@@ -1,24 +1,19 @@
 /* eslint-disable */
 'use client'
 
-import { RightOutlined } from '@ant-design/icons'
+import { EditOutlined, RightOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import {
-  BooleanField,
-  EditButton,
-  useModalForm,
-  useTable,
-} from '@refinedev/antd'
+import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
 import { BaseRecord, useResource } from '@refinedev/core'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { DARK_RED, GREY, PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
-import { Modal, Table, Tag, Typography } from 'antd'
+import { Button, Modal, Table, Tag, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import type { SegmentedValue } from 'rc-segmented'
 
@@ -146,12 +141,12 @@ export default function Page() {
           title={t('table.actions')}
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
-            <EditButton
+            <Button
               size={'small'}
               onClick={() => {
                 show(record.id)
               }}
-              hideText
+              icon={<EditOutlined />}
             />
           )}
         />
