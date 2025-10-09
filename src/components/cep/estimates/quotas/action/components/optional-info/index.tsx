@@ -129,6 +129,7 @@ function OptionalInfo() {
                   return {
                     children: (
                       <Form.Item
+                        className="ant-form-item-hidden-margin"
                         name={[record.index, 'group_name']}
                         style={{
                           marginBottom: 0,
@@ -181,15 +182,19 @@ function OptionalInfo() {
 
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'product_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
                     <Select
                       {...selectPropsProduct}
@@ -322,15 +327,13 @@ function OptionalInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'package_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                   >
                     <CoreAutoComplete
                       filterPath1={[
@@ -378,15 +381,13 @@ function OptionalInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'selling_price',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     rules={[
                       {
                         required: true,
@@ -409,10 +410,8 @@ function OptionalInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     rules={[
                       {
                         required: true,

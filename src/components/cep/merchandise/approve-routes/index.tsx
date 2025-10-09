@@ -13,7 +13,8 @@ import {
 } from '@refinedev/antd'
 import type { BaseRecord, CrudFilters } from '@refinedev/core'
 import { Link, useGo, useTranslate } from '@refinedev/core'
-import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
+import boldText from '@utility/bold-text'
+import { BLACK, GREEN, GREY_TAG, PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Breadcrumb,
@@ -25,13 +26,10 @@ import {
   Select,
   Space,
   Tag,
-  Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
-
-const { Title } = Typography
 
 function Approve() {
   const t = useTranslate()
@@ -86,25 +84,57 @@ function Approve() {
         key: 'code',
         dataIndex: 'code',
         title: t('approve_routes.table.routeCode'),
+        onCell: () => ({
+          style: {
+            width: 200,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'wrap',
+          },
+        }),
         render: (value, record) => {
-          return <Link to={`/approve-routes/show/${record.id}`}>{value}</Link>
+          return (
+            <div title={value}>
+              <Link to={`/approve-routes/show/${record.id}`}>{value}</Link>
+            </div>
+          )
         },
       },
       {
         key: 'name',
         dataIndex: 'name',
         title: t('approve_routes.table.routeName'),
-        width: 300,
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (value) => {
+          return <span title={value}>{value}</span>
+        },
       },
       {
         key: 'departments',
         dataIndex: 'departments',
         title: t('approve_routes.table.department'),
-        width: 300,
+        ellipsis: true,
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (value) => {
-          return value?.map((item: any) => item?.name).join(', ')
+          const text = value?.map((item: any) => item?.name).join(', ')
+          return <span title={text}>{text}</span>
         },
       },
+
       {
         key: 'status',
         dataIndex: 'status',
@@ -161,14 +191,10 @@ function Approve() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.parent')}
-                </Title>
-              ),
+              title: boldText(t('approve_routes.parent'), PRIMARY),
             },
             {
-              title: <Title level={5}>{t('approve_routes.list')}</Title>,
+              title: boldText(t('approve_routes.list'), BLACK),
             },
           ]}
           separator={<RightOutlined />}

@@ -6,7 +6,7 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton, useForm } from '@refinedev/antd'
 import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { PRIMARY, WHITE } from '@utility/color'
+import { BLACK, PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -80,14 +80,10 @@ function ApproveDetail() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.parent')}
-                </Title>
-              ),
+              title: boldText(t('approve_routes.parent'), PRIMARY),
             },
             {
-              title: <Title level={5}> {t('approve_routes.detail')}</Title>,
+              title: boldText(t('approve_routes.detail'), BLACK),
             },
           ]}
           separator={<RightOutlined />}

@@ -2,7 +2,7 @@
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Card, Flex, Form } from 'antd'
+import { Card, Flex } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 
 function OptionalInfo({ data }: { data: any }) {
@@ -26,16 +26,7 @@ function OptionalInfo({ data }: { data: any }) {
       render: (_, record) => {
         if (record.isHeader) {
           return {
-            children: (
-              <Form.Item
-                name={[record.index, 'group_name']}
-                style={{
-                  marginBottom: 0,
-                }}
-              >
-                {record.title}
-              </Form.Item>
-            ),
+            children: record.title,
             props: { colSpan: columns.length },
           }
         }
@@ -51,15 +42,7 @@ function OptionalInfo({ data }: { data: any }) {
           return { props: { colSpan: 0 } }
         }
 
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record.name}
-          </Form.Item>
-        )
+        return record.name
       },
     },
     {
@@ -70,15 +53,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.unit_name}
-          </Form.Item>
-        )
+        return record?.unit_name
       },
     },
     {
@@ -90,15 +65,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.package_name}
-          </Form.Item>
-        )
+        return record?.package_name
       },
     },
     {
@@ -109,15 +76,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.cost_price}
-          </Form.Item>
-        )
+        return record?.cost_price
       },
     },
     {
@@ -128,15 +87,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.selling_price}
-          </Form.Item>
-        )
+        return record?.selling_price
       },
     },
     {
@@ -147,15 +98,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.quantity}
-          </Form.Item>
-        )
+        return record?.quantity
       },
     },
     {
@@ -166,15 +109,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {record?.profit_margin}%
-          </Form.Item>
-        )
+        return `${record?.profit_margin}%`
       },
     },
     {
@@ -185,15 +120,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            {(record?.selling_price || 0) * (record?.quantity || 1)}
-          </Form.Item>
-        )
+        return (record?.selling_price || 0) * (record?.quantity || 1)
       },
     },
   ]
