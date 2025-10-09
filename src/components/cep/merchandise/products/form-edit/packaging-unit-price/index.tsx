@@ -73,7 +73,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   rules={[
                     { required: true, message: t('validation.required') },
                   ]}
-                  className="!mb-0"
+                  className="ant-form-item-hidden-margin"
+                  style={{ marginBottom: '0px !important' }}
                 >
                   <Input />
                 </Form.Item>
@@ -85,7 +86,10 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               width: 15,
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
-                <CoreInput name={[index, 'barcode']} />
+                <CoreInput
+                  name={[index, 'barcode']}
+                  styleForm={{ marginBottom: '0px !important' }}
+                />
               ),
             },
             {
@@ -100,7 +104,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   rules={[
                     { required: true, message: t('validation.required') },
                   ]}
-                  className="!mb-0"
+                  className="ant-form-item-hidden-margin"
+                  style={{ marginBottom: '0px !important' }}
                 >
                   <InputNumber
                     min={1}
@@ -169,7 +174,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
-                    className="!mb-0"
+                    className="ant-form-item-hidden-margin"
                     name={[index, 'selling_price']}
                     required
                     rules={[
@@ -196,7 +201,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     name={[index, 'is_standard_price']}
                     valuePropName="checked"
                     noStyle
-                    className="!mb-0"
+                    className="ant-form-item-hidden-margin"
+                    style={{ marginBottom: '0px !important' }}
                   >
                     <Checkbox
                       className="!mt-1"

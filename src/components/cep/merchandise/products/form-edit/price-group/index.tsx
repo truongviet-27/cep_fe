@@ -46,7 +46,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               <Form.Item
                 name={[index, 'rank_' + rank.id]}
                 hidden={isRateBased}
-                className="!mb-0"
+                className="ant-form-item-hidden-margin"
                 required
                 rules={[{ required: true, message: t('validation.required') }]}
               >
@@ -84,9 +84,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                 return (
                   <Form.Item
                     shouldUpdate
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     {() => getFieldValue(['packagings', index, 'code'])}
                   </Form.Item>
@@ -102,9 +100,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                 return (
                   <Form.Item
                     shouldUpdate
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     {() => getFieldValue(['packagings', index, 'name'])}
                   </Form.Item>
@@ -120,9 +116,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                 return (
                   <Form.Item
                     shouldUpdate
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     {() =>
                       getFieldValue(['packagings', index, 'selling_price'])
@@ -139,9 +133,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               render: (_: unknown, __: unknown, index: number) => (
                 <Form.Item
                   name={[index, 'is_rate_based']}
-                  style={{
-                    marginBottom: 0,
-                  }}
+                  className="ant-form-item-hidden-margin"
                 >
                   <Radio.Group
                     options={[
