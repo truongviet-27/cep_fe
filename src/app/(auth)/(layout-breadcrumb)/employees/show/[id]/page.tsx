@@ -9,6 +9,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import { EditButton, useSelect } from '@refinedev/antd'
 import { useResource, useShow, useTranslate } from '@refinedev/core'
 import type { Employee } from '@sdk/hey-api'
+import boldText from '@utility/bold-text'
 import { DARK_RED, GREY, PRIMARY, WARNING } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Space, Tag, Typography } from 'antd'
@@ -58,13 +59,9 @@ export default function EmployeeShow() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>{t('employees.show.show')}</Title> },
+    { title: boldText(t('employees.show.show'), PRIMARY) },
   ]
 
   return (

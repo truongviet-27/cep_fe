@@ -14,12 +14,13 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 interface DepartmentPayload {
   code: string
@@ -93,13 +94,11 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('departments.departments')}
-        </Title>
-      ),
+      title: boldText(t('departments.departments')),
     },
-    { title: <Title level={5}>{t('departments.create.create')}</Title> },
+    {
+      title: boldText(t('departments.create.create'), PRIMARY),
+    },
   ]
 
   return (

@@ -43,7 +43,7 @@ const AgreedPriceQuotaTab = () => {
   const apiUrl = useApiUrl()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
-  const [status, setStatus] = useState<string | null>(null)
+  const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -308,11 +308,6 @@ const AgreedPriceQuotaTab = () => {
 
     return [
       {
-        title: t('agreed_prices.summary.all'),
-        value: c?.total ?? 0,
-        key: null as string | null,
-      },
-      {
         title: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).text,
         value: get('active'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).color,
@@ -331,6 +326,11 @@ const AgreedPriceQuotaTab = () => {
         value: get('expired'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Expired, t).color,
         key: 'expired',
+      },
+      {
+        title: t('agreed_prices.summary.all'),
+        value: c?.total ?? 0,
+        key: null as string | null,
       },
     ]
   }, [count, t])
@@ -471,7 +471,7 @@ const AgreedPriceQuotaTab = () => {
                 type="default"
                 onClick={() => {
                   setFilters([], 'replace')
-                  setStatus(null)
+                  setStatus(AgreedPriceStatus.Active)
                 }}
               >
                 {t('agreed_prices.action.clear')}

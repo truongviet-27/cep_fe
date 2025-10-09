@@ -33,7 +33,7 @@ import {
   Typography,
 } from 'antd'
 import { includes } from 'lodash'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const { Title } = Typography
 
@@ -118,14 +118,10 @@ function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('price_groups.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('price_groups.business_partner')),
     },
     {
-      title: <Title level={5}>{t('price_groups.list.list')}</Title>,
+      title: boldText(t('price_groups.list.list'), PRIMARY),
     },
   ]
 

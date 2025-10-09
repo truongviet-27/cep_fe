@@ -3,10 +3,10 @@ import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
 import PageContainer from '@components/common/page-container'
 import { EditButton } from '@refinedev/antd'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Form, Popconfirm } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import Title from 'antd/es/typography/Title'
 
 function MailTemplate() {
   const [
@@ -32,16 +32,10 @@ function MailTemplate() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('system_config.system_config')}
-                </Title>
-              ),
+              title: boldText(t('system_config.system_config')),
             },
             {
-              title: (
-                <Title level={5}>{t('mail_templates.mail_templates')}</Title>
-              ),
+              title: boldText(t('mail_templates.mail_templates'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}

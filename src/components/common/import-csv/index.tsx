@@ -6,6 +6,7 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 import { useForm } from '@refinedev/antd'
 import {
   Link,
@@ -13,15 +14,14 @@ import {
   useCustomMutation,
   useTranslate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { cn } from '@utility/cn'
-import { BLACK, GREY } from '@utility/color'
+import { BLACK, GREY, PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Card, Form, List, Space, Typography } from 'antd'
 import Dragger from 'antd/es/upload/Dragger'
-import Title from 'antd/lib/typography/Title'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
-import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 
 const { Text, Paragraph } = Typography
 
@@ -117,7 +117,7 @@ function ImportCsv({
         <Breadcrumb
           items={[
             {
-              title: <Title level={5}>{t('csv.title')}</Title>,
+              title: boldText(t('csv.title'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
