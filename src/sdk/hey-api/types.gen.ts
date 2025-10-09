@@ -2236,9 +2236,13 @@ export type QuotaAgreedPrice = {
    */
   number_updating?: number
   /**
-   * Expiration date of the agreed price
+   * Start time of the agreed price
    */
-  expiration_date?: string | null
+  valid_from?: string | null
+  /**
+   * End time of the agreed price
+   */
+  valid_to?: string | null
   created_by?: number | null
   updated_by?: number | null
   created_at?: string
@@ -2533,6 +2537,10 @@ export type QuotaResource = {
    * Expiration date
    */
   expiration_date?: string
+  /**
+   * Specific expiration date for the quota
+   */
+  expired_date?: string
   /**
    * Consumption tax type
    */
@@ -7970,7 +7978,11 @@ export type QuotaAgreedPriceControllerUpdateExpirationDateData = {
     /**
      * New expiration date (Y/m/d format)
      */
-    expiration_date: string
+    valid_from?: string
+    /**
+     * New expiration date (Y/m/d format)
+     */
+    valid_to?: string
   }
   path: {
     /**
@@ -8126,7 +8138,7 @@ export type QuotaControllerIndexData = {
      */
     search_date_type?:
       | 'created_at'
-      | 'expiration_date'
+      | 'expired_date'
       | 'sent_to_customer_date'
       | 'customer_accepted_date'
       | 'customer_cancelled_date'
@@ -8708,6 +8720,56 @@ export type QuotaControllerPreviewPdfResponses = {
 
 export type QuotaControllerPreviewPdfResponse =
   QuotaControllerPreviewPdfResponses[keyof QuotaControllerPreviewPdfResponses]
+
+export type QuotaControllerPreviewUpdatePdfData = {
+  body: QuotaUpdateRequest
+  path?: never
+  query?: never
+  url: '/api/v1/quotas/preview-pdf/{id}'
+}
+
+export type QuotaControllerPreviewUpdatePdfErrors = {
+  /**
+   * Invalid ID format or value
+   */
+  400: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Quota not found
+   */
+  404: {
+    success?: boolean
+    message?: string
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type QuotaControllerPreviewUpdatePdfError =
+  QuotaControllerPreviewUpdatePdfErrors[keyof QuotaControllerPreviewUpdatePdfErrors]
+
+export type QuotaControllerPreviewUpdatePdfResponses = {
+  /**
+   * PDF preview (base64)
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      pdf_base64?: string
+    }
+  }
+}
+
+export type QuotaControllerPreviewUpdatePdfResponse =
+  QuotaControllerPreviewUpdatePdfResponses[keyof QuotaControllerPreviewUpdatePdfResponses]
 
 export type QuotaControllerBackToSentToCustomerData = {
   body: {

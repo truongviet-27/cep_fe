@@ -1480,7 +1480,8 @@ export const zQuotaAgreedPrice = z.object({
   total_price: z.optional(z.number()),
   customer_id: z.optional(z.int()),
   number_updating: z.optional(z.int()),
-  expiration_date: z.optional(z.union([z.iso.datetime(), z.null()])),
+  valid_from: z.optional(z.union([z.iso.datetime(), z.null()])),
+  valid_to: z.optional(z.union([z.iso.datetime(), z.null()])),
   created_by: z.optional(z.union([z.int(), z.null()])),
   updated_by: z.optional(z.union([z.int(), z.null()])),
   created_at: z.optional(z.iso.datetime()),
@@ -1629,6 +1630,7 @@ export const zQuotaResource = z.object({
   delivery_method: z.optional(z.string()),
   payment_due_date: z.optional(z.string()),
   expiration_date: z.optional(z.string()),
+  expired_date: z.optional(z.iso.date()),
   consumption_tax: z.optional(z.string()),
   pdf_path: z.optional(z.string()),
   tax_rate: z.optional(z.int()),
@@ -4102,7 +4104,8 @@ export const zQuotaAgreedPriceControllerGetCustomerProductsResponse =
 
 export const zQuotaAgreedPriceControllerUpdateExpirationDateData = z.object({
   body: z.object({
-    expiration_date: z.iso.date(),
+    valid_from: z.optional(z.iso.date()),
+    valid_to: z.optional(z.iso.date()),
   }),
   path: z.object({
     id: z.int().gte(1),
@@ -4169,7 +4172,7 @@ export const zQuotaControllerIndexData = z.object({
       search_date_type: z.optional(
         z.enum([
           'created_at',
-          'expiration_date',
+          'expired_date',
           'sent_to_customer_date',
           'customer_accepted_date',
           'customer_cancelled_date',
@@ -4472,6 +4475,25 @@ export const zQuotaControllerPreviewPdfData = z.object({
  * PDF preview (base64)
  */
 export const zQuotaControllerPreviewPdfResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      pdf_base64: z.optional(z.string()),
+    }),
+  ),
+})
+
+export const zQuotaControllerPreviewUpdatePdfData = z.object({
+  body: zQuotaUpdateRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * PDF preview (base64)
+ */
+export const zQuotaControllerPreviewUpdatePdfResponse = z.object({
   success: z.optional(z.boolean()),
   message: z.optional(z.string()),
   data: z.optional(

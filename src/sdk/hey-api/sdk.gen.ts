@@ -276,6 +276,9 @@ import type {
   QuotaControllerPreviewPdfData,
   QuotaControllerPreviewPdfResponses,
   QuotaControllerPreviewPdfErrors,
+  QuotaControllerPreviewUpdatePdfData,
+  QuotaControllerPreviewUpdatePdfResponses,
+  QuotaControllerPreviewUpdatePdfErrors,
   QuotaControllerBackToSentToCustomerData,
   QuotaControllerBackToSentToCustomerResponses,
   QuotaControllerBackToSentToCustomerErrors,
@@ -440,6 +443,7 @@ import {
   zQuotaControllerCancelQuotaData,
   zQuotaControllerSendToApproverData,
   zQuotaControllerPreviewPdfData,
+  zQuotaControllerPreviewUpdatePdfData,
   zQuotaControllerBackToSentToCustomerData,
   zQuotaFormSettingControllerShowData,
   zF44B13Bc4971Acac4481E0A6B882787Data,
@@ -3156,8 +3160,8 @@ export const quotaControllerSendToApprover = <
 }
 
 /**
- * Preview quota PDF
- * Preview quota PDF as base64 string. Useful for displaying PDF in browser or download.
+ * Preview CREATE quota PDF
+ * Preview CREATE quota PDF as base64 string. Useful for displaying PDF in browser or download.
  */
 export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
   options: Options<QuotaControllerPreviewPdfData, ThrowOnError>,
@@ -3177,6 +3181,38 @@ export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/api/v1/quotas/preview-pdf',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Preview UPDATE update quota PDF
+ * Preview UPDATE quota PDF as base64 string. Useful for displaying PDF in browser or download.
+ */
+export const quotaControllerPreviewUpdatePdf = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerPreviewUpdatePdfData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerPreviewUpdatePdfResponses,
+    QuotaControllerPreviewUpdatePdfErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerPreviewUpdatePdfData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/preview-pdf/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
