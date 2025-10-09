@@ -256,7 +256,7 @@ function Approve() {
               justifyContent: 'space-between',
             }}
           >
-            <Space className="mt-[3px]">
+            <Space className="mt-4">
               <Button htmlType="submit" type="primary">
                 {t('buttons.search')}
               </Button>

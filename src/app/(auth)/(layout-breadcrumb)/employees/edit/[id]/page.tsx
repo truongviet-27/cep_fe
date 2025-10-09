@@ -92,13 +92,9 @@ export default function EmployeeEdit() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>社員編集</Title> },
+    { title: boldText('社員編集', PRIMARY) },
   ]
 
   return (
