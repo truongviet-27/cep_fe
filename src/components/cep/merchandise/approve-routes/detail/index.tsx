@@ -3,7 +3,8 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton, useForm } from '@refinedev/antd'
+import { Edit } from '@components/crud/edit'
+import { DeleteButton, EditButton, useForm } from '@refinedev/antd'
 import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { BLACK, PRIMARY, WHITE } from '@utility/color'
@@ -328,8 +329,9 @@ function ApproveDetail() {
                 {t('buttons.back')}
               </Button>
 
-              <Button
+              <EditButton
                 type="primary"
+                icon={null}
                 onClick={() => {
                   go({
                     to: `/approve-routes/edit/${params?.id}`,
@@ -337,7 +339,7 @@ function ApproveDetail() {
                 }}
               >
                 {t('buttons.edit')}
-              </Button>
+              </EditButton>
             </Space>
           </Flex>
         </Form>
