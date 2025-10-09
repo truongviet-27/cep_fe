@@ -1,6 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { RightOutlined } from '@ant-design/icons'
 import DetailInfo from '@components/cep/estimates/quotas/action/components/detail-info'
 import History from '@components/cep/estimates/quotas/action/components/history'
 import Note from '@components/cep/estimates/quotas/action/components/note'
@@ -24,6 +25,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import { type QuotaFormSettingResponse } from '@sdk/hey-api'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -36,14 +38,10 @@ import {
   Row,
   Space,
   Spin,
-  Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
-import { RightOutlined } from '@ant-design/icons'
-
-const { Title } = Typography
 
 function QuotaAction() {
   const t = useTranslate()
@@ -366,18 +364,10 @@ function QuotaAction() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('estimates.estimates')}
-                </Title>
-              ),
+              title: boldText(t('estimates.estimates'), PRIMARY),
             },
             {
-              title: (
-                <Title level={5}>
-                  {isUpdate ? t('quotas.edit') : t('quotas.create')}
-                </Title>
-              ),
+              title: boldText(isUpdate ? t('quotas.edit') : t('quotas.create')),
             },
           ]}
           separator={<RightOutlined />}
@@ -385,7 +375,7 @@ function QuotaAction() {
       }
       title={
         <div className="flex justify-between">
-          <span>{isUpdate ? t('quotas.edit') : t('quotas.create')}</span>
+          {isUpdate ? t('quotas.edit') : t('quotas.create')}
           <Button
             color="primary"
             variant="outlined"
@@ -412,7 +402,7 @@ function QuotaAction() {
         <Form
           form={formProps2}
           onFinish={onFinish}
-          labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
+          labelCol={{ xs: 24, sm: 8, md: 6, lg: 4, xl: 2 }}
           labelAlign="left"
           layout="horizontal"
           colon={false}
@@ -432,7 +422,12 @@ function QuotaAction() {
           <Tags />
           {isUpdate && !isCloneNew && <History data={dataHistory?.data} />}
 
-          <Divider />
+          <Divider
+            size="large"
+            style={{
+              background: '#d9d9d9',
+            }}
+          />
           {isUpdate && !isCloneNew && (
             <ShowMoreInfo
               descriptions={[
@@ -461,7 +456,7 @@ function QuotaAction() {
           <Flex
             justify="space-between"
             style={{
-              marginTop: 40,
+              marginTop: 20,
             }}
           >
             <Space>
