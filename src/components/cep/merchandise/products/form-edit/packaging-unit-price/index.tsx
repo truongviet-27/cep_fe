@@ -5,7 +5,7 @@ import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
 import type { FormInstance } from 'antd'
-import { Button, Checkbox, Form, Input, InputNumber } from 'antd'
+import { Button, Checkbox, Form, Input, InputNumber, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { CheckboxChangeEvent } from 'antd/lib'
 import type { MutableRefObject } from 'react'
@@ -25,7 +25,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
   const { form, addRef, ranks } = props
   const t = useTranslate()
   const { getFieldValue, setFieldValue } = form
-  const packagings = Form.useWatch('packagings', form)
+  const packagings = Form.useWatch('packagings', form) ?? []
 
   const onStandardPriceChange = (event: CheckboxChangeEvent, index: number) => {
     const isChecked = event.target.checked
@@ -50,20 +50,22 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.packagingCode'),
               dataIndex: 'code',
-              width: '10%',
+              width: 10,
               align: 'center',
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
-                <>
+                <div className="mt-1">
                   <CoreInput name={[index, 'code']} readOnly={true} hidden />
                   {getFieldValue(['packagings', index, 'code'])}
-                </>
+                </div>
               ),
             },
             {
               title: t('products.fields.packagingName'),
               dataIndex: 'name',
-              width: '15%',
+              width: 15,
               align: 'left',
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
                 <Form.Item
                   name={[index, 'name']}
@@ -80,7 +82,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.barcode'),
               dataIndex: 'barcode',
-              width: '15%',
+              width: 15,
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
                 <CoreInput name={[index, 'barcode']} />
               ),
@@ -88,7 +91,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.quantity'),
               dataIndex: 'quantity_in_package',
-              width: '10%',
+              width: 10,
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
                 <Form.Item
                   name={[index, 'quantity_in_package']}
@@ -136,30 +140,32 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.unit'),
               dataIndex: 'unit_id',
-              width: '10%',
+              width: 10,
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
-                <>
+                <div className="mt-1">
                   <CoreInput name={[index, 'unit_id']} readOnly={true} hidden />
                   {form.getFieldValue('unit')}
-                </>
+                </div>
               ),
             },
             {
               title: t('products.fields.standardPrice'),
               dataIndex: 'cost_price',
-              width: '10%',
-              className: 'p-[0px !important]',
-              render: (value: string, __: unknown, index: number) => {
-                return (
-                  getFieldValue('selling_price') *
-                  getFieldValue(['packagings', index, 'quantity_in_package'])
-                )
-              },
+              width: 10,
+              className: '!content-start',
+              render: (value: string, __: unknown, index: number) => (
+                <div className="mt-1">
+                  {getFieldValue('selling_price') *
+                    getFieldValue(['packagings', index, 'quantity_in_package'])}
+                </div>
+              ),
             },
             {
               title: t('products.fields.sellingPrice'),
               dataIndex: 'selling_price',
-              width: '10%',
+              width: 10,
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
@@ -182,7 +188,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.isStandard'),
               dataIndex: 'is_standard_price',
-              width: '5%',
+              width: 5,
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) =>
                 index !== 0 && (
                   <Form.Item
@@ -192,6 +199,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     className="!mb-0"
                   >
                     <Checkbox
+                      className="!mt-1"
                       style={{
                         transform: 'scale(1.3)',
                         marginBottom: 0,
@@ -211,7 +219,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
             {
               title: t('products.fields.actions'),
               dataIndex: 'action',
-              width: '5%',
+              width: 4,
+              className: '!content-start',
               render: (_: unknown, __: unknown, index: number) =>
                 index > 0 && (
                   <Action
@@ -232,8 +241,31 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   dataSource={fields}
                   pagination={false}
                   // rowClassName="bg-[#BBBBBB] hover:!bg-[#ccc]"
-                  scroll={{ y: 55 * 5 }}
+                  scroll={fields.length ? { y: 55 * 5, x: 1500 } : { x: 1000 }}
                   rowClassName={(_, index) => (!index ? 'hidden' : '')}
+                  locale={{
+                    emptyText: (
+                      <div className="text-center text-gray-300">
+                        データがありません。
+                      </div>
+                    ),
+                  }}
+                  summary={
+                    fields.length == 1
+                      ? () => (
+                          <Table.Summary.Row className="!bg-white">
+                            <Table.Summary.Cell
+                              index={0}
+                              colSpan={9}
+                              align="center"
+                              className="!p-[11px] text-gray-300"
+                            >
+                              データがありません。
+                            </Table.Summary.Cell>
+                          </Table.Summary.Row>
+                        )
+                      : undefined
+                  }
                 />
               </Form.Item>
               <div className="mt-4 text-right">
@@ -241,6 +273,14 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   type="primary"
                   disabled={fields.length < 1}
                   onClick={() => {
+                    const rankObject: Record<string, number> = {}
+
+                    ranks?.data?.forEach(({ id, rate }) => {
+                      rankObject[`rank_${id}`] = Math.round(
+                        ((rate ?? 0) / 100) * getFieldValue('selling_price'),
+                      )
+                    })
+
                     add({
                       code: `${getFieldValue('code')}-${fields.length}`,
                       name: '',
@@ -251,6 +291,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       selling_price: getFieldValue(`selling_price`),
                       is_standard_price: true,
                       is_rate_based: true,
+                      ...rankObject,
                     })
                   }}
                 >

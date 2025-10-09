@@ -132,6 +132,7 @@ const ProductFormContainer: React.FC = () => {
                   <PackagingUnitPrice
                     form={form as unknown as FormInstance<ProductFormType>}
                     addRef={addRef}
+                    ranks={ranks}
                   />
                 ),
               },

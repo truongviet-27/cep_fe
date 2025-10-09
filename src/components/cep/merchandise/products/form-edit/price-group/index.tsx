@@ -79,6 +79,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.fields.packagingCode'),
               dataIndex: 'code',
               key: 'code',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
@@ -96,6 +97,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.fields.packagingName'),
               dataIndex: 'name',
               key: 'name',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
@@ -113,6 +115,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.unitPriceGroup.sellingPrice'),
               dataIndex: 'selling_price',
               key: 'selling_price',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <Form.Item
@@ -132,6 +135,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               title: t('products.unitPriceGroup.settingMethod'),
               dataIndex: 'is_rate_based',
               key: 'is_rate_based',
+              width: 200,
               render: (_: unknown, __: unknown, index: number) => (
                 <Form.Item
                   name={[index, 'is_rate_based']}
@@ -171,7 +175,16 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                         ? 'bg-[#BBBBBB] hover:!bg-[#ccc]'
                         : ''
                     }}
-                    scroll={{ y: 55 * 5 }}
+                    scroll={
+                      fields.length ? { y: 55 * 5, x: 1500 } : { x: 1000 }
+                    }
+                    locale={{
+                      emptyText: (
+                        <div className="text-center text-gray-300">
+                          データがありません。
+                        </div>
+                      ),
+                    }}
                   />
                 )
               }}
