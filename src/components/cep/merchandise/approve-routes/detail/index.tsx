@@ -80,10 +80,10 @@ function ApproveDetail() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('approve_routes.parent'), PRIMARY),
+              title: boldText(t('approve_routes.parent')),
             },
             {
-              title: boldText(t('approve_routes.detail'), BLACK),
+              title: boldText(t('approve_routes.detail'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}

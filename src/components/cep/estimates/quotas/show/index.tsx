@@ -23,7 +23,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { BLACK, PRIMARY, WHITE } from '@utility/color'
+import { PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -145,10 +145,10 @@ function QuotaDetail() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('estimates.estimates'), PRIMARY),
+              title: boldText(t('estimates.estimates')),
             },
             {
-              title: boldText(t('quotas.detail'), BLACK),
+              title: boldText(t('quotas.detail'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}

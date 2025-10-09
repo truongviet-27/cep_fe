@@ -22,10 +22,10 @@ function ProductContainer() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('products.breadcrumb.home'), PRIMARY, 14),
+              title: boldText(t('products.breadcrumb.home')),
             },
             {
-              title: boldText(t('products.breadcrumb.productList')),
+              title: boldText(t('products.breadcrumb.productList'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}

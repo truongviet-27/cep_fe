@@ -204,12 +204,15 @@ function ApproveAction() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('approve_routes.parent'), PRIMARY),
+              title: boldText(t('approve_routes.parent')),
             },
             {
-              title: isUpdate
-                ? boldText(t('approve_routes.edit'), BLACK)
-                : boldText(t('approve_routes.create'), BLACK),
+              title: boldText(
+                isUpdate
+                  ? t('approve_routes.edit')
+                  : t('approve_routes.create'),
+                PRIMARY,
+              ),
             },
           ]}
           separator={<RightOutlined />}

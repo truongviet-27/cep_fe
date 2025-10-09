@@ -38,7 +38,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { BLACK, PRIMARY } from '@utility/color'
+import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
@@ -140,7 +140,18 @@ function QuotaList() {
         dataIndex: 'code',
         key: 'code',
         render: (value, record) => (
-          <Link href={`/quotas/show/${record.id}`}>{value}</Link>
+          <Button
+            type="link"
+            className="underline"
+            title={value}
+            onClick={() => {
+              go({
+                to: `/quotas/show/${record.id}`,
+              })
+            }}
+          >
+            {value}
+          </Button>
         ),
       },
       {
@@ -605,10 +616,10 @@ function QuotaList() {
         <Breadcrumbs
           items={[
             {
-              title: boldText(t('estimates.estimates'), PRIMARY, 14),
+              title: boldText(t('estimates.estimates')),
             },
             {
-              title: boldText(t('quotas.list'), BLACK, 14),
+              title: boldText(t('quotas.list'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
