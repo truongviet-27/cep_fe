@@ -6,7 +6,18 @@ import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
-import { Button, Col, Form, Modal, Row, Select, Spin, Typography } from 'antd'
+import { PRIMARY } from '@utility/color'
+import {
+  Button,
+  Col,
+  Form,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  Spin,
+  Typography,
+} from 'antd'
 import { Empty, type FormInstance } from 'antd/lib'
 import { type MutableRefObject } from 'react'
 
@@ -53,15 +64,12 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
     open: isOpenCategoryModal,
   } = modalFormCategory
 
-  const allowShowForm = isAllowedSaveButton
-
   return (
     <div className="px-2">
       <Row className="my-4">
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="code"
-            isView={allowShowForm}
             label={t('products.fields.productCode')}
             required={true}
             layout="horizontal"
@@ -115,7 +123,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="name"
-            isView={allowShowForm}
             label={t('products.fields.productName')}
             required={true}
             layout="horizontal"
@@ -136,7 +143,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="short_name"
-            isView={allowShowForm}
             label={
               <span className="font-bold">
                 {t('products.fields.productNameAbbr')}
@@ -156,7 +162,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="barcode"
-            isView={allowShowForm}
             label={
               <span className="font-bold">{t('products.fields.barcode')}</span>
             }
@@ -180,7 +185,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           >
             <ProductCategoryDropdown
               defaultValue={form.getFieldValue('category')}
-              valueOnly={allowShowForm}
               placeholder="選択してください"
               onSelect={handleChooseCategory}
             />
@@ -216,24 +220,20 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               },
             ]}
           >
-            {!allowShowForm ? (
-              <Select
-                showSearch
-                onSearch={handleSearchProductUnit}
-                filterOption={false}
-                notFoundContent={
-                  isFetchingProductUnits ? <Spin size="small" /> : <Empty />
-                }
-                placeholder={t('products.pleaseSelect')}
-                options={isFetchingProductUnits ? [] : productUnitOptions}
-                suffixIcon={<CaretDownOutlined />}
-                onSelect={(_, option) => {
-                  form.setFieldValue('unit', option.label)
-                }}
-              />
-            ) : (
-              form.getFieldValue('unit')
-            )}
+            <Select
+              showSearch
+              onSearch={handleSearchProductUnit}
+              filterOption={false}
+              notFoundContent={
+                isFetchingProductUnits ? <Spin size="small" /> : <Empty />
+              }
+              placeholder={t('products.pleaseSelect')}
+              options={isFetchingProductUnits ? [] : productUnitOptions}
+              suffixIcon={<CaretDownOutlined />}
+              onSelect={(_, option) => {
+                form.setFieldValue('unit', option.label)
+              }}
+            />
           </Form.Item>
         </Col>
       </Row>
@@ -241,7 +241,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="cost_price"
-            isView={allowShowForm}
             label={t('products.fields.costPrice')}
             required={true}
             layout="horizontal"
@@ -276,13 +275,13 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       </Row>
       <Row className="mb-4">
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
-          <CoreInput
+          <Form.Item
+            className="!w-full"
             name="selling_price"
-            isView={allowShowForm}
-            label={t('products.fields.sellingPrice')}
+            label={boldText(t('products.fields.sellingPrice'))}
+            colon={false}
             required={true}
             layout="horizontal"
-            type="number"
             rules={[
               {
                 required: true,
@@ -293,8 +292,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   if (value === undefined || value === null) {
                     return Promise.resolve()
                   }
-
-                  console.log(value, typeof value)
 
                   if (value < 0) {
                     return Promise.reject(
@@ -316,20 +313,29 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 },
               },
             ]}
-            style={{
-              width: '100%',
-            }}
-          />
+          >
+            {isAllowedSaveButton ? (
+              <>
+                <span
+                  className="mr-2 rounded-sm p-1 text-white"
+                  style={{ background: PRIMARY }}
+                >
+                  {form.getFieldValue('selling_price')}
+                </span>
+                <EditFilled
+                  onClick={() => {
+                    setIsAllowedSaveButton(false)
+                  }}
+                />
+              </>
+            ) : (
+              <InputNumber controls={false} min={0} className="!w-full" />
+            )}
+          </Form.Item>
         </Col>
         <Col>
           <div className="mt-1 ml-10">
-            {isAllowedSaveButton ? (
-              <EditFilled
-                onClick={() => {
-                  setIsAllowedSaveButton(false)
-                }}
-              />
-            ) : (
+            {!isAllowedSaveButton && (
               <Button
                 size="small"
                 color="blue"
@@ -346,7 +352,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="note"
-            isView={allowShowForm}
             label={t('products.fields.remarks')}
             layout="horizontal"
           />
