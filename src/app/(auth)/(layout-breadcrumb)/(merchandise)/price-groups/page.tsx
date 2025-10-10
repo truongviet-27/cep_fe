@@ -30,12 +30,9 @@ import {
   Select,
   Space,
   Table,
-  Typography,
 } from 'antd'
 import { includes } from 'lodash'
 import { useState } from 'react'
-
-const { Title } = Typography
 
 function Page() {
   const [editIds, setEditIds] = useState<number[]>([])
@@ -70,6 +67,8 @@ function Page() {
   const { data: ranks, isLoading } = useList<Rank>({
     resource: 'ranks',
   })
+
+  const watch = Form.useWatch([], form)
 
   const { mutate, isLoading: loadingCreate } = useCreate()
 
@@ -289,11 +288,14 @@ function Page() {
                 title={`${item.name} ${item.rate}% (円)`}
                 render={(value, record, index) => {
                   const rankPrices = getCurrentPrices(index)
+                  const is_rate_based = !!(watch as any)?.[index]?.is_rate_based
+
                   const currentPrice =
                     rankPrices?.find((i) => i.rank_id === item.id)?.price ?? 0
                   if (
                     record?.packaging_id &&
-                    includes(editIds, record.packaging_id)
+                    includes(editIds, record.packaging_id) &&
+                    is_rate_based
                   ) {
                     return (
                       <>
@@ -316,7 +318,10 @@ function Page() {
                       </>
                     )
                   }
-                  return currentPrice
+                  return (
+                    ((record?.selling_price ?? 0) * (item?.rate ?? 0)) / 100 ||
+                    currentPrice
+                  )
                 }}
               />
             )

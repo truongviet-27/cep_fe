@@ -49,7 +49,9 @@ function BasicInformation(
     Form.useWatch('company_name_display_format', form) === 'after'
   const name = Form.useWatch('name', form)
   const companyType = Form.useWatch('company_type', form)
-  const isOtherSelected = companyType == 'other'
+  const isOtherSelected = !typesCompanyOptions.some(
+    ({ value }) => value == companyType && companyType !== 'other',
+  )
   const tempCompanyType = Form.useWatch('temp_company_type', form)
   const nameDisplay = isOtherSelected ? tempCompanyType : companyType
   const parameterSettings = useUserStore((state) => state.parameterSettings)
@@ -57,6 +59,11 @@ function BasicInformation(
   const allowRankResource = parameterSettings?.get?.(
     ParameterResourceEnum.RANKS,
   )
+
+  if (companyType && isOtherSelected && companyType !== 'other') {
+    form.setFieldValue('temp_company_type', companyType)
+    form.setFieldValue('company_type', 'other')
+  }
 
   return (
     <Collapse
@@ -291,7 +298,6 @@ function BasicInformation(
             label: boldText(t('ranks.fields.code')),
             name: 'price_rank_id',
             rules: [rule],
-            required: true,
             style: { marginTop: -8 },
             hidden: !allowRankResource,
           }}
