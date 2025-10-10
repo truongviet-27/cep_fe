@@ -23,8 +23,8 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
   const t = useTranslate()
 
   const result = useMemo(() => {
-    return getQuotaStatusStyle(data?.status)
-  }, [data])
+    return getQuotaStatusStyle(data?.status, t)
+  }, [data, t])
 
   useEffect(() => {
     form.setFieldValue('valid_from', dayjs())
@@ -71,7 +71,9 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
     >
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('見積番号')}>
+          <Form.Item
+            label={boldText(t('quotas.modal.agreed_price.estimate_number'))}
+          >
             {data?.code}
             <Tag
               color={result.background}
@@ -84,12 +86,16 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
       </Row>
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('タイトル')}>{data?.title}</Form.Item>
+          <Form.Item
+            label={boldText(t('quotas.modal.agreed_price.title_label'))}
+          >
+            {data?.title}
+          </Form.Item>
         </Col>
       </Row>
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('取引先')}>
+          <Form.Item label={boldText(t('quotas.modal.agreed_price.customer'))}>
             {data?.customer_name}
           </Form.Item>
         </Col>
@@ -97,10 +103,13 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
       <Row>
         <Col xs={24}>
           <Form.Item
-            label={boldText('適用開始日')}
+            label={boldText(t('quotas.modal.agreed_price.valid_from'))}
             name={'valid_from'}
             rules={[
-              { required: true, message: t('errors.required') || '必須' },
+              {
+                required: true,
+                message: t('quotas.modal.agreed_price.required'),
+              },
             ]}
           >
             <DatePicker
@@ -113,7 +122,10 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
       </Row>
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('適用終了日')} name={'valid_to'}>
+          <Form.Item
+            label={boldText(t('quotas.modal.agreed_price.valid_to'))}
+            name={'valid_to'}
+          >
             <DatePicker
               style={{ width: '80%' }}
               placeholder={'YYYY/MM/DD'}

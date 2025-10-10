@@ -10,7 +10,7 @@ import { EditButton, useSelect } from '@refinedev/antd'
 import { useResource, useShow, useTranslate } from '@refinedev/core'
 import type { Employee } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
-import { DARK_RED, GREY, PRIMARY, WARNING } from '@utility/color'
+import { DARK_RED, GREY, RED, PRIMARY, WARNING } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -24,25 +24,16 @@ export default function EmployeeShow() {
   const { queryResult } = useShow<Employee>()
   const employeeData = queryResult?.data?.data
 
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
-
-  const departmentName = String(
-    departmentSelectProps.options?.find(
-      (option) => option.value === employeeData?.department?.id,
-    )?.label ?? '---',
-  )
-
-  const colorMap: Record<'employee' | 'manager', string> = {
+  const colorMap: Record<'employee' | 'manager' | 'module_admin', string> = {
     manager: DARK_RED,
     employee: GREY,
+    module_admin: RED,
   }
 
   const roleColor = employeeData?.role
-    ? colorMap[employeeData?.role?.name as 'employee' | 'manager']
+    ? colorMap[
+        employeeData?.role?.name as 'employee' | 'manager' | 'module_admin'
+      ]
     : 'default'
 
   const renderValue = (value: string | undefined | null) => {
@@ -108,7 +99,7 @@ export default function EmployeeShow() {
           {renderValue(employeeData?.email)}
         </DetailItem>
         <DetailItem label={t('employees.fields.department')}>
-          {renderValue(departmentName)}
+          {renderValue(employeeData?.department?.name)}
         </DetailItem>
         <DetailItem label={t('employees.fields.role')}>
           {employeeData?.role ? (

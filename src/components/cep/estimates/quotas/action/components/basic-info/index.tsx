@@ -90,7 +90,7 @@ const BasicInfo = () => {
 
   return (
     <Card
-      title={boldText('基本情報', PRIMARY, 16)}
+      title={boldText(t('quotas.action.basic_info'), PRIMARY, 16)}
       style={{
         border: 'none',
       }}
@@ -176,7 +176,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item required label={boldText('見積区分')}>
+      <Form.Item required label={boldText(t('quotas.action.fields.type'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'type'}>
@@ -185,11 +185,11 @@ const BasicInfo = () => {
                 options={[
                   {
                     value: 'normal',
-                    label: '通常',
+                    label: t('quotas.action.type.normal'),
                   },
                   {
                     value: 'channel_limited',
-                    label: '販路限定',
+                    label: t('quotas.action.type.limited'),
                   },
                 ]}
               />
@@ -198,7 +198,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item required label={boldText('タイトル')}>
+      <Form.Item required label={boldText(t('quotas.action.fields.title'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item
@@ -228,7 +228,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('取引先')}>
+      <Form.Item label={boldText(t('quotas.action.fields.customer'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
@@ -244,7 +244,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('見積日')}>
+      <Form.Item label={boldText(t('quotas.action.fields.created_at'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'created_at'}>
@@ -254,7 +254,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('納入期日')}>
+      <Form.Item label={boldText(t('quotas.action.fields.delivery_date'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_date'}>
@@ -268,7 +268,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('納品方法')}>
+      <Form.Item label={boldText(t('quotas.action.fields.delivery_method'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_method'}>
@@ -278,7 +278,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('支払期日')}>
+      <Form.Item label={boldText(t('quotas.action.fields.payment_due_date'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'payment_due_date'}>

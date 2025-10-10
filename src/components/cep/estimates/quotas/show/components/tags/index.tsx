@@ -1,11 +1,13 @@
+import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Card, Col, Form, Row, Space, Tag } from 'antd'
 
 function Tags({ tags }: { tags: { id: number; name: string }[] }) {
+  const t = useTranslate()
   return (
     <Card
-      title={boldText('タグ', PRIMARY, 16)}
+      title={boldText(t('quotas.show.tags'), PRIMARY, 16)}
       styles={{
         header: {
           padding: 0,

@@ -167,7 +167,7 @@ function QuotaDetail() {
               handlePreviewPdf()
             }}
           >
-            プレビュー
+            {t('quotas.show.preview')}
           </Button>
         </div>
       }
@@ -253,7 +253,7 @@ function QuotaDetail() {
                       })
                     }}
                   >
-                    承認依頼
+                    {t('quotas.show.actions.request_approval')}
                   </Button>
                 )}
               {queryBasic?.data?.has_approval_route &&
@@ -277,7 +277,7 @@ function QuotaDetail() {
                         ])
                       }}
                     >
-                      差戻
+                      {t('quotas.show.actions.reject')}
                     </Button>
                     <Button
                       style={{
@@ -296,7 +296,7 @@ function QuotaDetail() {
                         ])
                       }}
                     >
-                      承認
+                      {t('quotas.show.actions.approve')}
                     </Button>
                   </>
                 )}
@@ -317,7 +317,7 @@ function QuotaDetail() {
                       })
                     }}
                   >
-                    送信
+                    {t('quotas.show.actions.send')}
                   </Button>
                 )}
 
@@ -337,7 +337,7 @@ function QuotaDetail() {
                         })
                       }}
                     >
-                      失注へ移動
+                      {t('quotas.show.actions.move_to_cancel')}
                     </Button>
                     <Button
                       style={{
@@ -352,7 +352,7 @@ function QuotaDetail() {
                         })
                       }}
                     >
-                      受注へ移動
+                      {t('quotas.show.actions.move_to_order')}
                     </Button>
                   </>
                 )}
@@ -373,7 +373,7 @@ function QuotaDetail() {
                       })
                     }}
                   >
-                    送信へ移動
+                    {t('quotas.show.actions.move_to_send')}
                   </Button>
                 )}
             </Space>
@@ -409,7 +409,7 @@ function QuotaDetail() {
         </Form>
       </Spin>
       <Modal
-        title="Preview PDF"
+        title={t('quotas.show.preview_pdf')}
         closable={{ 'aria-label': 'Custom Close Button' }}
         open={isPdf}
         onCancel={() => {
