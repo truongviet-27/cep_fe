@@ -156,14 +156,8 @@ function useImportHistory() {
         ),
         render: (_: any, record: any) => (
           <div className="flex flex-col">
-            <Text>
-              {record?.start_time_import &&
-                dayjs(record?.start_time_import).format('YYYY/MM/DD HH:MM:ss')}
-            </Text>
-            <Text>
-              {record?.end_time_import &&
-                dayjs(record?.end_time_import).format('YYYY/MM/DD HH:MM:ss')}
-            </Text>
+            <Text>{record?.start_time_import}</Text>
+            <Text>{record?.end_time_import}</Text>
           </div>
         ),
       },

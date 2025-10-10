@@ -42,6 +42,14 @@ function ImportCsv({
 
   const apiUrl = useApiUrl()
 
+  // Mapping file name
+  const filenameMapping = {
+    DEPARTMENTS: '[部門]CSV一括登録.csv',
+    CUSTOMERS: '[取引先]CSV一括登録.csv',
+    CATEGORY_PRODUCTS: '[カテゴリ]CSV一括登録.csv',
+    PRODUCTS: '[商品]CSV一括登録.csv',
+  }
+
   const handleDownload = async () => {
     const response = await axiosInstance.get(
       `${apiUrl}/csv-imports/${name}/template`,
@@ -52,7 +60,8 @@ function ImportCsv({
 
     if (!response?.data) return
 
-    const filename = `${name.toLowerCase()}_example.csv`
+    const filename =
+      filenameMapping[name] || `${name.toLowerCase()}_example.csv`
 
     const url = URL.createObjectURL(response.data)
     const downloadLink = document.createElement('a')
