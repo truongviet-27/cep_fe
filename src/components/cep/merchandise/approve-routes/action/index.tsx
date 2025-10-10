@@ -102,17 +102,6 @@ function ApproveAction() {
       mode: 'server',
       pageSize: 100,
     },
-    // defaultValue: query.data?.data.departments.map((item: any) => item?.id),
-    onSearch: (value) => {
-      console.log(value, 'valuexxx')
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
-    },
   })
 
   const { selectProps: selectPropsDp2, query: querySelectDp2 } = useSelect({
@@ -122,15 +111,6 @@ function ApproveAction() {
     pagination: {
       mode: 'server',
       pageSize: 100,
-    },
-    onSearch: (value) => {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
     },
   })
 
@@ -350,9 +330,15 @@ function ApproveAction() {
                 <Select
                   {...selectPropsDp}
                   mode="multiple"
+                  onSearch={() => {}}
                   maxTagCount={'responsive'}
                   allowClear
                   placeholder={t('placeholders.select')}
+                  filterOption={(input, option) =>
+                    ((option?.label ?? '') as string)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
                   options={(() => {
                     const optionFromDp2 = selectPropsDp2?.options?.filter(
                       (opt) =>
@@ -559,12 +545,24 @@ function ApproveAction() {
                                               <Select
                                                 {...selectPropsDp2}
                                                 allowClear
+                                                autoClearSearchValue
                                                 style={{
                                                   width: 200,
                                                 }}
+                                                onSearch={() => {}}
                                                 placeholder={t(
                                                   'placeholders.select',
                                                 )}
+                                                filterOption={(input, option) =>
+                                                  (
+                                                    (option?.label ??
+                                                      '') as string
+                                                  )
+                                                    .toLowerCase()
+                                                    .includes(
+                                                      input.toLowerCase(),
+                                                    )
+                                                }
                                                 onChange={() => {
                                                   setFieldValue(
                                                     [

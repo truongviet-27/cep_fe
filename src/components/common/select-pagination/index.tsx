@@ -72,7 +72,7 @@ export const SelectPagination = ({
     } else {
       setOptions(normalizedData)
     }
-  }, [query?.data, search])
+  }, [search])
 
   return (
     <Form.Item {...formItemProps}>

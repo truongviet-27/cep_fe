@@ -125,7 +125,6 @@ export const customDataProvider = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error?.response?.status === 404) {
-        console.log('redirect_to_404')
         if (typeof window !== 'undefined') {
           window.location.href = '/404'
         }

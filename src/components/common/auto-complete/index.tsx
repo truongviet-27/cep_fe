@@ -4,6 +4,7 @@ import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import { Form, Select } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
+import { useEffect, useState } from 'react'
 
 function CoreAutoComplete({
   nameFilter,
@@ -30,8 +31,9 @@ function CoreAutoComplete({
   const form = useFormInstance()
 
   const filter = Form.useWatch(filterPath, form)
+  const [options, setOptions] = useState<{ value: string; label: string }[]>([])
 
-  const { selectProps } = useSelect({
+  const { selectProps, query } = useSelect({
     resource: resource,
     optionValue: valuePath,
     optionLabel: labelPath,
@@ -41,28 +43,36 @@ function CoreAutoComplete({
     queryOptions: {
       enabled: !!filterPath && !!filter,
     },
-    pagination: {
-      mode: 'off',
-    },
-    onSearch: (value) => {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
-    },
   })
+
+  useEffect(() => {
+    if (query.data?.data) {
+      const options = query.data.data.map((item) => ({
+        [item.id ?? 0]: item.role.name,
+      }))
+
+      const result =
+        selectProps.options?.filter(
+          (item) => !options.some((obj) => obj[item.value ?? 0] === 'employee'),
+        ) ?? ([] as any)
+
+      setOptions(result)
+    }
+  }, [query.data?.data])
 
   return (
     <Select
       {...selectProps}
       {...rest}
+      options={options}
       style={style}
       showSearch
       placeholder={t('placeholders.select')}
-      filterOption={false}
+      filterOption={(input, option) =>
+        ((option?.label ?? '') as string)
+          .toLowerCase()
+          .includes(input.toLowerCase())
+      }
       autoClearSearchValue
       allowClear
       onChange={onChange}

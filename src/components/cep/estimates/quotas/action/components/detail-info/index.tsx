@@ -124,7 +124,7 @@ function DetailInfo() {
     },
   })
 
-  const handleAddProduct = (groupIndex: number) => {
+  const handleAddProduct = (groupIndex: number, productIndex: number) => {
     const values = form?.getFieldValue('main_product') || []
     const products = values[groupIndex].products || []
 
@@ -661,7 +661,7 @@ function DetailInfo() {
                       record.index + 1,
                     )
                   } else {
-                    handleAddProduct(record.index)
+                    handleAddProduct(record.index, record.index2)
                   }
                 }
 
@@ -693,7 +693,13 @@ function DetailInfo() {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    // if (form.validateFields()) {
+                    // }
+                  }}
+                >
                   カテゴリから入力
                 </Button>
               </Flex>

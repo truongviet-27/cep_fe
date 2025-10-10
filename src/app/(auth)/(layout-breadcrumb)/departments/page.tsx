@@ -150,14 +150,20 @@ export default function Page() {
       align: 'right',
     },
     {
-      dataIndex: 'created_by',
-      title: t('approve_routes.show.creator'),
+      dataIndex: 'author',
+      title: t('common.created_by'),
       align: 'left',
+      render: (value: any) => {
+        return value?.name || '---'
+      },
     },
     {
-      dataIndex: 'updated_by',
-      title: t('departments.fields.updated_by'),
+      dataIndex: 'editor',
+      title: t('common.updated_by'),
       align: 'left',
+      render: (value: any) => {
+        return value?.name || '---'
+      },
     },
     {
       dataIndex: 'created_at',
