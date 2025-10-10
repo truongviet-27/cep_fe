@@ -5,7 +5,7 @@ import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useLayoutEffect } from 'react'
+import { useEffect } from 'react'
 
 export const useCustomerEdit = () => {
   const t = useTranslate()
@@ -18,20 +18,20 @@ export const useCustomerEdit = () => {
     queryResult,
   } = useForm({
     action: 'edit',
-    redirect: 'edit',
+    redirect: 'show',
   })
 
   const handleFinish = async (values: any) => {
     let company_type = values?.company_type
-    let temp_industry = values?.temp_industry
+    let industry = values?.industry
     if (values?.temp_company_type) {
       company_type = values?.temp_company_type
     }
-    if (values?.temp_industry) {
-      temp_industry = values?.temp_industry
+    if (!values?.industry && values?.temp_industry) {
+      industry = values?.temp_industry
     }
 
-    await onFinish({ ...values, company_type, temp_industry })
+    await onFinish({ ...values, company_type, industry })
   }
 
   const apiUrl = useApiUrl()
@@ -75,9 +75,9 @@ export const useCustomerEdit = () => {
 
   const record = queryResult?.data?.data
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (record) {
-      form.setFieldsValue(record)
+      form.setFieldsValue({ ...record })
     }
   }, [record])
 

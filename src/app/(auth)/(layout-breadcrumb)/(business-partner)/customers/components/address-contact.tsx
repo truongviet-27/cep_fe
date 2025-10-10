@@ -31,8 +31,16 @@ function AddressContact(
   const { t, rule, form } = props
 
   const industry = Form.useWatch('industry', form)
+  const temp_industry = Form.useWatch('temp_industry', form)
 
-  const isOtherSelected = industry === null
+  const isOtherSelected = !industryOptions.some(
+    ({ value }) => value == industry && industry !== null,
+  )
+
+  if (isOtherSelected && !temp_industry) {
+    form.setFieldValue('temp_industry', industry)
+    form.setFieldValue('industry', null)
+  }
 
   return (
     <Collapse
@@ -106,6 +114,9 @@ function AddressContact(
                   placeholder={t('placeholders.select')}
                   options={industryOptions}
                   style={{ minWidth: 200 }}
+                  onSelect={(value) => {
+                    console.log(value, 'eeee')
+                  }}
                   allowClear
                 />
               </Form.Item>

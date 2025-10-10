@@ -32,7 +32,7 @@ const zDeliveryAddressRule = (t: any) =>
       z
         .string({ error: t('validation.customer.phone.string') })
         .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-        .regex(/^(?:0|\+84)(3|5|7|8|9)\d{8}$/, {
+        .regex(/^\d{3,11}$/, {
           error: t('validation.customer.phone.regex'),
         }),
     ),
@@ -141,7 +141,9 @@ export const validateCustomerRule = (t: any) => {
           .nullable(),
       ),
       price_rank_id: z.optional(
-        z.int({ error: t('validation.customer.price_rank_id.integer') }),
+        z
+          .int({ error: t('validation.customer.price_rank_id.integer') })
+          .nullable(),
       ),
 
       country: z.optional(
@@ -180,7 +182,7 @@ export const validateCustomerRule = (t: any) => {
         z
           .string({ error: t('validation.customer.phone.string') })
           .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-          .regex(/^(?:0|\+84)(3|5|7|8|9)\d{8}$/, {
+          .regex(/^\d{3,11}$/, {
             error: t('validation.customer.phone.regex'),
           }),
       ),
@@ -267,7 +269,7 @@ export const validateCustomerRule = (t: any) => {
               max: 20,
             }),
           })
-          .regex(/^(?:0|\+84)(3|5|7|8|9)\d{8}$/, {
+          .regex(/^\d{3,11}$/, {
             error: t('validation.customer.person_in_charge_phone.regex'),
           })
           .or(z.literal(''))
