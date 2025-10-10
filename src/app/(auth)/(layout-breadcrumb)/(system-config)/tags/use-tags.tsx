@@ -20,8 +20,6 @@ import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
 import boldText from '@utility/bold-text'
 
-const { Title } = Typography
-
 export type TagRow = {
   id?: number | string
   name: string
@@ -48,6 +46,7 @@ function useTags() {
     setFilters,
     setPageSize: setPageSize2,
     current,
+    pageCount,
   } = useTable<TagRow>({
     syncWithLocation: true,
     onSearch: (values: any) => [
@@ -98,7 +97,10 @@ function useTags() {
 
   const addNew = () => {
     setPageSize((total) => total + 1)
-    setTotalPage((tableProps?.pagination as any)?.total + 1)
+    setTotalPage(
+      (pre) =>
+        (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
+    )
     forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
     insert(0, {
@@ -265,6 +267,7 @@ function useTags() {
       title: 'タグ名',
       dataIndex: 'name',
       key: 'name',
+      align: 'left',
       render: (_val, record, index) => {
         const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
         return isEditing ? (

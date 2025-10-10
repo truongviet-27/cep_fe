@@ -92,7 +92,7 @@ export const RankModalEdit: React.FC<Props> = ({
         </Form.Item>
 
         <Form.Item
-          className={'!-mt-6'}
+          className={'!-mt-3'}
           required={isShow ? undefined : true}
           label={boldText(t('ranks.fields.name'))}
           name="name"

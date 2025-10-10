@@ -216,15 +216,11 @@ export const validateCustomerRule = (t: any) => {
         .nullable(),
       date_of_establishment: z.any().optional(),
 
-      department_in_charge: z
-        .string({
-          error: t('validation.customer.department_in_charge.string'),
+      department_in_charge_id: z
+        .int({
+          error: t('validation.required'),
         })
-        .max(100, {
-          error: t('validation.customer.department_in_charge.max', {
-            max: 100,
-          }),
-        }),
+        .min(1, { error: t('validation.required') }),
       person_in_charge_name: z.optional(
         z
           .string({
