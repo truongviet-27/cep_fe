@@ -414,14 +414,10 @@ export default function CustomerListPage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner'), PRIMARY),
     },
     {
-      title: <Title level={5}>{t('customers.list.list')}</Title>,
+      title: boldText(t('customers.list.list')),
     },
   ]
 

@@ -70,7 +70,7 @@ export default function EmployeeShow() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={t('employees.show.show')}
+      i18nHeading={'employees.show.show'}
       footerButtons={
         <ShowMoreInfo
           descriptions={[
