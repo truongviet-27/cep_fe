@@ -135,13 +135,27 @@ export const customDataProvider = (
   },
 
   deleteOne: async ({ resource, id, variables, meta }) => {
-    const url = `${apiUrl}/${resource}/${id}`
-
     const { headers, method } = meta ?? {}
     const requestMethod = (method as MethodTypesWithBody) ?? 'delete'
 
+    const metaFlags =
+      (meta as unknown as { idsBody?: boolean; sendBodyArray?: boolean }) || {}
+    const idsBody = metaFlags.idsBody === true
+    const sendBodyArray = metaFlags.sendBodyArray === true
+
+    let url = `${apiUrl}/${resource}/${id}`
+    let payload: unknown = variables
+
+    if (idsBody) {
+      url = `${apiUrl}/${resource}`
+      payload = { ids: [id] }
+    } else if (sendBodyArray) {
+      url = `${apiUrl}/${resource}`
+      payload = [id]
+    }
+
     const { data } = await httpClient[requestMethod](url, {
-      data: variables,
+      data: payload,
       headers,
     })
 

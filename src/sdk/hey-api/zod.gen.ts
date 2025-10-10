@@ -1480,7 +1480,8 @@ export const zQuotaAgreedPrice = z.object({
   total_price: z.optional(z.number()),
   customer_id: z.optional(z.int()),
   number_updating: z.optional(z.int()),
-  expiration_date: z.optional(z.union([z.iso.datetime(), z.null()])),
+  valid_from: z.optional(z.union([z.iso.datetime(), z.null()])),
+  valid_to: z.optional(z.union([z.iso.datetime(), z.null()])),
   created_by: z.optional(z.union([z.int(), z.null()])),
   updated_by: z.optional(z.union([z.int(), z.null()])),
   created_at: z.optional(z.iso.datetime()),
@@ -1629,6 +1630,7 @@ export const zQuotaResource = z.object({
   delivery_method: z.optional(z.string()),
   payment_due_date: z.optional(z.string()),
   expiration_date: z.optional(z.string()),
+  expired_date: z.optional(z.iso.date()),
   consumption_tax: z.optional(z.string()),
   pdf_path: z.optional(z.string()),
   tax_rate: z.optional(z.int()),
@@ -1639,6 +1641,7 @@ export const zQuotaResource = z.object({
   note: z.optional(z.string()),
   display: z.optional(z.boolean()),
   is_author: z.optional(z.boolean()),
+  has_approval_route: z.optional(z.boolean()),
   tags: z.optional(
     z.array(
       z.object({
@@ -1783,6 +1786,8 @@ export const zSimpleQuota = z.object({
   pdf_path: z.optional(z.string()),
   display: z.optional(z.boolean()),
   is_author: z.optional(z.boolean()),
+  has_approval_route: z.optional(z.boolean()),
+  has_agreed_price: z.optional(z.boolean()),
   author: z.optional(z.union([z.string(), z.null()])),
   approvers: z.optional(z.array(z.string())),
   latest_approval_comment: z.optional(
@@ -2054,7 +2059,10 @@ export const zQuotaTemplateResource = z.object({
   tax_rate: z.optional(z.union([z.int(), z.null()])),
   note: z.optional(z.union([z.string(), z.null()])),
   number_product: z.optional(z.union([z.int(), z.null()])),
-  total_price: z.optional(z.union([z.int(), z.null()])),
+  total_price: z.optional(z.union([z.number(), z.null()])),
+  consumption_tax_amount: z.optional(z.union([z.number(), z.null()])),
+  total_profit_margin: z.optional(z.union([z.number(), z.null()])),
+  total_price_tax_included: z.optional(z.union([z.number(), z.null()])),
   tags: z.optional(
     z.array(
       z.object({
@@ -2281,7 +2289,10 @@ export const zQuotaTemplateStoreRequest = z.object({
   tax_rate: z.optional(z.int().gte(0).lte(100)),
   note: z.optional(z.string()),
   number_product: z.optional(z.int()),
-  total_price: z.optional(z.int().gte(0)),
+  total_price: z.optional(z.number().gte(0)),
+  consumption_tax_amount: z.optional(z.number().gte(0)),
+  total_profit_margin: z.optional(z.number()),
+  total_price_tax_included: z.optional(z.number().gte(0)),
   tags: z.optional(z.array(z.int())),
   main_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
   optional_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
@@ -2301,7 +2312,10 @@ export const zQuotaTemplateUpdateRequest = z.object({
   tax_rate: z.optional(z.int().gte(0).lte(100)),
   note: z.optional(z.string()),
   number_product: z.optional(z.int()),
-  total_price: z.optional(z.int().gte(0)),
+  total_price: z.optional(z.number().gte(0)),
+  consumption_tax_amount: z.optional(z.number().gte(0)),
+  total_profit_margin: z.optional(z.number()),
+  total_price_tax_included: z.optional(z.number().gte(0)),
   tags: z.optional(z.array(z.int())),
   main_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
   optional_product: z.optional(z.array(zQuotaTemplateProductGroupRequest)),
@@ -3983,6 +3997,7 @@ export const zQuotaAgreedPriceControllerIndexData = z.object({
       'department_id_in[]': z.optional(z.array(z.int().gte(1))),
       department_id: z.optional(z.int().gte(1)),
       created_by: z.optional(z.int().gte(1)),
+      tag_name: z.optional(z.string()),
       tag_id: z.optional(z.int().gte(1)),
       'tag_id_in[]': z.optional(z.array(z.int().gte(1))),
       status: z.optional(
@@ -4003,7 +4018,8 @@ export const zQuotaAgreedPriceControllerIndexResponse =
 export const zQuotaAgreedPriceControllerStoreData = z.object({
   body: z.object({
     quota_id: z.int(),
-    expiration_date: z.optional(z.union([z.iso.datetime(), z.null()])),
+    valid_from: z.optional(z.union([z.iso.datetime(), z.null()])),
+    valid_to: z.optional(z.union([z.iso.datetime(), z.null()])),
   }),
   path: z.optional(z.never()),
   query: z.optional(z.never()),
@@ -4088,7 +4104,8 @@ export const zQuotaAgreedPriceControllerGetCustomerProductsResponse =
 
 export const zQuotaAgreedPriceControllerUpdateExpirationDateData = z.object({
   body: z.object({
-    expiration_date: z.iso.date(),
+    valid_from: z.optional(z.iso.date()),
+    valid_to: z.optional(z.iso.date()),
   }),
   path: z.object({
     id: z.int().gte(1),
@@ -4467,6 +4484,49 @@ export const zQuotaControllerPreviewPdfResponse = z.object({
   ),
 })
 
+export const zQuotaControllerPreviewUpdatePdfData = z.object({
+  body: zQuotaUpdateRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * PDF preview (base64)
+ */
+export const zQuotaControllerPreviewUpdatePdfResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      pdf_base64: z.optional(z.string()),
+    }),
+  ),
+})
+
+export const zQuotaControllerBackToSentToCustomerData = z.object({
+  body: z.object({
+    quota_ids: z.array(z.int().gte(1)),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quotas reverted successfully
+ */
+export const zQuotaControllerBackToSentToCustomerResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      processed: z.optional(z.int()),
+      failed: z.optional(z.int()),
+      results: z.optional(z.array(z.object({}))),
+      errors: z.optional(z.array(z.object({}))),
+    }),
+  ),
+})
+
 export const zQuotaFormSettingControllerShowData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -4519,7 +4579,7 @@ export const zQuotaTemplateControllerIndexData = z.object({
       _page: z.optional(z.int()),
       _per_page: z.optional(z.int()),
       name_lk: z.optional(z.string()),
-      creator: z.optional(z.int()),
+      creator: z.optional(z.string()),
       start_date: z.optional(z.string()),
       end_date: z.optional(z.string()),
     }),

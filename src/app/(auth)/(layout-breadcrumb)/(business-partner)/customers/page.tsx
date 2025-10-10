@@ -238,16 +238,19 @@ export default function CustomerListPage() {
         title: t('customers.fields.name'),
         dataIndex: 'name',
         key: 'name',
+        align: 'left',
       },
       {
         title: t('customers.fields.country'),
         dataIndex: 'country',
         key: 'country',
+        align: 'left',
       },
       {
         title: t('customers.fields.department'),
         dataIndex: 'department_in_charge',
         key: 'person_in_charge_department',
+        align: 'left',
       },
       {
         title: t('customers.fields.unit_price_rank'),
@@ -340,6 +343,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
+        align: 'left',
         render: (_, record) =>
           record?.deleted_at && dayjs(record?.deleted_at).format(FORMAT_DATE),
       },
@@ -414,14 +418,10 @@ export default function CustomerListPage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner'), PRIMARY),
     },
     {
-      title: <Title level={5}>{t('customers.list.list')}</Title>,
+      title: boldText(t('customers.list.list')),
     },
   ]
 

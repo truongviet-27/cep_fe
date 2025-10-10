@@ -51,13 +51,9 @@ export default function EmployeeShow() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>{t('employees.show.show')}</Title> },
+    { title: boldText(t('employees.show.show'), PRIMARY) },
   ]
 
   return (
@@ -66,7 +62,7 @@ export default function EmployeeShow() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={t('employees.show.show')}
+      i18nHeading={'employees.show.show'}
       footerButtons={
         <ShowMoreInfo
           descriptions={[

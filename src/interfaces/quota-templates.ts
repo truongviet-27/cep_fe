@@ -106,7 +106,10 @@ export type QuoteTemplateDetailType = {
   tax_rate?: number
   note?: string
   number_product?: number
-  total_price?: number
+  total_price: number
+  total_price_tax_included: number
+  total_profit_margin: number
+  consumption_tax_amount: number
   tags?: Array<{
     id?: number
     name?: string

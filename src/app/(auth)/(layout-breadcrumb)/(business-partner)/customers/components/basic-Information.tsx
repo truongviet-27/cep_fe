@@ -87,7 +87,12 @@ function BasicInformation(
             {isAutomatic && (
               <>
                 <Col>
-                  <Button onClick={handleAutoNumber} loading={isCodeGenLoading}>
+                  <Button
+                    onClick={handleAutoNumber}
+                    loading={isCodeGenLoading}
+                    color="primary"
+                    variant="outlined"
+                  >
                     {t('departments.create.auto_number')}
                   </Button>
                 </Col>
@@ -190,7 +195,7 @@ function BasicInformation(
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -26 }}
+          style={{ marginTop: -10 }}
           label={boldText(t('customers.fields.name'))}
           required
         >
@@ -221,7 +226,7 @@ function BasicInformation(
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -26 }}
+          style={{ marginTop: -8 }}
           label={boldText(t('customers.fields.name_kana'))}
           name="customer_name_by_kana"
           rules={[rule]}
@@ -287,7 +292,7 @@ function BasicInformation(
             name: 'price_rank_id',
             rules: [rule],
             required: true,
-            style: { marginTop: -26 },
+            style: { marginTop: -8 },
             hidden: !allowRankResource,
           }}
           optionLabel={'code'}

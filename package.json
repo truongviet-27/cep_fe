@@ -55,6 +55,7 @@
     "html-react-parser": "^5.2.6",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
+    "libphonenumber-js": "^1.12.23",
     "lodash": "^4.17.21",
     "next": "^14.1.0",
     "next-auth": "^4.24.5",

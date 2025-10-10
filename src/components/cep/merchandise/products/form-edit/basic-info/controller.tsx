@@ -1,4 +1,5 @@
 import { useDebounce } from '@hook/use-debounce'
+import type { ProductPackagingInputType } from '@interfaces/products'
 import { useModalForm } from '@refinedev/antd'
 import type { GetListResponse } from '@refinedev/core'
 import { useApiUrl, useCustom, useList } from '@refinedev/core'
@@ -9,10 +10,10 @@ import type {
   Rank,
 } from '@sdk/hey-api'
 import type { Category } from '@utility/renderCategories'
-import type { FormInstance } from 'antd'
+import { Form, type FormInstance } from 'antd'
 import debounce from 'lodash/debounce'
 import type { MutableRefObject } from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { ProductFormType } from '../use-product-form'
 
@@ -21,11 +22,15 @@ export const useBasicInfoController = (
   addRef: MutableRefObject<
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >,
+  setIsAllowedSaveButton: (value: boolean) => void,
   ranks?: GetListResponse<Rank>,
 ) => {
   const apiUrl = useApiUrl()
   const [productUnitSearchText, setProductUnitSearchText] = useState<string>('')
   const { getFieldValue, setFieldValue, setFieldsValue } = form
+  const codeWatch = Form.useWatch('code', form)
+  const unitWatch = Form.useWatch('unit', form)
+  const barcodeWatch = Form.useWatch('barcode', form)
 
   const {
     data: codeIssueSetting,
@@ -123,7 +128,21 @@ export const useBasicInfoController = (
   )
 
   const handleAppendPackaging = async () => {
-    await form.validateFields()
+    try {
+      await form.validateFields([
+        'code',
+        'name',
+        'category',
+        'unit_id',
+        'cost_price',
+        'selling_price',
+      ])
+      setIsAllowedSaveButton(true)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
+      return
+    }
+
     const packagings: ProductPackagingInput[] = (getFieldValue('packagings') ??
       []) as ProductPackagingInput[]
 
@@ -186,25 +205,11 @@ export const useBasicInfoController = (
         return index === 0
           ? {
               ...item,
-              code: getFieldValue('code'),
-              quantity_in_package: 1,
-              unit_id: getFieldValue('unit_id'),
-              cost_price: getFieldValue('cost_price') * 1,
               selling_price: getFieldValue('selling_price'),
-              barcode: getFieldValue('barcode'),
               ...rankObject,
             }
           : {
               ...item,
-              code: `${getFieldValue('code')}-${index + 1}`,
-              cost_price:
-                getFieldValue('cost_price') *
-                getFieldValue(['packagings', index, 'quantity_in_package']),
-              quantity_in_package: getFieldValue([
-                'packagings',
-                index,
-                'quantity_in_package',
-              ]),
               selling_price:
                 getFieldValue('selling_price') *
                 getFieldValue(['packagings', index, 'quantity_in_package']),
@@ -213,6 +218,23 @@ export const useBasicInfoController = (
             }
       }),
     })
+  }
+
+  const handleBasicInfoChange = () => {
+    const packagings = form.getFieldValue(
+      'packagings',
+    ) as ProductPackagingInputType[]
+
+    if (!packagings?.length) return
+
+    const packagingsUpdated = packagings.map((packaging, index) => ({
+      ...packaging,
+      unit: unitWatch,
+      code: index ? `${codeWatch}-${index}` : codeWatch,
+      barcode: index ? packaging.barcode : barcodeWatch,
+    }))
+
+    form.setFieldValue('packagings', packagingsUpdated)
   }
 
   const modalFormCategory = useModalForm({
@@ -224,6 +246,10 @@ export const useBasicInfoController = (
       hash_dash: true,
     },
   })
+
+  useEffect(() => {
+    handleBasicInfoChange()
+  }, [codeWatch, unitWatch, barcodeWatch])
 
   return [
     {

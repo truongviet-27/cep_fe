@@ -75,9 +75,7 @@ const OptionalInfo: FC = () => {
                     children: (
                       <Form.Item
                         name={[record.index, 'group_name']}
-                        style={{
-                          marginBottom: 0,
-                        }}
+                        className="ant-form-item-hidden-margin"
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -139,9 +137,7 @@ const OptionalInfo: FC = () => {
                       record.index2,
                       'product_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <ProductSelect
                       defaultValue={defaultValue}
@@ -219,9 +215,7 @@ const OptionalInfo: FC = () => {
                       record.index2,
                       'package_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <PackageSelect
                       key={
@@ -240,7 +234,7 @@ const OptionalInfo: FC = () => {
                         record.index2,
                         'product_id',
                       ])}
-                      onChange={(value) =>
+                      onChange={(value, option) => {
                         form.setFieldValue(
                           [
                             'optional_product',
@@ -251,7 +245,18 @@ const OptionalInfo: FC = () => {
                           ],
                           value,
                         )
-                      }
+
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          option.selling_price,
+                        )
+                      }}
                       defaultOptions={
                         optionalProducts?.[record.index].products[record.index2]
                           ?.packagings ?? []
@@ -297,9 +302,7 @@ const OptionalInfo: FC = () => {
                       record.index2,
                       'selling_price',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>
@@ -317,9 +320,7 @@ const OptionalInfo: FC = () => {
                 return (
                   <Form.Item
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>

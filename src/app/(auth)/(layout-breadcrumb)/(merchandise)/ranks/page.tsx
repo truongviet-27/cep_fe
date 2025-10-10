@@ -27,7 +27,7 @@ import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
-import Link from 'next/link'
+import boldText from '@utility/bold-text'
 
 const { Title, Text } = Typography
 
@@ -62,10 +62,14 @@ export default function Page() {
         </Button>
       ),
     },
-    { dataIndex: 'name', title: t('ranks.fields.name') },
-    { dataIndex: 'rate', title: t('ranks.fields.rate') },
-    { dataIndex: 'customer', title: t('ranks.fields.number_of_customers') },
-    { dataIndex: 'note', title: t('ranks.fields.remarks') },
+    { dataIndex: 'name', title: t('ranks.fields.name'), align: 'left' },
+    { dataIndex: 'rate', title: t('ranks.fields.rate'), align: 'right' },
+    {
+      dataIndex: 'number_of_customers',
+      title: t('ranks.fields.number_of_customers'),
+      align: 'right',
+    },
+    { dataIndex: 'note', title: t('ranks.fields.remarks'), align: 'left' },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
@@ -96,14 +100,10 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner')),
     },
     {
-      title: <Title level={5}>{t('ranks.list.list')}</Title>,
+      title: boldText(t('ranks.list.list'), PRIMARY),
     },
   ]
 

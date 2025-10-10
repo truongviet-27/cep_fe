@@ -4,7 +4,6 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import { useForm } from '@refinedev/antd'
 import { useCreate, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
 import {
   Button,
   Col,
@@ -24,29 +23,31 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
   const t = useTranslate()
 
   const result = useMemo(() => {
-    return getQuotaStatusStyle(data?.status)
-  }, [data])
+    return getQuotaStatusStyle(data?.status, t)
+  }, [data, t])
 
   useEffect(() => {
-    if (data) {
-      form.setFieldValue('created_at', dayjs(data?.created_at))
-    }
-  }, [data])
+    form.setFieldValue('valid_from', dayjs())
+  }, [form])
 
   const { mutate } = useCreate({
     resource: 'quota/agreed-prices',
   })
 
   const handleSubmit = (values: any) => {
+    const payload: any = {
+      quota_id: data?.id,
+      valid_from: values?.valid_from
+        ? dayjs(values.valid_from).format('YYYY/MM/DD')
+        : undefined,
+    }
+
+    if (values?.valid_to) {
+      payload.valid_to = dayjs(values.valid_to).format('YYYY/MM/DD')
+    }
+
     mutate(
-      {
-        values: {
-          expiration_date: dayjs(values.expiration_date).format(
-            FORMAT_DATE_TIME,
-          ),
-          quota_id: data?.id,
-        },
-      },
+      { values: payload },
       {
         onSuccess: () => {
           close()
@@ -65,14 +66,14 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
         marginTop: 30,
       }}
       form={formProps.form}
-      initialValues={{
-        created_at: dayjs(),
-      }}
+      initialValues={{}}
       onFinish={handleSubmit}
     >
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('見積番号')}>
+          <Form.Item
+            label={boldText(t('quotas.modal.agreed_price.estimate_number'))}
+          >
             {data?.code}
             <Tag
               color={result.background}
@@ -85,27 +86,51 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
       </Row>
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('タイトル')}>{data?.title}</Form.Item>
+          <Form.Item
+            label={boldText(t('quotas.modal.agreed_price.title_label'))}
+          >
+            {data?.title}
+          </Form.Item>
         </Col>
       </Row>
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('取引先')}>
+          <Form.Item label={boldText(t('quotas.modal.agreed_price.customer'))}>
             {data?.customer_name}
           </Form.Item>
         </Col>
       </Row>
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('適用開始日')} name={'created_at'}>
-            <DatePicker style={{ width: '80%' }} placeholder={FORMAT_DATE} />
+          <Form.Item
+            label={boldText(t('quotas.modal.agreed_price.valid_from'))}
+            name={'valid_from'}
+            rules={[
+              {
+                required: true,
+                message: t('quotas.modal.agreed_price.required'),
+              },
+            ]}
+          >
+            <DatePicker
+              style={{ width: '80%' }}
+              placeholder={'YYYY/MM/DD'}
+              format={'YYYY/MM/DD'}
+            />
           </Form.Item>
         </Col>
       </Row>
       <Row>
         <Col xs={24}>
-          <Form.Item label={boldText('適用終了日')} name={'expiration_date'}>
-            <DatePicker style={{ width: '80%' }} placeholder={FORMAT_DATE} />
+          <Form.Item
+            label={boldText(t('quotas.modal.agreed_price.valid_to'))}
+            name={'valid_to'}
+          >
+            <DatePicker
+              style={{ width: '80%' }}
+              placeholder={'YYYY/MM/DD'}
+              format={'YYYY/MM/DD'}
+            />
           </Form.Item>
         </Col>
       </Row>

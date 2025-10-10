@@ -5,7 +5,7 @@ import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/co
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
-import { useModalForm, useSelect } from '@refinedev/antd'
+import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -37,6 +37,7 @@ function DetailInfo() {
   const taxRateWatch = Form.useWatch('tax_rate', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
+  const customerWatch = Form.useWatch('customer', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
@@ -210,6 +211,7 @@ function DetailInfo() {
                         style={{
                           marginBottom: 0,
                         }}
+                        className="ant-form-item-hidden-margin"
                         rules={[
                           {
                             required: true,
@@ -229,6 +231,7 @@ function DetailInfo() {
                           placeholder="商品リスト名入力"
                           style={{
                             width: 400,
+                            marginBottom: 0,
                           }}
                         />
                       </Form.Item>
@@ -258,17 +261,22 @@ function DetailInfo() {
 
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'product_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
                     <Select
+                      {...selectPropsProduct}
                       placeholder="商品名・サービス名で検索"
                       allowClear
                       showSearch
@@ -276,7 +284,7 @@ function DetailInfo() {
                       style={{
                         width: 200,
                       }}
-                      {...selectPropsProduct}
+                      disabled={!customerWatch}
                       onChange={(value) => {
                         const item: any = query.data?.data.find(
                           (item: any) => item.id === value,
@@ -399,15 +407,13 @@ function DetailInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'package_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                   >
                     <CoreAutoComplete
                       filterPath1={[
@@ -423,28 +429,6 @@ function DetailInfo() {
                       resource={`products`}
                       style={{ width: 200 }}
                       parent="main_product"
-                      // onChange={() => {
-                      //   // form.setFieldValue(
-                      //   //   [
-                      //   //     'main_product',
-                      //   //     record.index,
-                      //   //     'products',
-                      //   //     record.index2,
-                      //   //     'cost_price',
-                      //   //   ],
-                      //   //   item?.cost_price,
-                      //   // )
-                      //   // form.setFieldValue(
-                      //   //   [
-                      //   //     'main_product',
-                      //   //     record.index,
-                      //   //     'products',
-                      //   //     record.index2,
-                      //   //     'selling_price',
-                      //   //   ],
-                      //   //   item?.sale_price,
-                      //   // )
-                      // }}
                     />
                   </Form.Item>
                 )
@@ -477,15 +461,13 @@ function DetailInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[
                       record.index,
                       'products',
                       record.index2,
                       'selling_price',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     rules={[
                       {
                         required: true,
@@ -508,10 +490,8 @@ function DetailInfo() {
                 }
                 return (
                   <Form.Item
+                    className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     rules={[
                       {
                         required: true,
@@ -613,10 +593,8 @@ function DetailInfo() {
                       record.index2,
                       'is_add_total',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
                     valuePropName="checked"
+                    className="ant-form-item-hidden-margin"
                   >
                     <Checkbox
                       style={{

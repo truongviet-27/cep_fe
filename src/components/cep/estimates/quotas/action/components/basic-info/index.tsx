@@ -90,7 +90,7 @@ const BasicInfo = () => {
 
   return (
     <Card
-      title={boldText('基本情報', PRIMARY, 16)}
+      title={boldText(t('quotas.action.basic_info'), PRIMARY, 16)}
       style={{
         border: 'none',
       }}
@@ -99,7 +99,7 @@ const BasicInfo = () => {
         header: { padding: 0, minHeight: 0 },
       }}
     >
-      <Form.Item
+      {/* <Form.Item
         label={boldText('見積番号')}
         required
         style={{ marginTop: 20 }}
@@ -109,8 +109,8 @@ const BasicInfo = () => {
             <Form.Item name={'tax_rounding_method'} hidden />
           </Col>
         </Row>
-        <Row align="middle" gutter={20}>
-          <Col>
+        <Row align="middle" gutter={[8, 0]}>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item
               rules={[
                 {
@@ -139,7 +139,7 @@ const BasicInfo = () => {
               name={'code'}
               required
             >
-              <Input style={{ width: 240 }} disabled={isCloneVersion} />
+              <Input disabled={isCloneVersion} />
             </Form.Item>
           </Col>
           <Col>
@@ -176,7 +176,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item required label={boldText('見積区分')}>
+      <Form.Item required label={boldText(t('quotas.action.fields.type'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'type'}>
@@ -185,11 +185,11 @@ const BasicInfo = () => {
                 options={[
                   {
                     value: 'normal',
-                    label: '通常',
+                    label: t('quotas.action.type.normal'),
                   },
                   {
                     value: 'channel_limited',
-                    label: '販路限定',
+                    label: t('quotas.action.type.limited'),
                   },
                 ]}
               />
@@ -198,7 +198,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item required label={boldText('タイトル')}>
+      <Form.Item required label={boldText(t('quotas.action.fields.title'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item
@@ -228,7 +228,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('取引先')}>
+      <Form.Item label={boldText(t('quotas.action.fields.customer'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'customer'}>
@@ -244,22 +244,22 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('見積日')}>
+      <Form.Item label={boldText(t('quotas.action.fields.created_at'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'created_at'}>
-              <DatePicker style={{ width: '75%' }} placeholder={FORMAT_DATE} />
+              <DatePicker style={{ width: '100%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('納入期日')}>
+      <Form.Item label={boldText(t('quotas.action.fields.delivery_date'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_date'}>
               <DatePicker
-                style={{ width: '75%' }}
+                style={{ width: '100%' }}
                 placeholder={FORMAT_DATE}
                 minDate={Form.useWatch('created_at', form)}
               />
@@ -268,7 +268,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('納品方法')}>
+      <Form.Item label={boldText(t('quotas.action.fields.delivery_method'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'delivery_method'}>
@@ -278,7 +278,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('支払期日')}>
+      <Form.Item label={boldText(t('quotas.action.fields.payment_due_date'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'payment_due_date'}>
@@ -329,7 +329,7 @@ const BasicInfo = () => {
       </Form.Item>
 
       <Form.Item label={boldText('有効期限')}>
-        <Row gutter={[16, 0]}>
+        <Row gutter={[8, 0]}>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'expiration_date'}>
               <Select
@@ -386,7 +386,7 @@ const BasicInfo = () => {
 
       <Form.Item label={boldText('消費税')}>
         <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={5}>
+          <Col xs={24} sm={16} md={10} lg={8} xl={4}>
             <Form.Item name="consumption_tax">
               <Radio.Group
                 defaultValue={'exclusive'}
@@ -407,7 +407,7 @@ const BasicInfo = () => {
               />
             </Form.Item>
           </Col>
-          <Col xs={24} md={6}>
+          <Col xs={24} md={4}>
             <Form.Item
               label={t('tenant_settings.consumptionTax.taxRateLabel')}
               name="tax_rate"
@@ -422,7 +422,349 @@ const BasicInfo = () => {
             </Form.Item>
           </Col>
         </Row>
-      </Form.Item>
+      </Form.Item> */}
+
+      <div className="mt-4">
+        <Row>
+          <Col>
+            <Form.Item name={'tax_rounding_method'} hidden />
+          </Col>
+        </Row>
+
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={12} lg={10} xl={12}>
+            <div className="flex flex-col flex-wrap gap-4 xl:flex-row">
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: t('approve_routes.validation.route_code.required'),
+                  },
+                  {
+                    whitespace: true,
+                    message: t(
+                      'approve_routes.validation.route_code.invalid_whitespace',
+                    ),
+                  },
+                  {
+                    pattern: /^[A-Z0-9-]+$/,
+                    message: t(
+                      'approve_routes.validation.route_code.invalid_format',
+                    ),
+                  },
+                  {
+                    max: 255,
+                    message: t(
+                      'approve_routes.validation.route_code.invalid_format',
+                    ),
+                  },
+                ]}
+                name={'code'}
+                required
+                label={boldText('見積番号')}
+                style={{
+                  marginBottom: 0,
+                  flex: 1,
+                }}
+              >
+                <Input disabled={isCloneVersion} />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  onClick={handleAutoNumber}
+                  loading={loadingQuota}
+                  color="primary"
+                  variant="outlined"
+                  disabled={
+                    isCloneVersion ||
+                    codeIssueSetting?.data.issue_method === IssueMethod.Manual
+                  }
+                >
+                  {t('departments.create.auto_number')}
+                </Button>
+                <Button
+                  color="primary"
+                  variant="link"
+                  size="small"
+                  onClick={() => {
+                    show(codeIssueSetting?.data.id)
+                  }}
+                  disabled={isCloneVersion}
+                >
+                  {t('departments.create.popup_number_setting')}
+                </Button>
+              </Form.Item>
+            </div>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item name={'type'} label={boldText('見積区分')}>
+              <Radio.Group
+                defaultValue={'normal'}
+                options={[
+                  {
+                    value: 'normal',
+                    label: '通常',
+                  },
+                  {
+                    value: 'channel_limited',
+                    label: '販路限定',
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              required
+              label={boldText('タイトル')}
+              name={'title'}
+              rules={[
+                {
+                  required: true,
+                  message: t('approve_routes.validation.route_code.required'),
+                },
+                {
+                  whitespace: true,
+                  message: t(
+                    'approve_routes.validation.route_code.invalid_whitespace',
+                  ),
+                },
+                {
+                  max: 255,
+                  message: t(
+                    'approve_routes.validation.route_code.invalid_format',
+                  ),
+                },
+              ]}
+            >
+              <Input disabled={isCloneVersion} />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              label={boldText('取引先')}
+              name={'customer'}
+              rules={[
+                {
+                  required: true,
+                  message: t('approve_routes.validation.route_code.required'),
+                },
+              ]}
+            >
+              <Select
+                {...selectPropsCt}
+                allowClear
+                showSearch
+                disabled={isCloneVersion}
+                labelInValue
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[100, 0]} wrap>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item name={'created_at'} label={boldText('見積日')}>
+              <DatePicker style={{ width: '100%' }} placeholder={FORMAT_DATE} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_date'}
+              label={boldText('納入期日')}
+              rules={[
+                {
+                  required: true,
+                  message: t('approve_routes.validation.route_code.required'),
+                },
+              ]}
+            >
+              <DatePicker
+                style={{ width: '100%' }}
+                placeholder={FORMAT_DATE}
+                minDate={Form.useWatch('created_at', form)}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item name={'delivery_method'} label={boldText('納品方法')}>
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item name={'payment_due_date'} label={boldText('支払期日')}>
+              <Select
+                allowClear
+                options={[
+                  {
+                    value: 'monthly_25',
+                    label: t(
+                      'tenant_settings.paymentDueDate.options.monthly_25th',
+                    ),
+                  },
+                  {
+                    value: 'monthly_10',
+                    label: t(
+                      'tenant_settings.paymentDueDate.options.monthly_10th',
+                    ),
+                  },
+                  {
+                    value: 'net_30_from_delivery',
+                    label: t(
+                      'tenant_settings.paymentDueDate.options.30_days_after_delivery',
+                    ),
+                  },
+                  {
+                    value: 'net_30_from_invoice',
+                    label: t(
+                      'tenant_settings.paymentDueDate.options.30_days_after_invoice',
+                    ),
+                  },
+                  {
+                    value: 'end_of_month_next',
+                    label: t(
+                      'tenant_settings.paymentDueDate.options.eom_next_eom',
+                    ),
+                  },
+                  {
+                    value: 'end_of_month_after_next',
+                    label: t(
+                      'tenant_settings.paymentDueDate.options.eom_next_next_eom',
+                    ),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Form.Item
+                name={'expiration_date'}
+                label={boldText('有効期限')}
+                style={{ marginBottom: 0, flex: 1 }}
+              >
+                <Select
+                  allowClear
+                  options={[
+                    {
+                      value: 'days_7',
+                      label: t('tenant_settings.validityPeriod.options.days_7'),
+                    },
+                    {
+                      value: 'days_14',
+                      label: t(
+                        'tenant_settings.validityPeriod.options.days_14',
+                      ),
+                    },
+                    {
+                      value: 'days_30',
+                      label: t(
+                        'tenant_settings.validityPeriod.options.days_30',
+                      ),
+                    },
+                    {
+                      value: 'days_45',
+                      label: t(
+                        'tenant_settings.validityPeriod.options.days_45',
+                      ),
+                    },
+                    {
+                      value: 'days_60',
+                      label: t(
+                        'tenant_settings.validityPeriod.options.days_60',
+                      ),
+                    },
+                    {
+                      value: 'months_3',
+                      label: t(
+                        'tenant_settings.validityPeriod.options.months_3',
+                      ),
+                    },
+                    {
+                      value: 'months_6',
+                      label: t(
+                        'tenant_settings.validityPeriod.options.months_6',
+                      ),
+                    },
+                    {
+                      value: 'years_1',
+                      label: t('tenant_settings.validityPeriod.options.year_1'),
+                    },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item style={{ marginBottom: 0 }}>
+                <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
+                  {dayjs(
+                    getExpiryDate(
+                      Form.useWatch('expiration_date', form),
+                      Form.useWatch('created_at', form),
+                    ),
+                  ).format('YYYY/MM/DD')}
+                </span>
+              </Form.Item>
+            </div>
+          </Col>
+
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                name="consumption_tax"
+                label={boldText('消費税')}
+                style={{ marginBottom: 0, flex: 1 }}
+              >
+                <Radio.Group
+                  defaultValue={'exclusive'}
+                  options={[
+                    {
+                      value: 'exclusive',
+                      label: t('tenant_settings.consumptionTax.taxExclusive'),
+                    },
+                    {
+                      value: 'inclusive',
+                      label: t('tenant_settings.consumptionTax.taxInclusive'),
+                    },
+                    {
+                      value: 'external',
+                      label: t('tenant_settings.consumptionTax.taxExempt'),
+                    },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={boldText(
+                  t('tenant_settings.consumptionTax.taxRateLabel'),
+                )}
+                name="tax_rate"
+                style={{ marginBottom: 0 }}
+              >
+                <InputNumber
+                  controls={false}
+                  min={0}
+                  max={100}
+                  addonAfter="%"
+                  style={{ width: 100 }}
+                />
+              </Form.Item>
+            </div>
+          </Col>
+        </Row>
+      </div>
 
       <Modal open={open} onCancel={close} footer={null}>
         <CodeIssueSettingEdit modalProps={modalFormProps} />

@@ -22,6 +22,7 @@ import {
   useParsed,
   useTranslate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
@@ -32,12 +33,9 @@ import {
   Modal,
   Space,
   Spin,
-  Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
-
-const { Title } = Typography
 
 function QuotaDetail() {
   const t = useTranslate()
@@ -130,7 +128,7 @@ function QuotaDetail() {
     mutatePreviewPdf(
       {
         values: customValues,
-        url: `${apiUrl}/quotas/preview-pdf`,
+        url: `${apiUrl}/quotas/preview-pdf/${customValues?.id}`,
         method: 'post',
       },
       {
@@ -147,19 +145,10 @@ function QuotaDetail() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title
-                  level={5}
-                  style={{
-                    color: PRIMARY,
-                  }}
-                >
-                  {t('estimates.estimates')}
-                </Title>
-              ),
+              title: boldText(t('estimates.estimates')),
             },
             {
-              title: <Title level={5}>{t('quotas.detail')}</Title>,
+              title: boldText(t('quotas.detail'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -167,7 +156,7 @@ function QuotaDetail() {
       }
       title={
         <div className="flex justify-between">
-          <span>{t('quotas.detail')}</span>
+          {t('quotas.detail')}
           <Button
             color="primary"
             variant="outlined"
@@ -176,7 +165,7 @@ function QuotaDetail() {
               handlePreviewPdf()
             }}
           >
-            プレビュー
+            {t('quotas.show.preview')}
           </Button>
         </div>
       }
@@ -188,9 +177,6 @@ function QuotaDetail() {
           layout="horizontal"
           colon={false}
           autoComplete="off"
-          style={{
-            marginTop: 30,
-          }}
           form={formProps.form}
         >
           <BasicInfo data={queryBasic?.data} />
@@ -265,7 +251,7 @@ function QuotaDetail() {
                       })
                     }}
                   >
-                    承認依頼
+                    {t('quotas.show.actions.request_approval')}
                   </Button>
                 )}
               {queryBasic?.data?.has_approval_route &&
@@ -289,7 +275,7 @@ function QuotaDetail() {
                         ])
                       }}
                     >
-                      差戻
+                      {t('quotas.show.actions.reject')}
                     </Button>
                     <Button
                       style={{
@@ -308,7 +294,7 @@ function QuotaDetail() {
                         ])
                       }}
                     >
-                      承認
+                      {t('quotas.show.actions.approve')}
                     </Button>
                   </>
                 )}
@@ -329,7 +315,7 @@ function QuotaDetail() {
                       })
                     }}
                   >
-                    送信
+                    {t('quotas.show.actions.send')}
                   </Button>
                 )}
 
@@ -349,7 +335,7 @@ function QuotaDetail() {
                         })
                       }}
                     >
-                      失注へ移動
+                      {t('quotas.show.actions.move_to_cancel')}
                     </Button>
                     <Button
                       style={{
@@ -364,7 +350,7 @@ function QuotaDetail() {
                         })
                       }}
                     >
-                      受注へ移動
+                      {t('quotas.show.actions.move_to_order')}
                     </Button>
                   </>
                 )}
@@ -385,7 +371,7 @@ function QuotaDetail() {
                       })
                     }}
                   >
-                    送信へ移動
+                    {t('quotas.show.actions.move_to_send')}
                   </Button>
                 )}
             </Space>
@@ -421,7 +407,7 @@ function QuotaDetail() {
         </Form>
       </Spin>
       <Modal
-        title="Preview PDF"
+        title={t('quotas.show.preview_pdf')}
         closable={{ 'aria-label': 'Custom Close Button' }}
         open={isPdf}
         onCancel={() => {

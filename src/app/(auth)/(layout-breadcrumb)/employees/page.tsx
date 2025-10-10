@@ -13,7 +13,7 @@ import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
 import Link from 'next/link'
 import { SelectPagination } from '@components/common/select-pagination'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 function Page() {
   const t = useTranslate()
@@ -30,13 +30,9 @@ function Page() {
   const { tableProps, searchFormProps, setFilters, setCurrent } = useTable()
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>{t('employees.list.list')}</Title> },
+    { title: boldText(t('employees.list.list'), PRIMARY) },
   ]
 
   const getRowClassName = (record: BaseRecord) => {
@@ -169,10 +165,15 @@ function Page() {
             </Link>
           )}
         />
-        <Table.Column dataIndex="name" title={t('employees.fields.name')} />
+        <Table.Column
+          dataIndex="name"
+          title={t('employees.fields.name')}
+          align={'left'}
+        />
         <Table.Column
           dataIndex={['department']}
           title={t('employees.fields.department')}
+          align={'left'}
           render={(value) => renderFieldNotSet(value?.name)}
         />
         <Table.Column
@@ -184,6 +185,7 @@ function Page() {
           dataIndex={['role']}
           title={t('employees.fields.role')}
           render={(value) => renderFieldNotSet(value?.display_name)}
+          align={'left'}
         />
         <Table.Column
           title={t('table.actions')}

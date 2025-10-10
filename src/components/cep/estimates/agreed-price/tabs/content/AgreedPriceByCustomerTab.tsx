@@ -141,7 +141,7 @@ const AgreedPriceByCustomerTab = () => {
   }
 
   return (
-    <List title="">
+    <List title="" canCreate={false}>
       <Form colon={false} form={form} layout="vertical" {...searchFormProps}>
         <Row gutter={[16, 16]}>
           <Col xs={24} md={4}>

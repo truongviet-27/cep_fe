@@ -18,8 +18,7 @@ import type { ColumnsType } from 'antd/es/table'
 import React, { useLayoutEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
-
-const { Title } = Typography
+import boldText from '@utility/bold-text'
 
 export type TagRow = {
   id?: number | string
@@ -39,13 +38,15 @@ function useTags() {
   const { resource } = useResource()
   const apiUrl = useApiUrl()
   const [pageSize, setPageSize] = React.useState(10)
-  const [forceUpdate, setForceUpdate] = React.useState(false)
+  const [totalPage, setTotalPage] = React.useState(0)
+  const forceUpdate = useRef(false)
   const {
     tableProps,
     searchFormProps,
     setFilters,
     setPageSize: setPageSize2,
     current,
+    pageCount,
   } = useTable<TagRow>({
     syncWithLocation: true,
     onSearch: (values: any) => [
@@ -57,7 +58,7 @@ function useTags() {
     ],
   })
 
-  const { control, getValues, resetField, setValue, setFocus } =
+  const { control, getValues, resetField, setValue, setError } =
     useForm<FormValues>({
       defaultValues: { rows: [] },
       mode: 'onTouched',
@@ -77,7 +78,7 @@ function useTags() {
     row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
   useLayoutEffect(() => {
-    if (forceUpdate) {
+    if (forceUpdate.current) {
       setPageSize(10)
       setPageSize2(10)
     }
@@ -87,20 +88,20 @@ function useTags() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: <Title level={5}>{t('tags.tags')}</Title>,
+      title: boldText(t('tags.tags'), PRIMARY),
     },
   ]
 
   const addNew = () => {
     setPageSize((total) => total + 1)
-    setForceUpdate(true)
+    setTotalPage(
+      (pre) =>
+        (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
+    )
+    forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
     insert(0, {
       name: '',
@@ -135,8 +136,12 @@ function useTags() {
     delete originalRef.current[stableKey]
   }
 
-  const { mutate: createRow } = useCreate()
-  const { mutate: updateRow, isLoading: saving } = useUpdate()
+  const { mutate: createRow } = useCreate({
+    invalidates: [],
+  })
+  const { mutate: updateRow, isLoading: saving } = useUpdate({
+    invalidates: [],
+  })
   const { mutate: deleteRow } = useDelete()
 
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
@@ -178,7 +183,12 @@ function useTags() {
     const row = getValues(`rows.${index}`)
     const order = getValues(`rows.0`)?.order ?? index
     const name = (row.name ?? '').trim()
-    if (!name) return
+    if (!name) {
+      setError(`rows.${index}.name`, {
+        message: '',
+      })
+      return
+    }
 
     if (row._isNew) {
       createRow(
@@ -257,6 +267,7 @@ function useTags() {
       title: 'タグ名',
       dataIndex: 'name',
       key: 'name',
+      align: 'left',
       render: (_val, record, index) => {
         const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
         return isEditing ? (
@@ -352,6 +363,8 @@ function useTags() {
         onShowSizeChange: (current: number, size: number) => {
           setPageSize(size)
         },
+        total:
+          totalPage === 0 ? (tableProps.pagination as any)?.total : totalPage,
       },
     },
     getRowIdForDnd,

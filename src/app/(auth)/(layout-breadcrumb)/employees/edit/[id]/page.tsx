@@ -6,7 +6,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useForm, useModalForm, useSelect } from '@refinedev/antd'
+import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -51,12 +51,6 @@ export default function EmployeeEdit() {
     })
   const employeeData = queryResult?.data?.data
 
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
-
   const codeRules: Rule[] = useMemo(
     () => [
       { required: true, message: '部門コードは必須です。' },
@@ -94,13 +88,9 @@ export default function EmployeeEdit() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>社員編集</Title> },
+    { title: boldText('社員編集', PRIMARY) },
   ]
 
   return (
@@ -145,7 +135,7 @@ export default function EmployeeEdit() {
           </Button>
         </Space>
       }
-      i18nHeading={'社員編集'}
+      i18nHeading={'employees.edit.title'}
     >
       <Form
         {...formProps}

@@ -19,17 +19,19 @@ type ConsumptionTaxKey = 'exclusive' | 'inclusive' | 'external'
 interface BasicInfoExtendedProps {
   data: any
   showApplicablePeriod?: boolean
-  agreedPriceExpiration?: string
+  agrredPriceValidTo?: string
   agreedPriceId?: number
   onUpdateExpiration?: (newEndDate: dayjs.Dayjs) => void
+  agreedPriceValidFrom?: string
 }
 
 function BasicInfoExtended({
   data,
   showApplicablePeriod = false,
-  agreedPriceExpiration,
+  agrredPriceValidTo,
   agreedPriceId,
   onUpdateExpiration,
+  agreedPriceValidFrom,
 }: BasicInfoExtendedProps) {
   const t = useTranslate()
   const [isEditingPeriod, setIsEditingPeriod] = useState(false)
@@ -46,9 +48,9 @@ function BasicInfoExtended({
   }, [t])
 
   const handleEditPeriod = () => {
-    const start = data?.created_at ? dayjs(data?.created_at) : null
-    const end = agreedPriceExpiration ? dayjs(agreedPriceExpiration) : null
-    setPeriodValue([start, end])
+    const end = agrredPriceValidTo ? dayjs(agrredPriceValidTo) : null
+    const start = end ? end.add(1, 'day') : null
+    setPeriodValue([start, null])
     setIsEditingPeriod(true)
   }
 
@@ -164,12 +166,14 @@ function BasicInfoExtended({
                   />
                 ) : (
                   <>
-                    {data?.created_at
-                      ? dayjs(data?.created_at).format('YYYY/MM/DD')
-                      : '---'}{' '}
+                    {agreedPriceValidFrom
+                      ? dayjs(agreedPriceValidFrom).format('YYYY/MM/DD')
+                      : data?.created_at
+                        ? dayjs(data?.created_at).format('YYYY/MM/DD')
+                        : '---'}{' '}
                     〜{' '}
-                    {agreedPriceExpiration
-                      ? dayjs(agreedPriceExpiration).format('YYYY/MM/DD')
+                    {agrredPriceValidTo
+                      ? dayjs(agrredPriceValidTo).format('YYYY/MM/DD')
                       : '---'}
                   </>
                 )}

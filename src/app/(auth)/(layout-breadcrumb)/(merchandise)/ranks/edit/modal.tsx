@@ -92,7 +92,7 @@ export const RankModalEdit: React.FC<Props> = ({
         </Form.Item>
 
         <Form.Item
-          className={'!-mt-6'}
+          className={'!-mt-3'}
           required={isShow ? undefined : true}
           label={boldText(t('ranks.fields.name'))}
           name="name"
@@ -113,6 +113,16 @@ export const RankModalEdit: React.FC<Props> = ({
             <InputNumber style={{ width: '50%' }} />
           )}
         </Form.Item>
+
+        {isShow && (
+          <Form.Item
+            label={boldText(t('ranks.fields.number_of_customers'))}
+            name="number_of_customers"
+            rules={[validateRankRule(t)]}
+          >
+            {getFieldData('number_of_customers')}
+          </Form.Item>
+        )}
 
         <Form.Item
           label={boldText(t('ranks.fields.remarks'))}

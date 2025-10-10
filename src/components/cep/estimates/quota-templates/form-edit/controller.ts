@@ -10,6 +10,7 @@ export function useController() {
   const isUpdateMode = !!params?.id
   const methods = useForm<QuotaTemplateFormType>({
     resource: 'quota-templates',
+    redirect: 'show',
     queryOptions: {
       select: (data) => {
         const tags = (data.data?.tags ?? []) as unknown as { id: number }[]

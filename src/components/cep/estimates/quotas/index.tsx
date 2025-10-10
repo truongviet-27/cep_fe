@@ -54,7 +54,6 @@ import {
   Space,
   Tag,
   Tooltip,
-  Typography,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { type TableRowSelection } from 'antd/es/table/interface'
@@ -63,8 +62,6 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { type MenuInfo } from 'rc-menu/lib/interface'
 import React, { useCallback, useMemo, useState } from 'react'
-
-const { Title } = Typography
 
 const { RangePicker } = DatePicker
 
@@ -108,11 +105,11 @@ function QuotaList() {
   const columns: ColumnsType<any> = useMemo(() => {
     return [
       {
-        title: '状態 / コメント',
+        title: t('quotas.table.status_comment'),
         dataIndex: 'status',
         key: 'status',
         render: (value, record) => {
-          const result = getQuotaStatusStyle(value)
+          const result = getQuotaStatusStyle(value, t)
 
           return (
             <div className="flex flex-col items-center justify-center gap-1">
@@ -139,15 +136,26 @@ function QuotaList() {
         },
       },
       {
-        title: '見積番号',
+        title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
         render: (value, record) => (
-          <Link href={`/quotas/show/${record.id}`}>{value}</Link>
+          <Button
+            type="link"
+            className="underline"
+            title={value}
+            onClick={() => {
+              go({
+                to: `/quotas/show/${record.id}`,
+              })
+            }}
+          >
+            {value}
+          </Button>
         ),
       },
       {
-        title: 'タイトル / 取引先',
+        title: t('quotas.table.title_customer'),
         dataIndex: 'title',
         key: 'title',
         render: (_, record) => (
@@ -158,7 +166,7 @@ function QuotaList() {
         ),
       },
       {
-        title: '作成者 / 承認者',
+        title: t('quotas.table.creator_approver'),
         dataIndex: 'creator',
         key: 'creator',
         render: (_, record) => (
@@ -171,7 +179,7 @@ function QuotaList() {
         ),
       },
       {
-        title: '部門 / 金額 (円)',
+        title: t('quotas.table.department_amount'),
         dataIndex: 'department',
         key: 'department',
         render: (_, record) => (
@@ -182,7 +190,7 @@ function QuotaList() {
         ),
       },
       {
-        title: '作成日 / 有効期限',
+        title: t('quotas.table.created_expiry'),
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: (_, record) => (
@@ -198,7 +206,7 @@ function QuotaList() {
         ),
       },
       {
-        title: '送信日 / 受注・失注日',
+        title: t('quotas.table.sent_order_cancel'),
         dataIndex: 'sentAt',
         key: 'sentAt',
         render: (_, record) => {
@@ -228,7 +236,7 @@ function QuotaList() {
         },
       },
       {
-        title: '操作',
+        title: t('quotas.table.actions'),
         key: 'action',
         render: (_, record) => (
           <Space>
@@ -253,6 +261,19 @@ function QuotaList() {
               icon={<CopyOutlined />}
               recordItemId={record.id}
             />
+
+            {record.status === QuotaStatus.Completed && (
+              <Button
+                type="default"
+                size="small"
+                onClick={() => {
+                  show()
+                  setDataAgreedPrice(record)
+                }}
+              >
+                {t('quotas.actions.decide_move')}
+              </Button>
+            )}
 
             <Link href={record?.pdf_path} target="_blank">
               <Button size="small" icon={<DownloadOutlined />} />
@@ -279,29 +300,31 @@ function QuotaList() {
                   })
                 }}
               >
-                再見積
+                {t('quotas.actions.re_estimate')}
               </Button>
             )}
 
-            {record.status === QuotaStatus.Completed && record.is_author && (
-              <Button
-                type="default"
-                size="small"
-                onClick={() => {
-                  show()
-                  setDataAgreedPrice(record)
-                }}
-              >
-                決定移動
-              </Button>
-            )}
+            {record.status === QuotaStatus.Completed &&
+              record.is_author &&
+              !record?.has_agreed_price && (
+                <Button
+                  type="default"
+                  size="small"
+                  onClick={() => {
+                    show()
+                    setDataAgreedPrice(record)
+                  }}
+                >
+                  {t('quotas.actions.decide_move')}
+                </Button>
+              )}
           </Space>
         ),
       },
     ]
   }, [t])
 
-  const [status, setStatus] = useState<string | null>(null)
+  const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
 
   const {
     tableProps,
@@ -435,24 +458,44 @@ function QuotaList() {
   })
 
   const statusData = [
-    { title: 'すべて', value: 0, key: null },
-    { title: '作成中', value: 0, key: QuotaStatus.Creating },
+    { title: t('quotas.status.creating'), value: 0, key: QuotaStatus.Creating },
     {
-      title: '承認待',
+      title: t('quotas.status.waiting_approval'),
       value: 0,
       color: '#faad14',
       key: QuotaStatus.WaitingApproval,
     }, // vàng
-    { title: '承認済', value: 0, color: '#1890ff', key: QuotaStatus.Approved }, // xanh
     {
-      title: '送信済',
+      title: t('quotas.status.approved'),
+      value: 0,
+      color: '#1890ff',
+      key: QuotaStatus.Approved,
+    }, // xanh
+    {
+      title: t('quotas.status.sent_to_customer'),
       value: 0,
       color: '#1677ff',
       key: QuotaStatus.SentToCustomer,
     }, // xanh đậm
-    { title: '差戻', value: 0, color: '#fa541c', key: QuotaStatus.Rejected }, // cam
-    { title: '受注', value: 0, color: '#52c41a', key: QuotaStatus.Completed }, // xanh lá
-    { title: '失注', value: 0, color: '#ff4d4f', key: QuotaStatus.Cancelled }, // đỏ
+    {
+      title: t('quotas.status.rejected'),
+      value: 0,
+      color: '#fa541c',
+      key: QuotaStatus.Rejected,
+    }, // cam
+    {
+      title: t('quotas.status.completed'),
+      value: 0,
+      color: '#52c41a',
+      key: QuotaStatus.Completed,
+    }, // xanh lá
+    {
+      title: t('quotas.status.cancelled'),
+      value: 0,
+      color: '#ff4d4f',
+      key: QuotaStatus.Cancelled,
+    }, // đỏ
+    { title: t('quotas.status.all'), value: 0, key: null },
   ]
 
   const statusDashboard = useMemo(() => {
@@ -469,28 +512,32 @@ function QuotaList() {
     ): { key: number; label: string }[] => {
       if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
         return [
-          { key: 1, label: '削除' },
+          { key: 1, label: t('quotas.actions.delete') },
           ...(hasApprovalRoutes
-            ? [{ key: 2, label: '承認依頼（作成者）' }]
+            ? [{ key: 2, label: t('quotas.actions.request_approval') }]
             : []),
         ]
       } else if (status === QuotaStatus.WaitingApproval) {
         return [
-          ...(hasApprovalRoutes ? [{ key: 3, label: '承認（承認者）' }] : []),
+          ...(hasApprovalRoutes
+            ? [{ key: 3, label: t('quotas.actions.approve') }]
+            : []),
         ]
       } else if (status === QuotaStatus.Approved) {
-        return [{ key: 4, label: '送信（作成者）' }]
+        return [{ key: 4, label: t('quotas.actions.send') }]
       } else if (status === QuotaStatus.SentToCustomer) {
         return [
-          { key: 5, label: '受注へ移動' },
-          { key: 6, label: '失注へ移動' },
+          { key: 5, label: t('quotas.actions.move_to_order') },
+          { key: 6, label: t('quotas.actions.move_to_cancel') },
         ]
       } else if (status === QuotaStatus.Completed) {
-        return [{ key: 7, label: '送信へ移動' }]
+        return [{ key: 7, label: t('quotas.actions.move_to_send') }]
       } else if (status === QuotaStatus.Cancelled) {
         return [
-          { key: 1, label: '削除' },
-          ...(hasApprovalRoutes ? [{ key: 7, label: '送信へ移動' }] : []),
+          { key: 1, label: t('quotas.actions.delete') },
+          ...(hasApprovalRoutes
+            ? [{ key: 7, label: t('quotas.actions.move_to_send') }]
+            : []),
         ]
       }
       return []
@@ -606,20 +653,16 @@ function QuotaList() {
         <Breadcrumbs
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('estimates.estimates')}
-                </Title>
-              ),
+              title: boldText(t('estimates.estimates')),
             },
             {
-              title: <Title level={5}>{t('quotas.list')}</Title>,
+              title: boldText(t('quotas.list'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
         />
       }
-      i18nHeading={'quotas.list'}
+      i18nHeading={'list'}
     >
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
@@ -632,52 +675,74 @@ function QuotaList() {
           <Row gutter={[24, 0]}>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
-                label={<span className="font-bold">見積番号</span>}
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.estimate_number')}
+                  </span>
+                }
                 layout="vertical"
                 name={'code'}
               >
-                <Input placeholder="部分一致" />
+                <Input placeholder={t('quotas.filters.partial_match')} />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
-                label={<span className="font-bold">取引先</span>}
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.customer')}
+                  </span>
+                }
                 layout="vertical"
                 name={'customer_name'}
               >
-                <Input placeholder="部分一致" />
+                <Input placeholder={t('quotas.filters.partial_match')} />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
-                label={<span className="font-bold">タイトル</span>}
+                label={
+                  <span className="font-bold">{t('quotas.filters.title')}</span>
+                }
                 layout="vertical"
                 name={'title'}
               >
-                <Input placeholder="部分一致" />
+                <Input placeholder={t('quotas.filters.partial_match')} />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
-                label={<span className="font-bold">作成者</span>}
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.creator')}
+                  </span>
+                }
                 layout="vertical"
                 name={'creator_name'}
               >
-                <Input placeholder="部分一致" />
+                <Input placeholder={t('quotas.filters.partial_match')} />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
-                label={<span className="font-bold">承認者</span>}
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.approver')}
+                  </span>
+                }
                 layout="vertical"
                 name={'approver_name'}
               >
-                <Input placeholder="部分一致" />
+                <Input placeholder={t('quotas.filters.partial_match')} />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
               <Form.Item
-                label={<span className="font-bold">部門（支社/部/課）</span>}
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.department')}
+                  </span>
+                }
                 layout="vertical"
                 name={'department_in_charge'}
               >
@@ -686,24 +751,30 @@ function QuotaList() {
                   allowClear
                   showSearch
                   labelInValue
-                  placeholder={'選択してください'}
+                  placeholder={t('quotas.filters.please_select')}
                 />
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
-                label={<span className="font-bold">タグ名</span>}
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.tag_name')}
+                  </span>
+                }
                 layout="vertical"
                 name={'tag_name'}
               >
-                <Input placeholder="部分一致" />
+                <Input placeholder={t('quotas.filters.partial_match')} />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={[24, 0]}>
             <Col xs={12} md={6} lg={4}>
               <Form.Item
-                label={<span className="font-bold">日付</span>}
+                label={
+                  <span className="font-bold">{t('quotas.filters.date')}</span>
+                }
                 layout="vertical"
                 name={'search_date_type'}
               >
@@ -711,26 +782,26 @@ function QuotaList() {
                   options={[
                     {
                       value: 'created_at',
-                      label: '作成日',
+                      label: t('quotas.date_types.created_at'),
                     },
                     {
                       value: 'sent_to_customer_date',
-                      label: '送信日',
+                      label: t('quotas.date_types.sent_to_customer_date'),
                     },
                     {
-                      value: 'expiration_date',
-                      label: '有効期限',
+                      value: 'expired_date',
+                      label: t('quotas.date_types.expired_date'),
                     },
                     {
                       value: 'customer_accepted_date',
-                      label: '受注日 ',
+                      label: t('quotas.date_types.customer_accepted_date'),
                     },
                     {
                       value: 'customer_cancelled_date',
-                      label: '失注日',
+                      label: t('quotas.date_types.customer_cancelled_date'),
                     },
                   ]}
-                  placeholder={'作成日'}
+                  placeholder={t('quotas.date_types.created_at')}
                 />
               </Form.Item>
             </Col>
@@ -759,7 +830,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    setStatus(null)
+                    setStatus(QuotaStatus.Creating)
                   }}
                 >
                   {t('buttons.clear')}
@@ -813,7 +884,7 @@ function QuotaList() {
                       color: '#ccc',
                     }}
                   >
-                    一括処理
+                    {t('quotas.actions.bulk_processing')}
                     <DownOutlined
                       style={{
                         fontSize: 13,
@@ -825,8 +896,17 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="mt-7 flex justify-end gap-2">
-                <Button type="default">見積テンプレート一覧</Button>
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="default"
+                  onClick={() => {
+                    go({
+                      to: 'quota-templates',
+                    })
+                  }}
+                >
+                  {t('quotas.actions.template_list')}
+                </Button>
                 <Button
                   type="primary"
                   onClick={() => {
@@ -835,7 +915,7 @@ function QuotaList() {
                     })
                   }}
                 >
-                  新規作成
+                  {t('quotas.actions.new_create')}
                 </Button>
               </div>
             </Col>
@@ -852,7 +932,11 @@ function QuotaList() {
       <Modal
         {...modalProps}
         footer={false}
-        title={boldText('決定見積へ移動', PRIMARY, 16)}
+        title={boldText(
+          t('quotas.modal.move_to_decided_estimate'),
+          PRIMARY,
+          16,
+        )}
       >
         <ModalAgreePrice data={dataAgreedPrice} close={close} />
       </Modal>

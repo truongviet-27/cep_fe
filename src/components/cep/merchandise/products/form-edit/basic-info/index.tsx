@@ -6,7 +6,18 @@ import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
-import { Button, Col, Form, Modal, Row, Select, Spin, Typography } from 'antd'
+import { PRIMARY } from '@utility/color'
+import {
+  Button,
+  Col,
+  Form,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  Spin,
+  Typography,
+} from 'antd'
 import { Empty, type FormInstance } from 'antd/lib'
 import { type MutableRefObject } from 'react'
 
@@ -44,7 +55,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       handleSearchProductUnit,
       handleAppendPackaging,
     },
-  ] = useBasicInfoController(form, addRef, ranks)
+  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton, ranks)
 
   const { show, close, open } = modalFormProps
   const {
@@ -53,22 +64,28 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
     open: isOpenCategoryModal,
   } = modalFormCategory
 
-  const allowShowForm = isAllowedSaveButton
-
   return (
     <div className="px-2">
       <Row className="my-4">
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="code"
-            isView={allowShowForm}
             label={t('products.fields.productCode')}
             required={true}
             layout="horizontal"
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「商品コードは必須です。」',
+              },
+              {
+                max: 20,
+                message: '「商品コードは20文字以内で入力してください」',
+              },
+              {
+                pattern: /^[A-Z0-9-]+$/,
+                message:
+                  '商品コードには A〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
               },
             ]}
           />
@@ -106,14 +123,17 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="name"
-            isView={allowShowForm}
             label={t('products.fields.productName')}
             required={true}
             layout="horizontal"
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「商品名は必須です。」',
+              },
+              {
+                max: 100,
+                message: '「商品名は100文字以内で入力してください」',
               },
             ]}
           />
@@ -123,13 +143,18 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="short_name"
-            isView={allowShowForm}
             label={
               <span className="font-bold">
                 {t('products.fields.productNameAbbr')}
               </span>
             }
             layout="horizontal"
+            rules={[
+              {
+                max: 50,
+                message: '「略称は50文字以内で入力してください」',
+              },
+            ]}
           />
         </Col>
       </Row>
@@ -137,7 +162,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="barcode"
-            isView={allowShowForm}
             label={
               <span className="font-bold">{t('products.fields.barcode')}</span>
             }
@@ -155,13 +179,12 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「カテゴリは必須です。」',
               },
             ]}
           >
             <ProductCategoryDropdown
               defaultValue={form.getFieldValue('category')}
-              valueOnly={allowShowForm}
               placeholder="選択してください"
               onSelect={handleChooseCategory}
             />
@@ -193,28 +216,24 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「単位は必須です。」',
               },
             ]}
           >
-            {!allowShowForm ? (
-              <Select
-                showSearch
-                onSearch={handleSearchProductUnit}
-                filterOption={false}
-                notFoundContent={
-                  isFetchingProductUnits ? <Spin size="small" /> : <Empty />
-                }
-                placeholder={t('products.pleaseSelect')}
-                options={isFetchingProductUnits ? [] : productUnitOptions}
-                suffixIcon={<CaretDownOutlined />}
-                onSelect={(_, option) => {
-                  form.setFieldValue('unit', option.label)
-                }}
-              />
-            ) : (
-              form.getFieldValue('unit')
-            )}
+            <Select
+              showSearch
+              onSearch={handleSearchProductUnit}
+              filterOption={false}
+              notFoundContent={
+                isFetchingProductUnits ? <Spin size="small" /> : <Empty />
+              }
+              placeholder={t('products.pleaseSelect')}
+              options={isFetchingProductUnits ? [] : productUnitOptions}
+              suffixIcon={<CaretDownOutlined />}
+              onSelect={(_, option) => {
+                form.setFieldValue('unit', option.label)
+              }}
+            />
           </Form.Item>
         </Col>
       </Row>
@@ -222,7 +241,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="cost_price"
-            isView={allowShowForm}
             label={t('products.fields.costPrice')}
             required={true}
             layout="horizontal"
@@ -230,7 +248,22 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「原価は必須です。」',
+              },
+              {
+                validator: (_, value) => {
+                  if (value === undefined || value === null) {
+                    return Promise.resolve()
+                  }
+
+                  if (value < 0) {
+                    return Promise.reject(
+                      '「原価は0以上の数字で入力してください」',
+                    )
+                  }
+
+                  return Promise.resolve()
+                },
               },
             ]}
             style={{
@@ -242,41 +275,72 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       </Row>
       <Row className="mb-4">
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
-          <CoreInput
+          <Form.Item
+            className="!w-full"
             name="selling_price"
-            isView={allowShowForm}
-            label={t('products.fields.sellingPrice')}
+            label={boldText(t('products.fields.sellingPrice'))}
+            colon={false}
             required={true}
             layout="horizontal"
-            type="number"
             rules={[
               {
                 required: true,
-                message: t('validation.required'),
+                message: '「販売単価は必須です。」',
+              },
+              {
+                validator: (_, value) => {
+                  if (value === undefined || value === null) {
+                    return Promise.resolve()
+                  }
+
+                  if (value < 0) {
+                    return Promise.reject(
+                      '「原価は0以上の数字で入力してください」',
+                    )
+                  }
+
+                  if (value < form.getFieldValue('cost_price')) {
+                    return Promise.reject(
+                      '「販売単価は原価以上で入力してください」',
+                    )
+                  }
+
+                  if (!Number.isInteger(value)) {
+                    return Promise.reject('「整数で入力してください」')
+                  }
+
+                  return Promise.resolve()
+                },
               },
             ]}
-            style={{
-              width: '100%',
-            }}
-          />
+          >
+            {isAllowedSaveButton ? (
+              <>
+                <span
+                  className="mr-2 rounded-sm p-1 text-white"
+                  style={{ background: PRIMARY }}
+                >
+                  {form.getFieldValue('selling_price')}
+                </span>
+                <EditFilled
+                  onClick={() => {
+                    setIsAllowedSaveButton(false)
+                  }}
+                />
+              </>
+            ) : (
+              <InputNumber controls={false} min={0} className="!w-full" />
+            )}
+          </Form.Item>
         </Col>
         <Col>
           <div className="mt-1 ml-10">
-            {isAllowedSaveButton ? (
-              <EditFilled
-                onClick={() => {
-                  setIsAllowedSaveButton(false)
-                }}
-              />
-            ) : (
+            {!isAllowedSaveButton && (
               <Button
                 size="small"
                 color="blue"
                 variant="outlined"
-                onClick={() => {
-                  setIsAllowedSaveButton(true)
-                  handleAppendPackaging()
-                }}
+                onClick={handleAppendPackaging}
               >
                 {t('更新')}
               </Button>
@@ -288,7 +352,6 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
             name="note"
-            isView={allowShowForm}
             label={t('products.fields.remarks')}
             layout="horizontal"
           />
