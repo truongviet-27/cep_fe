@@ -72,7 +72,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                 </div>
                 <div>
                   <span
-                    className="p-1 text-white"
+                    className="rounded-sm p-1 text-white"
                     style={{ background: PRIMARY }}
                   >
                     {product.selling_price}
