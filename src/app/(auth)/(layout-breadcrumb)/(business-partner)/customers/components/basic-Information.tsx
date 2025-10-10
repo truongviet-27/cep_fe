@@ -87,7 +87,12 @@ function BasicInformation(
             {isAutomatic && (
               <>
                 <Col>
-                  <Button onClick={handleAutoNumber} loading={isCodeGenLoading}>
+                  <Button
+                    onClick={handleAutoNumber}
+                    loading={isCodeGenLoading}
+                    color="primary"
+                    variant="outlined"
+                  >
                     {t('departments.create.auto_number')}
                   </Button>
                 </Col>

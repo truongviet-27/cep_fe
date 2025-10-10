@@ -31,8 +31,6 @@ export const useCustomerEdit = () => {
       temp_industry = values?.temp_industry
     }
 
-    console.log('eee')
-
     await onFinish({ ...values, company_type, temp_industry })
   }
 
@@ -82,8 +80,6 @@ export const useCustomerEdit = () => {
       form.setFieldsValue(record)
     }
   }, [record])
-
-  console.log(saveButtonProps.disabled, 'form')
 
   return {
     t,

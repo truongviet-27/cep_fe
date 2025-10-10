@@ -143,13 +143,22 @@ export default function Page() {
         )
       },
     },
-    { dataIndex: 'name', title: t('departments.fields.name') },
+    { dataIndex: 'name', title: t('departments.fields.name'), align: 'left' },
     {
       dataIndex: 'number_of_employee',
       title: t('departments.fields.number_of_employee'),
+      align: 'right',
     },
-    { dataIndex: 'created_by', title: t('approve_routes.show.creator') },
-    { dataIndex: 'updated_by', title: t('departments.fields.updated_by') },
+    {
+      dataIndex: 'created_by',
+      title: t('approve_routes.show.creator'),
+      align: 'left',
+    },
+    {
+      dataIndex: 'updated_by',
+      title: t('departments.fields.updated_by'),
+      align: 'left',
+    },
     {
       dataIndex: 'created_at',
       title: t('departments.fields.created_at'),
