@@ -662,7 +662,6 @@ function QuotaList() {
           separator={<RightOutlined />}
         />
       }
-      i18nHeading={'list'}
     >
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
