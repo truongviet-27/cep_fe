@@ -959,7 +959,7 @@
     },
     "search": {
       "estimate_number": "見積番号",
-      "business_partner": "取引先",
+      "customer": "取引先",
       "creator": "作成者",
       "department": "部門(支社/部/課)",
       "tag_name": "タグ名",
@@ -970,9 +970,11 @@
     "table": {
       "status": "状態",
       "estimate_number": "見積番号",
-      "business_partner": "取引先",
+      "customer": "取引先",
       "creator": "作成者",
       "product_count": "商品数",
+      "department": "部門",
+      "amount": "金額(円)",
       "department_amount": "部門金額(円)",
       "estimate_date_application_end": "見積日適用終了",
       "reference_count": "参照回数",
