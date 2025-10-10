@@ -37,7 +37,6 @@ export default function EmployeeShow() {
     : 'default'
 
   const renderValue = (value: string | undefined | null) => {
-    console.log('values:', value)
     if (!value || value === '---') {
       return (
         <Space>
