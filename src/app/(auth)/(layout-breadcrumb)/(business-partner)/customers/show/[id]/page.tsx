@@ -56,9 +56,10 @@ export default function CustomerShowPage() {
           {t('customers.research.judgement')}
         </span>
       ),
-      dataIndex: 'judgement', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'judgement',
       key: 'judgement',
       width: 150,
+      render: (text: string) => (text == 'T' ? '△' : text),
     },
     {
       title: (
@@ -66,7 +67,7 @@ export default function CustomerShowPage() {
           {t('customers.research.file')}
         </span>
       ),
-      dataIndex: 'files', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'files',
       key: 'files',
       render: (files: Array<{ name: string; url: string }>) => (
         <Space direction="vertical" size="small">
@@ -214,10 +215,12 @@ export default function CustomerShowPage() {
                 </DetailItem>
               )}
               <DetailItem label={t('customers.fields.credit_rank')}>
-                N/A
+                {record?.fax}
               </DetailItem>
               <DetailItem label={t('customers.fields.anti_social_rank')}>
-                N/A
+                {record?.company_research_information?.[1]?.judgement == 'T'
+                  ? '△'
+                  : record?.company_research_information?.[1].judgement}
               </DetailItem>
             </>
           ),
@@ -252,7 +255,8 @@ export default function CustomerShowPage() {
                 {record?.industry}
               </DetailItem>
               <DetailItem label={t('customers.show.date_of_establishment')}>
-                {dayjs(record?.date_of_establishment).format(FORMAT_DATE)}
+                {record?.date_of_establishment &&
+                  dayjs(record?.date_of_establishment).format(FORMAT_DATE)}
               </DetailItem>
               <DetailItem label={t('customers.show.department_in_charge')}>
                 {record?.department_in_charge}
