@@ -13,12 +13,14 @@ export default getRequestConfig(async () => {
     )
   }
 
-  const [common, product, validation, quota_templates] = await Promise.all([
-    loadMessages('common'),
-    loadMessages('product'),
-    loadMessages('validation'),
-    loadMessages('quota-template'),
-  ])
+  const [common, product, validation, quota_templates, quotas] =
+    await Promise.all([
+      loadMessages('common'),
+      loadMessages('product'),
+      loadMessages('validation'),
+      loadMessages('quota-template'),
+      loadMessages('quotas'),
+    ])
 
   return {
     locale,
@@ -27,6 +29,7 @@ export default getRequestConfig(async () => {
       products: product.default,
       validation: validation.default,
       quota_templates: quota_templates.default,
+      quotas: quotas.default,
     },
   }
 })

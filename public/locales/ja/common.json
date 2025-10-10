@@ -924,16 +924,6 @@
   "list_received": {
     "list_received": "確定見積一覧"
   },
-  "quotas": {
-    "quotas": "見積一覧",
-    "list": "見積一覧",
-    "create": "見積新規作成",
-    "edit": "見積編集",
-    "detail": "見積詳細",
-    "page_list": {},
-    "page_detail": {},
-    "page_action": {}
-  },
   "price_groups": {
     "price_groups": "単価グループ設定",
     "business_partner": "取引先",
