@@ -388,7 +388,7 @@ function QuotaAction() {
               handlePreviewPdf()
             }}
           >
-            プレビュー
+            {t('quotas.action.preview')}
           </Button>
         </div>
       }
@@ -496,7 +496,7 @@ function QuotaAction() {
       </Spin>
       {
         <Modal
-          title="Preview PDF"
+          title={t('quotas.action.preview_pdf')}
           closable={{ 'aria-label': 'Custom Close Button' }}
           open={isPdf}
           onCancel={() => {

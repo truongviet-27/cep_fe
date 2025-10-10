@@ -27,7 +27,7 @@ function BasicInfo({ data }: { data: any }) {
 
   return (
     <Card
-      title={boldText('基本情報', PRIMARY, 16)}
+      title={boldText(t('quotas.show.basic_info'), PRIMARY, 16)}
       style={{
         border: 'none',
       }}
@@ -166,16 +166,16 @@ function BasicInfo({ data }: { data: any }) {
       <div className="mt-4">
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText('見積番号')}>
+            <Form.Item label={boldText(t('quotas.show.estimate_number'))}>
               {data?.code}
               <Tag
-                color={getQuotaStatusStyle(data?.status).background}
+                color={getQuotaStatusStyle(data?.status, t).background}
                 style={{
-                  color: getQuotaStatusStyle(data?.status).color,
+                  color: getQuotaStatusStyle(data?.status, t).color,
                   marginLeft: 10,
                 }}
               >
-                {getQuotaStatusStyle(data?.status).text}
+                {getQuotaStatusStyle(data?.status, t).text}
               </Tag>
             </Form.Item>
           </Col>
@@ -183,19 +183,26 @@ function BasicInfo({ data }: { data: any }) {
 
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'type'} label={boldText('見積区分')}>
-              {data?.type === 'normal' ? '通常' : '販路限定'}
+            <Form.Item
+              name={'type'}
+              label={boldText(t('quotas.show.estimate_type'))}
+            >
+              {data?.type === 'normal'
+                ? t('quotas.show.type.normal')
+                : t('quotas.show.type.limited')}
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText('タイトル')}>{data?.title}</Form.Item>
+            <Form.Item label={boldText(t('quotas.show.title'))}>
+              {data?.title}
+            </Form.Item>
           </Col>
 
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText('取引先')}>
+            <Form.Item label={boldText(t('quotas.show.customer'))}>
               {data?.customer_name}
             </Form.Item>
           </Col>
@@ -203,12 +210,15 @@ function BasicInfo({ data }: { data: any }) {
 
         <Row gutter={[100, 0]} wrap>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'created_at'} label={boldText('見積日')}>
+            <Form.Item
+              name={'created_at'}
+              label={boldText(t('quotas.show.estimate_date'))}
+            >
               {dayjs(data?.created_at).format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText('納入期日')}>
+            <Form.Item label={boldText(t('quotas.show.delivery_date'))}>
               {dayjs(data?.delivery_date).format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
@@ -216,12 +226,18 @@ function BasicInfo({ data }: { data: any }) {
 
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'delivery_method'} label={boldText('納品方法')}>
+            <Form.Item
+              name={'delivery_method'}
+              label={boldText(t('quotas.show.delivery_method'))}
+            >
               {data?.delivery_method}
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'payment_due_date'} label={boldText('支払期日')}>
+            <Form.Item
+              name={'payment_due_date'}
+              label={boldText(t('quotas.show.payment_due_date'))}
+            >
               {getPaymentDueDateLabel(data?.payment_due_date, t)}
             </Form.Item>
           </Col>
@@ -232,7 +248,7 @@ function BasicInfo({ data }: { data: any }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <Form.Item
                 name={'expiration_date'}
-                label={boldText('有効期限')}
+                label={boldText(t('quotas.show.expiration_date'))}
                 style={{ marginBottom: 0, flex: 1 }}
               >
                 {getExpirationDate(data?.expiration_date, t)}
@@ -257,7 +273,7 @@ function BasicInfo({ data }: { data: any }) {
             <div className="flex items-center">
               <Form.Item
                 name="consumption_tax"
-                label={boldText('消費税')}
+                label={boldText(t('quotas.show.consumption_tax'))}
                 style={{ marginBottom: 0, flex: 1 }}
               >
                 {consumptionTax[data?.consumption_tax as ConsumptionTaxKey]}

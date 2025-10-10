@@ -9,7 +9,7 @@ function Reason() {
   const t = useTranslate()
   return (
     <Card
-      title={boldText('差戻の理由', PRIMARY, 16)}
+      title={boldText(t('quotas.show.rejection_reason'), PRIMARY, 16)}
       styles={{
         header: {
           padding: 0,
