@@ -261,6 +261,23 @@ function QuotaDetail() {
                     {t('quotas.show.actions.request_approval')}
                   </Button>
                 )}
+              {queryBasic?.data?.status === QuotaStatus.SentToCustomer && (
+                <Button
+                  type="default"
+                  style={{
+                    background: '#faad14',
+                    color: WHITE,
+                  }}
+                  size="middle"
+                  onClick={() => {
+                    go({
+                      to: `quotas/clone/${id}?actionType=VERSION`,
+                    })
+                  }}
+                >
+                  {t('quotas.actions.re_estimate')}
+                </Button>
+              )}
               {queryBasic?.data?.has_approval_route &&
                 queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
                 (permission?.is_module_admin || queryBasic?.data?.display) && (

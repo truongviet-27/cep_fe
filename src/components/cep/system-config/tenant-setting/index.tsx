@@ -33,11 +33,14 @@ const { Title } = Typography
 type FormType = QuotaFormSettingResponse & {
   company_logo_image_file_key: string | null
   company_seal_image_file_key: string | null
+  company_logo_image_name: string | null
+  company_seal_image_name: string | null
 }
 
 function TenantSetting() {
   const t = useTranslate()
   const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const { formProps, saveButtonProps, form } = useForm<FormType>()
 
   const [previewPdf, setPreviewPdf] = useState('')
 
@@ -45,7 +48,10 @@ function TenantSetting() {
     redirect('/403')
   }
 
-  const { formProps, saveButtonProps, form } = useForm<FormType>()
+  const logo_image = Form.useWatch('company_logo_image', form)
+  const seal_image = Form.useWatch('company_seal_image', form)
+
+  console.log(logo_image, '')
 
   const [isPdf, setIsPdf] = useState(false)
   const apiUrl = useApiUrl()
@@ -68,9 +74,9 @@ function TenantSetting() {
       id: form.getFieldValue('id'),
       company_logo_image:
         form.getFieldValue('company_logo_image_file_key') ??
-        form
-          .getFieldValue('company_logo_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (logo_image
+          ? logo_image.match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null),
       is_enable_delivery: !values.is_enable_delivery,
       is_enable_delivery_method: !values.is_enable_delivery_method,
       is_enable_payment_due_date: !values.is_enable_payment_due_date,
@@ -79,9 +85,9 @@ function TenantSetting() {
       is_display_company_seal_image: !values.is_display_company_seal_image,
       company_seal_image:
         form.getFieldValue('company_seal_image_file_key') ??
-        form
-          .getFieldValue('company_seal_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (seal_image
+          ? seal_image.match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null),
     }
     mutate(
       {
@@ -105,15 +111,19 @@ function TenantSetting() {
       ...form.getFieldsValue(),
       id: form.getFieldValue('id'),
       company_logo_image:
-        form.getFieldValue('company_logo_image_file_key') ??
-        form
-          .getFieldValue('company_logo_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (form.getFieldValue('company_logo_image_file_key') ??
+        form.getFieldValue('company_logo_image'))
+          ? form
+              .getFieldValue('company_logo_image')
+              .match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null,
       company_seal_image:
-        form.getFieldValue('company_seal_image_file_key') ??
-        form
-          .getFieldValue('company_seal_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (form.getFieldValue('company_seal_image_file_key') ??
+        form.getFieldValue('company_seal_image'))
+          ? form
+              .getFieldValue('company_seal_image')
+              .match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null,
       is_enable_delivery: !form.getFieldValue('is_enable_delivery'),
       is_enable_delivery_method: !form.getFieldValue(
         'is_enable_delivery_method',

@@ -250,7 +250,8 @@ function QuotaList() {
               icon={<EyeOutlined />}
               recordItemId={record.id}
             />
-            {record.status === QuotaStatus.Creating &&
+            {(record.status === QuotaStatus.Creating ||
+              record.status === QuotaStatus.Rejected) &&
               (permission?.is_module_admin || record.is_author) && (
                 <EditButton
                   hideText
