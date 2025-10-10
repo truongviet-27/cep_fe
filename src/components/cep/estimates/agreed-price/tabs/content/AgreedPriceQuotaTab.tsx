@@ -142,16 +142,19 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.estimate_number'),
         dataIndex: 'quota_code',
         key: 'quota_code',
-        render: (quotaCode: string) => (
+        render: (quotaCode: string, record: QuotaAgreedPrice) => (
           <Button
             type="link"
-            onClick={() => go({ to: `/estimates/${quotaCode}` })}
+            onClick={() =>
+              go({ to: `/agreed-prices/quota/${record.quota_id}` })
+            }
           >
             {quotaCode}
           </Button>
         ),
       },
       {
+        title: t('agreed_prices.table.customer'),
         key: 'customer_name',
         render: (_: unknown, record: QuotaAgreedPrice) =>
           record.customer?.name ?? '-',
@@ -169,7 +172,14 @@ const AgreedPriceQuotaTab = () => {
         align: 'right',
       },
       {
-        title: t('agreed_prices.table.department_amount'),
+        title: (
+          <div>
+            <div>{t('agreed_prices.table.department')}</div>
+            <div style={{ fontSize: '12px', color: '#666' }}>
+              {t('agreed_prices.table.amount')}
+            </div>
+          </div>
+        ),
         dataIndex: 'total_price',
         key: 'total_price',
         align: 'right',
@@ -408,7 +418,7 @@ const AgreedPriceQuotaTab = () => {
             <Form.Item
               label={
                 <span className="font-bold">
-                  {t('agreed_prices.search.business_partner')}
+                  {t('agreed_prices.search.customer')}
                 </span>
               }
               layout="vertical"

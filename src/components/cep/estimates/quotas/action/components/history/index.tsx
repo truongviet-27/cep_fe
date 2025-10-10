@@ -38,7 +38,7 @@ function History({ data }: { data: any }) {
         dataIndex: 'status',
         key: 'status',
         render: (value: QuotaStatus) => {
-          const result = getQuotaStatusStyle(value)
+          const result = getQuotaStatusStyle(value, t)
 
           return (
             <div className="flex flex-col items-center justify-center gap-1">

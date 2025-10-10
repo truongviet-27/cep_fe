@@ -92,13 +92,13 @@ function BasicInfoExtended({
           <Col>
             <Form.Item>
               <Tag
-                color={getQuotaStatusStyle(data?.status).background}
+                color={getQuotaStatusStyle(data?.status, t).background}
                 style={{
-                  color: getQuotaStatusStyle(data?.status).color,
+                  color: getQuotaStatusStyle(data?.status, t).color,
                   marginRight: 0,
                 }}
               >
-                {getQuotaStatusStyle(data?.status).text}
+                {getQuotaStatusStyle(data?.status, t).text}
               </Tag>
             </Form.Item>
           </Col>
