@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
+import { CloseOutlined } from '@ant-design/icons'
 import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
 import { useTranslate } from '@refinedev/core'
 import {
   Checkbox,
   Col,
-  Flex,
   Form,
   InputNumber,
   Radio,
@@ -38,14 +38,29 @@ function Right() {
           </div>
           <div className="flex flex-1 content-center items-center">
             <div className="flex w-3/4 content-center items-center px-4">
+              <Form.Item name={'company_logo_image_name'} hidden />
               {watchCompanyLogoImage &&
                 !form.getFieldValue('company_logo_image_file_key') && (
-                  <div className="mr-4 rounded-lg border border-[#d9d9d9] p-2">
+                  <div className="relative mr-4 rounded-lg border border-[#d9d9d9] p-2">
                     <Image
                       src={watchCompanyLogoImage}
                       alt="watchCompanySealImage"
-                      width={84}
-                      height={84}
+                      width={85}
+                      height={85}
+                      style={{
+                        height: 85,
+                        width: 85,
+                      }}
+                    />
+                    <CloseOutlined
+                      style={{
+                        fontSize: 14,
+                      }}
+                      onClick={() => {
+                        form.setFieldValue('company_logo_image', null)
+                        form.setFieldValue(`company_logo_image_name`, null)
+                      }}
+                      className="absolute top-1 right-1 cursor-pointer"
                     />
                   </div>
                 )}
@@ -54,6 +69,7 @@ function Right() {
                 style={{
                   margin: 0,
                 }}
+                className="ant-form-item-hidden-margin"
               >
                 <UploadSetting
                   name={'company_logo_image'}
@@ -82,14 +98,29 @@ function Right() {
           </div>
           <div className="flex flex-1 content-center items-center">
             <div className="flex w-3/4 content-center items-center px-4">
+              <Form.Item name={'company_seal_image_name'} hidden />
               {watchCompanySealImage &&
                 !form.getFieldValue('company_seal_image_file_key') && (
-                  <div className="mr-4 rounded-lg border border-[#d9d9d9] p-2">
+                  <div className="relative mr-4 rounded-lg border border-[#d9d9d9] p-2">
                     <Image
                       src={watchCompanySealImage}
                       alt="watchCompanySealImage"
-                      width={84}
-                      height={84}
+                      width={85}
+                      height={85}
+                      style={{
+                        height: 85,
+                        width: 85,
+                      }}
+                    />
+                    <CloseOutlined
+                      style={{
+                        fontSize: 14,
+                      }}
+                      onClick={() => {
+                        form.setFieldValue('company_seal_image', null)
+                        form.setFieldValue(`company_seal_image_name`, null)
+                      }}
+                      className="absolute top-1 right-1 cursor-pointer"
                     />
                   </div>
                 )}
@@ -98,6 +129,7 @@ function Right() {
                 style={{
                   margin: 0,
                 }}
+                className="ant-form-item-hidden-margin"
               >
                 <UploadSetting
                   name={'company_seal_image'}
@@ -133,7 +165,7 @@ function Right() {
             >
               <div className="relative my-4 min-h-[200px] rounded-lg border border-solid border-[#ccc] p-4">
                 {watchCompanyLogoImage && (
-                  <div className="mb-4">
+                  <div className="mb-4 ml-[60%]">
                     <Image
                       src={
                         watchCompanyLogoImage instanceof File
@@ -141,10 +173,9 @@ function Right() {
                           : watchCompanyLogoImage
                       }
                       alt="preview"
-                      width={50}
-                      height={50}
+                      width={80}
+                      height={80}
                       style={{
-                        marginLeft: 'auto',
                         marginRight: 40,
                         borderRadius: 8,
                       }}
@@ -161,8 +192,8 @@ function Right() {
                           : watchCompanySealImage
                       }
                       alt="preview"
-                      width={100}
-                      height={100}
+                      width={80}
+                      height={80}
                       style={{
                         borderRadius: 8,
                       }}
@@ -170,11 +201,11 @@ function Right() {
                   </div>
                 )}
 
-                <Flex vertical gap={8} align="end">
+                <div className="mt-10 ml-[60%] flex flex-col">
                   <Space>{watchAddress}</Space>
                   <Space>{watchCompanyName}</Space>
                   <Space>{watchPhone}</Space>
-                </Flex>
+                </div>
               </div>
             </Form.Item>
           </div>
@@ -187,7 +218,7 @@ function Right() {
           <div className="flex flex-1 content-center items-center">
             <div className="solid content-center px-4">
               <Form.Item
-                name="is_display_manger_seal"
+                name="is_display_manager_seal"
                 style={{
                   margin: 0,
                 }}
