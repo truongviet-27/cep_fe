@@ -13,11 +13,9 @@ import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { DARK_RED, GREY, PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
-import { Button, Modal, Table, Tag, Typography } from 'antd'
+import { Button, Modal, Table, Tag } from 'antd'
 import { useTranslations } from 'next-intl'
 import type { SegmentedValue } from 'rc-segmented'
-
-const { Title } = Typography
 
 export default function Page() {
   const t = useTranslations()
@@ -90,6 +88,7 @@ export default function Page() {
         <Table.Column
           dataIndex="name"
           title={t('code_issue_settings.fields.name')}
+          align={'left'}
         />
 
         <Table.Column
@@ -110,6 +109,7 @@ export default function Page() {
         <Table.Column
           dataIndex="prefix"
           title={t('code_issue_settings.fields.prefix')}
+          align={'left'}
         />
         <Table.Column
           dataIndex={['hash_dash']}
@@ -122,14 +122,17 @@ export default function Page() {
           render={(value: SegmentedValue) =>
             segmentLabelByValue[value] ?? String(value)
           }
+          align={'left'}
         />
         <Table.Column
           dataIndex="serial_length"
           title={t('code_issue_settings.fields.serial_length')}
+          align={'right'}
         />
         <Table.Column
           dataIndex="total"
           title={t('code_issue_settings.fields.total')}
+          align={'right'}
         />
         <Table.Column
           dataIndex="preview_code"
@@ -157,7 +160,7 @@ export default function Page() {
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'60vh'}
+        width={'35vw'}
       >
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>

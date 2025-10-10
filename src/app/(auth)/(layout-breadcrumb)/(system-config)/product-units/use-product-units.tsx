@@ -51,6 +51,7 @@ export default function useProductUnits() {
     setFilters,
     setPageSize: setPageSize2,
     current,
+    pageCount,
   } = useTable<UnitRow>({
     syncWithLocation: true,
     onSearch: (values: any) => {
@@ -159,7 +160,10 @@ export default function useProductUnits() {
 
   const addNew = () => {
     setPageSize((total) => total + 1)
-    setTotalPage((tableProps?.pagination as any)?.total + 1)
+    setTotalPage(
+      (pre) =>
+        (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
+    )
     forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
 
@@ -306,6 +310,7 @@ export default function useProductUnits() {
       title: '単位名',
       dataIndex: 'name',
       key: 'name',
+      align: 'left',
       render: (_val, record, index) => {
         const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
         return isEditing ? (

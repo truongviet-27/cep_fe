@@ -167,17 +167,18 @@ export default function EmployeeEdit() {
               </Form.Item>
             </Col>
 
-            <Col flex="none">
+            <Col flex="none" className={'!-mt-2'}>
               <Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
                 (A-Z, 0-9, -)
               </Text>
             </Col>
 
-            <Col xs={24} sm="auto" flex="none">
-              <Space direction="vertical" size={6} wrap>
+            <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
+              <Space direction="horizontal" size={6} wrap>
                 <Button
                   size="middle"
-                  type="default"
+                  color="primary"
+                  variant="outlined"
                   loading={isLoading}
                   onClick={() => {
                     refetch().then(() => {

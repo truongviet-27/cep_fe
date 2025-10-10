@@ -62,13 +62,14 @@ export default function Page() {
         </Button>
       ),
     },
-    { dataIndex: 'name', title: t('ranks.fields.name') },
-    { dataIndex: 'rate', title: t('ranks.fields.rate') },
+    { dataIndex: 'name', title: t('ranks.fields.name'), align: 'left' },
+    { dataIndex: 'rate', title: t('ranks.fields.rate'), align: 'right' },
     {
       dataIndex: 'number_of_customers',
       title: t('ranks.fields.number_of_customers'),
+      align: 'right',
     },
-    { dataIndex: 'note', title: t('ranks.fields.remarks') },
+    { dataIndex: 'note', title: t('ranks.fields.remarks'), align: 'left' },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
