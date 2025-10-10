@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CommonTable from '@components/common/table'
+import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
@@ -9,6 +10,7 @@ import { Table } from 'antd/lib'
 const { Text } = Typography
 
 function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
+  const t = useTranslate()
   const dataSource: any[] = (data ?? []).flatMap((item: any) => [
     {
       isHeader: true,
@@ -22,7 +24,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
   ])
   const columns: ColumnsType = [
     {
-      title: '商品コード',
+      title: t('quotas.show.table.product_code'),
       dataIndex: 'code',
       key: 'code',
       align: 'left',
@@ -37,7 +39,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '商品・サービス名',
+      title: t('quotas.show.table.product_service_name'),
       dataIndex: 'name',
       key: 'name',
       render: (_, record) => {
@@ -49,7 +51,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '単位',
+      title: t('quotas.show.table.unit'),
       dataIndex: 'unit',
       key: 'unit',
       render: (_, record) => {
@@ -60,7 +62,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '荷姿',
+      title: t('quotas.show.table.package'),
       dataIndex: 'package',
       key: 'package',
       width: 200,
@@ -72,7 +74,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '原価',
+      title: t('quotas.show.table.cost_price'),
       dataIndex: 'cost_price',
       key: 'cost_price',
       render: (_, record) => {
@@ -83,7 +85,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '売単価',
+      title: t('quotas.show.table.selling_price'),
       dataIndex: 'selling_price',
       key: 'selling_price',
       render: (_, record) => {
@@ -94,7 +96,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '数量',
+      title: t('quotas.show.table.quantity'),
       dataIndex: 'quantity',
       key: 'quantity',
       render: (_, record) => {
@@ -105,7 +107,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '利益率',
+      title: t('quotas.show.table.profit_margin'),
       dataIndex: 'profit_margin',
       key: 'profit_margin',
       render: (_, record) => {
@@ -116,7 +118,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '合計計算',
+      title: t('quotas.show.table.total_calculation'),
       dataIndex: 'is_add_total',
       key: 'is_add_total',
       render: (_, record) => {
@@ -135,7 +137,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
-      title: '売価金額',
+      title: t('quotas.show.table.selling_amount'),
       dataIndex: 'sellingAmount',
       key: 'sellingAmount',
       render: (_, record) => {
@@ -148,7 +150,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
   ]
   return (
     <Card
-      title={boldText('詳細情報', PRIMARY, 16)}
+      title={boldText(t('quotas.show.detail_info'), PRIMARY, 16)}
       styles={{
         header: {
           padding: 0,
