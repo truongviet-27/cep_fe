@@ -705,7 +705,13 @@ function QuotaList() {
                   allowClear
                   showSearch
                   labelInValue
+                  onSearch={() => {}}
                   placeholder={'選択してください'}
+                  filterOption={(input, option) =>
+                    ((option?.label ?? '') as string)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
                 />
               </Form.Item>
             </Col>

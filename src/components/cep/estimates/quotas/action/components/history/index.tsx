@@ -126,6 +126,7 @@ function History({ data }: { data: any }) {
     <Collapse
       bordered={false}
       expandIconPosition="end"
+      defaultActiveKey={1}
       expandIcon={({ isActive }) => (
         <DownOutlined rotate={isActive ? 180 : 0} />
       )}

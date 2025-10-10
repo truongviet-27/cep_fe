@@ -490,6 +490,9 @@ const BasicInfo = () => {
                     show(codeIssueSetting?.data.id)
                   }}
                   disabled={isCloneVersion}
+                  style={{
+                    textDecoration: 'underline',
+                  }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>
@@ -564,6 +567,12 @@ const BasicInfo = () => {
                 showSearch
                 disabled={isCloneVersion}
                 labelInValue
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               />
             </Form.Item>
           </Col>
@@ -589,7 +598,7 @@ const BasicInfo = () => {
               <DatePicker
                 style={{ width: '100%' }}
                 placeholder={FORMAT_DATE}
-                minDate={Form.useWatch('created_at', form)}
+                // minDate={Form.useWatch('created_at', form)}
               />
             </Form.Item>
           </Col>
@@ -715,6 +724,7 @@ const BasicInfo = () => {
                       Form.useWatch('created_at', form),
                     ),
                   ).format('YYYY/MM/DD')}
+                  まで
                 </span>
               </Form.Item>
             </div>
@@ -751,7 +761,9 @@ const BasicInfo = () => {
                   t('tenant_settings.consumptionTax.taxRateLabel'),
                 )}
                 name="tax_rate"
-                style={{ marginBottom: 0 }}
+                style={{
+                  marginBottom: 0,
+                }}
               >
                 <InputNumber
                   controls={false}
@@ -760,6 +772,11 @@ const BasicInfo = () => {
                   addonAfter="%"
                   style={{ width: 100 }}
                 />
+              </Form.Item>
+              <Form.Item style={{ marginBottom: 0 }}>
+                <span className="ml-2 text-[#FA8C16]">
+                  デフォルト{Form.useWatch('tax_rate')}%
+                </span>
               </Form.Item>
             </div>
           </Col>

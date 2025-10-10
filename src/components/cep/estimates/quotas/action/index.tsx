@@ -132,7 +132,9 @@ function QuotaAction() {
     mutatePreviewPdf(
       {
         values: customValues,
-        url: `${apiUrl}/quotas/preview-pdf`,
+        url: isEdit
+          ? `${apiUrl}/quotas/preview-pdf/${id}`
+          : `${apiUrl}/quotas/preview-pdf`,
         method: 'post',
       },
       {
@@ -316,6 +318,7 @@ function QuotaAction() {
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             status: 'creating',
+            delivery_date: dayjs(values.delivery_date),
             tags: values?.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
@@ -340,6 +343,7 @@ function QuotaAction() {
             source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
+            delivery_date: dayjs(values.delivery_date),
             status: 'creating',
             tags: values.tags.map((item: any) => ({
               id: item.value,

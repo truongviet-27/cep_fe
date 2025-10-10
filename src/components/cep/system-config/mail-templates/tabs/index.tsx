@@ -82,7 +82,7 @@ function TabsEmailTemplate({
             text: t('mail_templates.tags_password.selfTel'),
           },
         ]
-  }, [])
+  }, [t, indexTab])
 
   const items = useMemo(() => {
     return [

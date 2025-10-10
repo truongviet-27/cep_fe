@@ -123,6 +123,8 @@ function QuotaDetail() {
   const handlePreviewPdf = () => {
     const customValues = {
       ...queryBasic?.data,
+      ...dataProducts?.data,
+      ...dataHistory?.data,
     }
 
     mutatePreviewPdf(

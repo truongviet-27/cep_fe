@@ -210,7 +210,11 @@ function ImportCsv({
                     }
                     if (!isCSV) {
                       setIsError(true)
-                      return Promise.reject(t('csv.step_1.error.pattern'))
+                      return Promise.reject(
+                        <div style={{ whiteSpace: 'pre-line' }}>
+                          {t('csv.step_1.error.pattern')}
+                        </div>,
+                      )
                     }
 
                     return Promise.resolve()
