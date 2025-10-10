@@ -238,6 +238,12 @@ function Approve() {
               <Select
                 placeholder={t('approve_routes.filters.selectPlaceholder')}
                 {...selectProps}
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 allowClear
               />
             </Form.Item>

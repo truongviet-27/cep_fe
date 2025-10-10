@@ -208,18 +208,9 @@
   .ant-picker {
     border-color: #d0d5dd !important;
   }
-  :where(
-      .css-dev-only-do-not-override-l9pxc0
-    ).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled),
-  :where(
-      .css-dev-only-do-not-override-l9pxc0
-    ).ant-select-outlined.ant-select-status-error:not(
-      .ant-select-customize-input
-    )
-    .ant-select-selector,
-  :where(
-      .css-dev-only-do-not-override-l9pxc0
-    ).ant-picker-outlined.ant-picker-status-error:not(.ant-picker-disabled) {
+  .ant-input-status-error,
+  .ant-select-status-error .ant-select-selector,
+  .ant-picker-status-error {
     border-color: #ff4d4f !important;
   }
 }
