@@ -252,7 +252,9 @@ export default function CustomerShowPage() {
                 {record?.industry}
               </DetailItem>
               <DetailItem label={t('customers.show.date_of_establishment')}>
-                {dayjs(record?.date_of_establishment).format(FORMAT_DATE)}
+                {record?.date_of_establishment
+                  ? dayjs(record?.date_of_establishment).format(FORMAT_DATE)
+                  : ''}
               </DetailItem>
               <DetailItem label={t('customers.show.department_in_charge')}>
                 {record?.department_in_charge}
