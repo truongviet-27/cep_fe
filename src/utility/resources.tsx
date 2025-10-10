@@ -21,9 +21,9 @@ export const resource: ResourceProps[] = [
   {
     name: 'agreed-prices',
     list: '/agreed-prices',
-    show: '/agreed-prices/show/:id',
+    show: '/agreed-prices/quota/:id',
     create: '/agreed-prices/create',
-    edit: '/agreed-prices/edit/:id',
+    edit: '/agreed-prices/quota/:id',
     meta: {
       parent: 'estimates',
       // canDelete: true,
@@ -50,19 +50,6 @@ export const resource: ResourceProps[] = [
     show: '/quota-templates/show/:id',
     create: '/quota-templates/create',
     edit: '/quota-templates/edit/:id',
-    meta: {
-      parent: 'estimates',
-      // canDelete: true,
-      // canCreate: true,
-      // canEdit: true,
-    },
-  },
-  {
-    name: 'agreed-prices',
-    list: '/agreed-prices',
-    show: '/agreed-prices/quota/:id',
-    create: '/agreed-prices/create',
-    edit: '/agreed-prices/edit/:id',
     meta: {
       parent: 'estimates',
       // canDelete: true,
