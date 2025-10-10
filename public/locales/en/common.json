@@ -103,7 +103,8 @@
     },
     "roles": {
       "employee": "General",
-      "manager": "Manager"
+      "manager": "Manager",
+      "module_admin": "Manager (Default)"
     },
     "show": {
       "show": "Show Employee"

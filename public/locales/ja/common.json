@@ -378,7 +378,8 @@
     },
     "roles": {
       "employee": "一般",
-      "manager": "管理者"
+      "manager": "管理者",
+      "module_admin": "管理者 (Default)"
     },
     "show": {
       "show": "社員詳細"

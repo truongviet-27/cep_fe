@@ -229,16 +229,20 @@ export default function EmployeeEdit() {
           name="role_id"
           hidden={!permission?.is_module_admin}
         >
-          <Radio.Group buttonStyle="solid">
-            {isArray(roles?.data) &&
-              roles?.data
-                .filter(({ name }) => !EXCLUDED_ROLES.includes(name))
-                .map(({ id, name }) => (
-                  <Radio key={name} value={id}>
-                    {t(`employees.roles.${name}`)}
-                  </Radio>
-                ))}
-          </Radio.Group>
+          {employeeData?.role?.name === 'module_admin' ? (
+            <Text>{t(`employees.roles.${employeeData.role.name}`)}</Text>
+          ) : (
+            <Radio.Group buttonStyle="solid">
+              {isArray(roles?.data) &&
+                roles?.data
+                  .filter(({ name }) => !EXCLUDED_ROLES.includes(name))
+                  .map(({ id, name }) => (
+                    <Radio key={name} value={id}>
+                      {t(`employees.roles.${name}`)}
+                    </Radio>
+                  ))}
+            </Radio.Group>
+          )}
         </Form.Item>
       </Form>
       <Modal
