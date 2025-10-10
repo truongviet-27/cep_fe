@@ -208,13 +208,11 @@ function useProductCategories() {
         },
         {
           onSuccess: ({ data }) => {
-            const newId = String(data?.id)
             setTree((prev) =>
               updateNode(prev, id, (n: CatNode) => ({
                 ...n,
-                id: newId,
-                name,
                 _isNew: false,
+                ...data,
               })),
             )
             setEditing((prev) => {
@@ -233,7 +231,7 @@ function useProductCategories() {
             // setTree((prev) =>
             //   updateNode(prev, id, (n: CatNode) => ({
             //     ...n,
-            //     name,
+            //     ...data,
             //   })),
             // )
             setEditing((prev) => {
