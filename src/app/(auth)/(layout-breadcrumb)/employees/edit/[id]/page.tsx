@@ -6,7 +6,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useForm, useModalForm, useSelect } from '@refinedev/antd'
+import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -41,6 +41,8 @@ export default function EmployeeEdit() {
   const userEmail = session.data?.user?.email
   const { permission } = useUserStore.getState()
 
+  const EXCLUDED_ROLES = ['module_admin', 'super_admin']
+
   const { data: roles } = useCustom({ method: 'get', url: `${apiUrl}/roles` })
 
   const { formProps, saveButtonProps, queryResult, form, formLoading } =
@@ -48,12 +50,6 @@ export default function EmployeeEdit() {
       redirect: 'show',
     })
   const employeeData = queryResult?.data?.data
-
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
 
   const codeRules: Rule[] = useMemo(
     () => [
@@ -117,23 +113,17 @@ export default function EmployeeEdit() {
           descriptions={[
             {
               title: t('common.created_by'),
-              value:
-                (employeeData as any)?.created_by?.name ??
-                '---' +
-                  ' ' +
-                  dayjs((employeeData as any)?.created_by?.date).format(
-                    FORMAT_DATE_TIME,
-                  ),
+              value: `${(employeeData as any)?.created_by?.name ?? '---'} ${dayjs(
+                (employeeData as any)?.created_at,
+              ).format(FORMAT_DATE_TIME)}`,
             },
             {
               title: t('common.updated_by'),
-              value:
-                (employeeData as any)?.updated_by?.name ??
-                '---' +
-                  ' ' +
-                  dayjs((employeeData as any)?.updated_by?.date).format(
-                    FORMAT_DATE_TIME,
-                  ),
+              value: (employeeData as any)?.editor
+                ? `${(employeeData as any).editor.name} ${dayjs(
+                    (employeeData as any).updated_at,
+                  ).format(FORMAT_DATE_TIME)}`
+                : '---',
             },
           ]}
         />
@@ -145,7 +135,7 @@ export default function EmployeeEdit() {
           </Button>
         </Space>
       }
-      i18nHeading={'社員編集'}
+      i18nHeading={'employees.edit.title'}
     >
       <Form
         {...formProps}
@@ -241,11 +231,13 @@ export default function EmployeeEdit() {
         >
           <Radio.Group buttonStyle="solid">
             {isArray(roles?.data) &&
-              roles?.data.map(({ id, name }) => (
-                <Radio key={name} value={id}>
-                  {t(`employees.roles.${name}`)}
-                </Radio>
-              ))}
+              roles?.data
+                .filter(({ name }) => !EXCLUDED_ROLES.includes(name))
+                .map(({ id, name }) => (
+                  <Radio key={name} value={id}>
+                    {t(`employees.roles.${name}`)}
+                  </Radio>
+                ))}
           </Radio.Group>
         </Form.Item>
       </Form>

@@ -43,7 +43,7 @@ function Page() {
     setCurrent(1)
     setFilters([
       { field: 'q', operator: 'contains', value: values.q },
-      { field: 'email', operator: 'null', value: values.email },
+      { field: 'email', operator: 'contains', value: values.email },
       { field: 'department_id', operator: 'null', value: values.department_id },
       { field: 'role_id', operator: 'null', value: values.role_id },
     ])
@@ -66,12 +66,22 @@ function Page() {
         {...searchFormProps}
         layout="vertical"
         onFinish={handleSearch}
+        onFinishFailed={(errorInfo) => {
+          console.error('Form validation failed:', errorInfo)
+        }}
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('employees.filters.code_name'))}
               name="q"
+              validateTrigger={['onChange', 'onBlur']}
+              rules={[
+                {
+                  max: 100,
+                  message: 'コード名は100文字以内で入力してください',
+                },
+              ]}
             >
               <Input placeholder={t('placeholders.partial_match')} />
             </Form.Item>
@@ -80,6 +90,13 @@ function Page() {
             <Form.Item
               label={boldText(t('employees.filters.email'))}
               name="email"
+              validateTrigger={['onChange', 'onBlur']}
+              rules={[
+                {
+                  max: 255,
+                  message: 'メールアドレスは255文字以内で入力してください',
+                },
+              ]}
             >
               <Input placeholder={t('placeholders.partial_match')} />
             </Form.Item>
