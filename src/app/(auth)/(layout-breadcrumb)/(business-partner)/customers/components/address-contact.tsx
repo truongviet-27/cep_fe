@@ -123,7 +123,7 @@ function AddressContact(
         </Form.Item>
 
         <Form.Item
-          className={'!-mt-6'}
+          className={'!-mt-3'}
           label={boldText(t('customers.show.listing_classification'))}
           name="listing_classification"
           rules={[rule]}

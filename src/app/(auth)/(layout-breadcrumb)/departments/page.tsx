@@ -205,7 +205,16 @@ export default function Page() {
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
             <Text strong>{t('departments.list.filters.search_label')}</Text>
-            <Form.Item name="q">
+            <Form.Item
+              name="q"
+              validateTrigger={['onChange', 'onBlur']}
+              rules={[
+                {
+                  max: 100,
+                  message: 'コード名は100文字以内で入力してください',
+                },
+              ]}
+            >
               <Input
                 className={'mt-2'}
                 placeholder={t('departments.list.filters.search_placeholder')}

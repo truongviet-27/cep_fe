@@ -13,12 +13,10 @@ import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Form, Modal, Space, Typography } from 'antd'
+import { Button, Form, Modal, Space } from 'antd'
 import React from 'react'
 
 import { useCustomerCreate } from './use-customer-create'
-
-const { Title } = Typography
 
 export default function CustomerCreatePage() {
   const hookProps = useCustomerCreate()
@@ -41,13 +39,9 @@ export default function CustomerCreatePage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner'), PRIMARY),
     },
-    { title: <Title level={5}>{t('customers.create.create')}</Title> },
+    { title: boldText(t('customers.create.create')) },
   ]
 
   return (

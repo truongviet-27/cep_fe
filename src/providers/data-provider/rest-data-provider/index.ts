@@ -116,10 +116,21 @@ export const customDataProvider = (
     const { headers, method } = meta ?? {}
     const requestMethod = (method as MethodTypes) ?? 'get'
 
-    const { data } = await httpClient[requestMethod](url, { headers })
+    try {
+      const { data } = await httpClient[requestMethod](url, { headers })
 
-    return {
-      data: data?.data,
+      return {
+        data: data?.data,
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        console.log('redirect_to_404')
+        if (typeof window !== 'undefined') {
+          window.location.href = '/404'
+        }
+      }
+      throw error
     }
   },
 

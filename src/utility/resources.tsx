@@ -19,17 +19,6 @@ export const resource: ResourceProps[] = [
     },
   },
   {
-    name: 'list-received',
-    list: '/list-received',
-    show: '/list-received/show/:id',
-    create: '/list-received/create',
-    edit: '/list-received/edit/:id',
-    clone: '/list-received/clone/:id',
-    meta: {
-      parent: 'estimates',
-    },
-  },
-  {
     name: 'agreed-prices',
     list: '/agreed-prices',
     show: '/agreed-prices/quota/:id',
