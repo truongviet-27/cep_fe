@@ -132,6 +132,7 @@ function History({ data }: { data: any }) {
       expandIcon={({ isActive }) => (
         <DownOutlined rotate={isActive ? 180 : 0} />
       )}
+      defaultActiveKey={[1]}
       style={{
         background: WHITE,
         padding: 'none',
