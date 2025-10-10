@@ -68,7 +68,7 @@ export const CorporateResearchFormSection = (
       'company_research_information',
       defaultCustomerCompanyResearchInformation,
     )
-    formTrigger()
+    // formTrigger()
   }
 
   const columns = [

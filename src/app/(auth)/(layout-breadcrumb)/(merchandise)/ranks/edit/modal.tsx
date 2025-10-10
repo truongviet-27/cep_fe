@@ -139,18 +139,16 @@ export const RankModalEdit: React.FC<Props> = ({
             {
               title: t('common.created_by'),
               value:
-                record?.author?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+                (record?.author?.name ?? '---') +
+                ' ' +
+                dayjs(record?.created_at).format(FORMAT_DATE_TIME),
             },
             {
               title: t('common.updated_by'),
               value:
-                record?.editor?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
+                (record?.editor?.name ?? '---') +
+                ' ' +
+                dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
             },
           ]}
         />
