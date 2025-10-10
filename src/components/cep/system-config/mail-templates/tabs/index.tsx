@@ -41,10 +41,14 @@ function TabsEmailTemplate({
           },
           {
             value: 6,
-            text: t('mail_templates.tags_mail.selfEmail'),
+            text: t('mail_templates.tags_mail.contactCompany'),
           },
           {
             value: 7,
+            text: t('mail_templates.tags_mail.selfEmail'),
+          },
+          {
+            value: 8,
             text: t('mail_templates.tags_mail.selfTel'),
           },
         ]
@@ -67,18 +71,22 @@ function TabsEmailTemplate({
           },
           {
             value: 5,
-            text: t('mail_templates.tags_password.selfDepartment'),
+            text: t('mail_templates.tags_password.contactCompany'),
           },
           {
             value: 6,
-            text: t('mail_templates.tags_password.selfPassword'),
+            text: t('mail_templates.tags_password.selfDepartment'),
           },
           {
             value: 7,
-            text: t('mail_templates.tags_password.selfEmail'),
+            text: t('mail_templates.tags_password.selfPassword'),
           },
           {
             value: 8,
+            text: t('mail_templates.tags_password.selfEmail'),
+          },
+          {
+            value: 9,
             text: t('mail_templates.tags_password.selfTel'),
           },
         ]

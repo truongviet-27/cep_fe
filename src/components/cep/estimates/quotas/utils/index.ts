@@ -147,15 +147,20 @@ export const getActionPermissions = (
   status: QuotaStatus,
   isAuthor: boolean,
   isApprover: boolean,
+  is_module_admin?: boolean,
 ) => {
-  let permissions = true
+  let disable = true
+
+  if (is_module_admin) {
+    return false
+  }
 
   switch (status) {
     case QuotaStatus.Creating:
     case QuotaStatus.Approved:
     case QuotaStatus.Rejected:
       if (isAuthor) {
-        permissions = false
+        disable = false
       }
       break
 
@@ -163,13 +168,13 @@ export const getActionPermissions = (
     case QuotaStatus.Completed:
     case QuotaStatus.Cancelled:
       if (isApprover) {
-        permissions = false
+        disable = false
       }
       break
 
     case QuotaStatus.SentToCustomer:
       if (isAuthor || isApprover) {
-        permissions = false
+        disable = false
       }
       break
 
@@ -177,5 +182,5 @@ export const getActionPermissions = (
       break
   }
 
-  return permissions
+  return disable
 }

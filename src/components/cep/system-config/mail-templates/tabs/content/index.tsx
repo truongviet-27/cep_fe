@@ -143,7 +143,7 @@ function TabsContent({
         }
       >
         <TextArea
-          rows={8}
+          rows={15}
           name={`content_${index}`}
           variant={isEdit ? 'outlined' : 'borderless'}
           readOnly={!isEdit}

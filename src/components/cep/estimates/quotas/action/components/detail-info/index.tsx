@@ -128,20 +128,22 @@ function DetailInfo() {
     const values = form?.getFieldValue('main_product') || []
     const products = values[groupIndex].products || []
 
-    values[groupIndex].products = [
-      ...products,
-      {
-        product_id: null,
-        package_id: null,
-        name: '',
-        code: '自動採番',
-        quantity: 0,
-        cost_price: 0,
-        selling_price: 0,
-        profit_margin: 0,
-        is_add_total: true,
-      },
-    ]
+    const newProduct = {
+      product_id: null,
+      package_id: null,
+      name: '',
+      code: '自動採番',
+      quantity: 0,
+      cost_price: 0,
+      selling_price: 0,
+      profit_margin: 0,
+      is_add_total: true,
+    }
+
+    const newProducts = [...products]
+    newProducts.splice(productIndex, 0, newProduct)
+
+    values[groupIndex].products = newProducts
 
     form.setFieldsValue({ main_product: values })
   }
@@ -661,7 +663,7 @@ function DetailInfo() {
                       record.index + 1,
                     )
                   } else {
-                    handleAddProduct(record.index, record.index2)
+                    handleAddProduct(record.index, record.index2 + 1)
                   }
                 }
 
@@ -695,9 +697,9 @@ function DetailInfo() {
               >
                 <Button
                   type="primary"
-                  onClick={() => {
-                    // if (form.validateFields()) {
-                    // }
+                  onClick={async () => {
+                    await form.validateFields(['customer'])
+                    setIsModalOpen(true)
                   }}
                 >
                   カテゴリから入力

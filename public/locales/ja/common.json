@@ -504,6 +504,7 @@
       "customerName": "取引先担当者名",
       "selfCompany": "自社名",
       "selfDepartment": "自社担当者名",
+      "contactCompany": "自社担当者部署",
       "selfEmail": "自社担当者メールアドレス",
       "selfTel": "自社担当者電話番号"
     },
@@ -512,7 +513,8 @@
       "customerDepartment": "取引先部署名",
       "customerName": "取引先担当者名",
       "selfCompany": "自社名",
-      "selfDepartment": "自社担当者名",
+      "contactCompany": "自社担当者名",
+      "selfDepartment": "自社担当者部署",
       "selfPassword": "パスワード",
       "selfEmail": "自社担当者メールアドレス",
       "selfTel": "自社担当者電話番号"
