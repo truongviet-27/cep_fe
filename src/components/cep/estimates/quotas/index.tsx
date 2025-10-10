@@ -37,6 +37,7 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
+import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
@@ -70,6 +71,8 @@ function QuotaList() {
 
   const apiUrl = useApiUrl()
 
+  const { permission } = useUserStore.getState()
+
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
@@ -96,6 +99,7 @@ function QuotaList() {
         record.status,
         record?.is_author,
         record?.display,
+        permission?.is_module_admin,
       ),
     }),
   }
@@ -246,14 +250,15 @@ function QuotaList() {
               icon={<EyeOutlined />}
               recordItemId={record.id}
             />
-            {record.status === QuotaStatus.Creating && record.is_author && (
-              <EditButton
-                hideText
-                size="small"
-                icon={<EditOutlined />}
-                recordItemId={record.id}
-              />
-            )}
+            {record.status === QuotaStatus.Creating &&
+              (permission?.is_module_admin || record.is_author) && (
+                <EditButton
+                  hideText
+                  size="small"
+                  icon={<EditOutlined />}
+                  recordItemId={record.id}
+                />
+              )}
 
             <CloneButton
               hideText
@@ -305,7 +310,7 @@ function QuotaList() {
             )}
 
             {record.status === QuotaStatus.Completed &&
-              record.is_author &&
+              (permission?.is_module_admin || record.is_author) &&
               !record?.has_agreed_price && (
                 <Button
                   type="default"
@@ -452,7 +457,7 @@ function QuotaList() {
     return filter as QuotaStatus
   }
 
-  const { data } = useCustom({
+  const { data, refetch: refetchStats } = useCustom({
     method: 'get',
     url: `${apiUrl}/quotas/stats`,
   })
@@ -548,6 +553,7 @@ function QuotaList() {
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
       refetch()
+      refetchStats()
       setSelectedRowKeys([])
       setOptions([])
       return {

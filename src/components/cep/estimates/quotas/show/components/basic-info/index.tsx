@@ -10,7 +10,12 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Card, Col, Form, Row, Tag } from 'antd'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { useMemo } from 'react'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type ConsumptionTaxKey = 'exclusive' | 'inclusive' | 'external'
 
@@ -218,8 +223,8 @@ function BasicInfo({ data }: { data: any }) {
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText(t('quotas.show.delivery_date'))}>
-              {dayjs(data?.delivery_date).format('YYYY/MM/DD')}
+            <Form.Item label={boldText('納入期日')}>
+              {dayjs(data?.delivery_date).tz('Asia/Tokyo').format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
         </Row>

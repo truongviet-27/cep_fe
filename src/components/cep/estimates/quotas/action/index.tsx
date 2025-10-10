@@ -42,6 +42,9 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
 
 function QuotaAction() {
   const t = useTranslate()
@@ -318,7 +321,10 @@ function QuotaAction() {
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             status: 'creating',
-            delivery_date: dayjs(values.delivery_date),
+            delivery_date: dayjs(values.delivery_date)
+              .utc(true)
+              .startOf('day')
+              .toISOString(),
             tags: values?.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
@@ -343,7 +349,10 @@ function QuotaAction() {
             source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
-            delivery_date: dayjs(values.delivery_date),
+            delivery_date: dayjs(values.delivery_date)
+              .utc(true)
+              .startOf('day')
+              .toISOString(),
             status: 'creating',
             tags: values.tags.map((item: any) => ({
               id: item.value,
@@ -386,8 +395,8 @@ function QuotaAction() {
           <Button
             color="primary"
             variant="outlined"
-            disabled={!Form.useWatch('code', form)}
-            onClick={() => {
+            onClick={async () => {
+              await form.validateFields()
               setIsPdf(!isPdf)
               handlePreviewPdf()
             }}

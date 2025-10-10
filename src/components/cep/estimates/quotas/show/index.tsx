@@ -22,6 +22,7 @@ import {
   useParsed,
   useTranslate,
 } from '@refinedev/core'
+import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
 import {
@@ -39,6 +40,8 @@ import { useCallback, useEffect, useState } from 'react'
 
 function QuotaDetail() {
   const t = useTranslate()
+
+  const { permission } = useUserStore.getState()
 
   const { form, formProps } = useForm()
 
@@ -162,7 +165,8 @@ function QuotaDetail() {
           <Button
             color="primary"
             variant="outlined"
-            onClick={() => {
+            onClick={async () => {
+              await form.validateFields()
               setIsPdf(!isPdf)
               handlePreviewPdf()
             }}
@@ -223,7 +227,7 @@ function QuotaDetail() {
             }}
           >
             <Space>
-              {queryBasic?.data?.is_author && (
+              {(permission?.is_module_admin || queryBasic?.data?.is_author) && (
                 <DeleteButton
                   icon={null}
                   size={'small'}
@@ -239,7 +243,8 @@ function QuotaDetail() {
             <Space>
               {queryBasic?.data?.has_approval_route &&
                 queryBasic?.data?.status === QuotaStatus.Creating &&
-                queryBasic?.data?.is_author && (
+                (permission?.is_module_admin ||
+                  queryBasic?.data?.is_author) && (
                   <Button
                     style={{
                       background: '#10B981',
@@ -258,7 +263,7 @@ function QuotaDetail() {
                 )}
               {queryBasic?.data?.has_approval_route &&
                 queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
-                queryBasic?.data?.display && (
+                (permission?.is_module_admin || queryBasic?.data?.display) && (
                   <>
                     <Button
                       style={{
@@ -302,7 +307,8 @@ function QuotaDetail() {
                 )}
 
               {queryBasic?.data?.status === QuotaStatus.Approved &&
-                queryBasic?.data?.is_author && (
+                (permission?.is_module_admin ||
+                  queryBasic?.data?.is_author) && (
                   <Button
                     style={{
                       background: '#10B981',
@@ -322,7 +328,9 @@ function QuotaDetail() {
                 )}
 
               {queryBasic?.data?.status === QuotaStatus.SentToCustomer &&
-                (queryBasic.data?.display || queryBasic?.data?.is_author) && (
+                (permission?.is_module_admin ||
+                  queryBasic.data?.display ||
+                  queryBasic?.data?.is_author) && (
                   <>
                     <Button
                       style={{
@@ -359,7 +367,7 @@ function QuotaDetail() {
 
               {(queryBasic?.data?.status === QuotaStatus.Completed ||
                 queryBasic?.data?.status === QuotaStatus.Cancelled) &&
-                queryBasic.data?.display && (
+                (permission?.is_module_admin || queryBasic.data?.display) && (
                   <Button
                     style={{
                       background: '#721C24',
@@ -392,7 +400,7 @@ function QuotaDetail() {
 
               {(queryBasic?.data?.status === QuotaStatus.Creating ||
                 queryBasic?.data?.status === QuotaStatus.Rejected) &&
-                queryBasic.data?.is_author && (
+                (permission?.is_module_admin || queryBasic.data?.is_author) && (
                   <Button
                     type="primary"
                     onClick={() => {

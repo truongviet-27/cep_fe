@@ -573,7 +573,13 @@ function OptionalInfo() {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                <Button
+                  type="primary"
+                  onClick={async () => {
+                    await form.validateFields(['customer'])
+                    setIsModalOpen(true)
+                  }}
+                >
                   カテゴリから入力
                 </Button>
               </Flex>

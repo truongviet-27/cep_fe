@@ -199,7 +199,8 @@ function AgreedPriceQuotaDetail() {
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
 
-  const handlePreviewPdf = () => {
+  const handlePreviewPdf = async () => {
+    await form.validateFields()
     const customValues = {
       ...queryBasic?.data,
     }

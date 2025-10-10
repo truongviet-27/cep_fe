@@ -598,7 +598,7 @@ const BasicInfo = () => {
               <DatePicker
                 style={{ width: '100%' }}
                 placeholder={FORMAT_DATE}
-                // minDate={Form.useWatch('created_at', form)}
+                minDate={Form.useWatch('created_at', form)}
               />
             </Form.Item>
           </Col>
