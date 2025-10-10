@@ -98,7 +98,9 @@ function TenantSetting() {
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
 
-  const handlePreviewPdf = () => {
+  const handlePreviewPdf = async () => {
+    await form.validateFields()
+
     const customValues: QuotaFormSettingResponse = {
       ...form.getFieldsValue(),
       id: form.getFieldValue('id'),
@@ -207,7 +209,7 @@ function TenantSetting() {
               handlePreviewPdf()
             }}
           >
-            {'プレビュー'}
+            プレビュー
           </Button>
           <Button
             type="primary"

@@ -1,5 +1,10 @@
 /* eslint-disable */
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useNotification,
+  useTranslate,
+} from '@refinedev/core'
 import { Button, Col, Divider, Flex, Form, Row } from 'antd'
 import React, { useState } from 'react'
 
@@ -20,11 +25,13 @@ export const ProductCategoryModal = ({
   const customerIdWatch = Form.useWatch('customer', form)?.value
   const mainProductWatch = Form.useWatch(name, form)
 
+  const { open } = useNotification()
+
   const { data } = useCustom({
     method: 'get',
     url: `${apiUrl}/product-categories/${categoryIdWatch}/products?rank_id=${customerIdWatch}`,
     queryOptions: {
-      enabled: !!categoryIdWatch && !!customerIdWatch,
+      enabled: !!categoryIdWatch,
     },
   })
 
@@ -35,7 +42,7 @@ export const ProductCategoryModal = ({
         {
           group_name: data?.data.products[0]?.category?.name,
           products: data?.data.products?.map((item: any) => ({
-            product_id: item.product_id,
+            product_id: item.id,
             package_id: null,
             name: item?.name,
             code: item?.code,
@@ -48,9 +55,15 @@ export const ProductCategoryModal = ({
           })),
         },
       ])
+      close()
+    } else {
+      open &&
+        open({
+          message: '耳がない',
+          description: 'カテゴリに商品がありません',
+          type: 'error',
+        })
     }
-
-    close()
   }
 
   return (
@@ -83,11 +96,7 @@ export const ProductCategoryModal = ({
         <Button
           type="primary"
           onClick={handleCreateCategory}
-          disabled={
-            !customerIdWatch ||
-            !categoryIdWatch ||
-            !(data?.data.products?.length > 0)
-          }
+          disabled={!categoryIdWatch}
         >
           {t('products.buttons.save')}
         </Button>
