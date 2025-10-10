@@ -945,8 +945,8 @@
     }
   },
   "agreed_prices": {
-    "parent": "確定見積",
-    "agreed_prices": "確定見積",
+    "parent": "確定見積一覧",
+    "agreed_prices": "確定見積一覧",
     "tab": {
       "decided_estimate_list": "決定見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"

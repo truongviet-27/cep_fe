@@ -170,6 +170,8 @@ export default function EmployeeEdit() {
                 <Button
                   size="middle"
                   type="default"
+                  color={'primary'}
+                  variant="outlined"
                   onClick={() => {
                     refetch().then(() => {
                       handleAutoNumber()
@@ -193,7 +195,7 @@ export default function EmployeeEdit() {
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -24 }}
+          style={{ marginTop: -10 }}
           label={boldText(t('employees.fields.name'))}
           name="name"
         >
@@ -201,7 +203,7 @@ export default function EmployeeEdit() {
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -14 }}
+          style={{ marginTop: -10 }}
           label={boldText(t('employees.fields.email'))}
           name="email"
         >
