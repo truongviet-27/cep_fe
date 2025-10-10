@@ -54,7 +54,6 @@ function AgreedPriceQuotaDetail() {
 
   const { mutate } = useCustomMutation()
 
-  // Fetch agreed price record for this quota to get agreed price id and expiration_date
   const { data: agreedPriceList, refetch: refetchAgreedPrice } = useCustom({
     url: `${apiUrl}/quota/agreed-prices?quota_id=${id}`,
     method: 'get',
@@ -68,8 +67,10 @@ function AgreedPriceQuotaDetail() {
     : (agreedPriceList as any)?.data?.items?.[0]
 
   const agreedPriceId: number | undefined = agreedPriceItem?.id
-  const agreedPriceExpiration: string | null | undefined =
-    agreedPriceItem?.expiration_date
+  const agrredPriceValidTo: string | null | undefined =
+    agreedPriceItem?.valid_to ?? agreedPriceItem?.expiration_date
+  const agreedPriceValidFrom: string | null | undefined =
+    agreedPriceItem?.valid_from
 
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [updateForm] = Form.useForm()
@@ -79,12 +80,15 @@ function AgreedPriceQuotaDetail() {
   const openUpdateExpiration = (newEndDate?: dayjs.Dayjs) => {
     if (newEndDate) {
       if (!agreedPriceId) return
-      const expiration = newEndDate.format('YYYY/MM/DD')
+      const validTo = newEndDate.format('YYYY/MM/DD')
+      const validFrom = agrredPriceValidTo
+        ? dayjs(agrredPriceValidTo).add(1, 'day').format('YYYY/MM/DD')
+        : undefined
       mutateUpdateExpiration(
         {
           method: 'put',
           url: `${apiUrl}/quota/agreed-prices/${agreedPriceId}/expiration-date`,
-          values: { expiration_date: expiration },
+          values: { valid_from: validFrom, valid_to: validTo },
           successNotification: () => ({
             message: t('notifications.success'),
             description: t('notifications.editSuccess'),
@@ -99,10 +103,9 @@ function AgreedPriceQuotaDetail() {
       )
     } else {
       // Open modal for update (fallback)
-      const start = agreedPriceExpiration
-        ? dayjs(agreedPriceExpiration).add(1, 'day')
-        : null
-      updateForm.setFieldsValue({ start_date: start, end_date: null })
+      const end = agrredPriceValidTo ? dayjs(agrredPriceValidTo) : null
+      const start = end ? end.add(1, 'day') : null
+      updateForm.setFieldsValue({ valid_from: start, valid_to: null })
       setIsUpdateOpen(true)
     }
   }
@@ -110,14 +113,16 @@ function AgreedPriceQuotaDetail() {
   const handleSubmitUpdateExpiration = () => {
     updateForm.validateFields().then((values) => {
       if (!agreedPriceId) return
-      const end: dayjs.Dayjs | undefined = values.end_date
-      if (!end) return
-      const expiration = end.format('YYYY/MM/DD')
+      const start: dayjs.Dayjs | undefined = values.valid_from
+      const end: dayjs.Dayjs | undefined = values.valid_to
+      if (!end || !start) return
+      const validFrom = start.format('YYYY/MM/DD')
+      const validTo = end.format('YYYY/MM/DD')
       mutateUpdateExpiration(
         {
           method: 'put',
           url: `${apiUrl}/quota/agreed-prices/${agreedPriceId}/expiration-date`,
-          values: { expiration_date: expiration },
+          values: { valid_from: validFrom, valid_to: validTo },
           successNotification: () => ({
             message: t('notifications.success'),
             description: t('notifications.editSuccess'),
@@ -270,8 +275,9 @@ function AgreedPriceQuotaDetail() {
           <BasicInfoExtended
             data={queryBasic?.data}
             showApplicablePeriod={true}
-            agreedPriceExpiration={agreedPriceExpiration || undefined}
+            agrredPriceValidTo={agrredPriceValidTo || undefined}
             agreedPriceId={agreedPriceId}
+            agreedPriceValidFrom={agreedPriceValidFrom || undefined}
             onUpdateExpiration={openUpdateExpiration}
           />
           <DetailInfo
@@ -497,12 +503,12 @@ function AgreedPriceQuotaDetail() {
         destroyOnClose
       >
         <Form form={updateForm} layout="vertical">
-          <Form.Item label="適用開始日" name="start_date">
+          <Form.Item label="適用開始日" name="valid_from">
             <DatePicker className="w-full" format="YYYY/MM/DD" disabled />
           </Form.Item>
           <Form.Item
             label="適用終了日"
-            name="end_date"
+            name="valid_to"
             rules={[
               { required: true, message: t('errors.required') || '必須' },
             ]}

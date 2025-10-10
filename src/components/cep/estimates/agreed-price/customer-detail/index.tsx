@@ -103,7 +103,9 @@ const AgreedPriceCustomerDetail = () => {
       title: t('agreed_prices.customer_detail.table.application_end'),
       dataIndex: 'application_end',
       key: 'application_end',
-      render: (v: any) => v ?? '-',
+      render: (v: any) => (
+        <span style={{ color: '#FF6918', fontWeight: '500' }}>{v ?? '-'}</span>
+      ),
     },
   ]
 
