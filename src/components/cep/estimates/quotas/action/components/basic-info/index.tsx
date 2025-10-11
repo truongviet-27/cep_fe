@@ -438,19 +438,17 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('approve_routes.validation.route_code.required'),
+                    message: 'ルートコードは必須です。',
                   },
                   {
                     whitespace: true,
-                    message: t(
-                      'approve_routes.validation.route_code.invalid_whitespace',
-                    ),
+                    message:
+                      'ルートコードには大文字の英字、数字、ハイフンのみ使用できます。',
                   },
                   {
                     pattern: /^[A-Z0-9-]+$/,
-                    message: t(
-                      'approve_routes.validation.route_code.invalid_format',
-                    ),
+                    message:
+                      'ルートコードには大文字の英字、数字、ハイフンのみ使用できます。',
                   },
                   {
                     max: 255,
@@ -470,6 +468,7 @@ const BasicInfo = () => {
                 <Input disabled={isCloneVersion} />
               </Form.Item>
               <Form.Item>
+                （A-Z, a-z, 0-9, -）
                 <Button
                   onClick={handleAutoNumber}
                   loading={loadingQuota}
@@ -503,7 +502,7 @@ const BasicInfo = () => {
 
         <Row>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'type'} label={boldText('見積区分')}>
+            <Form.Item required name={'type'} label={boldText('見積区分')}>
               <Radio.Group
                 defaultValue={'normal'}
                 options={[
@@ -557,7 +556,7 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('approve_routes.validation.route_code.required'),
+                  message: '取引先は必須です。',
                 },
               ]}
             >
@@ -585,16 +584,7 @@ const BasicInfo = () => {
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'delivery_date'}
-              label={boldText('納入期日')}
-              rules={[
-                {
-                  required: true,
-                  message: t('approve_routes.validation.route_code.required'),
-                },
-              ]}
-            >
+            <Form.Item name={'delivery_date'} label={boldText('納入期日')}>
               <DatePicker
                 style={{ width: '100%' }}
                 placeholder={FORMAT_DATE}
@@ -768,6 +758,7 @@ const BasicInfo = () => {
                 <InputNumber
                   controls={false}
                   min={0}
+                  defaultValue={0}
                   max={100}
                   addonAfter="%"
                   style={{ width: 100 }}
@@ -775,7 +766,7 @@ const BasicInfo = () => {
               </Form.Item>
               <Form.Item style={{ marginBottom: 0 }}>
                 <span className="ml-2 text-[#FA8C16]">
-                  デフォルト{Form.useWatch('tax_rate')}%
+                  デフォルト{Form.useWatch('tax_rate') ?? 0}%
                 </span>
               </Form.Item>
             </div>

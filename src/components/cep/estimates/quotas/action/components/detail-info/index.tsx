@@ -138,6 +138,7 @@ function DetailInfo() {
       selling_price: 0,
       profit_margin: 0,
       is_add_total: true,
+      unit: '-',
     }
 
     const newProducts = [...products]
@@ -657,6 +658,7 @@ function DetailInfo() {
                             selling_price: 0,
                             profit_margin: 0,
                             is_add_total: true,
+                            unit: '-',
                           },
                         ],
                       },

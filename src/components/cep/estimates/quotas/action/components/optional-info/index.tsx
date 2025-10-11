@@ -26,6 +26,7 @@ function OptionalInfo() {
 
   // const taxRateWatch = Form.useWatch('tax_rate', form)
   // const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
+  const customerWatch = Form.useWatch('customer', form)
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
@@ -46,24 +47,27 @@ function OptionalInfo() {
     },
   })
 
-  const handleAddProduct = (groupIndex: number) => {
+  const handleAddProduct = (groupIndex: number, productIndex: number) => {
     const values = form?.getFieldValue('optional_product') || []
     const products = values[groupIndex].products || []
 
-    values[groupIndex].products = [
-      ...products,
-      {
-        product_id: null,
-        package_id: null,
-        name: '',
-        code: '自動採番',
-        quantity: 0,
-        cost_price: 0,
-        selling_price: 0,
-        profit_margin: 0,
-        is_add_total: true,
-      },
-    ]
+    const newProduct = {
+      product_id: null,
+      package_id: null,
+      name: '',
+      code: '自動採番',
+      quantity: 0,
+      cost_price: 0,
+      selling_price: 0,
+      profit_margin: 0,
+      is_add_total: true,
+      unit: '-',
+    }
+
+    const newProducts = [...products]
+    newProducts.splice(productIndex, 0, newProduct)
+
+    values[groupIndex].products = newProducts
 
     form.setFieldsValue({ optional_product: values })
   }
@@ -189,12 +193,6 @@ function OptionalInfo() {
                       record.index2,
                       'product_id',
                     ]}
-                    rules={[
-                      {
-                        required: true,
-                        message: '',
-                      },
-                    ]}
                   >
                     <Select
                       {...selectPropsProduct}
@@ -205,6 +203,7 @@ function OptionalInfo() {
                       style={{
                         width: 200,
                       }}
+                      disabled={!customerWatch}
                       onChange={(value) => {
                         const item: any = query.data?.data.find(
                           (item: any) => item.id === value,
@@ -523,7 +522,7 @@ function OptionalInfo() {
                   if (isHeader) {
                     add(
                       {
-                        group_name: 'エアロン利用料',
+                        group_name: 'オプションリスト名入力',
                         products: [
                           {
                             product_id: null,
@@ -535,13 +534,14 @@ function OptionalInfo() {
                             selling_price: 0,
                             profit_margin: 0,
                             is_add_total: true,
+                            unit: '-',
                           },
                         ],
                       },
                       record.index + 1,
                     )
                   } else {
-                    handleAddProduct(record.index)
+                    handleAddProduct(record.index, record.index2 + 1)
                   }
                 }
 
