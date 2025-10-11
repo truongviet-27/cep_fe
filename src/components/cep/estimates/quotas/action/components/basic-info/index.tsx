@@ -502,7 +502,7 @@ const BasicInfo = () => {
 
         <Row>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'type'} label={boldText('見積区分')}>
+            <Form.Item required name={'type'} label={boldText('見積区分')}>
               <Radio.Group
                 defaultValue={'normal'}
                 options={[
@@ -584,16 +584,7 @@ const BasicInfo = () => {
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'delivery_date'}
-              label={boldText('納入期日')}
-              rules={[
-                {
-                  required: true,
-                  message: '見積日は必須です。',
-                },
-              ]}
-            >
+            <Form.Item name={'delivery_date'} label={boldText('納入期日')}>
               <DatePicker
                 style={{ width: '100%' }}
                 placeholder={FORMAT_DATE}
@@ -767,6 +758,7 @@ const BasicInfo = () => {
                 <InputNumber
                   controls={false}
                   min={0}
+                  defaultValue={0}
                   max={100}
                   addonAfter="%"
                   style={{ width: 100 }}
@@ -774,7 +766,7 @@ const BasicInfo = () => {
               </Form.Item>
               <Form.Item style={{ marginBottom: 0 }}>
                 <span className="ml-2 text-[#FA8C16]">
-                  デフォルト{Form.useWatch('tax_rate')}%
+                  デフォルト{Form.useWatch('tax_rate') ?? 0}%
                 </span>
               </Form.Item>
             </div>

@@ -195,7 +195,9 @@ function QuotaDetail() {
           <Tags tags={queryBasic?.data?.tags} />
           <History data={dataHistory?.data} />
 
-          {queryBasic?.data?.display && <Reason />}
+          {(permission?.is_module_admin || queryBasic?.data?.display) && (
+            <Reason />
+          )}
 
           <Divider />
           <ShowMoreInfo
