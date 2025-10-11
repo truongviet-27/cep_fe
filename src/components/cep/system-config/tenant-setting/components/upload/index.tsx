@@ -3,12 +3,14 @@
 import UploadImage from '@/assets/svg/upload.svg'
 import { useApiUrl, useCustomMutation } from '@refinedev/core'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
-import { Form, Image, Upload } from 'antd'
+import { Form, Image, Typography, Upload } from 'antd'
 import type { RcFile } from 'antd/es/upload'
 import axios from 'axios'
 import ImageNext from 'next/image'
 import { useEffect, useState } from 'react'
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
+
+const { Text } = Typography
 
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -65,6 +67,8 @@ function UploadSetting({
               .then(() => {
                 form.setFieldValue(name, file)
                 form.setFieldValue(`${name}_file_key`, data.data.file_key)
+                form.setFieldValue(`${name}_name`, file?.name)
+
                 setFileList(fileList)
               })
               .catch((error) => {
@@ -96,7 +100,7 @@ function UploadSetting({
   }
 
   return (
-    <div>
+    <div className="flex items-center">
       <Upload
         onPreview={handlePreview}
         accept=".png,.jpg,.jpeg"
@@ -108,12 +112,20 @@ function UploadSetting({
         style={{
           height: 50,
         }}
+        onRemove={() => {
+          form.setFieldValue(`${name}_name`, null)
+        }}
         multiple={false}
       >
-        {fileList.length < 1 && (
-          <ImageNext src={UploadImage} alt="upload" className="h-8 w-8" />
-        )}
+        <ImageNext src={UploadImage} alt="upload" className="h-8 w-8" />
       </Upload>
+      <Text
+        title={form.getFieldValue(`${name}_name`) || ''}
+        className="mt-1 ml-3 max-w-[100px] truncate text-center text-xs"
+      >
+        {form.getFieldValue(`${name}_name`) || ''}
+      </Text>
+
       {previewImage && (
         <Image
           wrapperStyle={{ display: 'none' }}
