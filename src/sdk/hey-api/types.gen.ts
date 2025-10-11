@@ -8780,7 +8780,7 @@ export type QuotaControllerBackToSentToCustomerData = {
   }
   path?: never
   query?: never
-  url: '/api/v1/quotas/back-to-send-customer'
+  url: '/api/v1/quotas/back-to-sent-customer'
 }
 
 export type QuotaControllerBackToSentToCustomerErrors = {
