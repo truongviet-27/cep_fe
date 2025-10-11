@@ -336,6 +336,7 @@ function QuotaList() {
     tableProps,
     searchFormProps,
     setFilters,
+    setCurrent,
     tableQuery: { refetch },
   } = useTable({
     syncWithLocation: true,
@@ -419,8 +420,9 @@ function QuotaList() {
           value: status,
         },
       ])
+      setCurrent(1)
     },
-    [status],
+    [status, setFilters, setCurrent],
   )
 
   const { selectProps } = useSelect({
