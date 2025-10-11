@@ -3244,7 +3244,7 @@ export const quotaControllerBackToSentToCustomer = <
         type: 'http',
       },
     ],
-    url: '/api/v1/quotas/back-to-send-customer',
+    url: '/api/v1/quotas/back-to-sent-customer',
     ...options,
     headers: {
       'Content-Type': 'application/json',

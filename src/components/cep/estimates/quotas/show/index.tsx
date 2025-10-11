@@ -393,7 +393,7 @@ function QuotaDetail() {
                     icon={null}
                     size={'middle'}
                     onClick={() => {
-                      handleChangeStatus('back-to-send-customer', {
+                      handleChangeStatus('back-to-sent-customer', {
                         quota_ids: [queryBasic?.data.id],
                       })
                     }}
