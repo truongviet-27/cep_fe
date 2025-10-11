@@ -438,19 +438,17 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('approve_routes.validation.route_code.required'),
+                    message: 'ルートコードは必須です。',
                   },
                   {
                     whitespace: true,
-                    message: t(
-                      'approve_routes.validation.route_code.invalid_whitespace',
-                    ),
+                    message:
+                      'ルートコードには大文字の英字、数字、ハイフンのみ使用できます。',
                   },
                   {
                     pattern: /^[A-Z0-9-]+$/,
-                    message: t(
-                      'approve_routes.validation.route_code.invalid_format',
-                    ),
+                    message:
+                      'ルートコードには大文字の英字、数字、ハイフンのみ使用できます。',
                   },
                   {
                     max: 255,
@@ -470,6 +468,7 @@ const BasicInfo = () => {
                 <Input disabled={isCloneVersion} />
               </Form.Item>
               <Form.Item>
+                （A-Z, a-z, 0-9, -）
                 <Button
                   onClick={handleAutoNumber}
                   loading={loadingQuota}
@@ -557,7 +556,7 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('approve_routes.validation.route_code.required'),
+                  message: '取引先は必須です。',
                 },
               ]}
             >
@@ -591,7 +590,7 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('approve_routes.validation.route_code.required'),
+                  message: '見積日は必須です。',
                 },
               ]}
             >
