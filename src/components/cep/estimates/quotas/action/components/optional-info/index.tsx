@@ -150,7 +150,7 @@ function OptionalInfo() {
                         ]}
                       >
                         <Input
-                          placeholder="商品リスト名入力"
+                          placeholder="オプションリスト名入力"
                           style={{
                             width: 400,
                           }}
