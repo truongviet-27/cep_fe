@@ -2,7 +2,7 @@
 import { useTable } from '@refinedev/antd'
 import type { CrudFilters } from '@refinedev/core'
 import { useGo, useTranslate } from '@refinedev/core'
-import { GREEN, GREY_TAG, PRIMARY, RED } from '@utility/color'
+import { GREEN, GREY_TAG, PRIMARY, RED, WARNING } from '@utility/color'
 import { Button, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -81,6 +81,7 @@ function useImportHistory() {
         color: GREEN,
         text: t('import_history.text.status.COMPLETED'),
       },
+      ERROR: { color: WARNING, text: t('import_history.text.status.ERROR') },
       FAILED: { color: RED, text: t('import_history.text.status.FAILED') },
     } as Record<string, { color: string; text: string }>
   }, [t])
@@ -214,8 +215,7 @@ function useImportHistory() {
         dataIndex: 'url_file_failed',
         title: t('import_history.table.headers.errorResult'),
         render(value, record) {
-          return record.status === 'COMPLETED' ? null : !value &&
-            record.status !== 'COMPLETED' ? (
+          return record.status === 'COMPLETED' ? null : (!value || record.status === 'FAILED') ? (
             <Text
               style={{
                 color: RED,
