@@ -336,6 +336,7 @@ function QuotaList() {
     tableProps,
     searchFormProps,
     setFilters,
+    setCurrent,
     tableQuery: { refetch },
   } = useTable({
     syncWithLocation: true,
@@ -419,8 +420,9 @@ function QuotaList() {
           value: status,
         },
       ])
+      setCurrent(1)
     },
-    [status],
+    [status, setFilters, setCurrent],
   )
 
   const { selectProps } = useSelect({
@@ -644,7 +646,7 @@ function QuotaList() {
           quota_ids: selectedRows?.map((item: any) => item?.id),
         },
         method: 'put',
-        url: `${apiUrl}/quotas/back-to-send-customer`,
+        url: `${apiUrl}/quotas/back-to-sent-customer`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
         },
