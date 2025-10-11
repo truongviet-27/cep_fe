@@ -268,7 +268,7 @@ function QuotaList() {
               recordItemId={record.id}
             />
 
-            {record.status === QuotaStatus.Completed && (
+            {/* {record.status === QuotaStatus.Completed && (
               <Button
                 type="default"
                 size="small"
@@ -279,7 +279,7 @@ function QuotaList() {
               >
                 {t('quotas.actions.decide_move')}
               </Button>
-            )}
+            )} */}
 
             <Link href={record?.pdf_path} target="_blank">
               <Button size="small" icon={<DownloadOutlined />} />

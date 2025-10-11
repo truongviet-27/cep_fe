@@ -42,9 +42,11 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
+import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(utc)
+dayjs.extend(timezone)
 
 function QuotaAction() {
   const t = useTranslate()
@@ -198,7 +200,7 @@ function QuotaAction() {
             label: dataBasicInfo.data.customer_name,
           },
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date)
+            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
           created_at: dataBasicInfo.data.created_at
             ? dayjs(dataBasicInfo.data.created_at)
@@ -212,7 +214,7 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
-              unit: item2.unit_name,
+              unit: item2.unit_name ?? '-',
             })),
           })),
           optional_product: dataProducts.data.optional_product.map(
@@ -220,7 +222,7 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
-                unit: item2.unit_name,
+                unit: item2.unit_name ?? '-',
               })),
             }),
           ),
@@ -279,30 +281,32 @@ function QuotaAction() {
                 product_id: null,
                 package_id: null,
                 name: '',
-                code: '',
+                code: '自動採番',
                 cost_price: 0,
                 quantity: 0,
                 selling_price: 0,
                 profit_margin: 0,
                 is_add_total: true,
+                unit: '-',
               },
             ],
           },
         ],
         optional_product: [
           {
-            group_name: '商品リスト名入力',
+            group_name: 'オプションリスト名入力',
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
-                code: '',
+                code: '自動採番',
                 cost_price: 0,
                 selling_price: 0,
                 quantity: 0,
                 profit_margin: 0,
                 is_add_total: false,
+                unit: '-',
               },
             ],
           },
@@ -321,14 +325,17 @@ function QuotaAction() {
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             status: 'creating',
-            delivery_date: dayjs(values.delivery_date)
-              .utc(true)
-              .startOf('day')
-              .toISOString(),
+            delivery_date: values.delivery_date
+              ? dayjs(values.delivery_date)
+                  .utc(true)
+                  .startOf('day')
+                  .toISOString()
+              : null,
             tags: values?.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
             })),
+            tax_rate: values.tax_rate ?? 0,
           },
           id: params?.id,
         },
@@ -349,15 +356,18 @@ function QuotaAction() {
             source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
-            delivery_date: dayjs(values.delivery_date)
-              .utc(true)
-              .startOf('day')
-              .toISOString(),
+            delivery_date: values.delivery_date
+              ? dayjs(values.delivery_date)
+                  .utc(true)
+                  .startOf('day')
+                  .toISOString()
+              : null,
             status: 'creating',
             tags: values.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
             })),
+            tax_rate: values.tax_rate ?? 0,
           },
         },
         {
