@@ -215,7 +215,8 @@ function useImportHistory() {
         dataIndex: 'url_file_failed',
         title: t('import_history.table.headers.errorResult'),
         render(value, record) {
-          return record.status === 'COMPLETED' ? null : (!value || record.status === 'FAILED') ? (
+          return record.status === 'COMPLETED' ? null : !value ||
+            record.status === 'FAILED' ? (
             <Text
               style={{
                 color: RED,
