@@ -70,7 +70,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.package_name
+        return record?.package_name ?? '-'
       },
     },
     {
