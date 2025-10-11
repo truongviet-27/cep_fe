@@ -588,7 +588,8 @@
         "PENDING": "保留中",
         "PROCESSING": "処理中",
         "COMPLETED": "成功",
-        "FAILED": "エラー"
+        "FAILED": "失敗",
+        "ERROR": "エラー"
       },
       "category": {
         "PRODUCTS": "商品登録",
