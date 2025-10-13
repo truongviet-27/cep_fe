@@ -39,9 +39,9 @@ export default function CustomerCreatePage() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('business_partner.business_partner'), PRIMARY),
+      title: boldText(t('business_partner.business_partner')),
     },
-    { title: boldText(t('customers.create.create')) },
+    { title: boldText(t('customers.create.create'), PRIMARY) },
   ]
 
   return (

@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable simple-import-sort/imports */
+import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
+import CommonTable from '@components/common/table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
-import { Button, Card, Col, Row, Typography } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-import { RightOutlined } from '@ant-design/icons'
-import { useParams } from 'next/navigation'
-import React from 'react'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import CommonTable from '@components/common/table'
-
-const { Title } = Typography
+import { Button, Card, Col, Row } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
+import { useParams } from 'next/navigation'
 
 const AgreedPriceCustomerDetail = () => {
   const t = useTranslate()
@@ -39,19 +37,13 @@ const AgreedPriceCustomerDetail = () => {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('estimates.estimates')}
-        </Title>
-      ),
+      title: boldText(t('estimates.estimates')),
     },
     {
-      title: <Title level={5}>{t('agreed_prices.parent')}</Title>,
+      title: boldText(t('agreed_prices.parent')),
     },
     {
-      title: (
-        <Title level={5}>{t('agreed_prices.customer_detail.title')}</Title>
-      ),
+      title: boldText(t('agreed_prices.customer_detail.title'), PRIMARY),
     },
   ]
 

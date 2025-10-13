@@ -12,12 +12,9 @@ import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Form, Modal, Space, Typography } from 'antd'
-import React from 'react'
+import { Button, Form, Modal, Space } from 'antd'
 
 import { useCustomerEdit } from './use-customers-edit'
-
-const { Title } = Typography
 
 export default function CustomerEditPage() {
   const hookProps = useCustomerEdit()
@@ -39,13 +36,9 @@ export default function CustomerEditPage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner')),
     },
-    { title: <Title level={5}>{t('customers.edit.edit')}</Title> },
+    { title: boldText(t('customers.edit.edit'), PRIMARY) },
   ]
 
   return (
