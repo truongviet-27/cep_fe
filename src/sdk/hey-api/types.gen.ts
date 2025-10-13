@@ -761,7 +761,7 @@ export type Customer = {
   /**
    * Price rank ID
    */
-  price_rank_id?: number
+  price_rank_id?: number | null
   /**
    * Country
    */
@@ -969,7 +969,7 @@ export type CustomerStoreRequest = {
   company_name_display_format?: 'before' | 'after'
   customer_name_by_kana?: string | null
   corporate_number: string
-  price_rank_id: number
+  price_rank_id: number | null
   country?: string | null
   post_code?: string | null
   address?: string | null
@@ -2986,17 +2986,25 @@ export type QuotaFormSettingResponse = {
    */
   phone_number?: string | null
   /**
-   * Company logo image filename
+   * Company logo image URL
    */
   company_logo_image?: string | null
+  /**
+   * Company logo image original file name
+   */
+  company_logo_image_name?: string | null
   /**
    * Whether to display company logo image
    */
   is_display_company_logo_image?: boolean | null
   /**
-   * Company seal image filename
+   * Company seal image URL
    */
   company_seal_image?: string | null
+  /**
+   * Company seal image original file name
+   */
+  company_seal_image_name?: string | null
   /**
    * Whether to display company seal image
    */
@@ -3012,7 +3020,7 @@ export type QuotaFormSettingResponse = {
   /**
    * Consumption tax type
    */
-  consumption_tax?: 'exclusive' | 'inclusive'
+  consumption_tax?: 'exclusive' | 'inclusive' | 'external'
   /**
    * Tax rate percentage
    */
@@ -3133,17 +3141,25 @@ export type UpdateQuotaFormSettingRequest = {
    */
   phone_number?: string | null
   /**
-   * Company logo image filename
+   * Company logo image S3 key
    */
   company_logo_image?: string | null
+  /**
+   * Company logo image original file name
+   */
+  company_logo_image_name?: string | null
   /**
    * Whether to display company logo image
    */
   is_display_company_logo_image?: boolean | null
   /**
-   * Company seal image filename
+   * Company seal image S3 key
    */
   company_seal_image?: string | null
+  /**
+   * Company seal image original file name
+   */
+  company_seal_image_name?: string | null
   /**
    * Whether to display company seal image
    */
@@ -3159,7 +3175,7 @@ export type UpdateQuotaFormSettingRequest = {
   /**
    * Consumption tax type
    */
-  consumption_tax?: 'exclusive' | 'inclusive'
+  consumption_tax?: 'exclusive' | 'inclusive' | 'external'
   /**
    * Tax rate percentage
    */
@@ -8138,7 +8154,7 @@ export type QuotaControllerIndexData = {
      */
     search_date_type?:
       | 'created_at'
-      | 'expiration_date'
+      | 'expired_date'
       | 'sent_to_customer_date'
       | 'customer_accepted_date'
       | 'customer_cancelled_date'
@@ -8780,7 +8796,7 @@ export type QuotaControllerBackToSentToCustomerData = {
   }
   path?: never
   query?: never
-  url: '/api/v1/quotas/back-to-sent-customer'
+  url: '/api/v1/quotas/back-to-send-customer'
 }
 
 export type QuotaControllerBackToSentToCustomerErrors = {
