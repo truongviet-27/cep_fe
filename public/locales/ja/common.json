@@ -815,7 +815,15 @@
       "error": {
         "5mb": "5MB以下のファイルのみアップロードできます",
         "pattern": "CSVファイルのみアップロードできます\nUTF-8またはShift_JISのファイルを選択してください。",
-        "required": "CSVファイルをアップロードしてください。"
+        "required": "CSVファイルをアップロードしてください。",
+        "empty_file": "ファイルが空です。",
+        "max_size": "ファイルサイズは最大5MBです。",
+        "invalid_format": "ファイルの文字コードが不正です。UTF-8またはShift_JISのファイルを選択してください。",
+        "max_name_file": "ファイル名は255文字以内で指定してください。",
+        "file_empty": "CSVファイルが空です。",
+        "max_rows": "CSVファイルの行数は1000行以内で指定してください。",
+        "required_column": "必須項目を入力してください。",
+        "missing_headers": "CSVファイルが空です。"
       },
       "result": {
         "title": "CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。",
