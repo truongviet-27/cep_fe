@@ -31,6 +31,7 @@ export const PARAMETER_SETTING_URL = new Map<string, ParameterResourceEnum>([
   ['/products', ParameterResourceEnum.PRODUCTS],
   ['/tenant-settings', ParameterResourceEnum.QUOTATION_FORMS],
   ['/approve-routes', ParameterResourceEnum.APPROVE_ROUTES],
+  ['/price-groups', ParameterResourceEnum.RANKS],
 ])
 
 export const hasDisableMenu = (route?: string): boolean => {
