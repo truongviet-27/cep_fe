@@ -760,7 +760,7 @@ function QuotaList() {
                   showSearch
                   labelInValue
                   onSearch={() => {}}
-                  placeholder={'選択してください'}
+                  placeholder={t('placeholders.select')}
                   filterOption={(input, option) =>
                     ((option?.label ?? '') as string)
                       .toLowerCase()
@@ -856,10 +856,10 @@ function QuotaList() {
           <Row gutter={[24, 24]}>
             <Col xs={8} md={6} lg={4}>
               {/* <Form.Item
-                label={<span className="font-bold">タグ名</span>}
+                label={<span className="font-bold">{t('quotas.filters.tag_name')}</span>}
                 layout="vertical"
               >
-                <Select placeholder={'一括処理'} options={options ?? []} />
+                <Select placeholder={t('quotas.actions.bulk_processing')} options={options ?? []} />
               </Form.Item> */}
               <Dropdown
                 menu={{

@@ -132,13 +132,13 @@ function DetailInfo() {
       product_id: null,
       package_id: null,
       name: '',
-      code: '自動採番',
+      code: t('quotas.action.detail_info.default_values.auto_numbering'),
       quantity: 0,
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
       is_add_total: true,
-      unit: '-',
+      unit: t('quotas.action.detail_info.default_values.default_unit'),
     }
 
     const newProducts = [...products]
@@ -168,7 +168,7 @@ function DetailInfo() {
 
   return (
     <Card
-      title={boldText('詳細情報', PRIMARY, 16)}
+      title={boldText(t('quotas.action.detail_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
         marginTop: 40,
@@ -200,7 +200,7 @@ function DetailInfo() {
 
           const columns: ColumnsType = [
             {
-              title: '商品コード',
+              title: t('quotas.action.detail_info.table.product_code'),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
@@ -231,7 +231,9 @@ function DetailInfo() {
                         ]}
                       >
                         <Input
-                          placeholder="商品リスト名入力"
+                          placeholder={t(
+                            'quotas.action.detail_info.placeholders.product_list_name',
+                          )}
                           style={{
                             width: 400,
                             marginBottom: 0,
@@ -252,7 +254,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '商品・サービス名',
+              title: t('quotas.action.detail_info.table.product_service_name'),
               dataIndex: 'name',
               key: 'name',
               align: 'left',
@@ -280,7 +282,9 @@ function DetailInfo() {
                   >
                     <Select
                       {...selectPropsProduct}
-                      placeholder="商品名・サービス名で検索"
+                      placeholder={t(
+                        'quotas.action.detail_info.placeholders.product_search',
+                      )}
                       allowClear
                       showSearch
                       filterOption={false}
@@ -382,7 +386,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '単位',
+              title: t('quotas.action.detail_info.table.unit'),
               dataIndex: 'unit',
               key: 'unit',
               render: (_, record) => {
@@ -399,7 +403,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '荷姿',
+              title: t('quotas.action.detail_info.table.package'),
               dataIndex: 'package_id',
               key: 'package_id',
               width: 200,
@@ -438,7 +442,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '原価',
+              title: t('quotas.action.detail_info.table.cost_price'),
               dataIndex: 'cost_price',
               key: 'cost_price',
               render: (_, record) => {
@@ -455,7 +459,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '売単価',
+              title: t('quotas.action.detail_info.table.selling_price'),
               dataIndex: 'selling_price',
               key: 'selling_price',
               render: (_, record) => {
@@ -484,7 +488,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '数量',
+              title: t('quotas.action.detail_info.table.quantity'),
               dataIndex: 'quantity',
               key: 'quantity',
               render: (_, record) => {
@@ -508,7 +512,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '利益率',
+              title: t('quotas.action.detail_info.table.profit_margin'),
               dataIndex: 'profit_margin',
               key: 'profit_margin',
               render: (_, record) => {
@@ -553,7 +557,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '売価金額',
+              title: t('quotas.action.detail_info.table.selling_amount'),
               dataIndex: 'sellingAmount',
               key: 'sellingAmount',
               render: (_, record) => {
@@ -581,7 +585,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '合計計算',
+              title: t('quotas.action.detail_info.table.total_calculation'),
               dataIndex: 'is_add_total',
               key: 'is_add_total',
               render: (_, record) => {
@@ -623,7 +627,7 @@ function DetailInfo() {
               },
             },
             {
-              title: '行編集',
+              title: t('quotas.action.detail_info.table.row_edit'),
               key: 'action',
               render: (_, record) => {
                 const isHeader = record.isHeader
@@ -646,19 +650,25 @@ function DetailInfo() {
                   if (isHeader) {
                     add(
                       {
-                        group_name: 'エアロン利用料',
+                        group_name: t(
+                          'quotas.action.detail_info.default_values.default_group_name',
+                        ),
                         products: [
                           {
                             product_id: null,
                             package_id: null,
                             name: '',
-                            code: '自動採番',
+                            code: t(
+                              'quotas.action.detail_info.default_values.auto_numbering',
+                            ),
                             quantity: 0,
                             cost_price: 0,
                             selling_price: 0,
                             profit_margin: 0,
                             is_add_total: true,
-                            unit: '-',
+                            unit: t(
+                              'quotas.action.detail_info.default_values.default_unit',
+                            ),
                           },
                         ],
                       },
@@ -704,7 +714,7 @@ function DetailInfo() {
                     setIsModalOpen(true)
                   }}
                 >
-                  カテゴリから入力
+                  {t('quotas.action.detail_info.buttons.add_from_category')}
                 </Button>
               </Flex>
               <CommonTable
@@ -741,7 +751,7 @@ function DetailInfo() {
                       }}
                     >
                       <Table.Summary.Cell index={0} colSpan={3} align="center">
-                        小計
+                        {t('quotas.action.detail_info.summary.subtotal')}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={1}></Table.Summary.Cell>
                       <Table.Summary.Cell index={2}></Table.Summary.Cell>
@@ -779,7 +789,7 @@ function DetailInfo() {
                   fontWeight: 700,
                 }}
               >
-                原価合計
+                {t('quotas.action.detail_info.summary.cost_total')}
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                 ¥{costTotal || 0}
@@ -805,7 +815,8 @@ function DetailInfo() {
                   fontWeight: 700,
                 }}
               >
-                消費税金額（{taxRateWatch}%）
+                {t('quotas.action.detail_info.summary.tax_amount')}（
+                {taxRateWatch}%）
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                 ¥{taxTotal || 0}
@@ -831,7 +842,7 @@ function DetailInfo() {
                   fontWeight: 700,
                 }}
               >
-                合計利益率
+                {t('quotas.action.detail_info.summary.total_profit_margin')}
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                 {profitRate.toFixed(2) || 0}%
@@ -857,8 +868,11 @@ function DetailInfo() {
                   fontWeight: 700,
                 }}
               >
-                合計金額（
-                {consumptionTaxWatch === 'external' ? '税抜）' : '税込）'}
+                {t('quotas.action.detail_info.summary.total_amount')}（
+                {consumptionTaxWatch === 'external'
+                  ? t('quotas.action.detail_info.summary.tax_exclusive')
+                  : t('quotas.action.detail_info.summary.tax_inclusive')}
+                ）
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                 ¥{sellTotalWithTax || 0}
@@ -875,7 +889,7 @@ function DetailInfo() {
         onCancel={handleClose}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        title={'カテゴリから商品を追加'}
+        title={t('quotas.action.detail_info.modal.add_from_category')}
         footer={null}
       >
         <ProductCategoryModal name="main_product" close={handleClose} />

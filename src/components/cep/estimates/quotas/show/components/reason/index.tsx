@@ -28,13 +28,11 @@ function Reason() {
         rules={[
           {
             required: true,
-            message: t('approve_routes.validation.route_code.required'),
+            message: t('validation.required'),
           },
           {
             whitespace: true,
-            message: t(
-              'approve_routes.validation.route_code.invalid_whitespace',
-            ),
+            message: t(t('validation.invalid_format')),
           },
         ]}
       >

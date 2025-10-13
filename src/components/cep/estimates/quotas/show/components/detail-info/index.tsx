@@ -186,7 +186,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 }}
               >
                 <Table.Summary.Cell index={0} colSpan={3} align="center">
-                  小計
+                  {t('quotas.action.detail_info.summary.subtotal')}
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1}></Table.Summary.Cell>
                 <Table.Summary.Cell index={2}></Table.Summary.Cell>
@@ -223,7 +223,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                     fontWeight: 700,
                   }}
                 >
-                  原価合計
+                  {t('quotas.action.detail_info.summary.cost_total')}
                 </Text>
                 <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                   ¥{basicInfo?.total_cost}
@@ -246,7 +246,8 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                     fontWeight: 700,
                   }}
                 >
-                  消費税金額（{basicInfo?.tax_rate}%）
+                  {t('quotas.action.detail_info.summary.tax_amount')}（
+                  {basicInfo?.tax_rate}%）
                 </Text>
                 <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                   ¥{basicInfo?.consumption_tax_amount}
@@ -269,7 +270,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                     fontWeight: 700,
                   }}
                 >
-                  合計利益率
+                  {t('quotas.action.detail_info.summary.total_profit_margin')}
                 </Text>
                 <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                   {basicInfo?.total_profit_margin}%
@@ -292,7 +293,8 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                     fontWeight: 700,
                   }}
                 >
-                  合計金額（税込）
+                  {t('quotas.action.detail_info.summary.total_amount')}（
+                  {t('quotas.action.detail_info.summary.tax_inclusive')}）
                 </Text>
                 <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                   ¥{basicInfo?.total_price_tax_included}

@@ -275,13 +275,17 @@ function QuotaAction() {
         tax_rounding_method: data.data?.tax_rounding_method,
         main_product: [
           {
-            group_name: '商品リスト名入力',
+            group_name: t(
+              'quotas.action.detail_info.placeholders.product_list_name',
+            ),
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
-                code: '自動採番',
+                code: t(
+                  'quotas.action.detail_info.default_values.auto_numbering',
+                ),
                 cost_price: 0,
                 quantity: 0,
                 selling_price: 0,
@@ -294,13 +298,17 @@ function QuotaAction() {
         ],
         optional_product: [
           {
-            group_name: 'オプションリスト名入力',
+            group_name: t(
+              'quotas.action.optional_info.placeholders.optional_list_name',
+            ),
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
-                code: '自動採番',
+                code: t(
+                  'quotas.action.detail_info.default_values.auto_numbering',
+                ),
                 cost_price: 0,
                 selling_price: 0,
                 quantity: 0,

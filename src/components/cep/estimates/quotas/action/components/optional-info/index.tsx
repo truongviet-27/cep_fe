@@ -55,7 +55,7 @@ function OptionalInfo() {
       product_id: null,
       package_id: null,
       name: '',
-      code: '自動採番',
+      code: t('quotas.action.detail_info.default_values.auto_numbering'),
       quantity: 0,
       cost_price: 0,
       selling_price: 0,
@@ -91,7 +91,7 @@ function OptionalInfo() {
 
   return (
     <Card
-      title={boldText('オプション情報', PRIMARY, 16)}
+      title={boldText(t('quotas.action.optional_info.title'), PRIMARY, 16)}
       styles={{
         header: { padding: 0, minHeight: 0 },
         body: { padding: 0 },
@@ -123,7 +123,7 @@ function OptionalInfo() {
 
           const columns: ColumnsType = [
             {
-              title: '商品コード',
+              title: t('quotas.action.optional_info.table.product_code'),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
@@ -154,7 +154,9 @@ function OptionalInfo() {
                         ]}
                       >
                         <Input
-                          placeholder="オプションリスト名入力"
+                          placeholder={t(
+                            'quotas.action.optional_info.placeholders.optional_list_name',
+                          )}
                           style={{
                             width: 400,
                           }}
@@ -174,7 +176,9 @@ function OptionalInfo() {
               },
             },
             {
-              title: '商品・サービス名',
+              title: t(
+                'quotas.action.optional_info.table.product_service_name',
+              ),
               dataIndex: 'name',
               key: 'name',
               align: 'left',
@@ -196,7 +200,9 @@ function OptionalInfo() {
                   >
                     <Select
                       {...selectPropsProduct}
-                      placeholder="商品名・サービス名で検索"
+                      placeholder={t(
+                        'quotas.action.detail_info.placeholders.product_search',
+                      )}
                       allowClear
                       showSearch
                       filterOption={false}
@@ -298,7 +304,7 @@ function OptionalInfo() {
               },
             },
             {
-              title: '単位',
+              title: t('quotas.action.optional_info.table.unit'),
               dataIndex: 'unit',
               key: 'unit',
               render: (_, record) => {
@@ -315,7 +321,7 @@ function OptionalInfo() {
               },
             },
             {
-              title: '荷姿',
+              title: t('quotas.action.optional_info.table.package'),
               dataIndex: 'package_id',
               key: 'package_id',
               width: 200,
@@ -354,7 +360,7 @@ function OptionalInfo() {
               },
             },
             {
-              title: '原価',
+              title: t('quotas.action.optional_info.table.cost_price'),
               dataIndex: 'cost_price',
               key: 'cost_price',
               render: (_, record) => {
@@ -371,7 +377,7 @@ function OptionalInfo() {
               },
             },
             {
-              title: '売単価',
+              title: t('quotas.action.optional_info.table.selling_price'),
               dataIndex: 'selling_price',
               key: 'selling_price',
               render: (_, record) => {
@@ -400,7 +406,7 @@ function OptionalInfo() {
               },
             },
             {
-              title: '数量',
+              title: t('quotas.action.optional_info.table.quantity'),
               dataIndex: 'quantity',
               key: 'quantity',
               render: (_, record) => {
@@ -424,7 +430,7 @@ function OptionalInfo() {
               },
             },
             {
-              title: '利益率',
+              title: t('quotas.action.optional_info.table.profit_margin'),
               dataIndex: 'profit_margin',
               key: 'profit_margin',
               render: (_, record) => {
@@ -467,7 +473,7 @@ function OptionalInfo() {
               },
             },
             {
-              title: '売価金額',
+              title: t('quotas.action.optional_info.table.selling_amount'),
               dataIndex: 'sellingAmount',
               key: 'sellingAmount',
               render: (_, record) => {
@@ -496,7 +502,7 @@ function OptionalInfo() {
             },
 
             {
-              title: '行編集',
+              title: t('quotas.action.optional_info.table.row_edit'),
               key: 'action',
               render: (_, record) => {
                 const isHeader = record.isHeader
@@ -522,13 +528,17 @@ function OptionalInfo() {
                   if (isHeader) {
                     add(
                       {
-                        group_name: 'オプションリスト名入力',
+                        group_name: t(
+                          'quotas.action.optional_info.placeholders.optional_list_name',
+                        ),
                         products: [
                           {
                             product_id: null,
                             package_id: null,
                             name: '',
-                            code: '自動採番',
+                            code: t(
+                              'quotas.action.detail_info.default_values.auto_numbering',
+                            ),
                             quantity: 0,
                             cost_price: 0,
                             selling_price: 0,
@@ -580,7 +590,7 @@ function OptionalInfo() {
                     setIsModalOpen(true)
                   }}
                 >
-                  カテゴリから入力
+                  {t('quotas.action.detail_info.buttons.add_from_category')}
                 </Button>
               </Flex>
               <CommonTable

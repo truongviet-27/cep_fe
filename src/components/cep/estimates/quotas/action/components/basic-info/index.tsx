@@ -100,7 +100,7 @@ const BasicInfo = () => {
       }}
     >
       {/* <Form.Item
-        label={boldText('見積番号')}
+        label={boldText(t('quotas.action.basic_info.fields.estimate_number'))}
         required
         style={{ marginTop: 20 }}
       >
@@ -115,24 +115,24 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('approve_routes.validation.route_code.required'),
+                  message: t('validation.required'),
                 },
                 {
                   whitespace: true,
                   message: t(
-                    'approve_routes.validation.route_code.invalid_whitespace',
+                    t('validation.invalid_format'),
                   ),
                 },
                 {
                   pattern: /^[A-Z0-9-]+$/,
                   message: t(
-                    'approve_routes.validation.route_code.invalid_format',
+                    t('validation.invalid_format'),
                   ),
                 },
                 {
                   max: 255,
                   message: t(
-                    'approve_routes.validation.route_code.invalid_format',
+                    t('validation.invalid_format'),
                   ),
                 },
               ]}
@@ -206,18 +206,18 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('approve_routes.validation.route_code.required'),
+                  message: t('validation.required'),
                 },
                 {
                   whitespace: true,
                   message: t(
-                    'approve_routes.validation.route_code.invalid_whitespace',
+                    t('validation.invalid_format'),
                   ),
                 },
                 {
                   max: 255,
                   message: t(
-                    'approve_routes.validation.route_code.invalid_format',
+                    t('validation.invalid_format'),
                   ),
                 },
               ]}
@@ -328,7 +328,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('有効期限')}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.expiration_date'))}>
         <Row gutter={[8, 0]}>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'expiration_date'}>
@@ -384,7 +384,7 @@ const BasicInfo = () => {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('消費税')}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.consumption_tax'))}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={4}>
             <Form.Item name="consumption_tax">
@@ -438,28 +438,26 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'ルートコードは必須です。',
+                    message: t('validation.required'),
                   },
                   {
                     whitespace: true,
-                    message:
-                      'ルートコードには大文字の英字、数字、ハイフンのみ使用できます。',
+                    message: t('validation.invalid_format'),
                   },
                   {
                     pattern: /^[A-Z0-9-]+$/,
-                    message:
-                      'ルートコードには大文字の英字、数字、ハイフンのみ使用できます。',
+                    message: t('validation.invalid_format'),
                   },
                   {
                     max: 255,
-                    message: t(
-                      'approve_routes.validation.route_code.invalid_format',
-                    ),
+                    message: t('validation.max255'),
                   },
                 ]}
                 name={'code'}
                 required
-                label={boldText('見積番号')}
+                label={boldText(
+                  t('quotas.action.basic_info.fields.estimate_number'),
+                )}
                 style={{
                   marginBottom: 0,
                   flex: 1,
@@ -502,17 +500,23 @@ const BasicInfo = () => {
 
         <Row>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item required name={'type'} label={boldText('見積区分')}>
+            <Form.Item
+              required
+              name={'type'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_type'),
+              )}
+            >
               <Radio.Group
                 defaultValue={'normal'}
                 options={[
                   {
                     value: 'normal',
-                    label: '通常',
+                    label: t('quotas.action.basic_info.types.normal'),
                   },
                   {
                     value: 'channel_limited',
-                    label: '販路限定',
+                    label: t('quotas.action.basic_info.types.limited'),
                   },
                 ]}
               />
@@ -524,24 +528,20 @@ const BasicInfo = () => {
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               required
-              label={boldText('タイトル')}
+              label={boldText(t('quotas.action.basic_info.fields.title'))}
               name={'title'}
               rules={[
                 {
                   required: true,
-                  message: t('approve_routes.validation.route_code.required'),
+                  message: t('validation.required'),
                 },
                 {
                   whitespace: true,
-                  message: t(
-                    'approve_routes.validation.route_code.invalid_whitespace',
-                  ),
+                  message: t(t('validation.invalid_format')),
                 },
                 {
                   max: 255,
-                  message: t(
-                    'approve_routes.validation.route_code.invalid_format',
-                  ),
+                  message: t(t('validation.invalid_format')),
                 },
               ]}
             >
@@ -551,12 +551,12 @@ const BasicInfo = () => {
 
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              label={boldText('取引先')}
+              label={boldText(t('quotas.action.basic_info.fields.customer'))}
               name={'customer'}
               rules={[
                 {
                   required: true,
-                  message: '取引先は必須です。',
+                  message: t('validation.required'),
                 },
               ]}
             >
@@ -579,12 +579,22 @@ const BasicInfo = () => {
 
         <Row gutter={[100, 0]} wrap>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'created_at'} label={boldText('見積日')}>
+            <Form.Item
+              name={'created_at'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_date'),
+              )}
+            >
               <DatePicker style={{ width: '100%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'delivery_date'} label={boldText('納入期日')}>
+            <Form.Item
+              name={'delivery_date'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_date'),
+              )}
+            >
               <DatePicker
                 style={{ width: '100%' }}
                 placeholder={FORMAT_DATE}
@@ -596,12 +606,22 @@ const BasicInfo = () => {
 
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'delivery_method'} label={boldText('納品方法')}>
+            <Form.Item
+              name={'delivery_method'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_method'),
+              )}
+            >
               <Input />
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item name={'payment_due_date'} label={boldText('支払期日')}>
+            <Form.Item
+              name={'payment_due_date'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.payment_due_date'),
+              )}
+            >
               <Select
                 allowClear
                 options={[
@@ -652,7 +672,9 @@ const BasicInfo = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <Form.Item
                 name={'expiration_date'}
-                label={boldText('有効期限')}
+                label={boldText(
+                  t('quotas.action.basic_info.fields.expiration_date'),
+                )}
                 style={{ marginBottom: 0, flex: 1 }}
               >
                 <Select
@@ -714,7 +736,7 @@ const BasicInfo = () => {
                       Form.useWatch('created_at', form),
                     ),
                   ).format('YYYY/MM/DD')}
-                  まで
+                  {t('quotas.action.basic_info.labels.until')}
                 </span>
               </Form.Item>
             </div>
@@ -724,7 +746,9 @@ const BasicInfo = () => {
             <div className="flex flex-wrap gap-4">
               <Form.Item
                 name="consumption_tax"
-                label={boldText('消費税')}
+                label={boldText(
+                  t('quotas.action.basic_info.fields.consumption_tax'),
+                )}
                 style={{ marginBottom: 0, flex: 1 }}
               >
                 <Radio.Group
@@ -766,7 +790,8 @@ const BasicInfo = () => {
               </Form.Item>
               <Form.Item style={{ marginBottom: 0 }}>
                 <span className="ml-2 text-[#FA8C16]">
-                  デフォルト{Form.useWatch('tax_rate') ?? 0}%
+                  {t('quotas.action.basic_info.labels.default_tax_rate')}
+                  {Form.useWatch('tax_rate') ?? 0}%
                 </span>
               </Form.Item>
             </div>

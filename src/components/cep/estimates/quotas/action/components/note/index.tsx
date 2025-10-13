@@ -27,7 +27,7 @@ function Note() {
           style={{ marginTop: 20 }}
           rows={6}
           className="!resize-none"
-          placeholder="仕様・条件を入力してください"
+          placeholder={t('quotas.action.placeholders.enter_note')}
         />
       </Form.Item>
     </Card>
