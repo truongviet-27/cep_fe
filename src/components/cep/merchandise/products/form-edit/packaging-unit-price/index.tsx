@@ -111,15 +111,25 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     min={1}
                     controls={false}
                     onChange={(value) => {
+                      const costPrice =
+                        (value as number) * getFieldValue('selling_price')
                       setFieldValue(
                         ['packagings', index, 'cost_price' as keyof object],
-                        (value as number) * getFieldValue('selling_price'),
+                        costPrice,
                       )
-                      setFieldValue(
-                        ['packagings', index, 'selling_price'],
-                        (value as number) *
-                          getFieldValue(['packagings', index, 'selling_price']),
-                      )
+
+                      if (
+                        getFieldValue([
+                          'packagings',
+                          index,
+                          'is_standard_price',
+                        ])
+                      ) {
+                        setFieldValue(
+                          ['packagings', index, 'selling_price'],
+                          costPrice,
+                        )
+                      }
 
                       const rankObject: Record<string, number> = {}
 
