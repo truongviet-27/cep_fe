@@ -8,13 +8,22 @@
   "page_detail": {},
   "page_action": {},
   "table": {
-    "status_comment": "状態 / コメント",
+    "status_comment_1": "状態",
+    "status_comment_2": "コメント",
     "estimate_number": "見積番号",
-    "title_customer": "タイトル / 取引先",
-    "creator_approver": "作成者 / 承認者",
-    "department_amount": "部門 / 金額 (円)",
-    "created_expiry": "作成日 / 有効期限",
-    "sent_order_cancel": "送信日 / 受注・失注日",
+    "title_customer_1": "タイトル",
+    "title_customer_2": "取引先",
+    "creator_approver_1": "作成者",
+    "creator_approver_2": "承認者",
+    "department_amount_1": "部門",
+    "department_amount_2": "金額 (円)",
+
+    "created_expiry_1": "作成日",
+    "created_expiry_2": "有効期限",
+
+    "sent_order_cancel_1": "送信日",
+    "sent_order_cancel_2": "受注・失注日",
+
     "actions": "操作"
   },
   "filters": {
