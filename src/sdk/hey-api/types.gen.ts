@@ -1778,7 +1778,7 @@ export type PriceGroupListResponse = {
 export type PriceGroupUpdateItem = {
   packaging_id: number
   is_rate_based?: boolean | null
-  ranks_prices?: Array<PackagingRankPriceInput> | null
+  rank_prices?: Array<PackagingRankPriceInput> | null
 }
 
 /**
@@ -6428,7 +6428,7 @@ export type PriceGroupControllerIndexData = {
      */
     product_id?: number
     /**
-     * Search by code or name (LIKE)
+     * Search by packaging code, packaging name, or product name (LIKE)
      */
     q?: string
     /**

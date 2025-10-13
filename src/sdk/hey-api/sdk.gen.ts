@@ -1894,7 +1894,7 @@ export const priceGroupControllerIndex = <ThrowOnError extends boolean = false>(
 
 /**
  * Bulk update packaging prices per rank
- * Update rank-based prices for multiple packagings. When is_rate_based is true, prices are recalculated from selling_price * rank.rate; otherwise, explicit ranks_prices are applied.
+ * Update rank-based prices for multiple packagings. When is_rate_based is true, prices are recalculated from selling_price * rank.rate; otherwise, explicit rank_prices are applied.
  */
 export const priceGroupControllerUpdate = <
   ThrowOnError extends boolean = false,
