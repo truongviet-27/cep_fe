@@ -12,6 +12,7 @@ import {
   Link,
   useApiUrl,
   useCustomMutation,
+  useGo,
   useTranslate,
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
@@ -29,17 +30,7 @@ const { Text, Paragraph } = Typography
 
 // Define required headers for each CSV type (using Japanese column names)
 const REQUIRED_HEADERS: Record<string, string[]> = {
-  PRODUCTS: [
-    '商品コード',
-    '商品名',
-    'カテゴリ',
-    '単位',
-    '原価（円）',
-    '販売単価（円）',
-    '荷姿名',
-    '入数',
-  ], // Required headers for products
-  CATEGORY_PRODUCTS: ['カテゴリレベル', 'カテゴリ名'], // Required headers for category products
+  CATEGORY_PRODUCTS: ['カテゴリレベル', 'カテゴリ名'],
   CUSTOMERS: [
     '取引先コード',
     '取引先名',
@@ -50,8 +41,25 @@ const REQUIRED_HEADERS: Record<string, string[]> = {
     '担当者名',
     '担当者部署',
     '担当者メール',
-  ], // Required headers for customers
-  DEPARTMENTS: ['部門コード', '部門名（支社/部/課）'], // Required headers for departments
+  ],
+  DEPARTMENTS: ['部門コード', '部門名（支社/部/課）'],
+  PRODUCTS: [
+    '商品コード',
+    '商品名',
+    'カテゴリ',
+    '単位',
+    '原価（円）',
+    '販売単価（円）',
+    '荷姿名',
+    '入数',
+  ],
+}
+
+const nameToUrlMap: Record<string, string> = {
+  PRODUCTS: 'products',
+  CATEGORY_PRODUCTS: 'product-categories',
+  CUSTOMERS: 'customers',
+  DEPARTMENTS: 'departments',
 }
 
 function ImportCsv({
@@ -70,6 +78,8 @@ function ImportCsv({
   const { mutate: mutate2 } = useCustomMutation()
 
   const apiUrl = useApiUrl()
+
+  const go = useGo()
 
   const handleDownload = async () => {
     const response = await axiosInstance.get(
@@ -406,6 +416,20 @@ function ImportCsv({
 
         <div className="mt-4 flex justify-end">
           <div className="flex justify-end gap-4">
+            <Button
+              type="default"
+              onClick={() => {
+                go({
+                  to: `/${nameToUrlMap[name]}`,
+                  type: 'replace',
+                })
+              }}
+            >
+              {!isResult
+                ? t('csv.buttons.back')
+                : t(`csv.${name.toLowerCase()}.back_to_list`)}
+            </Button>
+
             {isResult ? (
               <Button
                 type="default"
