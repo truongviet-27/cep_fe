@@ -89,7 +89,7 @@ function Page() {
       {
         onSuccess: () => {
           values.forEach((item: any) => {
-            !editIds.includes(item.packaging_id) && onEditRow(item.packaging_id)
+            editIds.includes(item.packaging_id) && onEditRow(item.packaging_id)
           })
         },
       },
@@ -262,7 +262,7 @@ function Page() {
                     name={[index, `packaging_id`]}
                     initialValue={record.packaging_id}
                     hidden
-                    className={'!m-0 !h-fit !p-0'}
+                    className={'!m-0 !h-0 !p-0'}
                   >
                     <Input hidden />
                   </Form.Item>
@@ -270,13 +270,13 @@ function Page() {
                   <Form.Item
                     initialValue={value}
                     name={[index, 'is_rate_based']}
-                    className={'!m-0 !h-fit !p-0'}
+                    className={'!m-0 !h-0 !p-0 !pb-5'}
                   >
                     {record?.packaging_id &&
                     !includes(editIds, record.packaging_id) ? (
                       currentVal
                     ) : (
-                      <Radio.Group>
+                      <Radio.Group className={''}>
                         <Radio value={true}>
                           {t('price_groups.fields.percentage')}
                         </Radio>
@@ -347,16 +347,15 @@ function Page() {
                             initialValue={item.id}
                             style={{ display: 'none' }}
                           >
-                            <Input hidden />
+                            <Input hidden className={'!h-0'} />
                           </Form.Item>
 
                           <Form.Item
                             className={'!m-0 !h-fit !p-0'}
                             name={[index, 'ranks_prices', indexChild, `price`]}
-                            style={{ margin: 0 }}
                             initialValue={currentPrice}
                           >
-                            <InputNumber min={0} />
+                            <InputNumber min={0} className={'!mt-4 !h-8'} />
                           </Form.Item>
                         </>
                       )
