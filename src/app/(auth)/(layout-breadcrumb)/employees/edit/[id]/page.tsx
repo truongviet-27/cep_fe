@@ -75,6 +75,9 @@ export default function EmployeeEdit() {
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
     redirect: false,
+    onMutationSuccess: () => {
+      refetch()
+    },
   })
 
   const { show, close, open } = modalFormProps
@@ -165,34 +168,33 @@ export default function EmployeeEdit() {
             <Col flex="none">
               <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
-            {isAutomatic && (
-              <Col xs={24} sm="auto" flex="none">
-                <Space direction="horizontal" size={12}>
-                  <Button
-                    size="middle"
-                    type="default"
-                    color={'primary'}
-                    variant="outlined"
-                    onClick={() => {
-                      refetch().then(() => {
-                        handleAutoNumber()
-                      })
-                    }}
-                    loading={loadingEm}
-                  >
-                    {t('departments.create.auto_number')}
-                  </Button>
-                  <Button
-                    type="link"
-                    onClick={() => show(data?.data?.id)}
-                    className="text-blue-500 !underline"
-                    style={{ marginLeft: -16, marginTop: -10 }}
-                  >
-                    {t('departments.create.popup_number_setting')}
-                  </Button>
-                </Space>
-              </Col>
-            )}
+            <Col xs={24} sm="auto" flex="none">
+              <Space direction="horizontal" size={12}>
+                <Button
+                  size="middle"
+                  type="default"
+                  color={'primary'}
+                  variant="outlined"
+                  onClick={() => {
+                    refetch().then(() => {
+                      handleAutoNumber()
+                    })
+                  }}
+                  loading={loadingEm}
+                  disabled={!isAutomatic}
+                >
+                  {t('departments.create.auto_number')}
+                </Button>
+                <Button
+                  type="link"
+                  onClick={() => show(data?.data?.id)}
+                  className="text-blue-500 !underline"
+                  style={{ marginLeft: -16, marginTop: -10 }}
+                >
+                  {t('departments.create.popup_number_setting')}
+                </Button>
+              </Space>
+            </Col>
           </Row>
         </Form.Item>
 
@@ -256,10 +258,7 @@ export default function EmployeeEdit() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <CodeIssueSettingEdit
-          modalProps={modalFormProps}
-          refetchParent={refetch}
-        />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
     </Edit>
   )

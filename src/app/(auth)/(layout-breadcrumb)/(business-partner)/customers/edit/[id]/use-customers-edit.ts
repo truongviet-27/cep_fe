@@ -52,6 +52,9 @@ export const useCustomerEdit = () => {
     autoResetFormWhenClose: true,
     redirect: false,
     warnWhenUnsavedChanges: false,
+    onMutationSuccess: () => {
+      refetchCodeGen()
+    },
   })
 
   const modalFormCorporate = useModal()

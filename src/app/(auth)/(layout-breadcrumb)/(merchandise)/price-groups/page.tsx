@@ -32,14 +32,23 @@ import {
   Table,
 } from 'antd'
 import { includes } from 'lodash'
-import { useLayoutEffect, useState } from 'react'
+import { useState } from 'react'
+import Link from 'next/link'
 
 function Page() {
   const [editIds, setEditIds] = useState<number[]>([])
 
-  const { tableProps, formProps, setFilters, searchFormProps, form, filters } =
-    useEditableTable<PriceGroupItem>({
-      onSearch: (values: any) => [
+  const {
+    tableProps,
+    formProps,
+    setFilters,
+    searchFormProps,
+    form,
+    tableQuery,
+  } = useEditableTable<PriceGroupItem>({
+    onSearch: (values: any) => {
+      form.setFieldsValue([])
+      return [
         {
           field: 'q',
           operator: 'null',
@@ -55,8 +64,9 @@ function Page() {
           operator: 'null',
           value: values?.setting_method,
         },
-      ],
-    })
+      ]
+    },
+  })
 
   const { data: ranks, isLoading } = useList<Rank>({
     resource: 'ranks',
@@ -69,11 +79,7 @@ function Page() {
   const handleSaveAll = () => {
     const flatIterator = Object.values(watch)
 
-    const allData = flatIterator as any[]
-
-    const values = allData.filter(
-      (item) => (item?.ranks_prices?.length ?? 0) > 0,
-    )
+    const values = flatIterator.filter((item: any) => !!item?.packaging_id)
 
     mutate(
       {
@@ -82,8 +88,8 @@ function Page() {
       },
       {
         onSuccess: () => {
-          values.forEach((item) => {
-            onEditRow(item.packaging_id)
+          values.forEach((item: any) => {
+            !editIds.includes(item.packaging_id) && onEditRow(item.packaging_id)
           })
         },
       },
@@ -120,11 +126,6 @@ function Page() {
       title: boldText(t('price_groups.list.list'), PRIMARY),
     },
   ]
-
-  useLayoutEffect(() => {
-    form.resetFields()
-    console.log('here')
-  }, [filters])
 
   return (
     <List
@@ -218,6 +219,14 @@ function Page() {
           <Table.Column
             dataIndex={['product_code']}
             title={t('price-groups.fields.product_code')}
+            render={(product_code, record) => (
+              <Link
+                href={`/products/show/${record.product_id}`}
+                className="!underline"
+              >
+                {product_code}
+              </Link>
+            )}
           />
           <Table.Column
             dataIndex="product_name"
@@ -250,10 +259,10 @@ function Page() {
               return (
                 <>
                   <Form.Item
-                    className={'!p-0'}
                     name={[index, `packaging_id`]}
-                    hidden
                     initialValue={record.packaging_id}
+                    hidden
+                    className={'!m-0 !h-fit !p-0'}
                   >
                     <Input hidden />
                   </Form.Item>
@@ -328,7 +337,7 @@ function Page() {
                       return (
                         <>
                           <Form.Item
-                            className={'!p-0'}
+                            className={'!m-0 !h-fit !p-0'}
                             name={[
                               index,
                               'ranks_prices',
@@ -342,6 +351,7 @@ function Page() {
                           </Form.Item>
 
                           <Form.Item
+                            className={'!m-0 !h-fit !p-0'}
                             name={[index, 'ranks_prices', indexChild, `price`]}
                             style={{ margin: 0 }}
                             initialValue={currentPrice}
@@ -363,8 +373,14 @@ function Page() {
             title={t('employees.fields.actions')}
             dataIndex="actions"
             fixed="right"
-            render={(_, record) => {
-              const onClick = () => onEditRow(record.packaging_id)
+            render={(_, record, index) => {
+              const onClick = () => {
+                form.setFieldValue([index], {
+                  packaging_id: record.packaging_id,
+                  is_rate_based: record.is_rate_based,
+                })
+                onEditRow(record.packaging_id)
+              }
 
               if (includes(editIds, record.packaging_id)) {
                 return (

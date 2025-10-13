@@ -45,6 +45,10 @@ export default function EmployeeEdit() {
     defaultFormValues: {
       hash_dash: true,
     },
+    redirect: false,
+    onMutationSuccess: () => {
+      refetch()
+    },
   })
 
   const { show, close, open } = modalFormProps
@@ -223,10 +227,7 @@ export default function EmployeeEdit() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <CodeIssueSettingEdit
-          modalProps={modalFormProps}
-          refetchParent={refetch}
-        />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
     </Edit>
   )
