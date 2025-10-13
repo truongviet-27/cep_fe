@@ -1,9 +1,11 @@
 import { useSelect } from '@refinedev/antd'
+import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Card, Col, Form, Row, Select } from 'antd'
 
 function Tags() {
+  const t = useTranslate()
   const { selectProps } = useSelect({
     resource: 'tags',
     optionLabel: 'name',
@@ -25,7 +27,7 @@ function Tags() {
 
   return (
     <Card
-      title={boldText('タグ', PRIMARY, 16)}
+      title={boldText(t('quotas.show.tags'), PRIMARY, 16)}
       styles={{
         header: {
           padding: 0,
@@ -44,7 +46,7 @@ function Tags() {
             <Select
               allowClear
               showSearch
-              placeholder={'選択してください'}
+              placeholder={t('placeholders.select')}
               style={{
                 marginTop: 20,
                 width: '100%',

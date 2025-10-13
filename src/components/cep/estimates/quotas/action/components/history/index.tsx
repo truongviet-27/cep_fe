@@ -21,12 +21,12 @@ function History({ data }: { data: any }) {
   const columnsApprove = useMemo(() => {
     return [
       {
-        title: 'ステップ',
+        title: t('quotas.show.table.step'),
         dataIndex: 'step_order',
         key: 'step_order',
       },
       {
-        title: '処理日',
+        title: t('quotas.show.table.process_date'),
         dataIndex: 'date',
         key: 'date',
         render(value) {
@@ -34,7 +34,7 @@ function History({ data }: { data: any }) {
         },
       },
       {
-        title: '操作',
+        title: t('quotas.show.table.operation'),
         dataIndex: 'status',
         key: 'status',
         render: (value: QuotaStatus) => {
@@ -53,12 +53,12 @@ function History({ data }: { data: any }) {
         },
       },
       {
-        title: 'コメント',
+        title: t('quotas.show.table.comment'),
         dataIndex: 'comment',
         key: 'comment',
       },
       {
-        title: '承認者',
+        title: t('quotas.show.table.approver'),
         dataIndex: 'approver_name',
         key: 'approver_name',
       },
@@ -68,7 +68,7 @@ function History({ data }: { data: any }) {
   const columnsCreation = useMemo(() => {
     return [
       {
-        title: '作成日',
+        title: t('quotas.show.table.created_date'),
         dataIndex: 'created_at',
         key: 'created_at',
         render(value) {
@@ -76,7 +76,7 @@ function History({ data }: { data: any }) {
         },
       },
       {
-        title: '送信日',
+        title: t('quotas.show.table.sent_date'),
         dataIndex: 'sent_to_customer_date',
         key: 'sent_to_customer_date',
         render(value) {
@@ -84,12 +84,12 @@ function History({ data }: { data: any }) {
         },
       },
       {
-        title: '見積番号',
+        title: t('quotas.show.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
       },
       {
-        title: '作成者',
+        title: t('quotas.show.table.creator'),
         dataIndex: 'author.name',
         key: 'author',
       },
@@ -140,11 +140,11 @@ function History({ data }: { data: any }) {
       items={[
         {
           key: 1,
-          label: <span>{boldText('履歴', PRIMARY, 16)}</span>,
+          label: <span>{boldText(t('quotas.show.history'), PRIMARY, 16)}</span>,
           children: (
             <Card style={{ marginTop: 10, background: '#F8F9FA' }}>
               <div className="mb-4">
-                <Title level={5}>承認履歴</Title>
+                <Title level={5}>{t('quotas.show.approval_history')}</Title>
                 <CommonTable
                   columns={columnsApprove}
                   dataSource={data?.approval_history}
@@ -152,7 +152,7 @@ function History({ data }: { data: any }) {
                 />
               </div>
               <div>
-                <Title level={5}>作成履歴</Title>
+                <Title level={5}>{t('quotas.show.creation_history')}</Title>
                 <CommonTable
                   columns={columnsCreation}
                   dataSource={data?.clone_history}

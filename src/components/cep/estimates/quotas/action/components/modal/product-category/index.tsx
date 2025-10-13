@@ -59,8 +59,8 @@ export const ProductCategoryModal = ({
     } else {
       open &&
         open({
-          message: '耳がない',
-          description: 'カテゴリに商品がありません',
+          message: t('quotas.action.modal.no_products.message'),
+          description: t('quotas.action.modal.no_products.description'),
           type: 'error',
         })
     }
@@ -74,7 +74,9 @@ export const ProductCategoryModal = ({
           <Col xs={24}>
             <Form.Item name="parent" layout="horizontal" colon={false}>
               <ProductCategoryDropdown
-                placeholder="例: 文房具 > 筆記用具"
+                placeholder={t(
+                  'quotas.action.detail_info.placeholders.product_search',
+                )}
                 onSelect={(level, currentPath, currentCat, categoryId) => {
                   form.setFieldValue('category_id', categoryId)
                 }}

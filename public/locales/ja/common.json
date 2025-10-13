@@ -1042,7 +1042,9 @@
     }
   },
   "validation": {
-    "required": "必須項目です"
+    "required": "必須項目です",
+    "max255": "このフィールドは 255 文字を超えることはできません。",
+    "invalid_format": "このフィールドは無効な形式です"
   },
   "common": {
     "created_by": "登録者",

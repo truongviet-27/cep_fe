@@ -70,6 +70,7 @@ export default function Page() {
     defaultFormValues: {
       hash_dash: true,
     },
+    redirect: false,
   })
 
   const { show, close, open } = modalFormProps
@@ -78,6 +79,8 @@ export default function Page() {
     const codeGen = data?.data
     form?.setFieldsValue({ code: codeGen?.preview_code })
   }
+
+  const isAutomatic = data?.data?.issue_method === 'automatic'
 
   const onSubmit = (values: DepartmentPayload) => {
     create(
@@ -155,31 +158,33 @@ export default function Page() {
               </Text>
             </Col>
 
-            <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
-              <Space direction="horizontal" size={3} wrap>
-                <Button
-                  size="middle"
-                  type="default"
-                  loading={loadingDp}
-                  onClick={() => {
-                    refetch().then(() => {
-                      handleAutoNumber()
-                    })
-                  }}
-                  disabled={data?.data?.issue_method === 'manual'}
-                >
-                  {t('departments.create.auto_number')}
-                </Button>
-                <Button
-                  type="link"
-                  onClick={() => show(data?.data?.id)}
-                  className="text-blue-500"
-                  style={{ marginLeft: -16, marginTop: -10 }}
-                >
-                  {t('departments.create.popup_number_setting')}
-                </Button>
-              </Space>
-            </Col>
+            {isAutomatic && (
+              <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
+                <Space direction="horizontal" size={3} wrap>
+                  <Button
+                    size="middle"
+                    type="default"
+                    loading={loadingDp}
+                    onClick={() => {
+                      refetch().then(() => {
+                        handleAutoNumber()
+                      })
+                    }}
+                    disabled={data?.data?.issue_method === 'manual'}
+                  >
+                    {t('departments.create.auto_number')}
+                  </Button>
+                  <Button
+                    type="link"
+                    onClick={() => show(data?.data?.id)}
+                    className="text-blue-500"
+                    style={{ marginLeft: -16, marginTop: -10 }}
+                  >
+                    {t('departments.create.popup_number_setting')}
+                  </Button>
+                </Space>
+              </Col>
+            )}
           </Row>
         </Form.Item>
 

@@ -74,9 +74,7 @@ export default function EmployeeEdit() {
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
-    defaultFormValues: {
-      hash_dash: true,
-    },
+    redirect: false,
   })
 
   const { show, close, open } = modalFormProps
@@ -85,6 +83,8 @@ export default function EmployeeEdit() {
     const codeGen = data?.data
     form?.setFieldsValue({ code: codeGen?.preview_code })
   }
+
+  const isAutomatic = data?.data?.issue_method === 'automatic'
 
   const breadcrumbItems = [
     {
@@ -165,32 +165,34 @@ export default function EmployeeEdit() {
             <Col flex="none">
               <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
-            <Col xs={24} sm="auto" flex="none">
-              <Space direction="horizontal" size={12}>
-                <Button
-                  size="middle"
-                  type="default"
-                  color={'primary'}
-                  variant="outlined"
-                  onClick={() => {
-                    refetch().then(() => {
-                      handleAutoNumber()
-                    })
-                  }}
-                  loading={loadingEm}
-                >
-                  {t('departments.create.auto_number')}
-                </Button>
-                <Button
-                  type="link"
-                  onClick={() => show(data?.data?.id)}
-                  className="text-blue-500 !underline"
-                  style={{ marginLeft: -16, marginTop: -10 }}
-                >
-                  {t('departments.create.popup_number_setting')}
-                </Button>
-              </Space>
-            </Col>
+            {isAutomatic && (
+              <Col xs={24} sm="auto" flex="none">
+                <Space direction="horizontal" size={12}>
+                  <Button
+                    size="middle"
+                    type="default"
+                    color={'primary'}
+                    variant="outlined"
+                    onClick={() => {
+                      refetch().then(() => {
+                        handleAutoNumber()
+                      })
+                    }}
+                    loading={loadingEm}
+                  >
+                    {t('departments.create.auto_number')}
+                  </Button>
+                  <Button
+                    type="link"
+                    onClick={() => show(data?.data?.id)}
+                    className="text-blue-500 !underline"
+                    style={{ marginLeft: -16, marginTop: -10 }}
+                  >
+                    {t('departments.create.popup_number_setting')}
+                  </Button>
+                </Space>
+              </Col>
+            )}
           </Row>
         </Form.Item>
 
@@ -254,7 +256,10 @@ export default function EmployeeEdit() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <CodeIssueSettingEdit modalProps={modalFormProps} />
+        <CodeIssueSettingEdit
+          modalProps={modalFormProps}
+          refetchParent={refetch}
+        />
       </Modal>
     </Edit>
   )

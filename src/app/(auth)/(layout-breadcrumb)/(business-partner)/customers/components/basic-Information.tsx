@@ -55,7 +55,7 @@ function BasicInformation(
   const tempCompanyType = Form.useWatch('temp_company_type', form)
   const nameDisplay = isOtherSelected ? tempCompanyType : companyType
   const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const parts = isNameAfter ? [nameDisplay, name] : [name, nameDisplay]
+  const parts = isNameAfter ? [name, nameDisplay] : [nameDisplay, name]
   const allowRankResource = parameterSettings?.get?.(
     ParameterResourceEnum.RANKS,
   )
@@ -177,8 +177,8 @@ function BasicInformation(
                     required
                   >
                     <Radio.Group>
-                      <Radio value="after">前</Radio>
-                      <Radio value="before">後</Radio>
+                      <Radio value="before">前</Radio>
+                      <Radio value="after">後</Radio>
                     </Radio.Group>
                   </Form.Item>
                 </Col>
