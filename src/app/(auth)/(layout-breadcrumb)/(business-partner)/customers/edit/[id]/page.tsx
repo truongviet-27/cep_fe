@@ -30,7 +30,6 @@ export default function CustomerEditPage() {
     modalFormProps,
     modalFormCorporate,
     handleFinish,
-    refetchCodeGen,
     form,
   } = hookProps
   const { close: closeModal, open: modalOpen } = modalFormProps
@@ -81,10 +80,7 @@ export default function CustomerEditPage() {
       </Form>
 
       <Modal open={modalOpen} onCancel={closeModal} footer={null}>
-        <CodeIssueSettingEdit
-          modalProps={modalFormProps}
-          refetchParent={refetchCodeGen}
-        />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
 
       <Modal

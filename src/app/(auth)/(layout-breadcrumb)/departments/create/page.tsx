@@ -71,6 +71,9 @@ export default function Page() {
       hash_dash: true,
     },
     redirect: false,
+    onMutationSuccess: () => {
+      refetch()
+    },
   })
 
   const { show, close, open } = modalFormProps
@@ -158,33 +161,31 @@ export default function Page() {
               </Text>
             </Col>
 
-            {isAutomatic && (
-              <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
-                <Space direction="horizontal" size={3} wrap>
-                  <Button
-                    size="middle"
-                    type="default"
-                    loading={loadingDp}
-                    onClick={() => {
-                      refetch().then(() => {
-                        handleAutoNumber()
-                      })
-                    }}
-                    disabled={data?.data?.issue_method === 'manual'}
-                  >
-                    {t('departments.create.auto_number')}
-                  </Button>
-                  <Button
-                    type="link"
-                    onClick={() => show(data?.data?.id)}
-                    className="text-blue-500"
-                    style={{ marginLeft: -16, marginTop: -10 }}
-                  >
-                    {t('departments.create.popup_number_setting')}
-                  </Button>
-                </Space>
-              </Col>
-            )}
+            <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
+              <Space direction="horizontal" size={3} wrap>
+                <Button
+                  size="middle"
+                  type="default"
+                  loading={loadingDp}
+                  onClick={() => {
+                    refetch().then(() => {
+                      handleAutoNumber()
+                    })
+                  }}
+                  disabled={!isAutomatic}
+                >
+                  {t('departments.create.auto_number')}
+                </Button>
+                <Button
+                  type="link"
+                  onClick={() => show(data?.data?.id)}
+                  className="text-blue-500"
+                  style={{ marginLeft: -16, marginTop: -10 }}
+                >
+                  {t('departments.create.popup_number_setting')}
+                </Button>
+              </Space>
+            </Col>
           </Row>
         </Form.Item>
 
@@ -208,10 +209,7 @@ export default function Page() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <CodeIssueSettingEdit
-          modalProps={modalFormProps}
-          refetchParent={refetch}
-        />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
     </Create>
   )
