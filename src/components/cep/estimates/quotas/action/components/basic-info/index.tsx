@@ -90,7 +90,7 @@ const BasicInfo = () => {
 
   return (
     <Card
-      title={boldText(t('quotas.action.basic_info_title'), PRIMARY, 16)}
+      title={boldText(t('quotas.action.basic_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
       }}
