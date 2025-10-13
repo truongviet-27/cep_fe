@@ -246,7 +246,14 @@ function Page() {
           />
           <Table.Column
             dataIndex="selling_price"
-            title={t('price-groups.fields.selling_price')}
+            title={() => {
+              return (
+                <>
+                  <div>{t('price-groups.fields.selling_price')}</div>
+                  <div>({t('price-groups.fields.selling_price_unit')})</div>
+                </>
+              )
+            }}
           />
 
           <Table.Column
