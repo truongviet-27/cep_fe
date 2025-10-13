@@ -43,6 +43,7 @@ const DetailInfo: FC = () => {
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
+    consumptionTaxWatch,
   } = useController()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -165,6 +166,13 @@ const DetailInfo: FC = () => {
                       'product_id',
                     ]}
                     className="ant-form-item-hidden-margin"
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
                     <ProductSelect
                       defaultValue={defaultValue}
@@ -671,7 +679,7 @@ const DetailInfo: FC = () => {
                 fontWeight: 700,
               }}
             >
-              合計金額（税込）
+              合計金額（{consumptionTaxWatch === 'external' ? '税抜' : '税込'}）
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               ¥{sellTotalWithTax.toLocaleString() || 0}

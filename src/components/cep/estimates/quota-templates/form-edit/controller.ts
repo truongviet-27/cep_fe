@@ -1,24 +1,42 @@
-import type { QuotaTemplateFormType } from '@interfaces/quota-templates'
+import type {
+  QuotaTemplateFormType,
+  QuoteTemplateDetailType,
+} from '@interfaces/quota-templates'
 import { useForm } from '@refinedev/antd'
 import type { GetOneResponse } from '@refinedev/core'
-import { useApiUrl, useCustom, useParsed } from '@refinedev/core'
+import { useApiUrl, useCustom, useGo, useParsed } from '@refinedev/core'
 import type { QuotaFormSettingResponse } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
+import { Form } from 'antd'
 import { useEffect } from 'react'
 
 export function useController() {
   const { params } = useParsed()
   const isUpdateMode = !!params?.id
+  const go = useGo()
+  const permission = useUserStore((state) => state.permission)
+
   const methods = useForm<QuotaTemplateFormType>({
     resource: 'quota-templates',
     redirect: 'show',
     queryOptions: {
       select: (data) => {
-        const tags = (data.data?.tags ?? []) as unknown as { id: number }[]
+        const detail = data.data as QuoteTemplateDetailType
+        const tags = (detail?.tags ?? []) as unknown as { id: number }[]
+
+        if (
+          !permission?.is_module_admin &&
+          permission?.user?.id != detail.author?.id
+        ) {
+          go({
+            to: '/403',
+          })
+        }
 
         return {
           ...data,
           data: {
-            ...data.data,
+            ...detail,
             tags_response: tags,
             tags: tags.map(({ id }) => id),
           },
@@ -26,6 +44,8 @@ export function useController() {
       },
     },
   })
+
+  const expirationDateWatch = Form.useWatch('expiration_date', methods.form)
 
   const apiUrl = useApiUrl()
 
@@ -103,6 +123,7 @@ export function useController() {
   return {
     isUpdateMode,
     methods,
-    isLoading: isUpdateMode && query?.isLoading,
+    isLoading: isUpdateMode && (query?.isLoading || query?.isFetching),
+    expirationDateWatch,
   }
 }

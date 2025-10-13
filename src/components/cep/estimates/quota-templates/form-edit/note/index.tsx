@@ -16,7 +16,11 @@ const NoteForm: React.FC = () => {
         {t('quota_templates.form.titleSpecificationsAndConditions')}
       </Title>
       <Form.Item name="note">
-        <Input.TextArea rows={6} className="!resize-none" />
+        <Input.TextArea
+          rows={6}
+          className="!resize-none"
+          placeholder="仕様・条件を入力してください"
+        />
       </Form.Item>
     </>
   )
