@@ -145,7 +145,7 @@
   "action": {
     "preview": "プレビュー",
     "preview_pdf": "Preview PDF",
-    "basic_info": "基本情報",
+    "basic_info_title": "基本情報",
     "estimate_number": "見積番号",
     "estimate_type": "見積区分",
     "title": "タイトル",
