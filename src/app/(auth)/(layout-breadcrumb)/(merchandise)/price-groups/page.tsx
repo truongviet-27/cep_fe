@@ -287,7 +287,7 @@ function Page() {
 
                             rankPrices?.forEach((item, indexChild) => {
                               form.setFieldValue(
-                                [indexChild, 'ranks_prices', index, `price`],
+                                [indexChild, 'rank_prices', index, `price`],
                                 Math.round(
                                   ((record?.selling_price ?? 0) *
                                     (item?.rate ?? 0)) /
@@ -313,7 +313,7 @@ function Page() {
               return (
                 <Table.Column<PriceGroupItem>
                   key={indexChild}
-                  dataIndex={'ranks_prices'}
+                  dataIndex={'rank_prices'}
                   title={
                     <>
                       <div>{boldText(`${item.name}`, PRIMARY)}</div>
@@ -338,12 +338,7 @@ function Page() {
                         <>
                           <Form.Item
                             className={'!m-0 !h-fit !p-0'}
-                            name={[
-                              index,
-                              'ranks_prices',
-                              indexChild,
-                              `rank_id`,
-                            ]}
+                            name={[index, 'rank_prices', indexChild, `rank_id`]}
                             initialValue={item.id}
                             style={{ display: 'none' }}
                           >
@@ -352,7 +347,7 @@ function Page() {
 
                           <Form.Item
                             className={'!m-0 !h-fit !p-0'}
-                            name={[index, 'ranks_prices', indexChild, `price`]}
+                            name={[index, 'rank_prices', indexChild, `price`]}
                             initialValue={currentPrice}
                           >
                             <InputNumber min={0} className={'!mt-4 !h-8'} />

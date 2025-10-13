@@ -1094,7 +1094,7 @@ export const zPackagingRankPriceInput = z.object({
 export const zPriceGroupUpdateItem = z.object({
   packaging_id: z.int(),
   is_rate_based: z.optional(z.union([z.boolean(), z.null()])),
-  ranks_prices: z.optional(
+  rank_prices: z.optional(
     z.union([z.array(zPackagingRankPriceInput), z.null()]),
   ),
 })
