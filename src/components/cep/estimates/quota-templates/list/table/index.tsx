@@ -8,12 +8,15 @@ import {
   ShowButton,
 } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
-import { Button, Flex, Space } from 'antd'
+import { useUserStore } from '@stores/useUserStore'
+import { Button, Flex, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableProps } from 'antd/lib'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import type { FC } from 'react'
+
+const { Text } = Typography
 
 interface Props {
   tableProps: TableProps<QuotaTemplateListItemType>
@@ -22,6 +25,7 @@ interface Props {
 const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
   const t = useTranslate()
   const go = useGo()
+  const permission = useUserStore((state) => state.permission)
 
   const columns: ColumnsType<QuotaTemplateListItemType> = [
     {
@@ -80,11 +84,17 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'total_price',
       dataIndex: 'total_price',
       title: t('quota_templates.list.bassPrice'),
+      render: (value) => Math.trunc(value).toLocaleString(),
     },
     {
       key: 'description',
       dataIndex: 'description',
       title: t('quota_templates.list.description'),
+      render: (value) => (
+        <Text style={{ width: 200 }} ellipsis={{ tooltip: value }}>
+          {value}
+        </Text>
+      ),
     },
     {
       key: 'operation',
@@ -104,6 +114,10 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
             size="small"
             recordItemId={record.id}
             resource="quota-templates"
+            disabled={
+              !permission?.is_module_admin &&
+              permission?.user?.id != record.author?.id
+            }
           />
           <Button
             size="small"
@@ -119,6 +133,10 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
             size="small"
             recordItemId={record.id}
             resource="quota-templates"
+            disabled={
+              !permission?.is_module_admin &&
+              permission?.user?.id != record.author?.id
+            }
           />
         </Space>
       ),

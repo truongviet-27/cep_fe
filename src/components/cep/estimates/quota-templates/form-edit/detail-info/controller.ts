@@ -38,7 +38,7 @@ export const useController = () => {
     values[groupIndex].products = [
       ...products,
       {
-        product_id: 0,
+        product_id: null,
         name: '',
         code: '自動採番',
         quantity: 0,
@@ -46,7 +46,7 @@ export const useController = () => {
         selling_price: 0,
         profit_margin: 0,
         is_add_total: false,
-      },
+      } as unknown as QuotaTemplateProductType,
     ]
 
     form?.setFieldsValue({ main_product: values })
@@ -178,5 +178,6 @@ export const useController = () => {
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
+    consumptionTaxWatch,
   }
 }

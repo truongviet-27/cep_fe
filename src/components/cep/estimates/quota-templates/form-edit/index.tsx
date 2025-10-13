@@ -19,7 +19,8 @@ import TagForm from './tag'
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const { isUpdateMode, isLoading, methods } = useController()
+  const { isUpdateMode, isLoading, methods, expirationDateWatch } =
+    useController()
 
   return (
     <PageContainer
@@ -53,7 +54,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
     >
       <Spin spinning={isLoading}>
         <Form {...methods.formProps} labelCol={{ span: 2 }} labelAlign="left">
-          <BasicInfo />
+          <BasicInfo expirationDate={expirationDateWatch} />
           <DetailInfo />
           <OptionalInfo />
           <NoteForm />
