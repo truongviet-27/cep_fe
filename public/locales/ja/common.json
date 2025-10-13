@@ -792,6 +792,22 @@
   },
   "csv": {
     "title": "[マスタ名] CSV一括登録",
+    "category_products": {
+      "title": "[カテゴリ] CSV一括登録",
+      "back_to_list": "カテゴリ一覧に戻る"
+    },
+    "products": {
+      "title": "[商品] CSV一括登録",
+      "back_to_list": "商品一覧に戻る"
+    },
+    "customers": {
+      "title": "[取引先] CSV一括登録",
+      "back_to_list": "取引先一覧に戻る"
+    },
+    "departments": {
+      "title": "[部門] CSV一括登録",
+      "back_to_list": "部門一覧に戻る"
+    },
     "step_1": {
       "title": "ファイル選択",
       "alertTitle": "📋 CSVテンプレート",
