@@ -1,5 +1,206 @@
 import Encoding from 'encoding-japanese'
 
+// Function để detect encoding và trả về thông tin chi tiết
+export function detectEncodingWithInfo(ab: ArrayBuffer): {
+  encoding: string
+  confidence: 'high' | 'medium' | 'low'
+  decodedText?: string
+  error?: string
+} {
+  const bytes = new Uint8Array(ab)
+
+  if (
+    bytes.length >= 3 &&
+    bytes[0] === 0xef &&
+    bytes[1] === 0xbb &&
+    bytes[2] === 0xbf
+  ) {
+    try {
+      const decodedText = new TextDecoder('utf-8').decode(bytes.subarray(3))
+      return {
+        encoding: 'UTF-8 (BOM)',
+        confidence: 'high',
+        decodedText,
+      }
+    } catch (error) {
+      return {
+        encoding: 'UTF-8 (BOM)',
+        confidence: 'low',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
+    }
+  }
+
+  // Thử các encoding phổ biến
+  const encodingsToTry = [
+    {
+      name: 'UTF-8',
+      decoder: () => new TextDecoder('utf-8', { fatal: true }).decode(bytes),
+    },
+    {
+      name: 'Shift-JIS',
+      decoder: () =>
+        Encoding.convert(bytes, {
+          to: 'UNICODE',
+          from: 'SJIS',
+          type: 'string',
+        }) as string,
+    },
+    {
+      name: 'EUC-JP',
+      decoder: () =>
+        Encoding.convert(bytes, {
+          to: 'UNICODE',
+          from: 'EUCJP',
+          type: 'string',
+        }) as string,
+    },
+    {
+      name: 'ISO-8859-1',
+      decoder: () => new TextDecoder('iso-8859-1').decode(bytes),
+    },
+    {
+      name: 'Windows-1252',
+      decoder: () => new TextDecoder('windows-1252').decode(bytes),
+    },
+    {
+      name: 'ASCII',
+      decoder: () => new TextDecoder('ascii').decode(bytes),
+    },
+  ]
+
+  // Thử tất cả encoding và chọn cái tốt nhất
+  let bestResult: {
+    encoding: string
+    confidence: 'high' | 'medium' | 'low'
+    decodedText: string
+  } | null = null
+
+  for (const encoding of encodingsToTry) {
+    try {
+      const decodedText = encoding.decoder()
+      const confidence = getDecodingConfidence(decodedText, encoding.name)
+
+      // Nếu là confidence cao nhất, lưu lại
+      if (
+        !bestResult ||
+        (confidence === 'high' && bestResult.confidence !== 'high') ||
+        (confidence === 'high' &&
+          bestResult.confidence === 'high' &&
+          getEncodingPriority(encoding.name) >
+            getEncodingPriority(bestResult.encoding)) ||
+        (confidence === 'medium' && bestResult.confidence === 'low')
+      ) {
+        bestResult = {
+          encoding: encoding.name,
+          confidence,
+          decodedText,
+        }
+      }
+    } catch {
+      // Tiếp tục thử encoding tiếp theo
+      continue
+    }
+  }
+
+  // Trả về kết quả tốt nhất nếu có
+  if (bestResult) {
+    return bestResult
+  }
+
+  // Nếu tất cả đều fail, thử với encoding-japanese detect
+  try {
+    const detected = Encoding.detect(bytes)
+    if (typeof detected === 'string') {
+      const decodedText = Encoding.convert(bytes, {
+        to: 'UNICODE',
+        from: detected as Encoding.Encoding,
+        type: 'string',
+      }) as string
+
+      return {
+        encoding: detected.toUpperCase(),
+        confidence: 'medium',
+        decodedText,
+      }
+    }
+  } catch {
+    // Ignore
+  }
+
+  return {
+    encoding: 'UNKNOWN',
+    confidence: 'low',
+    error: 'Unable to detect or decode the file encoding',
+  }
+}
+
+// Helper function để xác định độ ưu tiên của encoding
+function getEncodingPriority(encoding: string): number {
+  // Ưu tiên encoding cụ thể hơn ASCII
+  const priorities: Record<string, number> = {
+    'ISO-8859-1': 5,
+    'Windows-1252': 4,
+    'Shift-JIS': 3,
+    'EUC-JP': 2,
+    'UTF-8': 1,
+    ASCII: 0,
+  }
+  return priorities[encoding] || 0
+}
+
+// Helper function để đánh giá chất lượng decode
+function getDecodingConfidence(
+  text: string,
+  encoding: string,
+): 'high' | 'medium' | 'low' {
+  // Kiểm tra các ký tự không hợp lệ (replacement character)
+  const hasInvalidChars = /[\uFFFD]/.test(text)
+
+  if (hasInvalidChars) {
+    return 'low'
+  }
+
+  // Kiểm tra tỷ lệ ký tự control characters
+  const controlCharRatio =
+    (text.match(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g) || [])
+      .length / text.length
+
+  if (controlCharRatio > 0.05) {
+    return 'low'
+  }
+
+  // Đếm các loại ký tự khác nhau
+  const japaneseChars = (
+    text.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g) || []
+  ).length
+
+  const latinChars = (text.match(/[\u00C0-\u00FF]/g) || []).length
+
+  const asciiChars = (text.match(/[\x20-\x7E]/g) || []).length
+
+  // Nếu có nhiều ký tự Nhật và encoding là Nhật
+  if (japaneseChars > 0 && ['Shift-JIS', 'EUC-JP'].includes(encoding)) {
+    return 'high'
+  }
+
+  // Nếu có nhiều ký tự Latin và encoding là Latin
+  if (latinChars > 0 && ['ISO-8859-1', 'Windows-1252'].includes(encoding)) {
+    return 'high'
+  }
+
+  // Nếu chủ yếu là ASCII và encoding là ASCII/UTF-8
+  if (
+    asciiChars > latinChars &&
+    asciiChars > japaneseChars &&
+    ['UTF-8', 'ASCII'].includes(encoding)
+  ) {
+    return 'high'
+  }
+
+  return 'medium'
+}
+
 export function robustDecode(
   ab: ArrayBuffer,
   hint: 'utf-8' | 'shift_jis',
