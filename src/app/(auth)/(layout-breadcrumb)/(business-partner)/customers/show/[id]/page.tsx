@@ -19,6 +19,7 @@ import {
   PermissionEnum,
 } from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Collapse, Space, Typography } from 'antd'
@@ -131,13 +132,9 @@ export default function CustomerShowPage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner')),
     },
-    { title: <Title level={5}>{t('customers.show.show')}</Title> },
+    { title: boldText(t('customers.show.show'), PRIMARY) },
   ]
 
   return (
