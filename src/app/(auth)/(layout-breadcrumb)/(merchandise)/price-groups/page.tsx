@@ -32,37 +32,31 @@ import {
   Table,
 } from 'antd'
 import { includes } from 'lodash'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 function Page() {
   const [editIds, setEditIds] = useState<number[]>([])
 
-  const {
-    tableProps,
-    formProps,
-    setFilters,
-    searchFormProps,
-    // mutationResult,
-    form,
-  } = useEditableTable<PriceGroupItem>({
-    onSearch: (values: any) => [
-      {
-        field: 'q',
-        operator: 'null',
-        value: values?.q,
-      },
-      {
-        field: 'category_id',
-        operator: 'null',
-        value: values?.category_id,
-      },
-      {
-        field: 'setting_method',
-        operator: 'null',
-        value: values?.setting_method,
-      },
-    ],
-  })
+  const { tableProps, formProps, setFilters, searchFormProps, form, filters } =
+    useEditableTable<PriceGroupItem>({
+      onSearch: (values: any) => [
+        {
+          field: 'q',
+          operator: 'null',
+          value: values?.q,
+        },
+        {
+          field: 'category_id',
+          operator: 'null',
+          value: values?.category_id,
+        },
+        {
+          field: 'setting_method',
+          operator: 'null',
+          value: values?.setting_method,
+        },
+      ],
+    })
 
   const { data: ranks, isLoading } = useList<Rank>({
     resource: 'ranks',
@@ -73,7 +67,7 @@ function Page() {
   const { mutate, isLoading: loadingCreate } = useCreate()
 
   const handleSaveAll = () => {
-    const flatIterator = Object.values(form.getFieldsValue())
+    const flatIterator = Object.values(watch)
 
     const allData = flatIterator as any[]
 
@@ -95,6 +89,7 @@ function Page() {
       },
     )
   }
+
   const onEditRow = (id: number | undefined | null) => {
     if (id === null || id === undefined) {
       return
@@ -113,6 +108,8 @@ function Page() {
 
   const getCurrentPrices = (index: number) => {
     return tableProps?.dataSource?.[index].rank_prices
+      ?.sort((a, b) => (a.rate ?? 0) - (b.rate ?? 0))
+      .filter((i) => !!i.rate)
   }
 
   const breadcrumbItems = [
@@ -123,6 +120,11 @@ function Page() {
       title: boldText(t('price_groups.list.list'), PRIMARY),
     },
   ]
+
+  useLayoutEffect(() => {
+    form.resetFields()
+    console.log('here')
+  }, [filters])
 
   return (
     <List
@@ -248,6 +250,15 @@ function Page() {
               return (
                 <>
                   <Form.Item
+                    className={'!p-0'}
+                    name={[index, `packaging_id`]}
+                    hidden
+                    initialValue={record.packaging_id}
+                  >
+                    <Input hidden />
+                  </Form.Item>
+
+                  <Form.Item
                     initialValue={value}
                     name={[index, 'is_rate_based']}
                     className={'!m-0 !h-fit !p-0'}
@@ -257,75 +268,96 @@ function Page() {
                       currentVal
                     ) : (
                       <Radio.Group>
-                        <Radio value={false}>
+                        <Radio value={true}>
                           {t('price_groups.fields.percentage')}
                         </Radio>
-                        <Radio value={true}>
+                        <Radio
+                          value={false}
+                          onChange={() => {
+                            const rankPrices = getCurrentPrices(index)
+
+                            rankPrices?.forEach((item, indexChild) => {
+                              form.setFieldValue(
+                                [indexChild, 'ranks_prices', index, `price`],
+                                Math.round(
+                                  ((record?.selling_price ?? 0) *
+                                    (item?.rate ?? 0)) /
+                                    100,
+                                ),
+                              )
+                            })
+                          }}
+                        >
                           {t('price_groups.fields.absolute')}
                         </Radio>
                       </Radio.Group>
                     )}
-                  </Form.Item>
-
-                  <Form.Item
-                    className={'!p-0'}
-                    name={[index, `packaging_id`]}
-                    initialValue={record.packaging_id}
-                    style={{ display: 'none' }}
-                  >
-                    <Input hidden />
                   </Form.Item>
                 </>
               )
             }}
           />
 
-          {ranks?.data?.map((item, indexChild) => {
-            return (
-              <Table.Column<PriceGroupItem>
-                key={indexChild}
-                dataIndex={'ranks_prices'}
-                title={`${item.name} ${item.rate}% (円)`}
-                render={(value, record, index) => {
-                  const rankPrices = getCurrentPrices(index)
-                  const is_rate_based = !!(watch as any)?.[index]?.is_rate_based
-
-                  const currentPrice =
-                    rankPrices?.find((i) => i.rank_id === item.id)?.price ?? 0
-                  if (
-                    record?.packaging_id &&
-                    includes(editIds, record.packaging_id) &&
-                    is_rate_based
-                  ) {
-                    return (
-                      <>
-                        <Form.Item
-                          className={'!p-0'}
-                          name={[index, 'ranks_prices', indexChild, `rank_id`]}
-                          initialValue={item.id}
-                          style={{ display: 'none' }}
-                        >
-                          <Input hidden />
-                        </Form.Item>
-
-                        <Form.Item
-                          name={[index, 'ranks_prices', indexChild, `price`]}
-                          style={{ margin: 0 }}
-                          initialValue={currentPrice}
-                        >
-                          <InputNumber min={0} />
-                        </Form.Item>
-                      </>
-                    )
+          {ranks?.data
+            ?.sort((a, b) => (a?.rate ?? 0) - (b?.rate ?? 0))
+            .map((item, indexChild) => {
+              return (
+                <Table.Column<PriceGroupItem>
+                  key={indexChild}
+                  dataIndex={'ranks_prices'}
+                  title={
+                    <>
+                      <div>{boldText(`${item.name}`, PRIMARY)}</div>
+                      <div>{boldText(`${item.rate}% (円)`, PRIMARY)}</div>
+                    </>
                   }
-                  return (
-                    ((record?.selling_price ?? 0) * (item?.rate ?? 0)) / 100 ||
-                    currentPrice
-                  )
-                }}
-              />
-            )
-          })}
+                  render={(value, record, index) => {
+                    const rankPrices = getCurrentPrices(index)
+                    const is_rate_based = !!(watch as any)?.[index]
+                      ?.is_rate_based
+
+                    const currentPrice =
+                      rankPrices?.find((i) => i.rank_id === item.id)?.price ?? 0
+                    const isEditing =
+                      record?.packaging_id &&
+                      includes(editIds, record.packaging_id)
+
+                    if (!isEditing) return currentPrice
+
+                    if (isEditing && !is_rate_based) {
+                      return (
+                        <>
+                          <Form.Item
+                            className={'!p-0'}
+                            name={[
+                              index,
+                              'ranks_prices',
+                              indexChild,
+                              `rank_id`,
+                            ]}
+                            initialValue={item.id}
+                            style={{ display: 'none' }}
+                          >
+                            <Input hidden />
+                          </Form.Item>
+
+                          <Form.Item
+                            name={[index, 'ranks_prices', indexChild, `price`]}
+                            style={{ margin: 0 }}
+                            initialValue={currentPrice}
+                          >
+                            <InputNumber min={0} />
+                          </Form.Item>
+                        </>
+                      )
+                    }
+                    return Math.round(
+                      ((record?.selling_price ?? 0) * (item?.rate ?? 0)) / 100,
+                    )
+                  }}
+                />
+              )
+            })}
 
           <Table.Column
             title={t('employees.fields.actions')}

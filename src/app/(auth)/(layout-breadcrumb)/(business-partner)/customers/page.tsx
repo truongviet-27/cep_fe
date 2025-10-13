@@ -115,7 +115,7 @@ export default function CustomerListPage() {
         },
         {
           field: 'department_in_charge_id',
-          operator: 'contains',
+          operator: 'null',
           value: values?.department_in_charge_id,
         },
         {
@@ -170,7 +170,7 @@ export default function CustomerListPage() {
       },
       {
         field: 'department_in_charge_id',
-        operator: 'contains',
+        operator: 'null',
         value: values?.department_in_charge_id,
       },
       {

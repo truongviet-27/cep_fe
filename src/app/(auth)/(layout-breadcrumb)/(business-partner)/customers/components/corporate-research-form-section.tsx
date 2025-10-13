@@ -63,12 +63,18 @@ export const CorporateResearchFormSection = (
   const formTrigger = () => setCurrentType(initCur)
 
   const handleClearAll = () => {
-    // form.resetFields()
-    form.setFieldValue(
-      'company_research_information',
-      defaultCustomerCompanyResearchInformation,
-    )
-    // formTrigger()
+    const defaultVal = form
+      .getFieldValue('company_research_information')
+      .map((item: any, index: number) => {
+        return {
+          id: item?.id,
+          material_name:
+            defaultCustomerCompanyResearchInformation[index].material_name,
+          judgement: defaultCustomerCompanyResearchInformation[index].judgement,
+        }
+      })
+
+    form.setFieldValue('company_research_information', defaultVal)
   }
 
   const columns = [
