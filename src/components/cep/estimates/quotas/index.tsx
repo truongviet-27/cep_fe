@@ -219,8 +219,8 @@ function QuotaList() {
       {
         title: (
           <div className="flex flex-col">
-            <span>{t('quotas.table.sent_order_cancel_1')}</span>
-            <span>{t('quotas.table.sent_order_cancel_2')}</span>
+            <span>{t('quotas.table.created_expiry_1')}</span>
+            <span>{t('quotas.table.created_expiry_2')}</span>
           </div>
         ),
         dataIndex: 'createdAt',
@@ -240,8 +240,8 @@ function QuotaList() {
       {
         title: (
           <div className="flex flex-col">
-            <span>{t('quotas.table.created_expiry_1')}</span>
-            <span>{t('quotas.table.created_expiry_2')}</span>
+            <span>{t('quotas.table.sent_order_cancel_1')}</span>
+            <span>{t('quotas.table.sent_order_cancel_2')}</span>
           </div>
         ),
         dataIndex: 'sentAt',
@@ -986,7 +986,8 @@ function QuotaList() {
             <Col xs={16} md={18} lg={20}>
               <div className="flex justify-end gap-2">
                 <Button
-                  type="default"
+                  color="primary"
+                  variant="outlined"
                   onClick={() => {
                     go({
                       to: 'quota-templates',
