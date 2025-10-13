@@ -91,28 +91,25 @@ function BasicInformation(
             <Col flex="none">
               <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
-            {isAutomatic && (
-              <>
-                <Col>
-                  <Button
-                    onClick={handleAutoNumber}
-                    loading={isCodeGenLoading}
-                    color="primary"
-                    variant="outlined"
-                  >
-                    {t('departments.create.auto_number')}
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    type="link"
-                    onClick={() => modalFormProps.show(codeGenData?.data?.id)}
-                  >
-                    {t('departments.create.popup_number_setting')}
-                  </Button>
-                </Col>
-              </>
-            )}
+            <Col>
+              <Button
+                onClick={handleAutoNumber}
+                loading={isCodeGenLoading}
+                color="primary"
+                variant="outlined"
+                disabled={!isAutomatic}
+              >
+                {t('departments.create.auto_number')}
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                type="link"
+                onClick={() => modalFormProps.show(codeGenData?.data?.id)}
+              >
+                {t('departments.create.popup_number_setting')}
+              </Button>
+            </Col>
           </Row>
         </Form.Item>
 
