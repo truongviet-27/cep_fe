@@ -7,6 +7,10 @@ export type PermissionType = {
     name: string
     display_name: string
   }
+  user?: {
+    id: number
+    name: string
+  }
   permissions: Set<PermissionEnum>
 }
 
