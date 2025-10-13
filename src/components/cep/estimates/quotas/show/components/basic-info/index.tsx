@@ -45,7 +45,7 @@ function BasicInfo({ data }: { data: any }) {
       }}
     >
       {/* <Form.Item
-        label={boldText('見積番号')}
+        label={boldText(t('quotas.action.basic_info.fields.estimate_number'))}
         style={{ marginTop: 20, marginBottom: 0 }}
       >
         <Row align="middle" gutter={20}>
@@ -69,17 +69,17 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('見積区分')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.estimate_type'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>
-              {data?.type === 'normal' ? '通常' : '販路限定'}
+              {data?.type === 'normal' ? t('quotas.action.basic_info.types.normal') : t('quotas.action.basic_info.types.limited')}
             </Form.Item>
           </Col>
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('タイトル')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.title'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>{data?.title}</Form.Item>
@@ -87,7 +87,7 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('取引先')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.customer'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>{data?.customer_name}</Form.Item>
@@ -95,7 +95,7 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('見積日')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.estimate_date'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>
@@ -105,7 +105,7 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('納入期日')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.delivery_date'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>
@@ -115,7 +115,7 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('納品方法')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.delivery_method'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>{data?.delivery_method}</Form.Item>
@@ -123,7 +123,7 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('支払期日')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.payment_due_date'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item name={'payment_due_date'}>
@@ -133,7 +133,7 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('有効期限')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.expiration_date'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={10} md={6} lg={4} xl={2}>
             <Form.Item name={'expiration_date'}>
@@ -152,7 +152,7 @@ function BasicInfo({ data }: { data: any }) {
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('消費税')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText(t('quotas.action.basic_info.fields.consumption_tax'))} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={10} md={6} lg={4} xl={2}>
             <Form.Item>
@@ -223,7 +223,11 @@ function BasicInfo({ data }: { data: any }) {
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText('納入期日')}>
+            <Form.Item
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_date'),
+              )}
+            >
               {data?.delivery_date
                 ? dayjs(data?.delivery_date)
                     .tz('Asia/Tokyo')

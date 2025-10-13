@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CommonTable from '@components/common/table'
+import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Card, Flex } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 
 function OptionalInfo({ data }: { data: any }) {
+  const t = useTranslate()
   const dataSource: any[] = (data ?? []).flatMap((item: any) => [
     {
       isHeader: true,
@@ -19,7 +21,7 @@ function OptionalInfo({ data }: { data: any }) {
   ])
   const columns: ColumnsType = [
     {
-      title: 'オプション情報',
+      title: t('quotas.action.optional_info.title'),
       dataIndex: 'code',
       key: 'code',
       align: 'left',
@@ -34,7 +36,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '商品・サービス名',
+      title: t('quotas.action.optional_info.table.product_service_name'),
       dataIndex: 'name',
       key: 'name',
       render: (_, record) => {
@@ -46,7 +48,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '単位',
+      title: t('quotas.action.optional_info.table.unit'),
       dataIndex: 'unit',
       key: 'unit',
       render: (_, record) => {
@@ -57,7 +59,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '荷姿',
+      title: t('quotas.action.optional_info.table.package'),
       dataIndex: 'package',
       key: 'package',
       width: 200,
@@ -69,7 +71,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '原価',
+      title: t('quotas.action.optional_info.table.cost_price'),
       dataIndex: 'cost_price',
       key: 'cost_price',
       render: (_, record) => {
@@ -80,7 +82,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '売単価',
+      title: t('quotas.action.optional_info.table.selling_price'),
       dataIndex: 'selling_price',
       key: 'selling_price',
       render: (_, record) => {
@@ -91,7 +93,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '数量',
+      title: t('quotas.action.optional_info.table.quantity'),
       dataIndex: 'quantity',
       key: 'quantity',
       render: (_, record) => {
@@ -102,7 +104,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '利益率',
+      title: t('quotas.action.optional_info.table.profit_margin'),
       dataIndex: 'profit_margin',
       key: 'profit_margin',
       render: (_, record) => {
@@ -113,7 +115,7 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
-      title: '売価金額',
+      title: t('quotas.action.optional_info.table.selling_amount'),
       dataIndex: 'sellingAmount',
       key: 'sellingAmount',
       render: (_, record) => {
@@ -126,7 +128,7 @@ function OptionalInfo({ data }: { data: any }) {
   ]
   return (
     <Card
-      title={boldText('オプション情報', PRIMARY, 16)}
+      title={boldText(t('quotas.action.optional_info.title'), PRIMARY, 16)}
       styles={{
         header: {
           padding: 0,

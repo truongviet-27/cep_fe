@@ -1,18 +1,50 @@
+import { useTranslate } from '@refinedev/core'
 import { Card, Statistic } from 'antd'
 import React, { useState } from 'react'
 
 const StatusDashboard: React.FC = () => {
+  const t = useTranslate()
   const [status, setStatus] = useState('ALL')
   const statusData = [
-    { title: 'すべて', value: 9222, key: 'ALL' },
-    { title: '作成中', value: 4, key: 'CREATING' },
-    { title: '承認待', value: 3, color: '#faad14', key: 'PENDING_APPROVAL' }, // vàng
-    { title: '承認済', value: 11, color: '#1890ff', key: 'APPROVED' }, // xanh
-    { title: '送信中', value: 10, key: 'SENDING' },
-    { title: '送信済', value: 9100, color: '#1677ff', key: 'SENT' }, // xanh đậm
-    { title: '進度', value: 96, color: '#fa541c', key: 'PROGRESS' }, // cam
-    { title: '受注', value: 4, color: '#52c41a', key: 'WON' }, // xanh lá
-    { title: '失注', value: 4, color: '#ff4d4f', key: 'LOST' }, // đỏ
+    { title: t('quotas.status.all'), value: 9222, key: 'ALL' },
+    { title: t('quotas.status.creating'), value: 4, key: 'CREATING' },
+    {
+      title: t('quotas.status.waiting_approval'),
+      value: 3,
+      color: '#faad14',
+      key: 'PENDING_APPROVAL',
+    }, // vàng
+    {
+      title: t('quotas.status.approved'),
+      value: 11,
+      color: '#1890ff',
+      key: 'APPROVED',
+    }, // xanh
+    { title: t('quotas.status.sent_to_customer'), value: 10, key: 'SENDING' },
+    {
+      title: t('quotas.status.sent_to_customer'),
+      value: 9100,
+      color: '#1677ff',
+      key: 'SENT',
+    }, // xanh đậm
+    {
+      title: t('quotas.status.rejected'),
+      value: 96,
+      color: '#fa541c',
+      key: 'PROGRESS',
+    }, // cam
+    {
+      title: t('quotas.status.completed'),
+      value: 4,
+      color: '#52c41a',
+      key: 'WON',
+    }, // xanh lá
+    {
+      title: t('quotas.status.cancelled'),
+      value: 4,
+      color: '#ff4d4f',
+      key: 'LOST',
+    }, // đỏ
   ]
 
   return (
