@@ -91,7 +91,7 @@ function QuotaAction() {
     method: 'get',
     url: `${apiUrl}/quota-form-settings`,
     queryOptions: {
-      enabled: !isUpdate,
+      enabled: !isUpdate && !params?.templateId,
     },
   })
 
