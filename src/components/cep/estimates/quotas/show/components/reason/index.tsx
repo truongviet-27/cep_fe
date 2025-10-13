@@ -25,18 +25,18 @@ function Reason() {
       <Form.Item
         name={'reason'}
         style={{ marginTop: 20 }}
-        rules={[
-          {
-            required: true,
-            message: t('approve_routes.validation.route_code.required'),
-          },
-          {
-            whitespace: true,
-            message: t(
-              'approve_routes.validation.route_code.invalid_whitespace',
-            ),
-          },
-        ]}
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: t('validation.required'),
+        //   },
+        //   {
+        //     whitespace: true,
+        //     message: t(
+        //       'approve_routes.validation.route_code.invalid_whitespace',
+        //     ),
+        //   },
+        // ]}
       >
         <TextArea rows={6} className="!resize-none" />
       </Form.Item>
