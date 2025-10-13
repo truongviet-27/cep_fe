@@ -50,6 +50,7 @@ import {
   Form,
   Input,
   Modal,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -62,7 +63,7 @@ import { type ItemType } from 'antd/lib/menu/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { type MenuInfo } from 'rc-menu/lib/interface'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
 
 const { RangePicker } = DatePicker
 
@@ -76,8 +77,10 @@ function QuotaList() {
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
-  const [options, setOptions] = useState<ItemType[]>()
+  const [options, setOptions] = useState<ItemType[]>([])
   const [selectedRows, setSelectedRows] = useState<any>()
+
+  const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
 
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
@@ -109,7 +112,12 @@ function QuotaList() {
   const columns: ColumnsType<any> = useMemo(() => {
     return [
       {
-        title: t('quotas.table.status_comment'),
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.status_comment_1')}</span>
+            <span>{t('quotas.table.status_comment_2')}</span>
+          </div>
+        ),
         dataIndex: 'status',
         key: 'status',
         render: (value, record) => {
@@ -159,7 +167,12 @@ function QuotaList() {
         ),
       },
       {
-        title: t('quotas.table.title_customer'),
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.title_customer_1')}</span>
+            <span>{t('quotas.table.title_customer_2')}</span>
+          </div>
+        ),
         dataIndex: 'title',
         key: 'title',
         render: (_, record) => (
@@ -170,7 +183,12 @@ function QuotaList() {
         ),
       },
       {
-        title: t('quotas.table.creator_approver'),
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.creator_approver_1')}</span>
+            <span>{t('quotas.table.creator_approver_2')}</span>
+          </div>
+        ),
         dataIndex: 'creator',
         key: 'creator',
         render: (_, record) => (
@@ -183,7 +201,12 @@ function QuotaList() {
         ),
       },
       {
-        title: t('quotas.table.department_amount'),
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.department_amount_1')}</span>
+            <span>{t('quotas.table.department_amount_2')}</span>
+          </div>
+        ),
         dataIndex: 'department',
         key: 'department',
         render: (_, record) => (
@@ -194,7 +217,12 @@ function QuotaList() {
         ),
       },
       {
-        title: t('quotas.table.created_expiry'),
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.sent_order_cancel_1')}</span>
+            <span>{t('quotas.table.sent_order_cancel_2')}</span>
+          </div>
+        ),
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: (_, record) => (
@@ -210,7 +238,12 @@ function QuotaList() {
         ),
       },
       {
-        title: t('quotas.table.sent_order_cancel'),
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.created_expiry_1')}</span>
+            <span>{t('quotas.table.created_expiry_2')}</span>
+          </div>
+        ),
         dataIndex: 'sentAt',
         key: 'sentAt',
         render: (_, record) => {
@@ -399,12 +432,16 @@ function QuotaList() {
         {
           field: 'start_date',
           operator: 'eq',
-          value: dayjs((values?.date ?? [])[0]).format('YYYY-MM-DD'),
+          value: !!values?.date
+            ? dayjs((values?.date ?? [])[0]).format('YYYY-MM-DD')
+            : null,
         },
         {
           field: 'end_date',
           operator: 'eq',
-          value: dayjs((values?.date ?? [])[1]).format('YYYY-MM-DD'),
+          value: !!values?.date
+            ? dayjs((values?.date ?? [])[1]).format('YYYY-MM-DD')
+            : null,
         },
       ]
     },
@@ -513,16 +550,26 @@ function QuotaList() {
     }))
   }, [data])
 
+  console.log(isOpenManyDelete, 'isOpenManyDelete')
   const statusButton = useCallback(
     (
       status: QuotaStatus,
       hasApprovalRoutes: boolean,
-    ): { key: number; label: string }[] => {
+    ): { key: number; label: string | ReactNode }[] => {
+      console.log('object')
       if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
         return [
-          { key: 1, label: t('quotas.actions.delete') },
+          {
+            key: 1,
+            label: t('quotas.actions.delete'),
+          },
           ...(hasApprovalRoutes
-            ? [{ key: 2, label: t('quotas.actions.request_approval') }]
+            ? [
+                {
+                  key: 2,
+                  label: t('quotas.actions.request_approval'),
+                },
+              ]
             : []),
         ]
       } else if (status === QuotaStatus.WaitingApproval) {
@@ -550,7 +597,7 @@ function QuotaList() {
       }
       return []
     },
-    [t],
+    [t, isOpenManyDelete],
   )
 
   const notificationFunction = useCallback(
@@ -559,6 +606,7 @@ function QuotaList() {
       refetchStats()
       setSelectedRowKeys([])
       setOptions([])
+      setIsOpenManyDelete(false)
       return {
         message: t('notifications.success'),
         description: message ?? t('notifications.success'),
@@ -568,20 +616,11 @@ function QuotaList() {
     [t],
   )
 
-  const { mutate } = useCustomMutation()
+  const { mutate, isPending } = useCustomMutation()
 
   const handleClick = (info: MenuInfo) => {
     if (Number(info.key) === 1) {
-      mutate({
-        values: {
-          ids: selectedRows?.map((item: any) => item?.id),
-        },
-        method: 'delete',
-        url: `${apiUrl}/quotas`,
-        successNotification: (data) => {
-          return notificationFunction(data?.data.message)
-        },
-      })
+      setIsOpenManyDelete(true)
     } else if (Number(info.key) === 2) {
       mutate({
         values: {
@@ -830,6 +869,9 @@ function QuotaList() {
                   allowClear
                   className="w-full"
                   placeholder={[FORMAT_DATE, FORMAT_DATE]}
+                  disabled={
+                    !Form.useWatch('search_date_type', searchFormProps.form)
+                  }
                 />
               </Form.Item>
             </Col>
@@ -844,7 +886,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    setStatus(QuotaStatus.Creating)
+                    onChangeStatus(QuotaStatus.Creating)
                   }}
                 >
                   {t('buttons.clear')}
@@ -863,49 +905,81 @@ function QuotaList() {
               </Form.Item> */}
               <Dropdown
                 menu={{
-                  items: options ?? [
-                    {
-                      key: 0,
-                      label: (
-                        <Empty
-                          image={Empty.PRESENTED_IMAGE_SIMPLE}
-                          description={false}
-                          style={{
-                            height: 1,
-                            alignItems: 'center',
-                            display: 'flex',
-                            justifyContent: 'center',
-                          }}
-                        />
-                      ),
-                    },
-                  ],
+                  items:
+                    options.length > 0
+                      ? options
+                      : [
+                          {
+                            key: 0,
+                            label: (
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description={false}
+                                style={{
+                                  height: 1,
+                                  alignItems: 'center',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                }}
+                              />
+                            ),
+                          },
+                        ],
                   onClick: handleClick,
                 }}
                 // disabled={!options || options.length === 0}
               >
-                <Button
-                  size="middle"
-                  style={{
-                    width: '100%',
+                <Popconfirm
+                  title={t('quotas.actions.delete')}
+                  open={isOpenManyDelete}
+                  placement="topRight"
+                  okButtonProps={{
+                    loading: isPending,
+                    style: {
+                      border: '1px solid red',
+                      borderRadius: '4px',
+                      color: 'red',
+                      backgroundColor: 'white',
+                    },
                   }}
+                  onConfirm={() => {
+                    mutate({
+                      values: {
+                        ids: selectedRows?.map((item: any) => item?.id),
+                      },
+                      method: 'delete',
+                      url: `${apiUrl}/quotas`,
+                      successNotification: (data) =>
+                        notificationFunction(data?.data.message),
+                    })
+                  }}
+                  onCancel={() => setIsOpenManyDelete(false)}
+                  cancelText={t('buttons.cancel')}
+                  okText={t('buttons.delete')}
                 >
-                  <Space
+                  <Button
+                    size="middle"
                     style={{
                       width: '100%',
-                      justifyContent: 'space-between',
-                      fontSize: 14,
-                      color: '#ccc',
                     }}
                   >
-                    {t('quotas.actions.bulk_processing')}
-                    <DownOutlined
+                    <Space
                       style={{
-                        fontSize: 13,
+                        width: '100%',
+                        justifyContent: 'space-between',
+                        fontSize: 14,
+                        color: '#ccc',
                       }}
-                    />
-                  </Space>
-                </Button>
+                    >
+                      {t('quotas.actions.bulk_processing')}
+                      <DownOutlined
+                        style={{
+                          fontSize: 13,
+                        }}
+                      />
+                    </Space>
+                  </Button>
+                </Popconfirm>
               </Dropdown>
             </Col>
 
