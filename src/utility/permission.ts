@@ -34,6 +34,25 @@ export const PARAMETER_SETTING_URL = new Map<string, ParameterResourceEnum>([
   ['/price-groups', ParameterResourceEnum.RANKS],
 ])
 
+const getParameterSettingByUrl = (
+  route: string,
+): ParameterResourceEnum[] | null => {
+  switch (route) {
+    case '/ranks':
+      return [ParameterResourceEnum.RANKS]
+    case '/products':
+      return [ParameterResourceEnum.PRODUCTS]
+    case '/tenant-settings':
+      return [ParameterResourceEnum.QUOTATION_FORMS]
+    case '/approve-routes':
+      return [ParameterResourceEnum.APPROVE_ROUTES]
+    case '/price-groups':
+      return [ParameterResourceEnum.RANKS, ParameterResourceEnum.PRODUCTS]
+    default:
+      return null
+  }
+}
+
 export const hasDisableMenu = (route?: string): boolean => {
   const { permission } = useUserStore.getState()
 
@@ -50,11 +69,12 @@ export const hasDisableMenuByParameter = (route?: string): boolean => {
   if (!route) {
     return false
   }
-  const resource = PARAMETER_SETTING_URL.get(route)
+  const resources = getParameterSettingByUrl(route)
+  if (!resources) return false
 
-  if (!resource) return false
-
-  return !parameterSettings?.get?.(resource)
+  return resources.some(
+    (resource) => !parameterSettings?.get?.(resource as ParameterResourceEnum),
+  )
 }
 
 export const hasForbiddenRoute = (pathName: string) => {
