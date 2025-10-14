@@ -320,14 +320,15 @@ function QuotaList() {
 
             {(record.status === QuotaStatus.Creating ||
               record.status === QuotaStatus.Rejected ||
-              record.status === QuotaStatus.Cancelled) && (
-              <DeleteButton
-                hideText
-                size="small"
-                icon={<DeleteOutlined />}
-                recordItemId={record.id}
-              />
-            )}
+              record.status === QuotaStatus.Cancelled) &&
+              (record.is_author || permission?.is_module_admin) && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  icon={<DeleteOutlined />}
+                  recordItemId={record.id}
+                />
+              )}
 
             {record.status === QuotaStatus.SentToCustomer && (
               <Button

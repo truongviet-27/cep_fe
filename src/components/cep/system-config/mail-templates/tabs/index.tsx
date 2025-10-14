@@ -47,10 +47,10 @@ function TabsEmailTemplate({
             value: 7,
             text: t('mail_templates.tags_mail.selfEmail'),
           },
-          {
-            value: 8,
-            text: t('mail_templates.tags_mail.selfTel'),
-          },
+          // {
+          //   value: 8,
+          //   text: t('mail_templates.tags_mail.selfTel'),
+          // },
         ]
       : [
           {

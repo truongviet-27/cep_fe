@@ -53,6 +53,7 @@ const App = (props: React.PropsWithChildren) => {
     getLocale: useLocale,
     changeLocale: setUserLocale,
   }
+
   return (
     <RefineKbarProvider>
       <AntdRegistry>

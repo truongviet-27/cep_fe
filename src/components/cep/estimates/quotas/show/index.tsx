@@ -325,7 +325,9 @@ function QuotaDetail() {
                   </>
                 )}
 
-              {queryBasic?.data?.status === QuotaStatus.Approved &&
+              {(queryBasic?.data?.has_approval_route
+                ? queryBasic?.data?.status === QuotaStatus.Approved
+                : queryBasic?.data?.status === QuotaStatus.Creating) &&
                 (permission?.is_module_admin ||
                   queryBasic?.data?.is_author) && (
                   <Button
