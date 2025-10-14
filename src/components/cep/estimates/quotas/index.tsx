@@ -551,7 +551,6 @@ function QuotaList() {
     }))
   }, [data])
 
-  console.log(isOpenManyDelete, 'isOpenManyDelete')
   const statusButton = useCallback(
     (
       status: QuotaStatus,

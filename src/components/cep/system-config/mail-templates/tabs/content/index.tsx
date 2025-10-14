@@ -133,7 +133,10 @@ function TabsContent({
                   required: true,
                   message: t('mail_templates.validation.required'),
                 },
-                { max: 255, message: t('mail_templates.validation.max255') },
+                {
+                  max: 10000,
+                  message: t('mail_templates.validation.max10000'),
+                },
                 {
                   pattern: /^(?!\s*$).+/,
                   message: t('mail_templates.validation.notBlank'),
@@ -163,7 +166,7 @@ function TabsContent({
                   required: true,
                   message: t('mail_templates.validation.required'),
                 },
-                { max: 255, message: t('mail_templates.validation.max255') },
+                { max: 1000, message: t('mail_templates.validation.max1000') },
                 {
                   pattern: /^(?!\s*$).+/,
                   message: t('mail_templates.validation.notBlank'),

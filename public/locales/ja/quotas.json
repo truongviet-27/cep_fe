@@ -58,9 +58,9 @@
   "actions": {
     "bulk_processing": "一括処理",
     "delete": "削除",
-    "request_approval": "承認依頼（作成者）",
-    "approve": "承認（承認者）",
-    "send": "送信（作成者）",
+    "request_approval": "承認依頼",
+    "approve": "承認",
+    "send": "送信",
     "move_to_order": "受注へ移動",
     "move_to_cancel": "失注へ移動",
     "move_to_send": "送信へ移動",
