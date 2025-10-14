@@ -109,7 +109,7 @@ export const List: React.FC<ListProps & CustomProps> = ({
             {/*{defaultExtra}*/}
           </div>
           {children}
-          <div className={'mt-10 flex justify-end space-x-3'}>
+          <div className={'mt-4 flex justify-end space-x-3'}>
             {footer}
             {/*  <Button*/}
             {/*    type="default"*/}
