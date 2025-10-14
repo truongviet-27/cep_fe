@@ -18,7 +18,7 @@ const YMD = (d: Date, dash: boolean) =>
  * @param setting       CodeIssueSetting
  */
 export function buildCodePreviewFromSetting({
-  total,
+  current_serial_number,
   segment,
   updated_at,
   serial_length,
@@ -64,7 +64,7 @@ export function buildCodePreviewFromSetting({
 
   // Số thứ tự kế tiếp
   const digits = serial_length ?? 2
-  const serial = pad((total ?? 0) + 1, digits)
+  const serial = pad((current_serial_number ?? 0) + 1, digits)
 
   // Ghép các phần
   const parts = [pr, segmentPart, serial].filter(Boolean)
