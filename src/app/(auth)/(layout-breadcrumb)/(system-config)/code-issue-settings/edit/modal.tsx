@@ -44,7 +44,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
 
   const issueMethod = Form.useWatch('issue_method', form)
   const isManual = issueMethod === 'manual'
-  const total = Form.useWatch('total', form)
+  const current_serial_number = Form.useWatch('current_serial_number', form)
   const segment = Form.useWatch('segment', form)
   const updated_at = Form.useWatch('updated_at', form)
   const serial_length = Form.useWatch('serial_length', form)
@@ -54,14 +54,21 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
   const previewCode = useMemo(
     () =>
       buildCodePreviewFromSetting({
-        total,
+        current_serial_number,
         segment,
         updated_at,
         serial_length,
         hash_dash,
         prefix,
       }),
-    [total, segment, updated_at, serial_length, hash_dash, prefix],
+    [
+      current_serial_number,
+      segment,
+      updated_at,
+      serial_length,
+      hash_dash,
+      prefix,
+    ],
   )
 
   const rule = validateCodeIssueSettingsRule(t)
@@ -179,9 +186,9 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
 
         <Form.Item
           label={boldText(t('code_issue_settings.fields.total'))}
-          name="total"
+          name="current_serial_number"
         >
-          {record?.total}
+          {record?.current_serial_number}
         </Form.Item>
 
         <Form.Item
