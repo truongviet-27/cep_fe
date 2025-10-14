@@ -161,7 +161,7 @@ function QuotaAction() {
             label: dataBasicInfo.data.customer_name,
           },
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date)
+            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
           created_at: dataBasicInfo.data.created_at
             ? dayjs(dataBasicInfo.data.created_at)
