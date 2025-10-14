@@ -302,6 +302,13 @@ export type UserProfile = {
    */
   role?: UserRole | null
   /**
+   * User information
+   */
+  user?: {
+    id?: number
+    name?: string
+  } | null
+  /**
    * Array of user permissions
    */
   permissions?: Array<PermissionEnum>
@@ -473,9 +480,9 @@ export type CodeIssueSettingResponse = {
    */
   serial_length?: number
   /**
-   * Total number of existing records
+   * Current serial number for the code
    */
-  total?: number
+  current_serial_number?: number
   /**
    * Preview of the next generated code
    */

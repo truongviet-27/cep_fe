@@ -206,6 +206,15 @@ export const zPermissionEnum = z.enum([
 export const zUserProfile = z.object({
   is_module_admin: z.optional(z.boolean()),
   role: z.optional(z.union([zUserRole, z.null()])),
+  user: z.optional(
+    z.union([
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+      }),
+      z.null(),
+    ]),
+  ),
   permissions: z.optional(z.array(zPermissionEnum)),
 })
 
@@ -290,7 +299,7 @@ export const zCodeIssueSettingResponse = z.object({
     ]),
   ),
   serial_length: z.optional(z.int()),
-  total: z.optional(z.int()),
+  current_serial_number: z.optional(z.int()),
   preview_code: z.optional(z.string()),
   created_by: z.optional(z.union([z.int(), z.null()])),
   updated_by: z.optional(z.union([z.int(), z.null()])),
