@@ -6,11 +6,12 @@ const pad = (n: number, len: number) =>
 const Y = (d: Date) => d.getFullYear().toString().slice(2)
 const YM = (d: Date, dash: boolean) =>
   dash
-    ? `${Y(d)}-${(d.getMonth() + 1).toString().padStart(2, '0')}`
+    ? `${Y(d)}${(d.getMonth() + 1).toString().padStart(2, '0')}`
     : `${Y(d)}${(d.getMonth() + 1).toString().padStart(2, '0')}`
+
 const YMD = (d: Date, dash: boolean) =>
   dash
-    ? `${Y(d)}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
+    ? `${Y(d)}${(d.getMonth() + 1).toString().padStart(2, '0')}${d.getDate().toString().padStart(2, '0')}`
     : `${Y(d)}${(d.getMonth() + 1).toString().padStart(2, '0')}${d.getDate().toString().padStart(2, '0')}`
 
 /**
@@ -38,7 +39,7 @@ export function buildCodePreviewFromSetting({
       break
     }
     case 'year_range': {
-      segmentPart = `${Y(today)}-`
+      segmentPart = `${Y(today)}`
       break
     }
     case 'year_month': {
@@ -46,7 +47,7 @@ export function buildCodePreviewFromSetting({
       break
     }
     case 'year_month_range': {
-      segmentPart = `${YM(today, useDash)}-`
+      segmentPart = `${YM(today, useDash)}`
       break
     }
     case 'year_month_day': {
@@ -54,7 +55,7 @@ export function buildCodePreviewFromSetting({
       break
     }
     case 'year_month_day_range': {
-      segmentPart = `${YMD(today, useDash)}-`
+      segmentPart = `${YMD(today, useDash)}`
       break
     }
     case 'none':
@@ -68,5 +69,6 @@ export function buildCodePreviewFromSetting({
 
   // Ghép các phần
   const parts = [pr, segmentPart, serial].filter(Boolean)
+  // return parts.join('')
   return useDash ? parts.join(sep) : parts.join('')
 }
