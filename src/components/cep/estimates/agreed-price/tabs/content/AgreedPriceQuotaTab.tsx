@@ -52,15 +52,6 @@ const AgreedPriceQuotaTab = () => {
       mode: 'server',
       pageSize: 100,
     },
-    onSearch(value) {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
-    },
   })
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -228,6 +219,15 @@ const AgreedPriceQuotaTab = () => {
         align: 'right',
       },
       {
+        title: '更新',
+        dataIndex: 'number_updating',
+        key: 'number_updating',
+        align: 'center',
+        render: () => {
+          return '-'
+        },
+      },
+      {
         title: t('agreed_prices.table.operation'),
         key: 'operation',
         render: (_, record) => (
@@ -284,6 +284,8 @@ const AgreedPriceQuotaTab = () => {
     onSearch(values) {
       const v = values as Record<string, unknown>
 
+      console.log(v, 'values')
+
       const range = v.application_completion as
         | [Dayjs | null, Dayjs | null]
         | undefined
@@ -314,7 +316,7 @@ const AgreedPriceQuotaTab = () => {
           field: 'department_id',
           operator: 'eq',
           value: v.department_id
-            ? (v.department_id as { id?: number }).id
+            ? (v.department_id as { value?: number }).value
             : undefined,
         },
         {
@@ -451,9 +453,15 @@ const AgreedPriceQuotaTab = () => {
               name={'department_id'}
             >
               <Select
+                {...departmentSelectProps}
                 allowClear
                 showSearch
-                {...departmentSelectProps}
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 labelInValue={true}
                 placeholder={t('agreed_prices.search.please_select')}
               />
