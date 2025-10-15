@@ -53,7 +53,7 @@ function OptionalInfo() {
       product_id: null,
       package_id: null,
       name: '',
-      code: t('quotas.action.detail_info.default_values.auto_numbering'),
+      code: '',
       quantity: 0,
       cost_price: 0,
       selling_price: 0,
@@ -622,17 +622,13 @@ function OptionalInfo() {
                   if (isHeader) {
                     add(
                       {
-                        group_name: t(
-                          'quotas.action.optional_info.placeholders.optional_list_name',
-                        ),
+                        group_name: '',
                         products: [
                           {
                             product_id: null,
                             package_id: null,
                             name: '',
-                            code: t(
-                              'quotas.action.detail_info.default_values.auto_numbering',
-                            ),
+                            code: '',
                             quantity: 0,
                             cost_price: 0,
                             selling_price: 0,
