@@ -178,11 +178,7 @@ function OptionalInfo() {
                         width: 300,
                       }}
                     >
-                      <Input
-                        placeholder={t(
-                          'quotas.action.detail_info.placeholders.product_list_name',
-                        )}
-                      />
+                      <Input placeholder={t('quotas.filters.partial_match')} />
                     </Form.Item>
                   )
                 }
@@ -339,11 +335,7 @@ function OptionalInfo() {
                         width: 300,
                       }}
                     >
-                      <Input
-                        placeholder={t(
-                          'quotas.action.detail_info.placeholders.product_list_name',
-                        )}
-                      />
+                      <Input placeholder={t('quotas.filters.partial_match')} />
                     </Form.Item>
                   )
                 }
@@ -386,11 +378,7 @@ function OptionalInfo() {
                         width: 100,
                       }}
                     >
-                      <Input
-                        placeholder={t(
-                          'quotas.action.detail_info.placeholders.product_list_name',
-                        )}
-                      />
+                      <Input placeholder={t('quotas.filters.partial_match')} />
                     </Form.Item>
                   )
                 }
@@ -455,11 +443,7 @@ function OptionalInfo() {
                         },
                       ]}
                     >
-                      <Input
-                        placeholder={t(
-                          'quotas.action.detail_info.placeholders.product_list_name',
-                        )}
-                      />
+                      <Input placeholder={t('quotas.filters.partial_match')} />
                     </Form.Item>
                   )
                 }
@@ -492,14 +476,7 @@ function OptionalInfo() {
                       ]}
                       className="ant-form-item-hidden-margin"
                     >
-                      <InputNumber
-                        min={0}
-                        precision={0}
-                        controls={false}
-                        placeholder={t(
-                          'quotas.action.detail_info.placeholders.product_list_name',
-                        )}
-                      />
+                      <InputNumber min={0} precision={0} controls={false} />
                     </Form.Item>
                   )
                 }
