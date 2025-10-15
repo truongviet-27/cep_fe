@@ -518,7 +518,7 @@ function OptionalInfo() {
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
                   >
-                    <InputNumber min={1} precision={0} controls={false} />
+                    <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
                 )
               },

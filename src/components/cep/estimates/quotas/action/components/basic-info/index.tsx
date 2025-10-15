@@ -466,7 +466,7 @@ const BasicInfo = () => {
                 <Input disabled={isCloneVersion} />
               </Form.Item>
               <Form.Item>
-                （A-Z, a-z, 0-9, -）
+                （A-Z, 0-9, -）
                 <Button
                   onClick={handleAutoNumber}
                   loading={loadingQuota}
@@ -742,7 +742,7 @@ const BasicInfo = () => {
             </div>
           </Col>
 
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <Col xs={24} sm={16} md={14} lg={14} xl={11} xxl={10}>
             <div className="flex flex-wrap gap-4">
               <Form.Item
                 name="consumption_tax"
@@ -789,7 +789,7 @@ const BasicInfo = () => {
                 />
               </Form.Item>
               <Form.Item style={{ marginBottom: 0 }}>
-                <span className="ml-2 text-[#FA8C16]">
+                <span className="ml-1 text-[#FA8C16]">
                   {t('quotas.action.basic_info.labels.default_tax_rate')}
                   {Form.useWatch('tax_rate') ?? 0}%
                 </span>
