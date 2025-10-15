@@ -407,5 +407,15 @@
     "updated_by": "Updated By",
     "created_at": "Created At",
     "not_set": "Not Set"
+  },
+  "validation": {
+    "required": "This is a required field",
+    "invalid_format": "This field has an invalid format",
+    "max255": "This field cannot exceed 255 characters."
+  },
+  "validations": {
+    "invalid_format": "This field has an invalid format",
+    "required": "This is a required field",
+    "max255": "This field cannot exceed 255 characters."
   }
 }

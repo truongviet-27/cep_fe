@@ -5,6 +5,7 @@ import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
+import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -28,6 +29,9 @@ function OptionalInfo() {
   // const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
   const customerWatch = Form.useWatch('customer', form)
 
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const isProductManager = parameterSettings.get('products')
+
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
     optionLabel: 'name',
@@ -36,14 +40,8 @@ function OptionalInfo() {
       mode: 'server',
       pageSize: 100,
     },
-    onSearch(value) {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
+    queryOptions: {
+      enabled: isProductManager,
     },
   })
 
@@ -138,20 +136,6 @@ function OptionalInfo() {
                         style={{
                           marginBottom: 0,
                         }}
-                        rules={[
-                          {
-                            required: true,
-                            message: '',
-                          },
-                          {
-                            whitespace: true,
-                            message: '',
-                          },
-                          {
-                            max: 255,
-                            message: '',
-                          },
-                        ]}
                       >
                         <Input
                           placeholder={t(
@@ -165,14 +149,39 @@ function OptionalInfo() {
                     ),
                     props: { colSpan: columns.length - 1 },
                   }
+                } else {
+                  if (isProductManager) {
+                    return form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'code',
+                    ])
+                  }
+
+                  return (
+                    <Form.Item
+                      name={[record.index, 'products', record.index2, 'code']}
+                      className="ant-form-item-hidden-margin"
+                      rules={[
+                        {
+                          whitespace: true,
+                          message: '',
+                        },
+                        {
+                          max: 255,
+                          message: '',
+                        },
+                      ]}
+                      style={{
+                        width: 300,
+                      }}
+                    >
+                      <Input placeholder={t('quotas.filters.partial_match')} />
+                    </Form.Item>
+                  )
                 }
-                return form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'code',
-                ])
               },
             },
             {
@@ -186,121 +195,150 @@ function OptionalInfo() {
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
-                }
+                } else {
+                  if (isProductManager) {
+                    return (
+                      <Form.Item
+                        className="ant-form-item-hidden-margin"
+                        name={[
+                          record.index,
+                          'products',
+                          record.index2,
+                          'product_id',
+                        ]}
+                      >
+                        <Select
+                          {...selectPropsProduct}
+                          placeholder={t(
+                            'quotas.action.detail_info.placeholders.product_search',
+                          )}
+                          allowClear
+                          showSearch
+                          filterOption={(input, option) =>
+                            ((option?.label ?? '') as string)
+                              .toLowerCase()
+                              .includes(input.toLowerCase())
+                          }
+                          onSearch={() => {}}
+                          style={{
+                            width: 200,
+                          }}
+                          disabled={!customerWatch}
+                          onChange={(value) => {
+                            const item: any = query.data?.data.find(
+                              (item: any) => item.id === value,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'package_id',
+                              ],
+                              null,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'name',
+                              ],
+                              item?.name,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'code',
+                              ],
+                              item?.code,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'unit',
+                              ],
+                              item?.unit,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'cost_price',
+                              ],
+                              item?.cost_price,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'selling_price',
+                              ],
+                              item?.sale_price,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'quantity',
+                              ],
+                              1,
+                            )
 
-                return (
-                  <Form.Item
-                    className="ant-form-item-hidden-margin"
-                    name={[
-                      record.index,
-                      'products',
-                      record.index2,
-                      'product_id',
-                    ]}
-                  >
-                    <Select
-                      {...selectPropsProduct}
-                      placeholder={t(
-                        'quotas.action.detail_info.placeholders.product_search',
-                      )}
-                      allowClear
-                      showSearch
-                      filterOption={false}
+                            if (!value) {
+                              form.setFieldValue(
+                                [
+                                  'optional_product',
+                                  record.index,
+                                  'products',
+                                  record.index2,
+                                  'quantity',
+                                ],
+                                0,
+                              )
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    )
+                  }
+
+                  return (
+                    <Form.Item
+                      name={[record.index, 'products', record.index2, 'name']}
+                      className="ant-form-item-hidden-margin"
+                      rules={[
+                        {
+                          whitespace: true,
+                          message: '',
+                        },
+                        {
+                          max: 255,
+                          message: '',
+                        },
+                      ]}
                       style={{
-                        width: 200,
+                        width: 300,
                       }}
-                      disabled={!customerWatch}
-                      onChange={(value) => {
-                        const item: any = query.data?.data.find(
-                          (item: any) => item.id === value,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'package_id',
-                          ],
-                          null,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'name',
-                          ],
-                          item?.name,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'code',
-                          ],
-                          item?.code,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'unit',
-                          ],
-                          item?.unit,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'cost_price',
-                          ],
-                          item?.cost_price,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'selling_price',
-                          ],
-                          item?.sale_price,
-                        )
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'quantity',
-                          ],
-                          1,
-                        )
-
-                        if (!value) {
-                          form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'quantity',
-                            ],
-                            0,
-                          )
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                )
+                    >
+                      <Input placeholder={t('quotas.filters.partial_match')} />
+                    </Form.Item>
+                  )
+                }
               },
             },
             {
@@ -310,14 +348,40 @@ function OptionalInfo() {
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
+                } else {
+                  if (isProductManager) {
+                    return (
+                      form.getFieldValue([
+                        'optional_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'unit',
+                      ]) ?? '-'
+                    )
+                  }
+                  return (
+                    <Form.Item
+                      name={[record.index, 'products', record.index2, 'unit']}
+                      className="ant-form-item-hidden-margin"
+                      rules={[
+                        {
+                          whitespace: true,
+                          message: '',
+                        },
+                        {
+                          max: 255,
+                          message: '',
+                        },
+                      ]}
+                      style={{
+                        width: 100,
+                      }}
+                    >
+                      <Input placeholder={t('quotas.filters.partial_match')} />
+                    </Form.Item>
+                  )
                 }
-                return form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'unit',
-                ])
               },
             },
             {
@@ -329,34 +393,60 @@ function OptionalInfo() {
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
-                }
-                return (
-                  <Form.Item
-                    className="ant-form-item-hidden-margin"
-                    name={[
-                      record.index,
-                      'products',
-                      record.index2,
-                      'package_id',
-                    ]}
-                  >
-                    <CoreAutoComplete
-                      filterPath1={[
-                        'optional_product',
+                } else {
+                  if (isProductManager) {
+                    return (
+                      <Form.Item
+                        className="ant-form-item-hidden-margin"
+                        name={[
+                          record.index,
+                          'products',
+                          record.index2,
+                          'package_id',
+                        ]}
+                      >
+                        <CoreAutoComplete
+                          filterPath1={[
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'product_id',
+                          ]}
+                          parent="optional_product"
+                          index={record.index}
+                          index2={record.index2}
+                          filterPath2={['customer']}
+                          resource={`products`}
+                          style={{ width: 200 }}
+                        />
+                      </Form.Item>
+                    )
+                  }
+                  return (
+                    <Form.Item
+                      name={[
                         record.index,
                         'products',
                         record.index2,
-                        'product_id',
+                        'package_name',
                       ]}
-                      parent="optional_product"
-                      index={record.index}
-                      index2={record.index2}
-                      filterPath2={['customer']}
-                      resource={`products`}
-                      style={{ width: 200 }}
-                    />
-                  </Form.Item>
-                )
+                      className="ant-form-item-hidden-margin"
+                      rules={[
+                        {
+                          whitespace: true,
+                          message: '',
+                        },
+                        {
+                          max: 255,
+                          message: '',
+                        },
+                      ]}
+                    >
+                      <Input placeholder={t('quotas.filters.partial_match')} />
+                    </Form.Item>
+                  )
+                }
               },
             },
             {
@@ -366,14 +456,30 @@ function OptionalInfo() {
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
+                } else {
+                  if (isProductManager) {
+                    return form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'cost_price',
+                    ])
+                  }
+                  return (
+                    <Form.Item
+                      name={[
+                        record.index,
+                        'products',
+                        record.index2,
+                        'cost_price',
+                      ]}
+                      className="ant-form-item-hidden-margin"
+                    >
+                      <InputNumber min={0} precision={0} controls={false} />
+                    </Form.Item>
+                  )
                 }
-                return form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'cost_price',
-                ])
               },
             },
             {
@@ -393,14 +499,8 @@ function OptionalInfo() {
                       record.index2,
                       'selling_price',
                     ]}
-                    rules={[
-                      {
-                        required: true,
-                        message: '',
-                      },
-                    ]}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
                 )
               },
@@ -417,12 +517,6 @@ function OptionalInfo() {
                   <Form.Item
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    rules={[
-                      {
-                        required: true,
-                        message: '',
-                      },
-                    ]}
                   >
                     <InputNumber min={1} precision={0} controls={false} />
                   </Form.Item>

@@ -438,19 +438,19 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('validation.required'),
+                    message: t('validations.required'),
                   },
                   {
                     whitespace: true,
-                    message: t('validation.invalid_format'),
+                    message: t('validations.invalid_format'),
                   },
                   {
                     pattern: /^[A-Z0-9-]+$/,
-                    message: t('validation.invalid_format'),
+                    message: t('validations.invalid_format'),
                   },
                   {
                     max: 255,
-                    message: t('validation.max255'),
+                    message: t('validations.max255'),
                   },
                 ]}
                 name={'code'}
@@ -533,15 +533,15 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validation.required'),
+                  message: t('validations.required'),
                 },
                 {
                   whitespace: true,
-                  message: t(t('validation.invalid_format')),
+                  message: t('validations.invalid_format'),
                 },
                 {
                   max: 255,
-                  message: t(t('validation.invalid_format')),
+                  message: t('validations.invalid_format'),
                 },
               ]}
             >
@@ -556,7 +556,7 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validation.required'),
+                  message: t('validations.required'),
                 },
               ]}
             >

@@ -110,7 +110,12 @@ function CoreAutoComplete({
       style={style}
       showSearch
       placeholder={t('placeholders.select')}
-      filterOption={false}
+      filterOption={(input, option) =>
+        ((option?.label ?? '') as string)
+          .toLowerCase()
+          .includes(input.toLowerCase())
+      }
+      onSearch={() => {}}
       autoClearSearchValue
       allowClear
       onChange={(value) => {

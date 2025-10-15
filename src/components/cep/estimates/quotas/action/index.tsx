@@ -25,6 +25,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import { type QuotaFormSettingResponse } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -40,10 +41,10 @@ import {
   Spin,
 } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
-import BasicInfo from './components/basic-info'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { useEffect, useState } from 'react'
+import BasicInfo from './components/basic-info'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -69,6 +70,8 @@ function QuotaAction() {
 
   const go = useGo()
   const apiUrl = useApiUrl()
+
+  const permission = useUserStore((state) => state.permission)
 
   const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -100,6 +103,22 @@ function QuotaAction() {
     method: 'get',
     queryOptions: {
       enabled: isUpdate,
+      select: (data) => {
+        const detail = data.data as any
+
+        if (!permission?.is_module_admin && !detail.is_author) {
+          go({
+            to: '/403',
+          })
+        }
+
+        return {
+          ...data,
+          data: {
+            ...detail,
+          },
+        } as unknown as any
+      },
     },
   })
 
@@ -286,35 +305,33 @@ function QuotaAction() {
                 code: t(
                   'quotas.action.detail_info.default_values.auto_numbering',
                 ),
+                package_name: '',
                 cost_price: 0,
                 quantity: 0,
                 selling_price: 0,
                 profit_margin: 0,
                 is_add_total: true,
-                unit: '-',
+                unit: null,
               },
             ],
           },
         ],
         optional_product: [
           {
-            group_name: t(
-              'quotas.action.optional_info.placeholders.optional_list_name',
-            ),
+            group_name: '',
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
-                code: t(
-                  'quotas.action.detail_info.default_values.auto_numbering',
-                ),
+                code: '',
+                package_name: '',
                 cost_price: 0,
                 selling_price: 0,
                 quantity: 0,
                 profit_margin: 0,
                 is_add_total: false,
-                unit: '-',
+                unit: null,
               },
             ],
           },
