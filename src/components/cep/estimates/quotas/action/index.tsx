@@ -286,35 +286,33 @@ function QuotaAction() {
                 code: t(
                   'quotas.action.detail_info.default_values.auto_numbering',
                 ),
+                package_name: '',
                 cost_price: 0,
                 quantity: 0,
                 selling_price: 0,
                 profit_margin: 0,
                 is_add_total: true,
-                unit: '-',
+                unit: null,
               },
             ],
           },
         ],
         optional_product: [
           {
-            group_name: t(
-              'quotas.action.optional_info.placeholders.optional_list_name',
-            ),
+            group_name: '',
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
-                code: t(
-                  'quotas.action.detail_info.default_values.auto_numbering',
-                ),
+                code: '',
+                package_name: '',
                 cost_price: 0,
                 selling_price: 0,
                 quantity: 0,
                 profit_margin: 0,
                 is_add_total: false,
-                unit: '-',
+                unit: null,
               },
             ],
           },
