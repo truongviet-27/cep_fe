@@ -258,7 +258,6 @@ function QuotaAction() {
       delete quoteTemplate.updated_at
       delete quoteTemplate.author
       delete quoteTemplate.editor
-      console.log(quoteTemplate)
       form.setFieldsValue({
         ...form.getFieldsValue(),
         type: quoteTemplate?.type,

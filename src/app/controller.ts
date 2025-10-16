@@ -110,8 +110,6 @@ export const useBootstrap = () => {
         throw new Error('Failed to fetch permission')
       }
 
-      console.log('xxxxxxxxxxxxxxxxxxxx')
-
       const permissionResponse = {
         ...permission,
         permissions: new Set(permission.permissions),

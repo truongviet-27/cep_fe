@@ -64,7 +64,6 @@ const AgreedPriceQuotaTab = () => {
   }
 
   const getStatusTag = (status?: string) => {
-    console.log('status', status)
     const statusEnum = status as AgreedPriceStatus
     const result = getAgreedPriceStatusStyle(statusEnum, t)
     return (
@@ -283,8 +282,6 @@ const AgreedPriceQuotaTab = () => {
     },
     onSearch(values) {
       const v = values as Record<string, unknown>
-
-      console.log(v, 'values')
 
       const range = v.application_completion as
         | [Dayjs | null, Dayjs | null]
