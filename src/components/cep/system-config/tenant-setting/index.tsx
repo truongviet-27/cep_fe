@@ -51,8 +51,6 @@ function TenantSetting() {
   const logo_image = Form.useWatch('company_logo_image', form)
   const seal_image = Form.useWatch('company_seal_image', form)
 
-  console.log(logo_image, '')
-
   const [isPdf, setIsPdf] = useState(false)
   const apiUrl = useApiUrl()
 

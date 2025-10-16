@@ -272,11 +272,10 @@ function BasicInfo({ data }: { data: any }) {
                     marginLeft: 10,
                   }}
                 >
-                  (
-                  {dayjs(
-                    getExpiryDate(data?.expiration_date, data?.created_at),
-                  ).format('YYYY/MM/DD')}
-                  )
+                  {data?.expiration_date &&
+                    dayjs(
+                      getExpiryDate(data?.expiration_date, data?.created_at),
+                    ).format('YYYY/MM/DD')}
                 </span>
               </Form.Item>
             </div>

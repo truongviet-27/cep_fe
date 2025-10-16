@@ -556,7 +556,6 @@ function QuotaList() {
       status: QuotaStatus,
       hasApprovalRoutes: boolean,
     ): { key: number; label: string | ReactNode }[] => {
-      console.log('object')
       if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
         return [
           {
