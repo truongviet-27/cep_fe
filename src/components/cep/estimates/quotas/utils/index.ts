@@ -121,10 +121,10 @@ export function getExpirationDate(
 export function getExpiryDate(
   value: string,
   baseDate?: string | Date | null,
-): Date {
+): Date | string {
   const start = dayjs(baseDate ?? new Date())
 
-  if (!value) return start.toDate()
+  if (!value) return ''
 
   const [unit, amountStr] = value.split('_')
   const amount = parseInt(amountStr, 10)

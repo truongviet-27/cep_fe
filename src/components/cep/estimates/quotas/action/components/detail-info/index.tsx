@@ -130,7 +130,7 @@ function DetailInfo() {
       product_id: null,
       package_id: null,
       name: '',
-      code: t('quotas.action.detail_info.default_values.auto_numbering'),
+      code: '',
       quantity: 0,
       cost_price: 0,
       selling_price: 0,
@@ -213,15 +213,15 @@ function DetailInfo() {
                         rules={[
                           {
                             required: true,
-                            message: '',
+                            message: t('validations.required'),
                           },
                           {
                             whitespace: true,
-                            message: '',
+                            message: t('validations.invalid_format'),
                           },
                           {
                             max: 255,
-                            message: '',
+                            message: t('validations.invalid_format'),
                           },
                         ]}
                       >
@@ -255,15 +255,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: t('validations.required'),
                         },
                         {
                           whitespace: true,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                         {
                           max: 255,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                       ]}
                       style={{
@@ -299,7 +299,7 @@ function DetailInfo() {
                         rules={[
                           {
                             required: true,
-                            message: '',
+                            message: t('validations.required'),
                           },
                         ]}
                       >
@@ -416,15 +416,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: t('validations.required'),
                         },
                         {
                           whitespace: true,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                         {
                           max: 255,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                       ]}
                       style={{
@@ -466,15 +466,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: t('validations.required'),
                         },
                         {
                           whitespace: true,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                         {
                           max: 255,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                       ]}
                       style={{
@@ -539,15 +539,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: t('validations.required'),
                         },
                         {
                           whitespace: true,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                         {
                           max: 255,
-                          message: '',
+                          message: t('validations.invalid_format'),
                         },
                       ]}
                     >
@@ -587,7 +587,7 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: t('validations.required'),
                         },
                       ]}
                     >
@@ -617,7 +617,7 @@ function DetailInfo() {
                     rules={[
                       {
                         required: true,
-                        message: '',
+                        message: t('validations.required'),
                       },
                     ]}
                   >
@@ -641,7 +641,7 @@ function DetailInfo() {
                     rules={[
                       {
                         required: true,
-                        message: '',
+                        message: t('validations.required'),
                       },
                     ]}
                   >
@@ -789,17 +789,13 @@ function DetailInfo() {
                   if (isHeader) {
                     add(
                       {
-                        group_name: t(
-                          'quotas.action.detail_info.default_values.default_group_name',
-                        ),
+                        group_name: '',
                         products: [
                           {
                             product_id: null,
                             package_id: null,
                             name: '',
-                            code: t(
-                              'quotas.action.detail_info.default_values.auto_numbering',
-                            ),
+                            code: '',
                             quantity: 0,
                             cost_price: 0,
                             selling_price: 0,
