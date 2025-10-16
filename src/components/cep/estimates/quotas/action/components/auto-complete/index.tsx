@@ -140,7 +140,7 @@ function CoreAutoComplete({
           [parent, index, 'products', index2, 'selling_price'],
           option?.rank_prices * 1
             ? (option?.rank_prices ?? 0) * 1
-            : (data?.data?.selling_price ?? 0) * 1,
+            : (option?.selling_price ?? 0) * 1,
         )
 
         form.setFieldValue([parent, index, 'products', index2, 'quantity'], 1)
