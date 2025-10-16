@@ -275,7 +275,7 @@ function BasicInfo({ data }: { data: any }) {
                   {data?.expiration_date &&
                     dayjs(
                       getExpiryDate(data?.expiration_date, data?.created_at),
-                    ).format('YYYY/MM/DD')}
+                    ).format('YYYY/MM/DD') + `${'まで'}`}
                 </span>
               </Form.Item>
             </div>
