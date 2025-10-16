@@ -87,7 +87,9 @@ function DetailInfo() {
       sellTotalWithTax = sellTotal
     }
     const profitRate =
-      costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
+      costTotal > 0 && sellTotal > 0
+        ? ((sellTotal - costTotal) / sellTotal) * 100
+        : 0
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
@@ -213,15 +215,15 @@ function DetailInfo() {
                         rules={[
                           {
                             required: true,
-                            message: t('validations.required'),
+                            message: '',
                           },
                           {
                             whitespace: true,
-                            message: t('validations.invalid_format'),
+                            message: '',
                           },
                           {
                             max: 255,
-                            message: t('validations.invalid_format'),
+                            message: '',
                           },
                         ]}
                       >
@@ -255,15 +257,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                       style={{
@@ -299,7 +301,7 @@ function DetailInfo() {
                         rules={[
                           {
                             required: true,
-                            message: t('validations.required'),
+                            message: '',
                           },
                         ]}
                       >
@@ -416,15 +418,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                       style={{
@@ -466,15 +468,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                       style={{
@@ -539,15 +541,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                     >
@@ -587,7 +589,7 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                       ]}
                     >
@@ -617,7 +619,7 @@ function DetailInfo() {
                     rules={[
                       {
                         required: true,
-                        message: t('validations.required'),
+                        message: '',
                       },
                     ]}
                   >
@@ -641,7 +643,7 @@ function DetailInfo() {
                     rules={[
                       {
                         required: true,
-                        message: t('validations.required'),
+                        message: '',
                       },
                     ]}
                   >
