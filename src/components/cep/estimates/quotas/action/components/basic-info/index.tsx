@@ -22,6 +22,7 @@ import {
   Select,
 } from 'antd'
 import dayjs from 'dayjs'
+import { useCallback, useEffect, useState } from 'react'
 
 const BasicInfo = () => {
   const t = useTranslate()
@@ -35,13 +36,20 @@ const BasicInfo = () => {
 
   const apiUrl = useApiUrl()
 
-  const { selectProps: selectPropsCt } = useSelect({
+  const [current, setCurrent] = useState(1)
+  const [options, setOptions] = useState<any[]>([])
+
+  const expirationDate = Form.useWatch('expiration_date', form)
+  const createdAt = Form.useWatch('created_at', form)
+
+  const { selectProps: selectPropsCt, query } = useSelect({
     resource: 'customers',
     optionLabel: 'name',
     optionValue: 'id',
     pagination: {
       mode: 'server',
-      pageSize: 100,
+      pageSize: 20,
+      current,
     },
 
     onSearch(value) {
@@ -54,6 +62,26 @@ const BasicInfo = () => {
       ]
     },
   })
+
+  useEffect(() => {
+    if (query.data?.data) {
+      setOptions((prev) => [...prev, ...query.data.data])
+    }
+  }, [query.data?.data])
+
+  const handlePopupScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
+      if (
+        scrollTop + clientHeight >= scrollHeight - 10 &&
+        !query.isFetching &&
+        (query.data?.total ?? 0) > options.length
+      ) {
+        setCurrent((prev) => prev + 1)
+      }
+    },
+    [query, options],
+  )
 
   const {
     data: codeIssueSetting,
@@ -466,7 +494,7 @@ const BasicInfo = () => {
                 <Input disabled={isCloneVersion} />
               </Form.Item>
               <Form.Item>
-                （A-Z, a-z, 0-9, -）
+                （A-Z, 0-9, -）
                 <Button
                   onClick={handleAutoNumber}
                   loading={loadingQuota}
@@ -562,16 +590,25 @@ const BasicInfo = () => {
             >
               <Select
                 {...selectPropsCt}
+                options={options.map((item) => ({
+                  label: item.name,
+                  value: item.id,
+                }))}
                 allowClear
                 showSearch
                 disabled={isCloneVersion}
                 labelInValue
                 onSearch={() => {}}
+                loading={query.isFetching}
+                onPopupScroll={handlePopupScroll}
                 filterOption={(input, option) =>
                   ((option?.label ?? '') as string)
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
+                // notFoundContent={
+                //   query.isFetching ? <Spin size="small" /> : null
+                // }
               />
             </Form.Item>
           </Col>
@@ -584,6 +621,13 @@ const BasicInfo = () => {
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_date'),
               )}
+              required
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
             >
               <DatePicker style={{ width: '100%' }} placeholder={FORMAT_DATE} />
             </Form.Item>
@@ -729,20 +773,19 @@ const BasicInfo = () => {
               </Form.Item>
 
               <Form.Item style={{ marginBottom: 0 }}>
-                <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
-                  {dayjs(
-                    getExpiryDate(
-                      Form.useWatch('expiration_date', form),
-                      Form.useWatch('created_at', form),
-                    ),
-                  ).format('YYYY/MM/DD')}
-                  {t('quotas.action.basic_info.labels.until')}
-                </span>
+                {expirationDate && (
+                  <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
+                    {dayjs(getExpiryDate(expirationDate, createdAt)).format(
+                      'YYYY/MM/DD',
+                    )}
+                    {t('quotas.action.basic_info.labels.until')}
+                  </span>
+                )}
               </Form.Item>
             </div>
           </Col>
 
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <Col xs={24} sm={16} md={14} lg={14} xl={11} xxl={10}>
             <div className="flex flex-wrap gap-4">
               <Form.Item
                 name="consumption_tax"
@@ -789,7 +832,7 @@ const BasicInfo = () => {
                 />
               </Form.Item>
               <Form.Item style={{ marginBottom: 0 }}>
-                <span className="ml-2 text-[#FA8C16]">
+                <span className="ml-1 text-[#FA8C16]">
                   {t('quotas.action.basic_info.labels.default_tax_rate')}
                   {Form.useWatch('tax_rate') ?? 0}%
                 </span>

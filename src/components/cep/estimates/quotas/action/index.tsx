@@ -294,17 +294,13 @@ function QuotaAction() {
         tax_rounding_method: data.data?.tax_rounding_method,
         main_product: [
           {
-            group_name: t(
-              'quotas.action.detail_info.placeholders.product_list_name',
-            ),
+            group_name: '',
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
-                code: t(
-                  'quotas.action.detail_info.default_values.auto_numbering',
-                ),
+                code: '',
                 package_name: '',
                 cost_price: 0,
                 quantity: 0,
