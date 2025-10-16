@@ -278,7 +278,6 @@ function ImportCsv({
                     ) // Log first 50 bytes for debugging
 
                     const encodingInfo = detectEncodingWithInfo(arrayBuffer)
-                    console.log('Encoding detection result:', encodingInfo)
 
                     // Validate encoding
                     const supportedEncodings = [
@@ -308,7 +307,6 @@ function ImportCsv({
                     const detectedEncoding = encodingInfo.encoding
 
                     console.log('Final detected encoding:', detectedEncoding)
-                    console.log('Confidence level:', encodingInfo.confidence)
 
                     // Validate CSV content using PapaParse
                     const result = Papa.parse(utf8Text, {

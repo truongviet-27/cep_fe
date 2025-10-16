@@ -271,8 +271,6 @@ export const CorporateResearchFormSection = (
           title={boldText(t('customers.research.modal.title'), PRIMARY)}
           open={visible}
           onOk={() => {
-            console.log(currentType, 'currentType')
-
             if (
               currentType.fileList.some((item) => item.status == 'uploading')
             ) {

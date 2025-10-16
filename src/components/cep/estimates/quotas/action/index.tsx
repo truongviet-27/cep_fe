@@ -258,7 +258,6 @@ function QuotaAction() {
       delete quoteTemplate.updated_at
       delete quoteTemplate.author
       delete quoteTemplate.editor
-      console.log(quoteTemplate)
       form.setFieldsValue({
         ...form.getFieldsValue(),
         type: quoteTemplate?.type,
@@ -352,6 +351,10 @@ function QuotaAction() {
                   .startOf('day')
                   .toISOString()
               : null,
+            created_at: dayjs(values.created_at)
+              .utc(true)
+              .startOf('day')
+              .toISOString(),
             tags: values?.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
@@ -383,6 +386,10 @@ function QuotaAction() {
                   .startOf('day')
                   .toISOString()
               : null,
+            created_at: dayjs(values.created_at)
+              .utc(true)
+              .startOf('day')
+              .toISOString(),
             status: 'creating',
             tags: values.tags.map((item: any) => ({
               id: item.value,
@@ -457,6 +464,9 @@ function QuotaAction() {
             delivery_date: dayjs(),
             created_at: dayjs(),
           }}
+          scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
+          autoComplete="off"
+          name="basic"
         >
           <BasicInfo />
           <DetailInfo />

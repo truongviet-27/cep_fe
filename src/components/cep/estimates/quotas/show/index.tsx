@@ -84,8 +84,6 @@ function QuotaDetail() {
     method: 'get',
   })
 
-  console.log(dataHistory)
-
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
       refetch()
