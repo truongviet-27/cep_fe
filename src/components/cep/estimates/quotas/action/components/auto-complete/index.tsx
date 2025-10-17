@@ -91,14 +91,12 @@ function CoreAutoComplete({
     if (option) {
       form.setFieldValue(
         [parent, index, 'products', index2, 'selling_price'],
-        option?.rank_prices * 1
-          ? option?.rank_prices * 1
-          : option?.selling_price * 1,
+        option?.rank_prices ? option?.rank_prices : option?.selling_price,
       )
     } else {
       form.setFieldValue(
         [parent, index, 'products', index2, 'selling_price'],
-        (data?.data?.selling_price ?? 0) * 1,
+        data?.data?.selling_price ?? 0,
       )
     }
   }, [data, customer])
@@ -133,14 +131,16 @@ function CoreAutoComplete({
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'cost_price'],
-          (data?.data?.cost_price ?? 0) * (option?.quantity_in_package ?? 1),
+          value
+            ? (data?.data?.cost_price ?? 0) * (option?.quantity_in_package ?? 0)
+            : (data?.data?.cost_price ?? 0),
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'selling_price'],
           option?.rank_prices * 1
-            ? (option?.rank_prices ?? 0) * 1
-            : (option?.selling_price ?? 0) * 1,
+            ? (option?.rank_prices ?? 0)
+            : (option?.selling_price ?? data?.data.selling_price),
         )
 
         form.setFieldValue([parent, index, 'products', index2, 'quantity'], 1)

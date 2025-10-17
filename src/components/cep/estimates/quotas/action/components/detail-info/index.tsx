@@ -46,7 +46,7 @@ function DetailInfo() {
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const isProductManager = parameterSettings.get('products')
+  const isProductManager = parameterSettings?.get('products')
 
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
@@ -667,7 +667,14 @@ function DetailInfo() {
                     'products',
                     record.index2,
                     'cost_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 const selling =
                   form.getFieldValue([
@@ -676,7 +683,14 @@ function DetailInfo() {
                     'products',
                     record.index2,
                     'selling_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 form.setFieldValue(
                   [

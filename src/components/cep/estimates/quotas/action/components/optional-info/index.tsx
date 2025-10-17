@@ -30,7 +30,7 @@ function OptionalInfo() {
   const customerWatch = Form.useWatch('customer', form)
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const isProductManager = parameterSettings.get('products')
+  const isProductManager = parameterSettings?.get('products')
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
