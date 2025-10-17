@@ -26,6 +26,7 @@ const getTenantForSuperAdmin = async () => {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: 'no-store',
     })
+
     if (!res.ok) return
 
     const data = await res.json()

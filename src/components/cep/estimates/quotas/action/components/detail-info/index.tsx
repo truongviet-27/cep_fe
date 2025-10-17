@@ -46,7 +46,8 @@ function DetailInfo() {
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const isProductManager = parameterSettings.get('products')
+  const isProductManager =
+    parameterSettings?.get && parameterSettings?.get('products')
 
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
@@ -87,7 +88,9 @@ function DetailInfo() {
       sellTotalWithTax = sellTotal
     }
     const profitRate =
-      costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
+      costTotal > 0 && sellTotal > 0
+        ? ((sellTotal - costTotal) / sellTotal) * 100
+        : 0
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
@@ -213,15 +216,15 @@ function DetailInfo() {
                         rules={[
                           {
                             required: true,
-                            message: t('validations.required'),
+                            message: '',
                           },
                           {
                             whitespace: true,
-                            message: t('validations.invalid_format'),
+                            message: '',
                           },
                           {
                             max: 255,
-                            message: t('validations.invalid_format'),
+                            message: '',
                           },
                         ]}
                       >
@@ -255,15 +258,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                       style={{
@@ -299,7 +302,7 @@ function DetailInfo() {
                         rules={[
                           {
                             required: true,
-                            message: t('validations.required'),
+                            message: '',
                           },
                         ]}
                       >
@@ -416,15 +419,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                       style={{
@@ -466,15 +469,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                       style={{
@@ -539,15 +542,15 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                         {
                           whitespace: true,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                         {
                           max: 255,
-                          message: t('validations.invalid_format'),
+                          message: '',
                         },
                       ]}
                     >
@@ -587,7 +590,7 @@ function DetailInfo() {
                       rules={[
                         {
                           required: true,
-                          message: t('validations.required'),
+                          message: '',
                         },
                       ]}
                     >
@@ -617,7 +620,7 @@ function DetailInfo() {
                     rules={[
                       {
                         required: true,
-                        message: t('validations.required'),
+                        message: '',
                       },
                     ]}
                   >
@@ -641,7 +644,7 @@ function DetailInfo() {
                     rules={[
                       {
                         required: true,
-                        message: t('validations.required'),
+                        message: '',
                       },
                     ]}
                   >
@@ -665,7 +668,14 @@ function DetailInfo() {
                     'products',
                     record.index2,
                     'cost_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 const selling =
                   form.getFieldValue([
@@ -674,7 +684,14 @@ function DetailInfo() {
                     'products',
                     record.index2,
                     'selling_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 form.setFieldValue(
                   [

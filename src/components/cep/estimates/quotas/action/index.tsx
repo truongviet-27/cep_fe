@@ -106,7 +106,12 @@ function QuotaAction() {
       select: (data) => {
         const detail = data.data as any
 
-        if (!permission?.is_module_admin && !detail.is_author) {
+        if (
+          !permission?.is_module_admin &&
+          !detail.is_author &&
+          !isCloneNew &&
+          !isCloneVersion
+        ) {
           go({
             to: '/403',
           })
