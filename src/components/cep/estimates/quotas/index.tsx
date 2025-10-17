@@ -175,10 +175,21 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+
         render: (_, record) => (
-          <div className="flex flex-col gap-[2px]">
-            <div>{record.title}</div>
-            <div>{record.customer_name}</div>
+          <div className="flex flex-col gap-1">
+            <div className="overflow-hidden" title={record.title}>
+              {record.title}
+            </div>
+            <span>{record.customer_name}</span>
           </div>
         ),
       },

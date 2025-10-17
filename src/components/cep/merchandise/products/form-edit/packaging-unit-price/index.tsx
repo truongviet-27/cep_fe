@@ -27,6 +27,25 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
   const { getFieldValue, setFieldValue } = form
   const packagings = Form.useWatch('packagings', form) ?? []
 
+  const codeWatch = Form.useWatch('code', form)
+  const nameWatch = Form.useWatch('name', form)
+  const categoryWatch = Form.useWatch('category', form)
+  const unitIdWatch = Form.useWatch('unit_id', form)
+  const costPriceWatch = Form.useWatch('cost_price', form)
+  const sellingPriceWatch = Form.useWatch('selling_price', form)
+
+  const isRequiredFieldsFilled = !!(
+    codeWatch &&
+    nameWatch &&
+    categoryWatch &&
+    unitIdWatch !== undefined &&
+    unitIdWatch !== null &&
+    costPriceWatch !== undefined &&
+    costPriceWatch !== null &&
+    sellingPriceWatch !== undefined &&
+    sellingPriceWatch !== null
+  )
+
   const onStandardPriceChange = (event: CheckboxChangeEvent, index: number) => {
     const isChecked = event.target.checked
 
@@ -70,11 +89,10 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                 <Form.Item
                   name={[index, 'name']}
                   required
-                  rules={[
-                    { required: true, message: t('validation.required') },
-                  ]}
+                  rules={[{ required: true, message: '' }]}
                   className="ant-form-item-hidden-margin"
                   style={{ marginBottom: '0px !important' }}
+                  help=""
                 >
                   <Input />
                 </Form.Item>
@@ -101,11 +119,10 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                 <Form.Item
                   name={[index, 'quantity_in_package']}
                   required
-                  rules={[
-                    { required: true, message: t('validation.required') },
-                  ]}
+                  rules={[{ required: true, message: '' }]}
                   className="ant-form-item-hidden-margin"
                   style={{ marginBottom: '0px !important' }}
+                  help=""
                 >
                   <InputNumber
                     min={1}
@@ -287,7 +304,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               <div className="mt-4 text-right">
                 <Button
                   type="primary"
-                  disabled={fields.length < 1}
+                  disabled={fields.length < 1 || !isRequiredFieldsFilled}
                   onClick={() => {
                     const rankObject: Record<string, number> = {}
 
@@ -298,7 +315,9 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     })
 
                     add({
-                      code: `${getFieldValue('code')}-${fields.length}`,
+                      code: getFieldValue('code')
+                        ? `${getFieldValue('code')}-${fields.length}`
+                        : `${fields.length}`,
                       name: '',
                       is_active: true,
                       quantity_in_package: 1,
