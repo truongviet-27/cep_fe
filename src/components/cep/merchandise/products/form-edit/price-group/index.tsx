@@ -41,24 +41,36 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               ((rank.rate ?? 0) / 100),
           )
           const isRateBased = packagingsWatch?.[index].is_rate_based
+          const formValue = getFieldValue([
+            'packagings',
+            index,
+            `rank_${rank.id}` as keyof object,
+          ])
+          const currentRankPrice = isRateBased
+            ? caculator
+            : (formValue ?? caculator)
           return (
-            <div className="flex flex-row items-center justify-center">
-              <Form.Item
-                name={[index, 'rank_' + rank.id]}
-                hidden={isRateBased}
-                className="ant-form-item-hidden-margin"
-                required
-                rules={[{ required: true, message: t('validation.required') }]}
-              >
-                <InputNumber
-                  defaultValue={caculator}
-                  className="text-center"
-                  min={0}
-                  controls={false}
-                />
-              </Form.Item>
-              {isRateBased ? caculator : ''}
-              {costPriceWatch < value ? (
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-row items-center justify-center">
+                <Form.Item
+                  name={[index, 'rank_' + rank.id]}
+                  hidden={isRateBased}
+                  className="ant-form-item-hidden-margin"
+                  required
+                  rules={[
+                    { required: true, message: t('validation.required') },
+                  ]}
+                >
+                  <InputNumber
+                    defaultValue={caculator}
+                    className="text-center"
+                    min={0}
+                    controls={false}
+                  />
+                </Form.Item>
+                {isRateBased ? caculator : ''}
+              </div>
+              {currentRankPrice < costPriceWatch ? (
                 <span className="text-[8px] text-red-500">
                   原価より低く設定されています
                 </span>
