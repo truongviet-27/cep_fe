@@ -145,8 +145,7 @@ function BasicInformation(
                       {
                         validator: (_, value) => {
                           if (
-                            form.getFieldValue('customer_type') ===
-                              'individual' &&
+                            form.getFieldValue('customer_type') === 'company' &&
                             !value
                           ) {
                             return Promise.reject(
@@ -297,6 +296,7 @@ function BasicInformation(
             rules: [rule],
             style: { marginTop: -8 },
             hidden: !allowRankResource,
+            required: true,
           }}
           optionLabel={'code'}
           optionValue={'id'}
