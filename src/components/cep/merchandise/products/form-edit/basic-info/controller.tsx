@@ -185,7 +185,7 @@ export const useBasicInfoController = (
               ...rankObject,
             },
             {
-              code: `${getFieldValue('code')}-1`,
+              code: getFieldValue('code') ? `${getFieldValue('code')}-1` : '1',
               name: '',
               quantity_in_package: 1,
               unit_id: getFieldValue('unit_id'),
@@ -230,7 +230,11 @@ export const useBasicInfoController = (
     const packagingsUpdated = packagings.map((packaging, index) => ({
       ...packaging,
       unit: unitWatch,
-      code: index ? `${codeWatch}-${index}` : codeWatch,
+      code: index
+        ? codeWatch
+          ? `${codeWatch}-${index}`
+          : `${index}`
+        : codeWatch,
       barcode: index ? packaging.barcode : barcodeWatch,
     }))
 
