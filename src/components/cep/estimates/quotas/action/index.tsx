@@ -60,8 +60,9 @@ function QuotaAction() {
   const { id, action, params } = useParsed()
 
   const { actionType } = params as any
+  const isClone = action === 'clone'
   const isCloneVersion = actionType === 'VERSION'
-  const isCloneNew = !isCloneVersion
+  const isCloneNew = !isCloneVersion && isClone
   const isEdit = action === 'edit'
 
   const isUpdate = !!id

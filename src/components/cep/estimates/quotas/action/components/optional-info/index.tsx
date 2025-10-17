@@ -174,6 +174,10 @@ function OptionalInfo() {
                           max: 255,
                           message: '',
                         },
+                        {
+                          pattern: /^[A-Z0-9-]+$/,
+                          message: '',
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -500,6 +504,7 @@ function OptionalInfo() {
                       record.index2,
                       'selling_price',
                     ]}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
@@ -518,6 +523,7 @@ function OptionalInfo() {
                   <Form.Item
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
@@ -539,7 +545,14 @@ function OptionalInfo() {
                     'products',
                     record.index2,
                     'cost_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 const selling =
                   form.getFieldValue([
@@ -548,7 +561,14 @@ function OptionalInfo() {
                     'products',
                     record.index2,
                     'selling_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 form.setFieldValue(
                   [

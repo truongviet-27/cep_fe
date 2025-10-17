@@ -6,7 +6,7 @@ import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import { Action, type ActionType } from '@components/common/action'
 import CommonTable from '@components/common/table'
 import { useSelect } from '@refinedev/antd'
-import { useResource, useTranslate } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -266,6 +266,10 @@ function DetailInfo() {
                         },
                         {
                           max: 255,
+                          message: '',
+                        },
+                        {
+                          pattern: /^[A-Z0-9-]+$/,
                           message: '',
                         },
                       ]}
@@ -623,6 +627,7 @@ function DetailInfo() {
                         message: '',
                       },
                     ]}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
@@ -647,6 +652,7 @@ function DetailInfo() {
                         message: '',
                       },
                     ]}
+                    normalize={(val) => val ?? 1}
                   >
                     <InputNumber min={1} precision={0} controls={false} />
                   </Form.Item>
