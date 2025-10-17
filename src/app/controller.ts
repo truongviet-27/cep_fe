@@ -1,13 +1,13 @@
 // eslint-disable-next-line simple-import-sort/imports
 import type { PermissionType } from '@interfaces/permission'
+import { getSessionOnce } from '@lib/get-session-once'
 import type { ParameterResourceEnum } from '@sdk/hey-api'
+import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
+import { isSupperAdmin } from '@utility/decode-token'
 import { hasForbiddenRoute } from '@utility/permission'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { getSessionOnce } from '@lib/get-session-once'
-import useTenantStore from '@stores/useTenantStore'
-import { isSupperAdmin } from '@utility/decode-token'
 import { useEffect, useState } from 'react'
 
 // Fetch and set a tenant for super admin users when no org is present in token
@@ -47,13 +47,9 @@ export const useBootstrap = () => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const {
-    isLoggedIn,
-    setPermission,
-    setParameterSettings,
-    setIsLoggedIn,
-    logout,
-  } = useUserStore((state) => state)
+  const { setPermission, setParameterSettings, setIsLoggedIn, logout } =
+    useUserStore((state) => state)
+  const isLoggedIn = useUserStore.getState().isLoggedIn
   const token = searchParams.get('token')
   const refreshToken = searchParams.get('refreshToken')
   const { status } = session
@@ -91,14 +87,14 @@ export const useBootstrap = () => {
     }
   }
 
-  const getProfile = async () => {
+  const getProfile = async (isTokenValid: boolean) => {
     try {
       const { tenantId } = useTenantStore.getState()
       const requestBody = {
         token: '',
         tenantId,
       }
-      if (pathname === '/' && token && refreshToken) {
+      if (pathname === '/' && token && isTokenValid) {
         requestBody.token = token
       }
       const response = await fetch('/api/me', {
@@ -156,13 +152,13 @@ export const useBootstrap = () => {
         return
       }
 
-      await validateToken()
+      const isTokenValid = await validateToken()
       const sessionOnce = await getSessionOnce()
       const accessToken = sessionOnce?.accessToken
       if (isSupperAdmin(accessToken)) {
         await getTenantForSuperAdmin()
       }
-      await getProfile()
+      await getProfile(isTokenValid)
 
       if (hasForbiddenRoute(pathname)) {
         router.push('/403')
