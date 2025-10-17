@@ -11,7 +11,7 @@ const PageContainer = ({
   breadcrumbs,
   children,
 }: {
-  title: string | ReactNode
+  title?: string | ReactNode
   breadcrumbs?: ReactNode
   children: ReactNode
 }) => {
@@ -30,7 +30,9 @@ const PageContainer = ({
         }}
       >
         <div>
-          <div className="mb-3">{boldText(title, PRIMARY, 18)}</div>
+          {title ? (
+            <div className="mb-3">{boldText(title, PRIMARY, 18)}</div>
+          ) : null}
           {children}
         </div>
       </Card>
