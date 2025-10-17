@@ -47,7 +47,7 @@ function DetailInfo() {
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const isProductManager =
-    parameterSettings && parameterSettings?.get('products')
+    parameterSettings?.get && parameterSettings?.get('products')
 
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0

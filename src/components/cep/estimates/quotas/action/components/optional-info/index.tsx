@@ -31,7 +31,7 @@ function OptionalInfo() {
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const isProductManager =
-    parameterSettings && parameterSettings?.get('products')
+    parameterSettings?.get && parameterSettings?.get('products')
 
   const { selectProps: selectPropsProduct, query } = useSelect({
     resource: 'products',
