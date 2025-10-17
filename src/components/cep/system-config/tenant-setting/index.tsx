@@ -14,6 +14,7 @@ import {
   useApiUrl,
   useCustom,
   useCustomMutation,
+  useGo,
   useTranslate,
   useUpdate,
 } from '@refinedev/core'
@@ -25,7 +26,6 @@ import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Row, Space, Spin, Typography } from 'antd'
-import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const { Title } = Typography
@@ -39,14 +39,11 @@ type FormType = QuotaFormSettingResponse & {
 
 function TenantSetting() {
   const t = useTranslate()
+  const go = useGo()
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const { formProps, saveButtonProps, form } = useForm<FormType>()
 
   const [previewPdf, setPreviewPdf] = useState('')
-
-  if (!parameterSettings?.get?.(ParameterResourceEnum.QUOTATION_FORMS)) {
-    redirect('/403')
-  }
 
   const logo_image = Form.useWatch('company_logo_image', form)
   const seal_image = Form.useWatch('company_seal_image', form)
@@ -153,6 +150,14 @@ function TenantSetting() {
       },
     )
   }
+
+  useEffect(() => {
+    if (!parameterSettings?.get?.(ParameterResourceEnum.QUOTATION_FORMS)) {
+      go({
+        to: '/403',
+      })
+    }
+  }, [parameterSettings, go])
 
   useEffect(() => {
     if (data?.data) {
