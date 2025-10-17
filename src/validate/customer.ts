@@ -156,11 +156,10 @@ export const validateCustomerRule = (t: any) => {
           .nullable(),
       ),
       post_code: z
-        .string({ error: t('validation.required') })
-        .max(10, {
-          error: t('validation.customer.post_code.max', { max: 10 }),
-        })
-        .min(1, { error: t('validation.required') }),
+        .string({ error: t('validation.customer.post_code.required') })
+        .min(1, { error: t('validation.customer.post_code.required') })
+        .max(10, { error: t('validation.customer.post_code.max', { max: 10 }) })
+        .regex(/^\d+$/, { error: t('validation.customer.post_code.regex') }),
       address: z.optional(
         z
           .string({ error: t('validation.required') })
@@ -190,6 +189,9 @@ export const validateCustomerRule = (t: any) => {
         z
           .string({ error: t('validation.customer.fax.string') })
           .max(20, { error: t('validation.customer.fax.max', { max: 20 }) })
+          .regex(/^\d+$/, {
+            error: t('validation.customer.fax.regex'),
+          })
           .or(z.literal(''))
           .nullable(),
       ),
