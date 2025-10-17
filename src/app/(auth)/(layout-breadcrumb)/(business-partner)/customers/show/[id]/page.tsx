@@ -199,8 +199,6 @@ export default function CustomerShowPage() {
     { title: boldText(t('customers.show.show'), PRIMARY) },
   ]
 
-  console.log(record)
-
   return (
     <Show
       isLoading={isLoading}

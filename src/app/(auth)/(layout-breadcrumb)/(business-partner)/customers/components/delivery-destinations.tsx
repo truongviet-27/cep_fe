@@ -146,10 +146,10 @@ function DeliveryDestinations(
                         {t('customers.delivery.email')}
                       </span>
                     ),
-                    key: 'email',
+                    key: 'mail',
                     render: (field) => (
                       <Form.Item
-                        name={[field.name, 'email']}
+                        name={[field.name, 'mail']}
                         rules={[rule]}
                         noStyle
                       >
