@@ -12,7 +12,11 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 
-function AgreedPriceList() {
+interface IProps {
+  isShowTitle?: boolean
+}
+
+function AgreedPriceList({ isShowTitle = true }: IProps) {
   const t = useTranslate()
   const router = useRouter()
   const pathname = usePathname()
@@ -47,7 +51,7 @@ function AgreedPriceList() {
       breadcrumbs={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      title={t('agreed_prices.parent')}
+      title={isShowTitle ? t('agreed_prices.parent') : null}
     >
       <TabsAgreedPrice
         isEdit={isEdit}
