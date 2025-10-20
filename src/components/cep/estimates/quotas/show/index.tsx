@@ -271,7 +271,7 @@ function QuotaDetail() {
                   size="middle"
                   onClick={() => {
                     go({
-                      to: `quotas/clone/${id}?actionType=VERSION`,
+                      to: `/quotas/clone/${id}?actionType=VERSION`,
                     })
                   }}
                 >

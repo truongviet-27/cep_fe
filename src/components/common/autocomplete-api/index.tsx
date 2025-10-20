@@ -9,7 +9,7 @@ type SelectPropsForm<
   ValueType = any,
   OptionType extends DefaultOptionType = DefaultOptionType,
 > = SelectProps<ValueType, OptionType> & {
-  name: string
+  name: any
   resource: string
   label?: React.ReactNode
   optionLabel?: any
@@ -19,31 +19,39 @@ type SelectPropsForm<
   rules?: any[]
   AutoCompleteClassName?: string
   labelInValue?: boolean
+  layout?: 'vertical' | 'horizontal'
+  colon?: boolean
+  filter?: string
+  pageSize?: number
   onChangeValue?: (value: any, option?: any) => void
+  onChangeClear?: (fn: ((value: string) => void) | undefined) => void
 }
 
 export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
   const {
     name,
     resource,
+    value,
     label,
     placeholder,
     optionLabel = 'name',
     optionValue = 'id',
-    labelPathDisplay = [optionLabel, 'customer_code'],
+    labelPathDisplay = [optionLabel],
     required,
     rules,
     mode,
     defaultValue,
     disabled = false,
     labelInValue = true,
+    layout = 'vertical',
+    colon = false,
+    pageSize = 100,
     onChangeValue,
-
+    onChangeClear,
     ...restProps
   } = props
 
   const [current, setCurrent] = useState(1)
-  const [pageSize] = useState(100)
   const [isClick, setIsClick] = useState(false)
   const [isPreApply, setIsPreApply] = useState(false)
 
@@ -62,7 +70,6 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     },
     queryOptions: {
       enabled: isClick,
-      refetchOnWindowFocus: false,
     },
     onSearch(value) {
       lastPageAdded.current = 0
@@ -103,7 +110,14 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     )
 
   return (
-    <Form.Item name={name} required={required} label={label} rules={rules}>
+    <Form.Item
+      name={name}
+      required={required}
+      label={label}
+      rules={rules}
+      layout={layout}
+      colon={colon}
+    >
       <Select
         {...selectProps}
         options={options.map((opt) => ({
@@ -131,11 +145,14 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
         disabled={disabled}
         mode={mode}
         onChange={(value) => {
-          console.log(value, 'value')
           if (onChangeValue) {
             onChangeValue(value)
           }
+          if (onChangeClear) {
+            onChangeClear(selectProps.onSearch)
+          }
         }}
+        value={value}
         onClick={() => {
           setIsClick(true)
         }}
