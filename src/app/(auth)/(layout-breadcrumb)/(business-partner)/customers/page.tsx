@@ -220,6 +220,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.code'),
         dataIndex: 'customer_code',
         key: 'customer_code',
+        width: '9%', // Tỷ lệ 1
         render: (text, record) => (
           <Link
             href={
@@ -239,23 +240,29 @@ export default function CustomerListPage() {
         dataIndex: 'name',
         key: 'name',
         align: 'left',
+        width: '18%', // Tỷ lệ 2
+        ellipsis: true,
       },
       {
         title: t('customers.fields.country'),
         dataIndex: 'country',
         key: 'country',
         align: 'left',
+        width: '8%', // Tỷ lệ 3
       },
       {
         title: t('customers.fields.department'),
         dataIndex: 'department_in_charge',
         key: 'person_in_charge_department',
         align: 'left',
+        width: '11%', // Tỷ lệ 4
+        ellipsis: true,
       },
       {
         title: t('customers.fields.unit_price_rank'),
         dataIndex: 'rank',
         key: 'rank',
+        width: '8%', // Tỷ lệ 5
         render: (rank) => (
           <Link
             href={`/ranks`}
@@ -284,10 +291,10 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'credit_rank',
         key: 'credit_rank',
+        width: '8%', // Tỷ lệ 6
         render: (_, record) => (
           <Space direction={'vertical'}>
             <Text strong>{record?.credit_rank}</Text>
-
             <Text className={'!font-light !italic'}>
               {record?.credit_rank_update_at &&
                 dayjs(record?.credit_rank_update_at).format(FORMAT_DATE)}
@@ -310,15 +317,17 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
-        width: 150,
+        width: '8%', // Tỷ lệ 7
         render: (_, record) => (
           <Space direction={'vertical'}>
             <Text strong>
-              {record?.anti_social_rank == 'T' ? '△' : record?.anti_social_rank}
+              {record?.anti_social_rank === 'T'
+                ? '△'
+                : record?.anti_social_rank}
             </Text>
-
             <Text className={'!font-light !italic'}>
-              {dayjs(record?.anti_social_rank_update_at).format(FORMAT_DATE)}
+              {record?.anti_social_rank_update_at &&
+                dayjs(record.anti_social_rank_update_at).format(FORMAT_DATE)}
             </Text>
           </Space>
         ),
@@ -327,31 +336,23 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        render: (_, record) => (
-          <Space direction={'vertical'}>
-            <Text strong>
-              {record?.anti_social_rank == 'T' ? '△' : record?.anti_social_rank}
-            </Text>
-
-            <Text className={'!font-light !italic'}>
-              {dayjs(record?.created_at).format(FORMAT_DATE)}
-            </Text>
-          </Space>
-        ),
+        width: '10%', // Tỷ lệ 8
+        render: (text) => text && dayjs(text).format(FORMAT_DATE),
       },
       {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
         align: 'left',
-        render: (_, record) =>
-          record?.deleted_at && dayjs(record?.deleted_at).format(FORMAT_DATE),
+        width: '10%', // Tỷ lệ 9
+        render: (text) => text && dayjs(text).format(FORMAT_DATE),
       },
       {
         title: t('customers.fields.actions'),
         key: 'actions',
         align: 'center',
         dataIndex: 'actions',
+        width: '10%', // Tỷ lệ 10
         render: (_, record) => (
           <Space>
             {!record.deleted_at && (
@@ -364,51 +365,41 @@ export default function CustomerListPage() {
                 {t('buttons.edit')}
               </EditButton>
             )}
-            &nbsp;
-            <Button
-              size="small"
-              danger={!record.deleted_at}
-              type={record.deleted_at ? 'default' : 'primary'}
-              icon={
-                record.deleted_at ? (
-                  <EditButton
-                    loading={isLoading}
-                    onClick={() =>
-                      mutate({
-                        resource: 'customers',
-                        id: record.id,
-                        values: {},
-                        meta: { action: 'restore' },
-                      })
-                    }
-                    icon={null}
-                    recordItemId={record.id}
-                    size={'small'}
-                    type={'primary'}
-                    disabled={!isFullAccess}
-                  >
-                    {t('buttons.resume')}
-                  </EditButton>
-                ) : (
-                  <DeleteButton
-                    icon={null}
-                    danger
-                    recordItemId={record.id}
-                    size={'small'}
-                    type={'primary'}
-                    className={isFullAccess ? '' : '!bg-gray-100'}
-                    disabled={!isFullAccess}
-                  >
-                    {t('buttons.suspend')}
-                  </DeleteButton>
-                )
-              }
-            />
+            {record.deleted_at ? (
+              <Button
+                size="small"
+                type="primary"
+                loading={isLoading}
+                disabled={!isFullAccess}
+                onClick={() => {
+                  mutate({
+                    resource: 'customers',
+                    id: record.id,
+                    values: {},
+                    meta: { action: 'restore' },
+                  })
+                }}
+              >
+                {t('buttons.resume')}
+              </Button>
+            ) : (
+              <DeleteButton
+                icon={null}
+                danger
+                recordItemId={record.id}
+                size={'small'}
+                type={'primary'}
+                className={isFullAccess ? '' : '!bg-gray-100'}
+                disabled={!isFullAccess}
+              >
+                {t('buttons.suspend')}
+              </DeleteButton>
+            )}
           </Space>
         ),
       },
     ],
-    [t, go],
+    [t, go, isFullAccess, isLoading, mutate, editModalShow],
   )
 
   const handleClear = () => {
@@ -590,6 +581,7 @@ export default function CustomerListPage() {
       </Modal>
 
       <CommonTable
+        tableLayout="fixed"
         onRow={(record) => ({
           className: getRowClassName(record),
         })}

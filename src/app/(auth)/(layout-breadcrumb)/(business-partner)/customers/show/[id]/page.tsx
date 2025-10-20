@@ -41,6 +41,68 @@ export default function CustomerShowPage() {
   const go = useGo()
   const { params } = useParsed()
 
+  const deliveryColumns = [
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.code')}
+        </span>
+      ),
+      dataIndex: 'delivery_address_code',
+      key: 'delivery_address_code',
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.name')}
+        </span>
+      ),
+      dataIndex: 'delivery_address_name',
+      key: 'delivery_address_name',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.address')}
+        </span>
+      ),
+      dataIndex: 'address',
+      key: 'address',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.contact_person')}
+        </span>
+      ),
+      dataIndex: 'contact_person_name',
+      key: 'contact_person_name',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.phone')}
+        </span>
+      ),
+      dataIndex: 'phone',
+      key: 'phone',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.email')}
+        </span>
+      ),
+      dataIndex: 'mail',
+      key: 'mail',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+  ]
+
   const researchColumns = [
     {
       title: (
@@ -305,6 +367,18 @@ export default function CustomerShowPage() {
         {/*  ),*/}
         {/*  i18n: 'customers.show.accounting_contact',*/}
         {/*})}*/}
+
+        {collapseWrapper({
+          i18n: 'customers.show.delivery_destinations',
+          children: (
+            <CommonTable
+              dataSource={record?.delivery_addresses}
+              columns={deliveryColumns}
+              pagination={false}
+              rowKey="id"
+            />
+          ),
+        })}
 
         {collapseWrapper({
           i18n: 'customers.show.corporate_research',

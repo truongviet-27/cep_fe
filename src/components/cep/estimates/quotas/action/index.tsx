@@ -280,6 +280,7 @@ function QuotaAction() {
       form.setFieldsValue({
         title: '',
         type: 'normal',
+        category: 'merchandise',
         customer: null,
         status: 'creating',
         created_at: dayjs(),

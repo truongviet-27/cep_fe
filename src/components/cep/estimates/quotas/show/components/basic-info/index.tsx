@@ -201,6 +201,19 @@ function BasicInfo({ data }: { data: any }) {
 
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'type'}
+              label={boldText(t('quotas.show.estimate_category'))}
+            >
+              {data?.category === 'merchandise'
+                ? t('quotas.show.category.merchandise')
+                : t('quotas.show.category.service')}
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item label={boldText(t('quotas.show.title'))}>
               {data?.title}
             </Form.Item>

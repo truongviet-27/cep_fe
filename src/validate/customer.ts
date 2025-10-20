@@ -83,7 +83,7 @@ export const validateCustomerRule = (t: any) => {
     z.object({
       customer_code: z.optional(
         z
-          .string({ error: t('validation.customer.customer_code.string') })
+          .string({ error: t('validation.customer.customer_code.required') })
           .max(50, {
             error: t('validation.customer.customer_code.max', { max: 50 }),
           })
@@ -93,13 +93,13 @@ export const validateCustomerRule = (t: any) => {
       ),
       name: z.optional(
         z
-          .string({ error: t('validation.customer.name.string') })
+          .string({ error: t('validation.customer.name.required') })
           .max(255, { error: t('validation.customer.name.max', { max: 255 }) }),
       ),
       customer_name_by_kana: z.optional(
         z
           .string({
-            error: t('validation.customer.customer_name_by_kana.string'),
+            error: t('validation.customer.customer_name_by_kana.required'),
           })
           .max(255, {
             error: t('validation.customer.customer_name_by_kana.max', {
@@ -119,7 +119,7 @@ export const validateCustomerRule = (t: any) => {
       ),
       company_type: z.optional(
         z
-          .string({ error: t('validation.customer.company_type.string') })
+          .string({ error: t('validation.customer.company_type.required') })
           .max(50, {
             error: t('validation.customer.company_type.max', { max: 50 }),
           })
@@ -134,7 +134,7 @@ export const validateCustomerRule = (t: any) => {
         .nullable(),
       corporate_number: z.optional(
         z
-          .string({ error: t('validation.customer.corporate_number.string') })
+          .string({ error: t('validation.customer.corporate_number.required') })
           .max(50, {
             error: t('validation.customer.corporate_number.max', { max: 50 }),
           })
@@ -148,7 +148,7 @@ export const validateCustomerRule = (t: any) => {
 
       country: z.optional(
         z
-          .string({ error: t('validation.customer.country.string') })
+          .string({ error: t('validation.customer.country.required') })
           .max(50, {
             error: t('validation.customer.country.max', { max: 50 }),
           })
@@ -157,9 +157,13 @@ export const validateCustomerRule = (t: any) => {
       ),
       post_code: z
         .string({ error: t('validation.customer.post_code.required') })
+        .max(10, {
+          error: t('validation.customer.post_code.max', { max: 10 }),
+        })
         .min(1, { error: t('validation.customer.post_code.required') })
-        .max(10, { error: t('validation.customer.post_code.max', { max: 10 }) })
-        .regex(/^\d+$/, { error: t('validation.customer.post_code.regex') }),
+        .regex(/^[0-9]+$/, {
+          error: t('validation.customer.post_code.numeric_only'),
+        }),
       address: z.optional(
         z
           .string({ error: t('validation.required') })
@@ -170,7 +174,7 @@ export const validateCustomerRule = (t: any) => {
       ),
       building: z.optional(
         z
-          .string({ error: t('validation.customer.building.string') })
+          .string({ error: t('validation.customer.building.required') })
           .max(255, {
             error: t('validation.customer.building.max', { max: 255 }),
           })
@@ -179,7 +183,7 @@ export const validateCustomerRule = (t: any) => {
 
       phone: z.optional(
         z
-          .string({ error: t('validation.customer.phone.string') })
+          .string({ error: t('validation.customer.phone.required') })
           .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
           .regex(/^\d{3,11}$/, {
             error: t('validation.customer.phone.regex'),
@@ -187,11 +191,8 @@ export const validateCustomerRule = (t: any) => {
       ),
       fax: z.optional(
         z
-          .string({ error: t('validation.customer.fax.string') })
+          .string({ error: t('validation.customer.fax.required') })
           .max(20, { error: t('validation.customer.fax.max', { max: 20 }) })
-          .regex(/^\d+$/, {
-            error: t('validation.customer.fax.regex'),
-          })
           .or(z.literal(''))
           .nullable(),
       ),
@@ -212,7 +213,7 @@ export const validateCustomerRule = (t: any) => {
       industry: z
         .optional(
           z
-            .string({ error: t('validation.customer.industry.string') })
+            .string({ error: t('validation.customer.industry.required') })
             .max(255, {
               error: t('validation.customer.industry.max', { max: 255 }),
             }),
@@ -228,7 +229,7 @@ export const validateCustomerRule = (t: any) => {
       person_in_charge_name: z.optional(
         z
           .string({
-            error: t('validation.customer.person_in_charge_name.string'),
+            error: t('validation.customer.person_in_charge_name.required'),
           })
           .max(50, {
             error: t('validation.customer.person_in_charge_name.max', {
@@ -239,7 +240,9 @@ export const validateCustomerRule = (t: any) => {
       person_in_charge_department: z.optional(
         z
           .string({
-            error: t('validation.customer.person_in_charge_department.string'),
+            error: t(
+              'validation.customer.person_in_charge_department.required',
+            ),
           })
           .max(100, {
             error: t('validation.customer.person_in_charge_department.max', {
@@ -250,7 +253,7 @@ export const validateCustomerRule = (t: any) => {
       ),
       person_in_charge_mail: z.optional(
         z
-          .string(t('validation.customer.person_in_charge_mail.email'))
+          .string(t('validation.customer.person_in_charge_mail.required'))
           .email({
             error: t('validation.customer.person_in_charge_mail.email'),
           })
@@ -264,7 +267,7 @@ export const validateCustomerRule = (t: any) => {
       person_in_charge_phone: z.optional(
         z
           .string({
-            error: t('validation.customer.person_in_charge_phone.string'),
+            error: t('validation.customer.person_in_charge_phone.required'),
           })
           .max(20, {
             error: t('validation.customer.person_in_charge_phone.max', {
