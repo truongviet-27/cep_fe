@@ -317,12 +317,12 @@ const AgreedPriceQuotaTab = () => {
             : undefined,
         },
         {
-          field: 'expiration_date_gte',
+          field: 'expiration_date',
           operator: 'gte',
           value: start ? start.format('YYYY-MM-DD') : undefined,
         },
         {
-          field: 'expiration_date_lte',
+          field: 'expiration_date',
           operator: 'lte',
           value: end ? end.format('YYYY-MM-DD') : undefined,
         },
