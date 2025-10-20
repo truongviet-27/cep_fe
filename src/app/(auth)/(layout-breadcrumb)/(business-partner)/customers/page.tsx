@@ -538,7 +538,12 @@ export default function CustomerListPage() {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit" onClick={handleSearch}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={handleSearch}
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button onClick={handleClear}>{t('buttons.clear')}</Button>

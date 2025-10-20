@@ -275,7 +275,7 @@ function Approve() {
             }}
           >
             <Space className="mt-4">
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
               <RefreshButton
