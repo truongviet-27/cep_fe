@@ -64,6 +64,7 @@ export function useController() {
       form.setFieldsValue({
         title: '',
         type: 'normal',
+        category: 'merchandise',
         customer: null,
         status: 'waiting_approve',
         created_at: null,

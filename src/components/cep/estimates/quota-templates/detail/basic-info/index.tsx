@@ -36,9 +36,15 @@ const BasicInfo: React.FC<Props> = (props) => {
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">
-          {t('quota_templates.form.label.quote_category')}
+          {t('quota_templates.form.label.quote_type')}
         </label>
         <span>{detail.type === 'normal' ? '通常' : '販路限定'}</span>
+      </Flex>
+      <Flex className="!mb-4">
+        <label className="w-[150px] font-bold">
+          {t('quota_templates.form.label.quote_category')}
+        </label>
+        <span>{detail.category === 'merchandise' ? '物販' : '役務'}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">

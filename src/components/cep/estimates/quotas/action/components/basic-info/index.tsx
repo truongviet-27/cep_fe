@@ -552,6 +552,32 @@ const BasicInfo = () => {
           </Col>
         </Row>
 
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              required
+              name={'category'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_category'),
+              )}
+            >
+              <Radio.Group
+                defaultValue={'merchandise'}
+                options={[
+                  {
+                    value: 'merchandise',
+                    label: t('quotas.action.basic_info.categories.merchandise'),
+                  },
+                  {
+                    value: 'service',
+                    label: t('quotas.action.basic_info.categories.service'),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item

@@ -37,6 +37,7 @@
     "titleTag": "タグ",
     "label": {
       "quote_number": "見積番号",
+      "quote_type": "見積種類",
       "quote_category": "見積区分",
       "template_name": "テンプレート名",
       "description": "説明",
