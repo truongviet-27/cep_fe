@@ -3,7 +3,7 @@ import { useSelect } from '@refinedev/antd'
 import { Empty, Form, Select, Spin, Typography } from 'antd'
 import { type DefaultOptionType, type SelectProps } from 'antd/es/select'
 import { get, join } from 'lodash'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 type SelectPropsForm<
   ValueType = any,
@@ -49,6 +49,8 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
 
   const [options, setOptions] = useState<any[]>([])
 
+  const lastPageAdded = useRef(0)
+
   const { selectProps, query } = useSelect({
     resource,
     optionLabel,
@@ -63,6 +65,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       refetchOnWindowFocus: false,
     },
     onSearch(value) {
+      lastPageAdded.current = 0
       setIsPreApply(false)
       setCurrent(1)
       if (!value) return []
@@ -71,24 +74,16 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
   })
 
   useEffect(() => {
-    if (query.data?.data) {
+    if (query.data?.data && current > lastPageAdded.current) {
       setOptions((prev) => [...(isPreApply ? prev : []), ...query.data.data])
+
+      lastPageAdded.current = current
     }
   }, [query.data?.data])
-  console.log(current, isPreApply, options, 'options')
 
   const handlePopupScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
       const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
-      console.log(
-        scrollTop + clientHeight >= scrollHeight - 10,
-        !query.isFetching,
-        (query.data?.total ?? 0) > options.length,
-        current,
-        isPreApply,
-        options,
-        'options3',
-      )
       if (
         scrollTop + clientHeight >= scrollHeight - 10 &&
         !query.isFetching &&
@@ -98,7 +93,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
         setCurrent((prev) => prev + 1)
       }
     },
-    [options, query.data?.data],
+    [options, query.isFetching, query.data?.total],
   )
 
   const formatOptionLabel = (option: any) =>
