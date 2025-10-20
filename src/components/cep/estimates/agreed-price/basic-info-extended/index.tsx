@@ -105,11 +105,21 @@ function BasicInfoExtended({
         </Row>
       </Form.Item>
 
-      <Form.Item label={boldText('見積区分')} style={{ marginBottom: 0 }}>
+      <Form.Item label={boldText('見積種類')} style={{ marginBottom: 0 }}>
         <Row>
           <Col xs={24} sm={16} md={10} lg={8} xl={8}>
             <Form.Item>
               {data?.type === 'normal' ? '通常' : '販路限定'}
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form.Item>
+
+      <Form.Item label={boldText('見積区分')} style={{ marginBottom: 0 }}>
+        <Row>
+          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
+            <Form.Item>
+              {data?.category === 'merchandise' ? '物販' : '役務'}
             </Form.Item>
           </Col>
         </Row>

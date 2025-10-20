@@ -50,7 +50,7 @@ const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
         disabled
       />
       <Form.Item
-        label={boldText(t('quota_templates.form.label.quote_category'))}
+        label={boldText(t('quota_templates.form.label.quote_type'))}
         colon={false}
         required
         name="type"
@@ -71,6 +71,32 @@ const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
             {
               value: 'channel_limited',
               label: '販路限定',
+            },
+          ]}
+        />
+      </Form.Item>
+      <Form.Item
+        label={boldText(t('quota_templates.form.label.quote_category'))}
+        colon={false}
+        required
+        name="category"
+        rules={[
+          {
+            required: true,
+            message: t('validation.required'),
+          },
+        ]}
+      >
+        <Radio.Group
+          defaultValue={'merchandise'}
+          options={[
+            {
+              value: 'merchandise',
+              label: t('quotas.action.basic_info.categories.merchandise'),
+            },
+            {
+              value: 'service',
+              label: t('quotas.action.basic_info.categories.service'),
             },
           ]}
         />

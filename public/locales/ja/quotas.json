@@ -86,7 +86,8 @@
     "preview_pdf": "Preview PDF",
     "basic_info": "基本情報",
     "estimate_number": "見積番号",
-    "estimate_type": "見積区分",
+    "estimate_type": "見積種類",
+    "estimate_category": "見積区分",
     "title": "タイトル",
     "customer": "取引先",
     "estimate_date": "見積日",
@@ -99,6 +100,10 @@
     "type": {
       "normal": "通常",
       "limited": "販路限定"
+    },
+    "category": {
+      "merchandise": "物販",
+      "service": "役務"
     },
     "detail_info": "詳細情報",
     "optional_info": "オプション情報",
@@ -270,7 +275,8 @@
       "title": "基本情報",
       "fields": {
         "estimate_number": "見積番号",
-        "estimate_type": "見積区分",
+        "estimate_type": "見積種類",
+        "estimate_category": "見積区分",
         "title": "タイトル",
         "customer": "取引先",
         "estimate_date": "見積日",
@@ -283,6 +289,10 @@
       "types": {
         "normal": "通常",
         "limited": "販路限定"
+      },
+      "categories": {
+        "merchandise": "物販",
+        "service": "役務"
       },
       "labels": {
         "until": "まで",

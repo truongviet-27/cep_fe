@@ -86,6 +86,7 @@ export type QuoteTemplateDetailType = {
   name?: string
   description?: string
   type?: 'normal' | 'channel_limited'
+  category?: 'merchandise' | 'service'
   delivery_method?: string
   payment_due_date?:
     | 'monthly_25'
