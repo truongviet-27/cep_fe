@@ -135,11 +135,6 @@ const AgreedPriceByCustomerTab = () => {
     },
   })
 
-  const handleCustomerClear = () => {
-    form.resetFields()
-    setFilters([], 'replace')
-  }
-
   return (
     <List title="" canCreate={false}>
       <Form colon={false} form={form} layout="vertical" {...searchFormProps}>
@@ -196,7 +191,13 @@ const AgreedPriceByCustomerTab = () => {
                 <Button type="primary" htmlType="submit">
                   {t('agreed_prices.action.search')}
                 </Button>
-                <Button onClick={handleCustomerClear}>
+                <Button
+                  htmlType="reset"
+                  type="default"
+                  onClick={() => {
+                    setFilters([], 'replace')
+                  }}
+                >
                   {t('agreed_prices.action.clear')}
                 </Button>
               </Space>
