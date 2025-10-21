@@ -34,7 +34,7 @@ function TenantSwitchingModal({
     HttpError,
     { q?: string }
   >({
-    syncWithLocation: true,
+    syncWithLocation: false,
     resource: 'tenants',
     onSearch: (values) => {
       const filters: CrudFilters = []

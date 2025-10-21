@@ -389,7 +389,6 @@ function QuotaList() {
     setCurrent,
     tableQuery: { refetch },
   } = useTable({
-    syncWithLocation: true,
     filters: {
       initial: [
         {
@@ -565,7 +564,7 @@ function QuotaList() {
       ...item,
       value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
-  }, [data])
+  }, [data, t])
 
   const statusButton = useCallback(
     (

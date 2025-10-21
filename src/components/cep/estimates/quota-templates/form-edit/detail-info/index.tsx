@@ -157,8 +157,6 @@ const DetailInfo: FC = () => {
                     }
                   : null
 
-                console.log(defaultValue, 'defaultValue')
-
                 return (
                   <Form.Item
                     name={[

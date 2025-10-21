@@ -1,5 +1,5 @@
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
-import { Card, Statistic } from 'antd'
+import { Card } from 'antd'
 
 const StatusDashboard = ({
   statusData,
@@ -17,32 +17,39 @@ const StatusDashboard = ({
 }) => {
   return (
     <div className="flex flex-wrap gap-4">
-      {statusData.map((item) => (
-        <Card
-          key={item.key}
-          style={{
-            width: '100%',
-            display: 'flex',
-            flex: 1,
-            alignItems: 'center',
-            border:
-              status === item.key ? '2px solid #1677ff ' : '1px solid #f0f0f0',
-            background: status === item.key ? '#E6F7FF' : '',
-          }}
-          onClick={() => {
-            onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
-          }}
-          styles={{
-            body: { width: '100%', textAlign: 'center', padding: '10px 10px' },
-          }}
-        >
-          <Statistic
-            value={item.value}
-            valueStyle={{ color: item.color || 'inherit', fontSize: 16 }}
-          />
-          <div style={{ marginTop: 8, fontSize: 12 }}>{item.title}</div>
-        </Card>
-      ))}
+      {statusData.map((item) => {
+        return (
+          <Card
+            key={item.key}
+            style={{
+              width: '100%',
+              display: 'flex',
+              flex: 1,
+              alignItems: 'center',
+              border:
+                status === item.key
+                  ? '2px solid #1677ff '
+                  : '1px solid #f0f0f0',
+              background: status === item.key ? '#E6F7FF' : '',
+            }}
+            onClick={() => {
+              onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
+            }}
+            styles={{
+              body: {
+                width: '100%',
+                textAlign: 'center',
+                padding: '10px 10px',
+              },
+            }}
+          >
+            <div style={{ color: item.color || 'inherit', fontSize: 16 }}>
+              {item.value}
+            </div>
+            <div style={{ marginTop: 8, fontSize: 12 }}>{item.title}</div>
+          </Card>
+        )
+      })}
     </div>
   )
 }
