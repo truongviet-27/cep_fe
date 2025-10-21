@@ -63,7 +63,13 @@ import { type ItemType } from 'antd/lib/menu/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { type MenuInfo } from 'rc-menu/lib/interface'
-import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
+import React, {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 const { RangePicker } = DatePicker
 
@@ -388,6 +394,7 @@ function QuotaList() {
     setFilters,
     setCurrent,
     tableQuery: { refetch },
+    filters,
   } = useTable({
     filters: {
       initial: [
@@ -462,6 +469,15 @@ function QuotaList() {
       ]
     },
   })
+
+  console.log(filters, 'filters')
+
+  useEffect(() => {
+    setStatus(
+      filters?.find((filter: any) => filter?.field === 'status')?.value ||
+        QuotaStatus.Creating,
+    )
+  }, [])
 
   const onChangeStatus = useCallback(
     (status: string | null) => {

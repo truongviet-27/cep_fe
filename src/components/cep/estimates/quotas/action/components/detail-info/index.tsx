@@ -7,6 +7,7 @@ import { Action, type ActionType } from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
+import { ConsumptionTaxEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -63,13 +64,15 @@ function DetailInfo() {
 
     let taxTotal = 0
     let sellTotalWithTax = 0
-    if (consumptionTaxWatch === 'inclusive') {
+    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
       if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor(sellTotal - sellTotal / 1.1)
+        taxTotal = Math.floor(sellTotal - sellTotal / (1 + taxRateWatch / 100))
       } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil(sellTotal - sellTotal / 1.1)
+        taxTotal = Math.ceil(sellTotal - sellTotal / (1 + taxRateWatch / 100))
       } else {
-        taxTotal = Number((sellTotal - sellTotal / 1.1).toFixed(0))
+        taxTotal = Number(
+          (sellTotal - sellTotal / (1 + taxRateWatch / 100)).toFixed(0),
+        )
       }
     } else {
       if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
