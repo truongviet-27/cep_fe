@@ -28,8 +28,6 @@ export const ProductCategoryModal: React.FC<Props> = (props) => {
     },
   })
 
-  console.log(productWatch, 'productWatch')
-
   const handleCreateCategory = () => {
     if (data?.data?.products?.length > 0) {
       form.setFieldValue(

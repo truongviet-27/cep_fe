@@ -25,8 +25,6 @@ export const ProductCategoryModal = ({
   const customerIdWatch = Form.useWatch('customer', form)?.value
   const mainProductWatch = Form.useWatch(name, form)
 
-  console.log(mainProductWatch, 'mainProductWatch')
-
   const isDirtyProduct = (mainProductWatch ?? [])[0]?.products[0]?.product_id
 
   const { open } = useNotification()

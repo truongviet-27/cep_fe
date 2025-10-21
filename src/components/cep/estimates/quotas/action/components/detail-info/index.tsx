@@ -438,7 +438,6 @@ function DetailInfo() {
                             (item: any) => item.id === value,
                           )
 
-                          console.log(value, item, 'itemitem')
                           form.setFieldValue(
                             [
                               'main_product',

@@ -79,8 +79,6 @@ function QuotaList() {
     Form.useFormInstance(),
   )
 
-  console.log(department, 'department')
-
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
