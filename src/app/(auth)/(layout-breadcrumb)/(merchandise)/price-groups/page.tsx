@@ -191,7 +191,7 @@ function Page() {
           </Col>
           <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
             <Space className={'mt-[30px]'}>
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
               <RefreshButton

@@ -194,7 +194,12 @@ export const CorporateNumberSearchModal: React.FC<
           <Col xs={24} md={6}>
             <Form.Item className={'!mt-7.5'}>
               <Space>
-                <Button type="primary" htmlType="submit" disabled={!watchName}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={!watchName}
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button onClick={handleClear}>{t('buttons.clear')}</Button>

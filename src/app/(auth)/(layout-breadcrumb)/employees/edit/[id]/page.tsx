@@ -233,10 +233,14 @@ export default function EmployeeEdit() {
           style={{ marginTop: -4 }}
           label={boldText(t('employees.fields.role'))}
           name="role_id"
-          hidden={!permission?.is_module_admin}
         >
-          {employeeData?.role?.name === 'module_admin' ? (
-            <Text>{t(`employees.roles.${employeeData.role.name}`)}</Text>
+          {!permission?.is_module_admin ||
+          employeeData?.role?.name === 'module_admin' ? (
+            <Text>
+              {employeeData?.role?.name
+                ? t(`employees.roles.${employeeData.role.name}`)
+                : '---'}
+            </Text>
           ) : (
             <Radio.Group buttonStyle="solid">
               {isArray(roles?.data) &&
