@@ -998,14 +998,16 @@ function QuotaList() {
                     style={{
                       width: '100%',
                     }}
+                    className="group"
                   >
                     <Space
                       style={{
                         width: '100%',
                         justifyContent: 'space-between',
                         fontSize: 14,
-                        color: '#ccc',
+                        // color: '#ccc',
                       }}
+                      className="font-normal text-[#ccc] group-hover:text-[#000000E0]"
                     >
                       {t('quotas.actions.bulk_processing')}
                       <DownOutlined
