@@ -4,9 +4,9 @@ import CoreAutoComplete from '@components/cep/estimates/quotas/action/components
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import { Action, type ActionType } from '@components/common/action'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
-import { useSelect } from '@refinedev/antd'
-import { useResource, useTranslate } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -21,7 +21,6 @@ import {
   InputNumber,
   Modal,
   Row,
-  Select,
   Typography,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
@@ -111,19 +110,6 @@ function DetailInfo() {
       form.getFieldValue('tax_rate'),
     )
   }, [taxRateWatch, mainProductWatch, consumptionTaxWatch])
-
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-    pagination: {
-      mode: 'server',
-      pageSize: 100,
-    },
-    queryOptions: {
-      enabled: isProductManager,
-    },
-  })
 
   const handleAddProduct = (groupIndex: number, productIndex: number) => {
     const values = form?.getFieldValue('main_product') || []
@@ -268,6 +254,10 @@ function DetailInfo() {
                           max: 255,
                           message: '',
                         },
+                        {
+                          pattern: /^[A-Z0-9-]+$/,
+                          message: '',
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -291,8 +281,7 @@ function DetailInfo() {
                 } else {
                   if (isProductManager) {
                     return (
-                      <Form.Item
-                        className="ant-form-item-hidden-margin"
+                      <CoreAutocompleteAPI
                         name={[
                           record.index,
                           'products',
@@ -305,85 +294,85 @@ function DetailInfo() {
                             message: '',
                           },
                         ]}
-                      >
-                        <Select
-                          {...selectPropsProduct}
-                          placeholder={t(
-                            'quotas.action.detail_info.placeholders.product_search',
-                          )}
-                          allowClear
-                          showSearch
-                          filterOption={(input, option) =>
-                            ((option?.label ?? '') as string)
-                              .toLowerCase()
-                              .includes(input.toLowerCase())
-                          }
-                          onSearch={() => {}}
-                          disabled={!customerWatch}
-                          onChange={(value) => {
-                            const item: any = query.data?.data.find(
-                              (item: any) => item.id === value,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'package_id',
-                              ],
-                              null,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'name',
-                              ],
-                              item?.name,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'code',
-                              ],
-                              item?.code,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'unit',
-                              ],
-                              item?.unit,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'cost_price',
-                              ],
-                              item?.cost_price,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'selling_price',
-                              ],
-                              item?.sale_price,
-                            )
+                        labelInValue={false}
+                        resource="products"
+                        placeholder={t(
+                          'quotas.action.detail_info.placeholders.product_search',
+                        )}
+                        disabled={!customerWatch}
+                        onChangeValue={(valueOption) => {
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'package_id',
+                            ],
+                            null,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'name',
+                            ],
+                            valueOption?.name,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'code',
+                            ],
+                            valueOption?.code,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'unit',
+                            ],
+                            valueOption?.unit,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'cost_price',
+                            ],
+                            valueOption?.cost_price,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'selling_price',
+                            ],
+                            valueOption?.sale_price,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'quantity',
+                            ],
+                            1,
+                          )
+
+                          if (!valueOption) {
                             form.setFieldValue(
                               [
                                 'main_product',
@@ -392,24 +381,11 @@ function DetailInfo() {
                                 record.index2,
                                 'quantity',
                               ],
-                              1,
+                              0,
                             )
-
-                            if (!value) {
-                              form.setFieldValue(
-                                [
-                                  'main_product',
-                                  record.index,
-                                  'products',
-                                  record.index2,
-                                  'quantity',
-                                ],
-                                0,
-                              )
-                            }
-                          }}
-                        />
-                      </Form.Item>
+                          }
+                        }}
+                      />
                     )
                   }
                   return (
@@ -623,6 +599,7 @@ function DetailInfo() {
                         message: '',
                       },
                     ]}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
@@ -647,6 +624,7 @@ function DetailInfo() {
                         message: '',
                       },
                     ]}
+                    normalize={(val) => val ?? 1}
                   >
                     <InputNumber min={1} precision={0} controls={false} />
                   </Form.Item>

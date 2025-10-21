@@ -1,10 +1,11 @@
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
-import { Card, Statistic } from 'antd'
+import { Card, Spin } from 'antd'
 
 const StatusDashboard = ({
   statusData,
   status,
   onChangeStatus,
+  isLoading,
 }: {
   statusData: {
     title: string
@@ -14,35 +15,47 @@ const StatusDashboard = ({
   }[]
   status: string | null
   onChangeStatus: (status: string | null) => void
+  isLoading: boolean
 }) => {
   return (
     <div className="flex flex-wrap gap-4">
-      {statusData.map((item) => (
-        <Card
-          key={item.key}
-          style={{
-            width: '100%',
-            display: 'flex',
-            flex: 1,
-            alignItems: 'center',
-            border:
-              status === item.key ? '2px solid #1677ff ' : '1px solid #f0f0f0',
-            background: status === item.key ? '#E6F7FF' : '',
-          }}
-          onClick={() => {
-            onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
-          }}
-          styles={{
-            body: { width: '100%', textAlign: 'center', padding: '10px 10px' },
-          }}
-        >
-          <Statistic
-            value={item.value}
-            valueStyle={{ color: item.color || 'inherit', fontSize: 16 }}
-          />
-          <div style={{ marginTop: 8, fontSize: 12 }}>{item.title}</div>
-        </Card>
-      ))}
+      {statusData.map((item) => {
+        return (
+          <Card
+            key={item.key}
+            style={{
+              width: '100%',
+              display: 'flex',
+              flex: 1,
+              alignItems: 'center',
+              border:
+                status === item.key
+                  ? '2px solid #1677ff '
+                  : '1px solid #f0f0f0',
+              background: status === item.key ? '#E6F7FF' : '',
+            }}
+            onClick={() => {
+              onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
+            }}
+            styles={{
+              body: {
+                width: '100%',
+                textAlign: 'center',
+                padding: '10px 10px',
+              },
+            }}
+          >
+            {isLoading ? (
+              <Spin size="small" />
+            ) : (
+              <div style={{ color: item.color || 'inherit', fontSize: 16 }}>
+                {item.value}
+              </div>
+            )}
+            <div style={{ marginTop: 8, fontSize: 12 }}>{item.title}</div>
+          </Card>
+        )
+      })}
     </div>
   )
 }

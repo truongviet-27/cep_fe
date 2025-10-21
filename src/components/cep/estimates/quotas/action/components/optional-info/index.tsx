@@ -2,22 +2,13 @@
 import CoreAutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { Action, type ActionType } from '@components/common/action'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
-import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Button,
-  Card,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-} from 'antd'
+import { Button, Card, Flex, Form, Input, InputNumber, Modal } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
 
@@ -25,26 +16,11 @@ function OptionalInfo() {
   const t = useTranslate()
   const form = Form.useFormInstance()
 
-  // const taxRateWatch = Form.useWatch('tax_rate', form)
-  // const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
   const customerWatch = Form.useWatch('customer', form)
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const isProductManager =
     parameterSettings?.get && parameterSettings?.get('products')
-
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-    pagination: {
-      mode: 'server',
-      pageSize: 100,
-    },
-    queryOptions: {
-      enabled: isProductManager,
-    },
-  })
 
   const handleAddProduct = (groupIndex: number, productIndex: number) => {
     const values = form?.getFieldValue('optional_product') || []
@@ -174,6 +150,10 @@ function OptionalInfo() {
                           max: 255,
                           message: '',
                         },
+                        {
+                          pattern: /^[A-Z0-9-]+$/,
+                          message: '',
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -199,96 +179,214 @@ function OptionalInfo() {
                 } else {
                   if (isProductManager) {
                     return (
-                      <Form.Item
-                        className="ant-form-item-hidden-margin"
+                      // <Form.Item
+                      //   className="ant-form-item-hidden-margin"
+                      //   name={[
+                      //     record.index,
+                      //     'products',
+                      //     record.index2,
+                      //     'product_id',
+                      //   ]}
+                      // >
+                      //   <Select
+                      //     {...selectPropsProduct}
+                      //     placeholder={t(
+                      //       'quotas.action.detail_info.placeholders.product_search',
+                      //     )}
+                      //     allowClear
+                      //     showSearch
+                      //     filterOption={(input, option) =>
+                      //       ((option?.label ?? '') as string)
+                      //         .toLowerCase()
+                      //         .includes(input.toLowerCase())
+                      //     }
+                      //     onSearch={() => {}}
+                      //     style={{
+                      //       width: 200,
+                      //     }}
+                      //     disabled={!customerWatch}
+                      //     onChange={(value) => {
+                      //       const item: any = query.data?.data.find(
+                      //         (item: any) => item.id === value,
+                      //       )
+                      //       form.setFieldValue(
+                      //         [
+                      //           'optional_product',
+                      //           record.index,
+                      //           'products',
+                      //           record.index2,
+                      //           'package_id',
+                      //         ],
+                      //         null,
+                      //       )
+                      //       form.setFieldValue(
+                      //         [
+                      //           'optional_product',
+                      //           record.index,
+                      //           'products',
+                      //           record.index2,
+                      //           'name',
+                      //         ],
+                      //         item?.name,
+                      //       )
+                      //       form.setFieldValue(
+                      //         [
+                      //           'optional_product',
+                      //           record.index,
+                      //           'products',
+                      //           record.index2,
+                      //           'code',
+                      //         ],
+                      //         item?.code,
+                      //       )
+                      //       form.setFieldValue(
+                      //         [
+                      //           'optional_product',
+                      //           record.index,
+                      //           'products',
+                      //           record.index2,
+                      //           'unit',
+                      //         ],
+                      //         item?.unit,
+                      //       )
+                      //       form.setFieldValue(
+                      //         [
+                      //           'optional_product',
+                      //           record.index,
+                      //           'products',
+                      //           record.index2,
+                      //           'cost_price',
+                      //         ],
+                      //         item?.cost_price,
+                      //       )
+                      //       form.setFieldValue(
+                      //         [
+                      //           'optional_product',
+                      //           record.index,
+                      //           'products',
+                      //           record.index2,
+                      //           'selling_price',
+                      //         ],
+                      //         item?.sale_price,
+                      //       )
+                      //       form.setFieldValue(
+                      //         [
+                      //           'optional_product',
+                      //           record.index,
+                      //           'products',
+                      //           record.index2,
+                      //           'quantity',
+                      //         ],
+                      //         1,
+                      //       )
+
+                      //       if (!value) {
+                      //         form.setFieldValue(
+                      //           [
+                      //             'optional_product',
+                      //             record.index,
+                      //             'products',
+                      //             record.index2,
+                      //             'quantity',
+                      //           ],
+                      //           0,
+                      //         )
+                      //       }
+                      //     }}
+                      //   />
+                      // </Form.Item>
+                      <CoreAutocompleteAPI
                         name={[
                           record.index,
                           'products',
                           record.index2,
                           'product_id',
                         ]}
-                      >
-                        <Select
-                          {...selectPropsProduct}
-                          placeholder={t(
-                            'quotas.action.detail_info.placeholders.product_search',
-                          )}
-                          allowClear
-                          showSearch
-                          filterOption={(input, option) =>
-                            ((option?.label ?? '') as string)
-                              .toLowerCase()
-                              .includes(input.toLowerCase())
-                          }
-                          onSearch={() => {}}
-                          style={{
-                            width: 200,
-                          }}
-                          disabled={!customerWatch}
-                          onChange={(value) => {
-                            const item: any = query.data?.data.find(
-                              (item: any) => item.id === value,
-                            )
-                            form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'package_id',
-                              ],
-                              null,
-                            )
-                            form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'name',
-                              ],
-                              item?.name,
-                            )
-                            form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'code',
-                              ],
-                              item?.code,
-                            )
-                            form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'unit',
-                              ],
-                              item?.unit,
-                            )
-                            form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'cost_price',
-                              ],
-                              item?.cost_price,
-                            )
-                            form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'selling_price',
-                              ],
-                              item?.sale_price,
-                            )
+                        rules={[
+                          {
+                            required: true,
+                            message: '',
+                          },
+                        ]}
+                        labelInValue={false}
+                        resource="products"
+                        placeholder={t(
+                          'quotas.action.detail_info.placeholders.product_search',
+                        )}
+                        disabled={!customerWatch}
+                        onChangeValue={(valueOption) => {
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'package_id',
+                            ],
+                            null,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'name',
+                            ],
+                            valueOption?.name,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'code',
+                            ],
+                            valueOption?.code,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'unit',
+                            ],
+                            valueOption?.unit,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'cost_price',
+                            ],
+                            valueOption?.cost_price,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'selling_price',
+                            ],
+                            valueOption?.sale_price,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'quantity',
+                            ],
+                            1,
+                          )
+
+                          if (!valueOption) {
                             form.setFieldValue(
                               [
                                 'optional_product',
@@ -297,24 +395,11 @@ function OptionalInfo() {
                                 record.index2,
                                 'quantity',
                               ],
-                              1,
+                              0,
                             )
-
-                            if (!value) {
-                              form.setFieldValue(
-                                [
-                                  'optional_product',
-                                  record.index,
-                                  'products',
-                                  record.index2,
-                                  'quantity',
-                                ],
-                                0,
-                              )
-                            }
-                          }}
-                        />
-                      </Form.Item>
+                          }
+                        }}
+                      />
                     )
                   }
 
@@ -500,6 +585,7 @@ function OptionalInfo() {
                       record.index2,
                       'selling_price',
                     ]}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
@@ -518,6 +604,7 @@ function OptionalInfo() {
                   <Form.Item
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
@@ -539,7 +626,14 @@ function OptionalInfo() {
                     'products',
                     record.index2,
                     'cost_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 const selling =
                   form.getFieldValue([
@@ -548,7 +642,14 @@ function OptionalInfo() {
                     'products',
                     record.index2,
                     'selling_price',
-                  ]) || 0
+                  ]) *
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'quantity',
+                    ]) || 0
 
                 form.setFieldValue(
                   [

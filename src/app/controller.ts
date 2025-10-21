@@ -32,6 +32,7 @@ const getTenantForSuperAdmin = async () => {
     const data = await res.json()
     const firstTenant = data?.data?.items?.[0]
     const fallbackId = firstTenant?.id as string | undefined
+
     if (fallbackId) {
       const fallbackName = (firstTenant?.name as string) || null
       setTenant(fallbackId, fallbackName)
