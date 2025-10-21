@@ -17,6 +17,7 @@ import {
   getExpiryDate,
   getQuotaStatusStyle,
 } from '@components/cep/estimates/quotas/utils'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -26,7 +27,6 @@ import {
   EditButton,
   ShowButton,
   useModal,
-  useSelect,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -73,6 +73,11 @@ function QuotaList() {
   const apiUrl = useApiUrl()
 
   const { permission } = useUserStore.getState()
+
+  const department = Form.useWatch(
+    'department_in_charge',
+    Form.useFormInstance(),
+  )
 
   const go = useGo()
 
@@ -384,7 +389,6 @@ function QuotaList() {
     setCurrent,
     tableQuery: { refetch },
   } = useTable({
-    syncWithLocation: true,
     filters: {
       initial: [
         {
@@ -474,24 +478,24 @@ function QuotaList() {
     [status, setFilters, setCurrent],
   )
 
-  const { selectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-    pagination: {
-      mode: 'server',
-      pageSize: 100,
-    },
-    onSearch(value) {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
-    },
-  })
+  // const { selectProps } = useSelect({
+  //   resource: 'departments',
+  //   optionLabel: 'name',
+  //   optionValue: 'id',
+  //   pagination: {
+  //     mode: 'server',
+  //     pageSize: 100,
+  //   },
+  //   onSearch(value) {
+  //     return [
+  //       {
+  //         field: 'q',
+  //         operator: 'eq',
+  //         value,
+  //       },
+  //     ]
+  //   },
+  // })
 
   const handleOptions = (data: any[]) => {
     let filter = ''
@@ -509,7 +513,11 @@ function QuotaList() {
     return filter as QuotaStatus
   }
 
-  const { data, refetch: refetchStats } = useCustom({
+  const {
+    data,
+    refetch: refetchStats,
+    isFetching,
+  } = useCustom({
     method: 'get',
     url: `${apiUrl}/quotas/stats`,
   })
@@ -560,7 +568,7 @@ function QuotaList() {
       ...item,
       value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
-  }, [data])
+  }, [data, t])
 
   const statusButton = useCallback(
     (
@@ -727,6 +735,7 @@ function QuotaList() {
           statusData={statusDashboard}
           status={status}
           onChangeStatus={onChangeStatus}
+          isLoading={isFetching}
         />
         <div className="my-4">
           <Row gutter={[24, 0]}>
@@ -794,7 +803,7 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
-              <Form.Item
+              {/* <Form.Item
                 label={
                   <span className="font-bold">
                     {t('quotas.filters.department')}
@@ -802,8 +811,8 @@ function QuotaList() {
                 }
                 layout="vertical"
                 name={'department_in_charge'}
-              >
-                <Select
+              > */}
+              {/* <Select
                   {...selectProps}
                   allowClear
                   showSearch
@@ -815,8 +824,21 @@ function QuotaList() {
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
-                />
-              </Form.Item>
+                /> */}
+              <CoreAutocompleteAPI
+                name="department_in_charge"
+                resource="departments"
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.department')}
+                  </span>
+                }
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback(department)
+                }}
+              />
+              {/* </Form.Item> */}
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item

@@ -27,7 +27,6 @@ export async function POST(req: Request) {
 
     const cepId = getOrgFromToken(accessToken)?.id
 
-    console.log(cepId, clientTenantId, 'clientTenantId')
     const xTenant = (cepId || clientTenantId) as string | undefined
 
     const headers: HeaderType = {

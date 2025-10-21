@@ -25,6 +25,8 @@ export const ProductCategoryModal = ({
   const customerIdWatch = Form.useWatch('customer', form)?.value
   const mainProductWatch = Form.useWatch(name, form)
 
+  const isDirtyProduct = (mainProductWatch ?? [])[0]?.products[0]?.product_id
+
   const { open } = useNotification()
 
   const { data } = useCustom({
@@ -37,24 +39,45 @@ export const ProductCategoryModal = ({
 
   const handleCreateCategory = () => {
     if (data?.data?.products?.length > 0) {
-      form.setFieldValue(name, [
-        ...mainProductWatch,
-        {
-          group_name: data?.data.products[0]?.category?.name,
-          products: data?.data.products?.map((item: any) => ({
-            product_id: item.id,
-            package_id: null,
-            name: item?.name,
-            code: item?.code,
-            unit: item?.unit?.name,
-            cost_price: item?.cost_price,
-            quantity: 1,
-            selling_price: item?.selling_price,
-            profit_margin: 0,
-            is_add_total: true,
-          })),
-        },
-      ])
+      form.setFieldValue(
+        name,
+        isDirtyProduct
+          ? [
+              ...mainProductWatch,
+              {
+                group_name: data?.data.products[0]?.category?.name,
+                products: data?.data.products?.map((item: any) => ({
+                  product_id: item.id,
+                  package_id: null,
+                  name: item?.name,
+                  code: item?.code,
+                  unit: item?.unit?.name,
+                  cost_price: item?.cost_price,
+                  quantity: 1,
+                  selling_price: item?.selling_price,
+                  profit_margin: 0,
+                  is_add_total: true,
+                })),
+              },
+            ]
+          : [
+              {
+                group_name: data?.data.products[0]?.category?.name,
+                products: data?.data.products?.map((item: any) => ({
+                  product_id: item.id,
+                  package_id: null,
+                  name: item?.name,
+                  code: item?.code,
+                  unit: item?.unit?.name,
+                  cost_price: item?.cost_price,
+                  quantity: 1,
+                  selling_price: item?.selling_price,
+                  profit_margin: 0,
+                  is_add_total: true,
+                })),
+              },
+            ],
+      )
       close()
     } else {
       open &&
