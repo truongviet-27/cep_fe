@@ -55,7 +55,8 @@
     "partial_match": "部分一致",
     "select": "選択してください",
     "file_url": "ファイルのURLを入力",
-    "please_choose_files": "ファイルを選択してください"
+    "please_choose_files": "ファイルを選択してください",
+    "input_please": "入力してください"
   },
   "notifications": {
     "success": "成功しました",

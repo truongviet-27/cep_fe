@@ -89,10 +89,11 @@ function DetailInfo() {
     } else {
       sellTotalWithTax = sellTotal
     }
-    const profitRate =
-      costTotal > 0 && sellTotal > 0
-        ? ((sellTotal - costTotal) / sellTotal) * 100
-        : 0
+    const profitRate = Number(
+      (sellTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0).toFixed(
+        2,
+      ),
+    )
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
@@ -266,7 +267,7 @@ function DetailInfo() {
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -413,7 +414,7 @@ function DetailInfo() {
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -424,7 +425,7 @@ function DetailInfo() {
               dataIndex: 'unit',
               key: 'unit',
               align: 'center',
-              width: 100,
+              width: 200,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -460,10 +461,10 @@ function DetailInfo() {
                         },
                       ]}
                       style={{
-                        width: 100,
+                        width: '100%',
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -533,7 +534,7 @@ function DetailInfo() {
                         },
                       ]}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -683,14 +684,13 @@ function DetailInfo() {
                     'profit_margin',
                   ],
                   Number(
-                    (selling > 0
-                      ? ((selling - cost) / selling) * 100
-                      : 0
-                    ).toFixed(2),
+                    selling > 0
+                      ? (((selling - cost) / selling) * 100).toFixed(2)
+                      : 0,
                   ),
                 )
 
-                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
+                return `${selling > 0 ? (((selling - cost) / selling) * 100).toFixed(2) : 0}%`
               },
             },
             {
@@ -978,7 +978,7 @@ function DetailInfo() {
                 {t('quotas.action.detail_info.summary.total_profit_margin')}
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {profitRate.toFixed(2) || 0}%
+                {profitRate}%
               </Text>
               <Form.Item name="total_profit_margin" hidden>
                 <InputNumber />

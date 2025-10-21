@@ -117,6 +117,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       rules={rules}
       layout={layout}
       colon={colon}
+      className="ant-form-item-hidden-margin"
     >
       <Select
         {...selectProps}
