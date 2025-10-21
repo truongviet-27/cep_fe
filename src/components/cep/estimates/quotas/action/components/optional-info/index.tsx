@@ -186,12 +186,6 @@ function OptionalInfo() {
                           record.index2,
                           'product_id',
                         ]}
-                        rules={[
-                          {
-                            required: true,
-                            message: '',
-                          },
-                        ]}
                         labelInValue={false}
                         resource="products"
                         placeholder={t(
