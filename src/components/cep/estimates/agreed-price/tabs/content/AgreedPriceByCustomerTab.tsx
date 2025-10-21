@@ -118,7 +118,7 @@ const AgreedPriceByCustomerTab = () => {
       return [
         {
           field: 'customer_name',
-          operator: 'contains',
+          operator: 'eq',
           value: v.business_partner_code_name,
         },
         {
