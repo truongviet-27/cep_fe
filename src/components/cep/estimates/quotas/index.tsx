@@ -888,7 +888,11 @@ function QuotaList() {
 
             <Col xs={12} md={6}>
               <div className="mt-7 mb-6 flex gap-2">
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button
