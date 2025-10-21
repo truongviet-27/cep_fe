@@ -10,8 +10,8 @@ import {
   isDescendant,
   maxDepthOf,
   mergeEditingIntoTree,
-  removeById,
   removeNodeById,
+  removeNodeUsingId,
   toggleAll,
   toggleOpen,
   toSaveTree,
@@ -27,18 +27,11 @@ import {
   useResource,
   useUpdate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Form,
-  message,
-  type TreeDataNode,
-  type TreeProps,
-  Typography,
-} from 'antd'
+import { Form, message, type TreeDataNode, type TreeProps } from 'antd'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useMemo, useState } from 'react'
-
-const { Title } = Typography
 
 const TEMP_PREFIX = 'tmp-'
 const MAX_DEPTH = 3
@@ -53,6 +46,7 @@ function useProductCategories() {
   const [category, setCategory] = useState<string | null>(null)
 
   const [form] = Form.useForm()
+  const [formFields] = Form.useForm()
 
   const { resource: rs } = useResource()
   const resource = String(rs?.name)
@@ -61,6 +55,7 @@ function useProductCategories() {
   const { tableProps } = useTable<ITree>()
   const { mutate: createRow } = useCreate({
     resource,
+    invalidates: [],
   })
   const apiUrl = useApiUrl()
   const { mutate: updateAll } = useCustomMutation()
@@ -148,15 +143,23 @@ function useProductCategories() {
   }
 
   const del = (id: string | number) => {
-    setTree((prev) => removeById(prev, id))
+    setTree((prev) => removeNodeUsingId(prev, id))
     setDirty(true)
   }
 
   const save = () => {
-    const patched = mergeEditingIntoTree(tree, editing)
+    const patched = mergeEditingIntoTree(tree, editing, formFields)
 
     setDirty(false)
-    handleUpdateAll(toSaveTree(patched))
+    formFields
+      .validateFields()
+      .then(() => {
+        handleUpdateAll(toSaveTree(patched))
+        setTree(patched)
+      })
+      .catch(() => {
+        message.warning(t('product_categories.validate.name_required'))
+      })
   }
 
   const startEdit = (id: string | number) => {
@@ -166,6 +169,7 @@ function useProductCategories() {
       ...prev,
       [id]: { name: node.name, original: node.name },
     }))
+    formFields.setFieldValue(node.id, node.name)
     setDirty(true)
   }
 
@@ -185,11 +189,9 @@ function useProductCategories() {
     const node = findNode(tree, id)
     if (!node) return
 
-    const draft = editing[id]
-    const name = (draft?.name ?? '').trim()
+    const name = formFields.getFieldValue(node.id)
     if (!name) {
       message.warning(t('product_categories.validate.name_required'))
-      return
       return
     }
 
@@ -206,13 +208,11 @@ function useProductCategories() {
         },
         {
           onSuccess: ({ data }) => {
-            const newId = String(data?.id)
             setTree((prev) =>
               updateNode(prev, id, (n: CatNode) => ({
                 ...n,
-                id: newId,
-                name,
                 _isNew: false,
+                ...data,
               })),
             )
             setEditing((prev) => {
@@ -231,7 +231,7 @@ function useProductCategories() {
             // setTree((prev) =>
             //   updateNode(prev, id, (n: CatNode) => ({
             //     ...n,
-            //     name,
+            //     ...data,
             //   })),
             // )
             setEditing((prev) => {
@@ -254,22 +254,18 @@ function useProductCategories() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('merchandise.merchandise')),
     },
     {
-      title: (
-        <Title level={5}>{t('product_categories.product_categories')}</Title>
-      ),
+      title: boldText(t('product_categories.product_categories'), PRIMARY),
     },
   ]
 
   // load initial data
   useEffect(() => {
-    if (tableProps?.dataSource) setTree(tableProps.dataSource as CatNode[])
+    if (tableProps?.dataSource) {
+      setTree(tableProps.dataSource as CatNode[])
+    }
   }, [tableProps?.dataSource])
 
   const onDrop: NonNullable<TreeProps['onDrop']> = (info) => {
@@ -334,13 +330,13 @@ function useProductCategories() {
           key: String(n.id),
           title: (
             <TreeRow
+              formFields={formFields}
               isNew={n._isNew}
               cat={n}
               hasChildren={Boolean(n.children?.length)}
               onToggle={toggle}
               onAddChild={addChild}
               onStartEdit={startEdit}
-              onChangeName={changeName}
               onSave={saveEdit}
               onCancel={cancelEdit}
               editingName={editing?.[String(n.id)]?.name}

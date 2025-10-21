@@ -101,15 +101,15 @@ export const List: React.FC<ListProps & CustomProps> = ({
         // {...(headerProps ?? {})}
       >
         <div
-          className="min-h-[82vh] bg-white px-8 py-8 shadow-sm"
+          className="min-h-[82vh] bg-white px-[18px] py-[18px] shadow-sm"
           {...(contentProps ?? {})}
         >
-          <div className={'mb-5 flex items-center justify-between'}>
+          <div className={'flex items-center justify-between'}>
             {isAutoHeading && <AutoHeading i18n={i18nHeading} />}
             {/*{defaultExtra}*/}
           </div>
           {children}
-          <div className={'mt-10 flex justify-end space-x-3'}>
+          <div className={'mt-4 flex justify-end space-x-3'}>
             {footer}
             {/*  <Button*/}
             {/*    type="default"*/}

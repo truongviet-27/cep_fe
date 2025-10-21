@@ -1,24 +1,22 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
+import AccountingContact from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/accounting-contact'
+import AddressContact from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/address-contact'
+import BasicInformation from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/basic-Information'
+import { CorporateNumberSearchModal } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/corporate-number-search-modal'
+import { CorporateResearchFormSection } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/corporate-research-form-section'
+import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/delivery-destinations'
+import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/instances'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
-import AccountingContact from '@app/(auth)/(layout-breadcrumb)/customers/components/accounting-contact'
-import AddressContact from '@app/(auth)/(layout-breadcrumb)/customers/components/address-contact'
-import BasicInformation from '@app/(auth)/(layout-breadcrumb)/customers/components/basic-Information'
-import { CorporateNumberSearchModal } from '@app/(auth)/(layout-breadcrumb)/customers/components/corporate-number-search-modal'
-import { CorporateResearchFormSection } from '@app/(auth)/(layout-breadcrumb)/customers/components/corporate-research-form-section'
-import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/customers/components/delivery-destinations'
-import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Form, Modal, Space, Typography } from 'antd'
+import { Button, Form, Modal, Space } from 'antd'
 import React from 'react'
 
 import { useCustomerCreate } from './use-customer-create'
-
-const { Title } = Typography
 
 export default function CustomerCreatePage() {
   const hookProps = useCustomerCreate()
@@ -31,7 +29,6 @@ export default function CustomerCreatePage() {
     saveButtonProps,
     modalFormCorporate,
     handleFinish,
-    refetchCodeGen,
     form,
   } = hookProps
 
@@ -41,13 +38,9 @@ export default function CustomerCreatePage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner')),
     },
-    { title: <Title level={5}>{t('customers.create.create')}</Title> },
+    { title: boldText(t('customers.create.create'), PRIMARY) },
   ]
 
   return (
@@ -73,8 +66,7 @@ export default function CustomerCreatePage() {
           person_in_charge_department: null,
           person_in_charge_mail: null,
           name: null,
-          price_rank_id: null,
-          department_in_charge: null,
+          department_in_charge_id: null,
           post_code: null,
           address: null,
           phone: null,
@@ -107,10 +99,7 @@ export default function CustomerCreatePage() {
       </Form>
 
       <Modal open={modalOpen} onCancel={closeModal} footer={null}>
-        <CodeIssueSettingEdit
-          modalProps={modalFormProps}
-          refetchParent={refetchCodeGen}
-        />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
 
       <Modal

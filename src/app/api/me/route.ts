@@ -11,7 +11,7 @@ type HeaderType = {
 
 export async function POST(req: Request) {
   try {
-    const { token } = await req.json()
+    const { token, tenantId: clientTenantId } = await req.json()
     let accessToken = token
     if (!accessToken) {
       const session = await getServerSession(authOptions)
@@ -27,9 +27,11 @@ export async function POST(req: Request) {
 
     const cepId = getOrgFromToken(accessToken)?.id
 
+    const xTenant = (cepId || clientTenantId) as string | undefined
+
     const headers: HeaderType = {
       Authorization: `Bearer ${accessToken}`,
-      'x-tenant-id': cepId,
+      ...(xTenant ? { 'x-tenant-id': xTenant } : {}),
     }
 
     const [permission, parameterSettings] = await Promise.all([

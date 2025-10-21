@@ -1,22 +1,16 @@
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
-import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
-import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
+import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/styles.module.css'
 import boldText from '@utility/bold-text'
 import { Button, Collapse, Form, Input } from 'antd'
-import React from 'react'
 
 const { Panel } = Collapse
 
 function AccountingContact(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
-  const { t, rule, handleCopyContact, form } = props
-
-  console.log(
-    form.getFieldValue('person_in_charge_name'),
-    'person_in_charge_name',
-  )
+  const { t, rule, handleCopyContact } = props
 
   return (
     <Collapse

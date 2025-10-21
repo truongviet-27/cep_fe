@@ -27,7 +27,7 @@ import { Rank } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
-import Link from 'next/link'
+import boldText from '@utility/bold-text'
 
 const { Title, Text } = Typography
 
@@ -62,10 +62,14 @@ export default function Page() {
         </Button>
       ),
     },
-    { dataIndex: 'name', title: t('ranks.fields.name') },
-    { dataIndex: 'rate', title: t('ranks.fields.rate') },
-    { dataIndex: 'customer', title: t('ranks.fields.number_of_customers') },
-    { dataIndex: 'note', title: t('ranks.fields.remarks') },
+    { dataIndex: 'name', title: t('ranks.fields.name'), align: 'left' },
+    { dataIndex: 'rate', title: t('ranks.fields.rate'), align: 'right' },
+    {
+      dataIndex: 'number_of_customers',
+      title: t('ranks.fields.number_of_customers'),
+      align: 'right',
+    },
+    { dataIndex: 'note', title: t('ranks.fields.remarks'), align: 'left' },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
@@ -96,14 +100,10 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('merchandise.merchandise')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner')),
     },
     {
-      title: <Title level={5}>{t('ranks.list.list')}</Title>,
+      title: boldText(t('ranks.list.list'), PRIMARY),
     },
   ]
 
@@ -135,7 +135,7 @@ export default function Page() {
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
-            <Text strong>{t('departments.list.filters.search_label')}</Text>
+            <Text strong>{t('ranks.list.filters.search_label')}</Text>
             <Form.Item name="q">
               <Input
                 className={'mt-2'}
@@ -146,7 +146,7 @@ export default function Page() {
           </Col>
           <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
             <Space className={'mt-[30px]'}>
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
               <RefreshButton

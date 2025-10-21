@@ -1,5 +1,6 @@
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
+import ProductSelect from '@components/common/product-select'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import type {
@@ -7,16 +8,7 @@ import type {
   QuotaTemplateProductItemRequest,
 } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import {
-  Button,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Typography,
-} from 'antd'
+import { Button, Flex, Form, Input, InputNumber, Modal, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { type FC, useState } from 'react'
 
@@ -31,7 +23,6 @@ const OptionalInfo: FC = () => {
   const {
     form,
     optionalProducts,
-    selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
@@ -84,9 +75,14 @@ const OptionalInfo: FC = () => {
                     children: (
                       <Form.Item
                         name={[record.index, 'group_name']}
-                        style={{
-                          marginBottom: 0,
-                        }}
+                        className="ant-form-item-hidden-margin"
+                        required
+                        rules={[
+                          {
+                            required: true,
+                            message: t('validation.required'),
+                          },
+                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -119,6 +115,27 @@ const OptionalInfo: FC = () => {
                   return { props: { colSpan: 0 } }
                 }
 
+                const productId = form.getFieldValue([
+                  'optional_product',
+                  record.index,
+                  'products',
+                  record.index2,
+                  'product_id',
+                ])
+
+                const defaultValue = productId
+                  ? {
+                      value: productId,
+                      label: form.getFieldValue([
+                        'optional_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'name',
+                      ]),
+                    }
+                  : null
+
                 return (
                   <Form.Item
                     name={[
@@ -127,19 +144,17 @@ const OptionalInfo: FC = () => {
                       record.index2,
                       'product_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
-                    <Select
-                      placeholder="商品名・サービス名で検索"
-                      allowClear
-                      showSearch
-                      filterOption={false}
-                      style={{
-                        width: 200,
-                      }}
-                      {...selectPropsProduct}
+                    <ProductSelect
+                      defaultValue={defaultValue}
                       onChange={(value) =>
                         onChangeProductName(value, record.index, record.index2)
                       }
@@ -184,6 +199,27 @@ const OptionalInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+
+                const packageId = form.getFieldValue([
+                  'optional_product',
+                  record.index,
+                  'products',
+                  record.index2,
+                  'package_id',
+                ])
+                const defaultValue = packageId
+                  ? {
+                      value: packageId,
+                      label: form.getFieldValue([
+                        'optional_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'package_name',
+                      ]),
+                    }
+                  : null
+
                 return (
                   <Form.Item
                     name={[
@@ -193,11 +229,18 @@ const OptionalInfo: FC = () => {
                       record.index2,
                       'package_id',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <PackageSelect
+                      key={
+                        record.index +
+                        '-' +
+                        record.index2 +
+                        '-' +
+                        optionalProducts?.[record.index]?.products?.[
+                          record.index2
+                        ].product_id
+                      }
                       productId={form.getFieldValue([
                         'optional_product',
                         record.index,
@@ -205,7 +248,7 @@ const OptionalInfo: FC = () => {
                         record.index2,
                         'product_id',
                       ])}
-                      onChange={(value) =>
+                      onChange={(value, option) => {
                         form.setFieldValue(
                           [
                             'optional_product',
@@ -216,18 +259,23 @@ const OptionalInfo: FC = () => {
                           ],
                           value,
                         )
-                      }
+
+                        form.setFieldValue(
+                          [
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          option.selling_price,
+                        )
+                      }}
                       defaultOptions={
                         optionalProducts?.[record.index].products[record.index2]
                           ?.packagings ?? []
                       }
-                      defaultValue={form.getFieldValue([
-                        'optional_product',
-                        record.index,
-                        'products',
-                        record.index2,
-                        'package_id',
-                      ])}
+                      defaultValue={defaultValue}
                     />
                   </Form.Item>
                 )
@@ -268,9 +316,7 @@ const OptionalInfo: FC = () => {
                       record.index2,
                       'selling_price',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>
@@ -288,9 +334,7 @@ const OptionalInfo: FC = () => {
                 return (
                   <Form.Item
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>

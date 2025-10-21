@@ -3,17 +3,9 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Breadcrumb,
-  Button,
-  Divider,
-  Flex,
-  Form,
-  Space,
-  Spin,
-  Typography,
-} from 'antd'
+import { Breadcrumb, Button, Divider, Flex, Form, Space, Spin } from 'antd'
 import Link from 'next/link'
 import { type FC } from 'react'
 
@@ -24,12 +16,11 @@ import NoteForm from './note'
 import OptionalInfo from './optional-info'
 import TagForm from './tag'
 
-const { Title } = Typography
-
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const { isUpdateMode, isLoading, methods } = useController()
+  const { isUpdateMode, isLoading, methods, expirationDateWatch } =
+    useController()
 
   return (
     <PageContainer
@@ -39,19 +30,16 @@ const QuoteTemplateFormEditContainer: FC = () => {
             {
               title: (
                 <Link href="/quota-templates">
-                  <Title level={5} style={{ color: PRIMARY }}>
-                    {t('quota_templates.breadcrumb.home')}
-                  </Title>
+                  {boldText(t('quota_templates.breadcrumb.home'))}
                 </Link>
               ),
             },
             {
-              title: (
-                <Title level={5}>
-                  {isUpdateMode
-                    ? t('quota_templates.breadcrumb.quotasUpdate')
-                    : t('quota_templates.breadcrumb.quotasRegister')}
-                </Title>
+              title: boldText(
+                isUpdateMode
+                  ? t('quota_templates.breadcrumb.quotasUpdate')
+                  : t('quota_templates.breadcrumb.quotasRegister'),
+                PRIMARY,
               ),
             },
           ]}
@@ -66,7 +54,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
     >
       <Spin spinning={isLoading}>
         <Form {...methods.formProps} labelCol={{ span: 2 }} labelAlign="left">
-          <BasicInfo />
+          <BasicInfo expirationDate={expirationDateWatch} />
           <DetailInfo />
           <OptionalInfo />
           <NoteForm />

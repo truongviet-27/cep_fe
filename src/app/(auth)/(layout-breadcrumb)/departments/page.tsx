@@ -25,6 +25,7 @@ import {
 } from '@refinedev/core'
 import { Department, PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { CSV_LINK, PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -142,13 +143,28 @@ export default function Page() {
         )
       },
     },
-    { dataIndex: 'name', title: t('departments.fields.name') },
+    { dataIndex: 'name', title: t('departments.fields.name'), align: 'left' },
     {
       dataIndex: 'number_of_employee',
       title: t('departments.fields.number_of_employee'),
+      align: 'right',
     },
-    { dataIndex: 'created_by', title: t('approve_routes.show.creator') },
-    { dataIndex: 'updated_by', title: t('departments.fields.updated_by') },
+    {
+      dataIndex: 'author',
+      title: t('common.created_by'),
+      align: 'left',
+      render: (value: any) => {
+        return value?.name || '---'
+      },
+    },
+    {
+      dataIndex: 'editor',
+      title: t('common.updated_by'),
+      align: 'left',
+      render: (value: any) => {
+        return value?.name || '---'
+      },
+    },
     {
       dataIndex: 'created_at',
       title: t('departments.fields.created_at'),
@@ -174,14 +190,10 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('departments.departments')}
-        </Title>
-      ),
+      title: boldText(t('departments.departments')),
     },
     {
-      title: <Title level={5}>{t('departments.list.list')}</Title>,
+      title: boldText(t('departments.list.list'), PRIMARY),
     },
   ]
 
@@ -208,7 +220,16 @@ export default function Page() {
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
             <Text strong>{t('departments.list.filters.search_label')}</Text>
-            <Form.Item name="q">
+            <Form.Item
+              name="q"
+              validateTrigger={['onChange', 'onBlur']}
+              rules={[
+                {
+                  max: 100,
+                  message: 'コード名は100文字以内で入力してください',
+                },
+              ]}
+            >
               <Input
                 className={'mt-2'}
                 placeholder={t('departments.list.filters.search_placeholder')}
@@ -218,7 +239,7 @@ export default function Page() {
           </Col>
           <Col xs={6} sm={4} md={6} style={{ textAlign: 'left' }}>
             <Space className={'mt-[30px]'}>
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
               <RefreshButton
@@ -257,15 +278,13 @@ export default function Page() {
         </Row>
       </Form>
 
-      <div className="mt-6">
-        <TableDnd<RowVM>
-          tableProps={tableProps}
-          dataSource={rows.map((r, i) => ({ ...r, __index: i }))}
-          columns={columns}
-          getRowId={(r) => getRowId(r)}
-          onDragEnd={onDragEnd}
-        />
-      </div>
+      <TableDnd<RowVM>
+        tableProps={tableProps}
+        dataSource={rows.map((r, i) => ({ ...r, __index: i }))}
+        columns={columns}
+        getRowId={(r) => getRowId(r)}
+        onDragEnd={onDragEnd}
+      />
     </List>
   )
 }

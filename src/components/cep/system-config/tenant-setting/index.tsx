@@ -8,14 +8,13 @@ import Right from '@components/cep/system-config/tenant-setting/components/Right
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import '@react-pdf-viewer/core/lib/styles/index.css'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
-import '@react-pdf-viewer/default-layout/lib/styles/index.css'
 import { useForm } from '@refinedev/antd'
 import {
   useApiUrl,
   useCustom,
   useCustomMutation,
+  useGo,
   useTranslate,
   useUpdate,
 } from '@refinedev/core'
@@ -24,9 +23,9 @@ import {
   type QuotaFormSettingResponse,
 } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Row, Space, Spin, Typography } from 'antd'
-import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const { Title } = Typography
@@ -34,19 +33,20 @@ const { Title } = Typography
 type FormType = QuotaFormSettingResponse & {
   company_logo_image_file_key: string | null
   company_seal_image_file_key: string | null
+  company_logo_image_name: string | null
+  company_seal_image_name: string | null
 }
 
 function TenantSetting() {
   const t = useTranslate()
+  const go = useGo()
   const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const { formProps, saveButtonProps, form } = useForm<FormType>()
 
   const [previewPdf, setPreviewPdf] = useState('')
 
-  if (!parameterSettings.get(ParameterResourceEnum.QUOTATION_FORMS)) {
-    redirect('/403')
-  }
-
-  const { formProps, saveButtonProps, form } = useForm<FormType>()
+  const logo_image = Form.useWatch('company_logo_image', form)
+  const seal_image = Form.useWatch('company_seal_image', form)
 
   const [isPdf, setIsPdf] = useState(false)
   const apiUrl = useApiUrl()
@@ -69,9 +69,9 @@ function TenantSetting() {
       id: form.getFieldValue('id'),
       company_logo_image:
         form.getFieldValue('company_logo_image_file_key') ??
-        form
-          .getFieldValue('company_logo_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (logo_image
+          ? logo_image.match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null),
       is_enable_delivery: !values.is_enable_delivery,
       is_enable_delivery_method: !values.is_enable_delivery_method,
       is_enable_payment_due_date: !values.is_enable_payment_due_date,
@@ -80,9 +80,9 @@ function TenantSetting() {
       is_display_company_seal_image: !values.is_display_company_seal_image,
       company_seal_image:
         form.getFieldValue('company_seal_image_file_key') ??
-        form
-          .getFieldValue('company_seal_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (seal_image
+          ? seal_image.match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null),
     }
     mutate(
       {
@@ -99,20 +99,26 @@ function TenantSetting() {
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
 
-  const handlePreviewPdf = () => {
+  const handlePreviewPdf = async () => {
+    await form.validateFields()
+
     const customValues: QuotaFormSettingResponse = {
       ...form.getFieldsValue(),
       id: form.getFieldValue('id'),
       company_logo_image:
-        form.getFieldValue('company_logo_image_file_key') ??
-        form
-          .getFieldValue('company_logo_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (form.getFieldValue('company_logo_image_file_key') ??
+        form.getFieldValue('company_logo_image'))
+          ? form
+              .getFieldValue('company_logo_image')
+              .match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null,
       company_seal_image:
-        form.getFieldValue('company_seal_image_file_key') ??
-        form
-          .getFieldValue('company_seal_image')
-          .match(/imports.*?\.(jpg|jpeg|png)/i)[0],
+        (form.getFieldValue('company_seal_image_file_key') ??
+        form.getFieldValue('company_seal_image'))
+          ? form
+              .getFieldValue('company_seal_image')
+              .match(/imports.*?\.(jpg|jpeg|png)/i)[0]
+          : null,
       is_enable_delivery: !form.getFieldValue('is_enable_delivery'),
       is_enable_delivery_method: !form.getFieldValue(
         'is_enable_delivery_method',
@@ -146,6 +152,14 @@ function TenantSetting() {
   }
 
   useEffect(() => {
+    if (!parameterSettings?.get?.(ParameterResourceEnum.QUOTATION_FORMS)) {
+      go({
+        to: '/403',
+      })
+    }
+  }, [parameterSettings, go])
+
+  useEffect(() => {
     if (data?.data) {
       form.setFieldsValue({
         ...data.data,
@@ -166,16 +180,10 @@ function TenantSetting() {
         <Breadcrumbs
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('system_config.system_config')}
-                </Title>
-              ),
+              title: boldText(t('system_config.system_config')),
             },
             {
-              title: (
-                <Title level={5}>{t('tenant_settings.tenant_settings')}</Title>
-              ),
+              title: boldText(t('tenant_settings.tenant_settings'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -214,7 +222,7 @@ function TenantSetting() {
               handlePreviewPdf()
             }}
           >
-            {'プレビュー'}
+            プレビュー
           </Button>
           <Button
             type="primary"

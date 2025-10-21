@@ -9,6 +9,7 @@ import TableDnd from '@components/common/table-dnd'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { CreateButton } from '@refinedev/antd'
+import boldText from '@utility/bold-text'
 import { Button, Col, Form, Input, Row, Space } from 'antd'
 
 export default function Page() {
@@ -47,66 +48,58 @@ export default function Page() {
       }
     >
       <Form {...searchFormProps} layout="vertical" colon={false}>
-        <Row
-          align="middle"
-          justify="space-between"
-          wrap={false}
-          gutter={[16, 16]}
-          style={{ width: '100%' }}
-        >
-          <Col flex="auto">
-            <Row align="middle" gutter={16} wrap={false}>
-              <Col>
-                <div style={{ fontWeight: 600 }}>
-                  {t('product_units.columns.unit_name')}
-                </div>
-              </Col>
-              <Col flex="360px">
-                <Form.Item name="name_lk" style={{ margin: 0 }}>
-                  <Input
-                    placeholder={t('placeholders.partial_match')}
-                    allowClear
-                    size="middle"
-                  />
-                </Form.Item>
-              </Col>
-              <Col>
-                <Form.Item label={<></>}>
-                  <Space size="middle">
-                    <Button htmlType="submit" type="primary" size="middle">
-                      {t('buttons.search')}
-                    </Button>
-                    <Button
-                      htmlType="reset"
-                      onClick={() => {
-                        searchFormProps.form?.resetFields()
-                        setFilters([], 'replace')
-                      }}
-                      size="middle"
-                      type="default"
-                    >
-                      {t('buttons.clear')}
-                    </Button>
-                  </Space>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Col>
-          <Col>
-            <CreateButton
-              type="primary"
-              size="middle"
-              onClick={addNew}
-              icon={null}
-              disabled={!isFullAccess}
+        <Row align="middle" gutter={[16, 0]}>
+          <Col xs={24} sm={12} md={6}>
+            <Form.Item
+              name="name_lk"
+              style={{ margin: 0 }}
+              label={boldText(t('product_units.columns.unit_name'))}
             >
-              {t('buttons.create_new')}
-            </CreateButton>
+              <Input
+                placeholder={t('placeholders.partial_match')}
+                allowClear
+                size="middle"
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={18}>
+            <Space size="middle" className="mt-4 flex w-full justify-between">
+              <Space>
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  size="middle"
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.search')}
+                </Button>
+                <Button
+                  htmlType="reset"
+                  onClick={() => {
+                    searchFormProps.form?.resetFields()
+                    setFilters([], 'replace')
+                  }}
+                  size="middle"
+                  type="default"
+                >
+                  {t('buttons.clear')}
+                </Button>
+              </Space>
+              <CreateButton
+                type="primary"
+                size="middle"
+                onClick={addNew}
+                icon={null}
+                disabled={!isFullAccess}
+              >
+                {t('buttons.create_new')}
+              </CreateButton>
+            </Space>
           </Col>
         </Row>
       </Form>
 
-      <div className="mt-8">
+      <div className="mt-2">
         <TableDnd<RowVM>
           tableProps={tableProps}
           dataSource={dataSource}

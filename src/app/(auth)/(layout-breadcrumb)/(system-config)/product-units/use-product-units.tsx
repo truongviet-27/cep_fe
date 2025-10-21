@@ -13,12 +13,14 @@ import {
 } from '@refinedev/core'
 import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Input, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isString } from 'lodash'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { TagRow } from '@app/(auth)/(layout-breadcrumb)/(system-config)/tags/use-tags'
 
 const { Title } = Typography
 
@@ -33,55 +35,15 @@ export type UnitRow = {
 }
 export type RowVM = UnitRow & { __index: string }
 
-type FormValues = { rows: RowVM[] }
-
-const EditableNameCell = React.memo(
-  ({ control, index, t }: { control: any; index: number; t: any }) => {
-    const isEditing = useWatch({ control, name: `rows.${index}._isEditing` })
-    const nameValue = useWatch({ control, name: `rows.${index}.name` })
-
-    return isEditing ? (
-      <Controller
-        control={control}
-        name={`rows.${index}.name`}
-        rules={{
-          required: t('validation.required'),
-          maxLength: {
-            value: 20,
-            message: t('validation.customer.person_in_charge_phone.max', {
-              max: 20,
-            }),
-          },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <div className={'-mb-2 !h-fit'}>
-            <Input
-              {...field}
-              required
-              size="middle"
-              placeholder={t('product_units.columns.unit_name')}
-              status={error ? 'error' : ''}
-            />
-            {error?.message && (
-              <p className="!h-2 text-[0.7rem] text-red-600">
-                {error?.message}
-              </p>
-            )}
-          </div>
-        )}
-      />
-    ) : (
-      <Typography.Text>{nameValue}</Typography.Text>
-    )
-  },
-)
+type FormValues = { rows: UnitRow[] }
 
 export default function useProductUnits() {
   const t = useTranslate()
   const { resource } = useResource()
   const { hasFullAccessModule } = useUserStore.getState()
   const [pageSize, setPageSize] = React.useState(10)
-
+  const [totalPage, setTotalPage] = React.useState(0)
+  const forceUpdate = useRef(false)
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_UNIT_EDIT)
   const {
     tableProps,
@@ -89,6 +51,7 @@ export default function useProductUnits() {
     setFilters,
     setPageSize: setPageSize2,
     current,
+    pageCount,
   } = useTable<UnitRow>({
     syncWithLocation: true,
     onSearch: (values: any) => {
@@ -107,13 +70,13 @@ export default function useProductUnits() {
 
   const apiUrl = useApiUrl()
 
-  const { control, getValues, resetField, setFocus, setValue, reset } =
+  const { control, getValues, resetField, reset, setError } =
     useForm<FormValues>({
       defaultValues: { rows: [{ name: '', is_disable: true, order: 0 }] },
       mode: 'onTouched',
     })
 
-  const { remove, update, move, fields } = useFieldArray({
+  const { remove, update, move, fields, insert } = useFieldArray({
     control,
     name: 'rows',
     keyName: '_key',
@@ -167,12 +130,14 @@ export default function useProductUnits() {
 
   const originalRef = useRef<Record<string, UnitRow>>({})
 
-  const keyOf = (row: RowVM, idx: number): string =>
-    row?.id?.toString() ?? row?._key ?? row?.__index ?? `tmp-${idx}`
+  const keyOf = (row: TagRow, idx: number): string =>
+    row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
   useEffect(() => {
-    setPageSize(10)
-    setPageSize2(10)
+    if (forceUpdate.current) {
+      setPageSize(10)
+      setPageSize2(10)
+    }
     const ds = (tableProps?.dataSource as UnitRow[]) ?? []
     reset({
       rows: ds.map((r, index) => ({
@@ -186,38 +151,30 @@ export default function useProductUnits() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: <Title level={5}>{t('product_units.product_units')}</Title>,
+      title: boldText(t('product_units.product_units'), PRIMARY),
     },
   ]
 
   const addNew = () => {
     setPageSize((total) => total + 1)
-    const order = tableProps?.dataSource?.[1]?.order ?? 0
-    const oldRows = fields.map((r) => ({
-      ...r,
-      __index: String(Number(r.__index) + 1),
-    }))
+    setTotalPage(
+      (pre) =>
+        (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
+    )
+    forceUpdate.current = true
+    const order = (getValues(`rows.0`)?.order ?? 0) + 1
 
-    setValue('rows', [
-      {
-        id: crypto?.randomUUID?.(),
-        name: '',
-        order,
-        is_disable: false,
-        _isNew: true,
-        _isEditing: true,
-        __index: '0',
-      },
-      ...oldRows,
-    ])
-    setFocus(`rows.0.name`)
+    insert(0, {
+      id: crypto?.randomUUID?.(),
+      name: '',
+      order,
+      is_disable: false,
+      _isNew: true,
+      _isEditing: true,
+    })
   }
 
   const startEdit = (index: number) => {
@@ -241,7 +198,6 @@ export default function useProductUnits() {
         ...orig,
         _isNew: false,
         _isEditing: false,
-        __index: String(index),
       })
     } else {
       resetField(`rows.${index}.name`)
@@ -251,8 +207,12 @@ export default function useProductUnits() {
     delete originalRef.current[stableKey]
   }
 
-  const { mutate: createRow } = useCreate()
-  const { mutate: updateRow, isLoading: saving } = useUpdate()
+  const { mutate: createRow } = useCreate({
+    invalidates: [],
+  })
+  const { mutate: updateRow, isLoading: saving } = useUpdate({
+    invalidates: [],
+  })
   const { mutate: deleteRow } = useDelete()
 
   const saveRow = (index: number) => {
@@ -260,7 +220,13 @@ export default function useProductUnits() {
     const name = (row.name ?? '').trim()
     const is_disable = !!row.is_disable
     const order = (fields?.[1]?.order ?? 0) + 1
-    if (!name) return
+
+    if (!name) {
+      setError(`rows.${index}.name`, {
+        message: '',
+      })
+      return
+    }
 
     if (row._isNew) {
       createRow(
@@ -274,7 +240,6 @@ export default function useProductUnits() {
               is_disable,
               _isNew: false,
               _isEditing: false,
-              __index: String(index),
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
@@ -297,7 +262,6 @@ export default function useProductUnits() {
               is_disable,
               _isNew: false,
               _isEditing: false,
-              __index: String(index),
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
@@ -319,7 +283,11 @@ export default function useProductUnits() {
     )
   }
 
-  const dataSource: RowVM[] = useMemo(() => fields, [fields, watchedRows])
+  const dataSource: RowVM[] = useMemo(
+    () =>
+      (watchedRows as UnitRow[]).map((r, i) => ({ ...r, __index: String(i) })),
+    [watchedRows],
+  )
 
   const getRowIdForDnd = (r: RowVM): string => {
     const idx = Number(r.__index)
@@ -342,9 +310,37 @@ export default function useProductUnits() {
       title: '単位名',
       dataIndex: 'name',
       key: 'name',
-      render: (_v, _record, index) => (
-        <EditableNameCell control={control} index={index} t={t} />
-      ),
+      align: 'left',
+      render: (_val, record, index) => {
+        const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
+        return isEditing ? (
+          <Controller
+            control={control}
+            rules={{ required: t('validation.required') }}
+            name={`rows.${index}.name`}
+            render={({ field, fieldState: { error } }) => (
+              <div className={'-mb-2 !h-fit'}>
+                <Input
+                  required
+                  size="middle"
+                  placeholder={t('product_units.columns.unit_name')}
+                  status={error ? 'error' : ''}
+                  {...field}
+                />
+                {error?.message && (
+                  <p className="!h-2 text-[0.7rem] text-red-600">
+                    {error?.message}
+                  </p>
+                )}
+              </div>
+            )}
+          />
+        ) : (
+          <Typography.Text>
+            {(watchedRows[index] as TagRow | undefined)?.name}
+          </Typography.Text>
+        )
+      },
     },
     {
       title: '有効・無効',
@@ -427,6 +423,11 @@ export default function useProductUnits() {
       pagination: {
         ...tableProps?.pagination,
         pageSize,
+        onShowSizeChange: (current: number, size: number) => {
+          setPageSize(size)
+        },
+        total:
+          totalPage === 0 ? (tableProps.pagination as any)?.total : totalPage,
       },
     },
     searchFormProps,

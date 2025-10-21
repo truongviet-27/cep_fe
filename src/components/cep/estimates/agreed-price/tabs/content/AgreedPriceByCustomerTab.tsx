@@ -118,16 +118,16 @@ const AgreedPriceByCustomerTab = () => {
       return [
         {
           field: 'customer_name',
-          operator: 'contains',
+          operator: 'eq',
           value: v.business_partner_code_name,
         },
         {
-          field: 'department_id_in[]',
+          field: 'department_id',
           operator: 'in',
           value: depId ? [depId] : undefined,
         },
         {
-          field: 'rank_id_in[]',
+          field: 'rank_id',
           operator: 'in',
           value: rankId ? [rankId] : undefined,
         },
@@ -135,13 +135,8 @@ const AgreedPriceByCustomerTab = () => {
     },
   })
 
-  const handleCustomerClear = () => {
-    form.resetFields()
-    setFilters([], 'replace')
-  }
-
   return (
-    <List title="">
+    <List title="" canCreate={false}>
       <Form colon={false} form={form} layout="vertical" {...searchFormProps}>
         <Row gutter={[16, 16]}>
           <Col xs={24} md={4}>
@@ -196,7 +191,13 @@ const AgreedPriceByCustomerTab = () => {
                 <Button type="primary" htmlType="submit">
                   {t('agreed_prices.action.search')}
                 </Button>
-                <Button onClick={handleCustomerClear}>
+                <Button
+                  htmlType="reset"
+                  type="default"
+                  onClick={() => {
+                    setFilters([], 'replace')
+                  }}
+                >
                   {t('agreed_prices.action.clear')}
                 </Button>
               </Space>

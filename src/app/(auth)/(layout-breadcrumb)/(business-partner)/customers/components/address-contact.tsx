@@ -1,8 +1,8 @@
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
-import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { SelectPagination } from '@components/common/select-pagination'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
@@ -31,8 +31,16 @@ function AddressContact(
   const { t, rule, form } = props
 
   const industry = Form.useWatch('industry', form)
+  const temp_industry = Form.useWatch('temp_industry', form)
 
-  const isOtherSelected = industry === null
+  const isOtherSelected = !industryOptions.some(
+    ({ value }) => value == industry && industry !== null,
+  )
+
+  if (isOtherSelected && !temp_industry) {
+    form.setFieldValue('temp_industry', industry)
+    form.setFieldValue('industry', null)
+  }
 
   return (
     <Collapse
@@ -106,6 +114,9 @@ function AddressContact(
                   placeholder={t('placeholders.select')}
                   options={industryOptions}
                   style={{ minWidth: 200 }}
+                  onSelect={(value) => {
+                    console.log(value, 'eeee')
+                  }}
                   allowClear
                 />
               </Form.Item>
@@ -123,7 +134,7 @@ function AddressContact(
         </Form.Item>
 
         <Form.Item
-          className={'!-mt-6'}
+          className={'!-mt-3'}
           label={boldText(t('customers.show.listing_classification'))}
           name="listing_classification"
           rules={[rule]}
@@ -162,15 +173,13 @@ function AddressContact(
                   resource: 'departments',
                 }}
                 formItemProps={{
-                  name: 'department_in_charge',
+                  name: 'department_in_charge_id',
                   rules: [rule],
                   required: true,
                 }}
-                optionLabel={'name'}
-                optionValue={'name'}
                 selectComponentProps={{
                   placeholder: t('placeholders.select'),
-                  style: { maxWidth: 560, minWidth: '150px' },
+                  style: { maxWidth: 560, width: '250px' },
                 }}
               />
             </Col>

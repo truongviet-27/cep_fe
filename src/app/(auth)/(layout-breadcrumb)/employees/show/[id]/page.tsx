@@ -9,7 +9,8 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import { EditButton, useSelect } from '@refinedev/antd'
 import { useResource, useShow, useTranslate } from '@refinedev/core'
 import type { Employee } from '@sdk/hey-api'
-import { DARK_RED, GREY, PRIMARY, WARNING } from '@utility/color'
+import boldText from '@utility/bold-text'
+import { DARK_RED, GREY, RED, PRIMARY, WARNING } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -23,25 +24,16 @@ export default function EmployeeShow() {
   const { queryResult } = useShow<Employee>()
   const employeeData = queryResult?.data?.data
 
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
-
-  const departmentName = String(
-    departmentSelectProps.options?.find(
-      (option) => option.value === employeeData?.department?.id,
-    )?.label ?? '---',
-  )
-
-  const colorMap: Record<'employee' | 'manager', string> = {
+  const colorMap: Record<'employee' | 'manager' | 'module_admin', string> = {
     manager: DARK_RED,
     employee: GREY,
+    module_admin: RED,
   }
 
   const roleColor = employeeData?.role
-    ? colorMap[employeeData?.role?.name as 'employee' | 'manager']
+    ? colorMap[
+        employeeData?.role?.name as 'employee' | 'manager' | 'module_admin'
+      ]
     : 'default'
 
   const renderValue = (value: string | undefined | null) => {
@@ -58,13 +50,9 @@ export default function EmployeeShow() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>{t('employees.show.show')}</Title> },
+    { title: boldText(t('employees.show.show'), PRIMARY) },
   ]
 
   return (
@@ -73,21 +61,21 @@ export default function EmployeeShow() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={t('employees.show.show')}
+      i18nHeading={'employees.show.show'}
       footerButtons={
         <ShowMoreInfo
           descriptions={[
             {
               title: t('common.created_by'),
               value: `${(employeeData as any)?.created_by?.name ?? '---'} ${dayjs(
-                (employeeData as any)?.created_by?.date,
+                (employeeData as any)?.created_at,
               ).format(FORMAT_DATE_TIME)}`,
             },
             {
               title: t('common.updated_by'),
-              value: (employeeData as any)?.updated_by
-                ? `${(employeeData as any).updated_by.name} ${dayjs(
-                    (employeeData as any).updated_by.date,
+              value: (employeeData as any)?.editor
+                ? `${(employeeData as any).editor.name} ${dayjs(
+                    (employeeData as any).updated_at,
                   ).format(FORMAT_DATE_TIME)}`
                 : '---',
             },
@@ -111,7 +99,7 @@ export default function EmployeeShow() {
           {renderValue(employeeData?.email)}
         </DetailItem>
         <DetailItem label={t('employees.fields.department')}>
-          {renderValue(departmentName)}
+          {renderValue(employeeData?.department?.name)}
         </DetailItem>
         <DetailItem label={t('employees.fields.role')}>
           {employeeData?.role ? (

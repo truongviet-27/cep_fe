@@ -36,7 +36,7 @@
   },
   "buttons": {
     "autoNumbering": "自動採番",
-    "createNewCategory": "新規作成",
+    "createNewCategory": "新規登録",
     "update": "更新",
     "addRow": "行を追加",
     "register": "登録",
@@ -69,7 +69,7 @@
       "clearButton": "クリア"
     },
     "actions": {
-      "createNewButton": "新規作成",
+      "createNewButton": "新規登録",
       "csvBulkUploadLink": "CSV一括登録"
     },
     "table": {
@@ -95,7 +95,7 @@
   "codeNumberingSettings": "コード採番設定はこちら",
   "newRegistration": "新規登録",
   "pleaseSelect": "選択してください",
-  "productCategoryEdit": "商品カテゴリ編集",
+  "productCategoryEdit": "商品カテゴリ新規登録",
   "breadcrumb": {
     "home": "商品",
     "productList": "商品一覧",

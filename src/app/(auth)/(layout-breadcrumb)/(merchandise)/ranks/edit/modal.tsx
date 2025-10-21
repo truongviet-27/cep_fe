@@ -66,9 +66,16 @@ export const RankModalEdit: React.FC<Props> = ({
         labelAlign="left"
         colon={false}
       >
-        <Form.Item required label={boldText(t('ranks.fields.code'))}>
+        <Form.Item
+          required={isShow ? undefined : true}
+          label={boldText(t('ranks.fields.code'))}
+        >
           <Flex>
-            <Form.Item required name="code" rules={[validateRankRule(t)]}>
+            <Form.Item
+              required={isShow ? undefined : true}
+              name="code"
+              rules={[validateRankRule(t)]}
+            >
               {isShow ? (
                 getFieldData('code')
               ) : (
@@ -85,8 +92,8 @@ export const RankModalEdit: React.FC<Props> = ({
         </Form.Item>
 
         <Form.Item
-          className={'!-mt-6'}
-          required
+          className={'!-mt-3'}
+          required={isShow ? undefined : true}
           label={boldText(t('ranks.fields.name'))}
           name="name"
           rules={[validateRankRule(t)]}
@@ -95,7 +102,7 @@ export const RankModalEdit: React.FC<Props> = ({
         </Form.Item>
 
         <Form.Item
-          required
+          required={isShow ? undefined : true}
           label={boldText(t('ranks.fields.rate'))}
           name="rate"
           rules={[validateRankRule(t)]}
@@ -107,8 +114,17 @@ export const RankModalEdit: React.FC<Props> = ({
           )}
         </Form.Item>
 
+        {isShow && (
+          <Form.Item
+            label={boldText(t('ranks.fields.number_of_customers'))}
+            name="number_of_customers"
+            rules={[validateRankRule(t)]}
+          >
+            {getFieldData('number_of_customers')}
+          </Form.Item>
+        )}
+
         <Form.Item
-          required
           label={boldText(t('ranks.fields.remarks'))}
           name="note"
           rules={[validateRankRule(t)]}
@@ -123,18 +139,16 @@ export const RankModalEdit: React.FC<Props> = ({
             {
               title: t('common.created_by'),
               value:
-                record?.author?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+                (record?.author?.name ?? '---') +
+                ' ' +
+                dayjs(record?.created_at).format(FORMAT_DATE_TIME),
             },
             {
               title: t('common.updated_by'),
               value:
-                record?.editor?.name ??
-                '---' +
-                  ' ' +
-                  dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
+                (record?.editor?.name ?? '---') +
+                ' ' +
+                dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
             },
           ]}
         />
@@ -145,7 +159,14 @@ export const RankModalEdit: React.FC<Props> = ({
           {t('buttons.delete')}
         </DeleteButton>
         <Space className={'flex justify-end'}>
-          <Button onClick={close}>{t('buttons.cancel')}</Button>
+          <Button
+            onClick={() => {
+              setIsShow(true)
+              close()
+            }}
+          >
+            {t('buttons.cancel')}
+          </Button>
           {isShow ? (
             <Button
               onClick={() => {

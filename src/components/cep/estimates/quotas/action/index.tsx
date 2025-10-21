@@ -1,6 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { RightOutlined } from '@ant-design/icons'
 import DetailInfo from '@components/cep/estimates/quotas/action/components/detail-info'
 import History from '@components/cep/estimates/quotas/action/components/history'
 import Note from '@components/cep/estimates/quotas/action/components/note'
@@ -24,6 +25,8 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import { type QuotaFormSettingResponse } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -36,13 +39,15 @@ import {
   Row,
   Space,
   Spin,
-  Typography,
 } from 'antd'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 
-const { Title } = Typography
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 function QuotaAction() {
   const t = useTranslate()
@@ -55,14 +60,19 @@ function QuotaAction() {
   const { id, action, params } = useParsed()
 
   const { actionType } = params as any
+  const isClone = action === 'clone'
   const isCloneVersion = actionType === 'VERSION'
-  const isCloneNew = !isCloneVersion
+  const isCloneNew = !isCloneVersion && isClone
   const isEdit = action === 'edit'
 
   const isUpdate = !!id
 
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+
   const go = useGo()
   const apiUrl = useApiUrl()
+
+  const permission = useUserStore((state) => state.permission)
 
   const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -81,13 +91,11 @@ function QuotaAction() {
   const [isPdf, setIsPdf] = useState(false)
   const [previewPdf, setPreviewPdf] = useState('')
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
-
   const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
     url: `${apiUrl}/quota-form-settings`,
     queryOptions: {
-      enabled: !isUpdate,
+      enabled: !isUpdate && !params?.templateId,
     },
   })
 
@@ -96,6 +104,27 @@ function QuotaAction() {
     method: 'get',
     queryOptions: {
       enabled: isUpdate,
+      select: (data) => {
+        const detail = data.data as any
+
+        if (
+          !permission?.is_module_admin &&
+          !detail.is_author &&
+          !isCloneNew &&
+          !isCloneVersion
+        ) {
+          go({
+            to: '/403',
+          })
+        }
+
+        return {
+          ...data,
+          data: {
+            ...detail,
+          },
+        } as unknown as any
+      },
     },
   })
 
@@ -133,7 +162,9 @@ function QuotaAction() {
     mutatePreviewPdf(
       {
         values: customValues,
-        url: `${apiUrl}/quotas/preview-pdf`,
+        url: isEdit
+          ? `${apiUrl}/quotas/preview-pdf/${id}`
+          : `${apiUrl}/quotas/preview-pdf`,
         method: 'post',
       },
       {
@@ -155,7 +186,7 @@ function QuotaAction() {
             label: dataBasicInfo.data.customer_name,
           },
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date)
+            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
           created_at: dataBasicInfo.data.created_at
             ? dayjs(dataBasicInfo.data.created_at)
@@ -194,7 +225,7 @@ function QuotaAction() {
             label: dataBasicInfo.data.customer_name,
           },
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date)
+            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
           created_at: dataBasicInfo.data.created_at
             ? dayjs(dataBasicInfo.data.created_at)
@@ -208,7 +239,7 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
-              unit: item2.unit_name,
+              unit: item2.unit_name ?? '-',
             })),
           })),
           optional_product: dataProducts.data.optional_product.map(
@@ -216,7 +247,7 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
-                unit: item2.unit_name,
+                unit: item2.unit_name ?? '-',
               })),
             }),
           ),
@@ -233,7 +264,6 @@ function QuotaAction() {
       delete quoteTemplate.updated_at
       delete quoteTemplate.author
       delete quoteTemplate.editor
-      console.log(quoteTemplate)
       form.setFieldsValue({
         ...form.getFieldsValue(),
         type: quoteTemplate?.type,
@@ -251,6 +281,7 @@ function QuotaAction() {
       form.setFieldsValue({
         title: '',
         type: 'normal',
+        category: 'merchandise',
         customer: null,
         status: 'creating',
         created_at: dayjs(),
@@ -269,36 +300,40 @@ function QuotaAction() {
         tax_rounding_method: data.data?.tax_rounding_method,
         main_product: [
           {
-            group_name: 'エアロン利用料',
+            group_name: '',
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
                 code: '',
+                package_name: '',
                 cost_price: 0,
                 quantity: 0,
                 selling_price: 0,
                 profit_margin: 0,
                 is_add_total: true,
+                unit: null,
               },
             ],
           },
         ],
         optional_product: [
           {
-            group_name: 'エアロン利用料',
+            group_name: '',
             products: [
               {
                 product_id: null,
                 package_id: null,
                 name: '',
                 code: '',
+                package_name: '',
                 cost_price: 0,
                 selling_price: 0,
                 quantity: 0,
                 profit_margin: 0,
                 is_add_total: false,
+                unit: null,
               },
             ],
           },
@@ -308,7 +343,7 @@ function QuotaAction() {
   }, [data, quoteTemplateQuery?.data?.data])
 
   const onFinish = (values: any) => {
-    if (isUpdate && action === 'edit') {
+    if (isUpdate && isEdit) {
       mutation.mutate(
         {
           resource: resource?.name,
@@ -317,10 +352,21 @@ function QuotaAction() {
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             status: 'creating',
+            delivery_date: values.delivery_date
+              ? dayjs(values.delivery_date)
+                  .utc(true)
+                  .startOf('day')
+                  .toISOString()
+              : null,
+            created_at: dayjs(values.created_at)
+              .utc(true)
+              .startOf('day')
+              .toISOString(),
             tags: values?.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
             })),
+            tax_rate: values.tax_rate ?? 0,
           },
           id: params?.id,
         },
@@ -341,11 +387,22 @@ function QuotaAction() {
             source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
+            delivery_date: values.delivery_date
+              ? dayjs(values.delivery_date)
+                  .utc(true)
+                  .startOf('day')
+                  .toISOString()
+              : null,
+            created_at: dayjs(values.created_at)
+              .utc(true)
+              .startOf('day')
+              .toISOString(),
             status: 'creating',
             tags: values.tags.map((item: any) => ({
               id: item.value,
               name: item.label,
             })),
+            tax_rate: values.tax_rate ?? 0,
           },
         },
         {
@@ -365,35 +422,31 @@ function QuotaAction() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('quotas.quotas')}
-                </Title>
-              ),
+              title: boldText(t('estimates.estimates')),
             },
             {
-              title: (
-                <Title level={5}>
-                  {isUpdate ? t('quotas.edit') : t('quotas.create')}
-                </Title>
+              title: boldText(
+                isUpdate ? t('quotas.edit') : t('quotas.create'),
+                PRIMARY,
               ),
             },
           ]}
+          separator={<RightOutlined />}
         />
       }
       title={
         <div className="flex justify-between">
-          <span>{isUpdate ? t('quotas.edit') : t('quotas.create')}</span>
+          {isUpdate ? t('quotas.edit') : t('quotas.create')}
           <Button
             color="primary"
             variant="outlined"
-            disabled={!Form.useWatch('code', form)}
-            onClick={() => {
+            onClick={async () => {
+              await form.validateFields()
               setIsPdf(!isPdf)
               handlePreviewPdf()
             }}
           >
-            プレビュー
+            {t('quotas.action.preview')}
           </Button>
         </div>
       }
@@ -410,7 +463,7 @@ function QuotaAction() {
         <Form
           form={formProps2}
           onFinish={onFinish}
-          labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
+          labelCol={{ xs: 24, sm: 8, md: 6, lg: 4, xl: 2 }}
           labelAlign="left"
           layout="horizontal"
           colon={false}
@@ -418,6 +471,9 @@ function QuotaAction() {
             delivery_date: dayjs(),
             created_at: dayjs(),
           }}
+          scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
+          autoComplete="off"
+          name="basic"
         >
           <BasicInfo />
           <DetailInfo />
@@ -430,7 +486,12 @@ function QuotaAction() {
           <Tags />
           {isUpdate && !isCloneNew && <History data={dataHistory?.data} />}
 
-          <Divider />
+          <Divider
+            size="large"
+            style={{
+              background: '#d9d9d9',
+            }}
+          />
           {isUpdate && !isCloneNew && (
             <ShowMoreInfo
               descriptions={[
@@ -459,11 +520,11 @@ function QuotaAction() {
           <Flex
             justify="space-between"
             style={{
-              marginTop: 40,
+              marginTop: 20,
             }}
           >
             <Space>
-              {isUpdate && !isCloneNew && (
+              {isEdit && (
                 <DeleteButton
                   icon={null}
                   size={'small'}
@@ -494,36 +555,38 @@ function QuotaAction() {
           </Flex>
         </Form>
       </Spin>
-      <Modal
-        title="Preview PDF"
-        closable={{ 'aria-label': 'Custom Close Button' }}
-        open={isPdf}
-        onCancel={() => {
-          setIsPdf(false)
-        }}
-        footer={null}
-        style={{ top: 20 }}
-        width={{
-          xs: '90%',
-          sm: '80%',
-          xxl: '50%',
-        }}
-      >
-        <div>
-          <Spin spinning={isPendingPreviewPdf}>
-            {!isPendingPreviewPdf && (
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                <Viewer
-                  fileUrl={`data:application/pdf;base64,${previewPdf}`}
-                  plugins={[defaultLayoutPluginInstance]}
-                />
-              </Worker>
-            )}
-          </Spin>
+      {
+        <Modal
+          title={t('quotas.action.preview_pdf')}
+          closable={{ 'aria-label': 'Custom Close Button' }}
+          open={isPdf}
+          onCancel={() => {
+            setIsPdf(false)
+          }}
+          footer={null}
+          style={{ top: 20 }}
+          width={{
+            xs: '90%',
+            sm: '80%',
+            xxl: '50%',
+          }}
+        >
+          <div>
+            <Spin spinning={isPendingPreviewPdf}>
+              {!isPendingPreviewPdf && (
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                  <Viewer
+                    fileUrl={`data:application/pdf;base64,${previewPdf}`}
+                    plugins={[defaultLayoutPluginInstance]}
+                  />
+                </Worker>
+              )}
+            </Spin>
 
-          {/* <PreviewPdf previewPdf={previewPdf} /> */}
-        </div>
-      </Modal>
+            {/* <PreviewPdf previewPdf={previewPdf} /> */}
+          </div>
+        </Modal>
+      }
     </PageContainer>
   )
 }

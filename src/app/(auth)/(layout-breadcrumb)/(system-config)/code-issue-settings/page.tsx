@@ -1,9 +1,8 @@
 /* eslint-disable */
 'use client'
 
-import { RightOutlined } from '@ant-design/icons'
+import { EditOutlined, RightOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
-import { CommonButton } from '@components/common/common-button'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -11,13 +10,12 @@ import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
 import { BaseRecord, useResource } from '@refinedev/core'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { DARK_RED, GREY, PRIMARY } from '@utility/color'
 import { segmentOptions } from '@utility/options'
-import { Modal, Table, Tag, Typography } from 'antd'
+import { Button, Modal, Table, Tag } from 'antd'
 import { useTranslations } from 'next-intl'
 import type { SegmentedValue } from 'rc-segmented'
-
-const { Title } = Typography
 
 export default function Page() {
   const t = useTranslations()
@@ -33,7 +31,7 @@ export default function Page() {
             (item) =>
               !(
                 item.code === 'products' &&
-                !parameterSettings.get(ParameterResourceEnum.PRODUCTS)
+                !parameterSettings?.get?.(ParameterResourceEnum.PRODUCTS)
               ),
           ),
         }
@@ -63,16 +61,10 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('system_config.system_config')}
-        </Title>
-      ),
+      title: boldText(t('system_config.system_config')),
     },
     {
-      title: (
-        <Title level={5}>{t('code_issue_settings.code_issue_settings')}</Title>
-      ),
+      title: boldText(t('code_issue_settings.code_issue_settings'), PRIMARY),
     },
   ]
 
@@ -96,6 +88,7 @@ export default function Page() {
         <Table.Column
           dataIndex="name"
           title={t('code_issue_settings.fields.name')}
+          align={'left'}
         />
 
         <Table.Column
@@ -116,6 +109,7 @@ export default function Page() {
         <Table.Column
           dataIndex="prefix"
           title={t('code_issue_settings.fields.prefix')}
+          align={'left'}
         />
         <Table.Column
           dataIndex={['hash_dash']}
@@ -128,14 +122,17 @@ export default function Page() {
           render={(value: SegmentedValue) =>
             segmentLabelByValue[value] ?? String(value)
           }
+          align={'left'}
         />
         <Table.Column
           dataIndex="serial_length"
           title={t('code_issue_settings.fields.serial_length')}
+          align={'right'}
         />
         <Table.Column
           dataIndex="total"
           title={t('code_issue_settings.fields.total')}
+          align={'right'}
         />
         <Table.Column
           dataIndex="preview_code"
@@ -143,17 +140,17 @@ export default function Page() {
           title={t('code_issue_settings.fields.preview_code')}
         />
         <Table.Column
+          align={'center'}
           title={t('table.actions')}
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
-            <div className={'w-8'}>
-              <CommonButton
-                type={'edit'}
-                onClick={() => {
-                  show(record.id)
-                }}
-              />
-            </div>
+            <Button
+              size={'small'}
+              onClick={() => {
+                show(record.id)
+              }}
+              icon={<EditOutlined />}
+            />
           )}
         />
       </CommonTable>
@@ -163,7 +160,7 @@ export default function Page() {
         onCancel={close}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        width={'60vh'}
+        width={'35vw'}
       >
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>

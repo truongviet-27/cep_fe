@@ -276,6 +276,12 @@ import type {
   QuotaControllerPreviewPdfData,
   QuotaControllerPreviewPdfResponses,
   QuotaControllerPreviewPdfErrors,
+  QuotaControllerPreviewUpdatePdfData,
+  QuotaControllerPreviewUpdatePdfResponses,
+  QuotaControllerPreviewUpdatePdfErrors,
+  QuotaControllerBackToSentToCustomerData,
+  QuotaControllerBackToSentToCustomerResponses,
+  QuotaControllerBackToSentToCustomerErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
@@ -437,6 +443,8 @@ import {
   zQuotaControllerCancelQuotaData,
   zQuotaControllerSendToApproverData,
   zQuotaControllerPreviewPdfData,
+  zQuotaControllerPreviewUpdatePdfData,
+  zQuotaControllerBackToSentToCustomerData,
   zQuotaFormSettingControllerShowData,
   zF44B13Bc4971Acac4481E0A6B882787Data,
   zA229A59B851Ad68435Ac0E91E98F32Data,
@@ -1886,7 +1894,7 @@ export const priceGroupControllerIndex = <ThrowOnError extends boolean = false>(
 
 /**
  * Bulk update packaging prices per rank
- * Update rank-based prices for multiple packagings. When is_rate_based is true, prices are recalculated from selling_price * rank.rate; otherwise, explicit ranks_prices are applied.
+ * Update rank-based prices for multiple packagings. When is_rate_based is true, prices are recalculated from selling_price * rank.rate; otherwise, explicit rank_prices are applied.
  */
 export const priceGroupControllerUpdate = <
   ThrowOnError extends boolean = false,
@@ -3152,8 +3160,8 @@ export const quotaControllerSendToApprover = <
 }
 
 /**
- * Preview quota PDF
- * Preview quota PDF as base64 string. Useful for displaying PDF in browser or download.
+ * Preview CREATE quota PDF
+ * Preview CREATE quota PDF as base64 string. Useful for displaying PDF in browser or download.
  */
 export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
   options: Options<QuotaControllerPreviewPdfData, ThrowOnError>,
@@ -3173,6 +3181,70 @@ export const quotaControllerPreviewPdf = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/api/v1/quotas/preview-pdf',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Preview UPDATE update quota PDF
+ * Preview UPDATE quota PDF as base64 string. Useful for displaying PDF in browser or download.
+ */
+export const quotaControllerPreviewUpdatePdf = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerPreviewUpdatePdfData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerPreviewUpdatePdfResponses,
+    QuotaControllerPreviewUpdatePdfErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerPreviewUpdatePdfData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/preview-pdf/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Revert quotas to Sent to Customer status
+ * Update multiple quotas status from completed or cancelled to sent_to_customer. Requires current user to be an approver of the quota.
+ */
+export const quotaControllerBackToSentToCustomer = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerBackToSentToCustomerData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    QuotaControllerBackToSentToCustomerResponses,
+    QuotaControllerBackToSentToCustomerErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerBackToSentToCustomerData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/back-to-send-customer',
     ...options,
     headers: {
       'Content-Type': 'application/json',

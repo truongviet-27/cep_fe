@@ -11,28 +11,59 @@ type QuotaStatusInfo = {
   text: string
 }
 
-export function getQuotaStatusStyle(status: QuotaStatus): QuotaStatusInfo {
+export function getQuotaStatusStyle(
+  status: QuotaStatus,
+  t: (key: string) => string,
+): QuotaStatusInfo {
   switch (status) {
     case QuotaStatus.Creating:
-      return { background: '#E2E2E2', color: '#666666', text: '下書き' }
+      return {
+        background: '#E2E2E2',
+        color: '#666666',
+        text: t('quotas.status.creating'),
+      }
 
     case QuotaStatus.WaitingApproval:
-      return { background: '#FFFFC7', color: '#D2A904', text: '承認待' }
+      return {
+        background: '#FFFFC7',
+        color: '#D2A904',
+        text: t('quotas.status.waiting_approval'),
+      }
 
     case QuotaStatus.Approved:
-      return { background: '#DAEDFF', color: '#0066CC', text: '承認済' }
+      return {
+        background: '#DAEDFF',
+        color: '#0066CC',
+        text: t('quotas.status.approved'),
+      }
 
     case QuotaStatus.Rejected:
-      return { background: '#FFDFBF', color: '#FF8400', text: '差戻' }
+      return {
+        background: '#FFDFBF',
+        color: '#FF8400',
+        text: t('quotas.status.rejected'),
+      }
 
     case QuotaStatus.SentToCustomer:
-      return { background: '#DAEDFF', color: '#0066CC', text: '送信済' }
+      return {
+        background: '#DAEDFF',
+        color: '#0066CC',
+        text: t('quotas.status.sent_to_customer'),
+      }
 
     case QuotaStatus.Completed:
-      return { background: '#DFFFEB', color: '#22874D', text: '受注' }
+      return {
+        background: '#DFFFEB',
+        color: '#22874D',
+        text: t('quotas.status.completed'),
+      }
 
     case QuotaStatus.Cancelled:
-      return { background: '#FFDFDF', color: '#FF0000', text: '失注' }
+      return {
+        background: '#FFDFDF',
+        color: '#FF0000',
+        text: t('quotas.status.cancelled'),
+      }
 
     default:
       return { background: '#FFFFFF', color: '#000000', text: '' }
@@ -90,10 +121,10 @@ export function getExpirationDate(
 export function getExpiryDate(
   value: string,
   baseDate?: string | Date | null,
-): Date {
+): Date | string {
   const start = dayjs(baseDate ?? new Date())
 
-  if (!value) return start.toDate()
+  if (!value) return ''
 
   const [unit, amountStr] = value.split('_')
   const amount = parseInt(amountStr, 10)
@@ -116,15 +147,20 @@ export const getActionPermissions = (
   status: QuotaStatus,
   isAuthor: boolean,
   isApprover: boolean,
+  is_module_admin?: boolean,
 ) => {
-  let permissions = true
+  let disable = true
+
+  if (is_module_admin) {
+    return false
+  }
 
   switch (status) {
     case QuotaStatus.Creating:
     case QuotaStatus.Approved:
     case QuotaStatus.Rejected:
       if (isAuthor) {
-        permissions = false
+        disable = false
       }
       break
 
@@ -132,13 +168,13 @@ export const getActionPermissions = (
     case QuotaStatus.Completed:
     case QuotaStatus.Cancelled:
       if (isApprover) {
-        permissions = false
+        disable = false
       }
       break
 
     case QuotaStatus.SentToCustomer:
       if (isAuthor || isApprover) {
-        permissions = false
+        disable = false
       }
       break
 
@@ -146,5 +182,5 @@ export const getActionPermissions = (
       break
   }
 
-  return permissions
+  return disable
 }

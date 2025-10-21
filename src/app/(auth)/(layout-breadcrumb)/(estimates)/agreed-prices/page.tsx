@@ -2,7 +2,7 @@
 import AgreedPriceList from '@components/cep/estimates/agreed-price/index'
 
 function Page() {
-  return <AgreedPriceList />
+  return <AgreedPriceList isShowTitle={false} />
 }
 
 export default Page

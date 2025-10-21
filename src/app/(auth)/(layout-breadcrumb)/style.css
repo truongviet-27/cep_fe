@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import '@react-pdf-viewer/core/lib/styles/index.css';
+@import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 @custom-variant dark (&:where(.dark,.dark *));
 
@@ -149,12 +151,66 @@
 
   .ant-page-header .ant-page-header-heading-left {
     margin-block: 0 !important;
-    margin-top: 12px !important;
+    margin-top: 6px !important;
     margin-bottom: 6px !important;
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 18px;
+    padding-right: 18px;
   }
   .ant-page-header .ant-page-header-content {
     padding-block-start: 0 !important;
+  }
+  .no-actions-border .ant-card-actions {
+    border-top: none !important;
+  }
+  .ant-form-item {
+    margin-bottom: 12px !important;
+  }
+  .ant-form-item-hidden-margin {
+    margin-bottom: 0px !important;
+  }
+  .ant-input {
+    border-color: '1px solid #000' !important;
+  }
+  .ant-form-item-label {
+    min-width: 80px !important;
+  }
+  .ant-card-head {
+    border-bottom-color: #d9d9d9 !important;
+  }
+  .ant-divider {
+    background-color: #d9d9d9 !important;
+  }
+
+  .ant-table-bordered .ant-table-content table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+
+  .ant-table-bordered .ant-table-cell {
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    box-sizing: border-box;
+  }
+
+  .ant-table-bordered tr > th:last-child,
+  .ant-table-bordered tr > td:last-child {
+    border-right: none !important;
+  }
+
+  .ant-table-bordered .ant-table-container {
+    border: 1px solid #e2e8f0 !important;
+    border-bottom: none !important;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .ant-input-outlined,
+  .ant-select-selector,
+  .ant-picker {
+    border-color: #d0d5dd !important;
+  }
+  .ant-input-status-error,
+  .ant-select-status-error .ant-select-selector,
+  .ant-picker-status-error {
+    border-color: #ff4d4f !important;
   }
 }

@@ -12,8 +12,17 @@ export default function AuthContainer({
   children: React.ReactNode
 }>) {
   return (
-    <Content>
+    <Content
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
       <div style={{ backgroundColor: LAYOUT_BG }}>{children}</div>
+      <div className={'flex justify-end space-x-3 py-6 pr-[18px]'}>
+        Copyright©Commerce Robotics Inc.All rights reserved.
+      </div>
     </Content>
   )
 }

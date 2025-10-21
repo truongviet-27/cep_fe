@@ -1,0 +1,327 @@
+{
+  "quotas": "見積一覧",
+  "list": "見積一覧",
+  "create": "見積新規作成",
+  "edit": "見積編集",
+  "detail": "確定見積詳細",
+  "page_list": {},
+  "page_detail": {},
+  "page_action": {},
+  "table": {
+    "status_comment_1": "状態",
+    "status_comment_2": "コメント",
+    "estimate_number": "見積番号",
+    "title_customer_1": "タイトル",
+    "title_customer_2": "取引先",
+    "creator_approver_1": "作成者",
+    "creator_approver_2": "承認者",
+    "department_amount_1": "部門",
+    "department_amount_2": "金額 (円)",
+
+    "created_expiry_1": "作成日",
+    "created_expiry_2": "有効期限",
+
+    "sent_order_cancel_1": "送信日",
+    "sent_order_cancel_2": "受注・失注日",
+
+    "actions": "操作"
+  },
+  "filters": {
+    "estimate_number": "見積番号",
+    "customer": "取引先",
+    "title": "タイトル",
+    "creator": "作成者",
+    "approver": "承認者",
+    "department": "部門（支社/部/課）",
+    "tag_name": "タグ名",
+    "date": "日付",
+    "partial_match": "部分一致",
+    "please_select": "選択してください"
+  },
+  "date_types": {
+    "created_at": "作成日",
+    "sent_to_customer_date": "送信日",
+    "expired_date": "有効期限",
+    "customer_accepted_date": "受注日",
+    "customer_cancelled_date": "失注日"
+  },
+  "status": {
+    "creating": "作成中",
+    "waiting_approval": "承認待",
+    "approved": "承認済",
+    "rejected": "差戻",
+    "sent_to_customer": "送信済",
+    "completed": "受注",
+    "cancelled": "失注",
+    "all": "すべて"
+  },
+  "actions": {
+    "bulk_processing": "一括処理",
+    "delete": "削除",
+    "request_approval": "承認依頼",
+    "approve": "承認",
+    "send": "送信",
+    "move_to_order": "受注へ移動",
+    "move_to_cancel": "失注へ移動",
+    "move_to_send": "送信へ移動",
+    "decide_move": "決定移動",
+    "re_estimate": "再見積",
+    "template_list": "見積テンプレート一覧",
+    "new_create": "新規作成"
+  },
+  "modal": {
+    "move_to_decided_estimate": "決定見積へ移動",
+    "agreed_price": {
+      "title": "決定見積へ移動",
+      "estimate_number": "見積番号",
+      "title_label": "タイトル",
+      "customer": "取引先",
+      "valid_from": "適用開始日",
+      "valid_to": "適用終了日",
+      "required": "必須"
+    }
+  },
+  "show": {
+    "preview": "プレビュー",
+    "preview_pdf": "Preview PDF",
+    "basic_info": "基本情報",
+    "estimate_number": "見積番号",
+    "estimate_type": "見積種類",
+    "estimate_category": "見積区分",
+    "title": "タイトル",
+    "customer": "取引先",
+    "estimate_date": "見積日",
+    "delivery_date": "納入期日",
+    "delivery_method": "納品方法",
+    "payment_due_date": "支払期日",
+    "expiration_date": "有効期限",
+    "consumption_tax": "消費税",
+    "tax_rate": "消費税率",
+    "type": {
+      "normal": "通常",
+      "limited": "販路限定"
+    },
+    "category": {
+      "merchandise": "物販",
+      "service": "役務"
+    },
+    "detail_info": "詳細情報",
+    "optional_info": "オプション情報",
+    "specifications_conditions": "仕様・条件",
+    "tags": "タグ",
+    "history": "履歴",
+    "approval_history": "承認履歴",
+    "creation_history": "作成履歴",
+    "rejection_reason": "差戻の理由",
+    "actions": {
+      "request_approval": "承認依頼",
+      "reject": "差戻",
+      "approve": "承認",
+      "send": "送信",
+      "move_to_cancel": "失注へ移動",
+      "move_to_order": "受注へ移動",
+      "move_to_send": "送信へ移動"
+    },
+    "table": {
+      "step": "ステップ",
+      "process_date": "処理日",
+      "operation": "操作",
+      "comment": "コメント",
+      "approver": "承認者",
+      "created_date": "作成日",
+      "sent_date": "送信日",
+      "estimate_number": "見積番号",
+      "creator": "作成者",
+      "pdf": "PDF",
+      "product_code": "商品コード",
+      "product_service_name": "商品・サービス名",
+      "unit": "単位",
+      "package": "荷姿",
+      "cost_price": "原価",
+      "selling_price": "販売単価",
+      "quantity": "数量",
+      "amount": "金額",
+      "remarks": "備考",
+      "profit_margin": "利益率",
+      "total_calculation": "合計計算",
+      "selling_amount": "売価金額"
+    }
+  },
+  "action": {
+    "preview": "プレビュー",
+    "preview_pdf": "Preview PDF",
+    "estimate_number": "見積番号",
+    "estimate_type": "見積区分",
+    "title": "タイトル",
+    "customer": "取引先",
+    "estimate_date": "見積日",
+    "delivery_date": "納入期日",
+    "delivery_method": "納品方法",
+    "payment_due_date": "支払期日",
+    "expiration_date": "有効期限",
+    "consumption_tax": "消費税",
+    "tax_rate": "消費税率",
+    "type": {
+      "normal": "通常",
+      "limited": "販路限定"
+    },
+    "specifications_conditions": "仕様・条件",
+    "tags": "タグ",
+    "history": "履歴",
+    "approval_history": "承認履歴",
+    "creation_history": "作成履歴",
+    "rejection_reason": "差戻の理由",
+    "actions": {
+      "request_approval": "承認依頼",
+      "reject": "差戻",
+      "approve": "承認",
+      "send": "送信",
+      "move_to_cancel": "失注へ移動",
+      "move_to_order": "受注へ移動",
+      "move_to_send": "送信へ移動"
+    },
+    "table": {
+      "step": "ステップ",
+      "process_date": "処理日",
+      "operation": "操作",
+      "comment": "コメント",
+      "approver": "承認者",
+      "created_date": "作成日",
+      "sent_date": "送信日",
+      "estimate_number": "見積番号",
+      "creator": "作成者",
+      "pdf": "PDF",
+      "product_code": "商品コード",
+      "product_service_name": "商品・サービス名",
+      "unit": "単位",
+      "package": "荷姿",
+      "cost_price": "原価",
+      "selling_price": "販売単価",
+      "quantity": "数量",
+      "amount": "金額",
+      "remarks": "備考",
+      "profit_margin": "利益率",
+      "total_calculation": "合計計算",
+      "selling_amount": "売価金額"
+    },
+    "fields": {
+      "code": "見積番号",
+      "type": "見積区分",
+      "title": "タイトル",
+      "customer": "取引先",
+      "created_at": "見積日",
+      "delivery_date": "納入期日",
+      "delivery_method": "納品方法",
+      "payment_due_date": "支払期日",
+      "expiration_date": "有効期限",
+      "consumption_tax": "消費税",
+      "tax_rate": "消費税率",
+      "note": "仕様・条件",
+      "tags": "タグ"
+    },
+    "placeholders": {
+      "select_customer": "取引先を選択してください",
+      "enter_title": "タイトルを入力してください",
+      "enter_delivery_method": "納品方法を入力してください",
+      "enter_note": "仕様・条件を入力してください",
+      "select_tags": "タグを選択してください",
+      "date_format": "YYYY/MM/DD"
+    },
+    "buttons": {
+      "auto_number": "自動採番",
+      "code_settings": "コード採番設定"
+    },
+    "detail_info": {
+      "title": "詳細情報",
+      "table": {
+        "product_code": "商品コード",
+        "product_service_name": "商品・サービス名",
+        "unit": "単位",
+        "package": "荷姿",
+        "cost_price": "原価",
+        "selling_price": "売単価",
+        "quantity": "数量",
+        "profit_margin": "利益率",
+        "selling_amount": "売価金額",
+        "total_calculation": "合計計算",
+        "row_edit": "行編集"
+      },
+      "placeholders": {
+        "product_list_name": "商品リスト名入力",
+        "product_search": "商品名・サービス名で検索"
+      },
+      "summary": {
+        "cost_total": "原価合計",
+        "tax_amount": "消費税金額",
+        "total_profit_margin": "合計利益率",
+        "total_amount": "合計金額",
+        "subtotal": "小計",
+        "tax_exclusive": "税抜",
+        "tax_inclusive": "税込"
+      },
+      "buttons": {
+        "add_from_category": "カテゴリから入力"
+      },
+      "modal": {
+        "add_from_category": "カテゴリから商品を追加"
+      },
+      "default_values": {
+        "auto_numbering": "自動採番",
+        "default_unit": "-",
+        "default_group_name": "エアロン利用料"
+      }
+    },
+    "basic_info": {
+      "title": "基本情報",
+      "fields": {
+        "estimate_number": "見積番号",
+        "estimate_type": "見積種類",
+        "estimate_category": "見積区分",
+        "title": "タイトル",
+        "customer": "取引先",
+        "estimate_date": "見積日",
+        "delivery_date": "納入期日",
+        "delivery_method": "納品方法",
+        "payment_due_date": "支払期日",
+        "expiration_date": "有効期限",
+        "consumption_tax": "消費税"
+      },
+      "types": {
+        "normal": "通常",
+        "limited": "販路限定"
+      },
+      "categories": {
+        "merchandise": "物販",
+        "service": "役務"
+      },
+      "labels": {
+        "until": "まで",
+        "default_tax_rate": "デフォルト"
+      }
+    },
+    "optional_info": {
+      "title": "オプション情報",
+      "table": {
+        "product_code": "商品コード",
+        "product_service_name": "商品・サービス名",
+        "unit": "単位",
+        "package": "荷姿",
+        "cost_price": "原価",
+        "selling_price": "売単価",
+        "quantity": "数量",
+        "profit_margin": "利益率",
+        "selling_amount": "売価金額",
+        "row_edit": "行編集"
+      },
+      "placeholders": {
+        "optional_list_name": "オプションリスト名入力"
+      }
+    },
+    "modal": {
+      "no_products": {
+        "message": "耳がない",
+        "description": "カテゴリに商品がありません"
+      }
+    }
+  }
+}

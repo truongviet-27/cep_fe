@@ -32,7 +32,7 @@ function Menu() {
 
   return (
     <div className="flex w-2/3 items-center justify-start space-x-8">
-      <AppIcon level={4} />
+      <AppIcon level={2} />
       <MenuAntd
         mode="horizontal"
         className="flex-1 border-none bg-transparent"

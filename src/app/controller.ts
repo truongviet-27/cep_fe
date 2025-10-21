@@ -1,25 +1,56 @@
 // eslint-disable-next-line simple-import-sort/imports
 import type { PermissionType } from '@interfaces/permission'
+import { getSessionOnce } from '@lib/get-session-once'
 import type { ParameterResourceEnum } from '@sdk/hey-api'
+import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
+import { isSupperAdmin } from '@utility/decode-token'
 import { hasForbiddenRoute } from '@utility/permission'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+// Fetch and set a tenant for super admin users when no org is present in token
+const getTenantForSuperAdmin = async () => {
+  try {
+    const { tenantId, setTenant } = useTenantStore.getState()
+    if (tenantId) return
+
+    const session = await getSessionOnce()
+    const accessToken = session?.accessToken
+    if (!accessToken) return
+
+    const API_URL =
+      process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8001/api/v1'
+    const res = await fetch(`${API_URL}/tenants/`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+    })
+
+    if (!res.ok) return
+
+    const data = await res.json()
+    const firstTenant = data?.data?.items?.[0]
+    const fallbackId = firstTenant?.id as string | undefined
+
+    if (fallbackId) {
+      const fallbackName = (firstTenant?.name as string) || null
+      setTenant(fallbackId, fallbackName)
+    }
+  } catch (e) {
+    console.error('Failed to bootstrap superadmin tenant:', e)
+  }
+}
+
 export const useBootstrap = () => {
   const session = useSession()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const {
-    isLoggedIn,
-    setPermission,
-    setParameterSettings,
-    setIsLoggedIn,
-    logout,
-  } = useUserStore((state) => state)
+  const { setPermission, setParameterSettings, setIsLoggedIn, logout } =
+    useUserStore((state) => state)
+  const isLoggedIn = useUserStore.getState().isLoggedIn
   const token = searchParams.get('token')
   const refreshToken = searchParams.get('refreshToken')
   const { status } = session
@@ -57,13 +88,14 @@ export const useBootstrap = () => {
     }
   }
 
-  const getProfile = async () => {
+  const getProfile = async (isTokenValid: boolean) => {
     try {
-      setIsLoading(true)
+      const { tenantId } = useTenantStore.getState()
       const requestBody = {
         token: '',
+        tenantId,
       }
-      if (pathname === '/' && token && refreshToken) {
+      if (pathname === '/' && token && isTokenValid) {
         requestBody.token = token
       }
       const response = await fetch('/api/me', {
@@ -110,23 +142,32 @@ export const useBootstrap = () => {
         router.push('/login')
       }
       throw error
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const initSetup = async () => {
     try {
-      if (pathname === '/login') return
+      setIsLoading(true)
+      if (pathname === '/login') {
+        setIsLoading(false)
+        return
+      }
 
-      await validateToken()
-      await getProfile()
+      const isTokenValid = await validateToken()
+      const sessionOnce = await getSessionOnce()
+      const accessToken = sessionOnce?.accessToken
+      if (isSupperAdmin(accessToken)) {
+        await getTenantForSuperAdmin()
+      }
+      await getProfile(isTokenValid)
 
       if (hasForbiddenRoute(pathname)) {
         router.push('/403')
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 

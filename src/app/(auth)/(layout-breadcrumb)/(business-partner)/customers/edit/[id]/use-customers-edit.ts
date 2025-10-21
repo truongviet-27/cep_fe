@@ -1,33 +1,37 @@
 /* eslint-disable */
+'use client'
+
 import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
+import { useEffect } from 'react'
 
-export const useCustomerCreate = () => {
+export const useCustomerEdit = () => {
   const t = useTranslate()
   const {
     formProps,
     saveButtonProps,
     form,
-    formLoading: isLoading,
     onFinish,
+    formLoading: isLoading,
+    queryResult,
   } = useForm({
-    action: 'create',
+    action: 'edit',
     redirect: 'show',
   })
 
   const handleFinish = async (values: any) => {
     let company_type = values?.company_type
-    let temp_industry = values?.temp_industry
+    let industry = values?.industry
     if (values?.temp_company_type) {
       company_type = values?.temp_company_type
     }
-    if (values?.temp_industry) {
-      temp_industry = values?.temp_industry
+    if (!values?.industry && values?.temp_industry) {
+      industry = values?.temp_industry
     }
 
-    await onFinish({ ...values, company_type, temp_industry })
+    await onFinish({ ...values, company_type, industry })
   }
 
   const apiUrl = useApiUrl()
@@ -48,6 +52,9 @@ export const useCustomerCreate = () => {
     autoResetFormWhenClose: true,
     redirect: false,
     warnWhenUnsavedChanges: false,
+    onMutationSuccess: () => {
+      refetchCodeGen()
+    },
   })
 
   const modalFormCorporate = useModal()
@@ -68,6 +75,14 @@ export const useCustomerCreate = () => {
       person_in_charge_phone: mainContact.phone,
     })
   }
+
+  const record = queryResult?.data?.data
+
+  useEffect(() => {
+    if (record) {
+      form.setFieldsValue({ ...record })
+    }
+  }, [record])
 
   return {
     t,

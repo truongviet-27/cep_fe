@@ -116,21 +116,45 @@ export const customDataProvider = (
     const { headers, method } = meta ?? {}
     const requestMethod = (method as MethodTypes) ?? 'get'
 
-    const { data } = await httpClient[requestMethod](url, { headers })
+    try {
+      const { data } = await httpClient[requestMethod](url, { headers })
 
-    return {
-      data: data?.data,
+      return {
+        data: data?.data,
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/404'
+        }
+      }
+      throw error
     }
   },
 
   deleteOne: async ({ resource, id, variables, meta }) => {
-    const url = `${apiUrl}/${resource}/${id}`
-
     const { headers, method } = meta ?? {}
     const requestMethod = (method as MethodTypesWithBody) ?? 'delete'
 
+    const metaFlags =
+      (meta as unknown as { idsBody?: boolean; sendBodyArray?: boolean }) || {}
+    const idsBody = metaFlags.idsBody === true
+    const sendBodyArray = metaFlags.sendBodyArray === true
+
+    let url = `${apiUrl}/${resource}/${id}`
+    let payload: unknown = variables
+
+    if (idsBody) {
+      url = `${apiUrl}/${resource}`
+      payload = { ids: [id] }
+    } else if (sendBodyArray) {
+      url = `${apiUrl}/${resource}`
+      payload = [id]
+    }
+
     const { data } = await httpClient[requestMethod](url, {
-      data: variables,
+      data: payload,
       headers,
     })
 

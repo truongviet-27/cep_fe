@@ -2,6 +2,7 @@ import useImportHistory from '@components/cep/import-history/useImportHistory'
 import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import {
@@ -13,21 +14,13 @@ import {
   Input,
   Row,
   Select,
-  Typography,
 } from 'antd'
 
-const { Title } = Typography
 const { RangePicker } = DatePicker
 
 function ImportHistory() {
   const [{ columns, tableProps, searchFormProps }, { t, onReset }] =
     useImportHistory()
-
-  // const { selectProps: employeeSelectProps } = useSelect({
-  //   resource: 'employees',
-  //   optionLabel: 'name',
-  //   optionValue: 'id',
-  // })
 
   return (
     <PageContainer
@@ -35,11 +28,7 @@ function ImportHistory() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('import_history.import_history')}
-                </Title>
-              ),
+              title: boldText(t('import_history.import_history'), PRIMARY),
             },
           ]}
         />
@@ -164,7 +153,7 @@ function ImportHistory() {
 
           <Col xs={12} md={4}>
             <div className="mt-7 mb-4 flex items-center gap-4">
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
               <Button variant="outlined" onClick={onReset}>

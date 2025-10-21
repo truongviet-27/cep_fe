@@ -7,6 +7,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry'
 import LoadingPage from '@components/common/loading-page'
 import { NProgressProvider } from '@components/common/progress-provider'
 import { accessControlProvider } from '@lib/accessControlProvider'
+import { corporationProvider } from '@providers/corporation-provider'
 import authProvider from '@providers/keycloak-provider'
 import { useNotificationProvider } from '@refinedev/antd'
 import '@refinedev/antd/dist/reset.css'
@@ -18,7 +19,6 @@ import { SessionProvider } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
 import { useBootstrap } from './controller'
-import { corporationProvider } from '@providers/corporation-provider'
 
 type RefineContextProps = {
   defaultMode?: string
@@ -53,6 +53,7 @@ const App = (props: React.PropsWithChildren) => {
     getLocale: useLocale,
     changeLocale: setUserLocale,
   }
+
   return (
     <RefineKbarProvider>
       <AntdRegistry>
@@ -67,7 +68,7 @@ const App = (props: React.PropsWithChildren) => {
           accessControlProvider={accessControlProvider}
           options={{
             syncWithLocation: true,
-            warnWhenUnsavedChanges: true,
+            warnWhenUnsavedChanges: false,
             useNewQueryKeys: true,
             title: { icon: null },
           }}

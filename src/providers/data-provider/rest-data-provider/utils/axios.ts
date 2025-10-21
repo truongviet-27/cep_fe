@@ -4,11 +4,6 @@ import useTenantStore from '@stores/useTenantStore'
 import { getOrgFromToken } from '@utility/decode-token'
 import axios from 'axios'
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8001/api/v1'
-
-const bareAxios = axios.create()
-
 const axiosInstance = axios.create()
 
 useTenantStore.subscribe((state) => {
@@ -24,34 +19,13 @@ axiosInstance.interceptors.request.use(
     const session = await getSessionOnce()
     const { tenantId } = useTenantStore.getState()
     const cepId = getOrgFromToken(session?.accessToken)?.id
-    console.log('tenantId:', tenantId)
-    console.log('cepId:', cepId)
     if (session?.accessToken) {
       request.headers = request.headers ?? {}
       request.headers['Authorization'] = `Bearer ${session.accessToken}`
     }
     if (tenantId || cepId) {
       request.headers = request.headers ?? {}
-      request.headers['x-tenant-id'] = (tenantId ?? cepId) as string
-    } else {
-      try {
-        const { data } = await bareAxios.get(`${API_URL}/tenants/`, {
-          headers: session?.accessToken
-            ? { Authorization: `Bearer ${session.accessToken}` }
-            : undefined,
-        })
-        const firstTenant = data?.data?.items?.[0]
-        const fallbackId = firstTenant?.id
-        if (fallbackId) {
-          request.headers = request.headers ?? {}
-          request.headers['x-tenant-id'] = fallbackId
-          const { setTenant } = useTenantStore.getState()
-          const fallbackName = firstTenant?.name || null
-          setTenant(fallbackId, fallbackName)
-        }
-      } catch {
-        console.error('Failed to fetch tenants for fallback x-tenant-id')
-      }
+      request.headers['x-tenant-id'] = tenantId ?? cepId
     }
     return request
   },

@@ -247,6 +247,22 @@ function Left() {
 
         <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
           <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
+            <Text strong>{t('tenant_settings.companyName.label')}</Text>
+          </div>
+          <div className="flex-1 content-center px-4">
+            <Form.Item
+              name="company_name"
+              style={{
+                marginBottom: 0,
+              }}
+            >
+              <Input style={{ width: '50%' }} />
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
+          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
             <Text strong>{t('tenant_settings.postalCode.label')}</Text>
           </div>
           <div className="flex-1 content-center px-4">
@@ -268,22 +284,6 @@ function Left() {
           <div className="flex-1 content-center px-4">
             <Form.Item
               name="address"
-              style={{
-                marginBottom: 0,
-              }}
-            >
-              <Input style={{ width: '50%' }} />
-            </Form.Item>
-          </div>
-        </div>
-
-        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
-          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
-            <Text strong>{t('tenant_settings.companyName.label')}</Text>
-          </div>
-          <div className="flex-1 content-center px-4">
-            <Form.Item
-              name="company_name"
               style={{
                 marginBottom: 0,
               }}

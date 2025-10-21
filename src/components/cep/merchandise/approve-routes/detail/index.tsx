@@ -3,10 +3,10 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton, useForm } from '@refinedev/antd'
+import { DeleteButton, EditButton, useForm } from '@refinedev/antd'
 import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { PRIMARY, WHITE } from '@utility/color'
+import { BLACK, PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -55,6 +55,7 @@ function ApproveDetail() {
 
   const methods = useForm<Form>({
     resource: 'approve-routes',
+    queryOptions: { enabled: false },
   })
 
   const { formProps, saveButtonProps, form } = methods
@@ -64,6 +65,8 @@ function ApproveDetail() {
   const { query } = useShow({
     queryOptions: { enabled: isUpdate },
   })
+
+  // const query = {} as any
 
   useEffect(() => {
     if (query?.data?.data) {
@@ -77,14 +80,10 @@ function ApproveDetail() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.approve_routes')}
-                </Title>
-              ),
+              title: boldText(t('approve_routes.parent')),
             },
             {
-              title: <Title level={5}> {t('approve_routes.detail')}</Title>,
+              title: boldText(t('approve_routes.detail'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -252,14 +251,20 @@ function ApproveDetail() {
                                           item2.name,
                                           'name',
                                         ])}
-                                        -
-                                        {form.getFieldValue([
+                                        {` (${form.getFieldValue([
+                                          'steps',
+                                          item.name,
+                                          'employees',
+                                          item2.name,
+                                          'department',
+                                        ])}
+                                        ${form.getFieldValue([
                                           'steps',
                                           item.name,
                                           'employees',
                                           item2.name,
                                           'code',
-                                        ])}
+                                        ])})`}
                                       </Space>
                                     </Col>
                                   </Row>
@@ -323,8 +328,9 @@ function ApproveDetail() {
                 {t('buttons.back')}
               </Button>
 
-              <Button
+              <EditButton
                 type="primary"
+                icon={false}
                 onClick={() => {
                   go({
                     to: `/approve-routes/edit/${params?.id}`,
@@ -332,7 +338,7 @@ function ApproveDetail() {
                 }}
               >
                 {t('buttons.edit')}
-              </Button>
+              </EditButton>
             </Space>
           </Flex>
         </Form>

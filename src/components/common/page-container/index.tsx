@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
 import { Card, Typography } from 'antd'
 import type { ReactNode } from 'react'
@@ -9,13 +11,13 @@ const PageContainer = ({
   breadcrumbs,
   children,
 }: {
-  title: string | ReactNode
+  title?: string | ReactNode
   breadcrumbs?: ReactNode
   children: ReactNode
 }) => {
   return (
     <div className="h-full w-full overflow-hidden">
-      <div className="mt-[12px] mb-[6px] px-[32px]">{breadcrumbs}</div>
+      <div className="mt-[6px] mb-[6px] px-[18px]">{breadcrumbs}</div>
       <Card
         style={{
           backgroundColor: WHITE,
@@ -23,22 +25,14 @@ const PageContainer = ({
             ? `calc( 100vh - 168px)`
             : `calc( 100vh - 80px)`,
         }}
-        bodyStyle={{
-          padding: 32,
+        styles={{
+          body: { padding: 18 },
         }}
       >
         <div>
-          <div className="mb-5 flex">
-            <Title
-              style={{
-                color: PRIMARY,
-                fontSize: 16,
-                width: '100%',
-              }}
-            >
-              {title}
-            </Title>
-          </div>
+          {title ? (
+            <div className="mb-3">{boldText(title, PRIMARY, 18)}</div>
+          ) : null}
           {children}
         </div>
       </Card>

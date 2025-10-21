@@ -1,3 +1,4 @@
+import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CoreInput from '@components/common/core-input'
 import { useTranslate } from '@refinedev/core'
 import { ConsumptionTaxEnum } from '@sdk/hey-api'
@@ -17,10 +18,15 @@ import {
   Select,
   Typography,
 } from 'antd'
+import dayjs from 'dayjs'
 
 const { Title } = Typography
 
-const BasicInfo: React.FC = () => {
+interface Props {
+  expirationDate: string
+}
+
+const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
   const t = useTranslate()
 
   return (
@@ -44,7 +50,7 @@ const BasicInfo: React.FC = () => {
         disabled
       />
       <Form.Item
-        label={boldText(t('quota_templates.form.label.quote_category'))}
+        label={boldText(t('quota_templates.form.label.quote_type'))}
         colon={false}
         required
         name="type"
@@ -69,6 +75,32 @@ const BasicInfo: React.FC = () => {
           ]}
         />
       </Form.Item>
+      <Form.Item
+        label={boldText(t('quota_templates.form.label.quote_category'))}
+        colon={false}
+        required
+        name="category"
+        rules={[
+          {
+            required: true,
+            message: t('validation.required'),
+          },
+        ]}
+      >
+        <Radio.Group
+          defaultValue={'merchandise'}
+          options={[
+            {
+              value: 'merchandise',
+              label: t('quotas.action.basic_info.categories.merchandise'),
+            },
+            {
+              value: 'service',
+              label: t('quotas.action.basic_info.categories.service'),
+            },
+          ]}
+        />
+      </Form.Item>
       <CoreInput
         name="name"
         label={t('quota_templates.form.label.template_name')}
@@ -78,7 +110,7 @@ const BasicInfo: React.FC = () => {
         rules={[
           {
             required: true,
-            message: t('validation.required'),
+            message: 'テンプレート名は必須です。',
           },
         ]}
       />
@@ -136,25 +168,38 @@ const BasicInfo: React.FC = () => {
           options={Object.values(PAYMENT_DUE_DATE)}
         />
       </Form.Item>
-      <Form.Item
-        name="expiration_date"
-        label={boldText(t('quota_templates.form.label.validity_period'))}
-        colon={false}
-      >
-        <Select
-          className="!w-64"
-          allowClear
-          showSearch
-          options={Object.values(EXPIRATION_DATE)}
-        />
-      </Form.Item>
+      <Flex gap={16}>
+        <div>
+          <Form.Item
+            name="expiration_date"
+            label={boldText(t('quota_templates.form.label.validity_period'))}
+            colon={false}
+            labelCol={{ span: 10, flex: '0 0 156px' }}
+          >
+            <Select
+              className="!w-64"
+              allowClear
+              showSearch
+              options={Object.values(EXPIRATION_DATE)}
+            />
+          </Form.Item>
+        </div>
+        <div
+          style={{ whiteSpace: 'nowrap', fontWeight: 500, marginTop: '5px' }}
+        >
+          {dayjs(getExpiryDate(expirationDate, new Date())).format(
+            'YYYY/MM/DD',
+          )}
+          まで
+        </div>
+      </Flex>
       <Flex gap={16}>
         <div>
           <Form.Item
             name="consumption_tax"
             label={boldText(t('quota_templates.form.label.consumption_tax'))}
             colon={false}
-            labelCol={{ span: 10, flex: '0 0 175px' }}
+            labelCol={{ span: 10, flex: '0 0 180px' }}
           >
             <Radio.Group
               defaultValue={ConsumptionTaxEnum.EXCLUSIVE}

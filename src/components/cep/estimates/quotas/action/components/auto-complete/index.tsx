@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useSelect } from '@refinedev/antd'
-import { useApiUrl, useCustom, useList, useTranslate } from '@refinedev/core'
-import { AutoComplete, Form, Select } from 'antd'
+import { useApiUrl, useCustom, useShow, useTranslate } from '@refinedev/core'
+import type { ProductDetail } from '@sdk/hey-api'
+import { Form, Select } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { useEffect, useState } from 'react'
 
@@ -38,16 +38,30 @@ function CoreAutoComplete({
 
   const form = useFormInstance()
 
-  const [options, setOptions] = useState([])
+  const [options, setOptions] =
+    useState<{ label: string | undefined; value: number | undefined }[]>()
 
-  const filter1 = Form.useWatch(filterPath1, form)
-  const filter2 = Form.useWatch(filterPath2, form)
+  const product = Form.useWatch(filterPath1, form)
+  const customer = Form.useWatch(filterPath2, form)
+
+  const package_id = Form.useWatch(
+    ['main_product', index, 'products', index2, 'package_id'],
+    form,
+  )
 
   const { data } = useCustom({
-    url: `${apiUrl}/${resource}/${filter1}/customer-pricing/${filter2?.value}`,
+    url: `${apiUrl}/${resource}/${product}/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      enabled: !!filter1 && !!filter2,
+      enabled: !!product && !!customer,
+    },
+  })
+
+  const { query: productResponse } = useShow<ProductDetail>({
+    resource: 'products',
+    id: product,
+    queryOptions: {
+      enabled: !!product && !customer,
     },
   })
 
@@ -59,8 +73,33 @@ function CoreAutoComplete({
           value: item.id,
         })),
       )
+    } else if (productResponse?.data?.data) {
+      setOptions(
+        productResponse.data?.data?.packagings?.map((item) => ({
+          label: item?.name,
+          value: item?.id,
+        })),
+      )
     }
-  }, [data])
+  }, [data, productResponse?.data?.data])
+
+  useEffect(() => {
+    const option = data?.data.packagings?.find(
+      (item: any) => item?.id === package_id,
+    )
+
+    if (option) {
+      form.setFieldValue(
+        [parent, index, 'products', index2, 'selling_price'],
+        option?.rank_prices ? option?.rank_prices : option?.selling_price,
+      )
+    } else {
+      form.setFieldValue(
+        [parent, index, 'products', index2, 'selling_price'],
+        data?.data?.selling_price ?? 0,
+      )
+    }
+  }, [data, customer])
 
   return (
     <Select
@@ -69,14 +108,19 @@ function CoreAutoComplete({
       style={style}
       showSearch
       placeholder={t('placeholders.select')}
-      filterOption={false}
+      filterOption={(input, option) =>
+        ((option?.label ?? '') as string)
+          .toLowerCase()
+          .includes(input.toLowerCase())
+      }
+      onSearch={() => {}}
       autoClearSearchValue
       allowClear
       onChange={(value) => {
         if (onChange) {
           onChange(value)
         }
-        const option = data?.data.packagings.find(
+        const option = (data?.data.packagings).find(
           (item: any) => item?.id === value,
         )
 
@@ -87,24 +131,21 @@ function CoreAutoComplete({
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'cost_price'],
-          data?.data?.cost_price * option?.quantity_in_package
-            ? data?.data?.cost_price * option?.quantity_in_package
-            : data?.data?.cost_price,
+          value
+            ? (data?.data?.cost_price ?? 0) * (option?.quantity_in_package ?? 0)
+            : (data?.data?.cost_price ?? 0),
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'selling_price'],
-          option?.rank_prices ??
-            option?.selling_price ??
-            data?.data?.selling_price,
+          option?.rank_prices * 1
+            ? (option?.rank_prices ?? 0)
+            : (option?.selling_price ?? data?.data.selling_price),
         )
 
-        form.setFieldValue(
-          [parent, index, 'products', index2, 'quantity'],
-          option?.quantity_in_package ?? 1,
-        )
+        form.setFieldValue([parent, index, 'products', index2, 'quantity'], 1)
       }}
-      disabled={!filter1 || !filter2}
+      disabled={!product}
     />
   )
 }

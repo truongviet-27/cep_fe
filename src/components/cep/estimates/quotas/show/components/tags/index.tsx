@@ -1,17 +1,19 @@
+import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Card, Col, Form, Row, Space, Tag } from 'antd'
 
 function Tags({ tags }: { tags: { id: number; name: string }[] }) {
+  const t = useTranslate()
   return (
     <Card
-      title={boldText('タグ', PRIMARY, 16)}
-      headStyle={{
-        padding: 0,
-        minHeight: 0,
-      }}
-      bodyStyle={{
-        padding: 0,
+      title={boldText(t('quotas.show.tags'), PRIMARY, 16)}
+      styles={{
+        header: {
+          padding: 0,
+          minHeight: 0,
+        },
+        body: { padding: 0 },
       }}
       style={{
         border: 'none',

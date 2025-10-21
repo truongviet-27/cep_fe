@@ -24,6 +24,7 @@ export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
   unit_name?: string
   product_id?: number | null
   product_name?: string
+  package_name?: string
   packagings?: Array<{
     id: number
     name: string
@@ -85,6 +86,7 @@ export type QuoteTemplateDetailType = {
   name?: string
   description?: string
   type?: 'normal' | 'channel_limited'
+  category?: 'merchandise' | 'service'
   delivery_method?: string
   payment_due_date?:
     | 'monthly_25'
@@ -105,7 +107,10 @@ export type QuoteTemplateDetailType = {
   tax_rate?: number
   note?: string
   number_product?: number
-  total_price?: number
+  total_price: number
+  total_price_tax_included: number
+  total_profit_margin: number
+  consumption_tax_amount: number
   tags?: Array<{
     id?: number
     name?: string

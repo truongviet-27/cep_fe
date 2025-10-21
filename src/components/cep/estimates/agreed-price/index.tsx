@@ -3,18 +3,20 @@
 
 import { RightOutlined } from '@ant-design/icons'
 import { useTranslate } from '@refinedev/core'
-import { Typography } from 'antd'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import TabsAgreedPrice from '@components/cep/estimates/agreed-price/tabs'
 import PageContainer from '@components/common/page-container'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 
-const { Title } = Typography
+interface IProps {
+  isShowTitle?: boolean
+}
 
-function AgreedPriceList() {
+function AgreedPriceList({ isShowTitle = true }: IProps) {
   const t = useTranslate()
   const router = useRouter()
   const pathname = usePathname()
@@ -37,14 +39,10 @@ function AgreedPriceList() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('estimates.estimates')}
-        </Title>
-      ),
+      title: boldText(t('estimates.estimates')),
     },
     {
-      title: <Title level={5}>{t('agreed_prices.agreed_prices')}</Title>,
+      title: boldText(t('agreed_prices.parent'), PRIMARY),
     },
   ]
 
@@ -53,7 +51,7 @@ function AgreedPriceList() {
       breadcrumbs={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      title={t('agreed_prices.agreed_prices')}
+      title={isShowTitle ? t('agreed_prices.parent') : null}
     >
       <TabsAgreedPrice
         isEdit={isEdit}

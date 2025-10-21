@@ -8,6 +8,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import { DeleteButton, useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Department } from '@sdk/hey-api'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
@@ -15,7 +16,7 @@ import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import React, { useMemo } from 'react'
 
-const { Text, Title } = Typography
+const { Text } = Typography
 
 export default function EmployeeEdit() {
   const t = useTranslate()
@@ -43,6 +44,10 @@ export default function EmployeeEdit() {
     warnWhenUnsavedChanges: false,
     defaultFormValues: {
       hash_dash: true,
+    },
+    redirect: false,
+    onMutationSuccess: () => {
+      refetch()
     },
   })
 
@@ -72,13 +77,11 @@ export default function EmployeeEdit() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('departments.departments')}
-        </Title>
-      ),
+      title: boldText(t('departments.departments')),
     },
-    { title: <Title level={5}>{t('departments.edit.edit')}</Title> },
+    {
+      title: boldText(t('departments.edit.edit'), PRIMARY),
+    },
   ]
 
   return (
@@ -168,23 +171,25 @@ export default function EmployeeEdit() {
               </Form.Item>
             </Col>
 
-            <Col flex="none">
+            <Col flex="none" className={'!-mt-2'}>
               <Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
                 (A-Z, 0-9, -)
               </Text>
             </Col>
 
-            <Col xs={24} sm="auto" flex="none">
-              <Space direction="vertical" size={6} wrap>
+            <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
+              <Space direction="horizontal" size={6} wrap>
                 <Button
                   size="middle"
-                  type="default"
+                  color="primary"
+                  variant="outlined"
                   loading={isLoading}
                   onClick={() => {
                     refetch().then(() => {
                       handleAutoNumber()
                     })
                   }}
+                  disabled={data?.data?.issue_method === 'manual'}
                 >
                   {t('departments.create.auto_number')}
                 </Button>
@@ -222,10 +227,7 @@ export default function EmployeeEdit() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
       >
-        <CodeIssueSettingEdit
-          modalProps={modalFormProps}
-          refetchParent={refetch}
-        />
+        <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
     </Edit>
   )

@@ -1,13 +1,14 @@
+import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import type {
   QuotaTemplateFormType,
   QuotaTemplateMainProductType,
   QuotaTemplateProductType,
 } from '@interfaces/quota-templates'
-import { useSelect } from '@refinedev/antd'
-import type {
-  ProductListItem,
-  QuotaTemplateProductGroupRequest,
-  QuotaTemplateProductItemRequest,
+import {
+  ConsumptionTaxEnum,
+  type ProductListItem,
+  type QuotaTemplateProductGroupRequest,
+  type QuotaTemplateProductItemRequest,
 } from '@sdk/hey-api'
 import { Form } from 'antd'
 import { useEffect, useState } from 'react'
@@ -16,31 +17,18 @@ export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
 
   const totalPriceWatch = Form.useWatch('total_price', form)
-  const taxRateWatch = Form.useWatch('tax_rate', form)
+  const taxRateWatch = Form.useWatch('tax_rate', form) ?? 0
   const mainProducts = Form.useWatch(
     'main_product',
     form,
   ) as QuotaTemplateMainProductType[]
+  const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
+  const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
-
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-    onSearch(value) {
-      return [
-        {
-          field: 'name',
-          operator: 'contains',
-          value,
-        },
-      ]
-    },
-  })
 
   const handleAddProduct = (groupIndex: number) => {
     const values = mainProducts || []
@@ -50,7 +38,7 @@ export const useController = () => {
     values[groupIndex].products = [
       ...products,
       {
-        product_id: 0,
+        product_id: null,
         name: '',
         code: '自動採番',
         quantity: 0,
@@ -58,7 +46,7 @@ export const useController = () => {
         selling_price: 0,
         profit_margin: 0,
         is_add_total: false,
-      },
+      } as unknown as QuotaTemplateProductType,
     ]
 
     form?.setFieldsValue({ main_product: values })
@@ -90,8 +78,31 @@ export const useController = () => {
       )
     })
 
-    const taxTotal = (sellTotal * Number(taxRateWatch ?? 0)) / 100
-    const sellTotalWithTax = sellTotal + taxTotal
+    let taxTotal = 0
+    let sellTotalWithTax = 0
+    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
+      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        taxTotal = Math.floor(sellTotal - sellTotal / 1.1)
+      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        taxTotal = Math.ceil(sellTotal - sellTotal / 1.1)
+      } else {
+        taxTotal = Number((sellTotal - sellTotal / 1.1).toFixed(0))
+      }
+    } else {
+      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        taxTotal = Math.floor((sellTotal * taxRateWatch) / 100)
+      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        taxTotal = Math.ceil((sellTotal * taxRateWatch) / 100)
+      } else {
+        taxTotal = Number(((sellTotal * taxRateWatch) / 100).toFixed(0))
+      }
+    }
+
+    if (consumptionTaxWatch === ConsumptionTaxEnum.EXCLUSIVE) {
+      sellTotalWithTax = sellTotal + taxTotal
+    } else {
+      sellTotalWithTax = sellTotal
+    }
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 
@@ -106,37 +117,37 @@ export const useController = () => {
   }
 
   const onChangeProductName = (
-    value: unknown,
+    value: ProductListItem,
     index: number,
     index2: number,
   ) => {
-    const item = query.data?.data.find(
-      (item) => item.id === value,
-    ) as ProductListItem
-
+    form.setFieldValue(
+      ['main_product', index, 'products', index2, 'product_id'],
+      value?.id,
+    )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'package_id'],
       null,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'name'],
-      item?.name,
+      value?.name,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'code'],
-      item?.code,
+      value?.code,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'unit'],
-      item?.unit,
+      value?.unit,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'cost_price'],
-      item?.cost_price,
+      value?.cost_price,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'selling_price'],
-      item?.sale_price,
+      value?.sale_price,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'quantity'],
@@ -153,7 +164,7 @@ export const useController = () => {
 
   useEffect(() => {
     calculateSummary()
-  }, [mainProducts, taxRateWatch])
+  }, [mainProducts, taxRateWatch, consumptionTaxWatch])
 
   return {
     form,
@@ -164,9 +175,9 @@ export const useController = () => {
     taxTotal,
     profitRate,
     sellTotalWithTax,
-    selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
+    consumptionTaxWatch,
   }
 }

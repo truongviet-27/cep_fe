@@ -73,7 +73,7 @@ interface ICustomer {
 export default function CustomerListPage() {
   const t = useTranslate()
   const go = useGo()
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(true)
 
   const { mutate, isLoading } = useUpdate()
   const { parameterSettings, hasFullAccessModule } = useUserStore(
@@ -81,7 +81,9 @@ export default function CustomerListPage() {
   )
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
-  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+  const allowRankResource = parameterSettings?.get?.(
+    ParameterResourceEnum.RANKS,
+  )
 
   const modalFormProps = useModalForm<Rank>({
     action: 'edit',
@@ -112,9 +114,9 @@ export default function CustomerListPage() {
           value: values?.country,
         },
         {
-          field: 'person_in_charge_department',
-          operator: 'contains',
-          value: values?.person_in_charge_department,
+          field: 'department_in_charge_id',
+          operator: 'null',
+          value: values?.department_in_charge_id,
         },
         {
           field: 'price_rank_id',
@@ -167,9 +169,9 @@ export default function CustomerListPage() {
         value: values?.country,
       },
       {
-        field: 'person_in_charge_department',
-        operator: 'contains',
-        value: values?.person_in_charge_department,
+        field: 'department_in_charge_id',
+        operator: 'null',
+        value: values?.department_in_charge_id,
       },
       {
         field: 'price_rank_id',
@@ -218,9 +220,14 @@ export default function CustomerListPage() {
         title: t('customers.fields.code'),
         dataIndex: 'customer_code',
         key: 'customer_code',
+        width: '9%', // Tỷ lệ 1
         render: (text, record) => (
           <Link
-            href={`/customers/show/${record.id}`}
+            href={
+              record.deleted_at
+                ? `/customers/show/${record.id}?disable=true`
+                : `/customers/show/${record.id}`
+            }
             key={record.id}
             style={{ textDecoration: 'underline' }}
           >
@@ -232,22 +239,31 @@ export default function CustomerListPage() {
         title: t('customers.fields.name'),
         dataIndex: 'name',
         key: 'name',
+        align: 'left',
+        width: '18%', // Tỷ lệ 2
+        ellipsis: true,
       },
       {
         title: t('customers.fields.country'),
         dataIndex: 'country',
         key: 'country',
+        align: 'left',
+        width: '8%', // Tỷ lệ 3
       },
       {
         title: t('customers.fields.department'),
         dataIndex: 'department_in_charge',
         key: 'person_in_charge_department',
+        align: 'left',
+        width: '11%', // Tỷ lệ 4
+        ellipsis: true,
       },
       {
         title: t('customers.fields.unit_price_rank'),
         dataIndex: 'rank',
         key: 'rank',
-        render: (rank, record) => (
+        width: '8%', // Tỷ lệ 5
+        render: (rank) => (
           <Link
             href={`/ranks`}
             className="!underline"
@@ -265,7 +281,7 @@ export default function CustomerListPage() {
           <div>
             <AutoHeading
               i18n={'customers.fields.credit_rank'}
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
@@ -275,10 +291,10 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'credit_rank',
         key: 'credit_rank',
+        width: '8%', // Tỷ lệ 6
         render: (_, record) => (
           <Space direction={'vertical'}>
             <Text strong>{record?.credit_rank}</Text>
-
             <Text className={'!font-light !italic'}>
               {record?.credit_rank_update_at &&
                 dayjs(record?.credit_rank_update_at).format(FORMAT_DATE)}
@@ -291,7 +307,7 @@ export default function CustomerListPage() {
           <div>
             <AutoHeading
               i18n={'customers.fields.anti_social_check_date'}
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
@@ -301,15 +317,17 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
-        width: 150,
+        width: '8%', // Tỷ lệ 7
         render: (_, record) => (
           <Space direction={'vertical'}>
             <Text strong>
-              {record?.anti_social_rank == 'T' ? '△' : record?.anti_social_rank}
+              {record?.anti_social_rank === 'T'
+                ? '△'
+                : record?.anti_social_rank}
             </Text>
-
             <Text className={'!font-light !italic'}>
-              {dayjs(record?.anti_social_rank_update_at).format(FORMAT_DATE)}
+              {record?.anti_social_rank_update_at &&
+                dayjs(record.anti_social_rank_update_at).format(FORMAT_DATE)}
             </Text>
           </Space>
         ),
@@ -318,30 +336,23 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        render: (_, record) => (
-          <Space direction={'vertical'}>
-            <Text strong>
-              {record?.anti_social_rank == 'T' ? '△' : record?.anti_social_rank}
-            </Text>
-
-            <Text className={'!font-light !italic'}>
-              {dayjs(record?.created_at).format(FORMAT_DATE)}
-            </Text>
-          </Space>
-        ),
+        width: '10%', // Tỷ lệ 8
+        render: (text) => text && dayjs(text).format(FORMAT_DATE),
       },
       {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
-        render: (_, record) =>
-          record?.deleted_at && dayjs(record?.deleted_at).format(FORMAT_DATE),
+        align: 'left',
+        width: '10%', // Tỷ lệ 9
+        render: (text) => text && dayjs(text).format(FORMAT_DATE),
       },
       {
         title: t('customers.fields.actions'),
         key: 'actions',
         align: 'center',
         dataIndex: 'actions',
+        width: '10%', // Tỷ lệ 10
         render: (_, record) => (
           <Space>
             {!record.deleted_at && (
@@ -354,51 +365,41 @@ export default function CustomerListPage() {
                 {t('buttons.edit')}
               </EditButton>
             )}
-            &nbsp;
-            <Button
-              size="small"
-              danger={!record.deleted_at}
-              type={record.deleted_at ? 'default' : 'primary'}
-              icon={
-                record.deleted_at ? (
-                  <EditButton
-                    loading={isLoading}
-                    onClick={() =>
-                      mutate({
-                        resource: 'customers',
-                        id: record.id,
-                        values: {},
-                        meta: { action: 'restore' },
-                      })
-                    }
-                    icon={null}
-                    recordItemId={record.id}
-                    size={'small'}
-                    type={'primary'}
-                    disabled={!isFullAccess}
-                  >
-                    {t('buttons.resume')}
-                  </EditButton>
-                ) : (
-                  <DeleteButton
-                    icon={null}
-                    danger
-                    recordItemId={record.id}
-                    size={'small'}
-                    type={'primary'}
-                    className={isFullAccess ? '' : '!bg-gray-100'}
-                    disabled={!isFullAccess}
-                  >
-                    {t('buttons.suspend')}
-                  </DeleteButton>
-                )
-              }
-            />
+            {record.deleted_at ? (
+              <Button
+                size="small"
+                type="primary"
+                loading={isLoading}
+                disabled={!isFullAccess}
+                onClick={() => {
+                  mutate({
+                    resource: 'customers',
+                    id: record.id,
+                    values: {},
+                    meta: { action: 'restore' },
+                  })
+                }}
+              >
+                {t('buttons.resume')}
+              </Button>
+            ) : (
+              <DeleteButton
+                icon={null}
+                danger
+                recordItemId={record.id}
+                size={'small'}
+                type={'primary'}
+                className={isFullAccess ? '' : '!bg-gray-100'}
+                disabled={!isFullAccess}
+              >
+                {t('buttons.suspend')}
+              </DeleteButton>
+            )}
           </Space>
         ),
       },
     ],
-    [t, go],
+    [t, go, isFullAccess, isLoading, mutate, editModalShow],
   )
 
   const handleClear = () => {
@@ -408,14 +409,10 @@ export default function CustomerListPage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner')),
     },
     {
-      title: <Title level={5}>{t('customers.list.list')}</Title>,
+      title: boldText(t('customers.list.list'), PRIMARY),
     },
   ]
 
@@ -463,10 +460,8 @@ export default function CustomerListPage() {
               }}
               formItemProps={{
                 label: boldText(t('customers.fields.department')),
-                name: 'department_id',
+                name: 'department_in_charge_id',
               }}
-              optionLabel={'name'}
-              optionValue={'id'}
               selectComponentProps={{
                 placeholder: t('placeholders.select'),
                 style: { maxWidth: 560, minWidth: '150px' },
@@ -478,7 +473,7 @@ export default function CustomerListPage() {
               <SelectPagination
                 formItemProps={{
                   label: boldText(t('ranks.fields.code')),
-                  name: 'unit_price_rank',
+                  name: 'price_rank_id',
                 }}
                 selectProps={{
                   resource: 'ranks',
@@ -486,8 +481,6 @@ export default function CustomerListPage() {
                     enabled: allowRankResource,
                   },
                 }}
-                optionLabel={'name'}
-                optionValue={'id'}
                 selectComponentProps={{
                   placeholder: t('placeholders.select'),
                   style: { maxWidth: 560, minWidth: '150px' },
@@ -545,7 +538,12 @@ export default function CustomerListPage() {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit" onClick={handleSearch}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={handleSearch}
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button onClick={handleClear}>{t('buttons.clear')}</Button>
@@ -572,7 +570,10 @@ export default function CustomerListPage() {
 
       <Modal
         open={editModalOpen}
-        onCancel={editModalClose}
+        onCancel={() => {
+          setIsShow(true)
+          editModalClose()
+        }}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
         width={'70vh'}
@@ -585,6 +586,7 @@ export default function CustomerListPage() {
       </Modal>
 
       <CommonTable
+        tableLayout="fixed"
         onRow={(record) => ({
           className: getRowClassName(record),
         })}

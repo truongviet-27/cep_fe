@@ -31,7 +31,27 @@ export const PARAMETER_SETTING_URL = new Map<string, ParameterResourceEnum>([
   ['/products', ParameterResourceEnum.PRODUCTS],
   ['/tenant-settings', ParameterResourceEnum.QUOTATION_FORMS],
   ['/approve-routes', ParameterResourceEnum.APPROVE_ROUTES],
+  ['/price-groups', ParameterResourceEnum.RANKS],
 ])
+
+const getParameterSettingByUrl = (
+  route: string,
+): ParameterResourceEnum[] | null => {
+  switch (route) {
+    case '/ranks':
+      return [ParameterResourceEnum.RANKS]
+    case '/products':
+      return [ParameterResourceEnum.PRODUCTS]
+    case '/tenant-settings':
+      return [ParameterResourceEnum.QUOTATION_FORMS]
+    case '/approve-routes':
+      return [ParameterResourceEnum.APPROVE_ROUTES]
+    case '/price-groups':
+      return [ParameterResourceEnum.RANKS, ParameterResourceEnum.PRODUCTS]
+    default:
+      return null
+  }
+}
 
 export const hasDisableMenu = (route?: string): boolean => {
   const { permission } = useUserStore.getState()
@@ -49,21 +69,21 @@ export const hasDisableMenuByParameter = (route?: string): boolean => {
   if (!route) {
     return false
   }
-  const resource = PARAMETER_SETTING_URL.get(route)
+  const resources = getParameterSettingByUrl(route)
+  if (!resources) return false
 
-  if (!resource) return false
-
-  return !parameterSettings?.get?.(resource)
+  return resources.some(
+    (resource) => !parameterSettings?.get?.(resource as ParameterResourceEnum),
+  )
 }
 
 export const hasForbiddenRoute = (pathName: string) => {
-  const { permission, hasFullAccessModule } = useUserStore.getState()
+  const { permission } = useUserStore.getState()
 
-  if (permission?.is_module_admin) {
-    return false
-  }
-
-  if (PermissionRouteFullAdminOnly.has(pathName)) {
+  if (
+    !permission?.is_module_admin &&
+    PermissionRouteFullAdminOnly.has(pathName)
+  ) {
     return true
   }
 
@@ -71,25 +91,62 @@ export const hasForbiddenRoute = (pathName: string) => {
 
   switch (pathConverted) {
     case '/product-categories/csv':
-      return !hasFullAccessModule(PermissionEnum.PRODUCT_CATEGORY_EDIT)
+      return checkForbidden(PermissionEnum.PRODUCT_CATEGORY_EDIT)
     case '/departments/csv':
     case '/departments/create':
     case '/departments/edit':
-      return !hasFullAccessModule(PermissionEnum.DEPARTMENT_EDIT)
+      return checkForbidden(PermissionEnum.DEPARTMENT_EDIT)
     case '/customers/csv':
     case '/customers/create':
     case '/customers/edit':
-      return !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
+      return checkForbidden(PermissionEnum.CUSTOMER_EDIT)
+    case '/products':
+    case '/products/show':
+      return checkForbidden(null, [ParameterResourceEnum.PRODUCTS])
     case '/products/csv':
     case '/products/create':
     case '/products/edit':
-      return !hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
+      return checkForbidden(PermissionEnum.PRODUCT_EDIT, [
+        ParameterResourceEnum.PRODUCTS,
+      ])
+    case '/ranks':
+    case '/ranks/show':
+    case '/ranks/create':
+    case '/ranks/edit':
+      return checkForbidden(null, [ParameterResourceEnum.RANKS])
     case '/employees/edit':
-      return !hasFullAccessModule(PermissionEnum.EMPLOYEE_EDIT)
+      return checkForbidden(PermissionEnum.EMPLOYEE_EDIT)
+    case '/approve-routes':
+    case '/approve-routes/show':
+      return checkForbidden(null, [ParameterResourceEnum.APPROVE_ROUTES])
     case '/approve-routes/create':
     case '/approve-routes/edit':
-      return true
+      return checkForbidden(PermissionEnum.APPROVE_ROUTE_EDIT, [
+        ParameterResourceEnum.APPROVE_ROUTES,
+      ])
+    case '/tenant-settings':
+      return checkForbidden(null, [ParameterResourceEnum.QUOTATION_FORMS])
     default:
       return false
   }
+}
+
+const checkForbidden = (
+  permissionEnum: PermissionEnum | null,
+  parameters?: ParameterResourceEnum[],
+) => {
+  const { permission, parameterSettings, hasFullAccessModule } =
+    useUserStore.getState()
+  let isForbidden = false
+  if (!permission?.is_module_admin && permissionEnum) {
+    isForbidden = !hasFullAccessModule(permissionEnum)
+  }
+
+  if (!isForbidden && parameters?.length) {
+    isForbidden = !parameters.every((parameter) =>
+      parameterSettings?.get?.(parameter),
+    )
+  }
+
+  return isForbidden
 }

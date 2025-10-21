@@ -62,7 +62,7 @@ export default function AuthHeader({
           background: WHITE,
           borderColor: GRAY,
           width: '100%',
-          padding: 32,
+          padding: 18,
         }}
       >
         {children}
@@ -75,7 +75,7 @@ export default function AuthHeader({
                 className={cn(isAdmin && 'cursor-pointer')}
                 onClick={isAdmin ? () => modalProps.show() : undefined}
               >
-                <div className="text-[12px] font-semibold text-[#74232A]">
+                <div className="text-[22px] font-semibold text-[#74232A]">
                   {tenantName ?? '株式会社ピオネロ'}
                 </div>
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}
@@ -85,18 +85,21 @@ export default function AuthHeader({
                 trigger={['click']}
                 menu={{ items: menuItems, onClick: onMenuClick }}
               >
-                <div className="flex cursor-pointer items-center justify-end gap-1">
-                  <span className="max-w-[180px] truncate text-[14px] font-medium text-gray-900">
-                    {session?.data?.user?.name}
-                  </span>
-                  <UserOutlined className="text-[16px] text-[#1677ff]" />
-                  <DownOutlined style={{ fontSize: '10px' }} />
+                <div className="flex cursor-pointer items-start justify-end gap-1">
+                  <div className="flex flex-col gap-[2px]">
+                    <span className="max-w-[180px] truncate text-[12px] font-medium text-gray-900">
+                      {session?.data?.user?.name}
+                    </span>
+                    <span className="text-[12px] text-gray-400">
+                      {permission?.role?.display_name ?? 'テナント管理者'}
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <UserOutlined className="text-[16px] text-[#1677ff]" />
+                    <DownOutlined style={{ fontSize: '10px' }} />
+                  </div>
                 </div>
               </Dropdown>
-
-              <div className="text-[11px] text-gray-400">
-                {permission?.role?.display_name}
-              </div>
             </div>
           </div>
         ) : (

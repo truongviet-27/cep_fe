@@ -4,6 +4,9 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton, EditButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
+import { ParameterResourceEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Divider, Flex, Space, Typography } from 'antd'
 import { Empty, Spin } from 'antd/lib'
@@ -21,6 +24,7 @@ const ProductDetailContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
   const { product, isLoading } = useProductDetail()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   return (
     <PageContainer
@@ -30,18 +34,12 @@ const ProductDetailContainer: React.FC = () => {
             {
               title: (
                 <Link href="/products">
-                  <Title level={5} style={{ color: PRIMARY }}>
-                    {t('products.breadcrumb.home')}
-                  </Title>
+                  {boldText(t('products.breadcrumb.home'))}
                 </Link>
               ),
             },
             {
-              title: (
-                <Title level={5}>
-                  {t('products.breadcrumb.productDetail')}
-                </Title>
-              ),
+              title: boldText(t('products.breadcrumb.productDetail'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -58,7 +56,10 @@ const ProductDetailContainer: React.FC = () => {
           <>
             <BasicInfo product={product} />
             <PackagingUnitPrice product={product} />
-            <PriceGroup product={product} />
+            {parameterSettings.get(ParameterResourceEnum.RANKS) && (
+              <PriceGroup product={product} />
+            )}
+
             <Divider />
             <ShowMoreInfo
               descriptions={[
@@ -96,7 +97,7 @@ const ProductDetailContainer: React.FC = () => {
                 >
                   {t('products.buttons.back')}
                 </Button>
-                <EditButton type="primary" icon={null}>
+                <EditButton resource="products" type="primary" icon={null}>
                   {t('products.buttons.edit')}
                 </EditButton>
               </Space>

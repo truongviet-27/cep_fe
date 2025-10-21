@@ -34,16 +34,12 @@ export async function POST(req: NextRequest) {
 
     const fullUrl = `${HOUJIN_API_BASE_URL}?${params.toString()}`
 
-    console.log(fullUrl, 'fullUrl')
-
     const apiResponse = await fetch(fullUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     })
-
-    console.log('here')
 
     if (!apiResponse.ok) {
       throw new Error(`External API failed with status: ${apiResponse.status}`)

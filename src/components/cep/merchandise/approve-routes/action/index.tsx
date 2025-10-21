@@ -19,7 +19,7 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { GREY_TAG, PRIMARY, WHITE } from '@utility/color'
+import { BLACK, GREY_TAG, PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -102,17 +102,6 @@ function ApproveAction() {
       mode: 'server',
       pageSize: 100,
     },
-    // defaultValue: query.data?.data.departments.map((item: any) => item?.id),
-    onSearch: (value) => {
-      console.log(value, 'valuexxx')
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
-    },
   })
 
   const { selectProps: selectPropsDp2, query: querySelectDp2 } = useSelect({
@@ -122,15 +111,6 @@ function ApproveAction() {
     pagination: {
       mode: 'server',
       pageSize: 100,
-    },
-    onSearch: (value) => {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
     },
   })
 
@@ -204,19 +184,14 @@ function ApproveAction() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.approve_routes')}
-                </Title>
-              ),
+              title: boldText(t('approve_routes.parent')),
             },
             {
-              title: (
-                <Title level={5}>
-                  {isUpdate
-                    ? t('approve_routes.edit')
-                    : t('approve_routes.create')}
-                </Title>
+              title: boldText(
+                isUpdate
+                  ? t('approve_routes.edit')
+                  : t('approve_routes.create'),
+                PRIMARY,
               ),
             },
           ]}
@@ -301,6 +276,10 @@ function ApproveAction() {
                       'approve_routes.validation.route_code.invalid_format',
                     ),
                   },
+                  {
+                    max: 20,
+                    message: '',
+                  },
                 ]}
               />
             </Col>
@@ -351,9 +330,15 @@ function ApproveAction() {
                 <Select
                   {...selectPropsDp}
                   mode="multiple"
+                  onSearch={() => {}}
                   maxTagCount={'responsive'}
                   allowClear
                   placeholder={t('placeholders.select')}
+                  filterOption={(input, option) =>
+                    ((option?.label ?? '') as string)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
                   options={(() => {
                     const optionFromDp2 = selectPropsDp2?.options?.filter(
                       (opt) =>
@@ -560,12 +545,24 @@ function ApproveAction() {
                                               <Select
                                                 {...selectPropsDp2}
                                                 allowClear
+                                                autoClearSearchValue
                                                 style={{
                                                   width: 200,
                                                 }}
+                                                onSearch={() => {}}
                                                 placeholder={t(
                                                   'placeholders.select',
                                                 )}
+                                                filterOption={(input, option) =>
+                                                  (
+                                                    (option?.label ??
+                                                      '') as string
+                                                  )
+                                                    .toLowerCase()
+                                                    .includes(
+                                                      input.toLowerCase(),
+                                                    )
+                                                }
                                                 onChange={() => {
                                                   setFieldValue(
                                                     [

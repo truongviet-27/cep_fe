@@ -1,5 +1,6 @@
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
+import ProductSelect from '@components/common/product-select'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import type {
@@ -17,7 +18,6 @@ import {
   InputNumber,
   Modal,
   Row,
-  Select,
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -40,10 +40,10 @@ const DetailInfo: FC = () => {
     costTotal,
     profitRate,
     sellTotalWithTax,
-    selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
+    consumptionTaxWatch,
   } = useController()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -96,9 +96,14 @@ const DetailInfo: FC = () => {
                     children: (
                       <Form.Item
                         name={[record.index, 'group_name']}
-                        style={{
-                          marginBottom: 0,
-                        }}
+                        className="ant-form-item-hidden-margin"
+                        required
+                        rules={[
+                          {
+                            required: true,
+                            message: t('validation.required'),
+                          },
+                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -131,14 +136,26 @@ const DetailInfo: FC = () => {
                   return { props: { colSpan: 0 } }
                 }
 
-                const defaultValue = {
-                  value:
-                    mainProducts?.[record.index]?.products?.[record.index2]
-                      ?.product_id || null,
-                  label:
-                    mainProducts?.[record.index]?.products?.[record.index2]
-                      ?.product_name || null,
-                }
+                const productId = form.getFieldValue([
+                  'main_product',
+                  record.index,
+                  'products',
+                  record.index2,
+                  'product_id',
+                ])
+
+                const defaultValue = productId
+                  ? {
+                      value: productId,
+                      label: form.getFieldValue([
+                        'main_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'name',
+                      ]),
+                    }
+                  : null
 
                 return (
                   <Form.Item
@@ -148,21 +165,20 @@ const DetailInfo: FC = () => {
                       record.index2,
                       'product_id',
                     ]}
-                    className="!mb-0"
+                    className="ant-form-item-hidden-margin"
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
                   >
-                    <Select
-                      {...selectPropsProduct}
-                      placeholder="商品名・サービス名で検索"
-                      allowClear
-                      showSearch
-                      filterOption={false}
-                      style={{
-                        width: 200,
-                      }}
+                    <ProductSelect
+                      defaultValue={defaultValue}
                       onChange={(value) =>
                         onChangeProductName(value, record.index, record.index2)
                       }
-                      defaultValue={defaultValue}
                     />
                   </Form.Item>
                 )
@@ -204,6 +220,27 @@ const DetailInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+
+                const packageId = form.getFieldValue([
+                  'main_product',
+                  record.index,
+                  'products',
+                  record.index2,
+                  'package_id',
+                ])
+
+                const defaultValue = packageId
+                  ? {
+                      value: packageId,
+                      label: form.getFieldValue([
+                        'main_product',
+                        record.index,
+                        'products',
+                        record.index2,
+                        'package_name',
+                      ]),
+                    }
+                  : null
                 return (
                   <Form.Item
                     name={[
@@ -213,9 +250,17 @@ const DetailInfo: FC = () => {
                       record.index2,
                       'package_id',
                     ]}
-                    className="!mb-0"
+                    className="ant-form-item-hidden-margin"
                   >
                     <PackageSelect
+                      key={
+                        record.index +
+                        '-' +
+                        record.index2 +
+                        '-' +
+                        mainProducts?.[record.index]?.products?.[record.index2]
+                          .product_id
+                      }
                       productId={form.getFieldValue([
                         'main_product',
                         record.index,
@@ -223,7 +268,7 @@ const DetailInfo: FC = () => {
                         record.index2,
                         'product_id',
                       ])}
-                      onChange={(value) =>
+                      onChange={(value, option) => {
                         form.setFieldValue(
                           [
                             'main_product',
@@ -234,18 +279,23 @@ const DetailInfo: FC = () => {
                           ],
                           value,
                         )
-                      }
+
+                        form.setFieldValue(
+                          [
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'selling_price',
+                          ],
+                          option.selling_price,
+                        )
+                      }}
                       defaultOptions={
                         mainProducts?.[record.index]?.products?.[record.index2]
                           ?.packagings ?? []
                       }
-                      defaultValue={form.getFieldValue([
-                        'main_product',
-                        record.index,
-                        'products',
-                        record.index2,
-                        'package_id',
-                      ])}
+                      defaultValue={defaultValue}
                     />
                   </Form.Item>
                 )
@@ -286,9 +336,7 @@ const DetailInfo: FC = () => {
                       record.index2,
                       'selling_price',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>
@@ -306,9 +354,7 @@ const DetailInfo: FC = () => {
                 return (
                   <Form.Item
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                   >
                     <InputNumber min={0} controls={false} />
                   </Form.Item>
@@ -402,9 +448,7 @@ const DetailInfo: FC = () => {
                       record.index2,
                       'is_add_total',
                     ]}
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    className="ant-form-item-hidden-margin"
                     valuePropName="checked"
                   >
                     <Checkbox
@@ -635,7 +679,7 @@ const DetailInfo: FC = () => {
                 fontWeight: 700,
               }}
             >
-              合計金額（税込）
+              合計金額（{consumptionTaxWatch === 'external' ? '税抜' : '税込'}）
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               ¥{sellTotalWithTax.toLocaleString() || 0}

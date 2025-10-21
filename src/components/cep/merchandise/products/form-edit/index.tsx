@@ -4,6 +4,9 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
+import { ParameterResourceEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
@@ -40,6 +43,7 @@ const ProductFormContainer: React.FC = () => {
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
   const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   return (
     <PageContainer
@@ -49,19 +53,16 @@ const ProductFormContainer: React.FC = () => {
             {
               title: (
                 <Link href="/products">
-                  <Title level={5} style={{ color: PRIMARY }}>
-                    {t('products.breadcrumb.home')}
-                  </Title>
+                  {boldText(t('products.breadcrumb.home'))}
                 </Link>
               ),
             },
             {
-              title: (
-                <Title level={5}>
-                  {isUpdateMode
-                    ? t('products.breadcrumb.productEdit')
-                    : t('products.breadcrumb.productCreate')}
-                </Title>
+              title: boldText(
+                isUpdateMode
+                  ? t('products.breadcrumb.productEdit')
+                  : t('products.breadcrumb.productCreate'),
+                PRIMARY,
               ),
             },
           ]}
@@ -84,6 +85,7 @@ const ProductFormContainer: React.FC = () => {
           labelAlign="left"
           className="mb-[24px]"
           onFinish={handleOnSubmit}
+          scrollToFirstError
         >
           <Collapse
             items={[
@@ -131,35 +133,6 @@ const ProductFormContainer: React.FC = () => {
                   <PackagingUnitPrice
                     form={form as unknown as FormInstance<ProductFormType>}
                     addRef={addRef}
-                  />
-                ),
-              },
-            ]}
-            expandIconPosition="end"
-            defaultActiveKey={[1]}
-            expandIcon={({ isActive }) => (
-              <DownOutlined
-                style={{ transition: '0.3s' }}
-                rotate={isActive ? 180 : 0}
-              />
-            )}
-          />
-
-          <Collapse
-            style={{
-              marginTop: '20px',
-            }}
-            items={[
-              {
-                key: 1,
-                label: (
-                  <span className="font-bold">
-                    {t('products.unitPriceGroup.tableTitle')}
-                  </span>
-                ),
-                children: (
-                  <PriceGroup
-                    form={form as unknown as FormInstance<ProductFormType>}
                     ranks={ranks}
                   />
                 ),
@@ -174,6 +147,37 @@ const ProductFormContainer: React.FC = () => {
               />
             )}
           />
+          {parameterSettings.get(ParameterResourceEnum.RANKS) && (
+            <Collapse
+              style={{
+                marginTop: '20px',
+              }}
+              items={[
+                {
+                  key: 1,
+                  label: (
+                    <span className="font-bold">
+                      {t('products.unitPriceGroup.tableTitle')}
+                    </span>
+                  ),
+                  children: (
+                    <PriceGroup
+                      form={form as unknown as FormInstance<ProductFormType>}
+                      ranks={ranks}
+                    />
+                  ),
+                },
+              ]}
+              expandIconPosition="end"
+              defaultActiveKey={[1]}
+              expandIcon={({ isActive }) => (
+                <DownOutlined
+                  style={{ transition: '0.3s' }}
+                  rotate={isActive ? 180 : 0}
+                />
+              )}
+            />
+          )}
 
           {isUpdateMode && (
             <>

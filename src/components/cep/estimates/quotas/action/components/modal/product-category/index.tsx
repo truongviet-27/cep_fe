@@ -1,5 +1,10 @@
 /* eslint-disable */
-import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useNotification,
+  useTranslate,
+} from '@refinedev/core'
 import { Button, Col, Divider, Flex, Form, Row } from 'antd'
 import React, { useState } from 'react'
 
@@ -20,37 +25,68 @@ export const ProductCategoryModal = ({
   const customerIdWatch = Form.useWatch('customer', form)?.value
   const mainProductWatch = Form.useWatch(name, form)
 
+  const isDirtyProduct = (mainProductWatch ?? [])[0]?.products[0]?.product_id
+
+  const { open } = useNotification()
+
   const { data } = useCustom({
     method: 'get',
     url: `${apiUrl}/product-categories/${categoryIdWatch}/products?rank_id=${customerIdWatch}`,
     queryOptions: {
-      enabled: !!categoryIdWatch && !!customerIdWatch,
+      enabled: !!categoryIdWatch,
     },
   })
 
   const handleCreateCategory = () => {
     if (data?.data?.products?.length > 0) {
-      form.setFieldValue(name, [
-        ...mainProductWatch,
-        {
-          group_name: data?.data.products[0]?.category?.name,
-          products: data?.data.products?.map((item: any) => ({
-            product_id: item.product_id,
-            package_id: null,
-            name: item?.name,
-            code: item?.code,
-            unit: item?.unit?.name,
-            cost_price: item?.cost_price,
-            quantity: 1,
-            selling_price: item?.selling_price,
-            profit_margin: 0,
-            is_add_total: true,
-          })),
-        },
-      ])
+      form.setFieldValue(
+        name,
+        isDirtyProduct
+          ? [
+              ...mainProductWatch,
+              {
+                group_name: data?.data.products[0]?.category?.name,
+                products: data?.data.products?.map((item: any) => ({
+                  product_id: item.id,
+                  package_id: null,
+                  name: item?.name,
+                  code: item?.code,
+                  unit: item?.unit?.name,
+                  cost_price: item?.cost_price,
+                  quantity: 1,
+                  selling_price: item?.selling_price,
+                  profit_margin: 0,
+                  is_add_total: true,
+                })),
+              },
+            ]
+          : [
+              {
+                group_name: data?.data.products[0]?.category?.name,
+                products: data?.data.products?.map((item: any) => ({
+                  product_id: item.id,
+                  package_id: null,
+                  name: item?.name,
+                  code: item?.code,
+                  unit: item?.unit?.name,
+                  cost_price: item?.cost_price,
+                  quantity: 1,
+                  selling_price: item?.selling_price,
+                  profit_margin: 0,
+                  is_add_total: true,
+                })),
+              },
+            ],
+      )
+      close()
+    } else {
+      open &&
+        open({
+          message: t('quotas.action.modal.no_products.message'),
+          description: t('quotas.action.modal.no_products.description'),
+          type: 'error',
+        })
     }
-
-    close()
   }
 
   return (
@@ -61,7 +97,9 @@ export const ProductCategoryModal = ({
           <Col xs={24}>
             <Form.Item name="parent" layout="horizontal" colon={false}>
               <ProductCategoryDropdown
-                placeholder="例: 文房具 > 筆記用具"
+                placeholder={t(
+                  'quotas.action.detail_info.placeholders.product_search',
+                )}
                 onSelect={(level, currentPath, currentCat, categoryId) => {
                   form.setFieldValue('category_id', categoryId)
                 }}
@@ -83,11 +121,7 @@ export const ProductCategoryModal = ({
         <Button
           type="primary"
           onClick={handleCreateCategory}
-          disabled={
-            !customerIdWatch ||
-            !categoryIdWatch ||
-            !(data?.data.products?.length > 0)
-          }
+          disabled={!categoryIdWatch}
         >
           {t('products.buttons.save')}
         </Button>

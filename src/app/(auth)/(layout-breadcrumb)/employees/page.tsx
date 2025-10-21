@@ -13,7 +13,7 @@ import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
 import Link from 'next/link'
 import { SelectPagination } from '@components/common/select-pagination'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 function Page() {
   const t = useTranslate()
@@ -30,13 +30,9 @@ function Page() {
   const { tableProps, searchFormProps, setFilters, setCurrent } = useTable()
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>{t('employees.list.list')}</Title> },
+    { title: boldText(t('employees.list.list'), PRIMARY) },
   ]
 
   const getRowClassName = (record: BaseRecord) => {
@@ -47,7 +43,7 @@ function Page() {
     setCurrent(1)
     setFilters([
       { field: 'q', operator: 'contains', value: values.q },
-      { field: 'email', operator: 'null', value: values.email },
+      { field: 'email', operator: 'contains', value: values.email },
       { field: 'department_id', operator: 'null', value: values.department_id },
       { field: 'role_id', operator: 'null', value: values.role_id },
     ])
@@ -70,12 +66,22 @@ function Page() {
         {...searchFormProps}
         layout="vertical"
         onFinish={handleSearch}
+        onFinishFailed={(errorInfo) => {
+          console.error('Form validation failed:', errorInfo)
+        }}
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} md={4}>
             <Form.Item
               label={boldText(t('employees.filters.code_name'))}
               name="q"
+              validateTrigger={['onChange', 'onBlur']}
+              rules={[
+                {
+                  max: 100,
+                  message: 'コード名は100文字以内で入力してください',
+                },
+              ]}
             >
               <Input placeholder={t('placeholders.partial_match')} />
             </Form.Item>
@@ -84,6 +90,13 @@ function Page() {
             <Form.Item
               label={boldText(t('employees.filters.email'))}
               name="email"
+              validateTrigger={['onChange', 'onBlur']}
+              rules={[
+                {
+                  max: 255,
+                  message: 'メールアドレスは255文字以内で入力してください',
+                },
+              ]}
             >
               <Input placeholder={t('placeholders.partial_match')} />
             </Form.Item>
@@ -122,7 +135,11 @@ function Page() {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button onClick={handleClear}>{t('buttons.clear')}</Button>
@@ -152,10 +169,15 @@ function Page() {
             </Link>
           )}
         />
-        <Table.Column dataIndex="name" title={t('employees.fields.name')} />
+        <Table.Column
+          dataIndex="name"
+          title={t('employees.fields.name')}
+          align={'left'}
+        />
         <Table.Column
           dataIndex={['department']}
           title={t('employees.fields.department')}
+          align={'left'}
           render={(value) => renderFieldNotSet(value?.name)}
         />
         <Table.Column
@@ -167,6 +189,7 @@ function Page() {
           dataIndex={['role']}
           title={t('employees.fields.role')}
           render={(value) => renderFieldNotSet(value?.display_name)}
+          align={'left'}
         />
         <Table.Column
           title={t('table.actions')}

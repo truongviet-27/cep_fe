@@ -6,17 +6,22 @@ import {
   FileImageOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import styles from '@app/(auth)/(layout-breadcrumb)/customers/styles.module.css'
+import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/styles.module.css'
 import { DetailItem } from '@components/common/detail-item'
 import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useGo, useShow, useTranslate } from '@refinedev/core'
-import { type Customer, ParameterResourceEnum } from '@sdk/hey-api/types.gen'
+import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
+import {
+  type Customer,
+  ParameterResourceEnum,
+  PermissionEnum,
+} from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
+import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Collapse, Space, Typography } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -26,12 +31,77 @@ const { Panel } = Collapse
 
 export default function CustomerShowPage() {
   const t = useTranslate()
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const { parameterSettings, hasFullAccessModule } = useUserStore(
+    (state) => state,
+  )
 
   const { queryResult } = useShow<Customer>()
   const { data, isLoading } = queryResult
   const record = data?.data
   const go = useGo()
+  const { params } = useParsed()
+
+  const deliveryColumns = [
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.code')}
+        </span>
+      ),
+      dataIndex: 'delivery_address_code',
+      key: 'delivery_address_code',
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.name')}
+        </span>
+      ),
+      dataIndex: 'delivery_address_name',
+      key: 'delivery_address_name',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.address')}
+        </span>
+      ),
+      dataIndex: 'address',
+      key: 'address',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.contact_person')}
+        </span>
+      ),
+      dataIndex: 'contact_person_name',
+      key: 'contact_person_name',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.phone')}
+        </span>
+      ),
+      dataIndex: 'phone',
+      key: 'phone',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.email')}
+        </span>
+      ),
+      dataIndex: 'mail',
+      key: 'mail',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+  ]
 
   const researchColumns = [
     {
@@ -40,7 +110,7 @@ export default function CustomerShowPage() {
           {t('customers.research.document_name')}
         </span>
       ),
-      dataIndex: 'material_name', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'material_name',
       key: 'material_name',
     },
     {
@@ -49,9 +119,10 @@ export default function CustomerShowPage() {
           {t('customers.research.judgement')}
         </span>
       ),
-      dataIndex: 'judgement', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'judgement',
       key: 'judgement',
       width: 150,
+      render: (text: string) => (text == 'T' ? '△' : text),
     },
     {
       title: (
@@ -59,7 +130,7 @@ export default function CustomerShowPage() {
           {t('customers.research.file')}
         </span>
       ),
-      dataIndex: 'files', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'files',
       key: 'files',
       render: (files: Array<{ name: string; url: string }>) => (
         <Space direction="vertical" size="small">
@@ -91,9 +162,10 @@ export default function CustomerShowPage() {
           {t('customers.research.last_updated')}
         </span>
       ),
-      dataIndex: 'updated_at', // SỬA LẠI: Dùng dataIndex
+      dataIndex: 'updated_at',
       key: 'updated_at',
       width: 180,
+      render: (date: string) => date && dayjs(date).format(FORMAT_DATE),
     },
   ]
 
@@ -122,13 +194,9 @@ export default function CustomerShowPage() {
 
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('business_partner.business_partner')}
-        </Title>
-      ),
+      title: boldText(t('business_partner.business_partner')),
     },
-    { title: <Title level={5}>{t('customers.show.show')}</Title> },
+    { title: boldText(t('customers.show.show'), PRIMARY) },
   ]
 
   return (
@@ -141,6 +209,10 @@ export default function CustomerShowPage() {
         <Space>
           <Button
             type="primary"
+            disabled={
+              params?.disable ||
+              !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
+            }
             onClick={() =>
               data?.data.id &&
               go({
@@ -196,16 +268,18 @@ export default function CustomerShowPage() {
               <DetailItem label={t('customers.fields.corporate_number')}>
                 {record?.corporate_number}
               </DetailItem>
-              {parameterSettings.get(ParameterResourceEnum.RANKS) && (
+              {parameterSettings?.get?.(ParameterResourceEnum.RANKS) && (
                 <DetailItem label={t('customers.fields.unit_price_rank')}>
                   {record?.rank?.name}
                 </DetailItem>
               )}
               <DetailItem label={t('customers.fields.credit_rank')}>
-                N/A
+                {record?.fax}
               </DetailItem>
               <DetailItem label={t('customers.fields.anti_social_rank')}>
-                N/A
+                {record?.company_research_information?.[1]?.judgement == 'T'
+                  ? '△'
+                  : record?.company_research_information?.[1].judgement}
               </DetailItem>
             </>
           ),
@@ -240,7 +314,8 @@ export default function CustomerShowPage() {
                 {record?.industry}
               </DetailItem>
               <DetailItem label={t('customers.show.date_of_establishment')}>
-                {record?.date_of_establishment}
+                {record?.date_of_establishment &&
+                  dayjs(record?.date_of_establishment).format(FORMAT_DATE)}
               </DetailItem>
               <DetailItem label={t('customers.show.department_in_charge')}>
                 {record?.department_in_charge}
@@ -292,6 +367,18 @@ export default function CustomerShowPage() {
         {/*  ),*/}
         {/*  i18n: 'customers.show.accounting_contact',*/}
         {/*})}*/}
+
+        {collapseWrapper({
+          i18n: 'customers.show.delivery_destinations',
+          children: (
+            <CommonTable
+              dataSource={record?.delivery_addresses}
+              columns={deliveryColumns}
+              pagination={false}
+              rowKey="id"
+            />
+          ),
+        })}
 
         {collapseWrapper({
           i18n: 'customers.show.corporate_research',

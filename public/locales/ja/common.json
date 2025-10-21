@@ -47,7 +47,9 @@
     "select_file": "ファイル",
     "show": "show",
     "refresh": "refresh",
-    "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？"
+    "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？",
+    "clone": "クローン",
+    "notAccessTitle": ""
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -63,7 +65,10 @@
     "createSuccess": "登録しました",
     "error": "エラー",
     "editError": "編集エラー",
-    "createError": "作成エラー"
+    "createError": "作成エラー",
+    "uploadSuccess": "ファイルのアップロードに成功しました。",
+    "uploadFail": "ファイルのアップロードに失敗しました。",
+    "uploading": "資料をアップロード中です。アップロードが完了するまで、保存しないでください。"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -149,7 +154,7 @@
       "actions": "操作",
       "name_kana": "取引先名（カナ)",
       "corporate_number": "法人番号",
-      "company_classification": "会社分類"
+      "company_classification": "取引先分類"
     },
     "delivery": {
       "code": "納品先コード",
@@ -160,13 +165,16 @@
       "email": "メールアドレス"
     },
     "enums": {
-      "corporation": "個人",
-      "individual": "会社"
+      "corporation": "会社",
+      "individual": "個人"
     },
     "filters": {
       "code_name": "取引先コード・取引先名",
       "date_range": "日付"
     }
+  },
+  "partners": {
+    "partners": "ランク一覧"
   },
   "products": {
     "products": "商品一覧",
@@ -296,7 +304,8 @@
     "merchandise": "商品"
   },
   "approve_routes": {
-    "approve_routes": "承認ルート",
+    "parent": "承認ルート",
+    "approve_routes": "承認ルート一覧",
     "list": "承認ルート一覧",
     "detail": "承認ルート詳細",
     "create": "承認ルート登録",
@@ -369,7 +378,8 @@
     },
     "roles": {
       "employee": "一般",
-      "manager": "管理者"
+      "manager": "管理者",
+      "module_admin": "管理者 (Default)"
     },
     "show": {
       "show": "社員詳細"
@@ -414,7 +424,7 @@
       }
     },
     "buttons": {
-      "cancel": "戻る",
+      "cancel": "キャンセル",
       "save": "保存"
     }
   },
@@ -482,12 +492,11 @@
       "titlePassword": "【見積書パスワード送付】お知らせメール",
       "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付の通りお見積りを送付いたします。\nよろしくご査収ください。",
       "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先程と送付致しましたお見積書のパスワードを送付致します。\nパスワードは\n\n[[パスワード]]\n\nです。\nよろしくお願い致します。",
-
       "signature": {
         "label": "署名（自動挿入）",
-        "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team mail: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"
+        "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team email: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"
       },
-      "note": "タグは必ず[[]]で囲って入力してください。\n・署名は自動的に追加されるため、テンプレート内に記載する必要はありません。\n・変更したテンプレートは「更新」ボタンを押すまで保存されません。\n・テンプレートは見積書送付時に自動的に適用されます。\n・入力欄上部のボタンをクリックすると、テンプレート内の任意の位置にタグを埋め込むことができます。埋め込まれたタグは、メール送信実行時に登録して表示されます。\n（例）[[取引先会社名]] → ○○商事株式会社"
+      "note": "テンプレート編集時の注意事項\n・タグは必ず[[]]で囲って入力してください。\n・署名は自動的に追加されるため、テンプレート内に記載する必要はありません。\n・変更したテンプレートは「保存」ボタンを押すまで保存されません。\n・テンプレートは見積書送付時に自動的に適用されます。\n・入力欄上部のボタンをクリックすると、テンプレート内の任意の位置にタグを埋め込むことができます。埋め込まれたタグは、メール送信実行時に登録して表示されます。\n（例）[[取引先会社名]] → ○○商事株式会社"
     },
     "tags_mail": {
       "customerCompany": "取引先会社名",
@@ -495,6 +504,7 @@
       "customerName": "取引先担当者名",
       "selfCompany": "自社名",
       "selfDepartment": "自社担当者名",
+      "contactCompany": "自社担当者部署",
       "selfEmail": "自社担当者メールアドレス",
       "selfTel": "自社担当者電話番号"
     },
@@ -503,7 +513,8 @@
       "customerDepartment": "取引先部署名",
       "customerName": "取引先担当者名",
       "selfCompany": "自社名",
-      "selfDepartment": "自社担当者名",
+      "contactCompany": "自社担当者名",
+      "selfDepartment": "自社担当者部署",
       "selfPassword": "パスワード",
       "selfEmail": "自社担当者メールアドレス",
       "selfTel": "自社担当者電話番号"
@@ -527,6 +538,8 @@
     "validation": {
       "required": "必須項目です",
       "max255": "255文字以内で入力してください",
+      "max10000": "10000文字以内で入力してください",
+      "max1000": "1000文字以内で入力してください",
       "notBlank": "空白だけの入力はできません"
     }
   },
@@ -550,14 +563,12 @@
       "created_by": "登録者",
       "date": "開始日時"
     },
-
     "placeholder": {
       "id": "部分一致",
       "status": "選択してください",
       "common_name": "選択してください",
       "created_by": "部分一致"
     },
-
     "table": {
       "headers": {
         "taskCode": "タスクコード",
@@ -579,7 +590,8 @@
         "PENDING": "保留中",
         "PROCESSING": "処理中",
         "COMPLETED": "成功",
-        "FAILED": "エラー"
+        "FAILED": "失敗",
+        "ERROR": "エラー"
       },
       "category": {
         "PRODUCTS": "商品登録",
@@ -588,7 +600,7 @@
         "DEPARTMENTS": "部門登録",
         "OTHER": "その他"
       },
-      "error": "処理が途中で失敗しました."
+      "error": "処理が途中で失敗しました。"
     }
   },
   "system_config": {
@@ -782,6 +794,22 @@
   },
   "csv": {
     "title": "[マスタ名] CSV一括登録",
+    "category_products": {
+      "title": "[カテゴリ] CSV一括登録",
+      "back_to_list": "カテゴリ一覧に戻る"
+    },
+    "products": {
+      "title": "[商品] CSV一括登録",
+      "back_to_list": "商品一覧に戻る"
+    },
+    "customers": {
+      "title": "[取引先] CSV一括登録",
+      "back_to_list": "取引先一覧に戻る"
+    },
+    "departments": {
+      "title": "[部門] CSV一括登録",
+      "back_to_list": "部門一覧に戻る"
+    },
     "step_1": {
       "title": "ファイル選択",
       "alertTitle": "📋 CSVテンプレート",
@@ -799,13 +827,21 @@
         "line1": "CSVファイルの1行目がヘッダー行として扱われます。",
         "line2": "文字コードはUTF-8またはShift-JISで保存してください。",
         "line3": "同じ項目コードが複数ある場合、上書きされます。",
-        "line4": "必須項目が不足する場合は取り込み不可です。",
-        "line5": "空白行があってもスキップされます。"
+        "line4": "一度に登録できる上限は1000件です。",
+        "line5": "必須項目が空の行はスキップされます。"
       },
       "error": {
         "5mb": "5MB以下のファイルのみアップロードできます",
         "pattern": "CSVファイルのみアップロードできます\nUTF-8またはShift_JISのファイルを選択してください。",
-        "required": "CSVファイルをアップロードしてください。"
+        "required": "CSVファイルをアップロードしてください。",
+        "empty_file": "ファイルが空です。",
+        "max_size": "ファイルサイズは最大5MBです。",
+        "invalid_format": "ファイルの文字コードが不正です。UTF-8またはShift_JISのファイルを選択してください。",
+        "max_name_file": "ファイル名は255文字以内で指定してください。",
+        "file_empty": "CSVファイルが空です。",
+        "max_rows": "CSVファイルの行数は1000行以内で指定してください。",
+        "required_column": "必須項目を入力してください。",
+        "missing_headers": "CSVファイルが空です。"
       },
       "result": {
         "title": "CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。",
@@ -915,12 +951,8 @@
   },
   "forbiddenMessage": "申し訳ありませんが、このページへのアクセス権限がありません。",
   "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
-  "quotas": {
-    "quotas": "見積",
-    "list": "見積一覧",
-    "create": "見積新規作成",
-    "edit": "見積編集",
-    "detail": "見積詳細"
+  "list_received": {
+    "list_received": "確定見積一覧"
   },
   "price_groups": {
     "price_groups": "単価グループ設定",
@@ -931,10 +963,11 @@
     "fields": {
       "product_code": "商品コード",
       "product_name": "商品名",
-      "category": "カテゴリ (小)",
+      "category": "カテゴリ",
       "unit": "単位",
-      "packaging_name": "荷姿",
-      "selling_price": "販売価格(円)",
+      "packaging_name": "荷姿名",
+      "selling_price": "販売価格",
+      "selling_price_unit": "円",
       "is_rate_based": "設定方式",
       "rate": "換率",
       "absolute": "絶対",
@@ -942,9 +975,10 @@
     }
   },
   "agreed_prices": {
-    "agreed_prices": "決定見積",
+    "parent": "確定見積一覧",
+    "agreed_prices": "確定見積一覧",
     "tab": {
-      "decided_estimate_list": "決定見積一覧",
+      "decided_estimate_list": "確定見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
     },
     "summary": {
@@ -955,7 +989,7 @@
     },
     "search": {
       "estimate_number": "見積番号",
-      "business_partner": "取引先",
+      "customer": "取引先",
       "creator": "作成者",
       "department": "部門(支社/部/課)",
       "tag_name": "タグ名",
@@ -966,9 +1000,11 @@
     "table": {
       "status": "状態",
       "estimate_number": "見積番号",
-      "business_partner": "取引先",
+      "customer": "取引先",
       "creator": "作成者",
       "product_count": "商品数",
+      "department": "部門",
+      "amount": "金額(円)",
       "department_amount": "部門金額(円)",
       "estimate_date_application_end": "見積日適用終了",
       "reference_count": "参照回数",
@@ -1032,8 +1068,10 @@
       }
     }
   },
-  "validation": {
-    "required": "必須項目です"
+  "validations": {
+    "required": "必須項目です",
+    "max255": "このフィールドは 255 文字を超えることはできません。",
+    "invalid_format": "このフィールドは無効な形式です"
   },
   "common": {
     "created_by": "登録者",

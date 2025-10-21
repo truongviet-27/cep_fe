@@ -3,7 +3,6 @@ import type {
   QuotaTemplateMainProductType,
   QuotaTemplateProductType,
 } from '@interfaces/quota-templates'
-import { useSelect } from '@refinedev/antd'
 import type { ProductListItem } from '@sdk/hey-api'
 import { Form } from 'antd'
 
@@ -14,22 +13,6 @@ export const useController = () => {
     form,
   ) as QuotaTemplateMainProductType[]
 
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-
-    onSearch(value) {
-      return [
-        {
-          field: 'name',
-          operator: 'contains',
-          value,
-        },
-      ]
-    },
-  })
-
   const handleAddProduct = (groupIndex: number) => {
     const values = optionalProducts || []
     const products = (values[groupIndex].products ||
@@ -38,7 +21,7 @@ export const useController = () => {
     values[groupIndex].products = [
       ...products,
       {
-        product_id: 0,
+        product_id: null,
         name: '',
         code: '自動採番',
         quantity: 0,
@@ -46,7 +29,7 @@ export const useController = () => {
         selling_price: 0,
         profit_margin: 0,
         is_add_total: false,
-      },
+      } as unknown as QuotaTemplateProductType,
     ]
 
     form?.setFieldsValue({ optional_product: values })
@@ -64,37 +47,37 @@ export const useController = () => {
   }
 
   const onChangeProductName = (
-    value: unknown,
+    value: ProductListItem,
     index: number,
     index2: number,
   ) => {
-    const item = query.data?.data.find(
-      (item) => item.id === value,
-    ) as ProductListItem
-
+    form.setFieldValue(
+      ['optional_product', index, 'products', index2, 'product_id'],
+      value?.id,
+    )
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'package_id'],
       null,
     )
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'name'],
-      item?.name,
+      value?.name,
     )
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'code'],
-      item?.code,
+      value?.code,
     )
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'unit'],
-      item?.unit,
+      value?.unit,
     )
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'cost_price'],
-      item?.cost_price,
+      value?.cost_price,
     )
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'selling_price'],
-      item?.sale_price,
+      value?.sale_price,
     )
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'quantity'],
@@ -112,7 +95,6 @@ export const useController = () => {
   return {
     form,
     optionalProducts,
-    selectPropsProduct,
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,

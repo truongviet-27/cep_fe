@@ -2,8 +2,8 @@
 'use client'
 
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
-import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -43,18 +43,27 @@ function BasicInformation(
     isAutomatic,
   } = props
 
-  const isIndividual = Form.useWatch('customer_type', form) === 'individual'
+  const isCompany = Form.useWatch('customer_type', form) === 'company'
   const isJapan = Form.useWatch('country', form) === '日本'
   const isNameAfter =
     Form.useWatch('company_name_display_format', form) === 'after'
   const name = Form.useWatch('name', form)
   const companyType = Form.useWatch('company_type', form)
-  const isOtherSelected = companyType == 'other'
+  const isOtherSelected = !typesCompanyOptions.some(
+    ({ value }) => value == companyType && companyType !== 'other',
+  )
   const tempCompanyType = Form.useWatch('temp_company_type', form)
   const nameDisplay = isOtherSelected ? tempCompanyType : companyType
   const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const parts = isNameAfter ? [nameDisplay, name] : [name, nameDisplay]
-  const allowRankResource = parameterSettings.get(ParameterResourceEnum.RANKS)
+  const parts = isNameAfter ? [name, nameDisplay] : [nameDisplay, name]
+  const allowRankResource = parameterSettings?.get?.(
+    ParameterResourceEnum.RANKS,
+  )
+
+  if (companyType && isOtherSelected && companyType !== 'other') {
+    form.setFieldValue('temp_company_type', companyType)
+    form.setFieldValue('company_type', 'other')
+  }
 
   return (
     <Collapse
@@ -82,23 +91,25 @@ function BasicInformation(
             <Col flex="none">
               <Text type="secondary">(A-Z, 0-9, -)</Text>
             </Col>
-            {isAutomatic && (
-              <>
-                <Col>
-                  <Button onClick={handleAutoNumber} loading={isCodeGenLoading}>
-                    {t('departments.create.auto_number')}
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    type="link"
-                    onClick={() => modalFormProps.show(codeGenData?.data?.id)}
-                  >
-                    {t('departments.create.popup_number_setting')}
-                  </Button>
-                </Col>
-              </>
-            )}
+            <Col>
+              <Button
+                onClick={handleAutoNumber}
+                loading={isCodeGenLoading}
+                color="primary"
+                variant="outlined"
+                disabled={!isAutomatic}
+              >
+                {t('departments.create.auto_number')}
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                type="link"
+                onClick={() => modalFormProps.show(codeGenData?.data?.id)}
+              >
+                {t('departments.create.popup_number_setting')}
+              </Button>
+            </Col>
           </Row>
         </Form.Item>
 
@@ -111,21 +122,21 @@ function BasicInformation(
               <Form.Item
                 name="customer_type"
                 rules={[rule]}
-                initialValue="company"
+                initialValue="individual"
                 required
               >
                 <Radio.Group>
-                  <Radio value="company">
-                    {t('customers.enums.corporation')}
-                  </Radio>
                   <Radio value="individual">
                     {t('customers.enums.individual')}
+                  </Radio>
+                  <Radio value="company">
+                    {t('customers.enums.corporation')}
                   </Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
 
-            {isIndividual && (
+            {isCompany && (
               <>
                 <Col>
                   <Form.Item
@@ -134,8 +145,7 @@ function BasicInformation(
                       {
                         validator: (_, value) => {
                           if (
-                            form.getFieldValue('customer_type') ===
-                              'individual' &&
+                            form.getFieldValue('customer_type') === 'company' &&
                             !value
                           ) {
                             return Promise.reject(
@@ -163,8 +173,8 @@ function BasicInformation(
                     required
                   >
                     <Radio.Group>
-                      <Radio value="after">前</Radio>
-                      <Radio value="before">後</Radio>
+                      <Radio value="before">前</Radio>
+                      <Radio value="after">後</Radio>
                     </Radio.Group>
                   </Form.Item>
                 </Col>
@@ -188,7 +198,7 @@ function BasicInformation(
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -26 }}
+          style={{ marginTop: -10 }}
           label={boldText(t('customers.fields.name'))}
           required
         >
@@ -199,7 +209,7 @@ function BasicInformation(
               </Form.Item>
             </Col>
 
-            {isIndividual && name && companyType && (
+            {isCompany && name && companyType && (
               <Col>
                 <Space direction={'horizontal'}>
                   <Form.Item>
@@ -219,7 +229,7 @@ function BasicInformation(
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -26 }}
+          style={{ marginTop: -8 }}
           label={boldText(t('customers.fields.name_kana'))}
           name="customer_name_by_kana"
           rules={[rule]}
@@ -284,9 +294,9 @@ function BasicInformation(
             label: boldText(t('ranks.fields.code')),
             name: 'price_rank_id',
             rules: [rule],
-            required: true,
-            style: { marginTop: -26 },
+            style: { marginTop: -8 },
             hidden: !allowRankResource,
+            required: true,
           }}
           optionLabel={'code'}
           optionValue={'id'}

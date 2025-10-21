@@ -1,11 +1,12 @@
 /* eslint-disable */
 import { DownOutlined } from '@ant-design/icons'
-import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/customers/create/use-customer-create'
+import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import CommonTable from '@components/common/table'
 import {
   Button,
   Collapse,
   Form,
+  message,
   Modal,
   Select,
   Space,
@@ -15,14 +16,14 @@ import {
 import React from 'react'
 
 import styles from '../styles.module.css'
-import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/customers/edit/[id]/use-customers-edit'
+import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { useModal } from '@refinedev/core'
 import { antiSocialCheckOptions, creditCheckOptions } from '@utility/options'
 import { EditButton } from '@refinedev/antd'
 import { InputUploadFile } from '@components/common/input-upload-file'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/customers/components/instances'
+import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/instances'
 import dayjs from 'dayjs'
 import { FORMAT_DATE } from '@utility/instances'
 import { useSession } from 'next-auth/react'
@@ -62,12 +63,18 @@ export const CorporateResearchFormSection = (
   const formTrigger = () => setCurrentType(initCur)
 
   const handleClearAll = () => {
-    // form.resetFields()
-    form.setFieldValue(
-      'company_research_information',
-      defaultCustomerCompanyResearchInformation,
-    )
-    formTrigger()
+    const defaultVal = form
+      .getFieldValue('company_research_information')
+      .map((item: any, index: number) => {
+        return {
+          id: item?.id,
+          material_name:
+            defaultCustomerCompanyResearchInformation[index].material_name,
+          judgement: defaultCustomerCompanyResearchInformation[index].judgement,
+        }
+      })
+
+    form.setFieldValue('company_research_information', defaultVal)
   }
 
   const columns = [
@@ -133,7 +140,10 @@ export const CorporateResearchFormSection = (
       key: 'updated_at',
       width: 180,
       render: (_: any, record: any) =>
-        record?.updated_at ?? dayjs(record?.created_at, FORMAT_DATE),
+        (record?.updated_at || record?.created_at) &&
+        dayjs(record?.updated_at ?? record?.created_at ?? '').format(
+          FORMAT_DATE,
+        ),
     },
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
@@ -261,23 +271,29 @@ export const CorporateResearchFormSection = (
           title={boldText(t('customers.research.modal.title'), PRIMARY)}
           open={visible}
           onOk={() => {
-            form.setFieldValue(
-              ['company_research_information', currentType.index],
-              {
-                ...form.getFieldValue([
-                  'company_research_information',
-                  currentType.index,
-                ]),
-                files: currentType.fileList,
-                judgement: currentType.judgement,
-                material_name: currentType.name,
-                updated_at: dayjs().format(FORMAT_DATE),
-                editor: {
-                  name: session.data?.user?.name,
+            if (
+              currentType.fileList.some((item) => item.status == 'uploading')
+            ) {
+              message.warning(t('notifications.uploading'))
+            } else {
+              form.setFieldValue(
+                ['company_research_information', currentType.index],
+                {
+                  ...form.getFieldValue([
+                    'company_research_information',
+                    currentType.index,
+                  ]),
+                  files: currentType.fileList,
+                  judgement: currentType.judgement,
+                  material_name: currentType.name,
+                  updated_at: dayjs().format(FORMAT_DATE),
+                  editor: {
+                    name: session.data?.user?.name,
+                  },
                 },
-              },
-            )
-            close()
+              )
+              close()
+            }
           }}
           onCancel={close}
           okText={t('buttons.save')}
@@ -327,19 +343,24 @@ export const CorporateResearchFormSection = (
               />
             </Form.Item>
             <Typography.Text type="secondary">
-              {t('common.updated_by')}:
+              {t('common.updated_by')}:&nbsp;
               {
                 form.getFieldValue([
                   'company_research_information',
                   currentType.index,
                 ])?.author?.name
               }
-              {
-                form.getFieldValue([
-                  'company_research_information',
-                  currentType.index,
-                ])?.updated_at
-              }
+              &nbsp;
+              {form.getFieldValue([
+                'company_research_information',
+                currentType.index,
+              ])?.updated_at &&
+                dayjs(
+                  form.getFieldValue([
+                    'company_research_information',
+                    currentType.index,
+                  ])?.updated_at,
+                ).format(FORMAT_DATE)}
             </Typography.Text>
           </Form>
         </Modal>

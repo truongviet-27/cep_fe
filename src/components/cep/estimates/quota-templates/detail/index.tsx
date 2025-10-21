@@ -4,16 +4,9 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Breadcrumb,
-  Button,
-  Divider,
-  Flex,
-  Space,
-  Spin,
-  Typography,
-} from 'antd'
+import { Breadcrumb, Button, Divider, Flex, Space, Spin } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -24,8 +17,6 @@ import DetailInfo from './detail-info'
 import NoteForm from './note'
 import OptionalInfo from './optional-info'
 import TagForm from './tag'
-
-const { Title } = Typography
 
 const QuoteTemplateDetailContainer: FC = () => {
   const t = useTranslate()
@@ -50,17 +41,14 @@ const QuoteTemplateDetailContainer: FC = () => {
             {
               title: (
                 <Link href="/quota-templates">
-                  <Title level={5} style={{ color: PRIMARY }}>
-                    {t('quota_templates.breadcrumb.home')}
-                  </Title>
+                  {boldText(t('quota_templates.breadcrumb.home'))}
                 </Link>
               ),
             },
             {
-              title: (
-                <Title level={5}>
-                  {t('quota_templates.breadcrumb.quotasDetail')}
-                </Title>
+              title: boldText(
+                t('quota_templates.breadcrumb.quotasDetail'),
+                PRIMARY,
               ),
             },
           ]}

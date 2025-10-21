@@ -1,39 +1,33 @@
 /* eslint-disable */
-'use client'
-
 import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useLayoutEffect } from 'react'
 
-export const useCustomerEdit = () => {
+export const useCustomerCreate = () => {
   const t = useTranslate()
   const {
     formProps,
     saveButtonProps,
     form,
-    onFinish,
     formLoading: isLoading,
-    queryResult,
+    onFinish,
   } = useForm({
-    action: 'edit',
-    redirect: 'edit',
+    action: 'create',
+    redirect: 'show',
   })
 
   const handleFinish = async (values: any) => {
     let company_type = values?.company_type
-    let temp_industry = values?.temp_industry
-    if (values?.temp_company_type) {
+    let industry = values?.industry
+    if (values?.company_type == 'other' && values?.temp_company_type) {
       company_type = values?.temp_company_type
     }
-    if (values?.temp_industry) {
-      temp_industry = values?.temp_industry
+    if (!values?.industry && values?.temp_industry) {
+      industry = values?.temp_industry
     }
 
-    console.log('eee')
-
-    await onFinish({ ...values, company_type, temp_industry })
+    await onFinish({ ...values, company_type, industry })
   }
 
   const apiUrl = useApiUrl()
@@ -54,6 +48,9 @@ export const useCustomerEdit = () => {
     autoResetFormWhenClose: true,
     redirect: false,
     warnWhenUnsavedChanges: false,
+    onMutationSuccess: () => {
+      refetchCodeGen()
+    },
   })
 
   const modalFormCorporate = useModal()
@@ -74,16 +71,6 @@ export const useCustomerEdit = () => {
       person_in_charge_phone: mainContact.phone,
     })
   }
-
-  const record = queryResult?.data?.data
-
-  useLayoutEffect(() => {
-    if (record) {
-      form.setFieldsValue(record)
-    }
-  }, [record])
-
-  console.log(saveButtonProps.disabled, 'form')
 
   return {
     t,

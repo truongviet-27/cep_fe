@@ -12,8 +12,10 @@ import {
   useTable,
 } from '@refinedev/antd'
 import type { BaseRecord, CrudFilters } from '@refinedev/core'
-import { Link, useGo, useTranslate } from '@refinedev/core'
+import { useGo, useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
+import { FORMAT_DATE } from '@utility/instances'
 import {
   Breadcrumb,
   Button,
@@ -24,13 +26,10 @@ import {
   Select,
   Space,
   Tag,
-  Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
-
-const { Title } = Typography
 
 function Approve() {
   const t = useTranslate()
@@ -74,7 +73,8 @@ function Approve() {
     optionLabel: 'name',
     optionValue: 'id',
     pagination: {
-      mode: 'off',
+      mode: 'server',
+      pageSize: 100,
     },
   })
 
@@ -84,23 +84,66 @@ function Approve() {
         key: 'code',
         dataIndex: 'code',
         title: t('approve_routes.table.routeCode'),
+        onCell: () => ({
+          style: {
+            width: 200,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'wrap',
+          },
+        }),
         render: (value, record) => {
-          return <Link to={`/approve-routes/show/${record.id}`}>{value}</Link>
+          return (
+            <Button
+              type="link"
+              className="underline"
+              title={value}
+              onClick={() => {
+                go({
+                  to: `/approve-routes/show/${record.id}`,
+                })
+              }}
+            >
+              {value}
+            </Button>
+          )
         },
       },
       {
         key: 'name',
         dataIndex: 'name',
         title: t('approve_routes.table.routeName'),
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (value) => {
+          return <span title={value}>{value}</span>
+        },
       },
       {
         key: 'departments',
         dataIndex: 'departments',
         title: t('approve_routes.table.department'),
+        ellipsis: true,
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (value) => {
-          return value?.map((item: any) => item?.name).join(', ')
+          const text = value?.map((item: any) => item?.name).join(', ')
+          return <span title={text}>{text}</span>
         },
       },
+
       {
         key: 'status',
         dataIndex: 'status',
@@ -129,7 +172,7 @@ function Approve() {
         dataIndex: 'updated_at',
         title: t('approve_routes.table.updatedAt'),
         render(value) {
-          return dayjs(value).format('YYYY/MM/DD HH:mm')
+          return dayjs(value).format(FORMAT_DATE)
         },
       },
       {
@@ -157,14 +200,10 @@ function Approve() {
         <Breadcrumb
           items={[
             {
-              title: (
-                <Title level={5} style={{ color: PRIMARY }}>
-                  {t('approve_routes.approve_routes')}
-                </Title>
-              ),
+              title: boldText(t('approve_routes.parent')),
             },
             {
-              title: <Title level={5}>{t('approve_routes.list')}</Title>,
+              title: boldText(t('approve_routes.list'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -181,7 +220,10 @@ function Approve() {
       >
         <Row gutter={[16, 16]}>
           <Col md={8} xl={4}>
-            <Form.Item label={t('approve_routes.filters.searchLabel')} name="q">
+            <Form.Item
+              label={boldText(t('approve_routes.filters.searchLabel'))}
+              name="q"
+            >
               <Input
                 className={'mt-2'}
                 placeholder={t('departments.list.filters.search_placeholder')}
@@ -190,19 +232,25 @@ function Approve() {
           </Col>
           <Col md={8} xl={4}>
             <Form.Item
-              label={t('approve_routes.filters.departmentLabel')}
+              label={boldText(t('approve_routes.filters.departmentLabel'))}
               name="department"
             >
               <Select
                 placeholder={t('approve_routes.filters.selectPlaceholder')}
                 {...selectProps}
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 allowClear
               />
             </Form.Item>
           </Col>
           <Col md={8} xl={4}>
             <Form.Item
-              label={t('approve_routes.filters.statusLabel')}
+              label={boldText(t('approve_routes.filters.statusLabel'))}
               name="status"
             >
               <Select
@@ -226,8 +274,8 @@ function Approve() {
               justifyContent: 'space-between',
             }}
           >
-            <Space className="mt-[3px]">
-              <Button htmlType="submit" type="primary">
+            <Space className="mt-4">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
               <RefreshButton

@@ -21,9 +21,10 @@ export const EditableCell: React.FC<
     <td
       {...restProps}
       style={{
+        alignContent: 'center',
         textAlign: 'center',
-        ...restProps.style,
         padding: 11,
+        ...restProps.style,
       }}
     >
       {editing ? (

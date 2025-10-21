@@ -6,7 +6,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useForm, useModalForm, useSelect } from '@refinedev/antd'
+import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -41,6 +41,8 @@ export default function EmployeeEdit() {
   const userEmail = session.data?.user?.email
   const { permission } = useUserStore.getState()
 
+  const EXCLUDED_ROLES = ['module_admin', 'super_admin']
+
   const { data: roles } = useCustom({ method: 'get', url: `${apiUrl}/roles` })
 
   const { formProps, saveButtonProps, queryResult, form, formLoading } =
@@ -48,12 +50,6 @@ export default function EmployeeEdit() {
       redirect: 'show',
     })
   const employeeData = queryResult?.data?.data
-
-  const { selectProps: departmentSelectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-  })
 
   const codeRules: Rule[] = useMemo(
     () => [
@@ -78,8 +74,9 @@ export default function EmployeeEdit() {
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
-    defaultFormValues: {
-      hash_dash: true,
+    redirect: false,
+    onMutationSuccess: () => {
+      refetch()
     },
   })
 
@@ -90,15 +87,13 @@ export default function EmployeeEdit() {
     form?.setFieldsValue({ code: codeGen?.preview_code })
   }
 
+  const isAutomatic = data?.data?.issue_method === 'automatic'
+
   const breadcrumbItems = [
     {
-      title: (
-        <Title level={5} style={{ color: PRIMARY }}>
-          {t('employees.employees')}
-        </Title>
-      ),
+      title: boldText(t('employees.employees')),
     },
-    { title: <Title level={5}>社員編集</Title> },
+    { title: boldText('社員編集', PRIMARY) },
   ]
 
   return (
@@ -121,23 +116,17 @@ export default function EmployeeEdit() {
           descriptions={[
             {
               title: t('common.created_by'),
-              value:
-                (employeeData as any)?.created_by?.name ??
-                '---' +
-                  ' ' +
-                  dayjs((employeeData as any)?.created_by?.date).format(
-                    FORMAT_DATE_TIME,
-                  ),
+              value: `${(employeeData as any)?.created_by?.name ?? '---'} ${dayjs(
+                (employeeData as any)?.created_at,
+              ).format(FORMAT_DATE_TIME)}`,
             },
             {
               title: t('common.updated_by'),
-              value:
-                (employeeData as any)?.updated_by?.name ??
-                '---' +
-                  ' ' +
-                  dayjs((employeeData as any)?.updated_by?.date).format(
-                    FORMAT_DATE_TIME,
-                  ),
+              value: (employeeData as any)?.editor
+                ? `${(employeeData as any).editor.name} ${dayjs(
+                    (employeeData as any).updated_at,
+                  ).format(FORMAT_DATE_TIME)}`
+                : '---',
             },
           ]}
         />
@@ -149,7 +138,7 @@ export default function EmployeeEdit() {
           </Button>
         </Space>
       }
-      i18nHeading={'社員編集'}
+      i18nHeading={'employees.edit.title'}
     >
       <Form
         {...formProps}
@@ -184,12 +173,15 @@ export default function EmployeeEdit() {
                 <Button
                   size="middle"
                   type="default"
+                  color={'primary'}
+                  variant="outlined"
                   onClick={() => {
                     refetch().then(() => {
                       handleAutoNumber()
                     })
                   }}
                   loading={loadingEm}
+                  disabled={!isAutomatic}
                 >
                   {t('departments.create.auto_number')}
                 </Button>
@@ -207,7 +199,7 @@ export default function EmployeeEdit() {
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -24 }}
+          style={{ marginTop: -10 }}
           label={boldText(t('employees.fields.name'))}
           name="name"
         >
@@ -215,7 +207,7 @@ export default function EmployeeEdit() {
         </Form.Item>
 
         <Form.Item
-          style={{ marginTop: -14 }}
+          style={{ marginTop: -10 }}
           label={boldText(t('employees.fields.email'))}
           name="email"
         >
@@ -241,16 +233,26 @@ export default function EmployeeEdit() {
           style={{ marginTop: -4 }}
           label={boldText(t('employees.fields.role'))}
           name="role_id"
-          hidden={!permission?.is_module_admin}
         >
-          <Radio.Group buttonStyle="solid">
-            {isArray(roles?.data) &&
-              roles?.data.map(({ id, name }) => (
-                <Radio key={name} value={id}>
-                  {t(`employees.roles.${name}`)}
-                </Radio>
-              ))}
-          </Radio.Group>
+          {!permission?.is_module_admin ||
+          employeeData?.role?.name === 'module_admin' ? (
+            <Text>
+              {employeeData?.role?.name
+                ? t(`employees.roles.${employeeData.role.name}`)
+                : '---'}
+            </Text>
+          ) : (
+            <Radio.Group buttonStyle="solid">
+              {isArray(roles?.data) &&
+                roles?.data
+                  .filter(({ name }) => !EXCLUDED_ROLES.includes(name))
+                  .map(({ id, name }) => (
+                    <Radio key={name} value={id}>
+                      {t(`employees.roles.${name}`)}
+                    </Radio>
+                  ))}
+            </Radio.Group>
+          )}
         </Form.Item>
       </Form>
       <Modal
