@@ -513,7 +513,11 @@ function QuotaList() {
     return filter as QuotaStatus
   }
 
-  const { data, refetch: refetchStats } = useCustom({
+  const {
+    data,
+    refetch: refetchStats,
+    isFetching,
+  } = useCustom({
     method: 'get',
     url: `${apiUrl}/quotas/stats`,
   })
@@ -731,6 +735,7 @@ function QuotaList() {
           statusData={statusDashboard}
           status={status}
           onChangeStatus={onChangeStatus}
+          isLoading={isFetching}
         />
         <div className="my-4">
           <Row gutter={[24, 0]}>

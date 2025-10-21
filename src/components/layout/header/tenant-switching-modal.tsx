@@ -6,6 +6,7 @@ import { useTable } from '@refinedev/antd'
 import {
   type CrudFilters,
   type HttpError,
+  useGo,
   useInvalidate,
   type useModalReturnType,
   useResource,
@@ -26,6 +27,8 @@ function TenantSwitchingModal({
   const t = useTranslations('tenant')
   const t_btn = useTranslations('buttons')
   const router = useRouter()
+
+  const go = useGo()
 
   const { resource } = useResource()
 
@@ -114,6 +117,9 @@ function TenantSwitchingModal({
                   invalidates: ['all'],
                 })
                 router.refresh()
+                go({
+                  to: '/quotas',
+                })
               }}
             >
               {t_btn('select')}

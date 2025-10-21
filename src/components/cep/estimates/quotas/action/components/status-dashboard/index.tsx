@@ -1,10 +1,11 @@
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
-import { Card } from 'antd'
+import { Card, Spin } from 'antd'
 
 const StatusDashboard = ({
   statusData,
   status,
   onChangeStatus,
+  isLoading,
 }: {
   statusData: {
     title: string
@@ -14,6 +15,7 @@ const StatusDashboard = ({
   }[]
   status: string | null
   onChangeStatus: (status: string | null) => void
+  isLoading: boolean
 }) => {
   return (
     <div className="flex flex-wrap gap-4">
@@ -43,9 +45,13 @@ const StatusDashboard = ({
               },
             }}
           >
-            <div style={{ color: item.color || 'inherit', fontSize: 16 }}>
-              {item.value}
-            </div>
+            {isLoading ? (
+              <Spin size="small" />
+            ) : (
+              <div style={{ color: item.color || 'inherit', fontSize: 16 }}>
+                {item.value}
+              </div>
+            )}
             <div style={{ marginTop: 8, fontSize: 12 }}>{item.title}</div>
           </Card>
         )
