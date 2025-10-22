@@ -49,7 +49,7 @@ function CoreAutoComplete({
     form,
   )
 
-  const { data } = useCustom({
+  const { data } = useCustom<any>({
     url: `${apiUrl}/${resource}/${product}/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
@@ -72,6 +72,10 @@ function CoreAutoComplete({
           label: item.name,
           value: item.id,
         })),
+      )
+      form.setFieldValue(
+        [parent, index, 'products', index2, 'package_id'],
+        data?.data?.packagings[0]?.id || null,
       )
     } else if (productResponse?.data?.data) {
       setOptions(
