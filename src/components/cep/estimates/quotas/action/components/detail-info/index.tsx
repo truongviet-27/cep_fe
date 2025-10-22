@@ -295,6 +295,7 @@ function DetailInfo() {
                           },
                         ]}
                         labelInValue={false}
+                        pageSize={20}
                         resource="products"
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
