@@ -10,7 +10,6 @@ import {
   DeleteButton,
   EditButton,
   useModalForm,
-  useSelect,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -486,6 +485,7 @@ export default function CustomerListPage() {
                   placeholder: t('placeholders.select'),
                   style: { maxWidth: 560, minWidth: '150px' },
                 }}
+                optionLabel={'code'}
               />
             </Col>
           )}

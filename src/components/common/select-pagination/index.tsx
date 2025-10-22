@@ -18,7 +18,7 @@ export const SelectPagination = ({
   selectComponentProps,
   selectProps,
   formItemProps,
-  optionLabel = 'code',
+  optionLabel = 'name',
   optionValue = 'id',
   fieldSearch = 'q',
 }: Props) => {
