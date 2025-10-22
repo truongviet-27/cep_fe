@@ -73,7 +73,7 @@ function OptionalInfo() {
       }}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 20,
       }}
     >
       <Form.List name={'optional_product'}>
@@ -650,8 +650,8 @@ function OptionalInfo() {
               <Flex
                 justify="end"
                 style={{
-                  marginTop: 20,
-                  marginBottom: 20,
+                  marginTop: 10,
+                  marginBottom: 10,
                 }}
               >
                 <Button

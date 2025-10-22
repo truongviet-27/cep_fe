@@ -162,7 +162,7 @@ function DetailInfo() {
       title={boldText(t('quotas.action.detail_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 20,
       }}
       styles={{
         body: { padding: 0 },
@@ -836,8 +836,8 @@ function DetailInfo() {
               <Flex
                 justify="end"
                 style={{
-                  marginTop: 20,
-                  marginBottom: 20,
+                  marginTop: 10,
+                  marginBottom: 10,
                 }}
               >
                 <Button

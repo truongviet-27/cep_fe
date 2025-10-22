@@ -193,9 +193,10 @@ function QuotaDetail() {
           <Tags tags={queryBasic?.data?.tags} />
           <History data={dataHistory?.data} />
 
-          {(permission?.is_module_admin || queryBasic?.data?.display) && (
-            <Reason />
-          )}
+          {(permission?.is_module_admin || queryBasic?.data?.display) &&
+            queryBasic?.data.status === QuotaStatus.WaitingApproval && (
+              <Reason />
+            )}
 
           <Divider />
           <ShowMoreInfo
