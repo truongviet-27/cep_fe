@@ -65,7 +65,11 @@ const BasicInfo = () => {
 
   useEffect(() => {
     if (query.data?.data) {
-      setOptions((prev) => [...prev, ...query.data.data])
+      // Only include items that are not deleted
+      const filtered = query.data.data.filter(
+        (it: any) => it.deleted_at == null,
+      )
+      setOptions((prev) => [...prev, ...filtered])
     }
   }, [query.data?.data])
 
