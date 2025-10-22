@@ -188,7 +188,11 @@ const AgreedPriceByCustomerTab = () => {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  autoInsertSpace={false}
+                >
                   {t('agreed_prices.action.search')}
                 </Button>
                 <Button

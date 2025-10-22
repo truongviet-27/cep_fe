@@ -199,6 +199,7 @@ export default function CustomerShowPage() {
     { title: boldText(t('customers.show.show'), PRIMARY) },
   ]
 
+  console.log(record)
   return (
     <Show
       isLoading={isLoading}
@@ -257,7 +258,7 @@ export default function CustomerShowPage() {
                 {record?.customer_code}
               </DetailItem>
               <DetailItem label={t('customers.fields.name')}>
-                {record?.name}
+                {record?.full_name}
               </DetailItem>
               <DetailItem label={t('customers.fields.name_kana')}>
                 {record?.customer_name_by_kana}

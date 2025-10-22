@@ -75,7 +75,7 @@ function TenantSwitchingModal({
           </Col>
           <Col md={4} style={{ textAlign: 'left' }}>
             <Space>
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('filters.search')}
               </Button>
               <Button
