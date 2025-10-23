@@ -94,7 +94,7 @@ export function useController() {
                 quantity: 0,
                 selling_price: 0,
                 profit_margin: 0,
-                is_add_total: false,
+                is_add_total: true,
               },
             ],
           },

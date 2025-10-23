@@ -100,7 +100,9 @@ function CoreAutoComplete({
     } else {
       form.setFieldValue(
         [parent, index, 'products', index2, 'selling_price'],
-        data?.data?.selling_price ?? 0,
+        data?.data?.packagings[0].rank_prices
+          ? data?.data?.packagings[0].rank_prices
+          : (data?.data?.selling_price ?? 0),
       )
     }
   }, [data, customer])
@@ -118,8 +120,8 @@ function CoreAutoComplete({
           .includes(input.toLowerCase())
       }
       onSearch={() => {}}
-      autoClearSearchValue
-      allowClear
+      // autoClearSearchValue
+      // allowClear
       onChange={(value) => {
         if (onChange) {
           onChange(value)
