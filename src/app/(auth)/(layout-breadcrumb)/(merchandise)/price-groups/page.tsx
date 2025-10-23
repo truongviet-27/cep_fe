@@ -323,7 +323,7 @@ function Page() {
                   dataIndex={'rank_prices'}
                   title={
                     <>
-                      <div>{boldText(`${item.name}`, PRIMARY)}</div>
+                      <div>{boldText(`${item.code}`, PRIMARY)}</div>
                       <div>{boldText(`${item.rate}% (円)`, PRIMARY)}</div>
                     </>
                   }
