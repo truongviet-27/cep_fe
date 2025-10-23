@@ -1,4 +1,3 @@
-import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
@@ -8,7 +7,6 @@ import {
   PAYMENT_DUE_DATE,
 } from '@utility/constant'
 import { Flex, Typography } from 'antd'
-import dayjs from 'dayjs'
 
 const { Title } = Typography
 
@@ -91,7 +89,7 @@ const BasicInfo: React.FC<Props> = (props) => {
         </label>
         <span>
           {EXPIRATION_DATE?.[detail.expiration_date ?? '']?.label}
-          <span
+          {/* <span
             style={{
               whiteSpace: 'nowrap',
               fontWeight: 500,
@@ -103,7 +101,7 @@ const BasicInfo: React.FC<Props> = (props) => {
               getExpiryDate(detail?.expiration_date ?? '', new Date()),
             ).format('YYYY/MM/DD')}
             )
-          </span>
+          </span> */}
         </span>
       </Flex>
       <Flex className="!mb-4">
