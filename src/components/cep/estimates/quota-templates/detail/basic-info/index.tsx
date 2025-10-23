@@ -87,22 +87,7 @@ const BasicInfo: React.FC<Props> = (props) => {
         <label className="w-[150px] font-bold">
           {t('quota_templates.form.label.validity_period')}
         </label>
-        <span>
-          {EXPIRATION_DATE?.[detail.expiration_date ?? '']?.label}
-          {/* <span
-            style={{
-              whiteSpace: 'nowrap',
-              fontWeight: 500,
-              marginLeft: 10,
-            }}
-          >
-            (
-            {dayjs(
-              getExpiryDate(detail?.expiration_date ?? '', new Date()),
-            ).format('YYYY/MM/DD')}
-            )
-          </span> */}
-        </span>
+        <span>{EXPIRATION_DATE?.[detail.expiration_date ?? '']?.label}</span>
       </Flex>
       <Flex className="!mb-4">
         <label className="w-[150px] font-bold">
