@@ -123,7 +123,7 @@ function Page() {
       title: boldText(t('price_groups.business_partner')),
     },
     {
-      title: boldText(t('price_groups.list.list'), PRIMARY),
+      title: boldText(t('price_groups.product_price_by_rank'), PRIMARY),
     },
   ]
 
@@ -132,7 +132,7 @@ function Page() {
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      i18nHeading={'price_groups.list.list'}
+      i18nHeading={'price_groups.product_price_by_rank'}
       footer={
         <Col>
           <Button
@@ -145,6 +145,13 @@ function Page() {
         </Col>
       }
     >
+      <div className="mb-3 rounded-[4px] border-[1px] border-[#FFD591] bg-[#FFF8F0] px-[16px] py-[8px]">
+        <h1 className="!m-0 !mb-1 !p-0 !font-bold text-[#E67E22]">
+          {t('price_groups.message')}
+        </h1>
+        <p className="!mb-0">{t('price_groups.message_description')}</p>
+      </div>
+
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
           <Col xs={12} sm={6} md={6}>
