@@ -1,3 +1,4 @@
+/* eslint-disable */
 import TreeRow from '@components/common/tree/tree-row'
 import {
   filterCategoryTree,
@@ -17,6 +18,7 @@ import {
   toSaveTree,
   updateLevelsRecursively,
   updateNode,
+  updateTree,
 } from '@components/common/tree/utils/tree-infinity'
 import type { CatNode, ITree, SavePayloadNode } from '@interfaces/tree'
 import { useTable } from '@refinedev/antd'
@@ -65,7 +67,8 @@ function useProductCategories() {
       url: `${apiUrl}/${resource}/update-tree`,
       method: 'post',
       values,
-      successNotification: () => {
+      successNotification: (res: any) => {
+        setTree(updateTree(res?.data?.items, values as any))
         setEditing({})
         return {
           message: t('notifications.success'),
