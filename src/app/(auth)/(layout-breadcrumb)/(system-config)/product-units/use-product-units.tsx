@@ -52,6 +52,7 @@ export default function useProductUnits() {
     setPageSize: setPageSize2,
     current,
     pageCount,
+    tableQuery,
   } = useTable<UnitRow>({
     syncWithLocation: true,
     onSearch: (values: any) => {
@@ -159,11 +160,10 @@ export default function useProductUnits() {
   ]
 
   const addNew = () => {
-    setPageSize((total) => total + 1)
-    setTotalPage(
-      (pre) =>
-        (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
-    )
+    // setPageSize((total) => total + 1)
+    // setTotalPage((pre) =>
+    //   pre == 0 ? (tableProps?.pagination as any)?.total : pre,
+    // )
     forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
 
@@ -243,6 +243,7 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            tableQuery.refetch()
           },
         },
       )
@@ -265,6 +266,7 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            tableQuery.refetch()
           },
         },
       )
@@ -279,7 +281,12 @@ export default function useProductUnits() {
     }
     deleteRow(
       { resource: resource?.name ?? 'product-units', id: row.id },
-      { onSuccess: () => remove(index) },
+      {
+        onSuccess: () => {
+          remove(index)
+          tableQuery.refetch()
+        },
+      },
     )
   }
 
@@ -399,9 +406,9 @@ export default function useProductUnits() {
                   hideText
                   size="middle"
                   recordItemId={dataSource[index]?.id}
-                  onClick={() =>
-                    !dataSource[index]?.id && handleDeleteRow(index)
-                  }
+                  // onClick={() =>
+                  //   !dataSource[index]?.id && handleDeleteRow(index)
+                  // }
                 />
               </>
             )}
@@ -422,12 +429,12 @@ export default function useProductUnits() {
       ...tableProps,
       pagination: {
         ...tableProps?.pagination,
-        pageSize,
+        // pageSize,
         onShowSizeChange: (current: number, size: number) => {
           setPageSize(size)
         },
-        total:
-          totalPage === 0 ? (tableProps.pagination as any)?.total : totalPage,
+        // total:
+        //   totalPage === 0 ? (tableProps.pagination as any)?.total : totalPage,
       },
     },
     searchFormProps,

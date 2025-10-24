@@ -7,6 +7,7 @@ import { Action, type ActionType } from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
+import { ConsumptionTaxEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -63,13 +64,15 @@ function DetailInfo() {
 
     let taxTotal = 0
     let sellTotalWithTax = 0
-    if (consumptionTaxWatch === 'inclusive') {
+    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
       if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor(sellTotal - sellTotal / 1.1)
+        taxTotal = Math.floor(sellTotal - sellTotal / (1 + taxRateWatch / 100))
       } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil(sellTotal - sellTotal / 1.1)
+        taxTotal = Math.ceil(sellTotal - sellTotal / (1 + taxRateWatch / 100))
       } else {
-        taxTotal = Number((sellTotal - sellTotal / 1.1).toFixed(0))
+        taxTotal = Number(
+          (sellTotal - sellTotal / (1 + taxRateWatch / 100)).toFixed(0),
+        )
       }
     } else {
       if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
@@ -86,10 +89,11 @@ function DetailInfo() {
     } else {
       sellTotalWithTax = sellTotal
     }
-    const profitRate =
-      costTotal > 0 && sellTotal > 0
-        ? ((sellTotal - costTotal) / sellTotal) * 100
-        : 0
+    const profitRate = Number(
+      (sellTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0).toFixed(
+        2,
+      ),
+    )
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
@@ -158,7 +162,7 @@ function DetailInfo() {
       title={boldText(t('quotas.action.detail_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 20,
       }}
       styles={{
         body: { padding: 0 },
@@ -263,7 +267,7 @@ function DetailInfo() {
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -410,7 +414,7 @@ function DetailInfo() {
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -421,7 +425,7 @@ function DetailInfo() {
               dataIndex: 'unit',
               key: 'unit',
               align: 'center',
-              width: 100,
+              width: 200,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -457,10 +461,10 @@ function DetailInfo() {
                         },
                       ]}
                       style={{
-                        width: 100,
+                        width: '100%',
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -530,7 +534,7 @@ function DetailInfo() {
                         },
                       ]}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -680,14 +684,13 @@ function DetailInfo() {
                     'profit_margin',
                   ],
                   Number(
-                    (selling > 0
-                      ? ((selling - cost) / selling) * 100
-                      : 0
-                    ).toFixed(2),
+                    selling > 0
+                      ? (((selling - cost) / selling) * 100).toFixed(2)
+                      : 0,
                   ),
                 )
 
-                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
+                return `${selling > 0 ? (((selling - cost) / selling) * 100).toFixed(2) : 0}%`
               },
             },
             {
@@ -833,8 +836,8 @@ function DetailInfo() {
               <Flex
                 justify="end"
                 style={{
-                  marginTop: 20,
-                  marginBottom: 20,
+                  marginTop: 10,
+                  marginBottom: 10,
                 }}
               >
                 <Button
@@ -975,7 +978,7 @@ function DetailInfo() {
                 {t('quotas.action.detail_info.summary.total_profit_margin')}
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {profitRate.toFixed(2) || 0}%
+                {profitRate}%
               </Text>
               <Form.Item name="total_profit_margin" hidden>
                 <InputNumber />
