@@ -244,7 +244,8 @@
         "profit_margin": "利益率",
         "selling_amount": "売価金額",
         "total_calculation": "合計計算",
-        "row_edit": "行編集"
+        "row_edit": "行編集",
+        "tax_rate": "消費税率"
       },
       "placeholders": {
         "product_list_name": "商品リスト名入力",

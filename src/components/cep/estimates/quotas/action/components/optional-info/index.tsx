@@ -575,7 +575,48 @@ function OptionalInfo() {
                 return quantity * selling
               },
             },
+            {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                if (isProductManager) {
+                  return (
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'tax_rate',
+                    ]) + '%'
+                  )
+                }
 
+                return (
+                  <Form.Item
+                    name={[record.index, 'products', record.index2, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                      controls={false}
+                    />{' '}
+                    %
+                  </Form.Item>
+                )
+              },
+            },
             {
               title: t('quotas.action.optional_info.table.row_edit'),
               key: 'action',
