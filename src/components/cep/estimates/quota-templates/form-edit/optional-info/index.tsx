@@ -76,13 +76,6 @@ const OptionalInfo: FC = () => {
                       <Form.Item
                         name={[record.index, 'group_name']}
                         className="ant-form-item-hidden-margin"
-                        required
-                        rules={[
-                          {
-                            required: true,
-                            message: t('validation.required'),
-                          },
-                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
