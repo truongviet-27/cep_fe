@@ -196,8 +196,10 @@ export const CorporateResearchFormSection = (
             size="small"
             onClick={() => {
               form.setFieldValue(['company_research_information', index], {
+                id: record?.id,
                 material_name: record.material_name,
                 judgement: '未定',
+                files: [],
               })
               formTrigger()
             }}

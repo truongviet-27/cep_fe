@@ -136,7 +136,7 @@ function History({ data }: { data: any }) {
       style={{
         background: WHITE,
         padding: 'none',
-        marginTop: 30,
+        marginTop: 20,
         paddingBottom: 20,
       }}
       className="custom-collapse"

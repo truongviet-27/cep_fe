@@ -101,7 +101,7 @@ const DetailInfo: FC = () => {
                         rules={[
                           {
                             required: true,
-                            message: t('validation.required'),
+                            message: '',
                           },
                         ]}
                       >

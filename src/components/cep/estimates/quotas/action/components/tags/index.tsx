@@ -37,7 +37,7 @@ function Tags() {
       }}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 20,
       }}
     >
       <Row>
