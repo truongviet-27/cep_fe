@@ -82,11 +82,13 @@ export const useController = () => {
     let sellTotalWithTax = 0
     if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
       if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor(sellTotal - sellTotal / 1.1)
+        taxTotal = Math.floor(sellTotal - sellTotal / (1 + taxRateWatch / 100))
       } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil(sellTotal - sellTotal / 1.1)
+        taxTotal = Math.ceil(sellTotal - sellTotal / (1 + taxRateWatch / 100))
       } else {
-        taxTotal = Number((sellTotal - sellTotal / 1.1).toFixed(0))
+        taxTotal = Number(
+          (sellTotal - sellTotal / (1 + taxRateWatch / 100)).toFixed(0),
+        )
       }
     } else {
       if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {

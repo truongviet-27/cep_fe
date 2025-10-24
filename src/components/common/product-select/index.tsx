@@ -59,7 +59,6 @@ const ProductSelect: React.FC<Props> = (props) => {
     <Select
       {...selectPropsProduct}
       placeholder="商品名・サービス名で検索"
-      // allowClear
       showSearch
       filterOption={false}
       onSearch={debounceFetcher}

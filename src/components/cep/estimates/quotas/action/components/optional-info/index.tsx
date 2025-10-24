@@ -73,7 +73,7 @@ function OptionalInfo() {
       }}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 20,
       }}
     >
       <Form.List name={'optional_product'}>
@@ -159,7 +159,7 @@ function OptionalInfo() {
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -179,134 +179,12 @@ function OptionalInfo() {
                 } else {
                   if (isProductManager) {
                     return (
-                      // <Form.Item
-                      //   className="ant-form-item-hidden-margin"
-                      //   name={[
-                      //     record.index,
-                      //     'products',
-                      //     record.index2,
-                      //     'product_id',
-                      //   ]}
-                      // >
-                      //   <Select
-                      //     {...selectPropsProduct}
-                      //     placeholder={t(
-                      //       'quotas.action.detail_info.placeholders.product_search',
-                      //     )}
-                      //     allowClear
-                      //     showSearch
-                      //     filterOption={(input, option) =>
-                      //       ((option?.label ?? '') as string)
-                      //         .toLowerCase()
-                      //         .includes(input.toLowerCase())
-                      //     }
-                      //     onSearch={() => {}}
-                      //     style={{
-                      //       width: 200,
-                      //     }}
-                      //     disabled={!customerWatch}
-                      //     onChange={(value) => {
-                      //       const item: any = query.data?.data.find(
-                      //         (item: any) => item.id === value,
-                      //       )
-                      //       form.setFieldValue(
-                      //         [
-                      //           'optional_product',
-                      //           record.index,
-                      //           'products',
-                      //           record.index2,
-                      //           'package_id',
-                      //         ],
-                      //         null,
-                      //       )
-                      //       form.setFieldValue(
-                      //         [
-                      //           'optional_product',
-                      //           record.index,
-                      //           'products',
-                      //           record.index2,
-                      //           'name',
-                      //         ],
-                      //         item?.name,
-                      //       )
-                      //       form.setFieldValue(
-                      //         [
-                      //           'optional_product',
-                      //           record.index,
-                      //           'products',
-                      //           record.index2,
-                      //           'code',
-                      //         ],
-                      //         item?.code,
-                      //       )
-                      //       form.setFieldValue(
-                      //         [
-                      //           'optional_product',
-                      //           record.index,
-                      //           'products',
-                      //           record.index2,
-                      //           'unit',
-                      //         ],
-                      //         item?.unit,
-                      //       )
-                      //       form.setFieldValue(
-                      //         [
-                      //           'optional_product',
-                      //           record.index,
-                      //           'products',
-                      //           record.index2,
-                      //           'cost_price',
-                      //         ],
-                      //         item?.cost_price,
-                      //       )
-                      //       form.setFieldValue(
-                      //         [
-                      //           'optional_product',
-                      //           record.index,
-                      //           'products',
-                      //           record.index2,
-                      //           'selling_price',
-                      //         ],
-                      //         item?.sale_price,
-                      //       )
-                      //       form.setFieldValue(
-                      //         [
-                      //           'optional_product',
-                      //           record.index,
-                      //           'products',
-                      //           record.index2,
-                      //           'quantity',
-                      //         ],
-                      //         1,
-                      //       )
-
-                      //       if (!value) {
-                      //         form.setFieldValue(
-                      //           [
-                      //             'optional_product',
-                      //             record.index,
-                      //             'products',
-                      //             record.index2,
-                      //             'quantity',
-                      //           ],
-                      //           0,
-                      //         )
-                      //       }
-                      //     }}
-                      //   />
-                      // </Form.Item>
                       <CoreAutocompleteAPI
                         name={[
                           record.index,
                           'products',
                           record.index2,
                           'product_id',
-                        ]}
-                        rules={[
-                          {
-                            required: true,
-                            message: '',
-                          },
                         ]}
                         labelInValue={false}
                         resource="products"
@@ -421,7 +299,7 @@ function OptionalInfo() {
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -431,6 +309,8 @@ function OptionalInfo() {
               title: t('quotas.action.optional_info.table.unit'),
               dataIndex: 'unit',
               key: 'unit',
+              align: 'center',
+              width: 200,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -461,10 +341,10 @@ function OptionalInfo() {
                         },
                       ]}
                       style={{
-                        width: 100,
+                        width: '100%',
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -529,7 +409,7 @@ function OptionalInfo() {
                         },
                       ]}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -659,13 +539,12 @@ function OptionalInfo() {
                     record.index2,
                     'profit_margin',
                   ],
-                  (selling > 0
-                    ? ((selling - cost) / selling) * 100
-                    : 0
-                  ).toFixed(2),
+                  selling > 0
+                    ? (((selling - cost) / selling) * 100).toFixed(2)
+                    : 0,
                 )
 
-                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
+                return `${selling > 0 ? (((selling - cost) / selling) * 100).toFixed(2) : 0}%`
               },
             },
             {
@@ -771,8 +650,8 @@ function OptionalInfo() {
               <Flex
                 justify="end"
                 style={{
-                  marginTop: 20,
-                  marginBottom: 20,
+                  marginTop: 10,
+                  marginBottom: 10,
                 }}
               >
                 <Button
