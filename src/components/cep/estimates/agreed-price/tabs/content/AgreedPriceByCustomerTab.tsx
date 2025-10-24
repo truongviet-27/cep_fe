@@ -59,6 +59,30 @@ const AgreedPriceByCustomerTab = () => {
         title: t('agreed_prices.customer_tab.table.business_partner_code'),
         dataIndex: 'customer_code',
         key: 'customer_code',
+        onCell: () => ({
+          style: {
+            width: 200,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'wrap',
+          },
+        }),
+        render: (value, record) => {
+          return (
+            <Button
+              type="link"
+              className="underline"
+              title={value}
+              onClick={() => {
+                go({
+                  to: `/agreed-prices/customer/${record.customer_id}`,
+                })
+              }}
+            >
+              {value}
+            </Button>
+          )
+        },
       },
       {
         title: t('agreed_prices.customer_tab.table.business_partner_name'),
@@ -188,7 +212,11 @@ const AgreedPriceByCustomerTab = () => {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  autoInsertSpace={false}
+                >
                   {t('agreed_prices.action.search')}
                 </Button>
                 <Button

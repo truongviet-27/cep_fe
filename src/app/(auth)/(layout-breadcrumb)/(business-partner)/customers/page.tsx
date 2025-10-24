@@ -63,7 +63,7 @@ interface ICustomer {
   name: string
   country: string
   department: string
-  unit_price_rank: string
+  unit_price_rank_code: string
   credit_rank: string
   anti_social_check_date: string
   registration_date: string
@@ -259,7 +259,7 @@ export default function CustomerListPage() {
         ellipsis: true,
       },
       {
-        title: t('customers.fields.unit_price_rank'),
+        title: t('customers.fields.unit_price_rank_code'),
         dataIndex: 'rank',
         key: 'rank',
         width: '8%', // Tỷ lệ 5
@@ -272,7 +272,7 @@ export default function CustomerListPage() {
               editModalShow(rank.id)
             }}
           >
-            {rank?.name}
+            {rank?.code}
           </Link>
         ),
       },
@@ -485,6 +485,7 @@ export default function CustomerListPage() {
                   placeholder: t('placeholders.select'),
                   style: { maxWidth: 560, minWidth: '150px' },
                 }}
+                optionLabel={'code'}
               />
             </Col>
           )}

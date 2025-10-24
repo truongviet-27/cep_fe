@@ -742,6 +742,10 @@ export type Customer = {
    */
   name?: string
   /**
+   * Company Full Name
+   */
+  full_name?: string
+  /**
    * Customer type (individual or company)
    */
   customer_type?: 'individual' | 'company'

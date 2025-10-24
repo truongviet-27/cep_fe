@@ -266,6 +266,7 @@ function QuotaAction() {
       delete quoteTemplate.editor
       form.setFieldsValue({
         ...form.getFieldsValue(),
+        category: quoteTemplate?.category,
         type: quoteTemplate?.type,
         delivery_method: quoteTemplate?.delivery_method,
         payment_due_date: quoteTemplate?.payment_due_date,
@@ -275,7 +276,11 @@ function QuotaAction() {
         note: quoteTemplate?.note,
         main_product: quoteTemplate?.main_product,
         optional_product: quoteTemplate?.optional_product,
-        tags: (quoteTemplate?.tags ?? []).map(({ id }) => id),
+        tags: (quoteTemplate?.tags ?? []).map(({ id, name }) => ({
+          label: name,
+          value: id,
+          key: id,
+        })),
       })
     } else if (!isUpdate && data?.data) {
       form.setFieldsValue({

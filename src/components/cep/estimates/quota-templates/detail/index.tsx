@@ -55,7 +55,7 @@ const QuoteTemplateDetailContainer: FC = () => {
           separator={<RightOutlined />}
         />
       }
-      title={t('quota_templates.detail.title')}
+      title={t('quota_templates.breadcrumb.quotasDetail')}
     >
       {quoteTemplateDetail ? (
         <Spin spinning={query.isLoading}>
@@ -128,7 +128,7 @@ const QuoteTemplateDetailContainer: FC = () => {
                 variant="outlined"
                 onClick={() => {
                   go({
-                    to: '/quotas',
+                    to: '/quota-templates',
                   })
                 }}
               >

@@ -62,7 +62,7 @@ const QuotaTemplateFilterForm: FC<Props> = ({
         </Col>
         <Col sm={12} md={6} lg={4}>
           <Space size="small" className="!mt-[30px]">
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" autoInsertSpace={false}>
               {t('quota_templates.button.search')}
             </Button>
             <Button
