@@ -237,6 +237,45 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           </Form.Item>
         </Col>
       </Row>
+      <Row className="mb-4 flex">
+        <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
+          <CoreInput
+            name="tax_rate"
+            label={t('products.fields.taxRate')}
+            required={true}
+            layout="horizontal"
+            type="number"
+            icon="%"
+            rules={[
+              {
+                required: true,
+                message: '消費税率は必須です。',
+              },
+              {
+                validator: (_, value) => {
+                  if (value === undefined || value === null) {
+                    return Promise.resolve()
+                  }
+
+                  if (value < 0) {
+                    return Promise.reject('消費税率は0以上で入力してください')
+                  }
+
+                  if (value > 100) {
+                    return Promise.reject('消費税率は100以下で入力してください')
+                  }
+
+                  return Promise.resolve()
+                },
+              },
+            ]}
+            style={{
+              width: '13%',
+              padding: 5,
+            }}
+          />
+        </Col>
+      </Row>
       <Row className="mb-4">
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput

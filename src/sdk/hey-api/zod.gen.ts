@@ -1219,6 +1219,7 @@ export const zProductDetail = z.object({
   ),
   cost_price: z.optional(z.int()),
   selling_price: z.optional(z.int()),
+  tax_rate: z.optional(z.int()),
   note: z.optional(z.union([z.string(), z.null()])),
   author: z.optional(
     z.union([
@@ -1278,6 +1279,7 @@ export const zStoreProductInput = z.object({
   unit_id: z.int(),
   cost_price: z.int(),
   selling_price: z.int(),
+  tax_rate: z.optional(z.int()),
   note: z.optional(z.union([z.string(), z.null()])),
   packagings: z.optional(z.union([z.array(zProductPackagingInput), z.null()])),
 })
@@ -1294,6 +1296,7 @@ export const zUpdateProductInput = z.object({
   unit_id: z.optional(z.union([z.int(), z.null()])),
   cost_price: z.optional(z.union([z.int(), z.null()])),
   selling_price: z.optional(z.union([z.int(), z.null()])),
+  tax_rate: z.optional(z.union([z.int(), z.null()])),
   note: z.optional(z.union([z.string(), z.null()])),
   packagings: z.optional(z.union([z.array(zProductPackagingInput), z.null()])),
 })
@@ -1311,6 +1314,7 @@ export const zProduct = z.object({
   unit_id: z.optional(z.int()),
   cost_price: z.optional(z.int()),
   selling_price: z.optional(z.int()),
+  tax_rate: z.optional(z.int()),
   note: z.optional(z.union([z.string(), z.null()])),
   packagings: z.optional(z.array(zProductPackagingInput)),
 })
@@ -1568,6 +1572,7 @@ export const zQuotaProductItemRequest = z.object({
   cost_price: z.number().gte(0),
   selling_price: z.number().gte(0),
   profit_margin: z.number(),
+  tax_rate: z.optional(z.int().gte(0).lte(100)),
   is_add_total: z.boolean(),
   display_order: z.optional(z.int().gte(0)),
   quantity: z.optional(z.int().gte(1)),
@@ -1624,6 +1629,7 @@ export const zQuotaResource = z.object({
   customer_name: z.optional(z.union([z.string(), z.null()])),
   title: z.optional(z.string()),
   type: z.optional(z.enum(['normal', 'channel_limited'])),
+  quota_type: z.optional(z.enum(['merchandise', 'service'])),
   status: z.optional(
     z.enum([
       'creating',
@@ -1683,6 +1689,7 @@ export const zQuotaStoreRequest = z.object({
   code: z.string().max(255),
   title: z.string().max(255),
   type: z.enum(['normal', 'channel_limited']),
+  quota_type: z.optional(z.enum(['merchandise', 'service'])),
   status: z.enum([
     'creating',
     'waiting_approval',
@@ -1736,6 +1743,7 @@ export const zQuotaUpdateRequest = z.object({
   code: z.string().max(255),
   title: z.string().max(255),
   type: z.enum(['standard', 'custom', 'enterprise']),
+  quota_type: z.optional(z.enum(['merchandise', 'service'])),
   status: z.enum([
     'creating',
     'waiting_approval',
@@ -2008,6 +2016,11 @@ export const zPaymentDueDateEnum = z.enum([
 ])
 
 /**
+ * Quota category options
+ */
+export const zQuotaCategoryEnum = z.enum(['merchandise', 'service'])
+
+/**
  * Quota Template Product
  * Represents a product within a quota template product group.
  */
@@ -2140,6 +2153,7 @@ export const zQuotaTemplateDetailResponse = z.object({
       name: z.optional(z.string()),
       description: z.optional(z.string()),
       type: z.optional(z.enum(['normal', 'channel_limited'])),
+      category: z.optional(z.enum(['merchandise', 'service'])),
       delivery_method: z.optional(z.string()),
       payment_due_date: z.optional(
         z.enum([
@@ -2295,6 +2309,7 @@ export const zQuotaTemplateStoreRequest = z.object({
   name: z.string().max(255),
   description: z.optional(z.union([z.string(), z.null()])),
   type: zQuotaTypeEnum,
+  category: z.optional(z.enum(['merchandise', 'service'])),
   delivery_method: z.optional(z.string().max(100)),
   payment_due_date: z.optional(zPaymentDueDateEnum),
   expiration_date: z.optional(zExpirationDateEnum),
@@ -2318,6 +2333,7 @@ export const zQuotaTemplateUpdateRequest = z.object({
   name: z.string().max(255),
   description: z.optional(z.union([z.string(), z.null()])),
   type: zQuotaTypeEnum,
+  category: z.optional(zQuotaCategoryEnum),
   delivery_method: z.optional(z.string().max(100)),
   payment_due_date: z.optional(zPaymentDueDateEnum),
   expiration_date: z.optional(zExpirationDateEnum),

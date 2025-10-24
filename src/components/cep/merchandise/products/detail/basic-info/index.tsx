@@ -62,6 +62,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
               </Flex>
               <Flex>
                 <div className="w-[150px] text-left font-bold">
+                  {t('products.fields.taxRate')}
+                </div>
+                <div>{product.tax_rate} %</div>
+              </Flex>
+              <Flex>
+                <div className="w-[150px] text-left font-bold">
                   {t('products.fields.costPrice')}
                 </div>
                 <div>{product.cost_price}</div>

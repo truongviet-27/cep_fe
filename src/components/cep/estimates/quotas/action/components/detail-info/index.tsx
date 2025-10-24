@@ -52,42 +52,66 @@ function DetailInfo() {
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
     let sellTotal = 0
+    let taxTotal = 0
 
+    // Calculate per-product totals and per-product tax using each product's tax_rate
     ;(main_product_groups ?? []).forEach((group: any) => {
       ;(group.products ?? []).forEach((product: any) => {
-        if (product.is_add_total) {
-          costTotal += (product.cost_price || 0) * (product.quantity || 0)
-          sellTotal += (product.selling_price || 0) * (product.quantity || 0)
+        if (!product.is_add_total) return
+
+        const qty = product.quantity || 0
+        const selling = (product.selling_price || 0) * qty
+        const cost = (product.cost_price || 0) * qty
+        console.log('main_product_groups', main_product_groups)
+
+        costTotal += cost
+        sellTotal += selling
+
+        // Use product's individual tax rate, fallback to global tax_rate if not set
+        console.log('prodcut tax:', product.tax_rate)
+
+        const productTaxRate = product.tax_rate ?? 0
+
+        // Calculate tax for this specific product
+        let productTax = 0
+        console.log('comsumpTax: ', consumptionTaxWatch)
+
+        const rawTax = selling * (productTaxRate / 100)
+        if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+          productTax = Math.floor(rawTax)
+        } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+          productTax = Math.ceil(rawTax)
+        } else {
+          productTax = Number(rawTax.toFixed(0))
         }
+
+        // if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
+        //   // For inclusive tax, extract tax portion from selling price
+
+        // } else {
+        //   // For exclusive tax, calculate tax on top of selling price
+        //   const rawTax = (selling * productTaxRate) / 100
+        //   if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        //     productTax = Math.floor(rawTax)
+        //   } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        //     productTax = Math.ceil(rawTax)
+        //   } else {
+        //     productTax = Number(rawTax.toFixed(0))
+        //   }
+        // }
+        console.log(productTax)
+
+        taxTotal += productTax
       })
     })
 
-    let taxTotal = 0
     let sellTotalWithTax = 0
     if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor(sellTotal - sellTotal / (1 + taxRateWatch / 100))
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil(sellTotal - sellTotal / (1 + taxRateWatch / 100))
-      } else {
-        taxTotal = Number(
-          (sellTotal - sellTotal / (1 + taxRateWatch / 100)).toFixed(0),
-        )
-      }
-    } else {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor((sellTotal * tax_rate) / 100)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil((sellTotal * tax_rate) / 100)
-      } else {
-        taxTotal = Number(((sellTotal * tax_rate) / 100).toFixed(0))
-      }
-    }
-
-    if (consumptionTaxWatch === 'exclusive') {
-      sellTotalWithTax = sellTotal + taxTotal
-    } else {
+      // For inclusive tax, selling total already includes tax
       sellTotalWithTax = sellTotal
+    } else {
+      // For exclusive tax, add tax to selling total
+      sellTotalWithTax = sellTotal + taxTotal
     }
     const profitRate = Number(
       (sellTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0).toFixed(
@@ -109,6 +133,8 @@ function DetailInfo() {
   }, [costTotal, profitRate, taxTotal, sellTotalWithTax])
 
   useEffect(() => {
+    console.log('main_product:', form.getFieldValue('main_product'))
+
     calculateSummary(
       form.getFieldValue('main_product'),
       form.getFieldValue('tax_rate'),
@@ -128,6 +154,7 @@ function DetailInfo() {
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
+      tax_rate: 0,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
     }
@@ -136,7 +163,7 @@ function DetailInfo() {
     newProducts.splice(productIndex, 0, newProduct)
 
     values[groupIndex].products = newProducts
-
+    console.log('values:', values)
     form.setFieldsValue({ main_product: values })
   }
 
@@ -304,6 +331,7 @@ function DetailInfo() {
                           'quotas.action.detail_info.placeholders.product_search',
                         )}
                         disabled={!customerWatch}
+                        pageSize={20}
                         onChangeValue={(valueOption) => {
                           form.setFieldValue(
                             [
@@ -375,7 +403,6 @@ function DetailInfo() {
                             ],
                             1,
                           )
-
                           if (!valueOption) {
                             form.setFieldValue(
                               [
@@ -719,6 +746,48 @@ function DetailInfo() {
                     'selling_price',
                   ]) || 0
                 return quantity * selling
+              },
+            },
+            {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'taxRate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                if (isProductManager) {
+                  return (
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'tax_rate',
+                    ]) + '%'
+                  )
+                }
+
+                return (
+                  <Form.Item
+                    name={[record.index, 'products', record.index2, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: false,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                      controls={false}
+                    />{' '}
+                    %
+                  </Form.Item>
+                )
               },
             },
             {
