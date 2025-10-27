@@ -22,7 +22,7 @@ export default async function RootLayout({
   const messages = await getMessages()
 
   return (
-    <html lang="en">
+    <html lang="en" translate="no">
       <body>
         <Suspense>
           <NextIntlClientProvider locale={locale} messages={messages}>
