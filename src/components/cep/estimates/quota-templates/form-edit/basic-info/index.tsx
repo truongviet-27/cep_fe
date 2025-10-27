@@ -9,15 +9,7 @@ import {
   EXPIRATION_DATE,
   PAYMENT_DUE_DATE,
 } from '@utility/constant'
-import {
-  DatePicker,
-  Flex,
-  Form,
-  InputNumber,
-  Radio,
-  Select,
-  Typography,
-} from 'antd'
+import { DatePicker, Flex, Form, Radio, Select, Typography } from 'antd'
 import dayjs from 'dayjs'
 
 const { Title } = Typography
@@ -204,22 +196,6 @@ const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
             <Radio.Group
               defaultValue={ConsumptionTaxEnum.EXCLUSIVE}
               options={Object.values(CONSUMPTION_TAX)}
-            />
-          </Form.Item>
-        </div>
-        <div>
-          <Form.Item
-            name="tax_rate"
-            layout="horizontal"
-            label={t('quota_templates.form.label.consumption_tax_rate')}
-            labelCol={{ flex: '0 0 70px' }}
-          >
-            <InputNumber
-              controls={false}
-              min={0}
-              max={100}
-              className="!mr-2 !w-[75px]"
-              suffix="%"
             />
           </Form.Item>
         </div>

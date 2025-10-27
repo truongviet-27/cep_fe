@@ -62,19 +62,16 @@ function DetailInfo() {
         const qty = product.quantity || 0
         const selling = (product.selling_price || 0) * qty
         const cost = (product.cost_price || 0) * qty
-        console.log('main_product_groups', main_product_groups)
 
         costTotal += cost
         sellTotal += selling
 
         // Use product's individual tax rate, fallback to global tax_rate if not set
-        console.log('prodcut tax:', product.tax_rate)
 
         const productTaxRate = product.tax_rate ?? 0
 
         // Calculate tax for this specific product
         let productTax = 0
-        console.log('comsumpTax: ', consumptionTaxWatch)
 
         const rawTax = selling * (productTaxRate / 100)
         if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
@@ -99,7 +96,6 @@ function DetailInfo() {
         //     productTax = Number(rawTax.toFixed(0))
         //   }
         // }
-        console.log(productTax)
 
         taxTotal += productTax
       })
@@ -133,8 +129,6 @@ function DetailInfo() {
   }, [costTotal, profitRate, taxTotal, sellTotalWithTax])
 
   useEffect(() => {
-    console.log('main_product:', form.getFieldValue('main_product'))
-
     calculateSummary(
       form.getFieldValue('main_product'),
       form.getFieldValue('tax_rate'),
@@ -163,7 +157,6 @@ function DetailInfo() {
     newProducts.splice(productIndex, 0, newProduct)
 
     values[groupIndex].products = newProducts
-    console.log('values:', values)
     form.setFieldsValue({ main_product: values })
   }
 
@@ -750,7 +743,7 @@ function DetailInfo() {
             },
             {
               title: t('quotas.action.detail_info.table.tax_rate'),
-              dataIndex: 'taxRate',
+              dataIndex: 'tax_rate',
               key: 'tax_rate',
               render: (_, record) => {
                 if (record.isHeader) {
@@ -782,10 +775,11 @@ function DetailInfo() {
                     <InputNumber
                       min={0}
                       max={100}
+                      style={{ width: 100 }}
                       precision={0}
+                      addonAfter="%"
                       controls={false}
-                    />{' '}
-                    %
+                    />
                   </Form.Item>
                 )
               },
@@ -867,6 +861,7 @@ function DetailInfo() {
                             cost_price: 0,
                             selling_price: 0,
                             profit_margin: 0,
+                            tax_rate: 0,
                             is_add_total: true,
                             unit: t(
                               'quotas.action.detail_info.default_values.default_unit',
@@ -965,6 +960,7 @@ function DetailInfo() {
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
                     </Table.Summary.Row>
                   )
                 }}

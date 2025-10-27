@@ -45,6 +45,7 @@ export const useController = () => {
         cost_price: 0,
         selling_price: 0,
         profit_margin: 0,
+        tax_rate: 0,
         is_add_total: true,
       } as unknown as QuotaTemplateProductType,
     ]
@@ -66,44 +67,60 @@ export const useController = () => {
   const calculateSummary = () => {
     let costTotal = 0
     let sellTotal = 0
+    let taxTotal = 0
 
+    // Calculate per-product totals and per-product tax using each product's tax_rate
     ;(mainProducts ?? []).forEach((group: QuotaTemplateProductGroupRequest) => {
       ;(group.products ?? []).forEach(
         (product: QuotaTemplateProductItemRequest) => {
-          if (product.is_add_total) {
-            costTotal += (product.cost_price || 0) * (product.quantity || 0)
-            sellTotal += (product.selling_price || 0) * (product.quantity || 0)
+          if (!product.is_add_total) return
+
+          const qty = product.quantity || 0
+          const selling = (product.selling_price || 0) * qty
+          const cost = (product.cost_price || 0) * qty
+
+          costTotal += cost
+          sellTotal += selling
+
+          // Use product's individual tax rate, fallback to global tax_rate if not set
+          const productTaxRate = product.tax_rate ?? taxRateWatch ?? 0
+
+          // Calculate tax for this specific product
+          let productTax = 0
+          if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
+            // For inclusive tax, extract tax portion from selling price
+            const rawTax = selling - selling / (1 + productTaxRate / 100)
+            if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+              productTax = Math.floor(rawTax)
+            } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+              productTax = Math.ceil(rawTax)
+            } else {
+              productTax = Number(rawTax.toFixed(0))
+            }
+          } else {
+            // For exclusive tax, calculate tax on top of selling price
+            const rawTax = (selling * productTaxRate) / 100
+            if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+              productTax = Math.floor(rawTax)
+            } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+              productTax = Math.ceil(rawTax)
+            } else {
+              productTax = Number(rawTax.toFixed(0))
+            }
           }
+
+          taxTotal += productTax
         },
       )
     })
 
-    let taxTotal = 0
     let sellTotalWithTax = 0
     if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor(sellTotal - sellTotal / (1 + taxRateWatch / 100))
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil(sellTotal - sellTotal / (1 + taxRateWatch / 100))
-      } else {
-        taxTotal = Number(
-          (sellTotal - sellTotal / (1 + taxRateWatch / 100)).toFixed(0),
-        )
-      }
-    } else {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor((sellTotal * taxRateWatch) / 100)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil((sellTotal * taxRateWatch) / 100)
-      } else {
-        taxTotal = Number(((sellTotal * taxRateWatch) / 100).toFixed(0))
-      }
-    }
-
-    if (consumptionTaxWatch === ConsumptionTaxEnum.EXCLUSIVE) {
-      sellTotalWithTax = sellTotal + taxTotal
-    } else {
+      // For inclusive tax, selling total already includes tax
       sellTotalWithTax = sellTotal
+    } else {
+      // For exclusive tax, add tax to selling total
+      sellTotalWithTax = sellTotal + taxTotal
     }
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
@@ -150,6 +167,10 @@ export const useController = () => {
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'selling_price'],
       value?.sale_price,
+    )
+    form.setFieldValue(
+      ['main_product', index, 'products', index2, 'tax_rate'],
+      value?.tax_rate,
     )
     form.setFieldValue(
       ['main_product', index, 'products', index2, 'quantity'],

@@ -174,6 +174,17 @@ const DetailInfo: FC<Props> = (props) => {
       },
     },
     {
+      title: t('quotas.show.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      render: (_, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return `${record?.tax_rate ?? 0}%`
+      },
+    },
+    {
       title: '合計計算',
       dataIndex: 'is_add_total',
       key: 'is_add_total',
@@ -224,7 +235,7 @@ const DetailInfo: FC<Props> = (props) => {
                   fontWeight: 700,
                 }}
               >
-                <Table.Summary.Cell index={0} colSpan={9} align="center">
+                <Table.Summary.Cell index={0} colSpan={10} align="center">
                   小計
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="center">
@@ -283,7 +294,7 @@ const DetailInfo: FC<Props> = (props) => {
                 fontWeight: 700,
               }}
             >
-              消費税金額（{detail?.tax_rate}%）
+              消費税金額
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               ¥{(detail.consumption_tax_amount || 0).toLocaleString()}

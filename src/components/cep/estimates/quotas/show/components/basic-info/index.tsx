@@ -178,10 +178,6 @@ function BasicInfo({ data }: { data: any }) {
                 style={{ marginBottom: 0, flex: 1 }}
               >
                 {consumptionTax[data?.consumption_tax as ConsumptionTaxKey]}
-                <span className="ml-20">
-                  {boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
-                  <span className="ml-10">{data?.tax_rate}%</span>
-                </span>
               </Form.Item>
               {/* <Form.Item
                 label={boldText(
