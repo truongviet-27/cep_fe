@@ -742,10 +742,6 @@ export type Customer = {
    */
   name?: string
   /**
-   * Company Full Name
-   */
-  full_name?: string
-  /**
    * Customer type (individual or company)
    */
   customer_type?: 'individual' | 'company'
@@ -2059,6 +2055,7 @@ export type ProductListItem = {
   packaging_count?: number
   cost_price?: number
   sale_price?: number
+  tax_rate?: number
 }
 
 /**
@@ -3691,6 +3688,10 @@ export type QuotaTemplateProductItemRequest = {
    */
   profit_margin: number
   /**
+   * Tax rate percentage
+   */
+  tax_rate?: number
+  /**
    * Required: Whether to add to total calculation
    */
   is_add_total: boolean
@@ -3716,6 +3717,7 @@ export type QuotaTemplateProductResponse = {
   name?: string
   code?: string
   unit_name?: string
+  tax_rate?: number
   cost_price?: number
   selling_price?: number
   profit_margin?: number

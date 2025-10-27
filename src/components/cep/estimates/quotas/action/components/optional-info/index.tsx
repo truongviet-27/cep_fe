@@ -610,9 +610,10 @@ function OptionalInfo() {
                       min={0}
                       max={100}
                       precision={0}
+                      style={{ width: 100 }}
+                      addonAfter="%"
                       controls={false}
-                    />{' '}
-                    %
+                    />
                   </Form.Item>
                 )
               },

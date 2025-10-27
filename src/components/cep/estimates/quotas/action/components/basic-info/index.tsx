@@ -15,7 +15,6 @@ import {
   DatePicker,
   Form,
   Input,
-  InputNumber,
   Modal,
   Radio,
   Row,
@@ -518,31 +517,6 @@ const BasicInfo = () => {
                     },
                   ]}
                 />
-              </Form.Item>
-
-              <Form.Item
-                label={boldText(
-                  t('tenant_settings.consumptionTax.taxRateLabel'),
-                )}
-                name="tax_rate"
-                style={{
-                  marginBottom: 0,
-                }}
-              >
-                <InputNumber
-                  controls={false}
-                  min={0}
-                  defaultValue={0}
-                  max={100}
-                  addonAfter="%"
-                  style={{ width: 100 }}
-                />
-              </Form.Item>
-              <Form.Item style={{ marginBottom: 0 }}>
-                <span className="ml-1 text-[#FA8C16]">
-                  {t('quotas.action.basic_info.labels.default_tax_rate')}
-                  {Form.useWatch('tax_rate') ?? 0}%
-                </span>
               </Form.Item>
             </div>
           </Col>

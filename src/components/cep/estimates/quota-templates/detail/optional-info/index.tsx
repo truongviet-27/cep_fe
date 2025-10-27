@@ -141,6 +141,17 @@ const OptionalInfo: FC<Props> = (props) => {
       },
     },
     {
+      title: t('quotas.show.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      render: (_, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return `${record?.tax_rate}%`
+      },
+    },
+    {
       title: '売価金額',
       dataIndex: 'sellingAmount',
       key: 'sellingAmount',

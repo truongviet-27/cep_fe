@@ -115,6 +115,17 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
     {
+      title: t('quotas.show.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      render: (_, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return `${record?.tax_rate ?? 0}%`
+      },
+    },
+    {
       title: t('quotas.action.optional_info.table.selling_amount'),
       dataIndex: 'sellingAmount',
       key: 'sellingAmount',
