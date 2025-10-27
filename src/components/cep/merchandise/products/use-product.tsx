@@ -64,6 +64,12 @@ function useProduct() {
         dataIndex: 'packaging_count',
         key: 'packaging_count',
         width: 120,
+        render: (value: number) => {
+          if (typeof value === 'number') {
+            return value - 1 //minus main product
+          }
+          return ''
+        },
       },
       {
         title: t('products.list.table.headers.barcode'), // barcode
