@@ -245,7 +245,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             required={true}
             layout="horizontal"
             type="number"
-            icon="%"
+            icon={'%'}
+            defaultValue={0}
             rules={[
               {
                 required: true,
@@ -271,7 +272,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             ]}
             style={{
               width: '13%',
-              padding: 5,
+              padding: '5px 10px',
             }}
           />
         </Col>

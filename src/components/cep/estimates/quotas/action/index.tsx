@@ -340,6 +340,7 @@ function QuotaAction() {
                 quantity: 0,
                 profit_margin: 0,
                 is_add_total: false,
+                tax_rate: 0,
                 unit: null,
               },
             ],

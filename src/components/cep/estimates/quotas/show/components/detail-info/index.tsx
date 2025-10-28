@@ -258,8 +258,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                     fontWeight: 700,
                   }}
                 >
-                  {t('quotas.action.detail_info.summary.tax_amount')}（
-                  {basicInfo?.tax_rate}%）
+                  {t('quotas.action.detail_info.summary.tax_amount')}
                 </Text>
                 <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                   ¥{basicInfo?.consumption_tax_amount}
