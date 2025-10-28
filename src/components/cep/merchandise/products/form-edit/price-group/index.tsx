@@ -27,7 +27,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
       sortBy(ranks?.data ?? [], 'rate').map((rank) => ({
         title: (
           <>
-            {rank.name}
+            {rank.code}
             <br />
             {rank.rate}% (円)
           </>
