@@ -174,7 +174,9 @@
     "filters": {
       "code_name": "取引先コード・取引先名",
       "date_range": "日付"
-    }
+    },
+    "suspend_success_title": "停止した",
+    "suspend_success_desc": "成功しました"
   },
   "partners": {
     "partners": "ランク一覧"
