@@ -87,7 +87,12 @@ export default function Page() {
             <div style={{ height: 28 }} />
             <div style={{ marginTop: 4 }}>
               <Space size="middle">
-                <Button type="primary" size="middle" htmlType={'submit'}>
+                <Button
+                  type="primary"
+                  size="middle"
+                  htmlType={'submit'}
+                  autoInsertSpace={false}
+                >
                   検索
                 </Button>
                 <Button size="middle" type="default" onClick={handleClear}>
