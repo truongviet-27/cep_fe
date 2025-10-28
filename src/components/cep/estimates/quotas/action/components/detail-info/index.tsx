@@ -750,15 +750,15 @@ function DetailInfo() {
                   return { props: { colSpan: 0 } }
                 }
                 if (isProductManager) {
-                  return (
+                  const taxRate =
                     form.getFieldValue([
                       'main_product',
                       record.index,
                       'products',
                       record.index2,
                       'tax_rate',
-                    ]) + '%'
-                  )
+                    ]) || 0
+                  return `${taxRate}%`
                 }
 
                 return (
@@ -771,6 +771,7 @@ function DetailInfo() {
                         message: '',
                       },
                     ]}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber
                       min={0}
@@ -1013,8 +1014,7 @@ function DetailInfo() {
                   fontWeight: 700,
                 }}
               >
-                {t('quotas.action.detail_info.summary.tax_amount')}（
-                {taxRateWatch}%）
+                {t('quotas.action.detail_info.summary.tax_amount')}
               </Text>
               <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                 ¥{taxTotal || 0}

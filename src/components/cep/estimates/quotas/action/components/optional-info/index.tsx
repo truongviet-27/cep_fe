@@ -35,6 +35,7 @@ function OptionalInfo() {
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
+      tax_rate: 0,
       is_add_total: true,
       unit: '-',
     }
@@ -548,34 +549,6 @@ function OptionalInfo() {
               },
             },
             {
-              title: t('quotas.action.optional_info.table.selling_amount'),
-              dataIndex: 'sellingAmount',
-              key: 'sellingAmount',
-              render: (_, record) => {
-                if (record.isHeader) {
-                  return { props: { colSpan: 0 } }
-                }
-                const quantity =
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'quantity',
-                  ]) || 0
-
-                const selling =
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'selling_price',
-                  ]) || 0
-                return quantity * selling
-              },
-            },
-            {
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
@@ -586,7 +559,7 @@ function OptionalInfo() {
                 if (isProductManager) {
                   return (
                     form.getFieldValue([
-                      'main_product',
+                      'optional_product',
                       record.index,
                       'products',
                       record.index2,
@@ -618,6 +591,35 @@ function OptionalInfo() {
                 )
               },
             },
+            {
+              title: t('quotas.action.optional_info.table.selling_amount'),
+              dataIndex: 'sellingAmount',
+              key: 'sellingAmount',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                const quantity =
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'quantity',
+                  ]) || 0
+
+                const selling =
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'selling_price',
+                  ]) || 0
+                return quantity * selling
+              },
+            },
+
             {
               title: t('quotas.action.optional_info.table.row_edit'),
               key: 'action',
