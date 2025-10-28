@@ -165,7 +165,7 @@ const AgreedPriceQuotaTab = () => {
         title: (
           <div>
             <div>{t('agreed_prices.table.department')}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={{ fontSize: '14px', color: '#1890FF' }}>
               {t('agreed_prices.table.amount')}
             </div>
           </div>
@@ -188,7 +188,7 @@ const AgreedPriceQuotaTab = () => {
         title: (
           <div>
             <div>見積日</div>
-            <div style={{ fontSize: '12px', color: '#FF6918' }}>適用終了</div>
+            <div style={{ fontSize: '14px', color: '#FF6918' }}>適用終了</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',
@@ -377,6 +377,8 @@ const AgreedPriceQuotaTab = () => {
     },
     [setFilters],
   )
+
+  console.log(tableProps.dataSource)
 
   return (
     <Form {...searchFormProps}>
