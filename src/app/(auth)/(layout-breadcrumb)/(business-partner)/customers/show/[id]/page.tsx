@@ -270,7 +270,7 @@ export default function CustomerShowPage() {
                 {record?.corporate_number}
               </DetailItem>
               {parameterSettings?.get?.(ParameterResourceEnum.RANKS) && (
-                <DetailItem label={t('customers.fields.unit_price_rank')}>
+                <DetailItem label={t('customers.fields.unit_price_rank_code')}>
                   {record?.rank?.name}
                 </DetailItem>
               )}

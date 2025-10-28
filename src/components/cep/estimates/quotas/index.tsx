@@ -647,7 +647,7 @@ function QuotaList() {
         type: 'success',
       }
     },
-    [t],
+    [t, refetch, refetchStats],
   )
 
   const { mutate, isPending } = useCustomMutation()
@@ -1081,7 +1081,11 @@ function QuotaList() {
           16,
         )}
       >
-        <ModalAgreePrice data={dataAgreedPrice} close={close} />
+        <ModalAgreePrice
+          data={dataAgreedPrice}
+          close={close}
+          onSuccess={notificationFunction}
+        />
       </Modal>
     </List>
   )

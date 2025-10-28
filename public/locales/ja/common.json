@@ -69,7 +69,8 @@
     "createError": "作成エラー",
     "uploadSuccess": "ファイルのアップロードに成功しました。",
     "uploadFail": "ファイルのアップロードに失敗しました。",
-    "uploading": "資料をアップロード中です。アップロードが完了するまで、保存しないでください。"
+    "uploading": "資料をアップロード中です。アップロードが完了するまで、保存しないでください。",
+    "stopped": "停止した"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -146,6 +147,7 @@
       "name": "取引先名",
       "country": "国",
       "department": "担当部署",
+      "unit_price_rank": "単価ランク",
       "unit_price_rank_code": "単価ランクコード",
       "credit_rank": "与信ランク",
       "anti_social_rank": "反社ランク",

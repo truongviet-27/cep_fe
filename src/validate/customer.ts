@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { createSchemaFieldRule } from 'antd-zod'
+import { error } from 'console'
 import { z } from 'zod'
 
 const zDeliveryAddressRule = (t: any) =>
@@ -84,33 +85,101 @@ export const validateCustomerRule = (t: any) => {
       customer_code: z.optional(
         z
           .string({ error: t('validation.customer.customer_code.required') })
-          .max(50, {
-            error: t('validation.customer.customer_code.max', { max: 50 }),
-          })
-          .regex(/^[A-Z0-9-]+$/, {
-            error: t('validation.rank.code.regex'),
+          .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.customer_code.required'),
+              })
+              return
+            }
+            if (val.length > 50) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 50,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.customer_code.max', {
+                  max: 50,
+                }),
+              })
+              return
+            }
+            if (!/^[A-Z0-9-]+$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                validation: 'regex',
+                message: t('validation.rank.code.regex'),
+              })
+              return
+            }
           }),
       ),
       name: z.optional(
         z
           .string({ error: t('validation.customer.name.required') })
-          .max(255, { error: t('validation.customer.name.max', { max: 255 }) }),
+          .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.name.required'),
+              })
+              return
+            }
+            if (val.length > 255) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 255,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.name.max', { max: 255 }),
+              })
+              return
+            }
+          }),
       ),
       customer_name_by_kana: z.optional(
         z
           .string({
             error: t('validation.customer.customer_name_by_kana.required'),
           })
-          .max(255, {
-            error: t('validation.customer.customer_name_by_kana.max', {
-              max: 255,
-            }),
-          })
-          .regex(/^[ァ-ンヴ・ー]+$/, {
-            error: t('validation.customer.customer_name_by_kana.regex'),
-          })
+          .nullable()
           .or(z.literal(''))
-          .nullable(),
+          .superRefine((val, ctx) => {
+            if (val === null || val === '') return
+
+            if (val.length > 255) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 255,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.customer_name_by_kana.max', {
+                  max: 255,
+                }),
+              })
+              return
+            }
+            if (!/^[ァ-ンヴ・ー]+$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                validation: 'regex',
+                message: t('validation.customer.customer_name_by_kana.regex'),
+              })
+              return
+            }
+          }),
       ),
       customer_type: z.optional(
         z.enum(['individual', 'company'], {
@@ -120,8 +189,18 @@ export const validateCustomerRule = (t: any) => {
       company_type: z.optional(
         z
           .string({ error: t('validation.customer.company_type.required') })
-          .max(50, {
-            error: t('validation.customer.company_type.max', { max: 50 }),
+          .superRefine((val, ctx) => {
+            if (val.length > 50) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 50,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.company_type.max', { max: 50 }),
+              })
+              return
+            }
           })
           .nullable(),
       ),
@@ -135,42 +214,110 @@ export const validateCustomerRule = (t: any) => {
       corporate_number: z.optional(
         z
           .string({ error: t('validation.customer.corporate_number.required') })
-          .max(50, {
-            error: t('validation.customer.corporate_number.max', { max: 50 }),
+          .superRefine((val, ctx) => {
+            if (val.length > 50) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 50,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.corporate_number.max', {
+                  max: 50,
+                }),
+              })
+              return
+            }
           })
           .nullable(),
       ),
-      price_rank_id: z.optional(
-        z
-          .int({ error: t('validation.customer.price_rank_id.integer') })
-          .nullable(),
-      ),
-
+      price_rank_id: z
+        .int({
+          error: t('validation.customer.price_rank_id.required'),
+        })
+        .min(1, { error: t('validation.customer.price_rank_id.required') }),
       country: z.optional(
         z
           .string({ error: t('validation.customer.country.required') })
-          .max(50, {
-            error: t('validation.customer.country.max', { max: 50 }),
-          })
+          .nullable()
           .or(z.literal(''))
-          .nullable(),
+          .superRefine((val, ctx) => {
+            if (val === null || val === '') return
+
+            if (val.length > 50) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 50,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.country.max', { max: 50 }),
+              })
+              return
+            }
+          }),
       ),
       post_code: z
         .string({ error: t('validation.customer.post_code.required') })
-        .max(10, {
-          error: t('validation.customer.post_code.max', { max: 10 }),
-        })
-        .min(1, { error: t('validation.customer.post_code.required') })
-        .regex(/^[0-9]+$/, {
-          error: t('validation.customer.post_code.numeric_only'),
+        .superRefine((val, ctx) => {
+          if (val.length < 1) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_small,
+              origin: 'string',
+              minimum: 1,
+              type: 'string',
+              inclusive: true,
+              message: t('validation.customer.post_code.required'),
+            })
+            return
+          }
+          if (val.length > 10) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_big,
+              origin: 'string',
+              maximum: 10,
+              type: 'string',
+              inclusive: true,
+              message: t('validation.customer.post_code.max', { max: 10 }),
+            })
+            return
+          }
+          if (!/^[0-9]+$/.test(val)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              validation: 'regex',
+              message: t('validation.customer.post_code.numeric_only'),
+            })
+            return
+          }
         }),
       address: z.optional(
         z
-          .string({ error: t('validation.required') })
-          .max(255, {
-            error: t('validation.customer.address.max', { max: 255 }),
-          })
-          .min(1, { error: t('validation.required') }),
+          .string({ error: t('validation.customer.address.required') })
+          .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.required'),
+              })
+              return
+            }
+            if (val.length > 255) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 255,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.address.max', { max: 255 }),
+              })
+              return
+            }
+          }),
       ),
       building: z.optional(
         z
@@ -184,23 +331,93 @@ export const validateCustomerRule = (t: any) => {
       phone: z.optional(
         z
           .string({ error: t('validation.customer.phone.required') })
-          .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-          .regex(/^\d{3,11}$/, {
-            error: t('validation.customer.phone.regex'),
+          .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.phone.required'),
+              })
+              return
+            }
+            if (val.length > 20) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 20,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.phone.max', { max: 20 }),
+              })
+              return
+            }
+            if (!/^\d+$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.customer.phone.regex'),
+              })
+              return
+            }
           }),
       ),
       fax: z.optional(
         z
           .string({ error: t('validation.customer.fax.required') })
-          .max(20, { error: t('validation.customer.fax.max', { max: 20 }) })
+          .nullable()
           .or(z.literal(''))
-          .nullable(),
+          .superRefine((val, ctx) => {
+            if (val === null || val === '') return
+            if (val.length > 20) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 20,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.fax.max', { max: 20 }),
+              })
+              return
+            }
+          }),
       ),
       mail: z.optional(
         z
-          .string({ error: t('validation.required') })
-          .email({ error: t('validation.customer.mail.email') })
-          .max(255, { error: t('validation.customer.mail.max', { max: 255 }) }),
+          .string({ error: t('validation.customer.mail.required') })
+          .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.mail.required'),
+              })
+              return
+            }
+            if (val.length > 255) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 255,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.mail.max', { max: 255 }),
+              })
+              return
+            }
+            if (!z.string().email().safeParse(val).success) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                validation: 'email',
+                message: t('validation.customer.mail.email'),
+              })
+              return
+            }
+          }),
       ),
 
       listing_classification: z.optional(
@@ -214,8 +431,18 @@ export const validateCustomerRule = (t: any) => {
         .optional(
           z
             .string({ error: t('validation.customer.industry.required') })
-            .max(255, {
-              error: t('validation.customer.industry.max', { max: 255 }),
+            .superRefine((val, ctx) => {
+              if (val.length > 255) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.too_big,
+                  origin: 'string',
+                  maximum: 255,
+                  type: 'string',
+                  inclusive: true,
+                  message: t('validation.customer.industry.max', { max: 255 }),
+                })
+                return
+              }
             }),
         )
         .nullable(),
@@ -223,18 +450,30 @@ export const validateCustomerRule = (t: any) => {
 
       department_in_charge_id: z
         .int({
-          error: t('validation.required'),
+          error: t('validation.customer.department_in_charge.required'),
         })
-        .min(1, { error: t('validation.required') }),
+        .min(1, {
+          error: t('validation.customer.department_in_charge.required'),
+        }),
       person_in_charge_name: z.optional(
         z
           .string({
             error: t('validation.customer.person_in_charge_name.required'),
           })
-          .max(50, {
-            error: t('validation.customer.person_in_charge_name.max', {
-              max: 50,
-            }),
+          .superRefine((val, ctx) => {
+            if (val.length > 50) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 50,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.person_in_charge_name.max', {
+                  max: 50,
+                }),
+              })
+              return
+            }
           }),
       ),
       person_in_charge_department: z.optional(
@@ -244,41 +483,106 @@ export const validateCustomerRule = (t: any) => {
               'validation.customer.person_in_charge_department.required',
             ),
           })
-          .max(100, {
-            error: t('validation.customer.person_in_charge_department.max', {
-              max: 100,
-            }),
-          })
-          .min(1, { error: t('validation.required') }),
+          .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.required'),
+              })
+              return
+            }
+            if (val.length > 100) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 100,
+                type: 'string',
+                inclusive: true,
+                message: t(
+                  'validation.customer.person_in_charge_department.max',
+                  {
+                    max: 100,
+                  },
+                ),
+              })
+              return
+            }
+          }),
       ),
       person_in_charge_mail: z.optional(
         z
           .string(t('validation.customer.person_in_charge_mail.required'))
-          .email({
-            error: t('validation.customer.person_in_charge_mail.email'),
-          })
-          .max(100, {
-            error: t('validation.customer.person_in_charge_mail.max', {
-              max: 100,
-            }),
-          })
-          .min(1, { error: t('validation.required') }),
+          .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.required'),
+              })
+              return
+            }
+            if (val.length > 100) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 100,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.person_in_charge_mail.max', {
+                  max: 100,
+                }),
+              })
+              return
+            }
+            if (!z.string().email().safeParse(val).success) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                validation: 'email',
+                message: t('validation.customer.person_in_charge_mail.email'),
+              })
+              return
+            }
+          }),
       ),
       person_in_charge_phone: z.optional(
         z
           .string({
             error: t('validation.customer.person_in_charge_phone.required'),
           })
-          .max(20, {
-            error: t('validation.customer.person_in_charge_phone.max', {
-              max: 20,
-            }),
-          })
-          .regex(/^\d{3,11}$/, {
-            error: t('validation.customer.person_in_charge_phone.regex'),
-          })
+          .nullable()
           .or(z.literal(''))
-          .nullable(),
+          .superRefine((val, ctx) => {
+            if (val === null || val === '') return
+
+            if (val.length > 20) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_big,
+                origin: 'string',
+                maximum: 20,
+                type: 'string',
+                inclusive: true,
+                message: t('validation.customer.person_in_charge_phone.max', {
+                  max: 20,
+                }),
+              })
+              return
+            }
+            if (!/^\d{3,11}$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                validation: 'regex',
+                message: t('validation.customer.person_in_charge_phone.regex'),
+              })
+              return
+            }
+          }),
       ),
       company_research_information: z.optional(
         z.array(zCompanyResearchInformationRule(t)),
