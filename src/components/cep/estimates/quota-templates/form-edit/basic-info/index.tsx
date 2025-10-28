@@ -184,14 +184,16 @@ const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
             />
           </Form.Item>
         </div>
-        <div
-          style={{ whiteSpace: 'nowrap', fontWeight: 500, marginTop: '5px' }}
-        >
-          {dayjs(getExpiryDate(expirationDate, new Date())).format(
-            'YYYY/MM/DD',
-          )}
-          まで
-        </div>
+        {expirationDate && (
+          <div
+            style={{ whiteSpace: 'nowrap', fontWeight: 500, marginTop: '5px' }}
+          >
+            {dayjs(getExpiryDate(expirationDate, new Date())).format(
+              'YYYY/MM/DD',
+            )}
+            まで
+          </div>
+        )}
       </Flex>
       <Flex gap={16}>
         <div>
@@ -213,6 +215,7 @@ const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
             layout="horizontal"
             label={t('quota_templates.form.label.consumption_tax_rate')}
             labelCol={{ flex: '0 0 70px' }}
+            normalize={(val) => val ?? 0}
           >
             <InputNumber
               controls={false}

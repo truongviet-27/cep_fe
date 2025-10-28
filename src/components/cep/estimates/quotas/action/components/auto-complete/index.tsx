@@ -100,8 +100,8 @@ function CoreAutoComplete({
     } else {
       form.setFieldValue(
         [parent, index, 'products', index2, 'selling_price'],
-        data?.data?.packagings[0].rank_prices
-          ? data?.data?.packagings[0].rank_prices
+        data?.data?.packagings[0]?.rank_prices
+          ? data?.data?.packagings[0]?.rank_prices
           : (data?.data?.selling_price ?? 0),
       )
     }

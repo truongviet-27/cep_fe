@@ -92,7 +92,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     (e: React.UIEvent<HTMLDivElement>) => {
       const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
       if (
-        scrollTop + clientHeight >= scrollHeight - 10 &&
+        scrollTop + clientHeight >= scrollHeight - 30 &&
         !query.isFetching &&
         (query.data?.total ?? 0) > options.length
       ) {

@@ -85,10 +85,6 @@ function TabsEmailTemplate({
             value: 8,
             text: t('mail_templates.tags_password.selfEmail'),
           },
-          {
-            value: 9,
-            text: t('mail_templates.tags_password.selfTel'),
-          },
         ]
   }, [t, indexTab])
 
