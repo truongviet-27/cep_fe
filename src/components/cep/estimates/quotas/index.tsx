@@ -470,8 +470,6 @@ function QuotaList() {
     },
   })
 
-  console.log(filters, 'filters')
-
   useEffect(() => {
     setStatus(
       filters?.find((filter: any) => filter?.field === 'status')?.value ||

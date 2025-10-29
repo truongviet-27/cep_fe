@@ -53,7 +53,18 @@ const QuoteTemplateFormEditContainer: FC = () => {
       }
     >
       <Spin spinning={isLoading}>
-        <Form {...methods.formProps} labelCol={{ span: 2 }} labelAlign="left">
+        <Form
+          {...methods.formProps}
+          labelCol={{ xs: 24, sm: 8, md: 8, xl: 6, xxl: 5 }}
+          labelAlign="left"
+          autoComplete="off"
+          name="basic"
+          layout="horizontal"
+          scrollToFirstError={{
+            behavior: 'smooth',
+            block: 'center',
+          }}
+        >
           <BasicInfo expirationDate={expirationDateWatch} />
           <DetailInfo />
           <OptionalInfo />

@@ -192,7 +192,15 @@ const DetailInfo: FC<Props> = (props) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <Checkbox checked={value} disabled />
+        return (
+          <Checkbox
+            checked={value}
+            style={{
+              transform: 'scale(1.3)',
+              marginBottom: 0,
+            }}
+          />
+        )
       },
     },
     {

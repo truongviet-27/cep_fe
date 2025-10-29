@@ -28,8 +28,8 @@
     "title": "見積詳細"
   },
   "form": {
-    "titleRegister": "見積登録",
-    "titleUpdate": "見積編集",
+    "titleRegister": "見積テンプレート新規作成",
+    "titleUpdate": "見積テンプレート編集",
     "titleBasicInfo": "基本情報",
     "titleDetailInfo": "詳細情報",
     "titleOptionalInfo": "オプション情報",

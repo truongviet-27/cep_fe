@@ -214,7 +214,7 @@ export default function CustomerListPage() {
   }
 
   const getRowClassName = (record: BaseRecord) => {
-    return record.deleted_at ? '!bg-gray-200' : ''
+    return record.deleted_at ? '!bg-gray-300' : ''
   }
 
   const columns: TableColumnsType<SimpleCustomer> = useMemo(
