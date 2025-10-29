@@ -406,6 +406,26 @@ const OptionalInfo: FC = () => {
               },
             },
             {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+
+                return (
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'tax_rate',
+                  ]) + '%'
+                )
+              },
+            },
+            {
               title: '行編集',
               key: 'action',
               render: (_, record) => {

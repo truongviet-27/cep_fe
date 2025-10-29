@@ -12,6 +12,7 @@
     "barcode": "バーコード",
     "category": "カテゴリ",
     "unit": "単位",
+    "taxRate": "消費税率",
     "costPrice": "原価 (円)",
     "sellingPrice": "販売単価 (円)",
     "remarks": "備考",

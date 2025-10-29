@@ -287,12 +287,12 @@ function BasicInfoExtended({
               {consumptionTax[data?.consumption_tax as ConsumptionTaxKey]}
             </Form.Item>
           </Col>
-          <Form.Item
+          {/* <Form.Item
             label={t('tenant_settings.consumptionTax.taxRateLabel')}
             layout="horizontal"
           >
             {data?.tax_rate}%
-          </Form.Item>
+          </Form.Item> */}
         </Row>
       </Form.Item>
     </Card>
