@@ -29,7 +29,6 @@ import {
   Tag,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { TableRowSelection } from 'antd/es/table/interface'
 import type { Dayjs } from 'dayjs'
 import React, { useCallback, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
@@ -41,7 +40,6 @@ const AgreedPriceQuotaTab = () => {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
 
   const { selectProps: departmentSelectProps } = useSelect({
@@ -53,15 +51,6 @@ const AgreedPriceQuotaTab = () => {
       pageSize: 100,
     },
   })
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys)
-  }
-
-  const rowSelection: TableRowSelection<QuotaAgreedPrice> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  }
 
   const getStatusTag = (status?: string) => {
     const statusEnum = status as AgreedPriceStatus
@@ -555,7 +544,6 @@ const AgreedPriceQuotaTab = () => {
           <CommonTable<QuotaAgreedPrice>
             {...refinedTableProps}
             rowKey={'id'}
-            rowSelection={rowSelection}
             columns={columns}
           />
         )

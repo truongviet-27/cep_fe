@@ -34,7 +34,7 @@ const AgreedPriceByCustomerTab = () => {
 
   const { selectProps: rankSelectProps } = useSelect({
     resource: 'ranks',
-    optionLabel: 'name',
+    optionLabel: 'code',
     optionValue: 'id',
     pagination: {
       mode: 'server',
@@ -95,7 +95,7 @@ const AgreedPriceByCustomerTab = () => {
         key: 'department_name',
       },
       {
-        title: t('agreed_prices.customer_tab.table.unit_price_rank'),
+        title: t('agreed_prices.customer_tab.table.unit_price_rank_code'),
         dataIndex: 'rank_code',
         key: 'rank_code',
       },
@@ -160,7 +160,7 @@ const AgreedPriceByCustomerTab = () => {
   })
 
   return (
-    <List title="" canCreate={false}>
+    <List title="" canCreate={false} breadcrumb={false}>
       <Form colon={false} form={form} layout="vertical" {...searchFormProps}>
         <Row gutter={[16, 16]}>
           <Col xs={24} md={4}>
