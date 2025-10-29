@@ -234,12 +234,14 @@ function AgreedPriceQuotaDetail() {
                     color: PRIMARY,
                   }}
                 >
-                  {t('quotas.quotas')}
+                  {t('quotas.confirmed_quota')}
                 </Title>
               ),
             },
             {
-              title: <Title level={5}>{t('quotas.detail')}</Title>,
+              title: (
+                <Title level={5}>{t('quotas.confirmed_quota_detail')}</Title>
+              ),
             },
           ]}
           separator={<RightOutlined />}
@@ -247,7 +249,7 @@ function AgreedPriceQuotaDetail() {
       }
       title={
         <div className="flex justify-between">
-          <span>{t('quotas.detail')}</span>
+          <span>{t('quotas.confirmed_quota_detail')}</span>
           <Button
             color="primary"
             variant="outlined"
