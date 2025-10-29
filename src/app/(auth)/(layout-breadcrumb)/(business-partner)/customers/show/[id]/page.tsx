@@ -280,7 +280,7 @@ export default function CustomerShowPage() {
               <DetailItem label={t('customers.fields.anti_social_rank')}>
                 {record?.company_research_information?.[1]?.judgement == 'T'
                   ? '△'
-                  : record?.company_research_information?.[1].judgement}
+                  : record?.company_research_information?.[1]?.judgement}
               </DetailItem>
             </>
           ),
