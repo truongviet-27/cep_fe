@@ -239,6 +239,7 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
+              tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
             })),
           })),
@@ -319,6 +320,7 @@ function QuotaAction() {
                 profit_margin: 0,
                 is_add_total: true,
                 unit: null,
+                tax_rate: 0,
               },
             ],
           },
@@ -338,6 +340,7 @@ function QuotaAction() {
                 quantity: 0,
                 profit_margin: 0,
                 is_add_total: false,
+                tax_rate: 0,
                 unit: null,
               },
             ],

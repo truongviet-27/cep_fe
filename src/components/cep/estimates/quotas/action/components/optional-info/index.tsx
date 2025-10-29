@@ -35,6 +35,7 @@ function OptionalInfo() {
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
+      tax_rate: 0,
       is_add_total: true,
       unit: '-',
     }
@@ -545,6 +546,49 @@ function OptionalInfo() {
                 )
 
                 return `${selling > 0 ? (((selling - cost) / selling) * 100).toFixed(2) : 0}%`
+              },
+            },
+            {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                if (isProductManager) {
+                  return (
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'tax_rate',
+                    ]) + '%'
+                  )
+                }
+
+                return (
+                  <Form.Item
+                    name={[record.index, 'products', record.index2, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                      style={{ width: 100 }}
+                      addonAfter="%"
+                      controls={false}
+                    />
+                  </Form.Item>
+                )
               },
             },
             {

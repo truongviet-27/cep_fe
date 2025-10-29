@@ -742,10 +742,6 @@ export type Customer = {
    */
   name?: string
   /**
-   * Company Full Name
-   */
-  full_name?: string
-  /**
    * Customer type (individual or company)
    */
   customer_type?: 'individual' | 'company'
@@ -1880,6 +1876,7 @@ export type ProductDetail = {
   }
   cost_price?: number
   selling_price?: number
+  tax_rate?: number
   note?: string | null
   author?: {
     id?: number
@@ -1999,6 +1996,10 @@ export type StoreProductInput = {
    * Base selling price
    */
   selling_price: number
+  /**
+   * Tax rate percentage for product (0-100)
+   */
+  tax_rate?: number
   note?: string | null
   /**
    * Optional extra packagings. First (default) packaging is auto created.
@@ -2018,6 +2019,7 @@ export type UpdateProductInput = {
   unit_id?: number | null
   cost_price?: number | null
   selling_price?: number | null
+  tax_rate?: number | null
   note?: string | null
   packagings?: Array<ProductPackagingInput> | null
 }
@@ -2035,6 +2037,7 @@ export type Product = {
   unit_id?: number
   cost_price?: number
   selling_price?: number
+  tax_rate?: number
   note?: string | null
   packagings?: Array<ProductPackagingInput>
 }
@@ -2052,6 +2055,7 @@ export type ProductListItem = {
   packaging_count?: number
   cost_price?: number
   sale_price?: number
+  tax_rate?: number
 }
 
 /**
@@ -2414,6 +2418,10 @@ export type QuotaProductItemRequest = {
    */
   profit_margin: number
   /**
+   * Tax rate for this quota product (percentage)
+   */
+  tax_rate?: number
+  /**
    * Whether this product should be included in total calculations
    */
   is_add_total: boolean
@@ -2521,6 +2529,10 @@ export type QuotaResource = {
    * Quota type
    */
   type?: 'normal' | 'channel_limited'
+  /**
+   * Quota business type
+   */
+  quota_type?: 'merchandise' | 'service'
   /**
    * Quota status
    */
@@ -2637,6 +2649,10 @@ export type QuotaStoreRequest = {
    * Quota type
    */
   type: 'normal' | 'channel_limited'
+  /**
+   * Quota business type
+   */
+  quota_type?: 'merchandise' | 'service'
   /**
    * Quota status
    */
@@ -2757,6 +2773,10 @@ export type QuotaUpdateRequest = {
    * Type of quota
    */
   type: 'standard' | 'custom' | 'enterprise'
+  /**
+   * Quota business type
+   */
+  quota_type?: 'merchandise' | 'service'
   /**
    * Current status of the quota
    */
@@ -3273,6 +3293,20 @@ export type PaymentDueDateEnum =
   (typeof PaymentDueDateEnum)[keyof typeof PaymentDueDateEnum]
 
 /**
+ * Quota category options
+ */
+export const QuotaCategoryEnum = {
+  MERCHANDISE: 'merchandise',
+  SERVICE: 'service',
+} as const
+
+/**
+ * Quota category options
+ */
+export type QuotaCategoryEnum =
+  (typeof QuotaCategoryEnum)[keyof typeof QuotaCategoryEnum]
+
+/**
  * Quota Template Resource
  * Represents a quota template with products and configuration.
  */
@@ -3413,6 +3447,7 @@ export type QuotaTemplateDetailResponse = {
     name?: string
     description?: string
     type?: 'normal' | 'channel_limited'
+    category?: 'merchandise' | 'service'
     delivery_method?: string
     payment_due_date?:
       | 'monthly_25'
@@ -3653,6 +3688,10 @@ export type QuotaTemplateProductItemRequest = {
    */
   profit_margin: number
   /**
+   * Tax rate percentage
+   */
+  tax_rate?: number
+  /**
    * Required: Whether to add to total calculation
    */
   is_add_total: boolean
@@ -3678,6 +3717,7 @@ export type QuotaTemplateProductResponse = {
   name?: string
   code?: string
   unit_name?: string
+  tax_rate?: number
   cost_price?: number
   selling_price?: number
   profit_margin?: number
@@ -3699,6 +3739,10 @@ export type QuotaTemplateStoreRequest = {
    */
   description?: string | null
   type: QuotaTypeEnum
+  /**
+   * Quota template category
+   */
+  category?: 'merchandise' | 'service'
   /**
    * Delivery method (free text)
    */
@@ -3761,6 +3805,7 @@ export type QuotaTemplateUpdateRequest = {
    */
   description?: string | null
   type: QuotaTypeEnum
+  category?: QuotaCategoryEnum
   /**
    * Delivery method (free text)
    */

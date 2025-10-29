@@ -34,7 +34,6 @@ const DetailInfo: FC = () => {
   const {
     form,
     mainProducts,
-    taxRateWatch,
     totalPriceWatch,
     taxTotal,
     costTotal,
@@ -433,6 +432,26 @@ const DetailInfo: FC = () => {
               },
             },
             {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+
+                return (
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'tax_rate',
+                  ]) + '%'
+                )
+              },
+            },
+            {
               title: '合計計算',
               dataIndex: 'is_add_total',
               key: 'is_add_total',
@@ -627,7 +646,7 @@ const DetailInfo: FC = () => {
                 fontWeight: 700,
               }}
             >
-              消費税金額（{taxRateWatch}%）
+              消費税金額
             </Text>
             <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
               ¥{(taxTotal || 0).toLocaleString()}

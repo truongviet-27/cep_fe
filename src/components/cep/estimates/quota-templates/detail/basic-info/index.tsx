@@ -94,10 +94,6 @@ const BasicInfo: React.FC<Props> = (props) => {
           {t('quota_templates.form.label.consumption_tax')}
         </label>
         <span>{CONSUMPTION_TAX?.[detail.consumption_tax ?? '']?.label}</span>
-        <label className="ml-10">
-          {t('quota_templates.form.label.consumption_tax_rate')}:
-        </label>
-        <span>{detail.tax_rate}%</span>
       </Flex>
     </>
   )

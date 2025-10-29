@@ -28,6 +28,7 @@ export const useController = () => {
         cost_price: 0,
         selling_price: 0,
         profit_margin: 0,
+        tax_rate: 0,
         is_add_total: false,
       } as unknown as QuotaTemplateProductType,
     ]
@@ -79,6 +80,12 @@ export const useController = () => {
       ['optional_product', index, 'products', index2, 'selling_price'],
       value?.sale_price,
     )
+
+    form.setFieldValue(
+      ['optional_product', index, 'products', index2, 'tax_rate'],
+      value?.tax_rate,
+    )
+
     form.setFieldValue(
       ['optional_product', index, 'products', index2, 'quantity'],
       1,

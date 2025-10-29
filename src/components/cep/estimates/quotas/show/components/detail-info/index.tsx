@@ -118,6 +118,17 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
+      title: t('quotas.show.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      render: (_, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return `${record?.tax_rate}%`
+      },
+    },
+    {
       title: t('quotas.show.table.total_calculation'),
       dataIndex: 'is_add_total',
       key: 'is_add_total',
@@ -194,7 +205,8 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 <Table.Summary.Cell index={4}></Table.Summary.Cell>
                 <Table.Summary.Cell index={5}></Table.Summary.Cell>
                 <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                <Table.Summary.Cell index={7} align="center">
+                <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                <Table.Summary.Cell index={8} align="center">
                   {basicInfo?.consumption_tax === 'exclusive'
                     ? +basicInfo?.total_price_tax_included -
                       +basicInfo?.consumption_tax_amount
@@ -246,8 +258,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                     fontWeight: 700,
                   }}
                 >
-                  {t('quotas.action.detail_info.summary.tax_amount')}（
-                  {basicInfo?.tax_rate}%）
+                  {t('quotas.action.detail_info.summary.tax_amount')}
                 </Text>
                 <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                   ¥{basicInfo?.consumption_tax_amount}
