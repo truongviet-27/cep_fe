@@ -1,9 +1,11 @@
+/* eslint-disable simple-import-sort/imports */
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
+import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Divider, Flex, Space, Spin } from 'antd'
@@ -11,7 +13,6 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
-
 import BasicInfo from './basic-info'
 import DetailInfo from './detail-info'
 import NoteForm from './note'
@@ -22,6 +23,8 @@ const QuoteTemplateDetailContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
   const { id } = useParams<{ id: string }>()
+
+  const { permission } = useUserStore()
 
   const { query } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -90,15 +93,18 @@ const QuoteTemplateDetailContainer: FC = () => {
             }}
           >
             <Space>
-              <DeleteButton
-                icon={null}
-                size={'small'}
-                onSuccess={() => {
-                  go({
-                    to: '/quota-templates',
-                  })
-                }}
-              />
+              {(permission?.is_module_admin ||
+                permission?.user?.id === quoteTemplateDetail?.author?.id) && (
+                <DeleteButton
+                  icon={null}
+                  size={'small'}
+                  onSuccess={() => {
+                    go({
+                      to: '/quota-templates',
+                    })
+                  }}
+                />
+              )}
             </Space>
             <Space className="items-end">
               <Button
@@ -113,18 +119,22 @@ const QuoteTemplateDetailContainer: FC = () => {
                 見積作成
               </Button>
 
+              {(permission?.is_module_admin ||
+                permission?.user?.id === quoteTemplateDetail?.author?.id) && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    go({
+                      to: `/quota-templates/edit/${quoteTemplateDetail.id}`,
+                    })
+                  }}
+                >
+                  {t('buttons.edit')}
+                </Button>
+              )}
+
               <Button
-                type="primary"
-                onClick={() => {
-                  go({
-                    to: `/quota-templates/edit/${quoteTemplateDetail.id}`,
-                  })
-                }}
-              >
-                {t('buttons.edit')}
-              </Button>
-              <Button
-                color="primary"
+                color="default"
                 variant="outlined"
                 onClick={() => {
                   go({

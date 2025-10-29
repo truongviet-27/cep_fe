@@ -234,12 +234,7 @@ export const CorporateResearchFormSection = (
         />
       )}
     >
-      <Panel
-        header={
-          <Title level={5}>{t('customers.show.corporate_research')}</Title>
-        }
-        key="1"
-      >
+      <Panel header={boldText(t('customers.show.corporate_research'))} key="1">
         <Space
           size={20}
           style={{ width: '100%' }}

@@ -356,7 +356,7 @@ function QuotaAction() {
             ...values,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
-            status: 'creating',
+            status: QuotaStatus.Creating,
             delivery_date: values.delivery_date
               ? dayjs(values.delivery_date)
                   .utc(true)

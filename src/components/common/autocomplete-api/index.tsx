@@ -155,6 +155,9 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
           if (onChangeClear) {
             onChangeClear(selectProps.onSearch)
           }
+          if (value) {
+            if (selectProps?.onSearch) selectProps.onSearch('')
+          }
         }}
         value={value}
         onClick={() => {

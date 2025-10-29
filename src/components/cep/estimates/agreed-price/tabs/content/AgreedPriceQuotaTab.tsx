@@ -13,7 +13,8 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
-import type { QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { type QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { useUserStore } from '@stores/useUserStore'
 import type { TableProps } from 'antd'
 import {
   Button,
@@ -31,8 +32,8 @@ import {
 import type { ColumnsType } from 'antd/es/table'
 import type { TableRowSelection } from 'antd/es/table/interface'
 import type { Dayjs } from 'dayjs'
-import React, { useCallback, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
+import React, { useCallback, useMemo, useState } from 'react'
 
 const { RangePicker } = DatePicker
 
@@ -43,6 +44,8 @@ const AgreedPriceQuotaTab = () => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
+
+  const { permission } = useUserStore((state) => state)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -244,6 +247,10 @@ const AgreedPriceQuotaTab = () => {
               resource="quota/agreed-prices"
               meta={{ idsBody: true, method: 'delete' }}
               onSuccess={() => tableQuery?.refetch?.()}
+              disabled={
+                !permission?.is_module_admin &&
+                permission?.user?.id !== record.creator?.id
+              }
             />
             <Button
               size="small"

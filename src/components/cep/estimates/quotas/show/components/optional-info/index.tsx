@@ -147,14 +147,18 @@ function OptionalInfo({ data }: { data: any }) {
           marginBottom: 20,
         }}
       >
-        <CommonTable
-          columns={columns}
-          dataSource={dataSource}
-          rowClassName={(record) =>
-            record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
-          }
-          pagination={false}
-        />
+        {data?.[0]?.products[0]?.product_id ? (
+          <CommonTable
+            columns={columns}
+            dataSource={dataSource}
+            rowClassName={(record) =>
+              record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
+            }
+            pagination={false}
+          />
+        ) : (
+          <div className="mt-4"></div>
+        )}
       </Flex>
     </Card>
   )
