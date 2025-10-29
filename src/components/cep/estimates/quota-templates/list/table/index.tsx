@@ -109,16 +109,15 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
             recordItemId={record.id}
             resource="quota-templates"
           />
-          <EditButton
-            hideText
-            size="small"
-            recordItemId={record.id}
-            resource="quota-templates"
-            disabled={
-              !permission?.is_module_admin &&
-              permission?.user?.id != record.author?.id
-            }
-          />
+          {(permission?.is_module_admin ||
+            permission?.user?.id === record.author?.id) && (
+            <EditButton
+              hideText
+              size="small"
+              recordItemId={record.id}
+              resource="quota-templates"
+            />
+          )}
           <Button
             size="small"
             icon={<ReconciliationOutlined />}
@@ -128,16 +127,15 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
               })
             }}
           />
-          <DeleteButton
-            hideText
-            size="small"
-            recordItemId={record.id}
-            resource="quota-templates"
-            disabled={
-              !permission?.is_module_admin &&
-              permission?.user?.id != record.author?.id
-            }
-          />
+          {(permission?.is_module_admin ||
+            permission?.user?.id === record.author?.id) && (
+            <DeleteButton
+              hideText
+              size="small"
+              recordItemId={record.id}
+              resource="quota-templates"
+            />
+          )}
         </Space>
       ),
     },

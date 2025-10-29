@@ -13,7 +13,8 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
-import type { QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { type QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { useUserStore } from '@stores/useUserStore'
 import type { TableProps } from 'antd'
 import {
   Button,
@@ -29,10 +30,9 @@ import {
   Tag,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { TableRowSelection } from 'antd/es/table/interface'
 import type { Dayjs } from 'dayjs'
-import React, { useCallback, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
+import React, { useCallback, useMemo, useState } from 'react'
 
 const { RangePicker } = DatePicker
 
@@ -41,8 +41,9 @@ const AgreedPriceQuotaTab = () => {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
+
+  const { permission } = useUserStore((state) => state)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -53,15 +54,6 @@ const AgreedPriceQuotaTab = () => {
       pageSize: 100,
     },
   })
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys)
-  }
-
-  const rowSelection: TableRowSelection<QuotaAgreedPrice> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  }
 
   const getStatusTag = (status?: string) => {
     const statusEnum = status as AgreedPriceStatus
@@ -244,6 +236,10 @@ const AgreedPriceQuotaTab = () => {
               resource="quota/agreed-prices"
               meta={{ idsBody: true, method: 'delete' }}
               onSuccess={() => tableQuery?.refetch?.()}
+              disabled={
+                !permission?.is_module_admin &&
+                permission?.user?.id !== record.creator?.id
+              }
             />
             <Button
               size="small"
@@ -557,7 +553,6 @@ const AgreedPriceQuotaTab = () => {
           <CommonTable<QuotaAgreedPrice>
             {...refinedTableProps}
             rowKey={'id'}
-            rowSelection={rowSelection}
             columns={columns}
           />
         )

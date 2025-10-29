@@ -335,7 +335,7 @@
     "show": {
       "creator": "作成者",
       "updater": "更新者",
-      "employeeNameExample": "伊藤太郎"
+      "employeeNameExample": "承認者名"
     },
     "table": {
       "routeCode": "ルートコード",
@@ -541,11 +541,27 @@
       }
     },
     "validation": {
-      "required": "必須項目です",
-      "max255": "255文字以内で入力してください",
-      "max10000": "10000文字以内で入力してください",
-      "max1000": "1000文字以内で入力してください",
-      "notBlank": "空白だけの入力はできません"
+      "title": {
+        "required": "件名は必須です。",
+        "max255": "255文字以内で入力してください",
+        "max10000": "10000文字以内で入力してください",
+        "max1000": "1000文字以内で入力してください",
+        "notBlank": "空白だけの入力はできません"
+      },
+      "body": {
+        "required": "本文は必須です。",
+        "max255": "255文字以内で入力してください",
+        "max10000": "10000文字以内で入力してください",
+        "max1000": "1000文字以内で入力してください",
+        "notBlank": "空白だけの入力はできません"
+      },
+      "signature": {
+        "required": "署名（自動挿入）は必須です。",
+        "max255": "255文字以内で入力してください",
+        "max10000": "10000文字以内で入力してください",
+        "max1000": "1000文字以内で入力してください",
+        "notBlank": "空白だけの入力はできません"
+      }
     }
   },
   "import_history": {
@@ -1052,6 +1068,7 @@
         "business_partner_name": "取引先名",
         "responsible_department": "担当部署",
         "unit_price_rank": "単価ランク",
+        "unit_price_rank_code": "単価ランクコード",
         "product_count": "商品数",
         "operation": "操作"
       }
@@ -1063,6 +1080,7 @@
       "customer_name": "取引先名",
       "department_in_charge": "担当部署",
       "unit_price_rank": "単価ランク",
+      "unit_price_rank_code": "単価ランクコード",
       "number_of_products": "商品数",
       "determined_unit_price_list": "決定単価一覧",
       "table": {
@@ -1070,7 +1088,7 @@
         "product_name": "商品・サービス名",
         "quantity": "数量",
         "unit": "単位",
-        "determined_unit_price": "決定単価",
+        "determined_unit_price": "売単価",
         "application_start": "適用開始",
         "application_end": "適用終了"
       }

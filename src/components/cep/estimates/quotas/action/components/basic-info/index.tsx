@@ -144,15 +144,15 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('validations.required'),
+                    message: t('quotas.validation.basic_info.required.code'),
                   },
                   {
                     whitespace: true,
-                    message: t('validations.invalid_format'),
+                    message: t('quotas.validation.basic_info.invalid_format'),
                   },
                   {
                     pattern: /^[A-Z0-9-]+$/,
-                    message: t('validations.invalid_format'),
+                    message: t('quotas.validation.basic_info.invalid_format'),
                   },
                   {
                     max: 255,
@@ -265,15 +265,15 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validations.required'),
+                  message: t('quotas.validation.basic_info.required.title'),
                 },
                 {
                   whitespace: true,
-                  message: t('validations.invalid_format'),
+                  message: t('quotas.validation.basic_info.invalid_format'),
                 },
                 {
                   max: 255,
-                  message: t('validations.invalid_format'),
+                  message: t('quotas.validation.basic_info.max255'),
                 },
               ]}
             >
@@ -329,7 +329,9 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validations.required'),
+                  message: t(
+                    'quotas.validation.basic_info.required.estimate_date',
+                  ),
                 },
               ]}
             >

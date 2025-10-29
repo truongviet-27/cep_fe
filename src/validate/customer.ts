@@ -461,6 +461,19 @@ export const validateCustomerRule = (t: any) => {
             error: t('validation.customer.person_in_charge_name.required'),
           })
           .superRefine((val, ctx) => {
+            if (val.length < 1) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                origin: 'string',
+                minimum: 1,
+                type: 'string',
+                inclusive: true,
+                message: t(
+                  'validation.customer.person_in_charge_name.required',
+                ),
+              })
+              return
+            }
             if (val.length > 50) {
               ctx.addIssue({
                 code: z.ZodIssueCode.too_big,

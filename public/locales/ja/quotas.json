@@ -1,5 +1,7 @@
 {
   "quotas": "見積一覧",
+  "confirmed_quota": "確定見積",
+  "confirmed_quota_detail": "確定見積詳細",
   "list": "見積一覧",
   "create": "見積新規作成",
   "edit": "見積編集",
@@ -324,6 +326,18 @@
         "message": "耳がない",
         "description": "カテゴリに商品がありません"
       }
+    }
+  },
+  "validation": {
+    "basic_info": {
+      "required": {
+        "code": "見積番号は必須です。",
+        "title": "タイトルは必須です。",
+        "customer": "取引先は必須です。",
+        "estimate_date": "見積日は必須です。"
+      },
+      "max255": "このフィールドは 255 文字を超えることはできません。",
+      "invalid_format": "見積番号には A〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます。"
     }
   }
 }

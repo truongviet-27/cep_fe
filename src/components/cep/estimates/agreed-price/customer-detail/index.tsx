@@ -123,7 +123,12 @@ const AgreedPriceCustomerDetail = () => {
       title={t('agreed_prices.customer_detail.title')}
     >
       <div className="space-y-6">
-        <Card title={t('agreed_prices.customer_detail.basic_info')}>
+        <Card
+          title={t('agreed_prices.customer_detail.basic_info')}
+          headStyle={{
+            color: PRIMARY,
+          }}
+        >
           <div className="mb-8 flex">
             <div className="w-1/8 text-sm font-semibold text-black/[0.88]">
               {t('agreed_prices.customer_detail.customer_code')}
@@ -152,7 +157,7 @@ const AgreedPriceCustomerDetail = () => {
           </div>
           <div className="mb-8 flex">
             <div className="w-1/8 text-sm font-semibold text-black/[0.88]">
-              {t('agreed_prices.customer_detail.unit_price_rank')}
+              {t('agreed_prices.customer_detail.unit_price_rank_code')}
             </div>
             <div className="w-1/8 font-normal text-black/[0.88]">
               {customer?.unit_price_rank ?? customer?.rank_code ?? '-'}
@@ -170,6 +175,9 @@ const AgreedPriceCustomerDetail = () => {
 
         <Card
           title={t('agreed_prices.customer_detail.determined_unit_price_list')}
+          headStyle={{
+            color: PRIMARY,
+          }}
         >
           <CommonTable
             columns={productColumns}

@@ -202,8 +202,8 @@ function Right() {
                 )}
 
                 <div className="mt-10 ml-[60%] flex flex-col">
-                  <Space>{watchAddress}</Space>
                   <Space>{watchCompanyName}</Space>
+                  <Space>{watchAddress}</Space>
                   <Space>{watchPhone}</Space>
                 </div>
               </div>

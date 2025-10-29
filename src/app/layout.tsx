@@ -22,7 +22,8 @@ export default async function RootLayout({
   const messages = await getMessages()
 
   return (
-    <html lang="en" translate="no">
+    <html lang="en">
+      <meta name="google" content="notranslate"></meta>
       <body>
         <Suspense>
           <NextIntlClientProvider locale={locale} messages={messages}>
