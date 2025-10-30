@@ -1,5 +1,5 @@
 export const PRIMARY = '#1890FF'
-export const LAYOUT_BG = '#f0f2f5'
+export const LAYOUT_BG = '#f5f5f5'
 export const WHITE = '#fff'
 export const GRAY = '#e5e7eb'
 export const DARK_RED = '#9a2e2e'
