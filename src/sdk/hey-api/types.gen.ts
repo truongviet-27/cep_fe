@@ -2055,7 +2055,6 @@ export type ProductListItem = {
   packaging_count?: number
   cost_price?: number
   sale_price?: number
-  tax_rate?: number
 }
 
 /**
