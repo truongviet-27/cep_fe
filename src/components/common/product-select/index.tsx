@@ -8,7 +8,11 @@ import { memo, useMemo, useState } from 'react'
 
 interface Props {
   defaultValue?: any
-  onChange?: (value: ProductListItem) => void
+  onChange?: (
+    value: ProductListItem & {
+      tax_rate: number
+    },
+  ) => void
 }
 
 const ProductSelect: React.FC<Props> = (props) => {
@@ -47,7 +51,7 @@ const ProductSelect: React.FC<Props> = (props) => {
       (item) => item.id === value,
     ) as ProductListItem
 
-    onSelectChange?.(item)
+    onSelectChange?.(item as any)
   }
 
   const debounceFetcher = useMemo(

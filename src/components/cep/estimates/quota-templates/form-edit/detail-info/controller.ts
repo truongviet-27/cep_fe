@@ -136,7 +136,9 @@ export const useController = () => {
   }
 
   const onChangeProductName = (
-    value: ProductListItem,
+    value: ProductListItem & {
+      tax_rate: number
+    },
     index: number,
     index2: number,
   ) => {
