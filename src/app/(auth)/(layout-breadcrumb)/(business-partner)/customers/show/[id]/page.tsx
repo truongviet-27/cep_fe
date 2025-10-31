@@ -12,7 +12,14 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useGo,
+  useParsed,
+  useShow,
+  useTranslate,
+} from '@refinedev/core'
 import {
   type Customer,
   ParameterResourceEnum,
@@ -31,6 +38,7 @@ const { Panel } = Collapse
 
 export default function CustomerShowPage() {
   const t = useTranslate()
+  const apiUrl = useApiUrl()
   const { parameterSettings, hasFullAccessModule } = useUserStore(
     (state) => state,
   )
@@ -39,7 +47,65 @@ export default function CustomerShowPage() {
   const { data, isLoading } = queryResult
   const record = data?.data
   const go = useGo()
-  const { params } = useParsed()
+  const { params, id } = useParsed()
+
+  // Fetch customer contacts
+  const { data: contactsData } = useCustom({
+    url: `${apiUrl}/customer-contacts`,
+    method: 'get',
+    config: {
+      query: {
+        customer_id: id,
+      },
+    },
+    queryOptions: {
+      enabled: !!id,
+    },
+  })
+
+  const quotationColumns = [
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.receivers.department_name')}
+        </span>
+      ),
+      dataIndex: 'department_name',
+      key: 'department_name',
+      width: '20%',
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.receivers.contact_person_name')}
+        </span>
+      ),
+      dataIndex: 'contact_person_name',
+      key: 'contact_person_name',
+      width: '20%',
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.receivers.email')}
+        </span>
+      ),
+      dataIndex: 'email',
+      key: 'email',
+      width: '35%',
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.receivers.created_at')}
+        </span>
+      ),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      width: '25%',
+      render: (date: string) => date && dayjs(date).format(FORMAT_DATE),
+    },
+  ]
 
   const deliveryColumns = [
     {
@@ -279,7 +345,7 @@ export default function CustomerShowPage() {
               <DetailItem label={t('customers.fields.anti_social_rank')}>
                 {record?.company_research_information?.[1]?.judgement == 'T'
                   ? '△'
-                  : record?.company_research_information?.[1].judgement}
+                  : record?.company_research_information?.[1]?.judgement}
               </DetailItem>
             </>
           ),
@@ -326,47 +392,16 @@ export default function CustomerShowPage() {
         })}
 
         {collapseWrapper({
+          i18n: 'customers.receivers.title',
           children: (
-            <div className={'space-y-6'}>
-              <DetailItem label={t('customers.show.contact_name')}>
-                {record?.person_in_charge_name}
-              </DetailItem>
-              <DetailItem label={t('customers.show.contact_department')}>
-                {record?.person_in_charge_department}
-              </DetailItem>
-              <DetailItem label={t('customers.show.contact_email')}>
-                {record?.person_in_charge_mail}
-              </DetailItem>
-              <DetailItem label={t('customers.show.contact_phone')}>
-                {record?.person_in_charge_phone}
-              </DetailItem>
-            </div>
+            <CommonTable
+              dataSource={(contactsData?.data as any[]) || []}
+              columns={quotationColumns}
+              pagination={false}
+              rowKey="id"
+            />
           ),
-          i18n: 'customers.show.accounting_contact',
         })}
-
-        {/*{collapseWrapper({*/}
-        {/*  children: (*/}
-        {/*    <div className={'space-y-6'}>*/}
-        {/*      <DetailItem label={t('customers.show.contact_name')}>*/}
-        {/*        {record?.accounting_contact?.name}*/}
-        {/*      </DetailItem>*/}
-
-        {/*      <DetailItem label={t('customers.show.contact_department')}>*/}
-        {/*        {record?.accounting_contact?.department}*/}
-        {/*      </DetailItem>*/}
-
-        {/*      <DetailItem label={t('customers.show.contact_email')}>*/}
-        {/*        {record?.accounting_contact?.email}*/}
-        {/*      </DetailItem>*/}
-
-        {/*      <DetailItem label={t('customers.show.contact_phone')}>*/}
-        {/*        {record?.accounting_contact?.phone}*/}
-        {/*      </DetailItem>*/}
-        {/*    </div>*/}
-        {/*  ),*/}
-        {/*  i18n: 'customers.show.accounting_contact',*/}
-        {/*})}*/}
 
         {collapseWrapper({
           i18n: 'customers.show.delivery_destinations',

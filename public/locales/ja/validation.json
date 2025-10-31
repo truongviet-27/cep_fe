@@ -1,5 +1,8 @@
 {
   "required": "この項目は必須です",
+  "whitespace": "空白のみの入力はできません",
+  "email_format": "メールアドレスの形式が正しくありません",
+  "duplicate_email": "同じメールアドレスが既に登録されています",
   "rank": {
     "code": {
       "required": "単価ランクコードは必須です。",
