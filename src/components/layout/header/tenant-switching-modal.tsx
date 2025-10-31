@@ -120,6 +120,7 @@ function TenantSwitchingModal({
                 go({
                   to: '/quotas',
                 })
+                window.location.reload()
               }}
             >
               {t_btn('select')}
