@@ -134,6 +134,14 @@ const AgreedPriceCustomerDetail = () => {
           title={t('agreed_prices.customer_detail.basic_info')}
           headStyle={{
             color: PRIMARY,
+            minHeight: 0,
+            padding: 0,
+          }}
+          bodyStyle={{
+            paddingLeft: 0,
+          }}
+          style={{
+            border: 0,
           }}
         >
           <div className="mb-8 flex">
@@ -184,6 +192,15 @@ const AgreedPriceCustomerDetail = () => {
           title={t('agreed_prices.customer_detail.determined_unit_price_list')}
           headStyle={{
             color: PRIMARY,
+            minHeight: 0,
+            padding: 0,
+          }}
+          bodyStyle={{
+            paddingLeft: 0,
+            paddingRight: 0,
+          }}
+          style={{
+            border: 0,
           }}
         >
           <CommonTable

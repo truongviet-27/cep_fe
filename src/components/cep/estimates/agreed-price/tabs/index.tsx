@@ -1,6 +1,6 @@
-import { DollarOutlined, FileTextOutlined } from '@ant-design/icons'
 import TabsAgreedPriceContent from '@components/cep/estimates/agreed-price/tabs/content'
 import { useTranslate } from '@refinedev/core'
+import { PRIMARY } from '@utility/color'
 import { Card, Tabs } from 'antd'
 import { useMemo } from 'react'
 
@@ -24,22 +24,22 @@ function TabsAgreedPrice({
         label: t('agreed_prices.tab.decided_estimate_list'),
         children: (
           <Card
+            title={t('agreed_prices.tab.decided_estimate_list')}
             styles={{
               header: {
-                backgroundColor: '#F0F9FF',
+                color: PRIMARY,
+                border: 0,
+                minHeight: 0,
+                padding: 0,
+                marginBottom: 16,
+                marginTop: 8,
+              },
+              body: {
+                border: 0,
+                padding: 0,
               },
             }}
-            title={
-              <div className="flex items-center justify-start gap-4">
-                <FileTextOutlined
-                  style={{
-                    fontSize: '20px',
-                    color: '#1890FF',
-                  }}
-                />
-                {t('agreed_prices.tab.decided_estimate_list')}
-              </div>
-            }
+            style={{ border: 0 }}
           >
             <TabsAgreedPriceContent index={1} />
           </Card>
@@ -50,22 +50,22 @@ function TabsAgreedPrice({
         label: t('agreed_prices.tab.agreed_price_by_customer'),
         children: (
           <Card
+            title={t('agreed_prices.tab.agreed_price_by_customer')}
             styles={{
               header: {
-                backgroundColor: '#F0F9FF',
+                color: PRIMARY,
+                border: 0,
+                minHeight: 0,
+                padding: 0,
+                marginBottom: 8,
+                marginTop: 8,
+              },
+              body: {
+                border: 0,
+                padding: 0,
               },
             }}
-            title={
-              <div className="flex items-center justify-start gap-4">
-                <DollarOutlined
-                  style={{
-                    fontSize: '20px',
-                    color: '#1890FF',
-                  }}
-                />
-                {t('agreed_prices.tab.agreed_price_by_customer')}
-              </div>
-            }
+            style={{ border: 0 }}
           >
             <TabsAgreedPriceContent index={2} />
           </Card>

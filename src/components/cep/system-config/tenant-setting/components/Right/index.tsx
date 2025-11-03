@@ -3,16 +3,7 @@
 import { CloseOutlined } from '@ant-design/icons'
 import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
 import { useTranslate } from '@refinedev/core'
-import {
-  Checkbox,
-  Col,
-  Form,
-  InputNumber,
-  Radio,
-  Select,
-  Space,
-  Typography,
-} from 'antd'
+import { Checkbox, Col, Form, Radio, Select, Space, Typography } from 'antd'
 import Image from 'next/image'
 
 const { Text } = Typography
@@ -260,29 +251,11 @@ function Right() {
                     label: t('tenant_settings.consumptionTax.taxExclusive'),
                   },
                   {
-                    value: 'inclusive',
-                    label: t('tenant_settings.consumptionTax.taxInclusive'),
-                  },
-                  {
                     value: 'external',
                     label: t('tenant_settings.consumptionTax.taxExempt'),
                   },
                 ]}
               />
-            </Form.Item>
-
-            <Form.Item
-              name="tax_rate"
-              label={t('tenant_settings.consumptionTax.taxRateLabel')}
-              colon={false}
-              layout="horizontal"
-              style={{
-                marginBottom: 0,
-                marginLeft: 'auto',
-              }}
-              getValueFromEvent={(value) => Number(value)}
-            >
-              <InputNumber controls={false} min={0} max={100} addonAfter="%" />
             </Form.Item>
           </div>
         </div>
