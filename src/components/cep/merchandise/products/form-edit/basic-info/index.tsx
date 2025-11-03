@@ -240,6 +240,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       <Row className="mb-4 flex">
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
+            initialValue={0}
             name="tax_rate"
             label={t('products.fields.taxRate')}
             required={true}

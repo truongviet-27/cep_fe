@@ -2175,6 +2175,7 @@ export type QuotaAgreedPriceCustomerProduct = {
   unit_name?: string
   selling_price?: number
   quantity?: number
+  tax_rate?: number
   start_date?: string
   end_date?: string
 }

@@ -87,6 +87,13 @@ const AgreedPriceCustomerDetail = () => {
         ).toLocaleString(),
     },
     {
+      title: t('agreed_prices.customer_detail.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      align: 'right',
+      render: (v: any) => (v ? `${v}%` : '-'),
+    },
+    {
       title: t('agreed_prices.customer_detail.table.application_start'),
       dataIndex: 'start_date',
       key: 'start_date',
