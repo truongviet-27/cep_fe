@@ -147,8 +147,8 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
         mode={mode}
         onChange={(value) => {
           if (onChangeValue) {
-            const valueOption = options.find((opt) =>
-              opt?.id === labelInValue ? value?.value : value,
+            const valueOption = options.find(
+              (opt) => opt?.id === (labelInValue ? value?.value : value),
             )
             onChangeValue(valueOption)
           }

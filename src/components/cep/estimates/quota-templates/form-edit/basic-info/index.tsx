@@ -39,6 +39,11 @@ const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
       >
         {t('quota_templates.form.titleBasicInfo')}
       </Title>
+      <Row>
+        <Col>
+          <Form.Item name={'tax_rounding_method'} hidden />
+        </Col>
+      </Row>
       <Row gutter={[100, 0]}>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <CoreInput
