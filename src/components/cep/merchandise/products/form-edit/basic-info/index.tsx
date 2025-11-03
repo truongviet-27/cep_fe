@@ -259,11 +259,13 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   }
 
                   if (value < 0) {
-                    return Promise.reject('消費税率は0以上で入力してください')
+                    return Promise.reject('消費税率は0以上で入力してください。')
                   }
 
                   if (value > 100) {
-                    return Promise.reject('消費税率は100以下で入力してください')
+                    return Promise.reject(
+                      '消費税率は100以下で入力してください。',
+                    )
                   }
 
                   return Promise.resolve()
