@@ -240,6 +240,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       <Row className="mb-4 flex">
         <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
           <CoreInput
+            initialValue={0}
             name="tax_rate"
             label={t('products.fields.taxRate')}
             required={true}
@@ -259,11 +260,13 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   }
 
                   if (value < 0) {
-                    return Promise.reject('消費税率は0以上で入力してください')
+                    return Promise.reject('消費税率は0以上で入力してください。')
                   }
 
                   if (value > 100) {
-                    return Promise.reject('消費税率は100以下で入力してください')
+                    return Promise.reject(
+                      '消費税率は100以下で入力してください。',
+                    )
                   }
 
                   return Promise.resolve()

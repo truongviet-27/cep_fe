@@ -190,6 +190,7 @@ const AgreedPriceByCustomerTab = () => {
             >
               <Select
                 {...departmentSelectProps}
+                allowClear
                 placeholder={t('agreed_prices.search.please_select')}
               />
             </Form.Item>
@@ -205,6 +206,7 @@ const AgreedPriceByCustomerTab = () => {
             >
               <Select
                 {...rankSelectProps}
+                allowClear
                 placeholder={t('agreed_prices.search.please_select')}
               />
             </Form.Item>

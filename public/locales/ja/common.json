@@ -977,7 +977,7 @@
   },
   "price_groups": {
     "message": "ランク別商品単価について",
-    "message_description": "ランク別商品単価について 顧客ランクごとに商品の販売単価を設定することができます。翌月更新時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
+    "message_description": "顧客ランクごとに商品の販売単価を設定することができます。翌月更新時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
     "price_groups": "ランク別商品単価",
     "product_price_by_rank": "ランク別商品単価",
     "business_partner": "取引先",
@@ -1090,7 +1090,8 @@
         "unit": "単位",
         "determined_unit_price": "売単価",
         "application_start": "適用開始",
-        "application_end": "適用終了"
+        "application_end": "適用終了",
+        "tax_rate": "税率"
       }
     }
   },

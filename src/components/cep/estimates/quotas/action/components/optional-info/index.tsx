@@ -254,6 +254,16 @@ function OptionalInfo() {
                             ],
                             valueOption?.sale_price,
                           )
+                          // form.setFieldValue(
+                          //   [
+                          //     'optional_product',
+                          //     record.index,
+                          //     'products',
+                          //     record.index2,
+                          //     'tax_rate',
+                          //   ],
+                          //   valueOption?.tax_rate,
+                          // )
                           form.setFieldValue(
                             [
                               'optional_product',
@@ -557,15 +567,15 @@ function OptionalInfo() {
                   return { props: { colSpan: 0 } }
                 }
                 if (isProductManager) {
-                  return (
+                  const taxRate =
                     form.getFieldValue([
-                      'optional_product',
+                      'main_product',
                       record.index,
                       'products',
                       record.index2,
                       'tax_rate',
-                    ]) + '%'
-                  )
+                    ]) || 0
+                  return `${taxRate}%`
                 }
 
                 return (
@@ -659,6 +669,7 @@ function OptionalInfo() {
                             selling_price: 0,
                             profit_margin: 0,
                             is_add_total: true,
+                            tax_rate: 0,
                             unit: '-',
                           },
                         ],

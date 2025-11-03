@@ -146,7 +146,9 @@ function BasicInformation(
                             !value
                           ) {
                             return Promise.reject(
-                              new Error(t('validation.required')),
+                              new Error(
+                                t('validation.customer.customer_type.required'),
+                              ),
                             )
                           }
                           return Promise.resolve()
