@@ -302,7 +302,7 @@ export const validateCustomerRule = (t: any) => {
                 minimum: 1,
                 type: 'string',
                 inclusive: true,
-                message: t('validation.required'),
+                message: t('validation.customer.address.required'),
               })
               return
             }
@@ -504,7 +504,9 @@ export const validateCustomerRule = (t: any) => {
                 minimum: 1,
                 type: 'string',
                 inclusive: true,
-                message: t('validation.required'),
+                message: t(
+                  'validation.customer.person_in_charge_department.required',
+                ),
               })
               return
             }
@@ -537,7 +539,9 @@ export const validateCustomerRule = (t: any) => {
                 minimum: 1,
                 type: 'string',
                 inclusive: true,
-                message: t('validation.required'),
+                message: t(
+                  'validation.customer.person_in_charge_mail.required',
+                ),
               })
               return
             }
