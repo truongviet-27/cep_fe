@@ -288,7 +288,7 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validations.required'),
+                  message: t('quotas.validation.basic_info.required.customer'),
                 },
               ]}
             >
