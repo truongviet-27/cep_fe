@@ -140,7 +140,7 @@
       "unit": "単位",
       "package": "荷姿",
       "cost_price": "原価",
-      "selling_price": "販売単価",
+      "selling_price": "売単価",
       "tax_rate": "消費税率",
       "quantity": "数量",
       "amount": "金額",

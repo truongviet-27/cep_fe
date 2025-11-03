@@ -571,7 +571,7 @@ const AgreedPriceQuotaTab = () => {
         footer={null}
         destroyOnClose
         style={{ top: 20 }}
-        width={980}
+        width={600}
       >
         <Form
           form={updateForm}
@@ -623,9 +623,9 @@ const AgreedPriceQuotaTab = () => {
             name="start_date"
             style={{ marginBottom: 16 }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <DatePicker
-                style={{ width: '80%' }}
+                style={{ width: '65%' }}
                 placeholder="YYYY/MM/DD"
                 format="YYYY/MM/DD"
                 value={
@@ -652,7 +652,7 @@ const AgreedPriceQuotaTab = () => {
             style={{ marginBottom: 16 }}
           >
             <DatePicker
-              style={{ width: '80%' }}
+              style={{ width: '65%' }}
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
             />
