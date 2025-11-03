@@ -1090,7 +1090,8 @@
         "unit": "単位",
         "determined_unit_price": "売単価",
         "application_start": "適用開始",
-        "application_end": "適用終了"
+        "application_end": "適用終了",
+        "tax_rate": "税率"
       }
     }
   },

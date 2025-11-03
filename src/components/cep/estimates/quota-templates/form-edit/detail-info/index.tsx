@@ -547,6 +547,7 @@ const DetailInfo: FC = () => {
                             cost_price: 0,
                             selling_price: 0,
                             profit_margin: 0,
+                            tax_rate: 0,
                             is_add_total: false,
                           },
                         ],
@@ -619,6 +620,7 @@ const DetailInfo: FC = () => {
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
                     </Table.Summary.Row>
                   )
                 }}
