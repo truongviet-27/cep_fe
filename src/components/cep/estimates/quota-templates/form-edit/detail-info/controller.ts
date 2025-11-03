@@ -86,35 +86,23 @@ export const useController = () => {
           const productTaxRate = product.tax_rate ?? taxRateWatch ?? 0
 
           // Calculate tax for this specific product
-          let productTax = 0
-          if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
-            // For inclusive tax, extract tax portion from selling price
-            const rawTax = selling - selling / (1 + productTaxRate / 100)
-            if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-              productTax = Math.floor(rawTax)
-            } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-              productTax = Math.ceil(rawTax)
-            } else {
-              productTax = Number(rawTax.toFixed(0))
-            }
-          } else {
-            // For exclusive tax, calculate tax on top of selling price
-            const rawTax = (selling * productTaxRate) / 100
-            if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-              productTax = Math.floor(rawTax)
-            } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-              productTax = Math.ceil(rawTax)
-            } else {
-              productTax = Number(rawTax.toFixed(0))
-            }
-          }
+          // For inclusive tax, extract tax portion from selling price
+          const rawTax = selling - selling / (1 + productTaxRate / 100)
 
-          taxTotal += productTax
+          taxTotal += rawTax
         },
       )
     })
 
     let sellTotalWithTax = 0
+    if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+      taxTotal = Math.floor(taxTotal)
+    } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+      taxTotal = Math.ceil(taxTotal)
+    } else {
+      taxTotal = Number(taxTotal.toFixed(0))
+    }
+
     if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
       // For inclusive tax, selling total already includes tax
       sellTotalWithTax = sellTotal

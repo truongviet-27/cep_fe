@@ -507,10 +507,10 @@ const BasicInfo = () => {
                       value: 'exclusive',
                       label: t('tenant_settings.consumptionTax.taxExclusive'),
                     },
-                    {
-                      value: 'inclusive',
-                      label: t('tenant_settings.consumptionTax.taxInclusive'),
-                    },
+                    // {
+                    //   value: 'inclusive',
+                    //   label: t('tenant_settings.consumptionTax.taxInclusive'),
+                    // },
                     {
                       value: 'external',
                       label: t('tenant_settings.consumptionTax.taxExempt'),

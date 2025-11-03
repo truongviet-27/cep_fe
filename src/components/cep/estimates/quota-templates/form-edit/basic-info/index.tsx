@@ -13,7 +13,6 @@ import {
   DatePicker,
   Flex,
   Form,
-  InputNumber,
   Radio,
   Row,
   Select,
@@ -34,6 +33,11 @@ const BasicInfo = () => {
       >
         {t('quota_templates.form.titleBasicInfo')}
       </Title>
+      <Row>
+        <Col>
+          <Form.Item name={'tax_rounding_method'} hidden />
+        </Col>
+      </Row>
       <Row gutter={[100, 0]}>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <CoreInput
@@ -220,24 +224,6 @@ const BasicInfo = () => {
                 <Radio.Group
                   defaultValue={ConsumptionTaxEnum.EXCLUSIVE}
                   options={Object.values(CONSUMPTION_TAX)}
-                />
-              </Form.Item>
-              <Form.Item
-                name="tax_rate"
-                layout="horizontal"
-                label={boldText(
-                  t('quota_templates.form.label.consumption_tax_rate'),
-                )}
-                labelCol={{ flex: '0 0 70px' }}
-                normalize={(val) => val ?? 0}
-                colon={false}
-              >
-                <InputNumber
-                  controls={false}
-                  min={0}
-                  max={100}
-                  className="!mr-2 !w-[75px]"
-                  suffix="%"
                 />
               </Form.Item>
             </Flex>
