@@ -126,6 +126,7 @@ function DetailInfo() {
     const products = values[groupIndex].products || []
 
     const newProduct = {
+      product: null,
       product_id: null,
       package_id: null,
       name: '',
@@ -198,7 +199,7 @@ function DetailInfo() {
 
     return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
       taxRate: parseFloat(taxRate),
-      total: (total as number).toFixed(2),
+      total: (total as number)?.toLocaleString(),
     }))
   }
 
@@ -218,6 +219,11 @@ function DetailInfo() {
         header: { padding: 0, minHeight: 0 },
       }}
     >
+      <Form.Item name={'total_cost'} hidden></Form.Item>
+      <Form.Item name={'consumption_tax_amount'} hidden></Form.Item>
+      <Form.Item name={'total_profit_margin'} hidden></Form.Item>
+      <Form.Item name={'total_price_tax_included'} hidden></Form.Item>
+
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
           const columns: ColumnsType = [
@@ -321,7 +327,7 @@ function DetailInfo() {
                           record.index,
                           'products',
                           record.index2,
-                          'product_id',
+                          'product',
                         ]}
                         rules={[
                           {
@@ -329,13 +335,27 @@ function DetailInfo() {
                             message: '',
                           },
                         ]}
-                        labelInValue={false}
                         resource="products"
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}
                         disabled={!customerWatch}
-                        pageSize={20}
+                        defaultValue={{
+                          value: form.getFieldValue([
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'product',
+                          ])?.value,
+                          label: form.getFieldValue([
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'name',
+                          ]),
+                        }}
                         onChangeValue={(valueOption) => {
                           form.setFieldValue(
                             [
@@ -346,6 +366,16 @@ function DetailInfo() {
                               'package_id',
                             ],
                             null,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'product_id',
+                            ],
+                            valueOption?.id,
                           )
                           form.setFieldValue(
                             [
@@ -528,7 +558,7 @@ function DetailInfo() {
                             record.index,
                             'products',
                             record.index2,
-                            'product_id',
+                            'product',
                           ]}
                           index={record.index}
                           index2={record.index2}
@@ -865,6 +895,7 @@ function DetailInfo() {
                         group_name: '',
                         products: [
                           {
+                            product: null,
                             product_id: null,
                             package_id: null,
                             name: '',
@@ -1004,7 +1035,7 @@ function DetailInfo() {
                     {t('quotas.action.detail_info.summary.cost_total')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{costTotal || 0}
+                    ¥{costTotal?.toLocaleString() || 0}
                   </Text>
                 </div>
               </Col>
@@ -1027,7 +1058,7 @@ function DetailInfo() {
                     {t('quotas.action.detail_info.summary.tax_amount')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{costTotal || 0}
+                    ¥{costTotal?.toLocaleString() || 0}
                   </Text>
                 </div>
               </Col>
@@ -1080,7 +1111,7 @@ function DetailInfo() {
                     {t('quotas.action.detail_info.summary.tax_inclusive')}）
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{sellTotalWithTax || 0}
+                    ¥{sellTotalWithTax?.toLocaleString() || 0}
                   </Text>
                 </div>
               </Col>

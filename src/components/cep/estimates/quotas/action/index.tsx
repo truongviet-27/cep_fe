@@ -200,6 +200,7 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
+              product: { value: item2.product_id, label: item2.name },
               unit: item2.unit_name,
             })),
           })),
@@ -208,6 +209,7 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
+                product: { value: item2.product_id, label: item2.name },
                 unit: item2.unit_name,
               })),
             }),
@@ -239,6 +241,7 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
+              product: { value: item2.product_id, label: item2.name },
               tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
             })),
@@ -248,6 +251,7 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
+                product: { value: item2.product_id, label: item2.name },
                 unit: item2.unit_name ?? '-',
               })),
             }),
@@ -275,8 +279,23 @@ function QuotaAction() {
         consumption_tax: quoteTemplate?.consumption_tax,
         tax_rate: quoteTemplate?.tax_rate,
         note: quoteTemplate?.note,
-        main_product: quoteTemplate?.main_product,
-        optional_product: quoteTemplate?.optional_product,
+        main_product: quoteTemplate?.main_product?.map((item: any) => ({
+          ...item,
+          products: item.products.map((item2: any) => ({
+            ...item2,
+            product: { value: item2.product_id, label: item2.name },
+            tax_rate: item2.tax_rate ?? 0,
+            unit: item2.unit_name ?? '-',
+          })),
+        })),
+        optional_product: quoteTemplate?.optional_product?.map((item: any) => ({
+          ...item,
+          products: item.products.map((item2: any) => ({
+            ...item2,
+            product: { value: item2.product_id, label: item2.name },
+            unit: item2.unit_name ?? '-',
+          })),
+        })),
         tags: (quoteTemplate?.tags ?? []).map(({ id, name }) => ({
           label: name,
           value: id,
@@ -309,6 +328,7 @@ function QuotaAction() {
             group_name: '',
             products: [
               {
+                product: null,
                 product_id: null,
                 package_id: null,
                 name: '',
@@ -330,6 +350,7 @@ function QuotaAction() {
             group_name: '',
             products: [
               {
+                product: null,
                 product_id: null,
                 package_id: null,
                 name: '',

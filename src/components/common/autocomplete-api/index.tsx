@@ -69,7 +69,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       pageSize,
     },
     queryOptions: {
-      enabled: isClick,
+      enabled: isClick && !disabled,
     },
     onSearch(value) {
       lastPageAdded.current = 0
@@ -118,6 +118,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       layout={layout}
       colon={colon}
       className="ant-form-item-hidden-margin"
+      initialValue={defaultValue}
     >
       <Select
         {...selectProps}

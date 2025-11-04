@@ -374,8 +374,6 @@ const AgreedPriceQuotaTab = () => {
     [setFilters],
   )
 
-  console.log(tableProps.dataSource)
-
   return (
     <Form {...searchFormProps}>
       <Form.Item name={'status'} hidden />

@@ -6,8 +6,8 @@ import React, { Suspense } from 'react'
 import { RefineContext } from './_refine_context'
 
 export const metadata: Metadata = {
-  title: 'eeERP',
-  description: 'eeERP',
+  title: 'eeRP',
+  description: 'eeRP',
   icons: {
     icon: '/favicon.ico',
   },
