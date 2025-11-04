@@ -2,7 +2,13 @@
 'use client'
 
 import { useForm, useModalForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useModal,
+  useTranslate,
+} from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 import { useEffect, useState } from 'react'
@@ -28,6 +34,8 @@ export const useCustomerEdit = () => {
     action: 'edit',
     redirect: false,
   })
+
+  const { mutateAsync: updateContacts } = useCustomMutation()
 
   // Fetch customer contacts
   const { data: contactsData, refetch: refetchContacts } = useCustom({
@@ -95,14 +103,8 @@ export const useCustomerEdit = () => {
         industry = values?.temp_industry
       }
 
-      // Remove receivers and other fields from customer data
-      const {
-        receivers: _,
-        person_in_charge_name,
-        person_in_charge_department,
-        person_in_charge_mail,
-        ...customerData
-      } = values
+      // Remove receivers from customer data
+      const { receivers: _, ...customerData } = values
 
       // Step 1: Update customer
       await onFinish({ ...customerData, company_type, industry })
@@ -129,7 +131,11 @@ export const useCustomerEdit = () => {
         return contact
       })
 
-      await axiosInstance.patch(`${apiUrl}/customer-contacts`, { contacts })
+      await updateContacts({
+        url: `${apiUrl}/customer-contacts`,
+        method: 'patch',
+        values: { contacts },
+      })
 
       message.success(t('notifications.updateSuccess'))
       window.location.href = `/customers/show/${customerId}`
@@ -175,14 +181,6 @@ export const useCustomerEdit = () => {
 
   const rule = validateCustomerRule(t)
 
-  const handleCopyContact = () => {
-    const mainContact = form.getFieldsValue(['mail', 'phone'])
-    form.setFieldsValue({
-      person_in_charge_mail: mainContact.mail,
-      person_in_charge_phone: mainContact.phone,
-    })
-  }
-
   const record = queryResult?.data?.data
 
   useEffect(() => {
@@ -203,7 +201,6 @@ export const useCustomerEdit = () => {
     form,
     rule,
     isLoading,
-    handleCopyContact,
     handleAutoNumber,
     modalFormProps,
     isCodeGenLoading,
