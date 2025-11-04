@@ -84,6 +84,17 @@ function QuotaDetail() {
     method: 'get',
   })
 
+  const { data: dataCustomerContact, isFetching: isFetchingCustomerContact } =
+    useCustom({
+      url: (queryBasic?.data?.customer_contact_id
+        ? `${apiUrl}/customer-contacts/${queryBasic.data.customer_contact_id}`
+        : '') as string,
+      method: 'get',
+      queryOptions: {
+        enabled: !!queryBasic?.data?.customer_contact_id,
+      },
+    })
+
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
       refetch()
@@ -174,7 +185,14 @@ function QuotaDetail() {
         </div>
       }
     >
-      <Spin spinning={isFetching || isFetchingProducts || isFetchingHistory}>
+      <Spin
+        spinning={
+          isFetching ||
+          isFetchingProducts ||
+          isFetchingHistory ||
+          isFetchingCustomerContact
+        }
+      >
         <Form
           labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
           labelAlign="left"
@@ -183,7 +201,12 @@ function QuotaDetail() {
           autoComplete="off"
           form={formProps.form}
         >
-          <BasicInfo data={queryBasic?.data} />
+          <BasicInfo
+            data={queryBasic?.data}
+            customerContact={
+              dataCustomerContact?.data?.data || dataCustomerContact?.data
+            }
+          />
           <DetailInfo
             data={dataProducts?.data?.main_product}
             basicInfo={queryBasic?.data}

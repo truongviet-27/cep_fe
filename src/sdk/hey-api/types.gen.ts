@@ -2308,6 +2308,7 @@ export type QuotaAgreedPriceCustomerProduct = {
   unit_name?: string
   selling_price?: number
   quantity?: number
+  tax_rate?: number
   start_date?: string
   end_date?: string
 }
@@ -5464,10 +5465,6 @@ export type CustomerContactControllerIndexData = {
      * Filter by customer ID
      */
     customer_id?: number
-    /**
-     * Search by department name, contact person name, or email
-     */
-    q?: string
   }
   url: '/api/v1/customer-contacts'
 }
