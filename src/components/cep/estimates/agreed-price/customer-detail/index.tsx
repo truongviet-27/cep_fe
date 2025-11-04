@@ -91,7 +91,7 @@ const AgreedPriceCustomerDetail = () => {
       dataIndex: 'tax_rate',
       key: 'tax_rate',
       align: 'right',
-      render: (v: any) => (v ? `${v}%` : '-'),
+      render: (v: any) => `${v}%`,
     },
     {
       title: t('agreed_prices.customer_detail.table.application_start'),

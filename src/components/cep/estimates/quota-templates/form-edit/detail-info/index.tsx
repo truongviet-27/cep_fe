@@ -656,6 +656,7 @@ const DetailInfo: FC = () => {
                   </Text>
                 </div>
               </Col>
+
               <Col span={24}>
                 <div
                   style={{
@@ -700,7 +701,7 @@ const DetailInfo: FC = () => {
                         fontWeight: 700,
                       }}
                     >
-                      {`${t('quotas.action.detail_info.summary.total_profit_margin')} (${item.taxRate}%)`}
+                      {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                       ¥{item.total}
