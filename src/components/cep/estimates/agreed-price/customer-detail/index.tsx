@@ -38,10 +38,14 @@ const AgreedPriceCustomerDetail = () => {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('estimates.estimates')),
+      title: (
+        <Link href="/agreed-prices">{boldText(t('estimates.estimates'))}</Link>
+      ),
     },
     {
-      title: boldText(t('agreed_prices.parent')),
+      title: (
+        <Link href="/agreed-prices">{boldText(t('agreed_prices.parent'))}</Link>
+      ),
     },
     {
       title: boldText(t('agreed_prices.customer_detail.title'), PRIMARY),

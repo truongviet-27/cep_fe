@@ -13,6 +13,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space } from 'antd'
+import Link from 'next/link'
 
 import { useCustomerEdit } from './use-customers-edit'
 
@@ -35,7 +36,11 @@ export default function CustomerEditPage() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('business_partner.business_partner')),
+      title: (
+        <Link href="/customers">
+          {boldText(t('business_partner.business_partner'))}
+        </Link>
+      ),
     },
     { title: boldText(t('customers.edit.edit'), PRIMARY) },
   ]

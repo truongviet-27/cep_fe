@@ -45,6 +45,7 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import { useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
+import Link from 'next/link'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -430,7 +431,9 @@ function QuotaAction() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('estimates.estimates')),
+              title: (
+                <Link href="/quotas">{boldText(t('estimates.estimates'))}</Link>
+              ),
             },
             {
               title: boldText(

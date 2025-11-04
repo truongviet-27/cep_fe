@@ -230,6 +230,9 @@ function Page() {
               <Link
                 href={`/products/show/${record.product_id}`}
                 className="!underline"
+                onClick={() => {
+                  sessionStorage.setItem('list_products', 'price-groups')
+                }}
               >
                 {product_code}
               </Link>

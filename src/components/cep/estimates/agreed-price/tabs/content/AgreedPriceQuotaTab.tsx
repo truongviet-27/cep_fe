@@ -118,7 +118,7 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.status'),
         dataIndex: 'status',
         key: 'status',
-        render: (status: string) => getStatusTag(status),
+        render: () => getStatusTag(status as string),
       },
       {
         title: t('agreed_prices.table.estimate_number'),
@@ -179,7 +179,7 @@ const AgreedPriceQuotaTab = () => {
       {
         title: (
           <div>
-            <div>見積日</div>
+            <div>適用開始</div>
             <div style={{ fontSize: '14px', color: '#FF6918' }}>適用終了</div>
           </div>
         ),
@@ -325,6 +325,7 @@ const AgreedPriceQuotaTab = () => {
       ]
     },
   })
+  console.log(count)
 
   const statusDashboard = useMemo(() => {
     const c = count?.data
@@ -373,8 +374,6 @@ const AgreedPriceQuotaTab = () => {
     },
     [setFilters],
   )
-
-  console.log(tableProps.dataSource)
 
   return (
     <Form {...searchFormProps}>
