@@ -13,7 +13,8 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
-import type { QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { type QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { useUserStore } from '@stores/useUserStore'
 import type { TableProps } from 'antd'
 import {
   Button,
@@ -29,10 +30,9 @@ import {
   Tag,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { TableRowSelection } from 'antd/es/table/interface'
 import type { Dayjs } from 'dayjs'
-import React, { useCallback, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
+import React, { useCallback, useMemo, useState } from 'react'
 
 const { RangePicker } = DatePicker
 
@@ -41,8 +41,9 @@ const AgreedPriceQuotaTab = () => {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
+
+  const { permission } = useUserStore((state) => state)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -53,15 +54,6 @@ const AgreedPriceQuotaTab = () => {
       pageSize: 100,
     },
   })
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys)
-  }
-
-  const rowSelection: TableRowSelection<QuotaAgreedPrice> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  }
 
   const getStatusTag = (status?: string) => {
     const statusEnum = status as AgreedPriceStatus
@@ -165,7 +157,7 @@ const AgreedPriceQuotaTab = () => {
         title: (
           <div>
             <div>{t('agreed_prices.table.department')}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={{ fontSize: '14px', color: '#1890FF' }}>
               {t('agreed_prices.table.amount')}
             </div>
           </div>
@@ -188,7 +180,7 @@ const AgreedPriceQuotaTab = () => {
         title: (
           <div>
             <div>見積日</div>
-            <div style={{ fontSize: '12px', color: '#FF6918' }}>適用終了</div>
+            <div style={{ fontSize: '14px', color: '#FF6918' }}>適用終了</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',
@@ -244,6 +236,10 @@ const AgreedPriceQuotaTab = () => {
               resource="quota/agreed-prices"
               meta={{ idsBody: true, method: 'delete' }}
               onSuccess={() => tableQuery?.refetch?.()}
+              disabled={
+                !permission?.is_module_admin &&
+                permission?.user?.id !== record.creator?.id
+              }
             />
             <Button
               size="small"
@@ -317,12 +313,12 @@ const AgreedPriceQuotaTab = () => {
             : undefined,
         },
         {
-          field: 'expiration_date_gte',
+          field: 'expiration_date',
           operator: 'gte',
           value: start ? start.format('YYYY-MM-DD') : undefined,
         },
         {
-          field: 'expiration_date_lte',
+          field: 'expiration_date',
           operator: 'lte',
           value: end ? end.format('YYYY-MM-DD') : undefined,
         },
@@ -377,6 +373,8 @@ const AgreedPriceQuotaTab = () => {
     },
     [setFilters],
   )
+
+  console.log(tableProps.dataSource)
 
   return (
     <Form {...searchFormProps}>
@@ -498,7 +496,7 @@ const AgreedPriceQuotaTab = () => {
           </Col>
           <Col xs={12} md={6}>
             <div className="mt-7 mb-6 flex gap-2">
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('agreed_prices.action.search')}
               </Button>
               <Button
@@ -555,7 +553,6 @@ const AgreedPriceQuotaTab = () => {
           <CommonTable<QuotaAgreedPrice>
             {...refinedTableProps}
             rowKey={'id'}
-            rowSelection={rowSelection}
             columns={columns}
           />
         )
@@ -574,7 +571,7 @@ const AgreedPriceQuotaTab = () => {
         footer={null}
         destroyOnClose
         style={{ top: 20 }}
-        width={980}
+        width={600}
       >
         <Form
           form={updateForm}
@@ -626,9 +623,9 @@ const AgreedPriceQuotaTab = () => {
             name="start_date"
             style={{ marginBottom: 16 }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <DatePicker
-                style={{ width: '80%' }}
+                style={{ width: '65%' }}
                 placeholder="YYYY/MM/DD"
                 format="YYYY/MM/DD"
                 value={
@@ -655,7 +652,7 @@ const AgreedPriceQuotaTab = () => {
             style={{ marginBottom: 16 }}
           >
             <DatePicker
-              style={{ width: '80%' }}
+              style={{ width: '65%' }}
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
             />

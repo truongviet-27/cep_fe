@@ -13,11 +13,10 @@ function Note({ note }: { note: string }) {
           padding: 0,
           minHeight: 0,
         },
-        body: { padding: 0 },
+        body: { padding: 0, marginTop: 10 },
       }}
       style={{
         border: 'none',
-        marginTop: 40,
       }}
     >
       <Form.Item

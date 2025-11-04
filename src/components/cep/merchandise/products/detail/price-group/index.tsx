@@ -50,7 +50,7 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
         result.push({
           title: (
             <>
-              {rank.rank_name}
+              {rank.rank_code}
               <br />
               {rank.rate}% (円)
             </>

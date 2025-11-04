@@ -265,6 +265,7 @@ export default function CustomerShowPage() {
     { title: boldText(t('customers.show.show'), PRIMARY) },
   ]
 
+  console.log(record)
   return (
     <Show
       isLoading={isLoading}
@@ -335,7 +336,7 @@ export default function CustomerShowPage() {
                 {record?.corporate_number}
               </DetailItem>
               {parameterSettings?.get?.(ParameterResourceEnum.RANKS) && (
-                <DetailItem label={t('customers.fields.unit_price_rank')}>
+                <DetailItem label={t('customers.fields.unit_price_rank_code')}>
                   {record?.rank?.name}
                 </DetailItem>
               )}

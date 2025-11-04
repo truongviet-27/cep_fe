@@ -4,16 +4,17 @@ import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Card, Col, Row } from 'antd'
+import { Button, Card } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 const AgreedPriceCustomerDetail = () => {
   const t = useTranslate()
-  const go = useGo()
   const apiUrl = useApiUrl()
   const params = useParams()
   const customerId = params.id as string
@@ -86,17 +87,26 @@ const AgreedPriceCustomerDetail = () => {
         ).toLocaleString(),
     },
     {
+      title: t('agreed_prices.customer_detail.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      align: 'right',
+      render: (v: any) => (v ? `${v}%` : '-'),
+    },
+    {
       title: t('agreed_prices.customer_detail.table.application_start'),
-      dataIndex: 'application_start',
-      key: 'application_start',
-      render: (v: any) => v ?? '-',
+      dataIndex: 'start_date',
+      key: 'start_date',
+      render: (v: any) => (v ? dayjs(v).format('DD/MM/YYYY') : '-'),
     },
     {
       title: t('agreed_prices.customer_detail.table.application_end'),
-      dataIndex: 'application_end',
-      key: 'application_end',
+      dataIndex: 'end_date',
+      key: 'end_date',
       render: (v: any) => (
-        <span style={{ color: '#FF6918', fontWeight: '500' }}>{v ?? '-'}</span>
+        <span style={{ color: '#FF6918', fontWeight: '500' }}>
+          {v ? dayjs(v).format('DD/MM/YYYY') : '-'}
+        </span>
       ),
     },
   ]
@@ -110,6 +120,7 @@ const AgreedPriceCustomerDetail = () => {
 
     return products.length
   })()
+  console.log(products)
 
   return (
     <PageContainer
@@ -119,65 +130,78 @@ const AgreedPriceCustomerDetail = () => {
       title={t('agreed_prices.customer_detail.title')}
     >
       <div className="space-y-6">
-        <Card title={t('agreed_prices.customer_detail.basic_info')}>
-          <Row gutter={[24, 16]}>
-            <Col xs={24} sm={12} md={8}>
-              <div>
-                <div className="mb-1 text-sm text-gray-500">
-                  {t('agreed_prices.customer_detail.customer_code')}
-                </div>
-                <div className="font-medium">
-                  {customer?.customer_code || '-'}
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
-              <div>
-                <div className="mb-1 text-sm text-gray-500">
-                  {t('agreed_prices.customer_detail.customer_name')}
-                </div>
-                <div className="font-medium">
-                  {customer?.customer_name || '-'}
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
-              <div>
-                <div className="mb-1 text-sm text-gray-500">
-                  {t('agreed_prices.customer_detail.department_in_charge')}
-                </div>
-                <div className="font-medium">
-                  {customer?.department_in_charge ??
-                    customer?.department_name ??
-                    '-'}
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
-              <div>
-                <div className="mb-1 text-sm text-gray-500">
-                  {t('agreed_prices.customer_detail.unit_price_rank')}
-                </div>
-                <div className="font-medium">
-                  {customer?.unit_price_rank ?? customer?.rank_code ?? '-'}
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
-              <div>
-                <div className="mb-1 text-sm text-gray-500">
-                  {t('agreed_prices.customer_detail.number_of_products')}
-                </div>
-                <div className="font-medium">
-                  {numberOfProducts.toLocaleString()}
-                </div>
-              </div>
-            </Col>
-          </Row>
+        <Card
+          title={t('agreed_prices.customer_detail.basic_info')}
+          headStyle={{
+            color: PRIMARY,
+            minHeight: 0,
+            padding: 0,
+          }}
+          bodyStyle={{
+            paddingLeft: 0,
+          }}
+          style={{
+            border: 0,
+          }}
+        >
+          <div className="mb-8 flex">
+            <div className="w-1/8 text-sm font-semibold text-black/[0.88]">
+              {t('agreed_prices.customer_detail.customer_code')}
+            </div>
+            <div className="w-1/8 font-normal text-black/[0.88]">
+              {customer?.customer_code || '-'}
+            </div>
+          </div>
+          <div className="mb-8 flex">
+            <div className="w-1/8 text-sm font-semibold text-black/[0.88]">
+              {t('agreed_prices.customer_detail.customer_name')}
+            </div>
+            <div className="w-1/8 font-normal text-black/[0.88]">
+              {customer?.customer_name || '-'}
+            </div>
+          </div>
+          <div className="mb-8 flex">
+            <div className="w-1/8 text-sm font-semibold text-black/[0.88]">
+              {t('agreed_prices.customer_detail.department_in_charge')}
+            </div>
+            <div className="w-1/8 font-normal text-black/[0.88]">
+              {customer?.department_in_charge ??
+                customer?.department_name ??
+                '-'}
+            </div>
+          </div>
+          <div className="mb-8 flex">
+            <div className="w-1/8 text-sm font-semibold text-black/[0.88]">
+              {t('agreed_prices.customer_detail.unit_price_rank_code')}
+            </div>
+            <div className="w-1/8 font-normal text-black/[0.88]">
+              {customer?.unit_price_rank ?? customer?.rank_code ?? '-'}
+            </div>
+          </div>
+          <div className="mb-8 flex">
+            <div className="w-1/8 text-sm font-semibold text-black/[0.88]">
+              {t('agreed_prices.customer_detail.number_of_products')}
+            </div>
+            <div className="w-1/8 font-normal text-black/[0.88]">
+              {numberOfProducts.toLocaleString()}
+            </div>
+          </div>
         </Card>
 
         <Card
           title={t('agreed_prices.customer_detail.determined_unit_price_list')}
+          headStyle={{
+            color: PRIMARY,
+            minHeight: 0,
+            padding: 0,
+          }}
+          bodyStyle={{
+            paddingLeft: 0,
+            paddingRight: 0,
+          }}
+          style={{
+            border: 0,
+          }}
         >
           <CommonTable
             columns={productColumns}
@@ -192,9 +216,14 @@ const AgreedPriceCustomerDetail = () => {
         </Card>
 
         <div className="flex justify-end">
-          <Button onClick={() => go({ to: '/agreed-prices' })}>
-            {t('buttons.back')}
-          </Button>
+          <Link
+            href={{
+              pathname: '/agreed-prices',
+              query: { tab: 'agreed_price_customer' },
+            }}
+          >
+            <Button>{t('buttons.back')}</Button>
+          </Link>
         </div>
       </div>
     </PageContainer>

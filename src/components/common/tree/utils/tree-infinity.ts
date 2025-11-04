@@ -258,6 +258,7 @@ const getParentId = (
 const toSaveTree = (nodes: CatNode[], order: number = 0): SavePayloadNode[] => {
   return (nodes ?? []).map((n) => {
     return {
+      ...n,
       id: isNumber(n.id) ? n.id : null,
       name: (n.name ?? '').trim(),
       parent_id: n.parent_id ?? null,
@@ -435,6 +436,51 @@ const filterCategoryTree = (
   return buildFilteredTree(nodes)
 }
 
+function updateTreeNodes(
+  nodes: CatNode[],
+  updateMap: Map<string | number, CatNode>,
+): CatNode[] {
+  if (!nodes || nodes.length === 0) {
+    return []
+  }
+
+  return nodes.map((node) => {
+    const updateInfo = updateMap.get(node.id)
+
+    let newNode: CatNode
+
+    if (updateInfo) {
+      const parent_id = updateInfo?.parent_id ?? node?.parent_id
+      newNode = {
+        ...updateInfo,
+        ...node,
+        parent_id,
+        _isNew: false,
+      }
+    } else {
+      newNode = { ...node }
+    }
+
+    if (newNode.children && newNode.children.length > 0) {
+      newNode.children = updateTreeNodes(
+        newNode.children as CatNode[],
+        updateMap,
+      )
+    }
+
+    return newNode
+  })
+}
+
+function updateTree(currentTree: CatNode[], updates: CatNode[]): CatNode[] {
+  console.log(updates, 'updates')
+
+  const updateMap = new Map<string | number, CatNode>(
+    updates.map((u) => [u.id, u]),
+  )
+  return updateTreeNodes(currentTree, updateMap)
+}
+
 export {
   deepClone,
   filterCategoryTree,
@@ -459,4 +505,5 @@ export {
   updateDeep,
   updateLevelsRecursively,
   updateNode,
+  updateTree,
 }

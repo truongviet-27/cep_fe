@@ -27,7 +27,7 @@ function AccountingContact(
       <Panel
         header={
           <Form.Item
-            className={'!h-2'}
+            className={'ant-form-item-hidden-margin'}
             label={boldText(t('customers.show.accounting_contact'))}
           >
             <Button

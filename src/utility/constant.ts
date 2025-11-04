@@ -8,10 +8,10 @@ export const CONSUMPTION_TAX: Record<string, { value: string; label: string }> =
       value: ConsumptionTaxEnum.EXCLUSIVE,
       label: '外税',
     },
-    [ConsumptionTaxEnum.INCLUSIVE]: {
-      value: ConsumptionTaxEnum.INCLUSIVE,
-      label: '内税',
-    },
+    // [ConsumptionTaxEnum.INCLUSIVE]: {
+    //   value: ConsumptionTaxEnum.INCLUSIVE,
+    //   label: '内税',
+    // },
     [ConsumptionTaxEnum.EXTERNAL]: {
       value: ConsumptionTaxEnum.EXTERNAL,
       label: '税抜',

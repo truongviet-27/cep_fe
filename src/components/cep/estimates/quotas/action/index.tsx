@@ -60,8 +60,9 @@ function QuotaAction() {
   const { id, action, params } = useParsed()
 
   const { actionType } = params as any
+  const isClone = action === 'clone'
   const isCloneVersion = actionType === 'VERSION'
-  const isCloneNew = !isCloneVersion
+  const isCloneNew = !isCloneVersion && isClone
   const isEdit = action === 'edit'
 
   const isUpdate = !!id
@@ -247,6 +248,7 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
+              tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
             })),
           })),
@@ -274,6 +276,7 @@ function QuotaAction() {
       delete quoteTemplate.editor
       form.setFieldsValue({
         ...form.getFieldsValue(),
+        category: quoteTemplate?.category,
         type: quoteTemplate?.type,
         delivery_method: quoteTemplate?.delivery_method,
         payment_due_date: quoteTemplate?.payment_due_date,
@@ -283,7 +286,11 @@ function QuotaAction() {
         note: quoteTemplate?.note,
         main_product: quoteTemplate?.main_product,
         optional_product: quoteTemplate?.optional_product,
-        tags: (quoteTemplate?.tags ?? []).map(({ id }) => id),
+        tags: (quoteTemplate?.tags ?? []).map(({ id, name }) => ({
+          label: name,
+          value: id,
+          key: id,
+        })),
       })
     } else if (!isUpdate && data?.data) {
       form.setFieldsValue({
@@ -323,6 +330,7 @@ function QuotaAction() {
                 profit_margin: 0,
                 is_add_total: true,
                 unit: null,
+                tax_rate: 0,
               },
             ],
           },
@@ -342,6 +350,7 @@ function QuotaAction() {
                 quantity: 0,
                 profit_margin: 0,
                 is_add_total: false,
+                tax_rate: 0,
                 unit: null,
               },
             ],
@@ -363,8 +372,8 @@ function QuotaAction() {
             customer_id: values.customer.value,
             customer_name: values.customer.label,
             customer_contact_id: values.selected_contact_id,
-            status: 'creating',
             consumption_tax: values.consumption_tax || 'exclusive',
+            status: QuotaStatus.Creating,
             delivery_date: values.delivery_date
               ? dayjs(values.delivery_date)
                   .utc(true)

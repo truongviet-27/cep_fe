@@ -17,6 +17,7 @@ import {
   getExpiryDate,
   getQuotaStatusStyle,
 } from '@components/cep/estimates/quotas/utils'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -26,7 +27,6 @@ import {
   EditButton,
   ShowButton,
   useModal,
-  useSelect,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -39,7 +39,7 @@ import {
 } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
-import { PRIMARY } from '@utility/color'
+import { BLACK, PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
@@ -63,7 +63,13 @@ import { type ItemType } from 'antd/lib/menu/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { type MenuInfo } from 'rc-menu/lib/interface'
-import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
+import React, {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 const { RangePicker } = DatePicker
 
@@ -73,6 +79,11 @@ function QuotaList() {
   const apiUrl = useApiUrl()
 
   const { permission } = useUserStore.getState()
+
+  const department = Form.useWatch(
+    'department_in_charge',
+    Form.useFormInstance(),
+  )
 
   const go = useGo()
 
@@ -383,8 +394,8 @@ function QuotaList() {
     setFilters,
     setCurrent,
     tableQuery: { refetch },
+    filters,
   } = useTable({
-    syncWithLocation: true,
     filters: {
       initial: [
         {
@@ -459,6 +470,13 @@ function QuotaList() {
     },
   })
 
+  useEffect(() => {
+    setStatus(
+      filters?.find((filter: any) => filter?.field === 'status')?.value ||
+        QuotaStatus.Creating,
+    )
+  }, [])
+
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
@@ -473,25 +491,6 @@ function QuotaList() {
     },
     [status, setFilters, setCurrent],
   )
-
-  const { selectProps } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-    pagination: {
-      mode: 'server',
-      pageSize: 100,
-    },
-    onSearch(value) {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
-    },
-  })
 
   const handleOptions = (data: any[]) => {
     let filter = ''
@@ -509,7 +508,11 @@ function QuotaList() {
     return filter as QuotaStatus
   }
 
-  const { data, refetch: refetchStats } = useCustom({
+  const {
+    data,
+    refetch: refetchStats,
+    isFetching,
+  } = useCustom({
     method: 'get',
     url: `${apiUrl}/quotas/stats`,
   })
@@ -560,7 +563,7 @@ function QuotaList() {
       ...item,
       value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
-  }, [data])
+  }, [data, t])
 
   const statusButton = useCallback(
     (
@@ -623,7 +626,7 @@ function QuotaList() {
         type: 'success',
       }
     },
-    [t],
+    [t, refetch, refetchStats],
   )
 
   const { mutate, isPending } = useCustomMutation()
@@ -727,6 +730,7 @@ function QuotaList() {
           statusData={statusDashboard}
           status={status}
           onChangeStatus={onChangeStatus}
+          isLoading={isFetching}
         />
         <div className="my-4">
           <Row gutter={[24, 0]}>
@@ -794,29 +798,19 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
-              <Form.Item
+              <CoreAutocompleteAPI
+                name="department_in_charge"
+                resource="departments"
                 label={
                   <span className="font-bold">
                     {t('quotas.filters.department')}
                   </span>
                 }
-                layout="vertical"
-                name={'department_in_charge'}
-              >
-                <Select
-                  {...selectProps}
-                  allowClear
-                  showSearch
-                  labelInValue
-                  onSearch={() => {}}
-                  placeholder={t('placeholders.select')}
-                  filterOption={(input, option) =>
-                    ((option?.label ?? '') as string)
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                />
-              </Form.Item>
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback(department)
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
@@ -888,7 +882,11 @@ function QuotaList() {
 
             <Col xs={12} md={6}>
               <div className="mt-7 mb-6 flex gap-2">
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button
@@ -972,13 +970,14 @@ function QuotaList() {
                     style={{
                       width: '100%',
                     }}
+                    className="group"
                   >
                     <Space
                       style={{
                         width: '100%',
                         justifyContent: 'space-between',
                         fontSize: 14,
-                        color: '#ccc',
+                        color: BLACK,
                       }}
                     >
                       {t('quotas.actions.bulk_processing')}
@@ -1037,7 +1036,11 @@ function QuotaList() {
           16,
         )}
       >
-        <ModalAgreePrice data={dataAgreedPrice} close={close} />
+        <ModalAgreePrice
+          data={dataAgreedPrice}
+          close={close}
+          onSuccess={notificationFunction}
+        />
       </Modal>
     </List>
   )

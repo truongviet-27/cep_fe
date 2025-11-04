@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import CommonTable from '@components/common/table'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
@@ -6,11 +8,11 @@ import type {
   QuotaTemplateProductResponse,
 } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { Checkbox, Col, Flex, Form, InputNumber, Row, Typography } from 'antd'
+import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 import type { FC } from 'react'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 
 const { Title, Text } = Typography
 
@@ -20,8 +22,6 @@ interface Props {
 
 const DetailInfo: FC<Props> = (props) => {
   const { detail } = props
-
-  const [profitRate, setProfitRate] = useState(0)
   const t = useTranslate()
 
   const dataSource = (detail?.main_product ?? []).flatMap(
@@ -44,33 +44,33 @@ const DetailInfo: FC<Props> = (props) => {
     ],
   )
 
-  const calculateSummary = () => {
-    let costTotal = 0
-    let sellTotal = 0
+  const calculateGroupedTotal = (data: Record<string, any>) => {
+    const totalByTaxRate = data.reduce(
+      (acc: Record<string, any>, item: Record<string, any>) => {
+        if (item.isHeader || !item.is_add_total) {
+          return acc
+        }
+        const sellingPrice = parseFloat(item.selling_price || 0)
+        const quantity = parseFloat(item.quantity || 0)
+        const taxRate = parseFloat(item.tax_rate || 0)
+        const calculatedValue = (sellingPrice * quantity * taxRate) / 100
+        const key = String(taxRate)
+        acc[key] = (acc[key] || 0) + calculatedValue
 
-    ;(detail?.main_product ?? []).forEach(
-      (group: QuotaTemplateProductGroupResponse) => {
-        ;(group.products ?? []).forEach(
-          (product: QuotaTemplateProductResponse) => {
-            if (product.is_add_total) {
-              costTotal += (product.cost_price || 0) * (product.quantity || 0)
-              sellTotal +=
-                (product.selling_price || 0) * (product.quantity || 0)
-            }
-          },
-        )
+        return acc
       },
+      {},
     )
 
-    const profitRate =
-      costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
-
-    setProfitRate(profitRate)
+    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
+      taxRate: parseFloat(taxRate),
+      total: (total as number).toFixed(2),
+    }))
   }
 
-  useEffect(() => {
-    calculateSummary()
-  }, [detail])
+  const groupedTotals = useMemo(() => {
+    return calculateGroupedTotal(dataSource)
+  }, [dataSource])
 
   const columns: ColumnsType = [
     {
@@ -174,6 +174,17 @@ const DetailInfo: FC<Props> = (props) => {
       },
     },
     {
+      title: t('quotas.show.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      render: (_, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return `${record?.tax_rate ?? 0}%`
+      },
+    },
+    {
       title: '合計計算',
       dataIndex: 'is_add_total',
       key: 'is_add_total',
@@ -181,7 +192,15 @@ const DetailInfo: FC<Props> = (props) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return <Checkbox checked={value} disabled />
+        return (
+          <Checkbox
+            checked={value}
+            style={{
+              transform: 'scale(1.3)',
+              marginBottom: 0,
+            }}
+          />
+        )
       },
     },
     {
@@ -224,7 +243,7 @@ const DetailInfo: FC<Props> = (props) => {
                   fontWeight: 700,
                 }}
               >
-                <Table.Summary.Cell index={0} colSpan={9} align="center">
+                <Table.Summary.Cell index={0} colSpan={10} align="center">
                   小計
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="center">
@@ -240,112 +259,112 @@ const DetailInfo: FC<Props> = (props) => {
         />
       </Flex>
 
-      <Row gutter={[16, 16]} className="p-8">
-        <Col span={12}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              border: '1px solid #f0f0f0',
-              borderRadius: 6,
-              background: '#F8F9FA',
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: 700,
-              }}
-            >
-              原価合計
-            </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-              ¥{(detail?.total_price || 0).toLocaleString()}
-            </Text>
-            <Form.Item name="total_cost" hidden>
-              <InputNumber />
-            </Form.Item>
-          </div>
-        </Col>
-        <Col span={12}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              border: '1px solid #f0f0f0',
-              borderRadius: 6,
-              background: '#F8F9FA',
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: 700,
-              }}
-            >
-              消費税金額（{detail?.tax_rate}%）
-            </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-              ¥{(detail.consumption_tax_amount || 0).toLocaleString()}
-            </Text>
-            <Form.Item name="consumption_tax_amount" hidden>
-              <InputNumber />
-            </Form.Item>
-          </div>
-        </Col>
-        <Col span={12}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              border: '1px solid #f0f0f0',
-              borderRadius: 6,
-              background: '#F8F9FA',
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: 700,
-              }}
-            >
-              合計利益率
-            </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-              {profitRate.toFixed(2) || 0}%
-            </Text>
-            <Form.Item name="total_profit_margin" hidden>
-              <InputNumber />
-            </Form.Item>
-          </div>
-        </Col>
-        <Col span={12}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              border: '1px solid #f0f0f0',
-              borderRadius: 6,
-              background: '#F8F9FA',
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: 700,
-              }}
-            >
-              合計金額（税込）
-            </Text>
-            <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-              ¥{(detail?.total_price_tax_included || 0).toLocaleString()}
-            </Text>
-            <Form.Item name="total_price_tax_included" hidden>
-              <InputNumber />
-            </Form.Item>
-          </div>
-        </Col>
-      </Row>
+      <Card bordered={false}>
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    原価合計
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{(detail?.total_price || 0).toLocaleString()}
+                  </Text>
+                </div>
+              </Col>
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    消費税金額
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{(detail.consumption_tax_amount || 0).toLocaleString()}
+                  </Text>
+                </div>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={12}>
+            <Row gutter={[16, 16]}>
+              {groupedTotals.map((item, index) => (
+                <Col span={24} key={index}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '8px 12px',
+                      border: '1px solid #f0f0f0',
+                      borderRadius: 6,
+                      background: '#F8F9FA',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {`${t('quotas.action.detail_info.summary.total_profit_margin')} (${item.taxRate}%)`}
+                    </Text>
+                    <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                      ¥{item.total}
+                    </Text>
+                  </div>
+                </Col>
+              ))}
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    合計金額（税込）
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{(detail?.total_price_tax_included || 0).toLocaleString()}
+                  </Text>
+                </div>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Card>
     </>
   )
 }

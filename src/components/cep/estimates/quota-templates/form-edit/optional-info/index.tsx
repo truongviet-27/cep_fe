@@ -76,13 +76,6 @@ const OptionalInfo: FC = () => {
                       <Form.Item
                         name={[record.index, 'group_name']}
                         className="ant-form-item-hidden-margin"
-                        required
-                        rules={[
-                          {
-                            required: true,
-                            message: t('validation.required'),
-                          },
-                        ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"
@@ -410,6 +403,26 @@ const OptionalInfo: FC = () => {
                     'selling_price',
                   ]) || 0
                 return (quantity * selling).toLocaleString()
+              },
+            },
+            {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+
+                return (
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'tax_rate',
+                  ]) + '%'
+                )
               },
             },
             {

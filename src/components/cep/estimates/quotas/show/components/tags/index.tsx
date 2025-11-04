@@ -17,12 +17,12 @@ function Tags({ tags }: { tags: { id: number; name: string }[] }) {
       }}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 10,
       }}
     >
       <Row style={{ marginTop: 20 }}>
         <Col xs={24}>
-          <Form.Item name={'tags'}>
+          <Form.Item name={'tags'} className="ant-form-item-hidden-margin">
             <Space wrap>
               {tags?.map((item) => (
                 <Tag

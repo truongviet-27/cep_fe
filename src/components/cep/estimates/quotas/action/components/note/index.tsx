@@ -19,7 +19,7 @@ function Note() {
       }}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 20,
       }}
     >
       <Form.Item name={'note'}>

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
-import { Card, Typography } from 'antd'
+import { Card, Spin } from 'antd'
 import type { ReactNode } from 'react'
-
-const { Title } = Typography
 
 const PageContainer = ({
   title,
   breadcrumbs,
   children,
+  loading = false,
 }: {
   title?: string | ReactNode
   breadcrumbs?: ReactNode
   children: ReactNode
+  loading?: boolean
 }) => {
   return (
     <div className="h-full w-full overflow-hidden">
@@ -33,7 +33,18 @@ const PageContainer = ({
           {title ? (
             <div className="mb-3">{boldText(title, PRIMARY, 18)}</div>
           ) : null}
-          {children}
+          <Spin
+            style={{
+              height: '70vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            spinning={loading}
+            size="default"
+          >
+            {children}
+          </Spin>
         </div>
       </Card>
     </div>
