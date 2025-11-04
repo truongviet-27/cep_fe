@@ -193,9 +193,10 @@ function QuotaDetail() {
           <Tags tags={queryBasic?.data?.tags} />
           <History data={dataHistory?.data} />
 
-          {(permission?.is_module_admin || queryBasic?.data?.display) && (
-            <Reason />
-          )}
+          {(permission?.is_module_admin || queryBasic?.data?.display) &&
+            queryBasic?.data.status === QuotaStatus.WaitingApproval && (
+              <Reason />
+            )}
 
           <Divider />
           <ShowMoreInfo
@@ -271,7 +272,7 @@ function QuotaDetail() {
                   size="middle"
                   onClick={() => {
                     go({
-                      to: `quotas/clone/${id}?actionType=VERSION`,
+                      to: `/quotas/clone/${id}?actionType=VERSION`,
                     })
                   }}
                 >

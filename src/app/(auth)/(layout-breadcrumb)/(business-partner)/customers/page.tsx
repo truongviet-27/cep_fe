@@ -15,6 +15,7 @@ import {
 import {
   type BaseRecord,
   useGo,
+  useNotification,
   useTranslate,
   useUpdate,
 } from '@refinedev/core'
@@ -63,7 +64,7 @@ interface ICustomer {
   name: string
   country: string
   department: string
-  unit_price_rank: string
+  unit_price_rank_code: string
   credit_rank: string
   anti_social_check_date: string
   registration_date: string
@@ -79,6 +80,8 @@ export default function CustomerListPage() {
   const { parameterSettings, hasFullAccessModule } = useUserStore(
     (state) => state,
   )
+
+  const notification = useNotification()
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
   const allowRankResource = parameterSettings?.get?.(
@@ -211,7 +214,7 @@ export default function CustomerListPage() {
   }
 
   const getRowClassName = (record: BaseRecord) => {
-    return record.deleted_at ? '!bg-gray-200' : ''
+    return record.deleted_at ? '!bg-gray-300' : ''
   }
 
   const columns: TableColumnsType<SimpleCustomer> = useMemo(
@@ -259,7 +262,7 @@ export default function CustomerListPage() {
         ellipsis: true,
       },
       {
-        title: t('customers.fields.unit_price_rank'),
+        title: t('customers.fields.unit_price_rank_code'),
         dataIndex: 'rank',
         key: 'rank',
         width: '8%', // Tỷ lệ 5
@@ -272,7 +275,7 @@ export default function CustomerListPage() {
               editModalShow(rank.id)
             }}
           >
-            {rank?.name}
+            {rank?.code}
           </Link>
         ),
       },
@@ -386,11 +389,25 @@ export default function CustomerListPage() {
               <DeleteButton
                 icon={null}
                 danger
+                confirmOkText={t('buttons.suspend')}
                 recordItemId={record.id}
                 size={'small'}
                 type={'primary'}
                 className={isFullAccess ? '' : '!bg-gray-100'}
                 disabled={!isFullAccess}
+                successNotification={false}
+                onSuccess={() => {
+                  if (notification && notification.open) {
+                    notification.open({
+                      type: 'success',
+                      message: t('customers.suspend_success_title'),
+                      description: t('customers.suspend_success_desc', {
+                        code: record.customer_code,
+                      }),
+                      key: `delete-${record.id}`,
+                    })
+                  }
+                }}
               >
                 {t('buttons.suspend')}
               </DeleteButton>
@@ -485,6 +502,7 @@ export default function CustomerListPage() {
                   placeholder: t('placeholders.select'),
                   style: { maxWidth: 560, minWidth: '150px' },
                 }}
+                optionLabel={'code'}
               />
             </Col>
           )}
@@ -538,7 +556,12 @@ export default function CustomerListPage() {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit" onClick={handleSearch}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={handleSearch}
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button onClick={handleClear}>{t('buttons.clear')}</Button>

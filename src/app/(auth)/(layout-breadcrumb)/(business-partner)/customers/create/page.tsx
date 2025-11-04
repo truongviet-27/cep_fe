@@ -77,6 +77,7 @@ export default function CustomerCreatePage() {
         layout="horizontal"
         colon={false}
         autoComplete="off"
+        scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
       >
         <Space size={30} direction={'vertical'} style={{ width: '100%' }}>
           {/* Basic Information */}

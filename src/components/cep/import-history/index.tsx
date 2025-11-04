@@ -153,7 +153,7 @@ function ImportHistory() {
 
           <Col xs={12} md={4}>
             <div className="mt-7 mb-4 flex items-center gap-4">
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
               <Button variant="outlined" onClick={onReset}>

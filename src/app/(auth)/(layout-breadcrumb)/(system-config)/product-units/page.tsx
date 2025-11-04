@@ -65,7 +65,12 @@ export default function Page() {
           <Col xs={24} sm={12} md={18}>
             <Space size="middle" className="mt-4 flex w-full justify-between">
               <Space>
-                <Button htmlType="submit" type="primary" size="middle">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  size="middle"
+                  autoInsertSpace={false}
+                >
                   {t('buttons.search')}
                 </Button>
                 <Button

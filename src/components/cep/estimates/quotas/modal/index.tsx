@@ -18,7 +18,15 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useMemo } from 'react'
 
-function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
+function ModalAgreePrice({
+  data,
+  close,
+  onSuccess,
+}: {
+  data: any
+  close: () => void
+  onSuccess: (message: string) => void
+}) {
   const { formProps, form } = useForm()
   const t = useTranslate()
 
@@ -51,6 +59,7 @@ function ModalAgreePrice({ data, close }: { data: any; close: () => void }) {
       {
         onSuccess: () => {
           close()
+          onSuccess('')
         },
       },
     )

@@ -6,6 +6,7 @@ import { useTable } from '@refinedev/antd'
 import {
   type CrudFilters,
   type HttpError,
+  useGo,
   useInvalidate,
   type useModalReturnType,
   useResource,
@@ -27,6 +28,8 @@ function TenantSwitchingModal({
   const t_btn = useTranslations('buttons')
   const router = useRouter()
 
+  const go = useGo()
+
   const { resource } = useResource()
 
   const { searchFormProps, tableProps, setFilters } = useTable<
@@ -34,7 +37,7 @@ function TenantSwitchingModal({
     HttpError,
     { q?: string }
   >({
-    syncWithLocation: true,
+    syncWithLocation: false,
     resource: 'tenants',
     onSearch: (values) => {
       const filters: CrudFilters = []
@@ -72,7 +75,7 @@ function TenantSwitchingModal({
           </Col>
           <Col md={4} style={{ textAlign: 'left' }}>
             <Space>
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('filters.search')}
               </Button>
               <Button
@@ -114,6 +117,10 @@ function TenantSwitchingModal({
                   invalidates: ['all'],
                 })
                 router.refresh()
+                go({
+                  to: '/quotas',
+                })
+                window.location.reload()
               }}
             >
               {t_btn('select')}

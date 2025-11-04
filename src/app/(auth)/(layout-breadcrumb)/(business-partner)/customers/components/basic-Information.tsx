@@ -49,9 +49,8 @@ function BasicInformation(
     Form.useWatch('company_name_display_format', form) === 'after'
   const name = Form.useWatch('name', form)
   const companyType = Form.useWatch('company_type', form)
-  const isOtherSelected = !typesCompanyOptions.some(
-    ({ value }) => value == companyType && companyType !== 'other',
-  )
+  const isOtherSelected = companyType === 'other'
+
   const tempCompanyType = Form.useWatch('temp_company_type', form)
   const nameDisplay = isOtherSelected ? tempCompanyType : companyType
   const parameterSettings = useUserStore((state) => state.parameterSettings)
@@ -77,10 +76,7 @@ function BasicInformation(
         />
       )}
     >
-      <Panel
-        header={<Title level={5}>{t('customers.show.basic_info')}</Title>}
-        key="1"
-      >
+      <Panel header={boldText(t('customers.show.basic_info'))} key="1">
         <Form.Item label={boldText(t('customers.fields.code'))} required>
           <Row align="middle" gutter={8}>
             <Col>
@@ -122,20 +118,21 @@ function BasicInformation(
               <Form.Item
                 name="customer_type"
                 rules={[rule]}
-                initialValue="individual"
+                initialValue="company"
                 required
               >
                 <Radio.Group>
-                  <Radio value="individual">
-                    {t('customers.enums.individual')}
-                  </Radio>
                   <Radio value="company">
                     {t('customers.enums.corporation')}
+                  </Radio>
+                  <Radio value="individual">
+                    {t('customers.enums.individual')}
                   </Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
-
+          </Row>
+          <Row>
             {isCompany && (
               <>
                 <Col>
@@ -149,7 +146,9 @@ function BasicInformation(
                             !value
                           ) {
                             return Promise.reject(
-                              new Error(t('validation.required')),
+                              new Error(
+                                t('validation.customer.customer_type.required'),
+                              ),
                             )
                           }
                           return Promise.resolve()
@@ -161,6 +160,9 @@ function BasicInformation(
                       allowClear
                       placeholder={t('placeholders.select')}
                       options={typesCompanyOptions}
+                      style={{
+                        minWidth: 160,
+                      }}
                     />
                   </Form.Item>
                 </Col>
@@ -171,6 +173,9 @@ function BasicInformation(
                     rules={[rule]}
                     initialValue="after"
                     required
+                    style={{
+                      marginLeft: 10,
+                    }}
                   >
                     <Radio.Group>
                       <Radio value="before">前</Radio>

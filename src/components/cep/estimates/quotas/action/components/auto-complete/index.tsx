@@ -49,7 +49,7 @@ function CoreAutoComplete({
     form,
   )
 
-  const { data } = useCustom({
+  const { data } = useCustom<any>({
     url: `${apiUrl}/${resource}/${product}/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
@@ -72,6 +72,10 @@ function CoreAutoComplete({
           label: item.name,
           value: item.id,
         })),
+      )
+      form.setFieldValue(
+        [parent, index, 'products', index2, 'package_id'],
+        data?.data?.packagings[0]?.id || null,
       )
     } else if (productResponse?.data?.data) {
       setOptions(
@@ -96,7 +100,14 @@ function CoreAutoComplete({
     } else {
       form.setFieldValue(
         [parent, index, 'products', index2, 'selling_price'],
-        data?.data?.selling_price ?? 0,
+        data?.data?.packagings[0]?.rank_prices
+          ? data?.data?.packagings[0]?.rank_prices
+          : (data?.data?.selling_price ?? 0),
+      )
+
+      form.setFieldValue(
+        [parent, index, 'products', index2, 'tax_rate'],
+        option?.tax_rate ?? data?.data?.tax_rate,
       )
     }
   }, [data, customer])
@@ -114,8 +125,8 @@ function CoreAutoComplete({
           .includes(input.toLowerCase())
       }
       onSearch={() => {}}
-      autoClearSearchValue
-      allowClear
+      // autoClearSearchValue
+      // allowClear
       onChange={(value) => {
         if (onChange) {
           onChange(value)
@@ -127,6 +138,11 @@ function CoreAutoComplete({
         form.setFieldValue(
           [parent, index, 'products', index2, 'unit'],
           option?.unit ?? data?.data?.unit?.name,
+        )
+
+        form.setFieldValue(
+          [parent, index, 'products', index2, 'tax_rate'],
+          option?.tax_rate ?? data?.data?.tax_rate,
         )
 
         form.setFieldValue(

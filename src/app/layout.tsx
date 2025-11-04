@@ -23,6 +23,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <meta name="google" content="notranslate"></meta>
       <body>
         <Suspense>
           <NextIntlClientProvider locale={locale} messages={messages}>

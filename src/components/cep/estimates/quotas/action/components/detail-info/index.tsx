@@ -4,9 +4,10 @@ import CoreAutoComplete from '@components/cep/estimates/quotas/action/components
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import { Action, type ActionType } from '@components/common/action'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
-import { useSelect } from '@refinedev/antd'
-import { useResource, useTranslate } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
+import { ConsumptionTaxEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -21,12 +22,11 @@ import {
   InputNumber,
   Modal,
   Row,
-  Select,
   Typography,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const { Text } = Typography
 
@@ -52,45 +52,54 @@ function DetailInfo() {
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
     let sellTotal = 0
+    let taxTotal = 0
 
+    // Calculate per-product totals and per-product tax using each product's tax_rate
     ;(main_product_groups ?? []).forEach((group: any) => {
       ;(group.products ?? []).forEach((product: any) => {
-        if (product.is_add_total) {
-          costTotal += (product.cost_price || 0) * (product.quantity || 0)
-          sellTotal += (product.selling_price || 0) * (product.quantity || 0)
-        }
+        if (!product.is_add_total) return
+
+        const qty = product.quantity || 0
+        const selling = (product.selling_price || 0) * qty
+        const cost = (product.cost_price || 0) * qty
+
+        costTotal += cost
+        sellTotal += selling
+
+        // Use product's individual tax rate, fallback to global tax_rate if not set
+
+        const productTaxRate = product.tax_rate ?? 0
+
+        // Calculate tax for this specific product
+        const productTax = 0
+
+        const rawTax = selling * (productTaxRate / 100)
+
+        taxTotal += rawTax
       })
     })
 
-    let taxTotal = 0
     let sellTotalWithTax = 0
-    if (consumptionTaxWatch === 'inclusive') {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor(sellTotal - sellTotal / 1.1)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil(sellTotal - sellTotal / 1.1)
-      } else {
-        taxTotal = Number((sellTotal - sellTotal / 1.1).toFixed(0))
-      }
+    if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+      taxTotal = Math.floor(taxTotal)
+    } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+      taxTotal = Math.ceil(taxTotal)
     } else {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor((sellTotal * tax_rate) / 100)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil((sellTotal * tax_rate) / 100)
-      } else {
-        taxTotal = Number(((sellTotal * tax_rate) / 100).toFixed(0))
-      }
+      taxTotal = Number(taxTotal.toFixed(0))
     }
 
-    if (consumptionTaxWatch === 'exclusive') {
-      sellTotalWithTax = sellTotal + taxTotal
-    } else {
+    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
+      // For inclusive tax, selling total already includes tax
       sellTotalWithTax = sellTotal
+    } else {
+      // For exclusive tax, add tax to selling total
+      sellTotalWithTax = sellTotal + taxTotal
     }
-    const profitRate =
-      costTotal > 0 && sellTotal > 0
-        ? ((sellTotal - costTotal) / sellTotal) * 100
-        : 0
+    const profitRate = Number(
+      (sellTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0).toFixed(
+        2,
+      ),
+    )
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
@@ -112,19 +121,6 @@ function DetailInfo() {
     )
   }, [taxRateWatch, mainProductWatch, consumptionTaxWatch])
 
-  const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
-    optionLabel: 'name',
-    optionValue: 'id',
-    pagination: {
-      mode: 'server',
-      pageSize: 100,
-    },
-    queryOptions: {
-      enabled: isProductManager,
-    },
-  })
-
   const handleAddProduct = (groupIndex: number, productIndex: number) => {
     const values = form?.getFieldValue('main_product') || []
     const products = values[groupIndex].products || []
@@ -138,6 +134,7 @@ function DetailInfo() {
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
+      tax_rate: 0,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
     }
@@ -146,7 +143,6 @@ function DetailInfo() {
     newProducts.splice(productIndex, 0, newProduct)
 
     values[groupIndex].products = newProducts
-
     form.setFieldsValue({ main_product: values })
   }
 
@@ -167,12 +163,55 @@ function DetailInfo() {
     setIsModalOpen(false)
   }
 
+  const dataSource: any[] = (form?.getFieldValue('main_product') ?? []).flatMap(
+    (item: any, index: number) => [
+      {
+        index,
+        key: `header-${index}`,
+        isHeader: true,
+        title: item.group_name,
+      },
+      ...(item.products ?? []).flatMap((item2: any, index2: number) => [
+        {
+          index,
+          index2,
+          ...item2,
+        },
+      ]),
+    ],
+  )
+
+  const calculateGroupedTotal = (data: any) => {
+    const totalByTaxRate = data.reduce((acc: any, item: any) => {
+      if (item.isHeader || !item.is_add_total) {
+        return acc
+      }
+      const sellingPrice = parseFloat(item.selling_price || 0)
+      const quantity = parseFloat(item.quantity || 0)
+      const taxRate = parseFloat(item.tax_rate || 0)
+      const calculatedValue = (sellingPrice * quantity * taxRate) / 100
+      const key = String(taxRate)
+      acc[key] = (acc[key] || 0) + calculatedValue
+
+      return acc
+    }, {})
+
+    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
+      taxRate: parseFloat(taxRate),
+      total: (total as number).toFixed(2),
+    }))
+  }
+
+  const groupedTotals = useMemo(() => {
+    return calculateGroupedTotal(dataSource)
+  }, [dataSource])
+
   return (
     <Card
       title={boldText(t('quotas.action.detail_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
-        marginTop: 40,
+        marginTop: 20,
       }}
       styles={{
         body: { padding: 0 },
@@ -181,24 +220,6 @@ function DetailInfo() {
     >
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
-          const dataSource: any[] = (
-            form?.getFieldValue('main_product') ?? []
-          ).flatMap((item: any, index: number) => [
-            {
-              index,
-              key: `header-${index}`,
-              isHeader: true,
-              title: item.group_name,
-            },
-            ...(item.products ?? []).flatMap((item2: any, index2: number) => [
-              {
-                index,
-                index2,
-                ...item2,
-              },
-            ]),
-          ])
-
           const columns: ColumnsType = [
             {
               title: t('quotas.action.detail_info.table.product_code'),
@@ -268,12 +289,16 @@ function DetailInfo() {
                           max: 255,
                           message: '',
                         },
+                        {
+                          pattern: /^[A-Z0-9-]+$/,
+                          message: '',
+                        },
                       ]}
                       style={{
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -291,8 +316,7 @@ function DetailInfo() {
                 } else {
                   if (isProductManager) {
                     return (
-                      <Form.Item
-                        className="ant-form-item-hidden-margin"
+                      <CoreAutocompleteAPI
                         name={[
                           record.index,
                           'products',
@@ -305,85 +329,85 @@ function DetailInfo() {
                             message: '',
                           },
                         ]}
-                      >
-                        <Select
-                          {...selectPropsProduct}
-                          placeholder={t(
-                            'quotas.action.detail_info.placeholders.product_search',
-                          )}
-                          allowClear
-                          showSearch
-                          filterOption={(input, option) =>
-                            ((option?.label ?? '') as string)
-                              .toLowerCase()
-                              .includes(input.toLowerCase())
-                          }
-                          onSearch={() => {}}
-                          disabled={!customerWatch}
-                          onChange={(value) => {
-                            const item: any = query.data?.data.find(
-                              (item: any) => item.id === value,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'package_id',
-                              ],
-                              null,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'name',
-                              ],
-                              item?.name,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'code',
-                              ],
-                              item?.code,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'unit',
-                              ],
-                              item?.unit,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'cost_price',
-                              ],
-                              item?.cost_price,
-                            )
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'selling_price',
-                              ],
-                              item?.sale_price,
-                            )
+                        labelInValue={false}
+                        resource="products"
+                        placeholder={t(
+                          'quotas.action.detail_info.placeholders.product_search',
+                        )}
+                        disabled={!customerWatch}
+                        pageSize={20}
+                        onChangeValue={(valueOption) => {
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'package_id',
+                            ],
+                            null,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'name',
+                            ],
+                            valueOption?.name,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'code',
+                            ],
+                            valueOption?.code,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'unit',
+                            ],
+                            valueOption?.unit,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'cost_price',
+                            ],
+                            valueOption?.cost_price,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'selling_price',
+                            ],
+                            valueOption?.sale_price,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'quantity',
+                            ],
+                            1,
+                          )
+                          if (!valueOption) {
                             form.setFieldValue(
                               [
                                 'main_product',
@@ -392,24 +416,11 @@ function DetailInfo() {
                                 record.index2,
                                 'quantity',
                               ],
-                              1,
+                              0,
                             )
-
-                            if (!value) {
-                              form.setFieldValue(
-                                [
-                                  'main_product',
-                                  record.index,
-                                  'products',
-                                  record.index2,
-                                  'quantity',
-                                ],
-                                0,
-                              )
-                            }
-                          }}
-                        />
-                      </Form.Item>
+                          }
+                        }}
+                      />
                     )
                   }
                   return (
@@ -434,7 +445,7 @@ function DetailInfo() {
                         width: 300,
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -445,7 +456,7 @@ function DetailInfo() {
               dataIndex: 'unit',
               key: 'unit',
               align: 'center',
-              width: 100,
+              width: 200,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -481,10 +492,10 @@ function DetailInfo() {
                         },
                       ]}
                       style={{
-                        width: 100,
+                        width: '100%',
                       }}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -554,7 +565,7 @@ function DetailInfo() {
                         },
                       ]}
                     >
-                      <Input placeholder={t('quotas.filters.partial_match')} />
+                      <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
                   )
                 }
@@ -623,6 +634,7 @@ function DetailInfo() {
                         message: '',
                       },
                     ]}
+                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
@@ -647,6 +659,7 @@ function DetailInfo() {
                         message: '',
                       },
                     ]}
+                    normalize={(val) => val ?? 1}
                   >
                     <InputNumber min={1} precision={0} controls={false} />
                   </Form.Item>
@@ -702,14 +715,13 @@ function DetailInfo() {
                     'profit_margin',
                   ],
                   Number(
-                    (selling > 0
-                      ? ((selling - cost) / selling) * 100
-                      : 0
-                    ).toFixed(2),
+                    selling > 0
+                      ? (((selling - cost) / selling) * 100).toFixed(2)
+                      : 0,
                   ),
                 )
 
-                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
+                return `${selling > 0 ? (((selling - cost) / selling) * 100).toFixed(2) : 0}%`
               },
             },
             {
@@ -738,6 +750,50 @@ function DetailInfo() {
                     'selling_price',
                   ]) || 0
                 return quantity * selling
+              },
+            },
+            {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                if (isProductManager) {
+                  const taxRate =
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'tax_rate',
+                    ]) || 0
+                  return `${taxRate}%`
+                }
+
+                return (
+                  <Form.Item
+                    name={[record.index, 'products', record.index2, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: false,
+                        message: '',
+                      },
+                    ]}
+                    normalize={(val) => val ?? 0}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      style={{ width: 100 }}
+                      precision={0}
+                      addonAfter="%"
+                      controls={false}
+                    />
+                  </Form.Item>
+                )
               },
             },
             {
@@ -817,6 +873,7 @@ function DetailInfo() {
                             cost_price: 0,
                             selling_price: 0,
                             profit_margin: 0,
+                            tax_rate: 0,
                             is_add_total: true,
                             unit: t(
                               'quotas.action.detail_info.default_values.default_unit',
@@ -855,8 +912,8 @@ function DetailInfo() {
               <Flex
                 justify="end"
                 style={{
-                  marginTop: 20,
-                  marginBottom: 20,
+                  marginTop: 10,
+                  marginBottom: 10,
                 }}
               >
                 <Button
@@ -915,6 +972,7 @@ function DetailInfo() {
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
                     </Table.Summary.Row>
                   )
                 }}
@@ -926,113 +984,107 @@ function DetailInfo() {
       <Card bordered={false}>
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.cost_total')}
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{costTotal || 0}
-              </Text>
-              <Form.Item name="total_cost" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    {t('quotas.action.detail_info.summary.cost_total')}
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{costTotal || 0}
+                  </Text>
+                </div>
+              </Col>
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    {t('quotas.action.detail_info.summary.tax_amount')}
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{costTotal || 0}
+                  </Text>
+                </div>
+              </Col>
+            </Row>
           </Col>
           <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.tax_amount')}（
-                {taxRateWatch}%）
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{taxTotal || 0}
-              </Text>
-              <Form.Item name="consumption_tax_amount" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.total_profit_margin')}
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {profitRate.toFixed(2) || 0}%
-              </Text>
-              <Form.Item name="total_profit_margin" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.total_amount')}（
-                {consumptionTaxWatch === 'external'
-                  ? t('quotas.action.detail_info.summary.tax_exclusive')
-                  : t('quotas.action.detail_info.summary.tax_inclusive')}
-                ）
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{sellTotalWithTax || 0}
-              </Text>
-              <Form.Item name="total_price_tax_included" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
+            <Row gutter={[16, 16]}>
+              {groupedTotals.map((item, index) => (
+                <Col span={24} key={index}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '8px 12px',
+                      border: '1px solid #f0f0f0',
+                      borderRadius: 6,
+                      background: '#F8F9FA',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {`${t('quotas.action.detail_info.summary.total_profit_margin')} (${item.taxRate}%)`}
+                    </Text>
+                    <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                      ¥{item.total}
+                    </Text>
+                  </div>
+                </Col>
+              ))}
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    {t('quotas.action.detail_info.summary.total_amount')}（
+                    {t('quotas.action.detail_info.summary.tax_inclusive')}）
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{sellTotalWithTax || 0}
+                  </Text>
+                </div>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Card>

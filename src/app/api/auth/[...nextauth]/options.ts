@@ -36,38 +36,41 @@ const authOptions: AuthOptions = {
       async authorize(credentials) {
         if (!credentials?.token) return null
 
+        const introspectRes = await fetch(
+          `${process.env.NEXT_PUBLIC_ACC_ADMIN_CONSOLE}/realms/dev/protocol/openid-connect/token/introspect`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
+              client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET || '',
+              token: credentials.token,
+            }),
+          },
+        )
+
+        const introspect = await introspectRes.json()
+        if (!introspectRes.ok || !introspect.active) {
+          console.error('Token invalid or expired')
+          return null
+        }
+
+        let refreshed = null
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_ACC_ADMIN_CONSOLE}/realms/dev/protocol/openid-connect/token/introspect`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
-                client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET || '',
-                token: credentials.token,
-              }),
-            },
-          )
+          refreshed = await refreshAccessToken({
+            accessToken: credentials.token,
+            refreshToken: credentials.refreshToken,
+          })
+        } catch (err) {
+          console.error('Error refreshing tokens:', err)
+        }
 
-          const data = await res.json()
-
-          if (res.ok && data && data?.active) {
-            return {
-              ...data,
-              access_token: credentials.token,
-              refresh_token: credentials.refreshToken,
-              expires_at: data?.exp,
-              id_token: credentials.token,
-            }
-          }
-          return null
-        } catch (error) {
-          console.error('Validate error', error)
-
-          return null
+        return {
+          ...introspect,
+          access_token: refreshed?.accessToken ?? credentials.token,
+          refresh_token: refreshed?.refreshToken ?? credentials.refreshToken,
+          id_token: refreshed?.idToken ?? null, // ✅ có id_token nếu gọi /token thành công
+          expires_at: refreshed?.expiresAt ?? introspect.exp,
         }
       },
     }),

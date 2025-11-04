@@ -34,7 +34,7 @@ const AgreedPriceByCustomerTab = () => {
 
   const { selectProps: rankSelectProps } = useSelect({
     resource: 'ranks',
-    optionLabel: 'name',
+    optionLabel: 'code',
     optionValue: 'id',
     pagination: {
       mode: 'server',
@@ -59,6 +59,30 @@ const AgreedPriceByCustomerTab = () => {
         title: t('agreed_prices.customer_tab.table.business_partner_code'),
         dataIndex: 'customer_code',
         key: 'customer_code',
+        onCell: () => ({
+          style: {
+            width: 200,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'wrap',
+          },
+        }),
+        render: (value, record) => {
+          return (
+            <Button
+              type="link"
+              className="underline"
+              title={value}
+              onClick={() => {
+                go({
+                  to: `/agreed-prices/customer/${record.customer_id}`,
+                })
+              }}
+            >
+              {value}
+            </Button>
+          )
+        },
       },
       {
         title: t('agreed_prices.customer_tab.table.business_partner_name'),
@@ -71,7 +95,7 @@ const AgreedPriceByCustomerTab = () => {
         key: 'department_name',
       },
       {
-        title: t('agreed_prices.customer_tab.table.unit_price_rank'),
+        title: t('agreed_prices.customer_tab.table.unit_price_rank_code'),
         dataIndex: 'rank_code',
         key: 'rank_code',
       },
@@ -118,7 +142,7 @@ const AgreedPriceByCustomerTab = () => {
       return [
         {
           field: 'customer_name',
-          operator: 'contains',
+          operator: 'eq',
           value: v.business_partner_code_name,
         },
         {
@@ -135,13 +159,8 @@ const AgreedPriceByCustomerTab = () => {
     },
   })
 
-  const handleCustomerClear = () => {
-    form.resetFields()
-    setFilters([], 'replace')
-  }
-
   return (
-    <List title="" canCreate={false}>
+    <List title="" canCreate={false} breadcrumb={false}>
       <Form colon={false} form={form} layout="vertical" {...searchFormProps}>
         <Row gutter={[16, 16]}>
           <Col xs={24} md={4}>
@@ -171,6 +190,7 @@ const AgreedPriceByCustomerTab = () => {
             >
               <Select
                 {...departmentSelectProps}
+                allowClear
                 placeholder={t('agreed_prices.search.please_select')}
               />
             </Form.Item>
@@ -186,6 +206,7 @@ const AgreedPriceByCustomerTab = () => {
             >
               <Select
                 {...rankSelectProps}
+                allowClear
                 placeholder={t('agreed_prices.search.please_select')}
               />
             </Form.Item>
@@ -193,10 +214,20 @@ const AgreedPriceByCustomerTab = () => {
           <Col xs={24} md={4}>
             <Form.Item label={<></>}>
               <Space>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  autoInsertSpace={false}
+                >
                   {t('agreed_prices.action.search')}
                 </Button>
-                <Button onClick={handleCustomerClear}>
+                <Button
+                  htmlType="reset"
+                  type="default"
+                  onClick={() => {
+                    setFilters([], 'replace')
+                  }}
+                >
                   {t('agreed_prices.action.clear')}
                 </Button>
               </Space>

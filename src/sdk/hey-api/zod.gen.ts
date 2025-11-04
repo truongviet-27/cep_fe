@@ -1351,7 +1351,7 @@ export const zStoreProductInput = z.object({
   unit_id: z.int(),
   cost_price: z.int(),
   selling_price: z.int(),
-  tax_rate: z.optional(z.int()),
+  tax_rate: z.optional(z.int()).default(0),
   note: z.optional(z.union([z.string(), z.null()])),
   packagings: z.optional(z.union([z.array(zProductPackagingInput), z.null()])),
 })
@@ -1495,6 +1495,7 @@ export const zQuotaAgreedPriceCustomerProduct = z.object({
   unit_name: z.optional(z.string()),
   selling_price: z.optional(z.number()),
   quantity: z.optional(z.int()),
+  tax_rate: z.optional(z.number()),
   start_date: z.optional(z.iso.datetime()),
   end_date: z.optional(z.iso.datetime()),
 })

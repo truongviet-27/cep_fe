@@ -29,6 +29,7 @@ function CoreInput({
   disabled = false,
   defaultValue,
   value,
+  initialValue,
   ...field
 }: {
   name?: string | (string | number)[]
@@ -55,6 +56,7 @@ function CoreInput({
   disabled?: boolean
   defaultValue?: any
   value?: any
+  initialValue?: any
 }) {
   const Component = type === 'number' ? InputNumber : Input
 
@@ -72,6 +74,7 @@ function CoreInput({
       style={styleForm}
       hidden={hidden}
       className={className}
+      initialValue={initialValue}
     >
       <Component
         className={classNameInput}

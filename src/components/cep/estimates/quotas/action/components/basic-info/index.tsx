@@ -15,7 +15,6 @@ import {
   DatePicker,
   Form,
   Input,
-  InputNumber,
   Modal,
   Radio,
   Row,
@@ -65,7 +64,11 @@ const BasicInfo = () => {
 
   useEffect(() => {
     if (query.data?.data) {
-      setOptions((prev) => [...prev, ...query.data.data])
+      // Only include items that are not deleted
+      const filtered = query.data.data.filter(
+        (it: any) => it.deleted_at == null,
+      )
+      setOptions((prev) => [...prev, ...filtered])
     }
   }, [query.data?.data])
 
@@ -127,331 +130,6 @@ const BasicInfo = () => {
         header: { padding: 0, minHeight: 0 },
       }}
     >
-      {/* <Form.Item
-        label={boldText(t('quotas.action.basic_info.fields.estimate_number'))}
-        required
-        style={{ marginTop: 20 }}
-      >
-        <Row>
-          <Col>
-            <Form.Item name={'tax_rounding_method'} hidden />
-          </Col>
-        </Row>
-        <Row align="middle" gutter={[8, 0]}>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item
-              rules={[
-                {
-                  required: true,
-                  message: t('validation.required'),
-                },
-                {
-                  whitespace: true,
-                  message: t(
-                    t('validation.invalid_format'),
-                  ),
-                },
-                {
-                  pattern: /^[A-Z0-9-]+$/,
-                  message: t(
-                    t('validation.invalid_format'),
-                  ),
-                },
-                {
-                  max: 255,
-                  message: t(
-                    t('validation.invalid_format'),
-                  ),
-                },
-              ]}
-              name={'code'}
-              required
-            >
-              <Input disabled={isCloneVersion} />
-            </Form.Item>
-          </Col>
-          <Col>
-            <Form.Item>
-              <Button
-                onClick={handleAutoNumber}
-                loading={loadingQuota}
-                color="primary"
-                variant="outlined"
-                disabled={
-                  isCloneVersion ||
-                  codeIssueSetting?.data.issue_method === IssueMethod.Manual
-                }
-              >
-                {t('departments.create.auto_number')}
-              </Button>
-            </Form.Item>
-          </Col>
-          <Col>
-            <Form.Item>
-              <Button
-                color="primary"
-                variant="link"
-                size="small"
-                onClick={() => {
-                  show(codeIssueSetting?.data.id)
-                }}
-                disabled={isCloneVersion}
-              >
-                {t('departments.create.popup_number_setting')}
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item required label={boldText(t('quotas.action.fields.type'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'type'}>
-              <Radio.Group
-                defaultValue={'normal'}
-                options={[
-                  {
-                    value: 'normal',
-                    label: t('quotas.action.type.normal'),
-                  },
-                  {
-                    value: 'channel_limited',
-                    label: t('quotas.action.type.limited'),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item required label={boldText(t('quotas.action.fields.title'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item
-              name={'title'}
-              rules={[
-                {
-                  required: true,
-                  message: t('validation.required'),
-                },
-                {
-                  whitespace: true,
-                  message: t(
-                    t('validation.invalid_format'),
-                  ),
-                },
-                {
-                  max: 255,
-                  message: t(
-                    t('validation.invalid_format'),
-                  ),
-                },
-              ]}
-            >
-              <Input disabled={isCloneVersion} />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item label={boldText(t('quotas.action.fields.customer'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'customer'}>
-              <Select
-                {...selectPropsCt}
-                allowClear
-                showSearch
-                disabled={isCloneVersion}
-                labelInValue
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item label={boldText(t('quotas.action.fields.created_at'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'created_at'}>
-              <DatePicker style={{ width: '100%' }} placeholder={FORMAT_DATE} />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item label={boldText(t('quotas.action.fields.delivery_date'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'delivery_date'}>
-              <DatePicker
-                style={{ width: '100%' }}
-                placeholder={FORMAT_DATE}
-                minDate={Form.useWatch('created_at', form)}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item label={boldText(t('quotas.action.fields.delivery_method'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'delivery_method'}>
-              <Input />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item label={boldText(t('quotas.action.fields.payment_due_date'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'payment_due_date'}>
-              <Select
-                allowClear
-                options={[
-                  {
-                    value: 'monthly_25',
-                    label: t(
-                      'tenant_settings.paymentDueDate.options.monthly_25th',
-                    ),
-                  },
-                  {
-                    value: 'monthly_10',
-                    label: t(
-                      'tenant_settings.paymentDueDate.options.monthly_10th',
-                    ),
-                  },
-                  {
-                    value: 'net_30_from_delivery',
-                    label: t(
-                      'tenant_settings.paymentDueDate.options.30_days_after_delivery',
-                    ),
-                  },
-                  {
-                    value: 'net_30_from_invoice',
-                    label: t(
-                      'tenant_settings.paymentDueDate.options.30_days_after_invoice',
-                    ),
-                  },
-                  {
-                    value: 'end_of_month_next',
-                    label: t(
-                      'tenant_settings.paymentDueDate.options.eom_next_eom',
-                    ),
-                  },
-                  {
-                    value: 'end_of_month_after_next',
-                    label: t(
-                      'tenant_settings.paymentDueDate.options.eom_next_next_eom',
-                    ),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item label={boldText(t('quotas.action.basic_info.fields.expiration_date'))}>
-        <Row gutter={[8, 0]}>
-          <Col xs={24} sm={16} md={10} lg={8} xl={8}>
-            <Form.Item name={'expiration_date'}>
-              <Select
-                allowClear
-                options={[
-                  {
-                    value: 'days_7',
-                    label: t('tenant_settings.validityPeriod.options.days_7'),
-                  },
-                  {
-                    value: 'days_14',
-                    label: t('tenant_settings.validityPeriod.options.days_14'),
-                  },
-                  {
-                    value: 'days_30',
-                    label: t('tenant_settings.validityPeriod.options.days_30'),
-                  },
-                  {
-                    value: 'days_45',
-                    label: t('tenant_settings.validityPeriod.options.days_45'),
-                  },
-                  {
-                    value: 'days_60',
-                    label: t('tenant_settings.validityPeriod.options.days_60'),
-                  },
-                  {
-                    value: 'months_3',
-                    label: t('tenant_settings.validityPeriod.options.months_3'),
-                  },
-                  {
-                    value: 'months_6',
-                    label: t('tenant_settings.validityPeriod.options.months_6'),
-                  },
-                  {
-                    value: 'years_1',
-                    label: t('tenant_settings.validityPeriod.options.year_1'),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col xl={8}>
-            <Form.Item>
-              {dayjs(
-                getExpiryDate(
-                  Form.useWatch('expiration_date', form),
-                  Form.useWatch('created_at', form),
-                ),
-              ).format('YYYY/MM/DD')}
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item label={boldText(t('quotas.action.basic_info.fields.consumption_tax'))}>
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={8} xl={4}>
-            <Form.Item name="consumption_tax">
-              <Radio.Group
-                defaultValue={'exclusive'}
-                options={[
-                  {
-                    value: 'exclusive',
-                    label: t('tenant_settings.consumptionTax.taxExclusive'),
-                  },
-                  {
-                    value: 'inclusive',
-                    label: t('tenant_settings.consumptionTax.taxInclusive'),
-                  },
-                  {
-                    value: 'external',
-                    label: t('tenant_settings.consumptionTax.taxExempt'),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} md={4}>
-            <Form.Item
-              label={t('tenant_settings.consumptionTax.taxRateLabel')}
-              name="tax_rate"
-            >
-              <InputNumber
-                controls={false}
-                min={0}
-                max={100}
-                addonAfter="%"
-                style={{ minWidth: '75%' }}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item> */}
-
       <div className="mt-4">
         <Row>
           <Col>
@@ -466,15 +144,15 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('validations.required'),
+                    message: t('quotas.validation.basic_info.required.code'),
                   },
                   {
                     whitespace: true,
-                    message: t('validations.invalid_format'),
+                    message: t('quotas.validation.basic_info.invalid_format'),
                   },
                   {
                     pattern: /^[A-Z0-9-]+$/,
-                    message: t('validations.invalid_format'),
+                    message: t('quotas.validation.basic_info.invalid_format'),
                   },
                   {
                     max: 255,
@@ -587,15 +265,15 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validations.required'),
+                  message: t('quotas.validation.basic_info.required.title'),
                 },
                 {
                   whitespace: true,
-                  message: t('validations.invalid_format'),
+                  message: t('quotas.validation.basic_info.invalid_format'),
                 },
                 {
                   max: 255,
-                  message: t('validations.invalid_format'),
+                  message: t('quotas.validation.basic_info.max255'),
                 },
               ]}
             >
@@ -651,7 +329,9 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validations.required'),
+                  message: t(
+                    'quotas.validation.basic_info.required.estimate_date',
+                  ),
                 },
               ]}
             >
@@ -827,41 +507,16 @@ const BasicInfo = () => {
                       value: 'exclusive',
                       label: t('tenant_settings.consumptionTax.taxExclusive'),
                     },
-                    {
-                      value: 'inclusive',
-                      label: t('tenant_settings.consumptionTax.taxInclusive'),
-                    },
+                    // {
+                    //   value: 'inclusive',
+                    //   label: t('tenant_settings.consumptionTax.taxInclusive'),
+                    // },
                     {
                       value: 'external',
                       label: t('tenant_settings.consumptionTax.taxExempt'),
                     },
                   ]}
                 />
-              </Form.Item>
-
-              <Form.Item
-                label={boldText(
-                  t('tenant_settings.consumptionTax.taxRateLabel'),
-                )}
-                name="tax_rate"
-                style={{
-                  marginBottom: 0,
-                }}
-              >
-                <InputNumber
-                  controls={false}
-                  min={0}
-                  defaultValue={0}
-                  max={100}
-                  addonAfter="%"
-                  style={{ width: 100 }}
-                />
-              </Form.Item>
-              <Form.Item style={{ marginBottom: 0 }}>
-                <span className="ml-1 text-[#FA8C16]">
-                  {t('quotas.action.basic_info.labels.default_tax_rate')}
-                  {Form.useWatch('tax_rate') ?? 0}%
-                </span>
               </Form.Item>
             </div>
           </Col>

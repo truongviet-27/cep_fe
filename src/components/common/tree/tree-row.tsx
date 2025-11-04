@@ -113,7 +113,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             <Button
               type="default"
               size="middle"
-              loading={Boolean(saving)}
+              loading={saving}
               onClick={() => onSave(cat.id)}
               icon={<SaveOutlined />}
               disabled={!localName}
@@ -138,14 +138,8 @@ const TreeRow: React.FC<TreeRowProps> = ({
           icon={<PlusOutlined />}
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
           type={'default'}
-        />
-        {/* <CommonButton
-          hideText
-          type="add"
           disabled={isNew}
-          onClick={() => onAddChild(cat.id)}
-          style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
-        /> */}
+        />
 
         {!cat?._isNew ? (
           <DeleteButton

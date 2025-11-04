@@ -68,7 +68,12 @@ export default function Page() {
           <Col xs={24} sm={12} md={20}>
             <Space className="mt-4 w-full justify-between">
               <Space>
-                <Button htmlType="submit" type="primary" size="middle">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  size="middle"
+                  autoInsertSpace={false}
+                >
                   検索
                 </Button>
                 <Button

@@ -16,6 +16,8 @@ function ProductContainer() {
     { t, setFilters },
   ] = useProduct()
 
+  console.log(tableProps.dataSource)
+
   return (
     <PageContainer
       breadcrumbs={
@@ -70,7 +72,11 @@ function ProductContainer() {
 
           <div className="mx-3 mt-[29px] mb-2 flex flex-1 flex-wrap justify-between gap-4">
             <div className="mr-auto flex flex-1 gap-4">
-              <Button type="primary" onClick={searchFormProps.form?.submit}>
+              <Button
+                type="primary"
+                onClick={searchFormProps.form?.submit}
+                autoInsertSpace={false}
+              >
                 {t('buttons.search')}
               </Button>
               <Button

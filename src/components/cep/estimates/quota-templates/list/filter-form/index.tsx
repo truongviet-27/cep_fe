@@ -41,7 +41,7 @@ const QuotaTemplateFilterForm: FC<Props> = ({
             placeholder={t('quota_templates.list.placeholderPartialMatch')}
           />
         </Col>
-        <Col sm={12} md={6} lg={4}>
+        <Col sm={12} md={6} lg={6}>
           <Flex>
             <Form.Item
               label={
@@ -52,6 +52,7 @@ const QuotaTemplateFilterForm: FC<Props> = ({
               colon={false}
               name="start_to_end_date"
               layout="vertical"
+              className="w-full"
             >
               <DatePicker.RangePicker
                 placeholder={['YYYY/MM/DD', 'YYYY/MM/DD']}
@@ -62,7 +63,7 @@ const QuotaTemplateFilterForm: FC<Props> = ({
         </Col>
         <Col sm={12} md={6} lg={4}>
           <Space size="small" className="!mt-[30px]">
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" autoInsertSpace={false}>
               {t('quota_templates.button.search')}
             </Button>
             <Button
