@@ -67,9 +67,12 @@ export const useController = () => {
   const calculateSummary = () => {
     let costTotal = 0
     let sellTotal = 0
-    let taxTotal = 0
 
-    // Calculate per-product totals and per-product tax using each product's tax_rate
+    // Group products by tax rate for separate calculation
+    const taxGroups: { [key: string]: { selling: number; taxRate: number } } =
+      {}
+
+    // Calculate per-product totals and group by tax_rate
     ;(mainProducts ?? []).forEach((group: QuotaTemplateProductGroupRequest) => {
       ;(group.products ?? []).forEach(
         (product: QuotaTemplateProductItemRequest) => {
@@ -84,32 +87,44 @@ export const useController = () => {
 
           // Use product's individual tax rate, fallback to global tax_rate if not set
           const productTaxRate = product.tax_rate ?? taxRateWatch ?? 0
+          const taxRateKey = productTaxRate.toString()
 
-          // Calculate tax for this specific product
-          // For inclusive tax, extract tax portion from selling price
-          const rawTax = selling - selling / (1 + productTaxRate / 100)
-
-          taxTotal += rawTax
+          // Group products by tax rate
+          if (!taxGroups[taxRateKey]) {
+            taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
+          }
+          taxGroups[taxRateKey].selling += selling
         },
       )
     })
 
-    let sellTotalWithTax = 0
-    if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-      taxTotal = Math.floor(taxTotal)
-    } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-      taxTotal = Math.ceil(taxTotal)
-    } else {
-      taxTotal = Number(taxTotal.toFixed(0))
-    }
+    // Calculate tax for each tax rate group with rounding
+    let taxTotal = 0
+    Object.values(taxGroups).forEach((group) => {
+      const rawTax = group.selling * (group.taxRate / 100)
+      let roundedTax = 0
 
-    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
-      // For inclusive tax, selling total already includes tax
+      // Apply rounding method per tax group
+      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        roundedTax = Math.floor(rawTax)
+      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        roundedTax = Math.ceil(rawTax)
+      } else {
+        roundedTax = Number(rawTax.toFixed(0))
+      }
+
+      taxTotal += roundedTax
+    })
+
+    let sellTotalWithTax = 0
+    if (consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL) {
+      // For external tax, selling total already includes tax
       sellTotalWithTax = sellTotal
     } else {
-      // For exclusive tax, add tax to selling total
+      // For internal tax, add tax to selling total
       sellTotalWithTax = sellTotal + taxTotal
     }
+
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 

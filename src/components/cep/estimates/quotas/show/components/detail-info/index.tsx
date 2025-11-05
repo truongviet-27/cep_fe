@@ -182,7 +182,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
 
     return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
       taxRate: parseFloat(taxRate),
-      total: (total as number).toFixed(2),
+      total: (total as number).toFixed(0),
     }))
   }
 
@@ -322,10 +322,11 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                           fontWeight: 700,
                         }}
                       >
-                        {t('quotas.action.detail_info.summary.tax_amount')}
+                        {t('quotas.action.detail_info.summary.tax_amount')}（
+                        {item?.taxRate}%）
                       </Text>
                       <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                        ¥{basicInfo?.consumption_tax_amount}
+                        ¥{item?.total}
                       </Text>
                     </div>
                   </Col>
