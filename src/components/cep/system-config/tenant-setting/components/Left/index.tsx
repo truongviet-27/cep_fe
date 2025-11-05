@@ -39,20 +39,13 @@ function Left() {
           </div>
           <div className="flex flex-1 content-center items-center">
             <div className="solid h-full w-3/4 content-center border-r-[1px] border-[#D0D0D0] px-4"></div>
-
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              name={'is_enable_delivery'}
-              valuePropName="checked"
-            >
-              <Checkbox checked={getFieldValue('is_enable_delivery')}>
-                {t('tenant_settings.hide')}
-              </Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item name={'is_enable_delivery'} valuePropName="checked">
+                <Checkbox checked={getFieldValue('is_enable_delivery')}>
+                  {t('tenant_settings.hide')}
+                </Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
@@ -75,19 +68,16 @@ function Left() {
               </Form.Item>
             </div>
 
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              valuePropName="checked"
-              name={'is_enable_delivery_method'}
-            >
-              <Checkbox checked={getFieldValue('is_enable_delivery_method')}>
-                {t('tenant_settings.hide')}
-              </Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item
+                valuePropName="checked"
+                name={'is_enable_delivery_method'}
+              >
+                <Checkbox checked={getFieldValue('is_enable_delivery_method')}>
+                  {t('tenant_settings.hide')}
+                </Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
@@ -147,20 +137,16 @@ function Left() {
                 />
               </Form.Item>
             </div>
-
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              valuePropName="checked"
-              name={'is_enable_payment_due_date'}
-            >
-              <Checkbox checked={getFieldValue('is_enable_payment_due_date')}>
-                {t('tenant_settings.hide')}
-              </Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item
+                valuePropName="checked"
+                name={'is_enable_payment_due_date'}
+              >
+                <Checkbox checked={getFieldValue('is_enable_payment_due_date')}>
+                  {t('tenant_settings.hide')}
+                </Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
@@ -229,19 +215,16 @@ function Left() {
               </Form.Item>
             </div>
 
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              valuePropName="checked"
-              name={'is_enable_expiration_date'}
-            >
-              <Checkbox checked={getFieldValue('is_enable_expiration_date')}>
-                {t('tenant_settings.hide')}
-              </Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item
+                valuePropName="checked"
+                name={'is_enable_expiration_date'}
+              >
+                <Checkbox checked={getFieldValue('is_enable_expiration_date')}>
+                  {t('tenant_settings.hide')}
+                </Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
