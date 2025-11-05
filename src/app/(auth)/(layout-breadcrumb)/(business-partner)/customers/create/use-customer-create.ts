@@ -4,6 +4,7 @@ import {
   useApiUrl,
   useCustom,
   useCustomMutation,
+  useGo,
   useModal,
   useTranslate,
 } from '@refinedev/core'
@@ -16,6 +17,7 @@ import { message } from 'antd'
 export const useCustomerCreate = () => {
   const t = useTranslate()
   const apiUrl = useApiUrl()
+  const go = useGo()
   const [deletedReceiverIds, setDeletedReceiverIds] = useState<number[]>([])
 
   const {
@@ -33,49 +35,9 @@ export const useCustomerCreate = () => {
 
   const handleFinish = async (values: any) => {
     try {
-      // Validate form fields first
       await form.validateFields()
 
-      // Extract receivers and validate
       const receivers = values?.receivers || []
-
-      // Validate that at least 1 receiver exists
-      if (receivers.length < 1) {
-        message.error(t('customers.receivers.min_one_required'))
-        return
-      }
-
-      // Validate each receiver
-      for (let i = 0; i < receivers.length; i++) {
-        const receiver = receivers[i]
-
-        // Check contact_person_name
-        if (
-          !receiver.contact_person_name ||
-          !receiver.contact_person_name.trim()
-        ) {
-          message.error(
-            `${t('customers.receivers.contact_person_name')}: ${t('validation.required')}`,
-          )
-          return
-        }
-
-        // Check email format
-        if (!receiver.email || !receiver.email.trim()) {
-          message.error(
-            `${t('customers.receivers.email')}: ${t('validation.required')}`,
-          )
-          return
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(receiver.email)) {
-          message.error(
-            `${t('customers.receivers.email')}: ${t('validation.email_format')}`,
-          )
-          return
-        }
-      }
 
       let company_type = values?.company_type
       let industry = values?.industry
@@ -97,10 +59,6 @@ export const useCustomerCreate = () => {
       })
       const customerId = customerResponse?.data?.id
 
-      if (!customerId) {
-        throw new Error('Failed to create customer')
-      }
-
       // Step 2: Create customer contacts
       const contacts = receivers.map((receiver: any) => ({
         customer_id: customerId,
@@ -116,7 +74,10 @@ export const useCustomerCreate = () => {
       })
 
       message.success(t('notifications.createSuccess'))
-      window.location.href = `/customers/show/${customerId}`
+      go({
+        to: `/customers/show/${customerId}`,
+        type: 'push',
+      })
     } catch (error: any) {
       console.error('Error creating customer:', error)
       const errorMessage =

@@ -6,6 +6,7 @@ import {
   useApiUrl,
   useCustom,
   useCustomMutation,
+  useGo,
   useModal,
   useTranslate,
 } from '@refinedev/core'
@@ -19,6 +20,7 @@ import { useParams } from 'next/navigation'
 export const useCustomerEdit = () => {
   const t = useTranslate()
   const apiUrl = useApiUrl()
+  const go = useGo()
   const params = useParams()
   const customerId = params?.id as string
   const [deletedReceiverIds, setDeletedReceiverIds] = useState<number[]>([])
@@ -50,49 +52,10 @@ export const useCustomerEdit = () => {
 
   const handleFinish = async (values: any) => {
     try {
-      // Validate form fields first
+      // Validate form fields (all validation rules in Form will be checked)
       await form.validateFields()
 
-      // Extract receivers and validate
       const receivers = values?.receivers || []
-
-      // Validate that at least 1 receiver exists
-      if (receivers.length < 1) {
-        message.error(t('customers.receivers.min_one_required'))
-        return
-      }
-
-      // Validate each receiver
-      for (let i = 0; i < receivers.length; i++) {
-        const receiver = receivers[i]
-
-        // Check contact_person_name
-        if (
-          !receiver.contact_person_name ||
-          !receiver.contact_person_name.trim()
-        ) {
-          message.error(
-            `${t('customers.receivers.contact_person_name')}: ${t('validation.required')}`,
-          )
-          return
-        }
-
-        // Check email format
-        if (!receiver.email || !receiver.email.trim()) {
-          message.error(
-            `${t('customers.receivers.email')}: ${t('validation.required')}`,
-          )
-          return
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(receiver.email)) {
-          message.error(
-            `${t('customers.receivers.email')}: ${t('validation.email_format')}`,
-          )
-          return
-        }
-      }
 
       let company_type = values?.company_type
       let industry = values?.industry
@@ -138,7 +101,10 @@ export const useCustomerEdit = () => {
       })
 
       message.success(t('notifications.updateSuccess'))
-      window.location.href = `/customers/show/${customerId}`
+      go({
+        to: `/customers/show/${customerId}`,
+        type: 'push',
+      })
     } catch (error: any) {
       console.error('Error updating customer:', error)
       const errorMessage =
