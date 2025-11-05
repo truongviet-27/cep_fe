@@ -274,7 +274,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               },
             ]}
             style={{
-              width: '13%',
+              width: '14%',
               padding: '5px 10px',
             }}
           />
