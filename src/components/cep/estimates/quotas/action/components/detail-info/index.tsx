@@ -88,11 +88,11 @@ function DetailInfo() {
       taxTotal = Number(taxTotal.toFixed(0))
     }
 
-    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
-      // For inclusive tax, selling total already includes tax
+    if (consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL) {
+      // For external tax, selling total already includes tax
       sellTotalWithTax = sellTotal
     } else {
-      // For exclusive tax, add tax to selling total
+      // For internal tax, add tax to selling total
       sellTotalWithTax = sellTotal + taxTotal
     }
     const profitRate = Number(
@@ -1024,11 +1024,14 @@ function DetailInfo() {
                       fontWeight: 700,
                     }}
                   >
-                    {t('quotas.action.detail_info.summary.tax_amount')}
+                    {t('quotas.action.detail_info.summary.total_profit_margin')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{costTotal || 0}
+                    {profitRate}%
                   </Text>
+                  <Form.Item name="total_profit_margin" hidden>
+                    <InputNumber />
+                  </Form.Item>
                 </div>
               </Col>
             </Row>
@@ -1052,7 +1055,7 @@ function DetailInfo() {
                         fontWeight: 700,
                       }}
                     >
-                      {`${t('quotas.action.detail_info.summary.total_profit_margin')} (${item.taxRate}%)`}
+                      {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                       ¥{item.total}
@@ -1077,11 +1080,17 @@ function DetailInfo() {
                     }}
                   >
                     {t('quotas.action.detail_info.summary.total_amount')}（
-                    {t('quotas.action.detail_info.summary.tax_inclusive')}）
+                    {consumptionTaxWatch === 'external'
+                      ? t('quotas.action.detail_info.summary.tax_exclusive')
+                      : t('quotas.action.detail_info.summary.tax_inclusive')}
+                    ）
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                     ¥{sellTotalWithTax || 0}
                   </Text>
+                  <Form.Item name="total_price_tax_included" hidden>
+                    <InputNumber />
+                  </Form.Item>
                 </div>
               </Col>
             </Row>
