@@ -14,6 +14,7 @@ import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import React, { useMemo } from 'react'
 
 const { Text } = Typography
@@ -77,7 +78,11 @@ export default function EmployeeEdit() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('departments.departments')),
+      title: (
+        <Link href="/departments">
+          {boldText(t('departments.departments'))}
+        </Link>
+      ),
     },
     {
       title: boldText(t('departments.edit.edit'), PRIMARY),

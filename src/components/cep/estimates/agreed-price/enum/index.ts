@@ -1,5 +1,5 @@
 export enum AgreedPriceStatus {
   Active = 'active',
   Expired = 'expired',
-  NearingExpiration = 'nearing_expiration',
+  NearingExpiration = 'about_to_expire',
 }
