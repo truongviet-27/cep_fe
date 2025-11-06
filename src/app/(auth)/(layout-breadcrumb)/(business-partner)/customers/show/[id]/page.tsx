@@ -31,6 +31,7 @@ import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Collapse, Space, Typography } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import React from 'react'
 
 const { Title } = Typography
@@ -260,12 +261,15 @@ export default function CustomerShowPage() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('business_partner.business_partner')),
+      title: (
+        <Link href="/customers">
+          {boldText(t('business_partner.business_partner'))}
+        </Link>
+      ),
     },
     { title: boldText(t('customers.show.show'), PRIMARY) },
   ]
 
-  console.log(record)
   return (
     <Show
       isLoading={isLoading}
@@ -337,7 +341,7 @@ export default function CustomerShowPage() {
               </DetailItem>
               {parameterSettings?.get?.(ParameterResourceEnum.RANKS) && (
                 <DetailItem label={t('customers.fields.unit_price_rank_code')}>
-                  {record?.rank?.name}
+                  {record?.rank?.code}
                 </DetailItem>
               )}
               <DetailItem label={t('customers.fields.credit_rank')}>

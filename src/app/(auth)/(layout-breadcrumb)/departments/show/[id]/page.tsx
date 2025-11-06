@@ -54,7 +54,11 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('departments.departments')),
+      title: (
+        <Link href="/departments">
+          {boldText(t('departments.departments'))}
+        </Link>
+      ),
     },
     {
       title: boldText(t('departments.show.show'), PRIMARY),

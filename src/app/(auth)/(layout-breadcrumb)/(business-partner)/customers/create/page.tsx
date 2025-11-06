@@ -13,6 +13,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space } from 'antd'
+import Link from 'next/link'
 import React from 'react'
 
 import { useCustomerCreate } from './use-customer-create'
@@ -37,7 +38,11 @@ export default function CustomerCreatePage() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('business_partner.business_partner')),
+      title: (
+        <Link href="/customers">
+          {boldText(t('business_partner.business_partner'))}
+        </Link>
+      ),
     },
     { title: boldText(t('customers.create.create'), PRIMARY) },
   ]

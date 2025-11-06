@@ -30,6 +30,7 @@ import { isArray } from 'lodash'
 import { useSession } from 'next-auth/react'
 import React, { useMemo } from 'react'
 import { SelectPagination } from '@components/common/select-pagination'
+import Link from 'next/link'
 
 const { Text, Title } = Typography
 
@@ -91,7 +92,9 @@ export default function EmployeeEdit() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('employees.employees')),
+      title: (
+        <Link href="/employees">{boldText(t('employees.employees'))}</Link>
+      ),
     },
     { title: boldText('社員編集', PRIMARY) },
   ]

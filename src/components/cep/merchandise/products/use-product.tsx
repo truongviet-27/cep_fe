@@ -47,7 +47,13 @@ function useProduct() {
         key: 'code',
         width: 200,
         render: (_: unknown, record: ProductListItem) => (
-          <Link href={`/products/show/${record.id}`} className="!underline">
+          <Link
+            href={`/products/show/${record.id}`}
+            onClick={() => {
+              sessionStorage.setItem('list_products', 'products')
+            }}
+            className="!underline"
+          >
             {record.code}
           </Link>
         ),

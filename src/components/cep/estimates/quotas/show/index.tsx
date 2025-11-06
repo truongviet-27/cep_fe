@@ -36,6 +36,7 @@ import {
   Spin,
 } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
 function QuotaDetail() {
@@ -159,7 +160,9 @@ function QuotaDetail() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('estimates.estimates')),
+              title: (
+                <Link href="/quotas">{boldText(t('estimates.estimates'))}</Link>
+              ),
             },
             {
               title: boldText(t('quotas.detail'), PRIMARY),
