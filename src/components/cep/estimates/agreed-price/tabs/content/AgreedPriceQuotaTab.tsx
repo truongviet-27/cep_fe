@@ -616,23 +616,37 @@ const AgreedPriceQuotaTab = () => {
             </span>
           </Form.Item>
 
-          <Form.Item
-            label="適用開始日"
-            name="start_date"
-            style={{ marginBottom: 16 }}
-          >
+          <Form.Item label="適用開始日" style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <DatePicker
-                style={{ width: '65%' }}
-                placeholder="YYYY/MM/DD"
-                format="YYYY/MM/DD"
-                value={
-                  selected?.valid_to
-                    ? dayjs(selected.valid_to).add(1, 'day')
-                    : dayjs().add(1, 'day')
-                }
-              />
-              <span style={{ color: '#fa8c16', fontSize: '12px' }}>
+              <Form.Item
+                name="start_date"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      t(
+                        'validation.agreed_prices.modal.applicable_start.required',
+                      ) || '必須',
+                  },
+                ]}
+                noStyle
+              >
+                <DatePicker
+                  // GIỮ LẠI WIDTH GỐC CỦA BẠN (hoặc chỉnh % tùy ý)
+                  style={{ width: '65%' }}
+                  placeholder="YYYY/MM/DD"
+                  format="YYYY/MM/DD"
+                  // (Vẫn dùng useEffect + setFieldsValue để set giá trị mặc định nhé)
+                />
+              </Form.Item>
+
+              <span
+                style={{
+                  color: '#fa8c16',
+                  fontSize: '12px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 自動で終了日の翌日
               </span>
             </div>
@@ -644,7 +658,9 @@ const AgreedPriceQuotaTab = () => {
             rules={[
               {
                 required: true,
-                message: t('validation.required') || '必須',
+                message:
+                  t('validation.agreed_prices.modal.applicable_end.required') ||
+                  '必須',
               },
             ]}
             style={{ marginBottom: 16 }}
@@ -653,6 +669,7 @@ const AgreedPriceQuotaTab = () => {
               style={{ width: '65%' }}
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
+              defaultPickerValue={Form.useWatch('start_date', updateForm)}
             />
           </Form.Item>
 

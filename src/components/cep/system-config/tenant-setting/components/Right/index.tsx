@@ -69,17 +69,14 @@ function Right() {
               </Form.Item>
             </div>
 
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              valuePropName="checked"
-              name={'is_display_company_logo_image'}
-            >
-              <Checkbox>{t('tenant_settings.hide')}</Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item
+                valuePropName="checked"
+                name={'is_display_company_logo_image'}
+              >
+                <Checkbox>{t('tenant_settings.hide')}</Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
@@ -128,18 +125,14 @@ function Right() {
                 />
               </Form.Item>
             </div>
-
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              valuePropName="checked"
-              name={'is_display_company_seal_image'}
-            >
-              <Checkbox>{t('tenant_settings.hide')}</Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item
+                valuePropName="checked"
+                name={'is_display_company_seal_image'}
+              >
+                <Checkbox>{t('tenant_settings.hide')}</Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 

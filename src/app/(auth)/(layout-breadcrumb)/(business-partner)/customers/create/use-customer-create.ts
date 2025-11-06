@@ -1,11 +1,25 @@
 /* eslint-disable */
 import { useForm, useModalForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useGo,
+  useModal,
+  useTranslate,
+} from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
+import { useState } from 'react'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
+import { message } from 'antd'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
+  const apiUrl = useApiUrl()
+  const go = useGo()
+  const [deletedReceiverIds, setDeletedReceiverIds] = useState<number[]>([])
+
   const {
     formProps,
     saveButtonProps,
@@ -14,23 +28,65 @@ export const useCustomerCreate = () => {
     onFinish,
   } = useForm({
     action: 'create',
-    redirect: 'show',
+    redirect: false,
   })
 
+  const { mutateAsync: createContacts } = useCustomMutation()
+
   const handleFinish = async (values: any) => {
-    let company_type = values?.company_type
-    let industry = values?.industry
-    if (values?.company_type == 'other' && values?.temp_company_type) {
-      company_type = values?.temp_company_type
-    }
-    if (!values?.industry && values?.temp_industry) {
-      industry = values?.temp_industry
-    }
+    try {
+      await form.validateFields()
 
-    await onFinish({ ...values, company_type, industry })
+      const receivers = values?.receivers || []
+
+      let company_type = values?.company_type
+      let industry = values?.industry
+      if (values?.company_type == 'other' && values?.temp_company_type) {
+        company_type = values?.temp_company_type
+      }
+      if (!values?.industry && values?.temp_industry) {
+        industry = values?.temp_industry
+      }
+
+      // Remove receivers from customer data
+      const { receivers: _, ...customerData } = values
+
+      // Step 1: Create customer
+      const customerResponse = await onFinish({
+        ...customerData,
+        company_type,
+        industry,
+      })
+      const customerId = customerResponse?.data?.id
+
+      // Step 2: Create customer contacts
+      const contacts = receivers.map((receiver: any) => ({
+        customer_id: customerId,
+        department_name: receiver.department_name,
+        contact_person_name: receiver.contact_person_name,
+        email: receiver.email,
+      }))
+
+      await createContacts({
+        url: `${apiUrl}/customer-contacts`,
+        method: 'patch',
+        values: { contacts },
+      })
+
+      message.success(t('notifications.createSuccess'))
+      go({
+        to: `/customers/show/${customerId}`,
+        type: 'push',
+      })
+    } catch (error: any) {
+      console.error('Error creating customer:', error)
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        t('notifications.createError')
+      message.error(errorMessage)
+    }
   }
-
-  const apiUrl = useApiUrl()
 
   const {
     data: codeGenData,
@@ -64,20 +120,11 @@ export const useCustomerCreate = () => {
 
   const rule = validateCustomerRule(t)
 
-  const handleCopyContact = () => {
-    const mainContact = form.getFieldsValue(['mail', 'phone'])
-    form.setFieldsValue({
-      person_in_charge_mail: mainContact.mail,
-      person_in_charge_phone: mainContact.phone,
-    })
-  }
-
   return {
     t,
     form,
     rule,
     isLoading,
-    handleCopyContact,
     handleAutoNumber,
     modalFormProps,
     isCodeGenLoading,
@@ -88,5 +135,7 @@ export const useCustomerCreate = () => {
     modalFormCorporate,
     handleFinish,
     isAutomatic,
+    deletedReceiverIds,
+    setDeletedReceiverIds,
   }
 }

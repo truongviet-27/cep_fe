@@ -52,9 +52,12 @@ function DetailInfo() {
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
     let sellTotal = 0
-    let taxTotal = 0
 
-    // Calculate per-product totals and per-product tax using each product's tax_rate
+    // Group products by tax rate for separate calculation
+    const taxGroups: { [key: string]: { selling: number; taxRate: number } } =
+      {}
+
+    // Calculate per-product totals and group by tax_rate
     ;(main_product_groups ?? []).forEach((group: any) => {
       ;(group.products ?? []).forEach((product: any) => {
         if (!product.is_add_total) return
@@ -66,35 +69,45 @@ function DetailInfo() {
         costTotal += cost
         sellTotal += selling
 
-        // Use product's individual tax rate, fallback to global tax_rate if not set
-
+        // Use product's individual tax rate, fallback to 0 if not set
         const productTaxRate = product.tax_rate ?? 0
+        const taxRateKey = productTaxRate.toString()
 
-        // Calculate tax for this specific product
-        const productTax = 0
-
-        const rawTax = selling * (productTaxRate / 100)
-
-        taxTotal += rawTax
+        // Group products by tax rate
+        if (!taxGroups[taxRateKey]) {
+          taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
+        }
+        taxGroups[taxRateKey].selling += selling
       })
     })
 
-    let sellTotalWithTax = 0
-    if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-      taxTotal = Math.floor(taxTotal)
-    } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-      taxTotal = Math.ceil(taxTotal)
-    } else {
-      taxTotal = Number(taxTotal.toFixed(0))
-    }
+    // Calculate tax for each tax rate group with rounding
+    let taxTotal = 0
+    Object.values(taxGroups).forEach((group) => {
+      const rawTax = group.selling * (group.taxRate / 100)
+      let roundedTax = 0
 
-    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
+      // Apply rounding method per tax group
+      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        roundedTax = Math.floor(rawTax)
+      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        roundedTax = Math.ceil(rawTax)
+      } else {
+        roundedTax = Number(rawTax.toFixed(0))
+      }
+
+      taxTotal += roundedTax
+    })
+
+    let sellTotalWithTax = 0
+    if (consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL) {
       // For inclusive tax, selling total already includes tax
       sellTotalWithTax = sellTotal
     } else {
-      // For exclusive tax, add tax to selling total
+      // For internal tax, add tax to selling total
       sellTotalWithTax = sellTotal + taxTotal
     }
+
     const profitRate = Number(
       (sellTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0).toFixed(
         2,
@@ -190,17 +203,38 @@ function DetailInfo() {
       const sellingPrice = parseFloat(item.selling_price || 0)
       const quantity = parseFloat(item.quantity || 0)
       const taxRate = parseFloat(item.tax_rate || 0)
-      const calculatedValue = (sellingPrice * quantity * taxRate) / 100
+      const sellingAmount = sellingPrice * quantity
       const key = String(taxRate)
-      acc[key] = (acc[key] || 0) + calculatedValue
+
+      // Group selling amounts by tax rate
+      if (!acc[key]) {
+        acc[key] = { sellingTotal: 0, taxRate }
+      }
+      acc[key].sellingTotal += sellingAmount
 
       return acc
     }, {})
 
-    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
-      taxRate: parseFloat(taxRate),
-      total: (total as number)?.toLocaleString(),
-    }))
+    return Object.entries(totalByTaxRate).map(
+      ([taxRateKey, group]: [string, any]) => {
+        const rawTax = group.sellingTotal * (group.taxRate / 100)
+        let roundedTax = 0
+
+        // Apply rounding method per tax group (same as calculateSummary)
+        if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+          roundedTax = Math.floor(rawTax)
+        } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+          roundedTax = Math.ceil(rawTax)
+        } else {
+          roundedTax = Number(rawTax.toFixed(0))
+        }
+
+        return {
+          taxRate: parseFloat(taxRateKey),
+          total: roundedTax.toString(),
+        }
+      },
+    )
   }
 
   const groupedTotals = useMemo(() => {
@@ -1034,6 +1068,9 @@ function DetailInfo() {
                   >
                     {t('quotas.action.detail_info.summary.cost_total')}
                   </Text>
+                  <Form.Item name="total_cost" hidden>
+                    <InputNumber />
+                  </Form.Item>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                     ¥{costTotal?.toLocaleString() || 0}
                   </Text>
@@ -1055,11 +1092,14 @@ function DetailInfo() {
                       fontWeight: 700,
                     }}
                   >
-                    {t('quotas.action.detail_info.summary.tax_amount')}
+                    {t('quotas.action.detail_info.summary.total_profit_margin')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{costTotal?.toLocaleString() || 0}
+                    {profitRate}%
                   </Text>
+                  <Form.Item name="total_profit_margin" hidden>
+                    <InputNumber />
+                  </Form.Item>
                 </div>
               </Col>
             </Row>
@@ -1083,7 +1123,7 @@ function DetailInfo() {
                         fontWeight: 700,
                       }}
                     >
-                      {`${t('quotas.action.detail_info.summary.total_profit_margin')} (${item.taxRate}%)`}
+                      {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                       ¥{item.total}
@@ -1108,11 +1148,17 @@ function DetailInfo() {
                     }}
                   >
                     {t('quotas.action.detail_info.summary.total_amount')}（
-                    {t('quotas.action.detail_info.summary.tax_inclusive')}）
+                    {consumptionTaxWatch === 'external'
+                      ? t('quotas.action.detail_info.summary.tax_exclusive')
+                      : t('quotas.action.detail_info.summary.tax_inclusive')}
+                    ）
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                     ¥{sellTotalWithTax?.toLocaleString() || 0}
                   </Text>
+                  <Form.Item name="total_price_tax_included" hidden>
+                    <InputNumber />
+                  </Form.Item>
                 </div>
               </Col>
             </Row>

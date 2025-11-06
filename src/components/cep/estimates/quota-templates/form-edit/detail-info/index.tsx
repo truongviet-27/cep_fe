@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
 import ProductSelect from '@components/common/product-select'
@@ -38,15 +39,18 @@ const DetailInfo: FC = () => {
     form,
     mainProducts,
     totalPriceWatch,
-    taxTotal,
     costTotal,
     sellTotalWithTax,
+    profitRate,
     handleAddProduct,
     handleRemoveProduct,
     onChangeProductName,
   } = useController()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Get taxRoundingMethodWatch from form
+  const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
 
   const t = useTranslate()
 
@@ -79,22 +83,43 @@ const DetailInfo: FC = () => {
       const sellingPrice = parseFloat(item.selling_price || 0)
       const quantity = parseFloat(item.quantity || 0)
       const taxRate = parseFloat(item.tax_rate || 0)
-      const calculatedValue = (sellingPrice * quantity * taxRate) / 100
+      const sellingAmount = sellingPrice * quantity
       const key = String(taxRate)
-      acc[key] = (acc[key] || 0) + calculatedValue
+
+      // Group selling amounts by tax rate
+      if (!acc[key]) {
+        acc[key] = { sellingTotal: 0, taxRate }
+      }
+      acc[key].sellingTotal += sellingAmount
 
       return acc
     }, {})
 
-    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
-      taxRate: parseFloat(taxRate),
-      total: (total as number).toFixed(2),
-    }))
+    return Object.entries(totalByTaxRate).map(
+      ([taxRateKey, group]: [string, any]) => {
+        const rawTax = group.sellingTotal * (group.taxRate / 100)
+        let roundedTax = 0
+
+        // Apply rounding method per tax group (same as calculateSummary)
+        if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+          roundedTax = Math.floor(rawTax)
+        } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+          roundedTax = Math.ceil(rawTax)
+        } else {
+          roundedTax = Number(rawTax.toFixed(0))
+        }
+
+        return {
+          taxRate: parseFloat(taxRateKey),
+          total: roundedTax.toString(),
+        }
+      },
+    )
   }
 
   const groupedTotals = useMemo(() => {
     return calculateGroupedTotal(dataSource)
-  }, [dataSource])
+  }, [dataSource, taxRoundingMethodWatch])
 
   return (
     <>
@@ -650,8 +675,12 @@ const DetailInfo: FC = () => {
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                     ¥{costTotal || 0}
                   </Text>
+                  <Form.Item name="total_price" hidden>
+                    <InputNumber />
+                  </Form.Item>
                 </div>
               </Col>
+
               <Col span={24}>
                 <div
                   style={{
@@ -668,11 +697,14 @@ const DetailInfo: FC = () => {
                       fontWeight: 700,
                     }}
                   >
-                    {t('quotas.action.detail_info.summary.tax_amount')}
+                    {t('quotas.action.detail_info.summary.total_profit_margin')}
                   </Text>
-                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{(taxTotal || 0).toLocaleString()}
+                  <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
+                    {profitRate.toFixed(2) || 0}%
                   </Text>
+                  <Form.Item name="total_profit_margin" hidden>
+                    <InputNumber />
+                  </Form.Item>
                 </div>
               </Col>
             </Row>
@@ -696,7 +728,7 @@ const DetailInfo: FC = () => {
                         fontWeight: 700,
                       }}
                     >
-                      {`${t('quotas.action.detail_info.summary.total_profit_margin')} (${item.taxRate}%)`}
+                      {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                       ¥{item.total}

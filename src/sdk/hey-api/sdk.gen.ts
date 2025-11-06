@@ -72,6 +72,18 @@ import type {
   CustomerControllerRestoreData,
   CustomerControllerRestoreResponses,
   CustomerControllerRestoreErrors,
+  CustomerContactControllerBatchDeleteData,
+  CustomerContactControllerBatchDeleteResponses,
+  CustomerContactControllerBatchDeleteErrors,
+  CustomerContactControllerIndexData,
+  CustomerContactControllerIndexResponses,
+  CustomerContactControllerIndexErrors,
+  CustomerContactControllerBatchUpdateData,
+  CustomerContactControllerBatchUpdateResponses,
+  CustomerContactControllerBatchUpdateErrors,
+  CustomerContactControllerShowData,
+  CustomerContactControllerShowResponses,
+  CustomerContactControllerShowErrors,
   DepartmentControllerIndexData,
   DepartmentControllerIndexResponses,
   DepartmentControllerIndexErrors,
@@ -373,6 +385,10 @@ import {
   zCustomerControllerShowData,
   zCustomerControllerUpdateData,
   zCustomerControllerRestoreData,
+  zCustomerContactControllerBatchDeleteData,
+  zCustomerContactControllerIndexData,
+  zCustomerContactControllerBatchUpdateData,
+  zCustomerContactControllerShowData,
   zDepartmentControllerIndexData,
   zDepartmentControllerStoreData,
   zDepartmentControllerDestroyData,
@@ -1141,6 +1157,102 @@ export const customerControllerRestore = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/api/v1/customers/{id}/restore',
+    ...options,
+  })
+}
+
+/**
+ * Batch delete customer contacts
+ * Delete multiple customer contacts by their IDs
+ */
+export const customerContactControllerBatchDelete = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CustomerContactControllerBatchDeleteData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    CustomerContactControllerBatchDeleteResponses,
+    CustomerContactControllerBatchDeleteErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerContactControllerBatchDeleteData.parseAsync(data)
+    },
+    url: '/api/v1/customer-contacts',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Get list of customer contacts
+ * Retrieve all customer contacts. Can be filtered by customer_id or search query.
+ */
+export const customerContactControllerIndex = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<CustomerContactControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    CustomerContactControllerIndexResponses,
+    CustomerContactControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerContactControllerIndexData.parseAsync(data)
+    },
+    url: '/api/v1/customer-contacts',
+    ...options,
+  })
+}
+
+/**
+ * Batch update/create customer contacts
+ * Update existing contacts (with id) or create new contacts (without id)
+ */
+export const customerContactControllerBatchUpdate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CustomerContactControllerBatchUpdateData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    CustomerContactControllerBatchUpdateResponses,
+    CustomerContactControllerBatchUpdateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerContactControllerBatchUpdateData.parseAsync(data)
+    },
+    url: '/api/v1/customer-contacts',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Get customer contact details
+ * Retrieve a single customer contact by ID
+ */
+export const customerContactControllerShow = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CustomerContactControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    CustomerContactControllerShowResponses,
+    CustomerContactControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerContactControllerShowData.parseAsync(data)
+    },
+    url: '/api/v1/customer-contacts/{id}',
     ...options,
   })
 }
