@@ -326,6 +326,15 @@
         "message": "耳がない",
         "description": "カテゴリに商品がありません"
       }
+    },
+    "customer_contact_modal": {
+      "title": "見積送付先選択",
+      "department_name": "部署名",
+      "contact_person_name": "氏名",
+      "email": "メールアドレス",
+      "created_at": "登録日",
+      "select_button": "見積送付先を選択",
+      "selected_contact_label": "見積送付先"
     }
   },
   "validation": {

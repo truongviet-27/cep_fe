@@ -2,13 +2,29 @@
 'use client'
 
 import { useForm, useModalForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useModal, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useGo,
+  useModal,
+  useTranslate,
+} from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
+import { message } from 'antd'
+import { useParams } from 'next/navigation'
 
 export const useCustomerEdit = () => {
   const t = useTranslate()
+  const apiUrl = useApiUrl()
+  const go = useGo()
+  const params = useParams()
+  const customerId = params?.id as string
+  const [deletedReceiverIds, setDeletedReceiverIds] = useState<number[]>([])
+
   const {
     formProps,
     saveButtonProps,
@@ -18,23 +34,86 @@ export const useCustomerEdit = () => {
     queryResult,
   } = useForm({
     action: 'edit',
-    redirect: 'show',
+    redirect: false,
+  })
+
+  const { mutateAsync: updateContacts } = useCustomMutation()
+
+  // Fetch customer contacts
+  const { data: contactsData, refetch: refetchContacts } = useCustom({
+    url: `${apiUrl}/customer-contacts`,
+    method: 'get',
+    config: {
+      query: {
+        customer_id: customerId,
+      },
+    },
   })
 
   const handleFinish = async (values: any) => {
-    let company_type = values?.company_type
-    let industry = values?.industry
-    if (values?.temp_company_type) {
-      company_type = values?.temp_company_type
-    }
-    if (!values?.industry && values?.temp_industry) {
-      industry = values?.temp_industry
-    }
+    try {
+      // Validate form fields (all validation rules in Form will be checked)
+      await form.validateFields()
 
-    await onFinish({ ...values, company_type, industry })
+      const receivers = values?.receivers || []
+
+      let company_type = values?.company_type
+      let industry = values?.industry
+      if (values?.temp_company_type) {
+        company_type = values?.temp_company_type
+      }
+      if (!values?.industry && values?.temp_industry) {
+        industry = values?.temp_industry
+      }
+
+      // Remove receivers from customer data
+      const { receivers: _, ...customerData } = values
+
+      // Step 1: Update customer
+      await onFinish({ ...customerData, company_type, industry })
+
+      // Step 2: Delete contacts if any
+      if (deletedReceiverIds.length > 0) {
+        await axiosInstance.delete(`${apiUrl}/customer-contacts`, {
+          data: { ids: deletedReceiverIds },
+        })
+      }
+
+      // Step 3: Update/Create customer contacts
+      const contacts = receivers.map((receiver: any) => {
+        const contact: any = {
+          customer_id: Number(customerId),
+          department_name: receiver.department_name,
+          contact_person_name: receiver.contact_person_name,
+          email: receiver.email,
+        }
+        // Include id if exists (for update)
+        if (receiver.id) {
+          contact.id = receiver.id
+        }
+        return contact
+      })
+
+      await updateContacts({
+        url: `${apiUrl}/customer-contacts`,
+        method: 'patch',
+        values: { contacts },
+      })
+
+      message.success(t('notifications.updateSuccess'))
+      go({
+        to: `/customers/show/${customerId}`,
+        type: 'push',
+      })
+    } catch (error: any) {
+      console.error('Error updating customer:', error)
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        t('notifications.updateError')
+      message.error(errorMessage)
+    }
   }
-
-  const apiUrl = useApiUrl()
 
   const {
     data: codeGenData,
@@ -68,14 +147,6 @@ export const useCustomerEdit = () => {
 
   const rule = validateCustomerRule(t)
 
-  const handleCopyContact = () => {
-    const mainContact = form.getFieldsValue(['mail', 'phone'])
-    form.setFieldsValue({
-      person_in_charge_mail: mainContact.mail,
-      person_in_charge_phone: mainContact.phone,
-    })
-  }
-
   const record = queryResult?.data?.data
 
   useEffect(() => {
@@ -84,12 +155,18 @@ export const useCustomerEdit = () => {
     }
   }, [record])
 
+  // Load contacts into form
+  useEffect(() => {
+    if (contactsData?.data) {
+      form.setFieldsValue({ receivers: contactsData.data })
+    }
+  }, [contactsData])
+
   return {
     t,
     form,
     rule,
     isLoading,
-    handleCopyContact,
     handleAutoNumber,
     modalFormProps,
     isCodeGenLoading,
@@ -100,5 +177,7 @@ export const useCustomerEdit = () => {
     modalFormCorporate,
     handleFinish,
     isAutomatic,
+    deletedReceiverIds,
+    setDeletedReceiverIds,
   }
 }

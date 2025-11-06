@@ -135,6 +135,7 @@ function UploadSetting({
             afterOpenChange: (visible) => !visible && setPreviewImage(''),
           }}
           src={previewImage}
+          alt="Preview image"
         />
       )}
     </div>

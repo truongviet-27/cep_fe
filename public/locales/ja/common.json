@@ -167,6 +167,15 @@
       "phone": "電話番号",
       "email": "メールアドレス"
     },
+    "receivers": {
+      "title": "見積送付先情報",
+      "department_name": "部署名",
+      "contact_person_name": "氏名",
+      "email": "メールアドレス",
+      "created_at": "登録日",
+      "add_button": "経理者追加",
+      "min_one_required": "最低1件の連絡先を登録してください"
+    },
     "enums": {
       "corporation": "会社",
       "individual": "個人"

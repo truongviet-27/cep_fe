@@ -530,10 +530,6 @@ export const zCustomer = z.object({
   industry: z.optional(z.union([z.string(), z.null()])),
   date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
   department_in_charge: z.optional(z.union([z.string(), z.null()])),
-  person_in_charge_name: z.optional(z.string()),
-  person_in_charge_department: z.optional(z.string()),
-  person_in_charge_mail: z.optional(z.string()),
-  person_in_charge_phone: z.optional(z.union([z.string(), z.null()])),
   is_deleted: z.optional(z.union([z.boolean(), z.null()])),
   created_by: z.optional(z.union([z.int(), z.null()])),
   updated_by: z.optional(z.union([z.int(), z.null()])),
@@ -599,10 +595,6 @@ export const zCustomerStoreRequest = z.object({
   industry: z.optional(z.union([z.string().max(50), z.null()])),
   date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
   department_in_charge_id: z.optional(z.union([z.int(), z.null()])),
-  person_in_charge_name: z.string().max(50),
-  person_in_charge_department: z.string().max(100),
-  person_in_charge_mail: z.email().max(100),
-  person_in_charge_phone: z.optional(z.union([z.string().max(20), z.null()])),
   company_research_information: z.optional(
     z.array(zCompanyResearchInformationStoreRequest),
   ),
@@ -637,10 +629,6 @@ export const zCustomerUpdateRequest = z.object({
   industry: z.optional(z.union([z.string().max(50), z.null()])),
   date_of_establishment: z.optional(z.union([z.iso.date(), z.null()])),
   department_in_charge_id: z.optional(z.union([z.int(), z.null()])),
-  person_in_charge_name: z.union([z.string().max(50), z.null()]),
-  person_in_charge_department: z.union([z.string().max(100), z.null()]),
-  person_in_charge_mail: z.union([z.email().max(100), z.null()]),
-  person_in_charge_phone: z.optional(z.union([z.string().max(20), z.null()])),
   company_research_information: z.optional(
     z.array(zCompanyResearchInformationUpdateRequest),
   ),
@@ -657,7 +645,6 @@ export const zSimpleCustomer = z.object({
   customer_code: z.optional(z.string()),
   name: z.optional(z.string()),
   country: z.optional(z.string()),
-  person_in_charge_department: z.optional(z.string()),
   rank: z.optional(zRank),
   credit_rank: z.optional(z.union([z.string(), z.null()])),
   credit_rank_update_at: z.optional(z.union([z.iso.date(), z.null()])),
@@ -700,6 +687,91 @@ export const zCustomersPaginatedResponse = z.object({
       links: z.optional(zCustomerLinks),
     }),
   ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Customer Contact Model
+ * Represents a customer contact record.
+ */
+export const zCustomerContact = z.object({
+  id: z.optional(z.int()),
+  customer_id: z.optional(z.int()),
+  customer_name: z.optional(z.string()),
+  department_name: z.optional(z.union([z.string().max(50), z.null()])),
+  contact_person_name: z.optional(z.string().max(50)),
+  email: z.optional(z.email().max(100)),
+  created_by: z.optional(z.union([z.int(), z.null()])),
+  updated_by: z.optional(z.union([z.int(), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
+ * Customer Contact Batch Delete Request
+ * Request to batch delete customer contacts by IDs
+ */
+export const zCustomerContactBatchDeleteRequest = z.object({
+  ids: z.array(z.int()).min(1),
+})
+
+/**
+ * Customer Contact Batch Delete Response
+ * Response after batch deleting customer contacts
+ */
+export const zCustomerContactBatchDeleteResponse = z.object({
+  data: z.optional(
+    z.object({
+      deleted_count: z.optional(z.int()),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Customer Contact Item
+ * Single contact item for batch operations. If 'id' is provided, it updates existing contact. If 'id' is omitted, it creates a new contact.
+ */
+export const zCustomerContactItem = z.object({
+  id: z.optional(z.union([z.int(), z.null()])),
+  customer_id: z.int(),
+  department_name: z.union([z.string().max(50), z.null()]),
+  contact_person_name: z.string().max(50),
+  email: z.email().max(100),
+})
+
+/**
+ * Customer Contact Batch Update Request
+ * Request to batch update/create customer contacts. Items with 'id' will be updated, items without 'id' will be created.
+ */
+export const zCustomerContactBatchUpdateRequest = z.object({
+  contacts: z.array(zCustomerContactItem).min(1),
+})
+
+/**
+ * Customer Contact Batch Update Response
+ * Response after batch updating/creating customer contacts
+ */
+export const zCustomerContactBatchUpdateResponse = z.object({
+  data: z.optional(z.array(zCustomerContact)),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Customer Contact Detail Response
+ * Response containing single customer contact details
+ */
+export const zCustomerContactDetailResponse = z.object({
+  data: z.optional(zCustomerContact),
+  message: z.optional(z.string()),
+})
+
+/**
+ * Customer Contacts Response
+ * Response containing list of customer contacts (no pagination)
+ */
+export const zCustomerContactsResponse = z.object({
+  data: z.optional(z.array(zCustomerContact)),
   message: z.optional(z.string()),
 })
 
@@ -2989,6 +3061,59 @@ export const zCustomerControllerRestoreResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(z.union([z.object({}), z.null()])),
 })
+
+export const zCustomerContactControllerBatchDeleteData = z.object({
+  body: zCustomerContactBatchDeleteRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer contacts batch deleted successfully
+ */
+export const zCustomerContactControllerBatchDeleteResponse =
+  zCustomerContactBatchDeleteResponse
+
+export const zCustomerContactControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      customer_id: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Customer contacts retrieved successfully
+ */
+export const zCustomerContactControllerIndexResponse = zCustomerContactsResponse
+
+export const zCustomerContactControllerBatchUpdateData = z.object({
+  body: zCustomerContactBatchUpdateRequest,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer contacts batch updated successfully
+ */
+export const zCustomerContactControllerBatchUpdateResponse =
+  zCustomerContactBatchUpdateResponse
+
+export const zCustomerContactControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer contact retrieved successfully
+ */
+export const zCustomerContactControllerShowResponse =
+  zCustomerContactDetailResponse
 
 export const zDepartmentControllerIndexData = z.object({
   body: z.optional(z.never()),
