@@ -22,6 +22,9 @@
       "password_required": "パスワードを入力してください！"
     }
   },
+  "confirm": {
+    "delete_confirm": "削除してもよろしいですか？"
+  },
   "buttons": {
     "cancel": "キャンセル",
     "save_settings": "設定を保存",

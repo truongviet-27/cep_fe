@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line simple-import-sort/imports */
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
-import { Button, Input, Modal, Space, Spin, message } from 'antd'
+import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Button, Input, Modal, Popconfirm, Space, Spin, message } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
@@ -132,6 +132,25 @@ function CustomerContactSelectionModal({
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message || t('notifications.createError')
+      message.error(errorMessage)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDelete = async (contactId: number) => {
+    setIsSaving(true)
+    try {
+      await axiosInstance.delete(`${apiUrl}/customer-contacts`, {
+        data: {
+          ids: [contactId],
+        },
+      })
+      message.success(t('notifications.deleteSuccess'))
+      refetch()
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message || t('notifications.deleteError')
       message.error(errorMessage)
     } finally {
       setIsSaving(false)
@@ -285,13 +304,25 @@ function CustomerContactSelectionModal({
                   )
                 }
                 return (
-                  <Button
-                    type="default"
-                    onClick={() => handleSelect(record)}
-                    style={{ color: '#1890ff', borderColor: '#1890ff' }}
-                  >
-                    {t('buttons.select')}
-                  </Button>
+                  <Space>
+                    <Button
+                      type="default"
+                      onClick={() => handleSelect(record)}
+                      style={{ color: '#1890ff', borderColor: '#1890ff' }}
+                    >
+                      {t('buttons.select')}
+                    </Button>
+                    <Popconfirm
+                      title={t('confirm.delete_confirm')}
+                      onConfirm={() => handleDelete(record.id)}
+                      okText={t('buttons.confirm')}
+                      cancelText={t('buttons.cancel', {
+                        defaultValue: 'いいえ',
+                      })}
+                    >
+                      <Button danger icon={<DeleteOutlined />} size="small" />
+                    </Popconfirm>
+                  </Space>
                 )
               },
             },
