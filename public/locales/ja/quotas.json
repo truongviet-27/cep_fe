@@ -66,7 +66,7 @@
     "move_to_order": "受注へ移動",
     "move_to_cancel": "失注へ移動",
     "move_to_send": "送信へ移動",
-    "decide_move": "決定移動",
+    "decide_move": "確定移動",
     "re_estimate": "再見積",
     "template_list": "見積テンプレート一覧",
     "new_create": "新規作成"
