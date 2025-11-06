@@ -5465,10 +5465,6 @@ export type CustomerContactControllerIndexData = {
      * Filter by customer ID
      */
     customer_id?: number
-    /**
-     * Search by department name, contact person name, or email
-     */
-    q?: string
   }
   url: '/api/v1/customer-contacts'
 }

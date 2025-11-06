@@ -185,6 +185,7 @@ function QuotaAction() {
             value: dataBasicInfo.data.customer_id,
             label: dataBasicInfo.data.customer_name,
           },
+          selected_contact_id: dataBasicInfo.data.customer_contact_id,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
@@ -217,13 +218,21 @@ function QuotaAction() {
       }
     } else {
       if (dataBasicInfo?.data && dataProducts?.data) {
+        const basicData = { ...dataBasicInfo.data }
+        // Remove customer_id and customer_name to avoid overwriting customer field
+        delete basicData.customer_id
+        delete basicData.customer_name
+
+        const customerField = {
+          value: dataBasicInfo.data.customer_id,
+          label: dataBasicInfo.data.customer_name,
+        }
+
         form.setFieldsValue({
-          ...dataBasicInfo.data,
+          ...basicData,
           code: isEdit ? dataBasicInfo.data.code : '',
-          customer: {
-            value: dataBasicInfo.data.customer_id,
-            label: dataBasicInfo.data.customer_name,
-          },
+          customer: customerField,
+          selected_contact_id: dataBasicInfo.data.customer_contact_id,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
@@ -289,6 +298,7 @@ function QuotaAction() {
         type: 'normal',
         category: 'merchandise',
         customer: null,
+        selected_contact_id: null,
         status: 'creating',
         created_at: dayjs(),
         delivery_date: null,
@@ -357,8 +367,12 @@ function QuotaAction() {
           resource: resource?.name,
           values: {
             ...values,
+            type: values.type || 'normal',
+            category: values.category || 'merchandise',
             customer_id: values.customer.value,
             customer_name: values.customer.label,
+            customer_contact_id: values.selected_contact_id,
+            consumption_tax: values.consumption_tax || 'exclusive',
             status: QuotaStatus.Creating,
             delivery_date: values.delivery_date
               ? dayjs(values.delivery_date)
@@ -370,10 +384,11 @@ function QuotaAction() {
               .utc(true)
               .startOf('day')
               .toISOString(),
-            tags: values?.tags.map((item: any) => ({
-              id: item.value,
-              name: item.label,
-            })),
+            tags:
+              values?.tags?.map((item: any) => ({
+                id: item.value,
+                name: item.label,
+              })) || [],
             tax_rate: values.tax_rate ?? 0,
           },
           id: params?.id,
@@ -392,9 +407,12 @@ function QuotaAction() {
           resource: resource?.name,
           values: {
             ...values,
+            type: values.type || 'normal',
+            category: values.category || 'merchandise',
             source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
+            customer_contact_id: values.selected_contact_id,
             delivery_date: values.delivery_date
               ? dayjs(values.delivery_date)
                   .utc(true)
@@ -406,10 +424,11 @@ function QuotaAction() {
               .startOf('day')
               .toISOString(),
             status: 'creating',
-            tags: values.tags.map((item: any) => ({
-              id: item.value,
-              name: item.label,
-            })),
+            tags:
+              values?.tags?.map((item: any) => ({
+                id: item.value,
+                name: item.label,
+              })) || [],
             tax_rate: values.tax_rate ?? 0,
           },
         },
@@ -476,6 +495,9 @@ function QuotaAction() {
           layout="horizontal"
           colon={false}
           initialValues={{
+            type: 'normal',
+            category: 'merchandise',
+            consumption_tax: 'exclusive',
             delivery_date: dayjs(),
             created_at: dayjs(),
           }}

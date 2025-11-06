@@ -3080,7 +3080,6 @@ export const zCustomerContactControllerIndexData = z.object({
   query: z.optional(
     z.object({
       customer_id: z.optional(z.int()),
-      q: z.optional(z.string()),
     }),
   ),
 })
