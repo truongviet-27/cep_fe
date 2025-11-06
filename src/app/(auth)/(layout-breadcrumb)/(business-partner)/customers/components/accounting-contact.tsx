@@ -3,14 +3,14 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(busines
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/styles.module.css'
 import boldText from '@utility/bold-text'
-import { Button, Collapse, Form, Input } from 'antd'
+import { Collapse, Form, Input } from 'antd'
 
 const { Panel } = Collapse
 
 function AccountingContact(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
-  const { t, rule, handleCopyContact } = props
+  const { t, rule } = props
 
   return (
     <Collapse
@@ -24,31 +24,7 @@ function AccountingContact(
         />
       )}
     >
-      <Panel
-        header={
-          <Form.Item
-            className={'ant-form-item-hidden-margin'}
-            label={boldText(t('customers.show.accounting_contact'))}
-          >
-            <Button
-              type="link"
-              onClick={(e) => {
-                e.stopPropagation()
-                handleCopyContact()
-              }}
-              className={'!-ml-3 !underline'}
-            >
-              {t('buttons.copy_contact_info')}
-            </Button>
-          </Form.Item>
-        }
-        key="1"
-        // extra={
-        //   <Button type="link" onClick={handleCopyContact}>
-        //     {t('buttons.copy_contact_info')}
-        //   </Button>
-        // }
-      >
+      <Panel header={boldText(t('customers.show.accounting_contact'))} key="1">
         <Form.Item
           label={boldText(t('customers.show.contact_name'))}
           name="person_in_charge_name"
