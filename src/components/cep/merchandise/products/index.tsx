@@ -16,8 +16,6 @@ function ProductContainer() {
     { t, setFilters },
   ] = useProduct()
 
-  console.log(tableProps.dataSource)
-
   return (
     <PageContainer
       breadcrumbs={

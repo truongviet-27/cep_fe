@@ -1,4 +1,3 @@
-import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CoreInput from '@components/common/core-input'
 import { useTranslate } from '@refinedev/core'
 import { ConsumptionTaxEnum } from '@sdk/hey-api'
@@ -19,15 +18,10 @@ import {
   Select,
   Typography,
 } from 'antd'
-import dayjs from 'dayjs'
 
 const { Title } = Typography
 
-interface Props {
-  expirationDate: string
-}
-
-const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
+const BasicInfo = () => {
   const t = useTranslate()
 
   return (
@@ -215,23 +209,6 @@ const BasicInfo: React.FC<Props> = ({ expirationDate }) => {
                   showSearch
                   options={Object.values(EXPIRATION_DATE)}
                 />
-              </Form.Item>
-
-              <Form.Item>
-                {expirationDate && (
-                  <span
-                    style={{
-                      whiteSpace: 'nowrap',
-                      fontWeight: 500,
-                      marginLeft: 10,
-                    }}
-                  >
-                    {dayjs(getExpiryDate(expirationDate, new Date())).format(
-                      'YYYY/MM/DD',
-                    )}
-                    {t('quotas.action.basic_info.labels.until')}
-                  </span>
-                )}
               </Form.Item>
             </Flex>
           </Form.Item>

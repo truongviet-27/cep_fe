@@ -47,7 +47,10 @@ export const ProductCategoryModal = ({
               {
                 group_name: data?.data.products[0]?.category?.name,
                 products: data?.data.products?.map((item: any) => ({
-                  product_id: item.id,
+                  product: {
+                    value: item.id,
+                    label: item.name,
+                  },
                   package_id: null,
                   name: item?.name,
                   code: item?.code,
@@ -64,7 +67,10 @@ export const ProductCategoryModal = ({
               {
                 group_name: data?.data.products[0]?.category?.name,
                 products: data?.data.products?.map((item: any) => ({
-                  product_id: item.id,
+                  product: {
+                    value: item.id,
+                    label: item.name,
+                  },
                   package_id: null,
                   name: item?.name,
                   code: item?.code,

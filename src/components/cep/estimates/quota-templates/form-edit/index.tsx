@@ -19,8 +19,7 @@ import TagForm from './tag'
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const { isUpdateMode, isLoading, methods, expirationDateWatch } =
-    useController()
+  const { isUpdateMode, isLoading, methods } = useController()
 
   return (
     <PageContainer
@@ -37,8 +36,8 @@ const QuoteTemplateFormEditContainer: FC = () => {
             {
               title: boldText(
                 isUpdateMode
-                  ? t('quota_templates.breadcrumb.quotasUpdate')
-                  : t('quota_templates.breadcrumb.quotasRegister'),
+                  ? t('quota_templates.form.titleUpdate')
+                  : t('quota_templates.form.titleRegister'),
                 PRIMARY,
               ),
             },
@@ -65,7 +64,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
             block: 'center',
           }}
         >
-          <BasicInfo expirationDate={expirationDateWatch} />
+          <BasicInfo />
           <DetailInfo />
           <OptionalInfo />
           <NoteForm />

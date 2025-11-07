@@ -22,6 +22,10 @@ export type QuotaTemplateMainProductType = QuotaTemplateProductGroupRequest & {
 export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
   unit?: string
   unit_name?: string
+  product?: {
+    id: number
+    name: string
+  } | null
   product_id?: number | null
   product_name?: string
   package_name?: string

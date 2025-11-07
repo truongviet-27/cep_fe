@@ -72,12 +72,15 @@ function TabsContent({
             ? [
                 {
                   required: true,
-                  message: t('mail_templates.validation.required'),
+                  message: t('mail_templates.validation.title.required'),
                 },
-                { max: 255, message: t('mail_templates.validation.max255') },
+                {
+                  max: 255,
+                  message: t('mail_templates.validation.title.max255'),
+                },
                 {
                   pattern: /^(?!\s*$).+/,
-                  message: t('mail_templates.validation.notBlank'),
+                  message: t('mail_templates.validation.title.notBlank'),
                 },
               ]
             : []
@@ -131,15 +134,15 @@ function TabsContent({
             ? [
                 {
                   required: true,
-                  message: t('mail_templates.validation.required'),
+                  message: t('mail_templates.validation.body.required'),
                 },
                 {
                   max: 10000,
-                  message: t('mail_templates.validation.max10000'),
+                  message: t('mail_templates.validation.body.max10000'),
                 },
                 {
                   pattern: /^(?!\s*$).+/,
-                  message: t('mail_templates.validation.notBlank'),
+                  message: t('mail_templates.validation.body.notBlank'),
                 },
               ]
             : []
@@ -164,12 +167,15 @@ function TabsContent({
             ? [
                 {
                   required: true,
-                  message: t('mail_templates.validation.required'),
+                  message: t('mail_templates.validation.signature.required'),
                 },
-                { max: 1000, message: t('mail_templates.validation.max1000') },
+                {
+                  max: 1000,
+                  message: t('mail_templates.validation.signature.max1000'),
+                },
                 {
                   pattern: /^(?!\s*$).+/,
-                  message: t('mail_templates.validation.notBlank'),
+                  message: t('mail_templates.validation.signature.notBlank'),
                 },
               ]
             : []
