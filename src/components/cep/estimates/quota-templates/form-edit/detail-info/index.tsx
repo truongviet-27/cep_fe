@@ -632,20 +632,16 @@ const DetailInfo: FC = () => {
                         fontWeight: 700,
                       }}
                     >
-                      <Table.Summary.Cell index={0} colSpan={3} align="center">
+                      <Table.Summary.Cell index={0} colSpan={8} align="center">
                         小計
                       </Table.Summary.Cell>
-                      <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={6} align="center">
+                      <Table.Summary.Cell index={1} align="center">
                         {totalPriceWatch?.toLocaleString()}
                       </Table.Summary.Cell>
-                      <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
+                      <Table.Summary.Cell
+                        index={2}
+                        colSpan={3}
+                      ></Table.Summary.Cell>
                     </Table.Summary.Row>
                   )
                 }}

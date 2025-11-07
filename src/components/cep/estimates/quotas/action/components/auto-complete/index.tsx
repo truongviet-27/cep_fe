@@ -50,7 +50,7 @@ function CoreAutoComplete({
   )
 
   const { data } = useCustom<any>({
-    url: `${apiUrl}/${resource}/${product}/customer-pricing/${customer?.value}`,
+    url: `${apiUrl}/${resource}/${product?.value}/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
       enabled: !!product && !!customer,
@@ -59,7 +59,7 @@ function CoreAutoComplete({
 
   const { query: productResponse } = useShow<ProductDetail>({
     resource: 'products',
-    id: product,
+    id: product?.value,
     queryOptions: {
       enabled: !!product && !customer,
     },

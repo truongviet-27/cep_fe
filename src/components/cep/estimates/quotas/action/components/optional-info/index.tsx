@@ -27,6 +27,7 @@ function OptionalInfo() {
     const products = values[groupIndex].products || []
 
     const newProduct = {
+      product: null,
       product_id: null,
       package_id: null,
       name: '',
@@ -185,14 +186,30 @@ function OptionalInfo() {
                           record.index,
                           'products',
                           record.index2,
-                          'product_id',
+                          'product',
                         ]}
-                        labelInValue={false}
+                        labelInValue={true}
                         resource="products"
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}
                         disabled={!customerWatch}
+                        defaultValue={{
+                          value: form.getFieldValue([
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'product',
+                          ])?.value,
+                          label: form.getFieldValue([
+                            'main_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'name',
+                          ]),
+                        }}
                         onChangeValue={(valueOption) => {
                           form.setFieldValue(
                             [
@@ -203,6 +220,16 @@ function OptionalInfo() {
                               'package_id',
                             ],
                             null,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'product_id',
+                            ],
+                            valueOption?.id,
                           )
                           form.setFieldValue(
                             [
@@ -388,7 +415,7 @@ function OptionalInfo() {
                             record.index,
                             'products',
                             record.index2,
-                            'product_id',
+                            'product',
                           ]}
                           parent="optional_product"
                           index={record.index}
@@ -660,6 +687,7 @@ function OptionalInfo() {
                         group_name: '',
                         products: [
                           {
+                            product: null,
                             product_id: null,
                             package_id: null,
                             name: '',

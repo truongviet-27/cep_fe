@@ -82,7 +82,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.cost_price
+        return (+record?.cost_price)?.toLocaleString()
       },
     },
     {
@@ -93,7 +93,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.selling_price
+        return (+record?.selling_price)?.toLocaleString()
       },
     },
     {
@@ -156,7 +156,9 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (record?.selling_price || 0) * (record?.quantity || 1)
+        return (
+          (record?.selling_price || 0) * (record?.quantity || 1)
+        )?.toLocaleString()
       },
     },
   ]
@@ -272,7 +274,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                       {t('quotas.action.detail_info.summary.cost_total')}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{basicInfo?.total_cost}
+                      ¥{(+basicInfo?.total_cost)?.toLocaleString()}
                     </Text>
                   </div>
                 </Col>
@@ -297,7 +299,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                       )}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      {basicInfo?.total_profit_margin}%
+                      ¥{(+basicInfo?.consumption_tax_amount)?.toLocaleString()}
                     </Text>
                   </div>
                 </Col>
@@ -326,7 +328,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                         {item?.taxRate}%）
                       </Text>
                       <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                        ¥{item?.total}
+                        ¥{(+item.total)?.toLocaleString()}
                       </Text>
                     </div>
                   </Col>
@@ -351,7 +353,8 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                       {t('quotas.action.detail_info.summary.tax_inclusive')}）
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{basicInfo?.total_price_tax_included}
+                      ¥
+                      {(+basicInfo?.total_price_tax_included)?.toLocaleString()}
                     </Text>
                   </div>
                 </Col>
