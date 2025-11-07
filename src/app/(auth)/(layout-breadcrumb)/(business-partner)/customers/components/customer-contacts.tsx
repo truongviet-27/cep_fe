@@ -33,6 +33,7 @@ function CustomerContacts(
       <Panel
         header={<Title level={5}>{t('customers.receivers.title')}</Title>}
         key="1"
+        forceRender
       >
         <Form.List
           name="receivers"
@@ -209,6 +210,7 @@ function CustomerContacts(
                         <Button
                           danger
                           icon={<DeleteOutlined />}
+                          disabled={fields.length === 1}
                           onClick={() => {
                             // If receiver has id, add to deletedReceiverIds
                             if (receiver?.id && setDeletedReceiverIds) {

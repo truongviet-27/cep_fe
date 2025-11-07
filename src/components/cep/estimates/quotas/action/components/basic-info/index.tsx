@@ -404,7 +404,8 @@ const BasicInfo = () => {
               </Col>
               <Col>
                 <Button
-                  type="default"
+                  color="primary"
+                  variant="outlined"
                   onClick={handleOpenContactModal}
                   disabled={!selectedCustomerId}
                   style={{ marginBottom: 12 }}
@@ -433,7 +434,7 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('validations.required'),
+                    message: t('validation.quotas.selected_contact.required'),
                   },
                 ]}
                 noStyle
@@ -449,8 +450,10 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t('quotas.action.customer_contact_modal.department_name')}:{' '}
-                  {selectedContact?.department_name || '---'}
+                  <strong>
+                    {t('quotas.action.customer_contact_modal.department_name')}:
+                  </strong>{' '}
+                  {selectedContact?.department_name || ''}
                 </Col>
                 <Col
                   flex="auto"
@@ -460,10 +463,13 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t(
-                    'quotas.action.customer_contact_modal.contact_person_name',
-                  )}
-                  : {selectedContact?.contact_person_name || '---'}
+                  <strong>
+                    {t(
+                      'quotas.action.customer_contact_modal.contact_person_name',
+                    )}
+                    :
+                  </strong>{' '}
+                  {selectedContact?.contact_person_name || ''}
                 </Col>
                 <Col
                   flex="auto"
@@ -473,8 +479,10 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t('quotas.action.customer_contact_modal.email')}:{' '}
-                  {selectedContact?.email || '---'}
+                  <strong>
+                    {t('quotas.action.customer_contact_modal.department_name')}:
+                  </strong>
+                  {selectedContact?.department_name || ''}
                 </Col>
               </Row>
             </Form.Item>
