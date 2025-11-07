@@ -14,6 +14,7 @@ import { DARK_RED, GREY, RED, PRIMARY, WARNING } from '@utility/color'
 import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import React from 'react'
 
 const { Title, Text } = Typography
@@ -50,7 +51,9 @@ export default function EmployeeShow() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('employees.employees')),
+      title: (
+        <Link href="/employees">{boldText(t('employees.employees'))}</Link>
+      ),
     },
     { title: boldText(t('employees.show.show'), PRIMARY) },
   ]

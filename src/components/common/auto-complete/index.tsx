@@ -47,14 +47,9 @@ function CoreAutoComplete({
 
   useEffect(() => {
     if (query.data?.data) {
-      const options = query.data.data.map((item) => ({
-        [item.id ?? 0]: item.role.name,
-      }))
-
-      const result =
-        selectProps.options?.filter(
-          (item) => !options.some((obj) => obj[item.value ?? 0] === 'employee'),
-        ) ?? ([] as any)
+      const result = query.data.data
+        ?.filter((item) => item.role.name !== 'employee')
+        .map((item) => ({ label: item.name, value: item.id })) as any
 
       setOptions(result)
     }

@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
-import { IssueMethod } from '@components/cep/estimates/quotas/enum'
-import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
-import { useModalForm, useSelect } from '@refinedev/antd'
-import { useApiUrl, useCustom, useParsed, useTranslate } from '@refinedev/core'
-import { type CodeIssueSetting } from '@sdk/hey-api'
-import boldText from '@utility/bold-text'
-import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+/* eslint-disable-next-line simple-import-sort/imports */
+import { useCallback, useEffect, useState } from 'react'
+
 import {
   Button,
   Card,
@@ -22,7 +16,19 @@ import {
   Select,
 } from 'antd'
 import dayjs from 'dayjs'
-import { useCallback, useEffect, useState } from 'react'
+
+import { useModalForm, useSelect } from '@refinedev/antd'
+import { useApiUrl, useCustom, useParsed, useTranslate } from '@refinedev/core'
+
+import type { CodeIssueSetting, CustomerContact } from '@sdk/hey-api'
+
+import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import { IssueMethod } from '@components/cep/estimates/quotas/enum'
+import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
+import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
+import { FORMAT_DATE } from '@utility/instances'
 
 const BasicInfo = () => {
   const t = useTranslate()
@@ -38,9 +44,41 @@ const BasicInfo = () => {
 
   const [current, setCurrent] = useState(1)
   const [options, setOptions] = useState<any[]>([])
+  const [contactModalOpen, setContactModalOpen] = useState(false)
+  const [selectedContact, setSelectedContact] =
+    useState<CustomerContact | null>(null)
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
+    null,
+  )
 
   const expirationDate = Form.useWatch('expiration_date', form)
   const createdAt = Form.useWatch('created_at', form)
+  const customer = Form.useWatch('customer', form)
+  const selectedContactId = Form.useWatch('selected_contact_id', form)
+
+  const { data: customerContactData } = useCustom<CustomerContact>({
+    url: selectedContactId
+      ? `${apiUrl}/customer-contacts/${selectedContactId}`
+      : '',
+    method: 'get',
+    queryOptions: {
+      enabled: !!selectedContactId,
+    },
+  })
+
+  useEffect(() => {
+    if (customerContactData?.data) {
+      setSelectedContact(customerContactData.data)
+    }
+  }, [customerContactData?.data])
+
+  useEffect(() => {
+    if (selectedContactId) {
+      // selectedContactId updated
+    } else {
+      setSelectedContact(null)
+    }
+  }, [selectedContactId])
 
   const { selectProps: selectPropsCt, query } = useSelect({
     resource: 'customers',
@@ -72,6 +110,14 @@ const BasicInfo = () => {
       setOptions((prev) => [...prev, ...filtered])
     }
   }, [query.data?.data])
+
+  useEffect(() => {
+    if (customer?.value) {
+      setSelectedCustomerId(customer.value)
+    } else {
+      setSelectedCustomerId(null)
+    }
+  }, [customer?.value, customer?.label])
 
   const handlePopupScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
@@ -118,6 +164,25 @@ const BasicInfo = () => {
     }
   }
 
+  const handleOpenContactModal = () => {
+    if (!selectedCustomerId) {
+      return
+    }
+    setContactModalOpen(true)
+  }
+
+  const handleSelectContact = (contact: CustomerContact) => {
+    setSelectedContact(contact)
+    // Save the selected contact ID to the form
+    const contactId = contact.id
+    if (contactId !== null && contactId !== undefined) {
+      form.setFieldsValue({ selected_contact_id: contactId })
+      // Validate the field after setting value
+      form.validateFields(['selected_contact_id'])
+    } else {
+    }
+  }
+
   const { show, close, open } = modalFormProps
 
   return (
@@ -145,15 +210,15 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('validations.required'),
+                    message: t('quotas.validation.basic_info.required.code'),
                   },
                   {
                     whitespace: true,
-                    message: t('validations.invalid_format'),
+                    message: t('quotas.validation.basic_info.invalid_format'),
                   },
                   {
                     pattern: /^[A-Z0-9-]+$/,
-                    message: t('validations.invalid_format'),
+                    message: t('quotas.validation.basic_info.invalid_format'),
                   },
                   {
                     max: 255,
@@ -213,9 +278,14 @@ const BasicInfo = () => {
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_type'),
               )}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
             >
               <Radio.Group
-                defaultValue={'normal'}
                 options={[
                   {
                     value: 'normal',
@@ -239,9 +309,14 @@ const BasicInfo = () => {
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_category'),
               )}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
             >
               <Radio.Group
-                defaultValue={'merchandise'}
                 options={[
                   {
                     value: 'merchandise',
@@ -266,15 +341,15 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validations.required'),
+                  message: t('quotas.validation.basic_info.required.title'),
                 },
                 {
                   whitespace: true,
-                  message: t('validations.invalid_format'),
+                  message: t('quotas.validation.basic_info.invalid_format'),
                 },
                 {
                   max: 255,
-                  message: t('validations.invalid_format'),
+                  message: t('quotas.validation.basic_info.max255'),
                 },
               ]}
             >
@@ -283,42 +358,128 @@ const BasicInfo = () => {
           </Col>
 
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              label={boldText(t('quotas.action.basic_info.fields.customer'))}
-              name={'customer'}
-              rules={[
-                {
-                  required: true,
-                  message: t('validations.required'),
-                },
-              ]}
-            >
-              <Select
-                {...selectPropsCt}
-                options={options.map((item) => ({
-                  label: item.name,
-                  value: item.id,
-                }))}
-                allowClear
-                showSearch
-                disabled={isCloneVersion}
-                labelInValue
-                onSearch={() => {}}
-                loading={query.isFetching}
-                onPopupScroll={handlePopupScroll}
-                filterOption={(input, option) =>
-                  ((option?.label ?? '') as string)
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                // notFoundContent={
-                //   query.isFetching ? <Spin size="small" /> : null
-                // }
-              />
-            </Form.Item>
+            <Row gutter={[8, 0]} align="bottom">
+              <Col flex="auto">
+                <Form.Item
+                  label={boldText(
+                    t('quotas.action.basic_info.fields.customer'),
+                  )}
+                  name={'customer'}
+                  rules={[
+                    {
+                      required: true,
+                      message: t('validations.required'),
+                    },
+                  ]}
+                  style={{ marginBottom: 0 }}
+                >
+                  <Select
+                    key={`customer-select-${selectedCustomerId}`}
+                    {...selectPropsCt}
+                    options={options.map((item) => ({
+                      label: item.name,
+                      value: item.id,
+                    }))}
+                    allowClear
+                    showSearch
+                    disabled={isCloneVersion}
+                    labelInValue
+                    onSearch={() => {}}
+                    loading={query.isFetching}
+                    onPopupScroll={handlePopupScroll}
+                    filterOption={(input, option) =>
+                      ((option?.label ?? '') as string)
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => {
+                      setSelectedCustomerId(value?.value || null)
+                      form.setFieldsValue({ customer: value })
+                      // Clear selected contact when customer changes
+                      setSelectedContact(null)
+                      form.setFieldsValue({ selected_contact_id: null })
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col>
+                <Button
+                  type="default"
+                  onClick={handleOpenContactModal}
+                  disabled={!selectedCustomerId}
+                  style={{ marginBottom: 12 }}
+                >
+                  {t('quotas.action.customer_contact_modal.select_button')}
+                </Button>
+              </Col>
+            </Row>
           </Col>
         </Row>
 
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10} />
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            {/* Display selected contact information with validation */}
+            <Form.Item
+              label={boldText(
+                t(
+                  'quotas.action.customer_contact_modal.selected_contact_label',
+                ),
+              )}
+              required
+            >
+              <Form.Item
+                name="selected_contact_id"
+                rules={[
+                  {
+                    required: true,
+                    message: t('validations.required'),
+                  },
+                ]}
+                noStyle
+              >
+                <InputNumber style={{ display: 'none' }} />
+              </Form.Item>
+              <Row gutter={[8, 0]} align="middle">
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {t('quotas.action.customer_contact_modal.department_name')}:{' '}
+                  {selectedContact?.department_name || '---'}
+                </Col>
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {t(
+                    'quotas.action.customer_contact_modal.contact_person_name',
+                  )}
+                  : {selectedContact?.contact_person_name || '---'}
+                </Col>
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {t('quotas.action.customer_contact_modal.email')}:{' '}
+                  {selectedContact?.email || '---'}
+                </Col>
+              </Row>
+            </Form.Item>
+          </Col>
+        </Row>
         <Row gutter={[100, 0]} wrap>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
@@ -330,7 +491,9 @@ const BasicInfo = () => {
               rules={[
                 {
                   required: true,
-                  message: t('validations.required'),
+                  message: t(
+                    'quotas.validation.basic_info.required.estimate_date',
+                  ),
                 },
               ]}
             >
@@ -498,49 +661,29 @@ const BasicInfo = () => {
                   t('quotas.action.basic_info.fields.consumption_tax'),
                 )}
                 style={{ marginBottom: 0, flex: 1 }}
+                rules={[
+                  {
+                    required: true,
+                    message: t('validations.required'),
+                  },
+                ]}
               >
                 <Radio.Group
-                  defaultValue={'exclusive'}
                   options={[
                     {
                       value: 'exclusive',
                       label: t('tenant_settings.consumptionTax.taxExclusive'),
                     },
-                    {
-                      value: 'inclusive',
-                      label: t('tenant_settings.consumptionTax.taxInclusive'),
-                    },
+                    // {
+                    //   value: 'inclusive',
+                    //   label: t('tenant_settings.consumptionTax.taxInclusive'),
+                    // },
                     {
                       value: 'external',
                       label: t('tenant_settings.consumptionTax.taxExempt'),
                     },
                   ]}
                 />
-              </Form.Item>
-
-              <Form.Item
-                label={boldText(
-                  t('tenant_settings.consumptionTax.taxRateLabel'),
-                )}
-                name="tax_rate"
-                style={{
-                  marginBottom: 0,
-                }}
-              >
-                <InputNumber
-                  controls={false}
-                  min={0}
-                  defaultValue={0}
-                  max={100}
-                  addonAfter="%"
-                  style={{ width: 100 }}
-                />
-              </Form.Item>
-              <Form.Item style={{ marginBottom: 0 }}>
-                <span className="ml-1 text-[#FA8C16]">
-                  {t('quotas.action.basic_info.labels.default_tax_rate')}
-                  {Form.useWatch('tax_rate') ?? 0}%
-                </span>
               </Form.Item>
             </div>
           </Col>
@@ -550,6 +693,13 @@ const BasicInfo = () => {
       <Modal open={open} onCancel={close} footer={null}>
         <CodeIssueSettingEdit modalProps={modalFormProps} />
       </Modal>
+
+      <CustomerContactSelectionModal
+        open={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
+        customerId={selectedCustomerId}
+        onSelect={handleSelectContact}
+      />
     </Card>
   )
 }

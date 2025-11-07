@@ -21,6 +21,7 @@ import {
   useParsed,
   useTranslate,
 } from '@refinedev/core'
+import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
@@ -32,12 +33,10 @@ import {
   Modal,
   Space,
   Spin,
-  Typography,
 } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-
-const { Title } = Typography
 
 function AgreedPriceQuotaDetail() {
   const t = useTranslate()
@@ -228,18 +227,13 @@ function AgreedPriceQuotaDetail() {
           items={[
             {
               title: (
-                <Title
-                  level={5}
-                  style={{
-                    color: PRIMARY,
-                  }}
-                >
-                  {t('quotas.quotas')}
-                </Title>
+                <Link href="/agreed-prices">
+                  {boldText(t('quotas.confirmed_quota'))}
+                </Link>
               ),
             },
             {
-              title: <Title level={5}>{t('quotas.detail')}</Title>,
+              title: boldText(t('quotas.confirmed_quota_detail'), PRIMARY),
             },
           ]}
           separator={<RightOutlined />}
@@ -247,7 +241,7 @@ function AgreedPriceQuotaDetail() {
       }
       title={
         <div className="flex justify-between">
-          <span>{t('quotas.detail')}</span>
+          <span>{t('quotas.confirmed_quota_detail')}</span>
           <Button
             color="primary"
             variant="outlined"

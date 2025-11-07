@@ -1,11 +1,11 @@
 'use client'
 
 import { RightOutlined } from '@ant-design/icons'
-import AccountingContact from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/accounting-contact'
 import AddressContact from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/address-contact'
 import BasicInformation from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/basic-Information'
 import { CorporateNumberSearchModal } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/corporate-number-search-modal'
 import { CorporateResearchFormSection } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/corporate-research-form-section'
+import CustomerContacts from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/customer-contacts'
 import DeliveryDestinations from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/delivery-destinations'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import { Edit } from '@components/crud/edit'
@@ -13,6 +13,7 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space } from 'antd'
+import Link from 'next/link'
 
 import { useCustomerEdit } from './use-customers-edit'
 
@@ -35,7 +36,11 @@ export default function CustomerEditPage() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('business_partner.business_partner')),
+      title: (
+        <Link href="/customers">
+          {boldText(t('business_partner.business_partner'))}
+        </Link>
+      ),
     },
     { title: boldText(t('customers.edit.edit'), PRIMARY) },
   ]
@@ -66,7 +71,7 @@ export default function CustomerEditPage() {
         <Space size={30} direction={'vertical'} style={{ width: '100%' }}>
           <BasicInformation {...hookProps} />
           <AddressContact {...hookProps} />
-          <AccountingContact {...hookProps} />
+          <CustomerContacts {...hookProps} />
           <DeliveryDestinations {...hookProps} />
           <CorporateResearchFormSection {...hookProps} />
         </Space>

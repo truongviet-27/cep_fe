@@ -1,15 +1,15 @@
+/* eslint-disable simple-import-sort/imports */
 'use client'
 
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
-import { Button, Collapse, Form, Input, Space, Typography } from 'antd'
+import boldText from '@utility/bold-text'
+import { Button, Collapse, Form, Input, Space } from 'antd'
 import React from 'react'
-
 import styles from '../styles.module.css'
 
-const { Title } = Typography
 const { Panel } = Collapse
 
 function DeliveryDestinations(
@@ -34,9 +34,7 @@ function DeliveryDestinations(
       )}
     >
       <Panel
-        header={
-          <Title level={5}>{t('customers.show.delivery_destinations')}</Title>
-        }
+        header={boldText(t('customers.show.delivery_destinations'))}
         key="1"
       >
         <Form.List name="delivery_addresses">

@@ -3,16 +3,7 @@
 import { CloseOutlined } from '@ant-design/icons'
 import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
 import { useTranslate } from '@refinedev/core'
-import {
-  Checkbox,
-  Col,
-  Form,
-  InputNumber,
-  Radio,
-  Select,
-  Space,
-  Typography,
-} from 'antd'
+import { Checkbox, Col, Form, Radio, Select, Space, Typography } from 'antd'
 import Image from 'next/image'
 
 const { Text } = Typography
@@ -78,17 +69,14 @@ function Right() {
               </Form.Item>
             </div>
 
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              valuePropName="checked"
-              name={'is_display_company_logo_image'}
-            >
-              <Checkbox>{t('tenant_settings.hide')}</Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item
+                valuePropName="checked"
+                name={'is_display_company_logo_image'}
+              >
+                <Checkbox>{t('tenant_settings.hide')}</Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
@@ -137,18 +125,14 @@ function Right() {
                 />
               </Form.Item>
             </div>
-
-            <Form.Item
-              style={{
-                marginBottom: 0,
-                scale: 1.3,
-                padding: '0 40px',
-              }}
-              valuePropName="checked"
-              name={'is_display_company_seal_image'}
-            >
-              <Checkbox>{t('tenant_settings.hide')}</Checkbox>
-            </Form.Item>
+            <div className="flex flex-1 items-center justify-center">
+              <Form.Item
+                valuePropName="checked"
+                name={'is_display_company_seal_image'}
+              >
+                <Checkbox>{t('tenant_settings.hide')}</Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
@@ -202,8 +186,8 @@ function Right() {
                 )}
 
                 <div className="mt-10 ml-[60%] flex flex-col">
-                  <Space>{watchAddress}</Space>
                   <Space>{watchCompanyName}</Space>
+                  <Space>{watchAddress}</Space>
                   <Space>{watchPhone}</Space>
                 </div>
               </div>
@@ -260,29 +244,11 @@ function Right() {
                     label: t('tenant_settings.consumptionTax.taxExclusive'),
                   },
                   {
-                    value: 'inclusive',
-                    label: t('tenant_settings.consumptionTax.taxInclusive'),
-                  },
-                  {
                     value: 'external',
                     label: t('tenant_settings.consumptionTax.taxExempt'),
                   },
                 ]}
               />
-            </Form.Item>
-
-            <Form.Item
-              name="tax_rate"
-              label={t('tenant_settings.consumptionTax.taxRateLabel')}
-              colon={false}
-              layout="horizontal"
-              style={{
-                marginBottom: 0,
-                marginLeft: 'auto',
-              }}
-              getValueFromEvent={(value) => Number(value)}
-            >
-              <InputNumber controls={false} min={0} max={100} addonAfter="%" />
             </Form.Item>
           </div>
         </div>

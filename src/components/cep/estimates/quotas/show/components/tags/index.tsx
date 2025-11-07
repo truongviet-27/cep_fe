@@ -17,7 +17,7 @@ function Tags({ tags }: { tags: { id: number; name: string }[] }) {
       }}
       style={{
         border: 'none',
-        marginTop: 20,
+        marginTop: 10,
       }}
     >
       <Row style={{ marginTop: 20 }}>

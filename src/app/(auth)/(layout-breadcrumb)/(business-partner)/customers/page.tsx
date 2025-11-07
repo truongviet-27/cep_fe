@@ -15,6 +15,7 @@ import {
 import {
   type BaseRecord,
   useGo,
+  useNotification,
   useTranslate,
   useUpdate,
 } from '@refinedev/core'
@@ -79,6 +80,8 @@ export default function CustomerListPage() {
   const { parameterSettings, hasFullAccessModule } = useUserStore(
     (state) => state,
   )
+
+  const notification = useNotification()
 
   const isFullAccess = hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
   const allowRankResource = parameterSettings?.get?.(
@@ -211,7 +214,7 @@ export default function CustomerListPage() {
   }
 
   const getRowClassName = (record: BaseRecord) => {
-    return record.deleted_at ? '!bg-gray-200' : ''
+    return record.deleted_at ? '!bg-gray-300' : ''
   }
 
   const columns: TableColumnsType<SimpleCustomer> = useMemo(
@@ -386,11 +389,25 @@ export default function CustomerListPage() {
               <DeleteButton
                 icon={null}
                 danger
+                confirmOkText={t('buttons.suspend')}
                 recordItemId={record.id}
                 size={'small'}
                 type={'primary'}
                 className={isFullAccess ? '' : '!bg-gray-100'}
                 disabled={!isFullAccess}
+                successNotification={false}
+                onSuccess={() => {
+                  if (notification && notification.open) {
+                    notification.open({
+                      type: 'success',
+                      message: t('customers.suspend_success_title'),
+                      description: t('customers.suspend_success_desc', {
+                        code: record.customer_code,
+                      }),
+                      key: `delete-${record.id}`,
+                    })
+                  }
+                }}
               >
                 {t('buttons.suspend')}
               </DeleteButton>

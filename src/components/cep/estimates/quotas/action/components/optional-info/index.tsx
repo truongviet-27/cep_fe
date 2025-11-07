@@ -35,6 +35,7 @@ function OptionalInfo() {
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
+      tax_rate: 0,
       is_add_total: true,
       unit: '-',
     }
@@ -253,6 +254,16 @@ function OptionalInfo() {
                             ],
                             valueOption?.sale_price,
                           )
+                          // form.setFieldValue(
+                          //   [
+                          //     'optional_product',
+                          //     record.index,
+                          //     'products',
+                          //     record.index2,
+                          //     'tax_rate',
+                          //   ],
+                          //   valueOption?.tax_rate,
+                          // )
                           form.setFieldValue(
                             [
                               'optional_product',
@@ -548,6 +559,49 @@ function OptionalInfo() {
               },
             },
             {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                if (isProductManager) {
+                  const taxRate =
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'tax_rate',
+                    ]) || 0
+                  return `${taxRate}%`
+                }
+
+                return (
+                  <Form.Item
+                    name={[record.index, 'products', record.index2, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                      style={{ width: 100 }}
+                      addonAfter="%"
+                      controls={false}
+                    />
+                  </Form.Item>
+                )
+              },
+            },
+            {
               title: t('quotas.action.optional_info.table.selling_amount'),
               dataIndex: 'sellingAmount',
               key: 'sellingAmount',
@@ -615,6 +669,7 @@ function OptionalInfo() {
                             selling_price: 0,
                             profit_margin: 0,
                             is_add_total: true,
+                            tax_rate: 0,
                             unit: '-',
                           },
                         ],

@@ -92,7 +92,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     (e: React.UIEvent<HTMLDivElement>) => {
       const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
       if (
-        scrollTop + clientHeight >= scrollHeight - 10 &&
+        scrollTop + clientHeight >= scrollHeight - 30 &&
         !query.isFetching &&
         (query.data?.total ?? 0) > options.length
       ) {
@@ -147,13 +147,16 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
         mode={mode}
         onChange={(value) => {
           if (onChangeValue) {
-            const valueOption = options.find((opt) =>
-              opt?.id === labelInValue ? value?.value : value,
+            const valueOption = options.find(
+              (opt) => opt?.id === (labelInValue ? value?.value : value),
             )
             onChangeValue(valueOption)
           }
           if (onChangeClear) {
             onChangeClear(selectProps.onSearch)
+          }
+          if (value) {
+            if (selectProps?.onSearch) selectProps.onSearch('')
           }
         }}
         value={value}

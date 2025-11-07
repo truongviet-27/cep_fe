@@ -6,6 +6,7 @@ import { PRIMARY } from '@utility/color'
 import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
+import { useMemo } from 'react'
 
 const { Text } = Typography
 
@@ -118,6 +119,17 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
     {
+      title: t('quotas.show.table.tax_rate'),
+      dataIndex: 'tax_rate',
+      key: 'tax_rate',
+      render: (_, record) => {
+        if (record.isHeader) {
+          return { props: { colSpan: 0 } }
+        }
+        return `${record?.tax_rate}%`
+      },
+    },
+    {
       title: t('quotas.show.table.total_calculation'),
       dataIndex: 'is_add_total',
       key: 'is_add_total',
@@ -148,6 +160,37 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
   ]
+
+  const calculateGroupedTotal = (data: any) => {
+    const totalByTaxRate = data.reduce((acc: any, item: any) => {
+      if (item.isHeader || !item.is_add_total) {
+        return acc
+      }
+
+      const sellingPrice = parseFloat(item.selling_price || 0)
+      const quantity = parseFloat(item.quantity || 0)
+      const taxRate = parseFloat(item.tax_rate || 0)
+
+      // Công thức: selling_price * quantity * tax_rate / 100
+      const calculatedValue = (sellingPrice * quantity * taxRate) / 100
+
+      const key = String(taxRate)
+      acc[key] = (acc[key] || 0) + calculatedValue
+
+      return acc
+    }, {})
+
+    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
+      taxRate: parseFloat(taxRate),
+      total: (total as number).toFixed(0),
+    }))
+  }
+
+  // 🌟 SỬ DỤNG useMemo: Biến này chỉ được tính toán lại khi dataSource thay đổi
+  const groupedTotals = useMemo(() => {
+    return calculateGroupedTotal(dataSource)
+  }, [dataSource]) // Dependency array: chỉ chạy lại khi dataSource thay đổi
+
   return (
     <Card
       title={boldText(t('quotas.show.detail_info'), PRIMARY, 16)}
@@ -194,7 +237,8 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 <Table.Summary.Cell index={4}></Table.Summary.Cell>
                 <Table.Summary.Cell index={5}></Table.Summary.Cell>
                 <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                <Table.Summary.Cell index={7} align="center">
+                <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                <Table.Summary.Cell index={8} align="center">
                   {basicInfo?.consumption_tax === 'exclusive'
                     ? +basicInfo?.total_price_tax_included -
                       +basicInfo?.consumption_tax_amount
@@ -208,98 +252,110 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         <Card bordered={false}>
           <Row gutter={[16, 16]}>
             <Col span={12}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '8px 12px',
-                  border: '1px solid #f0f0f0',
-                  borderRadius: 6,
-                  background: '#F8F9FA',
-                }}
-              >
-                <Text
-                  style={{
-                    fontWeight: 700,
-                  }}
-                >
-                  {t('quotas.action.detail_info.summary.cost_total')}
-                </Text>
-                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                  ¥{basicInfo?.total_cost}
-                </Text>
-              </div>
+              <Row gutter={[16, 16]}>
+                <Col span={24}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '8px 12px',
+                      border: '1px solid #f0f0f0',
+                      borderRadius: 6,
+                      background: '#F8F9FA',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {t('quotas.action.detail_info.summary.cost_total')}
+                    </Text>
+                    <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                      ¥{basicInfo?.total_cost}
+                    </Text>
+                  </div>
+                </Col>
+                <Col span={24}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '8px 12px',
+                      border: '1px solid #f0f0f0',
+                      borderRadius: 6,
+                      background: '#F8F9FA',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {t(
+                        'quotas.action.detail_info.summary.total_profit_margin',
+                      )}
+                    </Text>
+                    <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                      {basicInfo?.total_profit_margin}%
+                    </Text>
+                  </div>
+                </Col>
+              </Row>
             </Col>
             <Col span={12}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '8px 12px',
-                  border: '1px solid #f0f0f0',
-                  borderRadius: 6,
-                  background: '#F8F9FA',
-                }}
-              >
-                <Text
-                  style={{
-                    fontWeight: 700,
-                  }}
-                >
-                  {t('quotas.action.detail_info.summary.tax_amount')}（
-                  {basicInfo?.tax_rate}%）
-                </Text>
-                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                  ¥{basicInfo?.consumption_tax_amount}
-                </Text>
-              </div>
-            </Col>
-            <Col span={12}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '8px 12px',
-                  border: '1px solid #f0f0f0',
-                  borderRadius: 6,
-                  background: '#F8F9FA',
-                }}
-              >
-                <Text
-                  style={{
-                    fontWeight: 700,
-                  }}
-                >
-                  {t('quotas.action.detail_info.summary.total_profit_margin')}
-                </Text>
-                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                  {basicInfo?.total_profit_margin}%
-                </Text>
-              </div>
-            </Col>
-            <Col span={12}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '8px 12px',
-                  border: '1px solid #f0f0f0',
-                  borderRadius: 6,
-                  background: '#F8F9FA',
-                }}
-              >
-                <Text
-                  style={{
-                    fontWeight: 700,
-                  }}
-                >
-                  {t('quotas.action.detail_info.summary.total_amount')}（
-                  {t('quotas.action.detail_info.summary.tax_inclusive')}）
-                </Text>
-                <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                  ¥{basicInfo?.total_price_tax_included}
-                </Text>
-              </div>
+              <Row gutter={[16, 16]}>
+                {groupedTotals.map((item, index) => (
+                  <Col span={24} key={index}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        padding: '8px 12px',
+                        border: '1px solid #f0f0f0',
+                        borderRadius: 6,
+                        background: '#F8F9FA',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontWeight: 700,
+                        }}
+                      >
+                        {t('quotas.action.detail_info.summary.tax_amount')}（
+                        {item?.taxRate}%）
+                      </Text>
+                      <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                        ¥{item?.total}
+                      </Text>
+                    </div>
+                  </Col>
+                ))}
+                <Col span={24}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '8px 12px',
+                      border: '1px solid #f0f0f0',
+                      borderRadius: 6,
+                      background: '#F8F9FA',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {t('quotas.action.detail_info.summary.total_amount')}（
+                      {t('quotas.action.detail_info.summary.tax_inclusive')}）
+                    </Text>
+                    <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                      ¥{basicInfo?.total_price_tax_included}
+                    </Text>
+                  </div>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Card>

@@ -26,7 +26,7 @@ import {
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const { Text } = Typography
 
@@ -53,42 +53,61 @@ function DetailInfo() {
     let costTotal = 0
     let sellTotal = 0
 
+    // Group products by tax rate for separate calculation
+    const taxGroups: { [key: string]: { selling: number; taxRate: number } } =
+      {}
+
+    // Calculate per-product totals and group by tax_rate
     ;(main_product_groups ?? []).forEach((group: any) => {
       ;(group.products ?? []).forEach((product: any) => {
-        if (product.is_add_total) {
-          costTotal += (product.cost_price || 0) * (product.quantity || 0)
-          sellTotal += (product.selling_price || 0) * (product.quantity || 0)
+        if (!product.is_add_total) return
+
+        const qty = product.quantity || 0
+        const selling = (product.selling_price || 0) * qty
+        const cost = (product.cost_price || 0) * qty
+
+        costTotal += cost
+        sellTotal += selling
+
+        // Use product's individual tax rate, fallback to 0 if not set
+        const productTaxRate = product.tax_rate ?? 0
+        const taxRateKey = productTaxRate.toString()
+
+        // Group products by tax rate
+        if (!taxGroups[taxRateKey]) {
+          taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
         }
+        taxGroups[taxRateKey].selling += selling
       })
     })
 
+    // Calculate tax for each tax rate group with rounding
     let taxTotal = 0
+    Object.values(taxGroups).forEach((group) => {
+      const rawTax = group.selling * (group.taxRate / 100)
+      let roundedTax = 0
+
+      // Apply rounding method per tax group
+      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+        roundedTax = Math.floor(rawTax)
+      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+        roundedTax = Math.ceil(rawTax)
+      } else {
+        roundedTax = Number(rawTax.toFixed(0))
+      }
+
+      taxTotal += roundedTax
+    })
+
     let sellTotalWithTax = 0
-    if (consumptionTaxWatch === ConsumptionTaxEnum.INCLUSIVE) {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor(sellTotal - sellTotal / (1 + taxRateWatch / 100))
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil(sellTotal - sellTotal / (1 + taxRateWatch / 100))
-      } else {
-        taxTotal = Number(
-          (sellTotal - sellTotal / (1 + taxRateWatch / 100)).toFixed(0),
-        )
-      }
+    if (consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL) {
+      // For inclusive tax, selling total already includes tax
+      sellTotalWithTax = sellTotal
     } else {
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        taxTotal = Math.floor((sellTotal * tax_rate) / 100)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        taxTotal = Math.ceil((sellTotal * tax_rate) / 100)
-      } else {
-        taxTotal = Number(((sellTotal * tax_rate) / 100).toFixed(0))
-      }
+      // For internal tax, add tax to selling total
+      sellTotalWithTax = sellTotal + taxTotal
     }
 
-    if (consumptionTaxWatch === 'exclusive') {
-      sellTotalWithTax = sellTotal + taxTotal
-    } else {
-      sellTotalWithTax = sellTotal
-    }
     const profitRate = Number(
       (sellTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0).toFixed(
         2,
@@ -128,6 +147,7 @@ function DetailInfo() {
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
+      tax_rate: 0,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
     }
@@ -136,7 +156,6 @@ function DetailInfo() {
     newProducts.splice(productIndex, 0, newProduct)
 
     values[groupIndex].products = newProducts
-
     form.setFieldsValue({ main_product: values })
   }
 
@@ -157,6 +176,70 @@ function DetailInfo() {
     setIsModalOpen(false)
   }
 
+  const dataSource: any[] = (form?.getFieldValue('main_product') ?? []).flatMap(
+    (item: any, index: number) => [
+      {
+        index,
+        key: `header-${index}`,
+        isHeader: true,
+        title: item.group_name,
+      },
+      ...(item.products ?? []).flatMap((item2: any, index2: number) => [
+        {
+          index,
+          index2,
+          ...item2,
+        },
+      ]),
+    ],
+  )
+
+  const calculateGroupedTotal = (data: any) => {
+    const totalByTaxRate = data.reduce((acc: any, item: any) => {
+      if (item.isHeader || !item.is_add_total) {
+        return acc
+      }
+      const sellingPrice = parseFloat(item.selling_price || 0)
+      const quantity = parseFloat(item.quantity || 0)
+      const taxRate = parseFloat(item.tax_rate || 0)
+      const sellingAmount = sellingPrice * quantity
+      const key = String(taxRate)
+
+      // Group selling amounts by tax rate
+      if (!acc[key]) {
+        acc[key] = { sellingTotal: 0, taxRate }
+      }
+      acc[key].sellingTotal += sellingAmount
+
+      return acc
+    }, {})
+
+    return Object.entries(totalByTaxRate).map(
+      ([taxRateKey, group]: [string, any]) => {
+        const rawTax = group.sellingTotal * (group.taxRate / 100)
+        let roundedTax = 0
+
+        // Apply rounding method per tax group (same as calculateSummary)
+        if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
+          roundedTax = Math.floor(rawTax)
+        } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
+          roundedTax = Math.ceil(rawTax)
+        } else {
+          roundedTax = Number(rawTax.toFixed(0))
+        }
+
+        return {
+          taxRate: parseFloat(taxRateKey),
+          total: roundedTax.toString(),
+        }
+      },
+    )
+  }
+
+  const groupedTotals = useMemo(() => {
+    return calculateGroupedTotal(dataSource)
+  }, [dataSource])
+
   return (
     <Card
       title={boldText(t('quotas.action.detail_info.title'), PRIMARY, 16)}
@@ -171,24 +254,6 @@ function DetailInfo() {
     >
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
-          const dataSource: any[] = (
-            form?.getFieldValue('main_product') ?? []
-          ).flatMap((item: any, index: number) => [
-            {
-              index,
-              key: `header-${index}`,
-              isHeader: true,
-              title: item.group_name,
-            },
-            ...(item.products ?? []).flatMap((item2: any, index2: number) => [
-              {
-                index,
-                index2,
-                ...item2,
-              },
-            ]),
-          ])
-
           const columns: ColumnsType = [
             {
               title: t('quotas.action.detail_info.table.product_code'),
@@ -304,6 +369,7 @@ function DetailInfo() {
                           'quotas.action.detail_info.placeholders.product_search',
                         )}
                         disabled={!customerWatch}
+                        pageSize={20}
                         onChangeValue={(valueOption) => {
                           form.setFieldValue(
                             [
@@ -375,7 +441,6 @@ function DetailInfo() {
                             ],
                             1,
                           )
-
                           if (!valueOption) {
                             form.setFieldValue(
                               [
@@ -722,6 +787,50 @@ function DetailInfo() {
               },
             },
             {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                if (isProductManager) {
+                  const taxRate =
+                    form.getFieldValue([
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'tax_rate',
+                    ]) || 0
+                  return `${taxRate}%`
+                }
+
+                return (
+                  <Form.Item
+                    name={[record.index, 'products', record.index2, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: false,
+                        message: '',
+                      },
+                    ]}
+                    normalize={(val) => val ?? 0}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      style={{ width: 100 }}
+                      precision={0}
+                      addonAfter="%"
+                      controls={false}
+                    />
+                  </Form.Item>
+                )
+              },
+            },
+            {
               title: t('quotas.action.detail_info.table.total_calculation'),
               dataIndex: 'is_add_total',
               key: 'is_add_total',
@@ -798,6 +907,7 @@ function DetailInfo() {
                             cost_price: 0,
                             selling_price: 0,
                             profit_margin: 0,
+                            tax_rate: 0,
                             is_add_total: true,
                             unit: t(
                               'quotas.action.detail_info.default_values.default_unit',
@@ -896,6 +1006,7 @@ function DetailInfo() {
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
                     </Table.Summary.Row>
                   )
                 }}
@@ -907,113 +1018,119 @@ function DetailInfo() {
       <Card bordered={false}>
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.cost_total')}
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{costTotal || 0}
-              </Text>
-              <Form.Item name="total_cost" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    {t('quotas.action.detail_info.summary.cost_total')}
+                  </Text>
+                  <Form.Item name="total_cost" hidden>
+                    <InputNumber />
+                  </Form.Item>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{costTotal || 0}
+                  </Text>
+                </div>
+              </Col>
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    {t('quotas.action.detail_info.summary.total_profit_margin')}
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    {profitRate}%
+                  </Text>
+                  <Form.Item name="total_profit_margin" hidden>
+                    <InputNumber />
+                  </Form.Item>
+                </div>
+              </Col>
+            </Row>
           </Col>
           <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.tax_amount')}（
-                {taxRateWatch}%）
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{taxTotal || 0}
-              </Text>
-              <Form.Item name="consumption_tax_amount" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.total_profit_margin')}
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                {profitRate}%
-              </Text>
-              <Form.Item name="total_profit_margin" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                border: '1px solid #f0f0f0',
-                borderRadius: 6,
-                background: '#F8F9FA',
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 700,
-                }}
-              >
-                {t('quotas.action.detail_info.summary.total_amount')}（
-                {consumptionTaxWatch === 'external'
-                  ? t('quotas.action.detail_info.summary.tax_exclusive')
-                  : t('quotas.action.detail_info.summary.tax_inclusive')}
-                ）
-              </Text>
-              <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                ¥{sellTotalWithTax || 0}
-              </Text>
-              <Form.Item name="total_price_tax_included" hidden>
-                <InputNumber />
-              </Form.Item>
-            </div>
+            <Row gutter={[16, 16]}>
+              {groupedTotals.map((item, index) => (
+                <Col span={24} key={index}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '8px 12px',
+                      border: '1px solid #f0f0f0',
+                      borderRadius: 6,
+                      background: '#F8F9FA',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
+                    </Text>
+                    <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                      ¥{item.total}
+                    </Text>
+                  </div>
+                </Col>
+              ))}
+              <Col span={24}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    background: '#F8F9FA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    {t('quotas.action.detail_info.summary.total_amount')}（
+                    {consumptionTaxWatch === 'external'
+                      ? t('quotas.action.detail_info.summary.tax_exclusive')
+                      : t('quotas.action.detail_info.summary.tax_inclusive')}
+                    ）
+                  </Text>
+                  <Text style={{ color: '#1890ff', fontWeight: 500 }}>
+                    ¥{sellTotalWithTax || 0}
+                  </Text>
+                  <Form.Item name="total_price_tax_included" hidden>
+                    <InputNumber />
+                  </Form.Item>
+                </div>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Card>

@@ -39,7 +39,7 @@ import {
 } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
-import { PRIMARY } from '@utility/color'
+import { BLACK, PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
@@ -470,8 +470,6 @@ function QuotaList() {
     },
   })
 
-  console.log(filters, 'filters')
-
   useEffect(() => {
     setStatus(
       filters?.find((filter: any) => filter?.field === 'status')?.value ||
@@ -493,25 +491,6 @@ function QuotaList() {
     },
     [status, setFilters, setCurrent],
   )
-
-  // const { selectProps } = useSelect({
-  //   resource: 'departments',
-  //   optionLabel: 'name',
-  //   optionValue: 'id',
-  //   pagination: {
-  //     mode: 'server',
-  //     pageSize: 100,
-  //   },
-  //   onSearch(value) {
-  //     return [
-  //       {
-  //         field: 'q',
-  //         operator: 'eq',
-  //         value,
-  //       },
-  //     ]
-  //   },
-  // })
 
   const handleOptions = (data: any[]) => {
     let filter = ''
@@ -647,7 +626,7 @@ function QuotaList() {
         type: 'success',
       }
     },
-    [t],
+    [t, refetch, refetchStats],
   )
 
   const { mutate, isPending } = useCustomMutation()
@@ -819,28 +798,6 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
-              {/* <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.department')}
-                  </span>
-                }
-                layout="vertical"
-                name={'department_in_charge'}
-              > */}
-              {/* <Select
-                  {...selectProps}
-                  allowClear
-                  showSearch
-                  labelInValue
-                  onSearch={() => {}}
-                  placeholder={t('placeholders.select')}
-                  filterOption={(input, option) =>
-                    ((option?.label ?? '') as string)
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                /> */}
               <CoreAutocompleteAPI
                 name="department_in_charge"
                 resource="departments"
@@ -854,7 +811,6 @@ function QuotaList() {
                   if (callback) callback(department)
                 }}
               />
-              {/* </Form.Item> */}
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
@@ -1021,9 +977,8 @@ function QuotaList() {
                         width: '100%',
                         justifyContent: 'space-between',
                         fontSize: 14,
-                        // color: '#ccc',
+                        color: BLACK,
                       }}
-                      className="font-normal text-[#ccc] group-hover:text-[#000000E0]"
                     >
                       {t('quotas.actions.bulk_processing')}
                       <DownOutlined
@@ -1081,7 +1036,11 @@ function QuotaList() {
           16,
         )}
       >
-        <ModalAgreePrice data={dataAgreedPrice} close={close} />
+        <ModalAgreePrice
+          data={dataAgreedPrice}
+          close={close}
+          onSuccess={notificationFunction}
+        />
       </Modal>
     </List>
   )

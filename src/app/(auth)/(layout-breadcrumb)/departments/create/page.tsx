@@ -18,6 +18,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
+import Link from 'next/link'
 import { useMemo } from 'react'
 
 const { Text } = Typography
@@ -100,7 +101,11 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('departments.departments')),
+      title: (
+        <Link href="/departments">
+          {boldText(t('departments.departments'))}
+        </Link>
+      ),
     },
     {
       title: boldText(t('departments.create.create'), PRIMARY),

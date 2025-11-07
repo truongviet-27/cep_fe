@@ -47,7 +47,13 @@ function useProduct() {
         key: 'code',
         width: 200,
         render: (_: unknown, record: ProductListItem) => (
-          <Link href={`/products/show/${record.id}`} className="!underline">
+          <Link
+            href={`/products/show/${record.id}`}
+            onClick={() => {
+              sessionStorage.setItem('list_products', 'products')
+            }}
+            className="!underline"
+          >
             {record.code}
           </Link>
         ),
@@ -64,6 +70,12 @@ function useProduct() {
         dataIndex: 'packaging_count',
         key: 'packaging_count',
         width: 120,
+        render: (value: number) => {
+          if (typeof value === 'number') {
+            return value - 1 //minus main product
+          }
+          return ''
+        },
       },
       {
         title: t('products.list.table.headers.barcode'), // barcode

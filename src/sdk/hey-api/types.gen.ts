@@ -742,10 +742,6 @@ export type Customer = {
    */
   name?: string
   /**
-   * Company Full Name
-   */
-  full_name?: string
-  /**
    * Customer type (individual or company)
    */
   customer_type?: 'individual' | 'company'
@@ -817,22 +813,6 @@ export type Customer = {
    * Department in charge
    */
   department_in_charge?: string | null
-  /**
-   * Name of person in charge
-   */
-  person_in_charge_name?: string
-  /**
-   * Department of person in charge
-   */
-  person_in_charge_department?: string
-  /**
-   * Email of person in charge
-   */
-  person_in_charge_mail?: string
-  /**
-   * Phone of person in charge
-   */
-  person_in_charge_phone?: string | null
   /**
    * Soft deletion status
    */
@@ -992,10 +972,6 @@ export type CustomerStoreRequest = {
   industry?: string | null
   date_of_establishment?: string | null
   department_in_charge_id?: number | null
-  person_in_charge_name: string
-  person_in_charge_department: string
-  person_in_charge_mail: string
-  person_in_charge_phone?: string | null
   company_research_information?: Array<CompanyResearchInformationStoreRequest>
   /**
    * List of delivery addresses for the customer.
@@ -1036,10 +1012,6 @@ export type CustomerUpdateRequest = {
   industry?: string | null
   date_of_establishment?: string | null
   department_in_charge_id?: number | null
-  person_in_charge_name: string | null
-  person_in_charge_department: string | null
-  person_in_charge_mail: string | null
-  person_in_charge_phone?: string | null
   company_research_information?: Array<CompanyResearchInformationUpdateRequest>
   /**
    * List of delivery addresses to add, update, or delete.
@@ -1055,7 +1027,6 @@ export type SimpleCustomer = {
   customer_code?: string
   name?: string
   country?: string
-  person_in_charge_department?: string
   rank?: Rank
   credit_rank?: string | null
   credit_rank_update_at?: string | null
@@ -1109,6 +1080,164 @@ export type SimpleUser = {
    * User name
    */
   name?: string
+}
+
+/**
+ * Customer Contact Model
+ * Represents a customer contact record.
+ */
+export type CustomerContact = {
+  /**
+   * Contact ID
+   */
+  id?: number
+  /**
+   * Customer ID
+   */
+  customer_id?: number
+  /**
+   * Customer name
+   */
+  customer_name?: string
+  /**
+   * Department name
+   */
+  department_name?: string | null
+  /**
+   * Contact person name
+   */
+  contact_person_name?: string
+  /**
+   * Contact email
+   */
+  email?: string
+  /**
+   * ID of the user who created the record
+   */
+  created_by?: number | null
+  /**
+   * ID of the user who last updated the record
+   */
+  updated_by?: number | null
+  /**
+   * Creation timestamp
+   */
+  created_at?: string
+  /**
+   * Update timestamp
+   */
+  updated_at?: string
+}
+
+/**
+ * Customer Contact Batch Delete Request
+ * Request to batch delete customer contacts by IDs
+ */
+export type CustomerContactBatchDeleteRequest = {
+  /**
+   * Array of contact IDs to delete
+   */
+  ids: Array<number>
+}
+
+/**
+ * Customer Contact Batch Delete Response
+ * Response after batch deleting customer contacts
+ */
+export type CustomerContactBatchDeleteResponse = {
+  /**
+   * Delete operation result
+   */
+  data?: {
+    /**
+     * Number of contacts deleted
+     */
+    deleted_count?: number
+  }
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * Customer Contact Item
+ * Single contact item for batch operations. If 'id' is provided, it updates existing contact. If 'id' is omitted, it creates a new contact.
+ */
+export type CustomerContactItem = {
+  /**
+   * Contact ID (optional for create, required for update)
+   */
+  id?: number | null
+  /**
+   * Customer ID
+   */
+  customer_id: number
+  /**
+   * Department name
+   */
+  department_name: string | null
+  /**
+   * Contact person name
+   */
+  contact_person_name: string
+  /**
+   * Contact email
+   */
+  email: string
+}
+
+/**
+ * Customer Contact Batch Update Request
+ * Request to batch update/create customer contacts. Items with 'id' will be updated, items without 'id' will be created.
+ */
+export type CustomerContactBatchUpdateRequest = {
+  /**
+   * Array of contacts to update or create
+   */
+  contacts: Array<CustomerContactItem>
+}
+
+/**
+ * Customer Contact Batch Update Response
+ * Response after batch updating/creating customer contacts
+ */
+export type CustomerContactBatchUpdateResponse = {
+  /**
+   * Array of updated/created customer contacts
+   */
+  data?: Array<CustomerContact>
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * Customer Contact Detail Response
+ * Response containing single customer contact details
+ */
+export type CustomerContactDetailResponse = {
+  data?: CustomerContact
+  /**
+   * Response message
+   */
+  message?: string
+}
+
+/**
+ * Customer Contacts Response
+ * Response containing list of customer contacts (no pagination)
+ */
+export type CustomerContactsResponse = {
+  /**
+   * Array of customer contacts
+   */
+  data?: Array<CustomerContact>
+  /**
+   * Response message
+   */
+  message?: string
 }
 
 /**
@@ -1880,6 +2009,7 @@ export type ProductDetail = {
   }
   cost_price?: number
   selling_price?: number
+  tax_rate?: number
   note?: string | null
   author?: {
     id?: number
@@ -1999,6 +2129,10 @@ export type StoreProductInput = {
    * Base selling price
    */
   selling_price: number
+  /**
+   * Tax rate percentage for product (0-100)
+   */
+  tax_rate?: number
   note?: string | null
   /**
    * Optional extra packagings. First (default) packaging is auto created.
@@ -2018,6 +2152,7 @@ export type UpdateProductInput = {
   unit_id?: number | null
   cost_price?: number | null
   selling_price?: number | null
+  tax_rate?: number | null
   note?: string | null
   packagings?: Array<ProductPackagingInput> | null
 }
@@ -2035,6 +2170,7 @@ export type Product = {
   unit_id?: number
   cost_price?: number
   selling_price?: number
+  tax_rate?: number
   note?: string | null
   packagings?: Array<ProductPackagingInput>
 }
@@ -2172,6 +2308,7 @@ export type QuotaAgreedPriceCustomerProduct = {
   unit_name?: string
   selling_price?: number
   quantity?: number
+  tax_rate?: number
   start_date?: string
   end_date?: string
 }
@@ -2414,6 +2551,10 @@ export type QuotaProductItemRequest = {
    */
   profit_margin: number
   /**
+   * Tax rate for this quota product (percentage)
+   */
+  tax_rate?: number
+  /**
    * Whether this product should be included in total calculations
    */
   is_add_total: boolean
@@ -2521,6 +2662,10 @@ export type QuotaResource = {
    * Quota type
    */
   type?: 'normal' | 'channel_limited'
+  /**
+   * Quota business type
+   */
+  quota_type?: 'merchandise' | 'service'
   /**
    * Quota status
    */
@@ -2637,6 +2782,10 @@ export type QuotaStoreRequest = {
    * Quota type
    */
   type: 'normal' | 'channel_limited'
+  /**
+   * Quota business type
+   */
+  quota_type?: 'merchandise' | 'service'
   /**
    * Quota status
    */
@@ -2757,6 +2906,10 @@ export type QuotaUpdateRequest = {
    * Type of quota
    */
   type: 'standard' | 'custom' | 'enterprise'
+  /**
+   * Quota business type
+   */
+  quota_type?: 'merchandise' | 'service'
   /**
    * Current status of the quota
    */
@@ -3273,6 +3426,20 @@ export type PaymentDueDateEnum =
   (typeof PaymentDueDateEnum)[keyof typeof PaymentDueDateEnum]
 
 /**
+ * Quota category options
+ */
+export const QuotaCategoryEnum = {
+  MERCHANDISE: 'merchandise',
+  SERVICE: 'service',
+} as const
+
+/**
+ * Quota category options
+ */
+export type QuotaCategoryEnum =
+  (typeof QuotaCategoryEnum)[keyof typeof QuotaCategoryEnum]
+
+/**
  * Quota Template Resource
  * Represents a quota template with products and configuration.
  */
@@ -3413,6 +3580,7 @@ export type QuotaTemplateDetailResponse = {
     name?: string
     description?: string
     type?: 'normal' | 'channel_limited'
+    category?: 'merchandise' | 'service'
     delivery_method?: string
     payment_due_date?:
       | 'monthly_25'
@@ -3653,6 +3821,10 @@ export type QuotaTemplateProductItemRequest = {
    */
   profit_margin: number
   /**
+   * Tax rate percentage
+   */
+  tax_rate?: number
+  /**
    * Required: Whether to add to total calculation
    */
   is_add_total: boolean
@@ -3678,6 +3850,7 @@ export type QuotaTemplateProductResponse = {
   name?: string
   code?: string
   unit_name?: string
+  tax_rate?: number
   cost_price?: number
   selling_price?: number
   profit_margin?: number
@@ -3699,6 +3872,10 @@ export type QuotaTemplateStoreRequest = {
    */
   description?: string | null
   type: QuotaTypeEnum
+  /**
+   * Quota template category
+   */
+  category?: 'merchandise' | 'service'
   /**
    * Delivery method (free text)
    */
@@ -3761,6 +3938,7 @@ export type QuotaTemplateUpdateRequest = {
    */
   description?: string | null
   type: QuotaTypeEnum
+  category?: QuotaCategoryEnum
   /**
    * Delivery method (free text)
    */
@@ -5247,6 +5425,136 @@ export type CustomerControllerRestoreResponses = {
 
 export type CustomerControllerRestoreResponse =
   CustomerControllerRestoreResponses[keyof CustomerControllerRestoreResponses]
+
+export type CustomerContactControllerBatchDeleteData = {
+  body: CustomerContactBatchDeleteRequest
+  path?: never
+  query?: never
+  url: '/api/v1/customer-contacts'
+}
+
+export type CustomerContactControllerBatchDeleteErrors = {
+  /**
+   * Validation error
+   */
+  422: ValidationErrorResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type CustomerContactControllerBatchDeleteError =
+  CustomerContactControllerBatchDeleteErrors[keyof CustomerContactControllerBatchDeleteErrors]
+
+export type CustomerContactControllerBatchDeleteResponses = {
+  /**
+   * Customer contacts batch deleted successfully
+   */
+  200: CustomerContactBatchDeleteResponse
+}
+
+export type CustomerContactControllerBatchDeleteResponse =
+  CustomerContactControllerBatchDeleteResponses[keyof CustomerContactControllerBatchDeleteResponses]
+
+export type CustomerContactControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Filter by customer ID
+     */
+    customer_id?: number
+  }
+  url: '/api/v1/customer-contacts'
+}
+
+export type CustomerContactControllerIndexErrors = {
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type CustomerContactControllerIndexError =
+  CustomerContactControllerIndexErrors[keyof CustomerContactControllerIndexErrors]
+
+export type CustomerContactControllerIndexResponses = {
+  /**
+   * Customer contacts retrieved successfully
+   */
+  200: CustomerContactsResponse
+}
+
+export type CustomerContactControllerIndexResponse =
+  CustomerContactControllerIndexResponses[keyof CustomerContactControllerIndexResponses]
+
+export type CustomerContactControllerBatchUpdateData = {
+  body: CustomerContactBatchUpdateRequest
+  path?: never
+  query?: never
+  url: '/api/v1/customer-contacts'
+}
+
+export type CustomerContactControllerBatchUpdateErrors = {
+  /**
+   * Validation error
+   */
+  422: ValidationErrorResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type CustomerContactControllerBatchUpdateError =
+  CustomerContactControllerBatchUpdateErrors[keyof CustomerContactControllerBatchUpdateErrors]
+
+export type CustomerContactControllerBatchUpdateResponses = {
+  /**
+   * Customer contacts batch updated successfully
+   */
+  200: CustomerContactBatchUpdateResponse
+}
+
+export type CustomerContactControllerBatchUpdateResponse =
+  CustomerContactControllerBatchUpdateResponses[keyof CustomerContactControllerBatchUpdateResponses]
+
+export type CustomerContactControllerShowData = {
+  body?: never
+  path: {
+    /**
+     * Customer Contact ID
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/customer-contacts/{id}'
+}
+
+export type CustomerContactControllerShowErrors = {
+  /**
+   * Customer contact not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type CustomerContactControllerShowError =
+  CustomerContactControllerShowErrors[keyof CustomerContactControllerShowErrors]
+
+export type CustomerContactControllerShowResponses = {
+  /**
+   * Customer contact retrieved successfully
+   */
+  200: CustomerContactDetailResponse
+}
+
+export type CustomerContactControllerShowResponse =
+  CustomerContactControllerShowResponses[keyof CustomerContactControllerShowResponses]
 
 export type DepartmentControllerIndexData = {
   body?: never

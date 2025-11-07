@@ -13,7 +13,8 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
-import type { QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { type QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
+import { useUserStore } from '@stores/useUserStore'
 import type { TableProps } from 'antd'
 import {
   Button,
@@ -29,10 +30,9 @@ import {
   Tag,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { TableRowSelection } from 'antd/es/table/interface'
 import type { Dayjs } from 'dayjs'
-import React, { useCallback, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
+import React, { useCallback, useMemo, useState } from 'react'
 
 const { RangePicker } = DatePicker
 
@@ -41,8 +41,9 @@ const AgreedPriceQuotaTab = () => {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
+
+  const { permission } = useUserStore((state) => state)
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -53,15 +54,6 @@ const AgreedPriceQuotaTab = () => {
       pageSize: 100,
     },
   })
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys)
-  }
-
-  const rowSelection: TableRowSelection<QuotaAgreedPrice> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  }
 
   const getStatusTag = (status?: string) => {
     const statusEnum = status as AgreedPriceStatus
@@ -126,7 +118,7 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.status'),
         dataIndex: 'status',
         key: 'status',
-        render: (status: string) => getStatusTag(status),
+        render: () => getStatusTag(status as string),
       },
       {
         title: t('agreed_prices.table.estimate_number'),
@@ -165,7 +157,7 @@ const AgreedPriceQuotaTab = () => {
         title: (
           <div>
             <div>{t('agreed_prices.table.department')}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={{ fontSize: '14px', color: '#1890FF' }}>
               {t('agreed_prices.table.amount')}
             </div>
           </div>
@@ -187,8 +179,8 @@ const AgreedPriceQuotaTab = () => {
       {
         title: (
           <div>
-            <div>見積日</div>
-            <div style={{ fontSize: '12px', color: '#FF6918' }}>適用終了</div>
+            <div>適用開始</div>
+            <div style={{ fontSize: '14px', color: '#FF6918' }}>適用終了</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',
@@ -244,6 +236,10 @@ const AgreedPriceQuotaTab = () => {
               resource="quota/agreed-prices"
               meta={{ idsBody: true, method: 'delete' }}
               onSuccess={() => tableQuery?.refetch?.()}
+              disabled={
+                !permission?.is_module_admin &&
+                permission?.user?.id !== record.creator?.id
+              }
             />
             <Button
               size="small"
@@ -329,6 +325,7 @@ const AgreedPriceQuotaTab = () => {
       ]
     },
   })
+  console.log(count)
 
   const statusDashboard = useMemo(() => {
     const c = count?.data
@@ -555,7 +552,6 @@ const AgreedPriceQuotaTab = () => {
           <CommonTable<QuotaAgreedPrice>
             {...refinedTableProps}
             rowKey={'id'}
-            rowSelection={rowSelection}
             columns={columns}
           />
         )
@@ -574,7 +570,7 @@ const AgreedPriceQuotaTab = () => {
         footer={null}
         destroyOnClose
         style={{ top: 20 }}
-        width={980}
+        width={600}
       >
         <Form
           form={updateForm}
@@ -621,23 +617,37 @@ const AgreedPriceQuotaTab = () => {
             </span>
           </Form.Item>
 
-          <Form.Item
-            label="適用開始日"
-            name="start_date"
-            style={{ marginBottom: 16 }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <DatePicker
-                style={{ width: '80%' }}
-                placeholder="YYYY/MM/DD"
-                format="YYYY/MM/DD"
-                value={
-                  selected?.valid_to
-                    ? dayjs(selected.valid_to).add(1, 'day')
-                    : dayjs().add(1, 'day')
-                }
-              />
-              <span style={{ color: '#fa8c16', fontSize: '12px' }}>
+          <Form.Item label="適用開始日" style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <Form.Item
+                name="start_date"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      t(
+                        'validation.agreed_prices.modal.applicable_start.required',
+                      ) || '必須',
+                  },
+                ]}
+                noStyle
+              >
+                <DatePicker
+                  // GIỮ LẠI WIDTH GỐC CỦA BẠN (hoặc chỉnh % tùy ý)
+                  style={{ width: '65%' }}
+                  placeholder="YYYY/MM/DD"
+                  format="YYYY/MM/DD"
+                  // (Vẫn dùng useEffect + setFieldsValue để set giá trị mặc định nhé)
+                />
+              </Form.Item>
+
+              <span
+                style={{
+                  color: '#fa8c16',
+                  fontSize: '12px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 自動で終了日の翌日
               </span>
             </div>
@@ -649,15 +659,18 @@ const AgreedPriceQuotaTab = () => {
             rules={[
               {
                 required: true,
-                message: t('validation.required') || '必須',
+                message:
+                  t('validation.agreed_prices.modal.applicable_end.required') ||
+                  '必須',
               },
             ]}
             style={{ marginBottom: 16 }}
           >
             <DatePicker
-              style={{ width: '80%' }}
+              style={{ width: '65%' }}
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
+              defaultPickerValue={Form.useWatch('start_date', updateForm)}
             />
           </Form.Item>
 

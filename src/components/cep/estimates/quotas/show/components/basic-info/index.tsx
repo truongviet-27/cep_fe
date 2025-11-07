@@ -19,8 +19,16 @@ dayjs.extend(timezone)
 
 type ConsumptionTaxKey = 'exclusive' | 'inclusive' | 'external'
 
-function BasicInfo({ data }: { data: any }) {
+function BasicInfo({
+  data,
+  customerContact,
+}: {
+  data: any
+  customerContact?: any
+}) {
   const t = useTranslate()
+
+  console.log('BasicInfo customerContact:', customerContact)
 
   const consumptionTax: Record<ConsumptionTaxKey, string> = useMemo(() => {
     return {
@@ -101,6 +109,57 @@ function BasicInfo({ data }: { data: any }) {
             </Form.Item>
           </Col>
         </Row>
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}></Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              label={boldText(
+                t(
+                  'quotas.action.customer_contact_modal.selected_contact_label',
+                ),
+              )}
+              style={{ marginBottom: 0 }}
+            >
+              <Row gutter={[8, 0]} align="middle">
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {t('quotas.action.customer_contact_modal.department_name')}:{' '}
+                  {customerContact?.department_name || '---'}
+                </Col>
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {t(
+                    'quotas.action.customer_contact_modal.contact_person_name',
+                  )}
+                  : {customerContact?.contact_person_name || '---'}
+                </Col>
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {t('quotas.action.customer_contact_modal.email')}:{' '}
+                  {customerContact?.email || '---'}
+                </Col>
+              </Row>
+            </Form.Item>
+          </Col>
+        </Row>
 
         <Row gutter={[100, 0]} wrap>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
@@ -178,10 +237,6 @@ function BasicInfo({ data }: { data: any }) {
                 style={{ marginBottom: 0, flex: 1 }}
               >
                 {consumptionTax[data?.consumption_tax as ConsumptionTaxKey]}
-                <span className="ml-20">
-                  {boldText(t('tenant_settings.consumptionTax.taxRateLabel'))}
-                  <span className="ml-10">{data?.tax_rate}%</span>
-                </span>
               </Form.Item>
               {/* <Form.Item
                 label={boldText(

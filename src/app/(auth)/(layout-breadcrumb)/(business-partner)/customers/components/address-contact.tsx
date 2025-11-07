@@ -1,28 +1,16 @@
 'use client'
-
 import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
-import { SelectPagination } from '@components/common/select-pagination'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
 import { fieldDistinctionOptions, industryOptions } from '@utility/options'
-import {
-  Col,
-  Collapse,
-  DatePicker,
-  Form,
-  Input,
-  Row,
-  Select,
-  Typography,
-} from 'antd'
+import { Col, Collapse, DatePicker, Form, Input, Row, Select } from 'antd'
 import dayjs from 'dayjs'
-import React from 'react'
 
 import styles from '../styles.module.css'
 
-const { Title } = Typography
 const { Panel } = Collapse
 
 function AddressContact(
@@ -54,10 +42,7 @@ function AddressContact(
         />
       )}
     >
-      <Panel
-        header={<Title level={5}>{t('customers.show.address_contact')}</Title>}
-        key="1"
-      >
+      <Panel header={boldText(t('customers.show.address_contact'))} key="1">
         <Form.Item
           required
           label={boldText(t('customers.show.postal_code'))}
@@ -168,23 +153,23 @@ function AddressContact(
         >
           <Row gutter={8} align={'middle'}>
             <Col>
-              <SelectPagination
-                selectProps={{
-                  resource: 'departments',
-                }}
-                formItemProps={{
-                  name: 'department_in_charge_id',
-                  rules: [rule],
-                  required: true,
-                }}
-                selectComponentProps={{
-                  placeholder: t('placeholders.select'),
-                  style: { maxWidth: 560, width: '250px' },
-                }}
+              <CoreAutocompleteAPI
+                name={'department_in_charge_id'}
+                rules={[rule]}
+                labelInValue={false}
+                resource="departments"
+                placeholder={t(
+                  'quotas.action.detail_info.placeholders.product_search',
+                )}
+                layout="horizontal"
+                style={{ maxWidth: 560, width: '250px' }}
               />
             </Col>
+
             <Col>
-              <Form.Item>※当社の部署</Form.Item>
+              <Form.Item className="ant-form-item-hidden-margin">
+                ※当社の部署
+              </Form.Item>
             </Col>
           </Row>
         </Form.Item>
