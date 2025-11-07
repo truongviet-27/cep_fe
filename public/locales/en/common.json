@@ -22,6 +22,9 @@
       "password_required": "Please enter your password!"
     }
   },
+  "confirm": {
+    "delete_confirm": "Are you sure you want to delete this item?"
+  },
   "buttons": {
     "cancel": "Cancel",
     "save_settings": "Save Settings",
