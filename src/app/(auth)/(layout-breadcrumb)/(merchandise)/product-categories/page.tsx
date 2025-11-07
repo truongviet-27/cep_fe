@@ -103,6 +103,15 @@ export default function Page() {
           </Col>
           <Col style={{ flex: 1 }} />
           <div style={{ marginTop: 4, display: 'block' }}>
+            <Button
+              type="primary"
+              disabled={!dirty || !isFullAccess}
+              onClick={save}
+              className="shadow-sm disabled:opacity-60"
+              style={{ marginRight: 16 }}
+            >
+              {t('buttons.save_all')}
+            </Button>
             <CreateButton
               type="primary"
               size="middle"
@@ -130,14 +139,6 @@ export default function Page() {
 
       <div className="space-y-3">
         <div className="flex items-center justify-end">
-          <Button
-            type="primary"
-            disabled={!dirty || !isFullAccess}
-            onClick={save}
-            className="shadow-sm disabled:opacity-60"
-          >
-            {t('buttons.save_all')}
-          </Button>
           <Button
             type="text"
             onClick={() => openAll(!allOpen)}
