@@ -76,7 +76,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '「商品コードは必須です。」',
+                message: '商品コードは必須です。',
               },
               {
                 max: 20,
@@ -129,7 +129,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '「商品名は必須です。」',
+                message: '商品名は必須です。',
               },
               {
                 max: 100,
@@ -274,7 +274,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               },
             ]}
             style={{
-              width: '14%',
+              width: '80px',
               padding: '5px 10px',
             }}
           />
