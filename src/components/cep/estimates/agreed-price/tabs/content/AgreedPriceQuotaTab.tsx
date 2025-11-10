@@ -118,7 +118,23 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.status'),
         dataIndex: 'status',
         key: 'status',
-        render: () => getStatusTag(status as string),
+        render: (_: any, record: QuotaAgreedPrice) => {
+          let calculatedStatus = ''
+          const validToDate = record.valid_to
+          if (validToDate) {
+            const today = dayjs().startOf('day')
+            const validTo = dayjs(validToDate).startOf('day')
+            const diffInDays = validTo.diff(today, 'day')
+            if (diffInDays < 0) {
+              calculatedStatus = 'expired'
+            } else if (diffInDays < 15) {
+              calculatedStatus = 'about_to_expire'
+            } else {
+              calculatedStatus = 'active'
+            }
+          }
+          return getStatusTag(calculatedStatus)
+        },
       },
       {
         title: t('agreed_prices.table.estimate_number'),
@@ -325,7 +341,6 @@ const AgreedPriceQuotaTab = () => {
       ]
     },
   })
-  console.log(count)
 
   const statusDashboard = useMemo(() => {
     const c = count?.data

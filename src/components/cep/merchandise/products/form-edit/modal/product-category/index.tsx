@@ -55,7 +55,7 @@ export const ProductCategoryModal: React.FC<Props> = ({ modalProps }) => {
         rules={[
           {
             required: true,
-            message: '「カテゴリ名は必須です。」',
+            message: '分類名は必須です',
           },
         ]}
       />
