@@ -67,6 +67,7 @@ export default function CustomerEditPage() {
         layout="horizontal"
         colon={false}
         autoComplete="off"
+        scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
       >
         <Space size={30} direction={'vertical'} style={{ width: '100%' }}>
           <BasicInformation {...hookProps} />

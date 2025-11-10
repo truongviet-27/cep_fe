@@ -53,7 +53,7 @@ export const useCustomerEdit = () => {
   const handleFinish = async (values: any) => {
     try {
       // Validate form fields (all validation rules in Form will be checked)
-      await form.validateFields()
+      // await form.validateFields()
 
       const receivers = values?.receivers || []
 

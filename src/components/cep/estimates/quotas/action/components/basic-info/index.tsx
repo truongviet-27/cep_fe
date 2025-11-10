@@ -9,7 +9,6 @@ import {
   DatePicker,
   Form,
   Input,
-  InputNumber,
   Modal,
   Radio,
   Row,
@@ -427,20 +426,15 @@ const BasicInfo = () => {
                   'quotas.action.customer_contact_modal.selected_contact_label',
                 ),
               )}
+              name="selected_contact_id"
+              rules={[
+                {
+                  required: true,
+                  message: t('validation.quotas.selected_contact.required'),
+                },
+              ]}
               required
             >
-              <Form.Item
-                name="selected_contact_id"
-                rules={[
-                  {
-                    required: true,
-                    message: t('validation.quotas.selected_contact.required'),
-                  },
-                ]}
-                noStyle
-              >
-                <InputNumber style={{ display: 'none' }} />
-              </Form.Item>
               <Row gutter={[8, 0]} align="middle">
                 <Col
                   flex="auto"
