@@ -358,7 +358,7 @@ const BasicInfo = () => {
           </Col>
 
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Row gutter={[8, 0]} align="bottom">
+            <Row gutter={[8, 0]} align="top" wrap={false}>
               <Col flex="auto">
                 <Form.Item
                   label={boldText(
@@ -446,6 +446,13 @@ const BasicInfo = () => {
                   flex="auto"
                   style={{
                     overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                ></Col>
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                   }}
@@ -480,9 +487,9 @@ const BasicInfo = () => {
                   }}
                 >
                   <strong>
-                    {t('quotas.action.customer_contact_modal.department_name')}:
+                    {t('quotas.action.customer_contact_modal.email')}:
                   </strong>
-                  {selectedContact?.department_name || ''}
+                  {selectedContact?.email || ''}
                 </Col>
               </Row>
             </Form.Item>

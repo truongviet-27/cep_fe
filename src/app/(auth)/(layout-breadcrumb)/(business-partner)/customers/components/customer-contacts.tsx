@@ -111,6 +111,7 @@ function CustomerContacts(
                       <Form.Item
                         name={[field.name, 'email']}
                         dependencies={['receivers']}
+                        validateTrigger="onBlur"
                         rules={[
                           { required: true, message: t('validation.required') },
                           {
@@ -152,24 +153,7 @@ function CustomerContacts(
                         required
                         noStyle
                       >
-                        <Input
-                          type="email"
-                          onBlur={() => {
-                            setTimeout(() => {
-                              const receivers =
-                                form.getFieldValue('receivers') || []
-                              receivers.forEach((_: unknown, index: number) => {
-                                if (index !== field.name) {
-                                  form
-                                    .validateFields([
-                                      ['receivers', index, 'email'],
-                                    ])
-                                    .catch(() => {})
-                                }
-                              })
-                            }, 0)
-                          }}
-                        />
+                        <Input type="email" />
                       </Form.Item>
                     ),
                   },

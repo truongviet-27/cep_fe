@@ -51,7 +51,7 @@ export default function CustomerCreatePage() {
     <Create
       isLoading={isLoading}
       rightFooterButtons={
-        <Button {...saveButtonProps} type="primary">
+        <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
           {t('buttons.create')}
         </Button>
       }

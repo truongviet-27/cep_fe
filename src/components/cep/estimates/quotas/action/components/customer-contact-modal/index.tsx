@@ -57,13 +57,18 @@ function CustomerContactSelectionModal({
     if (!open) {
       setIsAdding(false)
       form.resetFields()
-    } else {
-      // Auto add new row if no contacts exist
-      if (!data?.data || (data?.data as any)?.length === 0) {
+    }
+  }, [open, form])
+
+  useEffect(() => {
+    if (open && !isLoading && !isFetching) {
+      const contacts = (data?.data as any) || []
+
+      if (contacts.length === 0) {
         setIsAdding(true)
       }
     }
-  }, [open, form, data?.data])
+  }, [open, isLoading, isFetching, data?.data])
 
   const handleSelect = (contact: CustomerContact) => {
     onSelect(contact)
@@ -340,6 +345,7 @@ function CustomerContactSelectionModal({
             rowKey={(record) => record.id}
             pagination={false}
             columns={columns}
+            scroll={{ x: undefined }}
           />
         </Form>
 
