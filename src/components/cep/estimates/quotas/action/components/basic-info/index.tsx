@@ -401,6 +401,7 @@ const BasicInfo = () => {
                       setSelectedContact(null)
                       form.setFieldsValue({ selected_contact_id: null })
                     }}
+                    style={{ marginLeft: 8 }}
                   />
                 </Form.Item>
               </Col>
@@ -435,14 +436,16 @@ const BasicInfo = () => {
                 rules={[
                   {
                     required: true,
-                    message: t('validations.required'),
+                    message: t(
+                      'quotas.validation.basic_info.required.contact_id',
+                    ),
                   },
                 ]}
                 noStyle
               >
                 <InputNumber style={{ display: 'none' }} />
               </Form.Item>
-              <Row gutter={[8, 0]} align="middle">
+              <Row gutter={[8, 0]} align="middle" style={{ marginLeft: 4 }}>
                 <Col
                   flex="auto"
                   style={{
@@ -510,7 +513,7 @@ const BasicInfo = () => {
               )}
             >
               <DatePicker
-                style={{ width: '100%' }}
+                style={{ width: '100%', marginLeft: 8 }}
                 placeholder={FORMAT_DATE}
                 minDate={Form.useWatch('created_at', form)}
               />
@@ -576,6 +579,7 @@ const BasicInfo = () => {
                     ),
                   },
                 ]}
+                style={{ marginLeft: 8 }}
               />
             </Form.Item>
           </Col>
@@ -685,6 +689,7 @@ const BasicInfo = () => {
                       label: t('tenant_settings.consumptionTax.taxExempt'),
                     },
                   ]}
+                  style={{ marginLeft: 8 }}
                 />
               </Form.Item>
             </div>
