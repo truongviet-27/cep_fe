@@ -53,7 +53,7 @@ const BasicInfo = () => {
   const expirationDate = Form.useWatch('expiration_date', form)
   const createdAt = Form.useWatch('created_at', form)
   const customer = Form.useWatch('customer', form)
-  const selectedContactId = Form.useWatch('selected_contact_id', form)
+  const selectedContactId = Form.useWatch('customer_contact_id', form)
 
   const { data: customerContactData } = useCustom<CustomerContact>({
     url: selectedContactId
@@ -175,9 +175,9 @@ const BasicInfo = () => {
     // Save the selected contact ID to the form
     const contactId = contact.id
     if (contactId !== null && contactId !== undefined) {
-      form.setFieldsValue({ selected_contact_id: contactId })
+      form.setFieldsValue({ customer_contact_id: contactId })
       // Validate the field after setting value
-      form.validateFields(['selected_contact_id'])
+      form.validateFields(['customer_contact_id'])
     } else {
     }
   }
@@ -396,7 +396,7 @@ const BasicInfo = () => {
                       form.setFieldsValue({ customer: value })
                       // Clear selected contact when customer changes
                       setSelectedContact(null)
-                      form.setFieldsValue({ selected_contact_id: null })
+                      form.setFieldsValue({ customer_contact_id: null })
                     }}
                   />
                 </Form.Item>
@@ -426,7 +426,7 @@ const BasicInfo = () => {
                   'quotas.action.customer_contact_modal.selected_contact_label',
                 ),
               )}
-              name="selected_contact_id"
+              name="customer_contact_id"
               rules={[
                 {
                   required: true,
