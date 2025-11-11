@@ -138,10 +138,10 @@ const OptionalInfo: FC = () => {
                       'product_id',
                     ]}
                     className="ant-form-item-hidden-margin"
-                    required
+                    // required
                     rules={[
                       {
-                        required: true,
+                        required: false,
                         message: '',
                       },
                     ]}

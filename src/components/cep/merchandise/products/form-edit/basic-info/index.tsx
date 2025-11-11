@@ -80,7 +80,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               },
               {
                 max: 20,
-                message: '「商品コードは20文字以内で入力してください」',
+                message: '商品コードは20文字以内で入力してください',
               },
               {
                 pattern: /^[A-Z0-9-]+$/,
@@ -133,7 +133,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               },
               {
                 max: 100,
-                message: '「商品名は100文字以内で入力してください」',
+                message: '商品名は100文字以内で入力してください',
               },
             ]}
           />
@@ -152,7 +152,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 max: 50,
-                message: '「略称は50文字以内で入力してください」',
+                message: '略称は50文字以内で入力してください',
               },
             ]}
           />
@@ -179,7 +179,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '「カテゴリは必須です。」',
+                message: 'カテゴリは必須です。',
               },
             ]}
           >
@@ -216,7 +216,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '「単位は必須です。」',
+                message: '単位は必須です。',
               },
             ]}
           >
@@ -291,7 +291,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '「原価は必須です。」',
+                message: '原価は必須です。',
               },
               {
                 validator: (_, value) => {
@@ -300,9 +300,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   }
 
                   if (value < 0) {
-                    return Promise.reject(
-                      '「原価は0以上の数字で入力してください」',
-                    )
+                    return Promise.reject('原価は0以上の数字で入力してください')
                   }
 
                   return Promise.resolve()
@@ -328,7 +326,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '「販売単価は必須です。」',
+                message: '販売単価は必須です。',
               },
               {
                 validator: (_, value) => {
@@ -337,19 +335,17 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   }
 
                   if (value < 0) {
-                    return Promise.reject(
-                      '「原価は0以上の数字で入力してください」',
-                    )
+                    return Promise.reject('原価は0以上の数字で入力してください')
                   }
 
                   if (value < form.getFieldValue('cost_price')) {
                     return Promise.reject(
-                      '「販売単価は原価以上で入力してください」',
+                      '販売単価は原価以上で入力してください',
                     )
                   }
 
                   if (!Number.isInteger(value)) {
-                    return Promise.reject('「整数で入力してください」')
+                    return Promise.reject('整数で入力してください')
                   }
 
                   return Promise.resolve()
