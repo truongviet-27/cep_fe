@@ -48,6 +48,29 @@ export const useCustomerEdit = () => {
         customer_id: customerId,
       },
     },
+    queryOptions: {
+      onSuccess: (data) => {
+        const currentReceivers = form.getFieldValue('receivers')
+
+        if (currentReceivers === undefined) {
+          const receivers = data?.data
+
+          if (!receivers || receivers.length === 0) {
+            form.setFieldsValue({
+              receivers: [
+                {
+                  department_name: null,
+                  contact_person_name: null,
+                  email: null,
+                },
+              ],
+            })
+          } else {
+            form.setFieldsValue({ receivers: receivers })
+          }
+        }
+      },
+    },
   })
 
   const handleFinish = async (values: any) => {
@@ -155,25 +178,25 @@ export const useCustomerEdit = () => {
   }, [record])
 
   // Load contacts into form
-  useEffect(() => {
-    if (contactsData?.data) {
-      const receivers = contactsData.data
-      // If no contacts, set one empty row
-      if (!receivers || receivers.length === 0) {
-        form.setFieldsValue({
-          receivers: [
-            {
-              department_name: null,
-              contact_person_name: null,
-              email: null,
-            },
-          ],
-        })
-      } else {
-        form.setFieldsValue({ receivers: contactsData.data })
-      }
-    }
-  }, [contactsData])
+  // useEffect(() => {
+  //   if (contactsData?.data) {
+  //     const receivers = contactsData.data
+  //     // If no contacts, set one empty row
+  //     if (!receivers || receivers.length === 0) {
+  //       form.setFieldsValue({
+  //         receivers: [
+  //           {
+  //             department_name: null,
+  //             contact_person_name: null,
+  //             email: null,
+  //           },
+  //         ],
+  //       })
+  //     } else {
+  //       form.setFieldsValue({ receivers: contactsData.data })
+  //     }
+  //   }
+  // }, [contactsData])
 
   // Handle validation errors - scroll to first error in section order
   const handleFinishFailed = (errorInfo: any) => {
