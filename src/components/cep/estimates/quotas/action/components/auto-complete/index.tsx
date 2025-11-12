@@ -53,16 +53,14 @@ function CoreAutoComplete({
     url: `${apiUrl}/${resource}/${product?.value}/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      enabled: !!product && !!customer,
+      enabled: !!product?.value && !!customer?.value,
     },
   })
 
   const { query: productResponse } = useShow<ProductDetail>({
     resource: 'products',
     id: product?.value,
-    queryOptions: {
-      enabled: !!product && !customer,
-    },
+    queryOptions: {},
   })
 
   useEffect(() => {

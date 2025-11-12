@@ -48,12 +48,35 @@ export const useCustomerEdit = () => {
         customer_id: customerId,
       },
     },
+    queryOptions: {
+      onSuccess: (data) => {
+        const currentReceivers = form.getFieldValue('receivers')
+
+        if (currentReceivers === undefined) {
+          const receivers = data?.data
+
+          if (!receivers || receivers.length === 0) {
+            form.setFieldsValue({
+              receivers: [
+                {
+                  department_name: null,
+                  contact_person_name: null,
+                  email: null,
+                },
+              ],
+            })
+          } else {
+            form.setFieldsValue({ receivers: receivers })
+          }
+        }
+      },
+    },
   })
 
   const handleFinish = async (values: any) => {
     try {
       // Validate form fields (all validation rules in Form will be checked)
-      await form.validateFields()
+      // await form.validateFields()
 
       const receivers = values?.receivers || []
 
@@ -100,7 +123,6 @@ export const useCustomerEdit = () => {
         values: { contacts },
       })
 
-      message.success(t('notifications.updateSuccess'))
       go({
         to: `/customers/show/${customerId}`,
         type: 'push',
@@ -156,11 +178,25 @@ export const useCustomerEdit = () => {
   }, [record])
 
   // Load contacts into form
-  useEffect(() => {
-    if (contactsData?.data) {
-      form.setFieldsValue({ receivers: contactsData.data })
-    }
-  }, [contactsData])
+  // useEffect(() => {
+  //   if (contactsData?.data) {
+  //     const receivers = contactsData.data
+  //     // If no contacts, set one empty row
+  //     if (!receivers || receivers.length === 0) {
+  //       form.setFieldsValue({
+  //         receivers: [
+  //           {
+  //             department_name: null,
+  //             contact_person_name: null,
+  //             email: null,
+  //           },
+  //         ],
+  //       })
+  //     } else {
+  //       form.setFieldsValue({ receivers: contactsData.data })
+  //     }
+  //   }
+  // }, [contactsData])
 
   return {
     t,
