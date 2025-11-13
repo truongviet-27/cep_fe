@@ -10,19 +10,40 @@ export const validateCodeIssueSettingsRule = (t: any) => {
           error: t('validation.code_issue_settings.issue_method.in'),
         }),
       ),
-      prefix: z.optional(
-        z
-          .string({
-            error: t('validation.code_issue_settings.prefix.required'),
+      prefix: z.string().superRefine((val, ctx) => {
+        if (val.length < 1) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.too_small,
+            origin: 'string',
+            minimum: 1,
+            type: 'string',
+            inclusive: true,
+            message: t('validation.code_issue_settings.prefix.required'),
           })
-          .min(1, { error: t('validation.required') })
-          .regex(/^[A-Z]+$/, {
-            error: t('validation.code_issue_settings.prefix.numeric'),
+          return
+        }
+
+        if (val.length > 2) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.too_big,
+            origin: 'string',
+            maximum: 2,
+            type: 'string',
+            inclusive: true,
+            message: t('validation.code_issue_settings.prefix.max', { max: 2 }),
           })
-          .max(2, {
-            error: t('validation.code_issue_settings.prefix.max', { max: 2 }),
-          }),
-      ),
+          return
+        }
+
+        if (!/^[A-Z]+$/.test(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            validation: 'regex',
+            message: t('validation.code_issue_settings.prefix.numeric'),
+          })
+          return
+        }
+      }),
 
       hash_dash: z.optional(
         z.boolean({
