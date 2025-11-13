@@ -73,7 +73,6 @@ export const useCustomerCreate = () => {
         values: { contacts },
       })
 
-      message.success(t('notifications.createSuccess'))
       go({
         to: `/customers/show/${customerId}`,
         type: 'push',
