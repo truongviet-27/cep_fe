@@ -171,32 +171,33 @@ export const useCustomerEdit = () => {
 
   const record = queryResult?.data?.data
 
+  // Set customer record into form (excluding receivers as they come from separate API)
   useEffect(() => {
     if (record) {
-      form.setFieldsValue({ ...record })
+      const { receivers: _, ...recordWithoutReceivers } = record as any
+      form.setFieldsValue(recordWithoutReceivers)
     }
-  }, [record])
+  }, [record, form])
 
-  // Load contacts into form
-  // useEffect(() => {
-  //   if (contactsData?.data) {
-  //     const receivers = contactsData.data
-  //     // If no contacts, set one empty row
-  //     if (!receivers || receivers.length === 0) {
-  //       form.setFieldsValue({
-  //         receivers: [
-  //           {
-  //             department_name: null,
-  //             contact_person_name: null,
-  //             email: null,
-  //           },
-  //         ],
-  //       })
-  //     } else {
-  //       form.setFieldsValue({ receivers: contactsData.data })
-  //     }
-  //   }
-  // }, [contactsData])
+  // Set receivers into form (separate effect to handle async loading)
+  useEffect(() => {
+    if (contactsData?.data !== undefined) {
+      const receivers = contactsData.data
+      if (!receivers || receivers.length === 0) {
+        form.setFieldsValue({
+          receivers: [
+            {
+              department_name: null,
+              contact_person_name: null,
+              email: null,
+            },
+          ],
+        })
+      } else {
+        form.setFieldsValue({ receivers: contactsData.data })
+      }
+    }
+  }, [contactsData, form])
 
   return {
     t,
