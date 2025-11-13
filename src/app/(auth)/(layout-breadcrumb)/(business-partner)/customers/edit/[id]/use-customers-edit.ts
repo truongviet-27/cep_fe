@@ -100,7 +100,6 @@ export const useCustomerEdit = () => {
         values: { contacts },
       })
 
-      message.success(t('notifications.updateSuccess'))
       go({
         to: `/customers/show/${customerId}`,
         type: 'push',
