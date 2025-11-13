@@ -177,7 +177,7 @@
       "email": "メールアドレス",
       "created_at": "登録日",
       "add_button": "経理者追加",
-      "min_one_required": "最低1件の連絡先を登録してください"
+      "min_one_required": "最低1件の連絡先を登録してください。"
     },
     "enums": {
       "corporation": "会社",
@@ -1108,7 +1108,7 @@
     }
   },
   "validations": {
-    "required": "必須項目です",
+    "required": "必須項目です。",
     "max255": "このフィールドは 255 文字を超えることはできません。",
     "invalid_format": "このフィールドは無効な形式です"
   },

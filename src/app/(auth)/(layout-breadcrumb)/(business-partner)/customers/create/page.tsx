@@ -51,7 +51,7 @@ export default function CustomerCreatePage() {
     <Create
       isLoading={isLoading}
       rightFooterButtons={
-        <Button {...saveButtonProps} type="primary">
+        <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
           {t('buttons.create')}
         </Button>
       }
@@ -66,15 +66,19 @@ export default function CustomerCreatePage() {
           company_research_information:
             defaultCustomerCompanyResearchInformation,
           customer_code: null,
-          person_in_charge_name: null,
-          person_in_charge_department: null,
-          person_in_charge_mail: null,
           name: null,
           department_in_charge_id: null,
           post_code: null,
           address: null,
           phone: null,
           mail: null,
+          receivers: [
+            {
+              department_name: null,
+              contact_person_name: null,
+              email: null,
+            },
+          ],
         }}
         labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
         wrapperCol={{ xs: 24, sm: 16, md: 14 }}

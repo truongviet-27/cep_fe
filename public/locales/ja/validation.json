@@ -219,5 +219,10 @@
         "required": "適用終了日は必須です。"
       }
     }
+  },
+  "quotas": {
+    "selected_contact": {
+      "required": "見積送付先は必須です。"
+    }
   }
 }
