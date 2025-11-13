@@ -9,7 +9,6 @@ import {
   DatePicker,
   Form,
   Input,
-  InputNumber,
   Modal,
   Radio,
   Row,
@@ -54,7 +53,7 @@ const BasicInfo = () => {
   const expirationDate = Form.useWatch('expiration_date', form)
   const createdAt = Form.useWatch('created_at', form)
   const customer = Form.useWatch('customer', form)
-  const selectedContactId = Form.useWatch('selected_contact_id', form)
+  const selectedContactId = Form.useWatch('customer_contact_id', form)
 
   const { data: customerContactData } = useCustom<CustomerContact>({
     url: selectedContactId
@@ -176,9 +175,9 @@ const BasicInfo = () => {
     // Save the selected contact ID to the form
     const contactId = contact.id
     if (contactId !== null && contactId !== undefined) {
-      form.setFieldsValue({ selected_contact_id: contactId })
+      form.setFieldsValue({ customer_contact_id: contactId })
       // Validate the field after setting value
-      form.validateFields(['selected_contact_id'])
+      form.validateFields(['customer_contact_id'])
     } else {
     }
   }
@@ -358,7 +357,7 @@ const BasicInfo = () => {
           </Col>
 
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Row gutter={[8, 0]} align="bottom">
+            <Row gutter={[8, 0]} align="top" wrap={false}>
               <Col flex="auto">
                 <Form.Item
                   label={boldText(
@@ -399,14 +398,15 @@ const BasicInfo = () => {
                       form.setFieldsValue({ customer: value })
                       // Clear selected contact when customer changes
                       setSelectedContact(null)
-                      form.setFieldsValue({ selected_contact_id: null })
+                      form.setFieldsValue({ customer_contact_id: null })
                     }}
                   />
                 </Form.Item>
               </Col>
               <Col>
                 <Button
-                  type="default"
+                  color="primary"
+                  variant="outlined"
                   onClick={handleOpenContactModal}
                   disabled={!selectedCustomerId}
                   style={{ marginBottom: 12 }}
@@ -428,31 +428,35 @@ const BasicInfo = () => {
                   'quotas.action.customer_contact_modal.selected_contact_label',
                 ),
               )}
+              name="customer_contact_id"
+              rules={[
+                {
+                  required: true,
+                  message: t('validation.quotas.selected_contact.required'),
+                },
+              ]}
               required
             >
-              <Form.Item
-                name="selected_contact_id"
-                rules={[
-                  {
-                    required: true,
-                    message: t('validations.required'),
-                  },
-                ]}
-                noStyle
-              >
-                <InputNumber style={{ display: 'none' }} />
-              </Form.Item>
               <Row gutter={[8, 0]} align="middle">
                 <Col
                   flex="auto"
                   style={{
                     overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                ></Col>
+                <Col
+                  flex="auto"
+                  style={{
+                    overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t('quotas.action.customer_contact_modal.department_name')}:{' '}
-                  {selectedContact?.department_name || '---'}
+                  <strong>
+                    {t('quotas.action.customer_contact_modal.department_name')}:
+                  </strong>{' '}
+                  {selectedContact?.department_name || ''}
                 </Col>
                 <Col
                   flex="auto"
@@ -462,10 +466,13 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t(
-                    'quotas.action.customer_contact_modal.contact_person_name',
-                  )}
-                  : {selectedContact?.contact_person_name || '---'}
+                  <strong>
+                    {t(
+                      'quotas.action.customer_contact_modal.contact_person_name',
+                    )}
+                    :
+                  </strong>{' '}
+                  {selectedContact?.contact_person_name || ''}
                 </Col>
                 <Col
                   flex="auto"
@@ -475,8 +482,10 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t('quotas.action.customer_contact_modal.email')}:{' '}
-                  {selectedContact?.email || '---'}
+                  <strong>
+                    {t('quotas.action.customer_contact_modal.email')}:
+                  </strong>
+                  {selectedContact?.email || ''}
                 </Col>
               </Row>
             </Form.Item>
