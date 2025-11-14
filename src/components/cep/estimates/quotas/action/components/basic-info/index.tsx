@@ -400,6 +400,7 @@ const BasicInfo = () => {
                       setSelectedContact(null)
                       form.setFieldsValue({ customer_contact_id: null })
                     }}
+                    style={{ marginLeft: 8 }}
                   />
                 </Form.Item>
               </Col>
@@ -519,7 +520,7 @@ const BasicInfo = () => {
               )}
             >
               <DatePicker
-                style={{ width: '100%' }}
+                style={{ width: '100%', marginLeft: 8 }}
                 placeholder={FORMAT_DATE}
                 minDate={Form.useWatch('created_at', form)}
               />
@@ -585,6 +586,7 @@ const BasicInfo = () => {
                     ),
                   },
                 ]}
+                style={{ marginLeft: 8 }}
               />
             </Form.Item>
           </Col>
@@ -694,6 +696,7 @@ const BasicInfo = () => {
                       label: t('tenant_settings.consumptionTax.taxExempt'),
                     },
                   ]}
+                  style={{ marginLeft: 8 }}
                 />
               </Form.Item>
             </div>

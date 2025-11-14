@@ -21,6 +21,7 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import { useEffect } from 'react'
 
 const { Title } = Typography
@@ -80,7 +81,11 @@ function ApproveDetail() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('approve_routes.parent')),
+              title: (
+                <Link href="/approve-routes">
+                  {boldText(t('approve_routes.parent'))}
+                </Link>
+              ),
             },
             {
               title: boldText(t('approve_routes.detail'), PRIMARY),

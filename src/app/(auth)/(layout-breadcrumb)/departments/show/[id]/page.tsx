@@ -12,7 +12,6 @@ import type { BaseRecord } from '@refinedev/core'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Space, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -79,14 +78,14 @@ export default function Page() {
                 title: t('approve_routes.show.creator'),
                 value: `${departmentData?.author?.name ?? '---'} ${dayjs(
                   departmentData?.created_at,
-                ).format(FORMAT_DATE_TIME)}`,
+                ).format('YYYY/MM/DD HH:mm')}`, // <-- Sửa ở đây
               },
               {
                 title: t('common.updated_by'),
                 value: departmentData?.editor?.name
                   ? `${departmentData.editor.name} ${dayjs(
                       departmentData.updated_at,
-                    ).format(FORMAT_DATE_TIME)}`
+                    ).format('YYYY/MM/DD HH:mm')}` // <-- Và sửa ở đây
                   : '---',
               },
             ]}

@@ -55,7 +55,11 @@ export default function EmployeeEdit() {
   const codeRules: Rule[] = useMemo(
     () => [
       { required: true, message: '部門コードは必須です。' },
-      { pattern: /^[A-Z0-9-]+$/, message: 'A-Z, 0-9, - のみ使用できます。' },
+      {
+        pattern: /^[A-Z0-9-]+$/,
+        message:
+          '社員コードにはA〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
+      },
       { max: 20, message: '最大32文字までです。' },
     ],
     [],
@@ -223,7 +227,7 @@ export default function EmployeeEdit() {
           }}
           formItemProps={{
             name: 'department_id',
-            rules: [{ required: true, message: 'このフィールドは必須です' }],
+            rules: [{ required: true, message: '部門は必須です' }],
             required: true,
             label: boldText(t('employees.fields.department')),
           }}

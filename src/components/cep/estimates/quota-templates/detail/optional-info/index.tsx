@@ -175,14 +175,18 @@ const OptionalInfo: FC<Props> = (props) => {
         {t('quota_templates.form.titleOptionalInfo')}
       </Title>
       <Flex vertical>
-        <CommonTable
-          columns={columns}
-          dataSource={dataSource}
-          rowClassName={(record) =>
-            record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
-          }
-          pagination={false}
-        />
+        {optionalProducts?.[0]?.products?.[0]?.product_id ? (
+          <CommonTable
+            columns={columns}
+            dataSource={dataSource}
+            rowClassName={(record) =>
+              record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
+            }
+            pagination={false}
+          />
+        ) : (
+          <div className="mt-4"></div>
+        )}
       </Flex>
     </>
   )

@@ -10,7 +10,6 @@ import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
@@ -110,19 +109,17 @@ export default function EmployeeEdit() {
             descriptions={[
               {
                 title: t('approve_routes.show.creator'),
-                value:
-                  employeeData?.author?.name ??
-                  '---' +
-                    ' ' +
-                    dayjs(employeeData?.created_at).format(FORMAT_DATE_TIME),
+                value: `${employeeData?.author?.name ?? '---'} ${dayjs(
+                  employeeData?.created_at,
+                ).format('YYYY/MM/DD HH:mm')}`, // <-- Sửa ở đây
               },
               {
                 title: t('common.updated_by'),
-                value:
-                  employeeData?.editor?.name ??
-                  '---' +
-                    ' ' +
-                    dayjs(employeeData?.updated_at).format(FORMAT_DATE_TIME),
+                value: employeeData?.editor?.name
+                  ? `${employeeData.editor.name} ${dayjs(
+                      employeeData.updated_at,
+                    ).format('YYYY/MM/DD HH:mm')}` // <-- Và sửa ở đây
+                  : '---',
               },
             ]}
           />
