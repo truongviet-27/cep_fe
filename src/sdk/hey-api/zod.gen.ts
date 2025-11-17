@@ -1700,6 +1700,7 @@ export const zQuotaResource = z.object({
   tenant_id: z.optional(z.string()),
   customer_id: z.optional(z.union([z.int(), z.null()])),
   customer_name: z.optional(z.union([z.string(), z.null()])),
+  customer_contact_id: z.optional(z.int()),
   title: z.optional(z.string()),
   type: z.optional(z.enum(['normal', 'channel_limited'])),
   quota_type: z.optional(z.enum(['merchandise', 'service'])),
@@ -1722,6 +1723,14 @@ export const zQuotaResource = z.object({
   consumption_tax: z.optional(z.string()),
   pdf_path: z.optional(z.string()),
   tax_rate: z.optional(z.int()),
+  tax_rate_group: z.optional(
+    z.array(
+      z.object({
+        taxRate: z.optional(z.number()),
+        total: z.optional(z.number()),
+      }),
+    ),
+  ),
   total_cost: z.optional(z.number()),
   consumption_tax_amount: z.optional(z.number()),
   total_profit_margin: z.optional(z.number()),
@@ -1798,7 +1807,16 @@ export const zQuotaStoreRequest = z.object({
   consumption_tax: z.optional(z.enum(['exclusive', 'inclusive', 'external'])),
   customer_id: z.optional(z.int()),
   customer_name: z.optional(z.string().max(255)),
+  customer_contact_id: z.int(),
   tax_rate: z.optional(z.int().gte(0).lte(100)),
+  tax_rate_group: z.optional(
+    z.array(
+      z.object({
+        taxRate: z.optional(z.number().gte(0).lte(100)),
+        total: z.optional(z.number().gte(0)),
+      }),
+    ),
+  ),
   note: z.optional(z.string()),
   total_cost: z.optional(z.number().gte(0)),
   consumption_tax_amount: z.optional(z.number().gte(0)),
@@ -1837,7 +1855,16 @@ export const zQuotaUpdateRequest = z.object({
   consumption_tax: z.optional(z.enum(['included', 'excluded', 'exempt'])),
   customer_id: z.optional(z.int()),
   customer_name: z.optional(z.string().max(255)),
+  customer_contact_id: z.int(),
   tax_rate: z.optional(z.int().gte(0).lte(100)),
+  tax_rate_group: z.optional(
+    z.array(
+      z.object({
+        taxRate: z.optional(z.number().gte(0).lte(100)),
+        total: z.optional(z.number().gte(0)),
+      }),
+    ),
+  ),
   note: z.optional(z.string()),
   total_cost: z.optional(z.number().gte(0)),
   consumption_tax_amount: z.optional(z.number().gte(0)),
@@ -1867,6 +1894,7 @@ export const zSimpleQuota = z.object({
   ),
   title: z.optional(z.string()),
   customer_name: z.optional(z.string()),
+  customer_contact_id: z.optional(z.int()),
   total_price: z.optional(z.string()),
   created_at: z.optional(z.iso.datetime()),
   expiration_date: z.optional(z.iso.date()),

@@ -96,7 +96,7 @@ function QuotaAction() {
     method: 'get',
     url: `${apiUrl}/quota-form-settings`,
     queryOptions: {
-      enabled: !isUpdate && !params?.templateId,
+      enabled: !params?.templateId,
     },
   })
 
@@ -220,6 +220,7 @@ function QuotaAction() {
         })
       }
     } else {
+      // Edit case and Show case
       if (dataBasicInfo?.data && dataProducts?.data) {
         const basicData = { ...dataBasicInfo.data }
         // Remove customer_id and customer_name to avoid overwriting customer field
@@ -236,6 +237,7 @@ function QuotaAction() {
           code: isEdit ? dataBasicInfo.data.code : '',
           customer: customerField,
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
+          tax_rounding_method: data?.data?.tax_rounding_method,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
@@ -289,6 +291,7 @@ function QuotaAction() {
         consumption_tax: quoteTemplate?.consumption_tax,
         tax_rate: quoteTemplate?.tax_rate,
         note: quoteTemplate?.note,
+        tax_rounding_method: data?.data?.tax_rounding_method,
         main_product: quoteTemplate?.main_product?.map((item: any) => ({
           ...item,
           products: item.products.map((item2: any) => ({
@@ -412,6 +415,7 @@ function QuotaAction() {
                 name: item.label,
               })) || [],
             tax_rate: values.tax_rate ?? 0,
+            tax_rate_group: values.tax_rate_group || [],
           },
           id: params?.id,
         },
@@ -452,6 +456,7 @@ function QuotaAction() {
                 name: item.label,
               })) || [],
             tax_rate: values.tax_rate ?? 0,
+            tax_rate_group: values.tax_rate_group || [],
           },
         },
         {
