@@ -31,6 +31,7 @@ export const useCustomerEdit = () => {
     form,
     onFinish,
     formLoading: isLoading,
+    query,
     queryResult,
   } = useForm({
     action: 'edit',
@@ -39,7 +40,9 @@ export const useCustomerEdit = () => {
 
   const { mutateAsync: updateContacts } = useCustomMutation()
 
-  // Fetch customer contacts
+  const record = queryResult?.data?.data
+
+  // Fetch customer contacts only after customer data is loaded
   const { data: contactsData, refetch: refetchContacts } = useCustom({
     url: `${apiUrl}/customer-contacts`,
     method: 'get',
@@ -49,27 +52,7 @@ export const useCustomerEdit = () => {
       },
     },
     queryOptions: {
-      onSuccess: (data) => {
-        const currentReceivers = form.getFieldValue('receivers')
-
-        if (currentReceivers === undefined) {
-          const receivers = data?.data
-
-          if (!receivers || receivers.length === 0) {
-            form.setFieldsValue({
-              receivers: [
-                {
-                  department_name: null,
-                  contact_person_name: null,
-                  email: null,
-                },
-              ],
-            })
-          } else {
-            form.setFieldsValue({ receivers: receivers })
-          }
-        }
-      },
+      enabled: !!customerId && !!record && !!query?.data?.data, // Only fetch when customerId exists AND customer data is loaded
     },
   })
 
@@ -169,8 +152,6 @@ export const useCustomerEdit = () => {
 
   const rule = validateCustomerRule(t)
 
-  const record = queryResult?.data?.data
-
   // Set customer record into form (excluding receivers as they come from separate API)
   useEffect(() => {
     if (record) {
@@ -178,10 +159,9 @@ export const useCustomerEdit = () => {
       form.setFieldsValue(recordWithoutReceivers)
     }
   }, [record, form])
-
-  // Set receivers into form (separate effect to handle async loading)
+  // Set receivers into form only after customer data is loaded
   useEffect(() => {
-    if (contactsData?.data !== undefined) {
+    if (record && contactsData?.data !== undefined) {
       const receivers = contactsData.data
       if (!receivers || receivers.length === 0) {
         form.setFieldsValue({
@@ -197,7 +177,7 @@ export const useCustomerEdit = () => {
         form.setFieldsValue({ receivers: contactsData.data })
       }
     }
-  }, [contactsData, form])
+  }, [record, contactsData, form])
 
   return {
     t,
