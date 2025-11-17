@@ -102,8 +102,8 @@ export default function useProductUnits() {
         })
 
         return {
-          message: t('notifications.editSuccess'),
-          description: t('notifications.editSuccess'),
+          message: t('notifications.success'),
+          description: t('notifications.success'),
           type: 'success',
         }
       },

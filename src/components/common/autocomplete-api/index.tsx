@@ -52,7 +52,6 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
   } = props
 
   const [current, setCurrent] = useState(1)
-  const [isClick, setIsClick] = useState(false)
   const [isPreApply, setIsPreApply] = useState(false)
 
   const [options, setOptions] = useState<any[]>([])
@@ -69,7 +68,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       pageSize,
     },
     queryOptions: {
-      enabled: isClick && !disabled,
+      enabled: true,
     },
     onSearch(value) {
       lastPageAdded.current = 0
@@ -161,9 +160,6 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
           }
         }}
         value={value}
-        onClick={() => {
-          setIsClick(true)
-        }}
         onPopupScroll={handlePopupScroll}
         allowClear
         onClear={() => {
