@@ -132,6 +132,12 @@
       "string": "担当者名は文字列で入力してください。",
       "max": "担当者名は{max}文字以内で入力してください。"
     },
+    "contact_person_name_customer_contacts": {
+      "required": "氏名は必須です。"
+    },
+    "email_customer_contacts": {
+      "required": "メールアドレスは必須です。"
+    },
     "person_in_charge_department": {
       "required": "担当者部署は必須です。",
       "string": "担当者部署は文字列で入力してください。",
