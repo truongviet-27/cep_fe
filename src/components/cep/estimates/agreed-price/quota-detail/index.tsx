@@ -43,7 +43,6 @@ function AgreedPriceQuotaDetail() {
   const { form, formProps } = useForm()
 
   const [isPdf, setIsPdf] = useState(false)
-  const [previewPdf, setPreviewPdf] = useState('')
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
@@ -150,6 +149,8 @@ function AgreedPriceQuotaDetail() {
     },
   })
 
+  const pdfUrl = queryBasic?.data?.pdf_path
+
   const {
     data: dataProducts,
     isFetching: isFetchingProducts,
@@ -195,28 +196,7 @@ function AgreedPriceQuotaDetail() {
     }
   }, [queryBasic])
 
-  const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
-    useCustomMutation()
-
-  const handlePreviewPdf = async () => {
-    await form.validateFields()
-    const customValues = {
-      ...queryBasic?.data,
-    }
-
-    mutatePreviewPdf(
-      {
-        values: customValues,
-        url: `${apiUrl}/quotas/preview-pdf`,
-        method: 'post',
-      },
-      {
-        onSuccess(data) {
-          setPreviewPdf(data.data?.pdf_base64 ?? '')
-        },
-      },
-    )
-  }
+  const { isPending: isPendingPreviewPdf } = useCustomMutation()
 
   // No extra resolving step; the route id is the quota id
 
@@ -247,7 +227,6 @@ function AgreedPriceQuotaDetail() {
             variant="outlined"
             onClick={() => {
               setIsPdf(!isPdf)
-              handlePreviewPdf()
             }}
           >
             プレビュー
@@ -532,7 +511,7 @@ function AgreedPriceQuotaDetail() {
             {!isPendingPreviewPdf && (
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                 <Viewer
-                  fileUrl={`data:application/pdf;base64,${previewPdf}`}
+                  fileUrl={pdfUrl}
                   plugins={[defaultLayoutPluginInstance]}
                 />
               </Worker>
