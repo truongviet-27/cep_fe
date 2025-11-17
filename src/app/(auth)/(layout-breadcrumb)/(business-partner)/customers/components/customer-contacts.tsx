@@ -87,7 +87,12 @@ function CustomerContacts(
                       <Form.Item
                         name={[field.name, 'contact_person_name']}
                         rules={[
-                          { required: true, message: t('validation.required') },
+                          {
+                            required: true,
+                            message: t(
+                              'validation.customer.contact_person_name_customer_contacts.required',
+                            ),
+                          },
                           {
                             whitespace: true,
                             message: t('validation.whitespace'),
@@ -110,10 +115,14 @@ function CustomerContacts(
                     render: (field) => (
                       <Form.Item
                         name={[field.name, 'email']}
-                        dependencies={['receivers']}
                         validateTrigger="onBlur"
                         rules={[
-                          { required: true, message: t('validation.required') },
+                          {
+                            required: true,
+                            message: t(
+                              'validation.customer.email_customer_contacts.required',
+                            ),
+                          },
                           {
                             type: 'email',
                             message: t('validation.email_format'),
@@ -126,21 +135,18 @@ function CustomerContacts(
                                 form.getFieldValue('receivers') || []
                               const currentEmail = value.trim().toLowerCase()
 
-                              // Find first index of this email
-                              const firstIndex = receivers.findIndex(
+                              // Count how many times this email appears
+                              const emailCount = receivers.filter(
                                 (r: {
                                   email?: string
                                   [key: string]: unknown
                                 }) =>
                                   r?.email?.trim().toLowerCase() ===
                                   currentEmail,
-                              )
+                              ).length
 
-                              // If current field is not the first occurrence, show error
-                              if (
-                                firstIndex !== -1 &&
-                                firstIndex !== field.name
-                              ) {
+                              // If this email appears more than once, show error
+                              if (emailCount > 1) {
                                 return Promise.reject(
                                   new Error(t('validation.duplicate_email')),
                                 )
