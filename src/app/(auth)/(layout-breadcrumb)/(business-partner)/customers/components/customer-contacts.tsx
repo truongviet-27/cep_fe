@@ -86,6 +86,7 @@ function CustomerContacts(
                     render: (field) => (
                       <Form.Item
                         name={[field.name, 'contact_person_name']}
+                        validateTrigger="onBlur"
                         rules={[
                           {
                             required: true,
