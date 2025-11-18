@@ -28,6 +28,7 @@ export default function Page() {
     columns,
     dataSource,
     onDragEnd,
+    lastRowEdited,
     onSaveAll,
     savingAll,
     searchFormProps,
@@ -87,7 +88,12 @@ export default function Page() {
                   クリア
                 </Button>
               </Space>
-              <Button type="primary" size="middle" onClick={addNew}>
+              <Button
+                type="primary"
+                size="middle"
+                onClick={addNew}
+                disabled={lastRowEdited}
+              >
                 新規登録
               </Button>
             </Space>
