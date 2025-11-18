@@ -202,14 +202,15 @@ const BasicInfo = () => {
           </Col>
         </Row>
 
-        <Row gutter={[100, 0]}>
+        <Row gutter={[8, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_number'),
               )}
+              className="[&>.ant-row]:!flex-nowrap"
             >
-              <div className="flex flex-col flex-wrap gap-4 xl:flex-row">
+              <div className="flex flex-row flex-nowrap items-center gap-4">
                 <Form.Item
                   rules={[
                     {
@@ -234,12 +235,12 @@ const BasicInfo = () => {
                   style={{
                     marginBottom: 0,
                     flex: 1,
-                    minWidth: '150px',
+                    minWidth: '160px',
                   }}
                 >
                   <Input disabled={isCloneVersion} />
                 </Form.Item>
-                <Form.Item>
+                <Form.Item style={{ whiteSpace: 'nowrap' }}>
                   （A-Z, 0-9, -）
                   <Button
                     onClick={handleAutoNumber}
