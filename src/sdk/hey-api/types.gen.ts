@@ -2655,6 +2655,10 @@ export type QuotaResource = {
    */
   customer_name?: string | null
   /**
+   * ID of the customer contact.
+   */
+  customer_contact_id?: number
+  /**
    * Quota title
    */
   title?: string
@@ -2709,6 +2713,19 @@ export type QuotaResource = {
    * Tax rate percentage
    */
   tax_rate?: number
+  /**
+   * Array of grouped tax rates with amounts
+   */
+  tax_rate_group?: Array<{
+    /**
+     * Tax rate percentage
+     */
+    taxRate?: number
+    /**
+     * Tax amount for this rate
+     */
+    total?: number
+  }>
   /**
    * Total original cost of products included in calculation.
    */
@@ -2839,9 +2856,26 @@ export type QuotaStoreRequest = {
    */
   customer_name?: string
   /**
+   * Customer contact ID
+   */
+  customer_contact_id: number
+  /**
    * Tax rate percentage
    */
   tax_rate?: number
+  /**
+   * Array of grouped tax rates with amounts
+   */
+  tax_rate_group?: Array<{
+    /**
+     * Tax rate percentage
+     */
+    taxRate?: number
+    /**
+     * Tax amount for this rate
+     */
+    total?: number
+  }>
   /**
    * Additional notes
    */
@@ -2950,9 +2984,26 @@ export type QuotaUpdateRequest = {
    */
   customer_name?: string
   /**
+   * Customer contact ID
+   */
+  customer_contact_id: number
+  /**
    * Tax rate percentage (0-100)
    */
   tax_rate?: number
+  /**
+   * Array of grouped tax rates with amounts
+   */
+  tax_rate_group?: Array<{
+    /**
+     * Tax rate percentage
+     */
+    taxRate?: number
+    /**
+     * Tax amount for this rate
+     */
+    total?: number
+  }>
   /**
    * Additional notes or comments
    */
@@ -3003,6 +3054,7 @@ export type SimpleQuota = {
     | 'cancelled'
   title?: string
   customer_name?: string
+  customer_contact_id?: number
   /**
    * Formatted total price
    */

@@ -238,7 +238,9 @@ function DetailInfo() {
   }
 
   const groupedTotals = useMemo(() => {
-    return calculateGroupedTotal(dataSource)
+    const taxRate = calculateGroupedTotal(dataSource)
+    form.setFieldValue('tax_rate_group', taxRate)
+    return taxRate
   }, [dataSource])
 
   return (
@@ -257,6 +259,7 @@ function DetailInfo() {
       <Form.Item name={'consumption_tax_amount'} hidden></Form.Item>
       <Form.Item name={'total_profit_margin'} hidden></Form.Item>
       <Form.Item name={'total_price_tax_included'} hidden></Form.Item>
+      <Form.Item name={'tax_rate_group'} hidden></Form.Item>
 
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
