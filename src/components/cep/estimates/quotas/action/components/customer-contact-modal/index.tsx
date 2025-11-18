@@ -209,7 +209,7 @@ function CustomerContactSelectionModal({
                 rules={[
                   {
                     required: true,
-                    message: t('validations.required'),
+                    message: t(''),
                   },
                 ]}
               >
@@ -238,11 +238,11 @@ function CustomerContactSelectionModal({
                 rules={[
                   {
                     required: true,
-                    message: t('validations.required'),
+                    message: t(''),
                   },
                   {
                     type: 'email',
-                    message: t('validation.email_format'),
+                    message: t(''),
                   },
                 ]}
               >
