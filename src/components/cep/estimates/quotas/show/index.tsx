@@ -452,16 +452,14 @@ function QuotaDetail() {
         }}
       >
         <div>
-          <Spin spinning={isPendingPreviewPdf}>
-            {!isPendingPreviewPdf && (
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                <Viewer
-                  fileUrl={decodeURIComponent(queryBasic?.data.pdf_path)}
-                  plugins={[defaultLayoutPluginInstance]}
-                />
-              </Worker>
-            )}
-          </Spin>
+          {
+            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+              <Viewer
+                fileUrl={decodeURIComponent(queryBasic?.data.pdf_path)}
+                plugins={[defaultLayoutPluginInstance]}
+              />
+            </Worker>
+          }
 
           {/* <PreviewPdf previewPdf={previewPdf} /> */}
         </div>
