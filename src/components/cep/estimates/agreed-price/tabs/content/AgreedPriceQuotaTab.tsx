@@ -111,6 +111,7 @@ const AgreedPriceQuotaTab = () => {
           onSuccess: () => {
             setIsUpdateOpen(false)
             setSelected(null)
+            refetchCount?.()
             tableQuery?.refetch?.()
           },
         },
@@ -283,7 +284,7 @@ const AgreedPriceQuotaTab = () => {
     [t, go],
   )
 
-  const { data: count } = useCustom({
+  const { data: count, refetch: refetchCount } = useCustom({
     method: 'get',
     url: `${apiUrl}/quota/agreed-prices/count`,
   })
