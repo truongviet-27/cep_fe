@@ -485,7 +485,8 @@
     "tags": "見積タグ設定",
     "filters": {
       "search_label": "タグ名"
-    }
+    },
+    "no_data_on_page": "このページにはデータがありません"
   },
   "parameter_settings": {
     "parameter_settings": "パラメーター設定",

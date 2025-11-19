@@ -150,7 +150,8 @@
     }
   },
   "tags": {
-    "tags": "Tags"
+    "tags": "Tags",
+    "no_data_on_page": "There is no data on this page"
   },
   "system_config": {
     "system_config": "System Settings",
