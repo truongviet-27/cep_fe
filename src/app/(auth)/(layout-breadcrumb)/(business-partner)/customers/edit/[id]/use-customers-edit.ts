@@ -72,11 +72,20 @@ export const useCustomerEdit = () => {
         industry = values?.temp_industry
       }
 
+      // Filter to get only new contacts (contacts without id)
+      const newContacts = receivers.filter((receiver: any) => !receiver.id)
+      const newContactEmails = newContacts.map((contact: any) => contact.email)
+
       // Remove receivers from customer data
       const { receivers: _, ...customerData } = values
 
-      // Step 1: Update customer
-      await onFinish({ ...customerData, company_type, industry })
+      // Step 1: Update customer with new contacts emails for validation
+      await onFinish({
+        ...customerData,
+        new_contacts_emails: newContactEmails, // Send only new contact emails
+        company_type,
+        industry,
+      })
 
       // Step 2: Delete contacts if any
       if (deletedReceiverIds.length > 0) {
@@ -116,7 +125,50 @@ export const useCustomerEdit = () => {
         error?.response?.data?.message ||
         error?.message ||
         t('notifications.updateError')
-      message.error(errorMessage)
+
+      // Handle duplicate contact errors
+      const errorData = error?.response?.data
+
+      // Check for new_contacts_emails error (duplicate emails)
+      if (errorData?.errors?.new_contacts_emails) {
+        const errorFields: any[] = []
+        const newContactsEmailsError =
+          errorData.errors.new_contacts_emails[0] ||
+          errorData.errors.new_contacts_emails
+
+        // Extract duplicate emails from error message like: "(3333@gmail.com, sfsdfssssdf@gmail.com)"
+        const emailRegex = /\(([^)]+)\)/
+        const match = newContactsEmailsError.match(emailRegex)
+
+        if (match) {
+          const duplicateEmailsStr = match[1]
+          const duplicateEmails = duplicateEmailsStr
+            .split(', ')
+            .map((email: string) => email.trim())
+
+          // Find receivers with duplicate emails and highlight them
+          values.receivers.forEach((receiver: any, index: number) => {
+            if (duplicateEmails.includes(receiver.email)) {
+              errorFields.push({
+                name: ['receivers', index, 'email'],
+                errors: [t('')],
+                value: receiver.email,
+              })
+            }
+          })
+        }
+
+        if (errorFields.length > 0) {
+          try {
+            form.setFields(errorFields)
+          } catch (e) {
+            console.error('Error setting field validation:', e)
+          }
+        }
+      }
+
+      // Remove error message notification - only show field validation errors
+      // message.error(errorMessage)
     }
   }
 

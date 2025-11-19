@@ -3,14 +3,14 @@ import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
+import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
-import { Button, Collapse, Form, Input, Space, Typography } from 'antd'
+import { Button, Collapse, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 import styles from '../styles.module.css'
 
-const { Title } = Typography
 const { Panel } = Collapse
 
 function CustomerContacts(
@@ -31,7 +31,7 @@ function CustomerContacts(
       )}
     >
       <Panel
-        header={<Title level={5}>{t('customers.receivers.title')}</Title>}
+        header={boldText(t('customers.receivers.title'))}
         key="1"
         forceRender
       >

@@ -15,7 +15,7 @@ import {
 import { PRIMARY } from '@utility/color'
 import { Button, Input, Space, Typography, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useLayoutEffect, useMemo, useRef } from 'react'
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
 import boldText from '@utility/bold-text'
@@ -129,6 +129,7 @@ function useTags() {
       id: crypto?.randomUUID?.(),
       order,
     })
+    setEdited(true)
   }
 
   const startEdit = (index: number) => {
@@ -136,6 +137,7 @@ function useTags() {
     const stableKey = keyOf(current, index)
     originalRef.current[stableKey] = { ...current }
     update(index, { ...current, _isEditing: true })
+    setEdited(true)
   }
 
   const cancelEdit = (index: number) => {
@@ -168,6 +170,9 @@ function useTags() {
   const { mutate: deleteRow } = useDelete()
 
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
+
+  const [edited, setEdited] = useState<boolean>(false)
+
   const handleUpdateOrdering = (values: TagRow[]) => {
     updateAll({
       url: `${apiUrl}/${resource?.name}/upsert`,
@@ -200,6 +205,7 @@ function useTags() {
 
     if (!values.length) return
     handleUpdateOrdering(values as TagRow[])
+    setEdited(false)
   }
 
   const saveRow = (index: number) => {
@@ -423,6 +429,7 @@ function useTags() {
     },
     getRowIdForDnd,
     setFilters,
+    edited,
   }
 }
 

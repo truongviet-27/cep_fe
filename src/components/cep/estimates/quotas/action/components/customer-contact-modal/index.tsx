@@ -12,6 +12,8 @@ import type { CustomerContact } from '@sdk/hey-api'
 import CommonTable from '@components/common/table'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { FORMAT_DATE } from '@utility/instances'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 
 interface CustomerContactSelectionModalProps {
   open: boolean
@@ -332,7 +334,7 @@ function CustomerContactSelectionModal({
 
   return (
     <Modal
-      title={t('quotas.action.customer_contact_modal.title')}
+      title={boldText(t('quotas.action.customer_contact_modal.title'), PRIMARY)}
       open={open}
       onCancel={onClose}
       footer={null}
