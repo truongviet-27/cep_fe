@@ -136,7 +136,8 @@
       "required": "氏名は必須です。"
     },
     "email_customer_contacts": {
-      "required": "メールアドレスは必須です。"
+      "required": "メールアドレスは必須です。",
+      "duplicate": "このメールアドレスは既に別の連絡先で使用されています。"
     },
     "person_in_charge_department": {
       "required": "担当者部署は必須です。",
