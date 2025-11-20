@@ -485,7 +485,9 @@
     "tags": "見積タグ設定",
     "filters": {
       "search_label": "タグ名"
-    }
+    },
+    "confirm_navigation": "ページ移動の確認",
+    "unsaved_changes_warning": "編集中のデータは保存されていません。ページを移動するとデータが失われますが、よろしいですか？"
   },
   "parameter_settings": {
     "parameter_settings": "パラメーター設定",
