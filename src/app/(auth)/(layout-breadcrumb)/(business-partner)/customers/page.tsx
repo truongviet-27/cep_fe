@@ -1,7 +1,7 @@
 /* eslint-disable */
 'use client'
 
-import { RightOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined, RightOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -46,6 +46,7 @@ import {
   Select,
   Space,
   TableColumnsType,
+  Tooltip,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
@@ -260,6 +261,28 @@ export default function CustomerListPage() {
         align: 'left',
         width: '11%', // Tỷ lệ 4
         ellipsis: true,
+        render: (department) => {
+          if (!department) return null
+          return (
+            <Space
+              size={4}
+              style={{ width: '100%', justifyContent: 'space-between' }}
+            >
+              {department.name}
+              {department.deleted_at && (
+                <Tooltip
+                  title={
+                    t('departments.is_deleted') ||
+                    'Phòng ban đã ngừng hoạt động'
+                  }
+                  color="red"
+                >
+                  <ExclamationCircleOutlined style={{ color: 'red' }} />
+                </Tooltip>
+              )}
+            </Space>
+          )
+        },
       },
       {
         title: t('customers.fields.unit_price_rank_code'),

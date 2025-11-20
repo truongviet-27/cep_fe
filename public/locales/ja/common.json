@@ -791,7 +791,8 @@
       "created_at": "作成日",
       "updated_at": "最終更新日",
       "number_of_employee": "社員数"
-    }
+    },
+    "is_deleted": "この部署が削除されました"
   },
   "tenant": {
     "tenant": "テナント選択",

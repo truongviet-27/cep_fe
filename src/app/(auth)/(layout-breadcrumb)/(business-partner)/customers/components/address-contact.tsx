@@ -29,6 +29,7 @@ function AddressContact(
     form.setFieldValue('temp_industry', industry)
     form.setFieldValue('industry', null)
   }
+  Form.useWatch('department_in_charge_id')
 
   return (
     <Collapse
@@ -163,6 +164,20 @@ function AddressContact(
                 )}
                 layout="horizontal"
                 style={{ maxWidth: 560, width: '250px' }}
+                defaultValue={{
+                  value: form.getFieldValue('department_in_charge_id'),
+                  label: form.getFieldValue(['department_in_charge', 'name']),
+                }}
+                onChangeValue={(valueOption) => {
+                  form.setFieldValue(
+                    ['department_in_charge', 'deleted_at'],
+                    null,
+                  )
+                  form.setFieldValue(
+                    ['department_in_charge', 'name'],
+                    valueOption.name,
+                  )
+                }}
               />
             </Col>
 
@@ -171,6 +186,11 @@ function AddressContact(
                 ※当社の部署
               </Form.Item>
             </Col>
+            {form.getFieldValue(['department_in_charge', 'deleted_at']) && (
+              <span className="ml-4 rounded-full bg-red-500 px-2 text-white">
+                {t('departments.is_deleted')}
+              </span>
+            )}
           </Row>
         </Form.Item>
       </Panel>
