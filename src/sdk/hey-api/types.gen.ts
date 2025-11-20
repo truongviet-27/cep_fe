@@ -3651,6 +3651,13 @@ export type QuotaTemplateDetailResponse = {
       | 'years_1'
     consumption_tax?: 'exclusive' | 'inclusive' | 'external'
     tax_rate?: number
+    /**
+     * Array of grouped tax rates with amounts
+     */
+    tax_rate_group?: Array<{
+      taxRate?: number
+      total?: number
+    }>
     note?: string
     number_product?: number
     total_price?: number
@@ -3940,6 +3947,19 @@ export type QuotaTemplateStoreRequest = {
    */
   tax_rate?: number
   /**
+   * Array of grouped tax rates with amounts
+   */
+  tax_rate_group?: Array<{
+    /**
+     * Tax rate percentage
+     */
+    taxRate?: number
+    /**
+     * Tax amount for this rate
+     */
+    total?: number
+  }>
+  /**
    * Additional notes
    */
   note?: string
@@ -4002,6 +4022,19 @@ export type QuotaTemplateUpdateRequest = {
    * Tax rate percentage
    */
   tax_rate?: number
+  /**
+   * Array of grouped tax rates with amounts
+   */
+  tax_rate_group?: Array<{
+    /**
+     * Tax rate percentage
+     */
+    taxRate?: number
+    /**
+     * Tax amount for this rate
+     */
+    total?: number
+  }>
   /**
    * Additional notes
    */
