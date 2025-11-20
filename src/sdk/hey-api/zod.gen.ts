@@ -2282,6 +2282,14 @@ export const zQuotaTemplateDetailResponse = z.object({
         z.enum(['exclusive', 'inclusive', 'external']),
       ),
       tax_rate: z.optional(z.int()),
+      tax_rate_group: z.optional(
+        z.array(
+          z.object({
+            taxRate: z.optional(z.number()),
+            total: z.optional(z.number()),
+          }),
+        ),
+      ),
       note: z.optional(z.string()),
       number_product: z.optional(z.int()),
       total_price: z.optional(z.int()),
@@ -2418,6 +2426,14 @@ export const zQuotaTemplateStoreRequest = z.object({
   expiration_date: z.optional(zExpirationDateEnum),
   consumption_tax: z.optional(zConsumptionTaxEnum),
   tax_rate: z.optional(z.int().gte(0).lte(100)),
+  tax_rate_group: z.optional(
+    z.array(
+      z.object({
+        taxRate: z.optional(z.number().gte(0).lte(100)),
+        total: z.optional(z.number().gte(0)),
+      }),
+    ),
+  ),
   note: z.optional(z.string()),
   number_product: z.optional(z.int()),
   total_price: z.optional(z.number().gte(0)),
@@ -2442,6 +2458,14 @@ export const zQuotaTemplateUpdateRequest = z.object({
   expiration_date: z.optional(zExpirationDateEnum),
   consumption_tax: z.optional(zConsumptionTaxEnum),
   tax_rate: z.optional(z.int().gte(0).lte(100)),
+  tax_rate_group: z.optional(
+    z.array(
+      z.object({
+        taxRate: z.optional(z.number().gte(0).lte(100)),
+        total: z.optional(z.number().gte(0)),
+      }),
+    ),
+  ),
   note: z.optional(z.string()),
   number_product: z.optional(z.int()),
   total_price: z.optional(z.number().gte(0)),

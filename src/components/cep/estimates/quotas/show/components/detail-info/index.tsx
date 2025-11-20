@@ -6,6 +6,7 @@ import { PRIMARY } from '@utility/color'
 import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
+import { useMemo } from 'react'
 
 const { Text } = Typography
 
@@ -125,7 +126,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return `${record?.tax_rate}%`
+        return record?.tax_rate ? `${record?.tax_rate}%` : '0%'
       },
     },
     {
@@ -161,6 +162,39 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       },
     },
   ]
+
+  const calculateGroupedTotal = (data: any) => {
+    const totalByTaxRate = data.reduce((acc: any, item: any) => {
+      if (item.isHeader || !item.is_add_total) {
+        return acc
+      }
+
+      const sellingPrice = parseFloat(item.selling_price || 0)
+      const quantity = parseFloat(item.quantity || 0)
+      const taxRate = parseFloat(item.tax_rate || 0)
+
+      // Công thức: selling_price * quantity * tax_rate / 100
+      const calculatedValue = (sellingPrice * quantity * taxRate) / 100
+
+      const key = String(taxRate)
+      acc[key] = (acc[key] || 0) + calculatedValue
+
+      return acc
+    }, {})
+
+    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
+      taxRate: parseFloat(taxRate),
+      total: (total as number).toFixed(0),
+    }))
+  }
+
+  // 🌟 SỬ DỤNG useMemo: Biến này chỉ được tính toán lại khi dataSource thay đổi
+  const groupedTotals = useMemo(() => {
+    if (basicInfo?.tax_rate_group?.length) {
+      return basicInfo?.tax_rate_group
+    }
+    return calculateGroupedTotal(dataSource)
+  }, [dataSource]) // Dependency array: chỉ chạy lại khi dataSource thay đổi
 
   return (
     <Card
@@ -276,7 +310,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
             </Col>
             <Col span={12}>
               <Row gutter={[16, 16]}>
-                {basicInfo?.tax_rate_group?.map((item: any, index: any) => (
+                {groupedTotals.map((item: any, index: any) => (
                   <Col span={24} key={index}>
                     <div
                       style={{

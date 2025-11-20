@@ -72,6 +72,7 @@ export function useController() {
         consumption_tax: data?.data.consumption_tax ?? '0',
         tax_rate: data?.data.tax_rate,
         tax_rounding_method: data.data?.tax_rounding_method,
+        tax_rate_group: {},
         note: null,
         tags: [],
         total_cost: 0,

@@ -114,6 +114,16 @@ export type QuoteTemplateDetailType = {
   total_price: number
   total_price_tax_included: number
   total_profit_margin: number
+  tax_rate_group?: Array<{
+    /**
+     * Tax rate percentage
+     */
+    taxRate?: number
+    /**
+     * Tax amount for this rate
+     */
+    total?: number
+  }>
   consumption_tax_amount: number
   tags?: Array<{
     id?: number

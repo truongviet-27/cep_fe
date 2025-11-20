@@ -150,7 +150,9 @@
     }
   },
   "tags": {
-    "tags": "Tags"
+    "tags": "Tags",
+    "confirm_navigation": "Confirm Navigation",
+    "unsaved_changes_warning": "You have unsaved changes. If you leave this page, your changes will be lost. Are you sure you want to proceed?"
   },
   "system_config": {
     "system_config": "System Settings",

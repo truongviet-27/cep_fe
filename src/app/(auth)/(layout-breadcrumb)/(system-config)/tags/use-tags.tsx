@@ -13,7 +13,7 @@ import {
   useUpdate,
 } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Button, Input, Space, Typography } from 'antd'
+import { Button, Input, Space, Typography, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
@@ -38,6 +38,7 @@ function useTags() {
   const { resource } = useResource()
   const apiUrl = useApiUrl()
   const [pageSize, setPageSize] = React.useState(10)
+  const [lastRowEdited, setLastRowEdited] = React.useState<boolean>(false)
   const [totalPage, setTotalPage] = React.useState(0)
   const forceUpdate = useRef(false)
   const {
@@ -64,13 +65,24 @@ function useTags() {
       mode: 'onTouched',
     })
 
-  const { insert, remove, update, move, replace, fields } = useFieldArray({
-    control,
-    name: 'rows',
-    keyName: '_key',
-  })
+  const { insert, remove, update, move, replace, fields, append } =
+    useFieldArray({
+      control,
+      name: 'rows',
+      keyName: '_key',
+    })
 
   const watchedRows = useWatch({ control, name: 'rows' }) ?? []
+  React.useEffect(() => {
+    const targetIndex = pageSize - 1
+    const targetRow = watchedRows[targetIndex]
+    if (targetRow) {
+      const isActive = !!(targetRow._isNew || targetRow._isEditing)
+      setLastRowEdited(isActive)
+    } else {
+      setLastRowEdited(false)
+    }
+  }, [watchedRows, pageSize])
 
   const originalRef = useRef<Record<string, TagRow>>({})
 
@@ -95,14 +107,21 @@ function useTags() {
     },
   ]
 
+  const stashedRowRef = useRef<TagRow[]>([])
   const addNew = () => {
-    setPageSize((total) => total + 1)
     setTotalPage(
       (pre) =>
         (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
     )
     forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
+
+    if (fields.length >= pageSize) {
+      const lastIndex = fields.length - 1
+      stashedRowRef.current.push(getValues(`rows.${lastIndex}`))
+      remove(lastIndex)
+    }
+
     insert(0, {
       name: '',
       _isNew: true,
@@ -125,6 +144,10 @@ function useTags() {
     const row = getValues(`rows.${index}`)
     if (row._isNew) {
       remove(index)
+      const rowToRestore = stashedRowRef.current.pop()
+      if (rowToRestore) {
+        append(rowToRestore)
+      }
       return
     }
     const stableKey = keyOf(row, index)
@@ -288,6 +311,7 @@ function useTags() {
                   size="middle"
                   placeholder={t('product_units.columns.unit_name')}
                   status={error ? 'error' : ''}
+                  autoFocus={true}
                   {...field}
                 />
                 {error?.message && (
@@ -351,18 +375,48 @@ function useTags() {
     },
   ]
 
+  const isDirty = useMemo(() => {
+    return watchedRows.some((r) => r._isNew || r._isEditing)
+  }, [watchedRows])
+
+  const handleTableChange = (
+    pagination: any,
+    filters: any,
+    sorter: any,
+    extra: any,
+  ) => {
+    if (isDirty) {
+      Modal.confirm({
+        title: t('tags.confirm_navigation'),
+        content: t('tags.unsaved_changes_warning'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        type: 'warning',
+        onOk: () => {
+          stashedRowRef.current = []
+          tableProps.onChange?.(pagination, filters, sorter, extra)
+        },
+        onCancel: () => {},
+      })
+    } else {
+      tableProps.onChange?.(pagination, filters, sorter, extra)
+    }
+  }
+
   return {
     t,
     breadcrumbItems,
     addNew,
     columns,
     dataSource,
+    lastRowEdited,
     onDragEnd,
     onSaveAll,
     savingAll,
     searchFormProps,
     tableProps: {
       ...tableProps,
+      onChange: handleTableChange,
       pagination: {
         ...tableProps?.pagination,
         pageSize,
