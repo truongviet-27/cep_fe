@@ -203,7 +203,8 @@ function QuotaAction() {
             products: item.products.map((item2: any) => ({
               ...item2,
               product: { value: item2.product_id, label: item2.name },
-              unit: item2.unit_name,
+              tax_rate: item2.tax_rate ?? 0,
+              unit: item2.unit_name ?? '-',
             })),
           })),
           optional_product: dataProducts.data.optional_product.map(
@@ -212,7 +213,8 @@ function QuotaAction() {
               products: item.products.map((item2: any) => ({
                 ...item2,
                 product: { value: item2.product_id, label: item2.name },
-                unit: item2.unit_name,
+                tax_rate: item2.tax_rate ?? 0,
+                unit: item2.unit_name ?? '-',
               })),
             }),
           ),
@@ -264,6 +266,7 @@ function QuotaAction() {
               products: item.products.map((item2: any) => ({
                 ...item2,
                 product: { value: item2.product_id, label: item2.name },
+                tax_rate: item2.tax_rate ?? 0,
                 unit: item2.unit_name ?? '-',
               })),
             }),

@@ -69,6 +69,9 @@ const DetailInfo: FC<Props> = (props) => {
   }
 
   const groupedTotals = useMemo(() => {
+    if (detail.tax_rate_group) {
+      return detail.tax_rate_group
+    }
     return calculateGroupedTotal(dataSource)
   }, [dataSource])
 
@@ -305,7 +308,7 @@ const DetailInfo: FC<Props> = (props) => {
                     消費税金額
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{(detail.consumption_tax_amount || 0).toLocaleString()}
+                    {(detail.total_profit_margin || 0).toLocaleString()}%
                   </Text>
                 </div>
               </Col>

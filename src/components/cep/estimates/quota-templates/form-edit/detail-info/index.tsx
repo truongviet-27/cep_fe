@@ -118,7 +118,9 @@ const DetailInfo: FC = () => {
   }
 
   const groupedTotals = useMemo(() => {
-    return calculateGroupedTotal(dataSource)
+    const taxRate = calculateGroupedTotal(dataSource)
+    form.setFieldValue('tax_rate_group', taxRate)
+    return taxRate
   }, [dataSource, taxRoundingMethodWatch])
 
   return (
@@ -130,6 +132,8 @@ const DetailInfo: FC = () => {
       >
         {t('quota_templates.form.titleDetailInfo')}
       </Title>
+
+      <Form.Item name={'tax_rate_group'} hidden></Form.Item>
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
           const columns: ColumnsType = [
@@ -758,6 +762,9 @@ const DetailInfo: FC = () => {
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
                     ¥{sellTotalWithTax || 0}
                   </Text>
+                  <Form.Item name="total_price_tax_included" hidden>
+                    <InputNumber />
+                  </Form.Item>
                 </div>
               </Col>
             </Row>
