@@ -455,7 +455,7 @@ function QuotaDetail() {
           {
             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
               <Viewer
-                fileUrl={decodeURIComponent(queryBasic?.data.pdf_path)}
+                fileUrl={queryBasic?.data.pdf_path}
                 plugins={[defaultLayoutPluginInstance]}
               />
             </Worker>
