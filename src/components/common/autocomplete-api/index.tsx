@@ -52,6 +52,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
   } = props
 
   const [current, setCurrent] = useState(1)
+  const [isClick, setIsClick] = useState(false)
   const [isPreApply, setIsPreApply] = useState(false)
 
   const [options, setOptions] = useState<any[]>([])
@@ -68,7 +69,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       pageSize,
     },
     queryOptions: {
-      enabled: true,
+      enabled: isClick && !disabled,
     },
     onSearch(value) {
       lastPageAdded.current = 0
@@ -86,6 +87,26 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       lastPageAdded.current = current
     }
   }, [query.data?.data])
+
+  useEffect(() => {
+    if (
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      defaultValue.value &&
+      defaultValue.label
+    ) {
+      const newOption = {
+        [optionValue]: defaultValue.value,
+        [optionLabel]: defaultValue.label,
+      }
+      setOptions((prev) => {
+        const isExist = prev.some(
+          (opt) => opt[optionValue] === newOption[optionValue],
+        )
+        return isExist ? prev : [newOption, ...prev]
+      })
+    }
+  }, [defaultValue?.value, defaultValue?.label])
 
   const handlePopupScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
@@ -160,6 +181,9 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
           }
         }}
         value={value}
+        onClick={() => {
+          setIsClick(true)
+        }}
         onPopupScroll={handlePopupScroll}
         allowClear
         onClear={() => {

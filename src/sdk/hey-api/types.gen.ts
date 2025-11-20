@@ -812,7 +812,10 @@ export type Customer = {
   /**
    * Department in charge
    */
-  department_in_charge?: string | null
+  department_in_charge?: {
+    name: string | null
+    deleted_at: string | null
+  } | null
   /**
    * Soft deletion status
    */

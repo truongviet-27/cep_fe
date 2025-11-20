@@ -14,7 +14,10 @@ declare module 'next-auth' {
       id: string
       name: string
     }
-    user?: {} & DefaultSession['user']
+    user?: {
+      given_name?: string
+      family_name?: string
+    } & DefaultSession['user']
   }
 }
 

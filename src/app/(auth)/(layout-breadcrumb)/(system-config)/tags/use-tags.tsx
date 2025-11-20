@@ -13,7 +13,7 @@ import {
   useUpdate,
 } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Button, Input, Space, Typography, Modal } from 'antd'
+import { Button, Input, message, Space, Typography, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
@@ -47,7 +47,9 @@ function useTags() {
     setFilters,
     setPageSize: setPageSize2,
     current,
+    setCurrent,
     pageCount,
+    tableQueryResult: { isLoading, isFetching },
   } = useTable<TagRow>({
     syncWithLocation: true,
     onSearch: (values: any) => [
@@ -273,6 +275,39 @@ function useTags() {
       (watchedRows as TagRow[]).map((r, i) => ({ ...r, __index: String(i) })),
     [watchedRows],
   )
+  React.useEffect(() => {
+    // 1. Nếu đang load data thì KHÔNG làm gì cả để tránh tính toán sai lúc total = 0
+    if (isLoading || isFetching || !tableProps?.pagination) {
+      return
+    }
+
+    const total = (tableProps.pagination as any)?.total || 0
+    const currentSize =
+      pageSize || (tableProps.pagination as any)?.pageSize || 10
+
+    // 2. Tính toán trang cuối cùng thực tế
+    // Ví dụ: Total = 41, size = 10 -> Last page = 5
+    const lastPage = Math.ceil(total / currentSize)
+
+    // 3. Chỉ nhảy trang nếu:
+    // - Có dữ liệu (total > 0)
+    // - Trang hiện tại (current) lớn hơn trang cuối cùng thực tế (lastPage)
+    if (total > 0 && current > lastPage) {
+      const targetPage = Math.max(1, lastPage)
+
+      setCurrent(targetPage)
+
+      message.warning(t('tags.no_data_on_page'))
+    }
+  }, [
+    current,
+    tableProps?.pagination,
+    pageSize,
+    isLoading,
+    isFetching,
+    setCurrent,
+    t,
+  ])
 
   const getRowIdForDnd = (r: RowVM): string => {
     const idx = Number(r.__index)

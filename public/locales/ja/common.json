@@ -487,7 +487,8 @@
       "search_label": "タグ名"
     },
     "confirm_navigation": "ページ移動の確認",
-    "unsaved_changes_warning": "編集中のデータは保存されていません。ページを移動するとデータが失われますが、よろしいですか？"
+    "unsaved_changes_warning": "編集中のデータは保存されていません。ページを移動するとデータが失われますが、よろしいですか？",
+    "no_data_on_page": "このページにはデータがありません"
   },
   "parameter_settings": {
     "parameter_settings": "パラメーター設定",
@@ -791,7 +792,8 @@
       "created_at": "作成日",
       "updated_at": "最終更新日",
       "number_of_employee": "社員数"
-    }
+    },
+    "is_deleted": "この部署が削除されました"
   },
   "tenant": {
     "tenant": "テナント選択",
