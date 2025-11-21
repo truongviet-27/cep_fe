@@ -82,7 +82,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.cost_price
+        return (+record?.cost_price)?.toLocaleString()
       },
     },
     {
@@ -93,7 +93,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.selling_price
+        return (+record?.selling_price)?.toLocaleString()
       },
     },
     {
@@ -126,7 +126,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return `${record?.tax_rate}%`
+        return record?.tax_rate ? `${record?.tax_rate}%` : '0%'
       },
     },
     {
@@ -156,7 +156,9 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (record?.selling_price || 0) * (record?.quantity || 1)
+        return (
+          (record?.selling_price || 0) * (record?.quantity || 1)
+        )?.toLocaleString()
       },
     },
   ]
@@ -188,6 +190,9 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
 
   // 🌟 SỬ DỤNG useMemo: Biến này chỉ được tính toán lại khi dataSource thay đổi
   const groupedTotals = useMemo(() => {
+    if (basicInfo?.tax_rate_group?.length) {
+      return basicInfo?.tax_rate_group
+    }
     return calculateGroupedTotal(dataSource)
   }, [dataSource]) // Dependency array: chỉ chạy lại khi dataSource thay đổi
 
@@ -272,7 +277,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                       {t('quotas.action.detail_info.summary.cost_total')}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{basicInfo?.total_cost}
+                      ¥{(+basicInfo?.total_cost)?.toLocaleString()}
                     </Text>
                   </div>
                 </Col>
@@ -297,7 +302,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                       )}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      {basicInfo?.total_profit_margin}%
+                      {(+basicInfo?.total_profit_margin)?.toLocaleString()}%
                     </Text>
                   </div>
                 </Col>
@@ -305,7 +310,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
             </Col>
             <Col span={12}>
               <Row gutter={[16, 16]}>
-                {groupedTotals.map((item, index) => (
+                {groupedTotals.map((item: any, index: any) => (
                   <Col span={24} key={index}>
                     <div
                       style={{
@@ -326,7 +331,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                         {item?.taxRate}%）
                       </Text>
                       <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                        ¥{item?.total}
+                        ¥{(+item.total)?.toLocaleString()}
                       </Text>
                     </div>
                   </Col>
@@ -351,7 +356,8 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                       {t('quotas.action.detail_info.summary.tax_inclusive')}）
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{basicInfo?.total_price_tax_included}
+                      ¥
+                      {(+basicInfo?.total_price_tax_included)?.toLocaleString()}
                     </Text>
                   </div>
                 </Col>

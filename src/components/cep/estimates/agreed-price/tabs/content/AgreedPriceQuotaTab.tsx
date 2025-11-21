@@ -75,12 +75,18 @@ const AgreedPriceQuotaTab = () => {
 
   const openUpdate = (record: QuotaAgreedPrice) => {
     setSelected(record)
-    const start = (record as any).valid_to
-      ? dayjs((record as any).valid_to).add(1, 'day')
+    const start = (record as any).valid_from
+      ? dayjs((record as any).valid_from).add(0, 'day')
       : dayjs().add(1, 'day')
-    updateForm.setFieldsValue({ start_date: start, end_date: null })
+    const end = (record as any).valid_to
+      ? dayjs((record as any).valid_to).add(0, 'day')
+      : dayjs().add(1, 'day')
+    updateForm.setFieldsValue({ start_date: start, end_date: end })
     setIsUpdateOpen(true)
   }
+
+  const startDate = Form.useWatch('start_date', updateForm)
+  const endDate = Form.useWatch('end_date', updateForm)
 
   const handleUpdateSubmit = () => {
     updateForm.validateFields().then((values) => {
@@ -105,11 +111,27 @@ const AgreedPriceQuotaTab = () => {
           onSuccess: () => {
             setIsUpdateOpen(false)
             setSelected(null)
+            refetchCount?.()
             tableQuery?.refetch?.()
           },
         },
       )
     })
+  }
+
+  const calculatedStatusFromExpiredDate = (expriedDate: string) => {
+    let calculatedStatus = ''
+    const today = dayjs().startOf('day')
+    const validTo = dayjs(expriedDate).startOf('day')
+    const diffInDays = validTo.diff(today, 'day')
+    if (diffInDays < 0) {
+      calculatedStatus = 'expired'
+    } else if (diffInDays < 15) {
+      calculatedStatus = 'about_to_expire'
+    } else {
+      calculatedStatus = 'active'
+    }
+    return calculatedStatus
   }
 
   const columns: ColumnsType<QuotaAgreedPrice> = useMemo(
@@ -118,7 +140,14 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.status'),
         dataIndex: 'status',
         key: 'status',
-        render: () => getStatusTag(status as string),
+        render: (_: any, record: QuotaAgreedPrice) => {
+          let calculatedStatus = ''
+          const validToDate = record.valid_to
+          if (validToDate) {
+            calculatedStatus = calculatedStatusFromExpiredDate(validToDate)
+          }
+          return getStatusTag(calculatedStatus)
+        },
       },
       {
         title: t('agreed_prices.table.estimate_number'),
@@ -255,7 +284,7 @@ const AgreedPriceQuotaTab = () => {
     [t, go],
   )
 
-  const { data: count } = useCustom({
+  const { data: count, refetch: refetchCount } = useCustom({
     method: 'get',
     url: `${apiUrl}/quota/agreed-prices/count`,
   })
@@ -325,7 +354,6 @@ const AgreedPriceQuotaTab = () => {
       ]
     },
   })
-  console.log(count)
 
   const statusDashboard = useMemo(() => {
     const c = count?.data
@@ -583,27 +611,35 @@ const AgreedPriceQuotaTab = () => {
         >
           <Form.Item label="見積番号" style={{ marginBottom: 16 }}>
             <Space>
-              <Button
-                type="link"
-                style={{ padding: 0, color: '#1890ff' }}
-                onClick={() =>
-                  selected?.quota_code &&
-                  go({ to: `/estimates/${selected.quota_code}` })
-                }
-              >
+              <span style={{ padding: 0, color: '#1890ff' }}>
                 {selected?.quota_code || 'ES-250527-003'}
-              </Button>
-              <span
-                style={{
-                  background: '#ff4d4f',
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                }}
-              >
-                期限切れ
               </span>
+              {selected?.valid_to && (
+                <span
+                  style={{
+                    background:
+                      calculatedStatusFromExpiredDate(selected.valid_to) ===
+                      'expired'
+                        ? '#ff4d4f'
+                        : calculatedStatusFromExpiredDate(selected.valid_to) ===
+                            'about_to_expire'
+                          ? '#fa8c16'
+                          : '#1890ff',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                  }}
+                >
+                  {calculatedStatusFromExpiredDate(selected.valid_to) ===
+                  'expired'
+                    ? t('agreed_prices.summary.expired')
+                    : calculatedStatusFromExpiredDate(selected.valid_to) ===
+                        'about_to_expire'
+                      ? t('agreed_prices.summary.nearing_expiration')
+                      : t('agreed_prices.summary.active')}
+                </span>
+              )}
             </Space>
           </Form.Item>
 
@@ -633,11 +669,9 @@ const AgreedPriceQuotaTab = () => {
                 noStyle
               >
                 <DatePicker
-                  // GIỮ LẠI WIDTH GỐC CỦA BẠN (hoặc chỉnh % tùy ý)
                   style={{ width: '65%' }}
                   placeholder="YYYY/MM/DD"
                   format="YYYY/MM/DD"
-                  // (Vẫn dùng useEffect + setFieldsValue để set giá trị mặc định nhé)
                 />
               </Form.Item>
 
@@ -670,7 +704,7 @@ const AgreedPriceQuotaTab = () => {
               style={{ width: '65%' }}
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
-              defaultPickerValue={Form.useWatch('start_date', updateForm)}
+              defaultPickerValue={endDate || startDate}
             />
           </Form.Item>
 

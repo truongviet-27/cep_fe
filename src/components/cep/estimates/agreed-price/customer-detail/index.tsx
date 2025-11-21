@@ -124,7 +124,6 @@ const AgreedPriceCustomerDetail = () => {
 
     return products.length
   })()
-  console.log(products)
 
   return (
     <PageContainer

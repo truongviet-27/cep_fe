@@ -50,19 +50,17 @@ function CoreAutoComplete({
   )
 
   const { data } = useCustom<any>({
-    url: `${apiUrl}/${resource}/${product}/customer-pricing/${customer?.value}`,
+    url: `${apiUrl}/${resource}/${product?.value}/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      enabled: !!product && !!customer,
+      enabled: !!product?.value && !!customer?.value,
     },
   })
 
   const { query: productResponse } = useShow<ProductDetail>({
     resource: 'products',
-    id: product,
-    queryOptions: {
-      enabled: !!product && !customer,
-    },
+    id: product?.value,
+    queryOptions: {},
   })
 
   useEffect(() => {
@@ -104,12 +102,11 @@ function CoreAutoComplete({
           ? data?.data?.packagings[0]?.rank_prices
           : (data?.data?.selling_price ?? 0),
       )
-
-      form.setFieldValue(
-        [parent, index, 'products', index2, 'tax_rate'],
-        option?.tax_rate ?? data?.data?.tax_rate,
-      )
     }
+    form.setFieldValue(
+      [parent, index, 'products', index2, 'tax_rate'],
+      option?.tax_rate ?? data?.data?.tax_rate,
+    )
   }, [data, customer])
 
   return (

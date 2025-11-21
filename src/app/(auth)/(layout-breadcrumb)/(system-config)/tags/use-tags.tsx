@@ -13,9 +13,9 @@ import {
   useUpdate,
 } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { Button, Input, Space, Typography } from 'antd'
+import { Button, Input, message, Space, Typography, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useLayoutEffect, useMemo, useRef } from 'react'
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
 import boldText from '@utility/bold-text'
@@ -38,6 +38,7 @@ function useTags() {
   const { resource } = useResource()
   const apiUrl = useApiUrl()
   const [pageSize, setPageSize] = React.useState(10)
+  const [lastRowEdited, setLastRowEdited] = React.useState<boolean>(false)
   const [totalPage, setTotalPage] = React.useState(0)
   const forceUpdate = useRef(false)
   const {
@@ -46,7 +47,9 @@ function useTags() {
     setFilters,
     setPageSize: setPageSize2,
     current,
+    setCurrent,
     pageCount,
+    tableQueryResult: { isLoading, isFetching },
   } = useTable<TagRow>({
     syncWithLocation: true,
     onSearch: (values: any) => [
@@ -64,13 +67,24 @@ function useTags() {
       mode: 'onTouched',
     })
 
-  const { insert, remove, update, move, replace, fields } = useFieldArray({
-    control,
-    name: 'rows',
-    keyName: '_key',
-  })
+  const { insert, remove, update, move, replace, fields, append } =
+    useFieldArray({
+      control,
+      name: 'rows',
+      keyName: '_key',
+    })
 
   const watchedRows = useWatch({ control, name: 'rows' }) ?? []
+  React.useEffect(() => {
+    const targetIndex = pageSize - 1
+    const targetRow = watchedRows[targetIndex]
+    if (targetRow) {
+      const isActive = !!(targetRow._isNew || targetRow._isEditing)
+      setLastRowEdited(isActive)
+    } else {
+      setLastRowEdited(false)
+    }
+  }, [watchedRows, pageSize])
 
   const originalRef = useRef<Record<string, TagRow>>({})
 
@@ -95,14 +109,21 @@ function useTags() {
     },
   ]
 
+  const stashedRowRef = useRef<TagRow[]>([])
   const addNew = () => {
-    setPageSize((total) => total + 1)
     setTotalPage(
       (pre) =>
         (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
     )
     forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
+
+    if (fields.length >= pageSize) {
+      const lastIndex = fields.length - 1
+      stashedRowRef.current.push(getValues(`rows.${lastIndex}`))
+      remove(lastIndex)
+    }
+
     insert(0, {
       name: '',
       _isNew: true,
@@ -110,6 +131,7 @@ function useTags() {
       id: crypto?.randomUUID?.(),
       order,
     })
+    setEdited(true)
   }
 
   const startEdit = (index: number) => {
@@ -117,12 +139,17 @@ function useTags() {
     const stableKey = keyOf(current, index)
     originalRef.current[stableKey] = { ...current }
     update(index, { ...current, _isEditing: true })
+    setEdited(true)
   }
 
   const cancelEdit = (index: number) => {
     const row = getValues(`rows.${index}`)
     if (row._isNew) {
       remove(index)
+      const rowToRestore = stashedRowRef.current.pop()
+      if (rowToRestore) {
+        append(rowToRestore)
+      }
       return
     }
     const stableKey = keyOf(row, index)
@@ -145,6 +172,9 @@ function useTags() {
   const { mutate: deleteRow } = useDelete()
 
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
+
+  const [edited, setEdited] = useState<boolean>(false)
+
   const handleUpdateOrdering = (values: TagRow[]) => {
     updateAll({
       url: `${apiUrl}/${resource?.name}/upsert`,
@@ -177,6 +207,7 @@ function useTags() {
 
     if (!values.length) return
     handleUpdateOrdering(values as TagRow[])
+    setEdited(false)
   }
 
   const saveRow = (index: number) => {
@@ -244,6 +275,39 @@ function useTags() {
       (watchedRows as TagRow[]).map((r, i) => ({ ...r, __index: String(i) })),
     [watchedRows],
   )
+  React.useEffect(() => {
+    // 1. Nếu đang load data thì KHÔNG làm gì cả để tránh tính toán sai lúc total = 0
+    if (isLoading || isFetching || !tableProps?.pagination) {
+      return
+    }
+
+    const total = (tableProps.pagination as any)?.total || 0
+    const currentSize =
+      pageSize || (tableProps.pagination as any)?.pageSize || 10
+
+    // 2. Tính toán trang cuối cùng thực tế
+    // Ví dụ: Total = 41, size = 10 -> Last page = 5
+    const lastPage = Math.ceil(total / currentSize)
+
+    // 3. Chỉ nhảy trang nếu:
+    // - Có dữ liệu (total > 0)
+    // - Trang hiện tại (current) lớn hơn trang cuối cùng thực tế (lastPage)
+    if (total > 0 && current > lastPage) {
+      const targetPage = Math.max(1, lastPage)
+
+      setCurrent(targetPage)
+
+      message.warning(t('tags.no_data_on_page'))
+    }
+  }, [
+    current,
+    tableProps?.pagination,
+    pageSize,
+    isLoading,
+    isFetching,
+    setCurrent,
+    t,
+  ])
 
   const getRowIdForDnd = (r: RowVM): string => {
     const idx = Number(r.__index)
@@ -273,7 +337,7 @@ function useTags() {
         return isEditing ? (
           <Controller
             control={control}
-            rules={{ required: t('validation.required') }}
+            rules={{ required: true }}
             name={`rows.${index}.name`}
             render={({ field, fieldState: { error } }) => (
               <div className={'-mb-2 !h-fit'}>
@@ -282,6 +346,7 @@ function useTags() {
                   size="middle"
                   placeholder={t('product_units.columns.unit_name')}
                   status={error ? 'error' : ''}
+                  autoFocus={true}
                   {...field}
                 />
                 {error?.message && (
@@ -345,18 +410,48 @@ function useTags() {
     },
   ]
 
+  const isDirty = useMemo(() => {
+    return watchedRows.some((r) => r._isNew || r._isEditing)
+  }, [watchedRows])
+
+  const handleTableChange = (
+    pagination: any,
+    filters: any,
+    sorter: any,
+    extra: any,
+  ) => {
+    if (isDirty) {
+      Modal.confirm({
+        title: t('tags.confirm_navigation'),
+        content: t('tags.unsaved_changes_warning'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        type: 'warning',
+        onOk: () => {
+          stashedRowRef.current = []
+          tableProps.onChange?.(pagination, filters, sorter, extra)
+        },
+        onCancel: () => {},
+      })
+    } else {
+      tableProps.onChange?.(pagination, filters, sorter, extra)
+    }
+  }
+
   return {
     t,
     breadcrumbItems,
     addNew,
     columns,
     dataSource,
+    lastRowEdited,
     onDragEnd,
     onSaveAll,
     savingAll,
     searchFormProps,
     tableProps: {
       ...tableProps,
+      onChange: handleTableChange,
       pagination: {
         ...tableProps?.pagination,
         pageSize,
@@ -369,6 +464,7 @@ function useTags() {
     },
     getRowIdForDnd,
     setFilters,
+    edited,
   }
 }
 

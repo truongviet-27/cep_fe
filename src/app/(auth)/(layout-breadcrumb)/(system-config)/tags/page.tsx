@@ -28,30 +28,20 @@ export default function Page() {
     columns,
     dataSource,
     onDragEnd,
+    lastRowEdited,
     onSaveAll,
     savingAll,
     searchFormProps,
     tableProps,
     getRowIdForDnd,
     setFilters,
+    edited,
   } = useTags()
 
   return (
     <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
-      }
-      footer={
-        <Col>
-          <Button
-            type="primary"
-            onClick={onSaveAll}
-            loading={savingAll}
-            disabled={savingAll}
-          >
-            {t('buttons.save_all', { defaultValue: '並び順を保存' })}
-          </Button>
-        </Col>
       }
     >
       <Form {...searchFormProps} layout="vertical" colon={false}>
@@ -87,9 +77,24 @@ export default function Page() {
                   クリア
                 </Button>
               </Space>
-              <Button type="primary" size="middle" onClick={addNew}>
-                新規登録
-              </Button>
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={onSaveAll}
+                  loading={savingAll}
+                  disabled={!edited || savingAll}
+                >
+                  {t('buttons.save_all', { defaultValue: '並び順を保存' })}
+                </Button>
+                <Button
+                  type="primary"
+                  size="middle"
+                  onClick={addNew}
+                  disabled={lastRowEdited}
+                >
+                  新規登録
+                </Button>
+              </Space>
             </Space>
           </Col>
         </Row>

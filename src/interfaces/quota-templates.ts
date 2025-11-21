@@ -22,6 +22,10 @@ export type QuotaTemplateMainProductType = QuotaTemplateProductGroupRequest & {
 export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
   unit?: string
   unit_name?: string
+  product?: {
+    id: number
+    name: string
+  } | null
   product_id?: number | null
   product_name?: string
   package_name?: string
@@ -110,6 +114,16 @@ export type QuoteTemplateDetailType = {
   total_price: number
   total_price_tax_included: number
   total_profit_margin: number
+  tax_rate_group?: Array<{
+    /**
+     * Tax rate percentage
+     */
+    taxRate?: number
+    /**
+     * Tax amount for this rate
+     */
+    total?: number
+  }>
   consumption_tax_amount: number
   tags?: Array<{
     id?: number

@@ -132,6 +132,13 @@
       "string": "担当者名は文字列で入力してください。",
       "max": "担当者名は{max}文字以内で入力してください。"
     },
+    "contact_person_name_customer_contacts": {
+      "required": "氏名は必須です。"
+    },
+    "email_customer_contacts": {
+      "required": "メールアドレスは必須です。",
+      "duplicate": "このメールアドレスは既に別の連絡先で使用されています。"
+    },
     "person_in_charge_department": {
       "required": "担当者部署は必須です。",
       "string": "担当者部署は文字列で入力してください。",
@@ -190,8 +197,8 @@
       "in": "採番方法は不正です。"
     },
     "prefix": {
-      "required": "接続詞は必須です。",
-      "numeric": "A〜Zの大文字のみ使用できます",
+      "required": "接続詞は必須です",
+      "numeric": "A〜Zの大文字のみ使用できます。",
       "max": "2文字以内で入力してください。"
     },
     "hash_dash": {
@@ -218,6 +225,11 @@
       "applicable_end": {
         "required": "適用終了日は必須です。"
       }
+    }
+  },
+  "quotas": {
+    "selected_contact": {
+      "required": "見積送付先は必須です。"
     }
   }
 }

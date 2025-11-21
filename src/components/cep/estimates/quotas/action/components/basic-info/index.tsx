@@ -9,7 +9,6 @@ import {
   DatePicker,
   Form,
   Input,
-  InputNumber,
   Modal,
   Radio,
   Row,
@@ -54,7 +53,7 @@ const BasicInfo = () => {
   const expirationDate = Form.useWatch('expiration_date', form)
   const createdAt = Form.useWatch('created_at', form)
   const customer = Form.useWatch('customer', form)
-  const selectedContactId = Form.useWatch('selected_contact_id', form)
+  const selectedContactId = Form.useWatch('customer_contact_id', form)
 
   const { data: customerContactData } = useCustom<CustomerContact>({
     url: selectedContactId
@@ -176,9 +175,9 @@ const BasicInfo = () => {
     // Save the selected contact ID to the form
     const contactId = contact.id
     if (contactId !== null && contactId !== undefined) {
-      form.setFieldsValue({ selected_contact_id: contactId })
+      form.setFieldsValue({ customer_contact_id: contactId })
       // Validate the field after setting value
-      form.validateFields(['selected_contact_id'])
+      form.validateFields(['customer_contact_id'])
     } else {
     }
   }
@@ -203,70 +202,75 @@ const BasicInfo = () => {
           </Col>
         </Row>
 
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={12} lg={10} xl={12}>
-            <div className="flex flex-col flex-wrap gap-4 xl:flex-row">
-              <Form.Item
-                rules={[
-                  {
-                    required: true,
-                    message: t('quotas.validation.basic_info.required.code'),
-                  },
-                  {
-                    whitespace: true,
-                    message: t('quotas.validation.basic_info.invalid_format'),
-                  },
-                  {
-                    pattern: /^[A-Z0-9-]+$/,
-                    message: t('quotas.validation.basic_info.invalid_format'),
-                  },
-                  {
-                    max: 255,
-                    message: t('validations.max255'),
-                  },
-                ]}
-                name={'code'}
-                required
-                label={boldText(
-                  t('quotas.action.basic_info.fields.estimate_number'),
-                )}
-                style={{
-                  marginBottom: 0,
-                  flex: 1,
-                }}
-              >
-                <Input disabled={isCloneVersion} />
-              </Form.Item>
-              <Form.Item>
-                （A-Z, 0-9, -）
-                <Button
-                  onClick={handleAutoNumber}
-                  loading={loadingQuota}
-                  color="primary"
-                  variant="outlined"
-                  disabled={
-                    isCloneVersion ||
-                    codeIssueSetting?.data.issue_method === IssueMethod.Manual
-                  }
-                >
-                  {t('departments.create.auto_number')}
-                </Button>
-                <Button
-                  color="primary"
-                  variant="link"
-                  size="small"
-                  onClick={() => {
-                    show(codeIssueSetting?.data.id)
-                  }}
-                  disabled={isCloneVersion}
+        <Row gutter={[8, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_number'),
+              )}
+              className="[&>.ant-row]:!flex-nowrap"
+            >
+              <div className="flex flex-row flex-nowrap items-center gap-4">
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                      message: t('quotas.validation.basic_info.required.code'),
+                    },
+                    {
+                      whitespace: true,
+                      message: t('quotas.validation.basic_info.invalid_format'),
+                    },
+                    {
+                      pattern: /^[A-Z0-9-]+$/,
+                      message: t('quotas.validation.basic_info.invalid_format'),
+                    },
+                    {
+                      max: 255,
+                      message: t('validations.max255'),
+                    },
+                  ]}
+                  name={'code'}
+                  required
                   style={{
-                    textDecoration: 'underline',
+                    marginBottom: 0,
+                    flex: 1,
+                    minWidth: '160px',
                   }}
                 >
-                  {t('departments.create.popup_number_setting')}
-                </Button>
-              </Form.Item>
-            </div>
+                  <Input disabled={isCloneVersion} />
+                </Form.Item>
+                <Form.Item style={{ whiteSpace: 'nowrap' }}>
+                  （A-Z, 0-9, -）
+                  <Button
+                    onClick={handleAutoNumber}
+                    loading={loadingQuota}
+                    color="primary"
+                    variant="outlined"
+                    disabled={
+                      isCloneVersion ||
+                      codeIssueSetting?.data.issue_method === IssueMethod.Manual
+                    }
+                  >
+                    {t('departments.create.auto_number')}
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="link"
+                    size="small"
+                    onClick={() => {
+                      show(codeIssueSetting?.data.id)
+                    }}
+                    disabled={isCloneVersion}
+                    style={{
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    {t('departments.create.popup_number_setting')}
+                  </Button>
+                </Form.Item>
+              </div>
+            </Form.Item>
           </Col>
         </Row>
 
@@ -356,63 +360,66 @@ const BasicInfo = () => {
               <Input disabled={isCloneVersion} />
             </Form.Item>
           </Col>
-
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Row gutter={[8, 0]} align="bottom">
-              <Col flex="auto">
-                <Form.Item
-                  label={boldText(
-                    t('quotas.action.basic_info.fields.customer'),
-                  )}
-                  name={'customer'}
-                  rules={[
-                    {
-                      required: true,
-                      message: t('validations.required'),
-                    },
-                  ]}
-                  style={{ marginBottom: 0 }}
-                >
-                  <Select
-                    key={`customer-select-${selectedCustomerId}`}
-                    {...selectPropsCt}
-                    options={options.map((item) => ({
-                      label: item.name,
-                      value: item.id,
-                    }))}
-                    allowClear
-                    showSearch
-                    disabled={isCloneVersion}
-                    labelInValue
-                    onSearch={() => {}}
-                    loading={query.isFetching}
-                    onPopupScroll={handlePopupScroll}
-                    filterOption={(input, option) =>
-                      ((option?.label ?? '') as string)
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => {
-                      setSelectedCustomerId(value?.value || null)
-                      form.setFieldsValue({ customer: value })
-                      // Clear selected contact when customer changes
-                      setSelectedContact(null)
-                      form.setFieldsValue({ selected_contact_id: null })
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col>
-                <Button
-                  type="default"
-                  onClick={handleOpenContactModal}
-                  disabled={!selectedCustomerId}
-                  style={{ marginBottom: 12 }}
-                >
-                  {t('quotas.action.customer_contact_modal.select_button')}
-                </Button>
-              </Col>
-            </Row>
+            <Form.Item
+              label={boldText(t('quotas.action.basic_info.fields.customer'))}
+            >
+              <Row gutter={[8, 0]} align="top" wrap={false}>
+                <Col style={{ width: '100%' }}>
+                  <Form.Item
+                    name={'customer'}
+                    rules={[
+                      {
+                        required: true,
+                        message: t(
+                          'quotas.validation.basic_info.required.customer',
+                        ),
+                      },
+                    ]}
+                    style={{ marginBottom: 0 }}
+                  >
+                    <Select
+                      key={`customer-select-${selectedCustomerId}`}
+                      {...selectPropsCt}
+                      options={options.map((item) => ({
+                        label: item.name,
+                        value: item.id,
+                      }))}
+                      allowClear
+                      showSearch
+                      disabled={isCloneVersion}
+                      labelInValue
+                      onSearch={() => {}}
+                      loading={query.isFetching}
+                      onPopupScroll={handlePopupScroll}
+                      filterOption={(input, option) =>
+                        ((option?.label ?? '') as string)
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) => {
+                        setSelectedCustomerId(value?.value || null)
+                        form.setFieldsValue({ customer: value })
+                        // Clear selected contact when customer changes
+                        setSelectedContact(null)
+                        form.setFieldsValue({ customer_contact_id: null })
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleOpenContactModal}
+                    disabled={!selectedCustomerId}
+                    style={{ marginBottom: 12 }}
+                  >
+                    {t('quotas.action.customer_contact_modal.select_button')}
+                  </Button>
+                </Col>
+              </Row>
+            </Form.Item>
           </Col>
         </Row>
 
@@ -426,20 +433,15 @@ const BasicInfo = () => {
                   'quotas.action.customer_contact_modal.selected_contact_label',
                 ),
               )}
+              name="customer_contact_id"
+              rules={[
+                {
+                  required: true,
+                  message: t('validation.quotas.selected_contact.required'),
+                },
+              ]}
               required
             >
-              <Form.Item
-                name="selected_contact_id"
-                rules={[
-                  {
-                    required: true,
-                    message: t('validations.required'),
-                  },
-                ]}
-                noStyle
-              >
-                <InputNumber style={{ display: 'none' }} />
-              </Form.Item>
               <Row gutter={[8, 0]} align="middle">
                 <Col
                   flex="auto"
@@ -449,8 +451,10 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t('quotas.action.customer_contact_modal.department_name')}:{' '}
-                  {selectedContact?.department_name || '---'}
+                  <strong>
+                    {t('quotas.action.customer_contact_modal.department_name')}:
+                  </strong>{' '}
+                  {selectedContact?.department_name || ''}
                 </Col>
                 <Col
                   flex="auto"
@@ -460,10 +464,13 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t(
-                    'quotas.action.customer_contact_modal.contact_person_name',
-                  )}
-                  : {selectedContact?.contact_person_name || '---'}
+                  <strong>
+                    {t(
+                      'quotas.action.customer_contact_modal.contact_person_name',
+                    )}
+                    :
+                  </strong>{' '}
+                  {selectedContact?.contact_person_name || ''}
                 </Col>
                 <Col
                   flex="auto"
@@ -473,8 +480,10 @@ const BasicInfo = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {t('quotas.action.customer_contact_modal.email')}:{' '}
-                  {selectedContact?.email || '---'}
+                  <strong>
+                    {t('quotas.action.customer_contact_modal.email')}:
+                  </strong>
+                  {selectedContact?.email || ''}
                 </Col>
               </Row>
             </Form.Item>
@@ -581,76 +590,82 @@ const BasicInfo = () => {
 
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Form.Item
-                name={'expiration_date'}
-                label={boldText(
-                  t('quotas.action.basic_info.fields.expiration_date'),
-                )}
-                style={{ marginBottom: 0, flex: 1 }}
-              >
-                <Select
-                  allowClear
-                  options={[
-                    {
-                      value: 'days_7',
-                      label: t('tenant_settings.validityPeriod.options.days_7'),
-                    },
-                    {
-                      value: 'days_14',
-                      label: t(
-                        'tenant_settings.validityPeriod.options.days_14',
-                      ),
-                    },
-                    {
-                      value: 'days_30',
-                      label: t(
-                        'tenant_settings.validityPeriod.options.days_30',
-                      ),
-                    },
-                    {
-                      value: 'days_45',
-                      label: t(
-                        'tenant_settings.validityPeriod.options.days_45',
-                      ),
-                    },
-                    {
-                      value: 'days_60',
-                      label: t(
-                        'tenant_settings.validityPeriod.options.days_60',
-                      ),
-                    },
-                    {
-                      value: 'months_3',
-                      label: t(
-                        'tenant_settings.validityPeriod.options.months_3',
-                      ),
-                    },
-                    {
-                      value: 'months_6',
-                      label: t(
-                        'tenant_settings.validityPeriod.options.months_6',
-                      ),
-                    },
-                    {
-                      value: 'years_1',
-                      label: t('tenant_settings.validityPeriod.options.year_1'),
-                    },
-                  ]}
-                />
-              </Form.Item>
-
-              <Form.Item style={{ marginBottom: 0 }}>
-                {expirationDate && (
-                  <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
-                    {dayjs(getExpiryDate(expirationDate, createdAt)).format(
-                      'YYYY/MM/DD',
-                    )}
-                    {t('quotas.action.basic_info.labels.until')}
-                  </span>
-                )}
-              </Form.Item>
-            </div>
+            <Form.Item
+              label={boldText(
+                t('quotas.action.basic_info.fields.expiration_date'),
+              )}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Form.Item
+                  name={'expiration_date'}
+                  style={{ marginBottom: 0, flex: 1 }}
+                >
+                  <Select
+                    allowClear
+                    options={[
+                      {
+                        value: 'days_7',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.days_7',
+                        ),
+                      },
+                      {
+                        value: 'days_14',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.days_14',
+                        ),
+                      },
+                      {
+                        value: 'days_30',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.days_30',
+                        ),
+                      },
+                      {
+                        value: 'days_45',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.days_45',
+                        ),
+                      },
+                      {
+                        value: 'days_60',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.days_60',
+                        ),
+                      },
+                      {
+                        value: 'months_3',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.months_3',
+                        ),
+                      },
+                      {
+                        value: 'months_6',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.months_6',
+                        ),
+                      },
+                      {
+                        value: 'years_1',
+                        label: t(
+                          'tenant_settings.validityPeriod.options.year_1',
+                        ),
+                      },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item style={{ marginBottom: 0 }}>
+                  {expirationDate && (
+                    <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
+                      {dayjs(getExpiryDate(expirationDate, createdAt)).format(
+                        'YYYY/MM/DD',
+                      )}
+                      {t('quotas.action.basic_info.labels.until')}
+                    </span>
+                  )}
+                </Form.Item>
+              </div>
+            </Form.Item>
           </Col>
 
           <Col xs={24} sm={16} md={14} lg={14} xl={11} xxl={10}>

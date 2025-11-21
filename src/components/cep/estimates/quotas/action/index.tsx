@@ -96,7 +96,7 @@ function QuotaAction() {
     method: 'get',
     url: `${apiUrl}/quota-form-settings`,
     queryOptions: {
-      enabled: !isUpdate && !params?.templateId,
+      enabled: !params?.templateId,
     },
   })
 
@@ -186,7 +186,7 @@ function QuotaAction() {
             value: dataBasicInfo.data.customer_id,
             label: dataBasicInfo.data.customer_name,
           },
-          selected_contact_id: dataBasicInfo.data.customer_contact_id,
+          customer_contact_id: dataBasicInfo.data.customer_contact_id,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
@@ -202,7 +202,9 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
-              unit: item2.unit_name,
+              product: { value: item2.product_id, label: item2.name },
+              tax_rate: item2.tax_rate ?? 0,
+              unit: item2.unit_name ?? '-',
             })),
           })),
           optional_product: dataProducts.data.optional_product.map(
@@ -210,7 +212,9 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
-                unit: item2.unit_name,
+                product: { value: item2.product_id, label: item2.name },
+                tax_rate: item2.tax_rate ?? 0,
+                unit: item2.unit_name ?? '-',
               })),
             }),
           ),
@@ -218,6 +222,7 @@ function QuotaAction() {
         })
       }
     } else {
+      // Edit case and Show case
       if (dataBasicInfo?.data && dataProducts?.data) {
         const basicData = { ...dataBasicInfo.data }
         // Remove customer_id and customer_name to avoid overwriting customer field
@@ -233,7 +238,8 @@ function QuotaAction() {
           ...basicData,
           code: isEdit ? dataBasicInfo.data.code : '',
           customer: customerField,
-          selected_contact_id: dataBasicInfo.data.customer_contact_id,
+          customer_contact_id: dataBasicInfo.data.customer_contact_id,
+          tax_rounding_method: data?.data?.tax_rounding_method,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
@@ -249,6 +255,7 @@ function QuotaAction() {
             ...item,
             products: item.products.map((item2: any) => ({
               ...item2,
+              product: { value: item2.product_id, label: item2.name },
               tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
             })),
@@ -258,6 +265,8 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
+                product: { value: item2.product_id, label: item2.name },
+                tax_rate: item2.tax_rate ?? 0,
                 unit: item2.unit_name ?? '-',
               })),
             }),
@@ -285,8 +294,24 @@ function QuotaAction() {
         consumption_tax: quoteTemplate?.consumption_tax,
         tax_rate: quoteTemplate?.tax_rate,
         note: quoteTemplate?.note,
-        main_product: quoteTemplate?.main_product,
-        optional_product: quoteTemplate?.optional_product,
+        tax_rounding_method: data?.data?.tax_rounding_method,
+        main_product: quoteTemplate?.main_product?.map((item: any) => ({
+          ...item,
+          products: item.products.map((item2: any) => ({
+            ...item2,
+            product: { value: item2.product_id, label: item2.name },
+            tax_rate: item2.tax_rate ?? 0,
+            unit: item2.unit_name ?? '-',
+          })),
+        })),
+        optional_product: quoteTemplate?.optional_product?.map((item: any) => ({
+          ...item,
+          products: item.products.map((item2: any) => ({
+            ...item2,
+            product: { value: item2.product_id, label: item2.name },
+            unit: item2.unit_name ?? '-',
+          })),
+        })),
         tags: (quoteTemplate?.tags ?? []).map(({ id, name }) => ({
           label: name,
           value: id,
@@ -299,7 +324,7 @@ function QuotaAction() {
         type: 'normal',
         category: 'merchandise',
         customer: null,
-        selected_contact_id: null,
+        customer_contact_id: null,
         status: 'creating',
         created_at: dayjs(),
         delivery_date: null,
@@ -320,6 +345,7 @@ function QuotaAction() {
             group_name: '',
             products: [
               {
+                product: null,
                 product_id: null,
                 package_id: null,
                 name: '',
@@ -341,6 +367,7 @@ function QuotaAction() {
             group_name: '',
             products: [
               {
+                product: null,
                 product_id: null,
                 package_id: null,
                 name: '',
@@ -372,7 +399,7 @@ function QuotaAction() {
             category: values.category || 'merchandise',
             customer_id: values.customer.value,
             customer_name: values.customer.label,
-            customer_contact_id: values.selected_contact_id,
+            customer_contact_id: values.customer_contact_id,
             consumption_tax: values.consumption_tax || 'exclusive',
             status: QuotaStatus.Creating,
             delivery_date: values.delivery_date
@@ -391,6 +418,7 @@ function QuotaAction() {
                 name: item.label,
               })) || [],
             tax_rate: values.tax_rate ?? 0,
+            tax_rate_group: values.tax_rate_group || [],
           },
           id: params?.id,
         },
@@ -413,7 +441,7 @@ function QuotaAction() {
             source_id: isCloneVersion ? Number(id) : null,
             customer_id: values.customer.value,
             customer_name: values.customer.label,
-            customer_contact_id: values.selected_contact_id,
+            customer_contact_id: values.customer_contact_id,
             delivery_date: values.delivery_date
               ? dayjs(values.delivery_date)
                   .utc(true)
@@ -431,6 +459,7 @@ function QuotaAction() {
                 name: item.label,
               })) || [],
             tax_rate: values.tax_rate ?? 0,
+            tax_rate_group: values.tax_rate_group || [],
           },
         },
         {
@@ -493,7 +522,7 @@ function QuotaAction() {
         <Form
           form={formProps2}
           onFinish={onFinish}
-          labelCol={{ xs: 24, sm: 8, md: 6, lg: 4, xl: 2 }}
+          labelCol={{ xs: 24, sm: 8, md: 6, lg: 4, xl: 4 }}
           labelAlign="left"
           layout="horizontal"
           colon={false}

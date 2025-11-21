@@ -3,14 +3,14 @@ import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
+import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
-import { Button, Collapse, Form, Input, Space, Typography } from 'antd'
+import { Button, Collapse, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
 import styles from '../styles.module.css'
 
-const { Title } = Typography
 const { Panel } = Collapse
 
 function CustomerContacts(
@@ -31,8 +31,9 @@ function CustomerContacts(
       )}
     >
       <Panel
-        header={<Title level={5}>{t('customers.receivers.title')}</Title>}
+        header={boldText(t('customers.receivers.title'))}
         key="1"
+        forceRender
       >
         <Form.List
           name="receivers"
@@ -85,8 +86,14 @@ function CustomerContacts(
                     render: (field) => (
                       <Form.Item
                         name={[field.name, 'contact_person_name']}
+                        validateTrigger="onBlur"
                         rules={[
-                          { required: true, message: t('validation.required') },
+                          {
+                            required: true,
+                            message: t(
+                              'validation.customer.contact_person_name_customer_contacts.required',
+                            ),
+                          },
                           {
                             whitespace: true,
                             message: t('validation.whitespace'),
@@ -109,9 +116,14 @@ function CustomerContacts(
                     render: (field) => (
                       <Form.Item
                         name={[field.name, 'email']}
-                        dependencies={['receivers']}
+                        validateTrigger="onBlur"
                         rules={[
-                          { required: true, message: t('validation.required') },
+                          {
+                            required: true,
+                            message: t(
+                              'validation.customer.email_customer_contacts.required',
+                            ),
+                          },
                           {
                             type: 'email',
                             message: t('validation.email_format'),
@@ -124,21 +136,18 @@ function CustomerContacts(
                                 form.getFieldValue('receivers') || []
                               const currentEmail = value.trim().toLowerCase()
 
-                              // Find first index of this email
-                              const firstIndex = receivers.findIndex(
+                              // Count how many times this email appears
+                              const emailCount = receivers.filter(
                                 (r: {
                                   email?: string
                                   [key: string]: unknown
                                 }) =>
                                   r?.email?.trim().toLowerCase() ===
                                   currentEmail,
-                              )
+                              ).length
 
-                              // If current field is not the first occurrence, show error
-                              if (
-                                firstIndex !== -1 &&
-                                firstIndex !== field.name
-                              ) {
+                              // If this email appears more than once, show error
+                              if (emailCount > 1) {
                                 return Promise.reject(
                                   new Error(t('validation.duplicate_email')),
                                 )
@@ -151,24 +160,7 @@ function CustomerContacts(
                         required
                         noStyle
                       >
-                        <Input
-                          type="email"
-                          onBlur={() => {
-                            setTimeout(() => {
-                              const receivers =
-                                form.getFieldValue('receivers') || []
-                              receivers.forEach((_: unknown, index: number) => {
-                                if (index !== field.name) {
-                                  form
-                                    .validateFields([
-                                      ['receivers', index, 'email'],
-                                    ])
-                                    .catch(() => {})
-                                }
-                              })
-                            }, 0)
-                          }}
-                        />
+                        <Input type="email" />
                       </Form.Item>
                     ),
                   },
@@ -209,6 +201,7 @@ function CustomerContacts(
                         <Button
                           danger
                           icon={<DeleteOutlined />}
+                          disabled={fields.length === 1}
                           onClick={() => {
                             // If receiver has id, add to deletedReceiverIds
                             if (receiver?.id && setDeletedReceiverIds) {

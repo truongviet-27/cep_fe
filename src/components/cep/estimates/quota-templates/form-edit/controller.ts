@@ -7,7 +7,6 @@ import type { GetOneResponse } from '@refinedev/core'
 import { useApiUrl, useCustom, useGo, useParsed } from '@refinedev/core'
 import type { QuotaFormSettingResponse } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-import { Form } from 'antd'
 import { useEffect } from 'react'
 
 export function useController() {
@@ -45,8 +44,6 @@ export function useController() {
     },
   })
 
-  const expirationDateWatch = Form.useWatch('expiration_date', methods.form)
-
   const apiUrl = useApiUrl()
 
   const { form, query } = methods
@@ -75,6 +72,7 @@ export function useController() {
         consumption_tax: data?.data.consumption_tax ?? '0',
         tax_rate: data?.data.tax_rate,
         tax_rounding_method: data.data?.tax_rounding_method,
+        tax_rate_group: {},
         note: null,
         tags: [],
         total_cost: 0,
@@ -127,6 +125,5 @@ export function useController() {
     isUpdateMode,
     methods,
     isLoading: isUpdateMode && (query?.isLoading || query?.isFetching),
-    expirationDateWatch,
   }
 }

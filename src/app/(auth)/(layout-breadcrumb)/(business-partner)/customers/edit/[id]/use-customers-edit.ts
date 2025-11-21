@@ -31,6 +31,7 @@ export const useCustomerEdit = () => {
     form,
     onFinish,
     formLoading: isLoading,
+    query,
     queryResult,
   } = useForm({
     action: 'edit',
@@ -39,7 +40,9 @@ export const useCustomerEdit = () => {
 
   const { mutateAsync: updateContacts } = useCustomMutation()
 
-  // Fetch customer contacts
+  const record = queryResult?.data?.data
+
+  // Fetch customer contacts only after customer data is loaded
   const { data: contactsData, refetch: refetchContacts } = useCustom({
     url: `${apiUrl}/customer-contacts`,
     method: 'get',
@@ -48,12 +51,15 @@ export const useCustomerEdit = () => {
         customer_id: customerId,
       },
     },
+    queryOptions: {
+      enabled: !!customerId && !!record && !!query?.data?.data, // Only fetch when customerId exists AND customer data is loaded
+    },
   })
 
   const handleFinish = async (values: any) => {
     try {
       // Validate form fields (all validation rules in Form will be checked)
-      await form.validateFields()
+      // await form.validateFields()
 
       const receivers = values?.receivers || []
 
@@ -66,11 +72,20 @@ export const useCustomerEdit = () => {
         industry = values?.temp_industry
       }
 
+      // Filter to get only new contacts (contacts without id)
+      const newContacts = receivers.filter((receiver: any) => !receiver.id)
+      const newContactEmails = newContacts.map((contact: any) => contact.email)
+
       // Remove receivers from customer data
       const { receivers: _, ...customerData } = values
 
-      // Step 1: Update customer
-      await onFinish({ ...customerData, company_type, industry })
+      // Step 1: Update customer with new contacts emails for validation
+      await onFinish({
+        ...customerData,
+        new_contacts_emails: newContactEmails, // Send only new contact emails
+        company_type,
+        industry,
+      })
 
       // Step 2: Delete contacts if any
       if (deletedReceiverIds.length > 0) {
@@ -100,7 +115,6 @@ export const useCustomerEdit = () => {
         values: { contacts },
       })
 
-      message.success(t('notifications.updateSuccess'))
       go({
         to: `/customers/show/${customerId}`,
         type: 'push',
@@ -111,7 +125,50 @@ export const useCustomerEdit = () => {
         error?.response?.data?.message ||
         error?.message ||
         t('notifications.updateError')
-      message.error(errorMessage)
+
+      // Handle duplicate contact errors
+      const errorData = error?.response?.data
+
+      // Check for new_contacts_emails error (duplicate emails)
+      if (errorData?.errors?.new_contacts_emails) {
+        const errorFields: any[] = []
+        const newContactsEmailsError =
+          errorData.errors.new_contacts_emails[0] ||
+          errorData.errors.new_contacts_emails
+
+        // Extract duplicate emails from error message like: "(3333@gmail.com, sfsdfssssdf@gmail.com)"
+        const emailRegex = /\(([^)]+)\)/
+        const match = newContactsEmailsError.match(emailRegex)
+
+        if (match) {
+          const duplicateEmailsStr = match[1]
+          const duplicateEmails = duplicateEmailsStr
+            .split(', ')
+            .map((email: string) => email.trim())
+
+          // Find receivers with duplicate emails and highlight them
+          values.receivers.forEach((receiver: any, index: number) => {
+            if (duplicateEmails.includes(receiver.email)) {
+              errorFields.push({
+                name: ['receivers', index, 'email'],
+                errors: [t('')],
+                value: receiver.email,
+              })
+            }
+          })
+        }
+
+        if (errorFields.length > 0) {
+          try {
+            form.setFields(errorFields)
+          } catch (e) {
+            console.error('Error setting field validation:', e)
+          }
+        }
+      }
+
+      // Remove error message notification - only show field validation errors
+      // message.error(errorMessage)
     }
   }
 
@@ -147,20 +204,32 @@ export const useCustomerEdit = () => {
 
   const rule = validateCustomerRule(t)
 
-  const record = queryResult?.data?.data
-
+  // Set customer record into form (excluding receivers as they come from separate API)
   useEffect(() => {
     if (record) {
-      form.setFieldsValue({ ...record })
+      const { receivers: _, ...recordWithoutReceivers } = record as any
+      form.setFieldsValue(recordWithoutReceivers)
     }
-  }, [record])
-
-  // Load contacts into form
+  }, [record, form])
+  // Set receivers into form only after customer data is loaded
   useEffect(() => {
-    if (contactsData?.data) {
-      form.setFieldsValue({ receivers: contactsData.data })
+    if (record && contactsData?.data !== undefined) {
+      const receivers = contactsData.data
+      if (!receivers || receivers.length === 0) {
+        form.setFieldsValue({
+          receivers: [
+            {
+              department_name: null,
+              contact_person_name: null,
+              email: null,
+            },
+          ],
+        })
+      } else {
+        form.setFieldsValue({ receivers: contactsData.data })
+      }
     }
-  }, [contactsData])
+  }, [record, contactsData, form])
 
   return {
     t,

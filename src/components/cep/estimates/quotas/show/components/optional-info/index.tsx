@@ -78,7 +78,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.cost_price
+        return (+record?.cost_price)?.toLocaleString()
       },
     },
     {
@@ -89,7 +89,7 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.selling_price
+        return (+record?.selling_price)?.toLocaleString()
       },
     },
     {
@@ -133,7 +133,9 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return (record?.selling_price || 0) * (record?.quantity || 1)
+        return (
+          (record?.selling_price || 0) * (record?.quantity || 1)
+        )?.toLocaleString()
       },
     },
   ]

@@ -47,7 +47,6 @@ function QuotaDetail() {
   const { form, formProps } = useForm()
 
   const [isPdf, setIsPdf] = useState(false)
-  const [previewPdf, setPreviewPdf] = useState('')
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
@@ -130,30 +129,6 @@ function QuotaDetail() {
     }
   }, [queryBasic])
 
-  const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
-    useCustomMutation()
-
-  const handlePreviewPdf = () => {
-    const customValues = {
-      ...queryBasic?.data,
-      ...dataProducts?.data,
-      ...dataHistory?.data,
-    }
-
-    mutatePreviewPdf(
-      {
-        values: customValues,
-        url: `${apiUrl}/quotas/preview-pdf/${customValues?.id}`,
-        method: 'post',
-      },
-      {
-        onSuccess(data) {
-          setPreviewPdf(data.data?.pdf_base64 ?? '')
-        },
-      },
-    )
-  }
-
   return (
     <PageContainer
       breadcrumbs={
@@ -180,7 +155,6 @@ function QuotaDetail() {
             onClick={async () => {
               await form.validateFields()
               setIsPdf(!isPdf)
-              handlePreviewPdf()
             }}
           >
             {t('quotas.show.preview')}
@@ -478,16 +452,14 @@ function QuotaDetail() {
         }}
       >
         <div>
-          <Spin spinning={isPendingPreviewPdf}>
-            {!isPendingPreviewPdf && (
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                <Viewer
-                  fileUrl={`data:application/pdf;base64,${previewPdf}`}
-                  plugins={[defaultLayoutPluginInstance]}
-                />
-              </Worker>
-            )}
-          </Spin>
+          {
+            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+              <Viewer
+                fileUrl={queryBasic?.data.pdf_path}
+                plugins={[defaultLayoutPluginInstance]}
+              />
+            </Worker>
+          }
 
           {/* <PreviewPdf previewPdf={previewPdf} /> */}
         </div>

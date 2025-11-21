@@ -69,7 +69,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       pageSize,
     },
     queryOptions: {
-      enabled: isClick,
+      enabled: isClick && !disabled,
     },
     onSearch(value) {
       lastPageAdded.current = 0
@@ -87,6 +87,26 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       lastPageAdded.current = current
     }
   }, [query.data?.data])
+
+  useEffect(() => {
+    if (
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      defaultValue.value &&
+      defaultValue.label
+    ) {
+      const newOption = {
+        [optionValue]: defaultValue.value,
+        [optionLabel]: defaultValue.label,
+      }
+      setOptions((prev) => {
+        const isExist = prev.some(
+          (opt) => opt[optionValue] === newOption[optionValue],
+        )
+        return isExist ? prev : [newOption, ...prev]
+      })
+    }
+  }, [defaultValue?.value, defaultValue?.label])
 
   const handlePopupScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
@@ -118,6 +138,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       layout={layout}
       colon={colon}
       className="ant-form-item-hidden-margin"
+      initialValue={defaultValue}
     >
       <Select
         {...selectProps}

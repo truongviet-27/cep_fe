@@ -102,8 +102,8 @@ export default function useProductUnits() {
         })
 
         return {
-          message: t('notifications.editSuccess'),
-          description: t('notifications.editSuccess'),
+          message: t('notifications.success'),
+          description: t('notifications.success'),
           type: 'success',
         }
       },
@@ -130,6 +130,9 @@ export default function useProductUnits() {
   }
 
   const originalRef = useRef<Record<string, UnitRow>>({})
+  const preserveNewRowsRef = useRef<
+    Array<{ row: UnitRow; originalIndex: number }>
+  >([])
 
   const keyOf = (row: TagRow, idx: number): string =>
     row.id?.toString() ?? row._key ?? `tmp-${idx}`
@@ -140,14 +143,32 @@ export default function useProductUnits() {
       setPageSize2(10)
     }
     const ds = (tableProps?.dataSource as UnitRow[]) ?? []
-    reset({
-      rows: ds.map((r, index) => ({
-        _isNew: false,
-        _isEditing: false,
-        __index: String(index),
-        ...r,
-      })),
-    })
+    const rowsToSet = ds.map((r, index) => ({
+      _isNew: false,
+      _isEditing: false,
+      __index: String(index),
+      ...r,
+    }))
+
+    if (preserveNewRowsRef.current.length > 0) {
+      const sortedPreserved = [...preserveNewRowsRef.current].sort(
+        (a, b) => a.originalIndex - b.originalIndex,
+      )
+
+      sortedPreserved.forEach(({ row: newRow, originalIndex }) => {
+        const insertIndex = Math.min(originalIndex, rowsToSet.length)
+        rowsToSet.splice(insertIndex, 0, {
+          ...newRow,
+          _isNew: newRow._isNew ?? false,
+          _isEditing: newRow._isEditing ?? false,
+          __index: String(insertIndex),
+        })
+      })
+
+      preserveNewRowsRef.current = []
+    }
+
+    reset({ rows: rowsToSet })
   }, [tableProps?.dataSource, current])
 
   const breadcrumbItems = [
@@ -219,7 +240,7 @@ export default function useProductUnits() {
     const row = getValues(`rows.${index}`)
     const name = (row.name ?? '').trim()
     const is_disable = !!row.is_disable
-    const order = (fields?.[1]?.order ?? 0) + 1
+    const order = row.order ?? 0
 
     if (!name) {
       setError(`rows.${index}.name`, {
@@ -230,7 +251,7 @@ export default function useProductUnits() {
 
     if (row._isNew) {
       createRow(
-        { resource: resource?.name, values: { name, is_disable, order } }, // Sửa tên field
+        { resource: resource?.name, values: { name, is_disable, order } },
         {
           onSuccess: ({ data }) => {
             update(index, {
@@ -243,7 +264,6 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
-            tableQuery.refetch()
           },
         },
       )
@@ -266,7 +286,6 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
-            tableQuery.refetch()
           },
         },
       )
@@ -323,7 +342,7 @@ export default function useProductUnits() {
         return isEditing ? (
           <Controller
             control={control}
-            rules={{ required: t('validation.required') }}
+            rules={{ required: '' }}
             name={`rows.${index}.name`}
             render={({ field, fieldState: { error } }) => (
               <div className={'-mb-2 !h-fit'}>

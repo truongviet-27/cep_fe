@@ -22,6 +22,9 @@
       "password_required": "Please enter your password!"
     }
   },
+  "confirm": {
+    "delete_confirm": "Are you sure you want to delete this item?"
+  },
   "buttons": {
     "cancel": "Cancel",
     "save_settings": "Save Settings",
@@ -147,7 +150,10 @@
     }
   },
   "tags": {
-    "tags": "Tags"
+    "tags": "Tags",
+    "no_data_on_page": "There is no data on this page",
+    "confirm_navigation": "Confirm Navigation",
+    "unsaved_changes_warning": "You have unsaved changes. If you leave this page, your changes will be lost. Are you sure you want to proceed?"
   },
   "system_config": {
     "system_config": "System Settings",
@@ -295,7 +301,8 @@
       "created_at": "Created at",
       "updated_at": "Last updated",
       "number_of_employee": "Employees"
-    }
+    },
+    "is_deleted": "This department has been deleted"
   },
   "agreed_prices": {
     "agreed_prices": "Agreed Price",

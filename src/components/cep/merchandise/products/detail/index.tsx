@@ -91,7 +91,7 @@ const ProductDetailContainer: React.FC = () => {
                 <Button
                   onClick={() => {
                     go({
-                      to: `/${sessionStorage.getItem('list_products') ?? ''}`,
+                      to: `/${sessionStorage.getItem('list_products') ?? 'products'}`,
                     })
                   }}
                   color="primary"

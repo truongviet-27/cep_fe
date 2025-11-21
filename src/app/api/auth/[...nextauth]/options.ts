@@ -21,6 +21,8 @@ const authOptions: AuthOptions = {
         return {
           id: profile.sub,
           name: profile.name ?? profile.preferred_username,
+          given_name: profile?.given_name ?? '',
+          family_name: profile?.family_name ?? '',
           email: profile.email,
           image: `https://faces-img.xcdn.link/thumb-lorem-face-6312_thumb.jpg`,
         }
@@ -78,6 +80,9 @@ const authOptions: AuthOptions = {
   secret: `UItTuD1HcGXIj8ZfHUswhYdNd40Lc325R8VlxQPUoR0=`,
   callbacks: {
     async jwt({ token, account, user }) {
+      const expandUser = user as
+        | { given_name?: string; family_name?: string }
+        | undefined
       const credsUser = user as CredentialsUser
       if (account || credsUser) {
         token.idToken = account?.id_token ?? credsUser.id_token
@@ -85,6 +90,10 @@ const authOptions: AuthOptions = {
         // token.refreshToken = account?.refresh_token ?? credsUser.refresh_token
         token.expiresAt = account?.expires_at ?? credsUser.expires_at
         // token.error = undefined
+        if (user) {
+          token.given_name = expandUser?.given_name ?? ''
+          token.family_name = expandUser?.family_name ?? ''
+        }
         return token
       }
 
@@ -104,6 +113,8 @@ const authOptions: AuthOptions = {
         session.refreshToken = token.refreshToken as string
         session.idToken = token.idToken as string
         session.expiresAt = token.expiresAt as number
+        session.user.given_name = token.given_name as string
+        session.user.family_name = token.family_name as string
       }
 
       return session
