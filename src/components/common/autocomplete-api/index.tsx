@@ -23,6 +23,7 @@ type SelectPropsForm<
   colon?: boolean
   filter?: string
   pageSize?: number
+  overwriteOptionsOnSearch?: boolean
   onChangeValue?: (value: any, option?: any) => void
   onChangeClear?: (fn: ((value: string) => void) | undefined) => void
 }
@@ -46,6 +47,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     layout = 'vertical',
     colon = false,
     pageSize = 100,
+    overwriteOptionsOnSearch = false,
     onChangeValue,
     onChangeClear,
     ...restProps
@@ -82,7 +84,14 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
 
   useEffect(() => {
     if (query.data?.data && current > lastPageAdded.current) {
-      setOptions((prev) => [...(isPreApply ? prev : []), ...query.data.data])
+      const newData = query.data.data
+
+      setOptions((prev) => {
+        if (overwriteOptionsOnSearch) {
+          return newData
+        }
+        return [...(isPreApply ? prev : []), ...newData]
+      })
 
       lastPageAdded.current = current
     }
