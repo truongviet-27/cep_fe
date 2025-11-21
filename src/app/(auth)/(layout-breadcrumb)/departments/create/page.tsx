@@ -38,7 +38,11 @@ export default function Page() {
   const codeRules: Rule[] = useMemo(
     () => [
       { required: true, message: '部門コードは必須です。' },
-      { pattern: /^[A-Z0-9-]+$/, message: 'A-Z, 0-9, - のみ使用できます。' },
+      {
+        pattern: /^[A-Z0-9-]+$/,
+        message:
+          '部門コードにはA〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
+      },
       { max: 20, message: '最大20文字までです。' },
     ],
     [],
@@ -155,12 +159,13 @@ export default function Page() {
                 <Input
                   placeholder="DEP001"
                   size="middle"
-                  style={{ width: 240 }}
+                  // style={{ width: 240 }}
+                  className="w-full"
                 />
               </Form.Item>
             </Col>
 
-            <Col flex="none" className={'!-mt-2'}>
+            <Col flex="none" className="mt-[-16px]">
               <Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
                 (A-Z, 0-9, -)
               </Text>

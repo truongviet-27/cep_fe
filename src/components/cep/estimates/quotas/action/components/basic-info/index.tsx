@@ -205,6 +205,7 @@ const BasicInfo = () => {
         <Row gutter={[8, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
+              required
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_number'),
               )}
