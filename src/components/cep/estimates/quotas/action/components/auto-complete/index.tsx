@@ -102,12 +102,11 @@ function CoreAutoComplete({
           ? data?.data?.packagings[0]?.rank_prices
           : (data?.data?.selling_price ?? 0),
       )
-
-      form.setFieldValue(
-        [parent, index, 'products', index2, 'tax_rate'],
-        option?.tax_rate ?? data?.data?.tax_rate,
-      )
     }
+    form.setFieldValue(
+      [parent, index, 'products', index2, 'tax_rate'],
+      option?.tax_rate ?? data?.data?.tax_rate,
+    )
   }, [data, customer])
 
   return (
