@@ -302,7 +302,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                       )}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{(+basicInfo?.consumption_tax_amount)?.toLocaleString()}
+                      {(+basicInfo?.total_profit_margin)?.toLocaleString()}%
                     </Text>
                   </div>
                 </Col>

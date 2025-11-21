@@ -48,6 +48,7 @@ export const ProductCategoryModal: React.FC<Props> = (props) => {
                   selling_price: item?.selling_price,
                   profit_margin: 0,
                   is_add_total: true,
+                  tax_rate: item?.tax_rate ?? 0,
                 })),
               },
             ]
@@ -65,6 +66,7 @@ export const ProductCategoryModal: React.FC<Props> = (props) => {
                   selling_price: item?.selling_price,
                   profit_margin: 0,
                   is_add_total: true,
+                  tax_rate: item?.tax_rate ?? 0,
                 })),
               },
             ],
