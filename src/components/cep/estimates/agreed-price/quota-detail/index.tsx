@@ -228,6 +228,7 @@ function AgreedPriceQuotaDetail() {
             onClick={() => {
               setIsPdf(!isPdf)
             }}
+            disabled={isFetching || isFetchingProducts || !queryBasic?.data}
           >
             プレビュー
           </Button>

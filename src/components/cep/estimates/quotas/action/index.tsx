@@ -504,6 +504,13 @@ function QuotaAction() {
               setIsPdf(!isPdf)
               handlePreviewPdf()
             }}
+            disabled={
+              isFetching ||
+              isFetchingBasicInfo ||
+              isFetchingProduct ||
+              isFetchingHistory ||
+              quoteTemplateQuery.isFetching
+            }
           >
             {t('quotas.action.preview')}
           </Button>

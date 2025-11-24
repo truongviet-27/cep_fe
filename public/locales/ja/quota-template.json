@@ -2,6 +2,7 @@
   "quota_templates": "見積テンプレート一覧",
   "breadcrumb": {
     "home": "見積",
+    "parent": "見積テンプレート",
     "quotasList": "見積テンプレート一覧",
     "quotasDetail": "見積テンプレート詳細",
     "quotasUpdate": "見積編集",

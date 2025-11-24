@@ -200,7 +200,7 @@ function Approve() {
         <Breadcrumb
           items={[
             {
-              title: boldText(t('approve_routes.parent')),
+              title: boldText(t('approve_routes.home')),
             },
             {
               title: boldText(t('approve_routes.list'), PRIMARY),
