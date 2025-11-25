@@ -529,7 +529,8 @@ function QuotaAction() {
         <Form
           form={formProps2}
           onFinish={onFinish}
-          labelCol={{ xs: 24, sm: 8, md: 6, lg: 4, xl: 4 }}
+          labelCol={{ span: '130px !important' }}
+          wrapperCol={{ span: '120px !important' }}
           labelAlign="left"
           layout="horizontal"
           colon={false}
