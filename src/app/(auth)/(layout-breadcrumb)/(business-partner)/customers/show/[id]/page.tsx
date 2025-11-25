@@ -131,6 +131,16 @@ export default function CustomerShowPage() {
     {
       title: (
         <span className={styles.tableTitle}>
+          {t('customers.delivery.post_code')}
+        </span>
+      ),
+      dataIndex: 'post_code',
+      key: 'post_code',
+      render: (text: string) => (text == 'T' ? '△' : text),
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
           {t('customers.delivery.address')}
         </span>
       ),
@@ -141,31 +151,11 @@ export default function CustomerShowPage() {
     {
       title: (
         <span className={styles.tableTitle}>
-          {t('customers.delivery.contact_person')}
-        </span>
-      ),
-      dataIndex: 'contact_person_name',
-      key: 'contact_person_name',
-      render: (text: string) => (text == 'T' ? '△' : text),
-    },
-    {
-      title: (
-        <span className={styles.tableTitle}>
           {t('customers.delivery.phone')}
         </span>
       ),
       dataIndex: 'phone',
       key: 'phone',
-      render: (text: string) => (text == 'T' ? '△' : text),
-    },
-    {
-      title: (
-        <span className={styles.tableTitle}>
-          {t('customers.delivery.email')}
-        </span>
-      ),
-      dataIndex: 'mail',
-      key: 'mail',
       render: (text: string) => (text == 'T' ? '△' : text),
     },
   ]

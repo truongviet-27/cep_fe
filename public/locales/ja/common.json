@@ -165,6 +165,7 @@
     "delivery": {
       "code": "納品先コード",
       "name": "納品先名",
+      "post_code": "郵便番号",
       "address": "住所",
       "contact_person": "受取人",
       "phone": "電話番号",
@@ -321,6 +322,7 @@
     "merchandise": "商品"
   },
   "approve_routes": {
+    "home": "見積",
     "parent": "承認ルート",
     "approve_routes": "承認ルート一覧",
     "list": "承認ルート一覧",
@@ -374,6 +376,18 @@
         "required": "ルートコードは必須です。",
         "invalid_whitespace": "ルートコードは空白のみにできません。",
         "invalid_format": "ルートコードには大文字の英字、数字、ハイフンのみ使用できます。"
+      },
+      "route_name": {
+        "required": "ルート名は必須です。"
+      },
+      "department": {
+        "required": "部門は必須です。"
+      },
+      "step_name": {
+        "required": "ステップ名は必須です。"
+      },
+      "employee": {
+        "required": "社員・社員コードは必須です。"
       }
     }
   },

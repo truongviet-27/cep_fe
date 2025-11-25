@@ -29,7 +29,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
             {
               title: (
                 <Link href="/quota-templates">
-                  {boldText(t('quota_templates.breadcrumb.home'))}
+                  {boldText(t('quota_templates.breadcrumb.parent'))}
                 </Link>
               ),
             },
