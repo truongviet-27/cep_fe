@@ -70,6 +70,7 @@ function useProductCategories() {
       successNotification: (res: any) => {
         setTree(updateTree(res?.data?.items, values as any))
         setEditing({})
+        setDirty(false)
         return {
           message: t('notifications.success'),
           description: t('notifications.success'),
@@ -153,7 +154,6 @@ function useProductCategories() {
   const save = () => {
     const patched = mergeEditingIntoTree(tree, editing, formFields)
 
-    setDirty(false)
     formFields
       .validateFields()
       .then(() => {

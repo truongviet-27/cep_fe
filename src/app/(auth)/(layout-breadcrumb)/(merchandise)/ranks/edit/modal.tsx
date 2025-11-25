@@ -16,7 +16,6 @@ import React from 'react'
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
 import boldText from '@utility/bold-text'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 import { DeleteButton } from '@refinedev/antd'
 import { validateRankRule } from '@validate/rank'
 import AutoHeading from '@components/common/auto-heading'
@@ -141,14 +140,14 @@ export const RankModalEdit: React.FC<Props> = ({
               value:
                 (record?.author?.name ?? '---') +
                 ' ' +
-                dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+                dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
             },
             {
               title: t('common.updated_by'),
               value:
                 (record?.editor?.name ?? '---') +
                 ' ' +
-                dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
+                dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
             },
           ]}
         />

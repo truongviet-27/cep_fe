@@ -324,6 +324,7 @@ function useTags() {
     if (from !== -1 && to !== -1 && from !== to) {
       move(from, to)
     }
+    setEdited(true)
   }
 
   const columns: ColumnsType<RowVM> = [
