@@ -178,6 +178,7 @@ function AddressContact(
                     valueOption.name,
                   )
                 }}
+                overwriteOptionsOnSearch={true}
               />
             </Col>
 
