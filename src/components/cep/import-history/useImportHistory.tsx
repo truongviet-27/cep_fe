@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useTable } from '@refinedev/antd'
 import type { CrudFilters } from '@refinedev/core'
-import { useGo, useTranslate } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
 import { GREEN, GREY_TAG, PRIMARY, RED, WARNING } from '@utility/color'
 import { Button, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -12,7 +12,6 @@ const { Text } = Typography
 
 function useImportHistory() {
   const t = useTranslate()
-  const go = useGo()
   const { tableProps, searchFormProps, setFilters } = useTable({
     syncWithLocation: true,
     resource: 'csv-imports/history',
@@ -157,8 +156,16 @@ function useImportHistory() {
         ),
         render: (_: any, record: any) => (
           <div className="flex flex-col">
-            <Text>{record?.start_time_import}</Text>
-            <Text>{record?.end_time_import}</Text>
+            <Text>
+              {record?.start_time_import
+                ? dayjs(record?.start_time_import).format('YYYY/MM/DD HH:mm')
+                : ''}
+            </Text>
+            <Text>
+              {record?.end_time_import
+                ? dayjs(record?.end_time_import).format('YYYY/MM/DD HH:mm')
+                : ''}
+            </Text>
           </div>
         ),
       },
@@ -229,9 +236,7 @@ function useImportHistory() {
               color="primary"
               variant="outlined"
               onClick={() => {
-                go({
-                  to: value,
-                })
+                window.open(value, '_blank')
               }}
             >
               ダウンロード

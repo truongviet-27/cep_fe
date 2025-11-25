@@ -72,14 +72,14 @@ export default function EmployeeShow() {
               title: t('common.created_by'),
               value: `${(employeeData as any)?.created_by?.name ?? '---'} ${dayjs(
                 (employeeData as any)?.created_at,
-              ).format(FORMAT_DATE_TIME)}`,
+              ).format('YYYY/MM/DD HH:mm')}`,
             },
             {
               title: t('common.updated_by'),
               value: (employeeData as any)?.editor
                 ? `${(employeeData as any).editor.name} ${dayjs(
                     (employeeData as any).updated_at,
-                  ).format(FORMAT_DATE_TIME)}`
+                  ).format('YYYY/MM/DD HH:mm')}`
                 : '---',
             },
           ]}
