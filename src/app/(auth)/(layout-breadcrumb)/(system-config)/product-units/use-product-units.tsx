@@ -342,7 +342,7 @@ export default function useProductUnits() {
         return isEditing ? (
           <Controller
             control={control}
-            rules={{ required: '' }}
+            rules={{ required: true }}
             name={`rows.${index}.name`}
             render={({ field, fieldState: { error } }) => (
               <div className={'-mb-2 !h-fit'}>

@@ -343,21 +343,20 @@ export const validateCustomerRule = (t: any) => {
               })
               return
             }
-            if (val.length > 20) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.too_big,
-                origin: 'string',
-                maximum: 20,
-                type: 'string',
-                inclusive: true,
-                message: t('validation.customer.phone.max', { max: 20 }),
-              })
-              return
-            }
-            if (!/^\d+$/.test(val)) {
+            if (!/^0\d+$/.test(val)) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: t('validation.customer.phone.regex'),
+              })
+              return
+            }
+            if (val.length < 10 || val.length > 11) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.customer.phone.regex', {
+                  min: 10,
+                  max: 11,
+                }),
               })
               return
             }
