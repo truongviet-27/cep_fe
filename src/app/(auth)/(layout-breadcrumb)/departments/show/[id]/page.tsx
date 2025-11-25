@@ -82,11 +82,13 @@ export default function Page() {
               },
               {
                 title: t('common.updated_by'),
-                value: departmentData?.editor?.name
-                  ? `${departmentData.editor.name} ${dayjs(
-                      departmentData.updated_at,
-                    ).format('YYYY/MM/DD HH:mm')}` // <-- Và sửa ở đây
-                  : '---',
+                value:
+                  departmentData?.editor?.name &&
+                  departmentData?.updated_at !== departmentData?.created_at
+                    ? `${departmentData.editor.name} ${dayjs(
+                        departmentData.updated_at,
+                      ).format('YYYY/MM/DD HH:mm')}` // <-- Và sửa ở đây
+                    : '---',
               },
             ]}
           />
