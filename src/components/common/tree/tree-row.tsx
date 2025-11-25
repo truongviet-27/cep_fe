@@ -75,27 +75,32 @@ const TreeRow: React.FC<TreeRowProps> = ({
         </Tag>
 
         {isEditing ? (
-          <Form
-            form={formFields}
-            initialValues={{
-              [cat.id]: null,
-            }}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()} // Thêm cái này để chắc chắn chặn cả hành vi focus/drag
           >
-            <Form.Item
-              className={'!h-3'}
-              name={cat.id}
-              validateTrigger="onBlur"
-              rules={[{ required: true, message: '' }]}
+            <Form
+              form={formFields}
+              initialValues={{
+                [cat.id]: null,
+              }}
             >
-              <Input
-                size="middle"
-                onPressEnter={() => onSave(cat.id)}
-                allowClear
-                className="min-w-[320px]"
-                autoFocus
-              />
-            </Form.Item>
-          </Form>
+              <Form.Item
+                className={'!h-3'}
+                name={cat.id}
+                validateTrigger="onBlur"
+                rules={[{ required: true, message: '' }]}
+              >
+                <Input
+                  size="middle"
+                  onPressEnter={() => onSave(cat.id)}
+                  allowClear
+                  className="min-w-[320px]"
+                  autoFocus
+                />
+              </Form.Item>
+            </Form>
+          </div>
         ) : (
           <Text className="truncate font-medium">{cat.name}</Text>
         )}
