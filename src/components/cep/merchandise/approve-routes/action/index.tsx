@@ -305,12 +305,12 @@ function ApproveAction() {
                 rules={[
                   {
                     required: true,
-                    message: t('approve_routes.validation.route_code.required'),
+                    message: t('approve_routes.validation.route_name.required'),
                   },
                   {
                     whitespace: true,
                     message: t(
-                      'approve_routes.validation.route_code.invalid_whitespace',
+                      'approve_routes.validation.route_name.invalid_whitespace',
                     ),
                   },
                 ]}
@@ -328,7 +328,7 @@ function ApproveAction() {
                 rules={[
                   {
                     required: true,
-                    message: t('approve_routes.validation.route_code.required'),
+                    message: t('approve_routes.validation.department.required'),
                   },
                 ]}
               >
@@ -451,6 +451,14 @@ function ApproveAction() {
                                 label={t('approve_routes.labels.stepName')}
                                 required
                                 layout="horizontal"
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: t(
+                                      'approve_routes.validation.step_name.required',
+                                    ),
+                                  },
+                                ]}
                               />
                             </Col>
                           </Row>
@@ -597,7 +605,7 @@ function ApproveAction() {
                                                 {
                                                   required: true,
                                                   message: t(
-                                                    'approve_routes.validation.route_code.required',
+                                                    'approve_routes.validation.employee.required',
                                                   ),
                                                 },
                                               ]}
