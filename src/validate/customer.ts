@@ -17,31 +17,26 @@ const zDeliveryAddressRule = (t: any) =>
           }),
         }),
     ),
+    post_code: z.optional(
+      z
+        .string({ error: t('validation.customer.phone.string') })
+        .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
+        .regex(/^\d+$/, {
+          error: t('validation.customer.phone.regex'),
+        }),
+    ),
     address: z.optional(
       z.string({ error: t('validation.customer.address.string') }).max(255, {
         error: t('validation.customer.address.max', { max: 255 }),
       }),
     ),
-    contact_person_name: z.optional(
-      z
-        .string({ error: t('validation.customer.contact_person_name.string') })
-        .max(50, {
-          error: t('validation.customer.contact_person_name.max', { max: 50 }),
-        }),
-    ),
     phone: z.optional(
       z
         .string({ error: t('validation.customer.phone.string') })
         .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-        .regex(/^\d{3,11}$/, {
+        .regex(/^0\d{9,10}$/, {
           error: t('validation.customer.phone.regex'),
         }),
-    ),
-    mail: z.optional(
-      z
-        .string({ error: t('validation.customer.mail.email') })
-        .email({ error: t('validation.customer.mail.email') })
-        .max(100, { error: t('validation.customer.mail.max', { max: 100 }) }),
     ),
   })
 

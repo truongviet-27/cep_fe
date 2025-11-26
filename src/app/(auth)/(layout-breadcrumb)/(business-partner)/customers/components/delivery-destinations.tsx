@@ -94,6 +94,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'delivery_address_code',
+                    width: 200,
                     render: (field) => (
                       <Form.Item
                         name={[field.name, 'delivery_address_code']}
@@ -101,7 +102,7 @@ function DeliveryDestinations(
                         noStyle
                         required
                       >
-                        <Input style={{ maxWidth: 560 }} disabled />
+                        <Input style={{ width: '100%' }} disabled />
                       </Form.Item>
                     ),
                   },
@@ -112,6 +113,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'name',
+                    width: '16%',
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'delivery_address_name']}
@@ -119,7 +121,7 @@ function DeliveryDestinations(
                         required
                         noStyle
                       >
-                        <Input style={{ maxWidth: 560 }} disabled={idx === 0} />
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
                       </Form.Item>
                     ),
                   },
@@ -130,13 +132,14 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'post_code',
+                    width: 200,
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'post_code']}
                         rules={[rule]}
                         noStyle
                       >
-                        <Input style={{ maxWidth: 560 }} disabled={idx === 0} />
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
                       </Form.Item>
                     ),
                   },
@@ -154,7 +157,7 @@ function DeliveryDestinations(
                         noStyle
                         required
                       >
-                        <Input style={{ maxWidth: 560 }} disabled={idx === 0} />
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
                       </Form.Item>
                     ),
                   },
@@ -165,13 +168,14 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'phone',
+                    width: 200,
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'phone']}
                         rules={[rule]}
                         noStyle
                       >
-                        <Input style={{ maxWidth: 560 }} disabled={idx === 0} />
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
                       </Form.Item>
                     ),
                   },
@@ -182,7 +186,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'actions',
-                    width: '100px',
+                    width: 200,
                     align: 'center',
                     render: (field, _, idx) => (
                       <Button
