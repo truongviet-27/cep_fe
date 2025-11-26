@@ -3,7 +3,7 @@ import { useSelect } from '@refinedev/antd'
 import type { UseSelectProps } from '@refinedev/core'
 import { Form, FormItemProps, Select, SelectProps } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
-import { get } from 'lodash'
+import { get, uniqBy } from 'lodash' // Nhớ import uniqBy
 
 type Props = {
   selectProps: UseSelectProps<any, any, any>
@@ -61,37 +61,48 @@ export const SelectPagination = ({
       value: get(item, optionValue),
     }))
 
-    if (!search?.length) {
-      setOptions((prev) => {
-        const merged = [...(prev || []), ...normalizedData]
-        // Loại bỏ trùng lặp theo value
-        return Array.from(
-          new Map(merged.map((item) => [item.value, item])).values(),
-        )
-      })
-    } else {
-      setOptions(normalizedData)
-    }
-  }, [search])
+    setOptions((prev) => {
+      const merged = [...(prev || []), ...normalizedData]
+      return uniqBy(merged, 'value')
+    })
+
+    if (data.length === 0 && page > 1) hasMore.current = false
+  }, [query?.data])
+
+  const isNotReady =
+    options?.length === 0 || query.isLoading || query.fetchStatus === 'fetching'
+
+  console.log(options)
+  console.log(query)
 
   return (
     <Form.Item {...formItemProps}>
-      <Select
-        options={options}
-        {...selectComponentProps}
-        {...props}
-        allowClear
-        showSearch
-        filterOption={false}
-        onPopupScroll={(event) => {
-          const target = event.currentTarget
-          if (target.scrollTop + target.offsetHeight === target.scrollHeight) {
-            if (props.options && hasMore.current) {
-              setPage((curr) => curr + 1)
+      {isNotReady ? (
+        <div>
+          <Select disabled {...selectComponentProps} placeholder="Loading..." />
+        </div>
+      ) : (
+        <Select
+          options={options}
+          {...selectComponentProps}
+          {...props}
+          onSearch={props.onSearch} // Đảm bảo search hoạt động
+          allowClear
+          showSearch
+          filterOption={false}
+          onPopupScroll={(event) => {
+            const target = event.currentTarget
+            if (
+              target.scrollTop + target.offsetHeight >=
+              target.scrollHeight - 10
+            ) {
+              if (hasMore.current && !query.isFetching) {
+                setPage((curr) => curr + 1)
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      )}
     </Form.Item>
   )
 }

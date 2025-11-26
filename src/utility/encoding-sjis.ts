@@ -164,3 +164,48 @@ function isValidUtf8(bytes: Uint8Array): boolean {
   }
   return true
 }
+
+export function robustDecode(
+  ab: ArrayBuffer,
+  hint: 'utf-8' | 'shift_jis',
+): string {
+  const bytes = new Uint8Array(ab)
+
+  if (
+    bytes.length >= 3 &&
+    bytes[0] === 0xef &&
+    bytes[1] === 0xbb &&
+    bytes[2] === 0xbf
+  ) {
+    return new TextDecoder('utf-8').decode(bytes.subarray(3))
+  }
+
+  const decodeUTF8 = () =>
+    new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+  const decodeSJIS = () =>
+    Encoding.convert(bytes, {
+      to: 'UNICODE',
+      from: 'SJIS',
+      type: 'string',
+    }) as string
+
+  if (hint === 'shift_jis' && isValidUtf8(bytes)) {
+    try {
+      return decodeUTF8()
+    } catch {}
+  }
+
+  if (hint === 'utf-8') {
+    try {
+      return decodeUTF8()
+    } catch {
+      return decodeSJIS()
+    }
+  } else {
+    try {
+      return decodeSJIS()
+    } catch {
+      return decodeUTF8()
+    }
+  }
+}

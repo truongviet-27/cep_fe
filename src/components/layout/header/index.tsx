@@ -140,6 +140,7 @@ export default function AuthHeader({
         <Modal
           {...modalProps}
           onCancel={modalProps.close}
+          onOk={modalProps.close}
           cancelButtonProps={{ style: { display: 'none' } }}
           okText={t_btn('cancel')}
           width={'50vw'}
