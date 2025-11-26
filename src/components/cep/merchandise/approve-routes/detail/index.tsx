@@ -136,7 +136,7 @@ function ApproveDetail() {
                 colon={false}
                 name={'code'}
               >
-                {query.data?.data.name}
+                {query.data?.data.code}
               </Form.Item>
             </Col>
           </Row>
@@ -148,7 +148,7 @@ function ApproveDetail() {
                 colon={false}
                 name={'name'}
               >
-                {query.data?.data.code}
+                {query.data?.data.name}
               </Form.Item>
             </Col>
           </Row>
