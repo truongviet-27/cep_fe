@@ -214,8 +214,15 @@ const AgreedPriceQuotaTab = () => {
         ),
         key: 'estimateDateApplicationEnd',
         render: (_, record: any) => {
-          const statusEnum = (record as any).status as AgreedPriceStatus
-          const style = getAgreedPriceStatusStyle(statusEnum, t)
+          let calculatedStatus = ''
+          const validToDate = record.valid_to
+          if (validToDate) {
+            calculatedStatus = calculatedStatusFromExpiredDate(validToDate)
+          }
+          const style = getAgreedPriceStatusStyle(
+            calculatedStatus as AgreedPriceStatus,
+            t,
+          )
           return (
             <div>
               <div>
@@ -342,6 +349,11 @@ const AgreedPriceQuotaTab = () => {
             : undefined,
         },
         {
+          field: 'tag_name',
+          operator: 'eq',
+          value: v.tag_name,
+        },
+        {
           field: 'expiration_date',
           operator: 'gte',
           value: start ? start.format('YYYY-MM-DD') : undefined,
@@ -402,6 +414,7 @@ const AgreedPriceQuotaTab = () => {
     },
     [setFilters],
   )
+  const { form } = searchFormProps
 
   return (
     <Form {...searchFormProps}>
@@ -527,11 +540,20 @@ const AgreedPriceQuotaTab = () => {
                 {t('agreed_prices.action.search')}
               </Button>
               <Button
-                htmlType="reset"
+                htmlType="button"
                 type="default"
                 onClick={() => {
-                  setFilters([], 'replace')
-                  setStatus(AgreedPriceStatus.Active)
+                  form?.resetFields()
+                  setFilters(
+                    [
+                      {
+                        field: 'status',
+                        operator: 'eq',
+                        value: status,
+                      },
+                    ],
+                    'replace',
+                  )
                 }}
               >
                 {t('agreed_prices.action.clear')}
@@ -720,7 +742,12 @@ const AgreedPriceQuotaTab = () => {
           </Form.Item>
 
           <Form.Item label="更新者:" style={{ marginBottom: 16 }}>
-            <span>---</span>
+            <span>
+              {selected?.creator?.name || '伊藤太郎'}{' '}
+              {selected?.updated_at
+                ? dayjs(selected.updated_at).format('YYYY/MM/DD HH:mm')
+                : '2025/08/04 12:30'}
+            </span>
           </Form.Item>
 
           <div

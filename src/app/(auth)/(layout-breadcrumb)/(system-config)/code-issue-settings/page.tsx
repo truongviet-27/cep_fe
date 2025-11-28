@@ -130,7 +130,7 @@ export default function Page() {
           align={'right'}
         />
         <Table.Column
-          dataIndex="total"
+          dataIndex="current_serial_number"
           title={t('code_issue_settings.fields.total')}
           align={'right'}
         />
