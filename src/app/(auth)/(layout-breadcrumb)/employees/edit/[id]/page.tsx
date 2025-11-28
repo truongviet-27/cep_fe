@@ -12,7 +12,6 @@ import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
 import {
   Button,
   Col,
@@ -54,7 +53,7 @@ export default function EmployeeEdit() {
 
   const codeRules: Rule[] = useMemo(
     () => [
-      { required: true, message: '部門コードは必須です。' },
+      { required: true, message: '社員コードは必須です。' },
       {
         pattern: /^[A-Z0-9-]+$/,
         message:
@@ -125,14 +124,14 @@ export default function EmployeeEdit() {
               title: t('common.created_by'),
               value: `${(employeeData as any)?.created_by?.name ?? '---'} ${dayjs(
                 (employeeData as any)?.created_at,
-              ).format(FORMAT_DATE_TIME)}`,
+              ).format('YYYY/MM/DD HH:mm')}`,
             },
             {
               title: t('common.updated_by'),
               value: (employeeData as any)?.editor
                 ? `${(employeeData as any).editor.name} ${dayjs(
                     (employeeData as any).updated_at,
-                  ).format(FORMAT_DATE_TIME)}`
+                  ).format('YYYY/MM/DD HH:mm')}`
                 : '---',
             },
           ]}

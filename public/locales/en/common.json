@@ -86,6 +86,15 @@
     "filters": {
       "code_name": "Customer Code / Name",
       "date_range": "Date"
+    },
+    "delivery": {
+      "code": "Delivery Code",
+      "name": "Destination Name",
+      "post_code": "Postal Code",
+      "address": "Address",
+      "contact_person": "Contact Person",
+      "phone": "Phone Number",
+      "email": "Email Address"
     }
   },
   "products": {

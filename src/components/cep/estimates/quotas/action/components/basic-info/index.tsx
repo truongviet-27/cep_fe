@@ -205,6 +205,7 @@ const BasicInfo = () => {
         <Row gutter={[8, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
+              required
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_number'),
               )}
@@ -273,9 +274,8 @@ const BasicInfo = () => {
             </Form.Item>
           </Col>
         </Row>
-
         <Row>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <Col xs={24} xl={5}>
             <Form.Item
               required
               name={'type'}
@@ -303,10 +303,7 @@ const BasicInfo = () => {
               />
             </Form.Item>
           </Col>
-        </Row>
-
-        <Row>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <Col xs={24} xl={5}>
             <Form.Item
               required
               name={'category'}
@@ -360,9 +357,13 @@ const BasicInfo = () => {
               <Input disabled={isCloneVersion} />
             </Form.Item>
           </Col>
+        </Row>
+
+        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               label={boldText(t('quotas.action.basic_info.fields.customer'))}
+              required
             >
               <Row gutter={[8, 0]} align="top" wrap={false}>
                 <Col style={{ width: '100%' }}>
@@ -421,10 +422,6 @@ const BasicInfo = () => {
               </Row>
             </Form.Item>
           </Col>
-        </Row>
-
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10} />
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             {/* Display selected contact information with validation */}
             <Form.Item
@@ -595,7 +592,7 @@ const BasicInfo = () => {
                 t('quotas.action.basic_info.fields.expiration_date'),
               )}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ alignItems: 'center', gap: 12 }}>
                 <Form.Item
                   name={'expiration_date'}
                   style={{ marginBottom: 0, flex: 1 }}

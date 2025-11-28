@@ -22,6 +22,25 @@ export function useController() {
       select: (data) => {
         const detail = data.data as QuoteTemplateDetailType
         const tags = (detail?.tags ?? []) as unknown as { id: number }[]
+        const defaultOptionalProduct = [
+          {
+            group_name: '',
+            products: [
+              {
+                product_id: null,
+                package_id: null,
+                name: '',
+                code: '',
+                cost_price: 0,
+                selling_price: 0,
+                quantity: 0,
+                tax_rate: 0,
+                profit_margin: 0,
+                is_add_total: false,
+              },
+            ],
+          },
+        ]
 
         if (
           !permission?.is_module_admin &&
@@ -32,10 +51,16 @@ export function useController() {
           })
         }
 
+        const finalOptionalProduct =
+          detail.optional_product && detail.optional_product.length > 0
+            ? detail.optional_product
+            : defaultOptionalProduct
+
         return {
           ...data,
           data: {
             ...detail,
+            optional_product: finalOptionalProduct,
             tags_response: tags,
             tags: tags.map(({ id }) => id),
           },

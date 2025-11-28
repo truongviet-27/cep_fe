@@ -156,6 +156,13 @@ function QuotaDetail() {
               await form.validateFields()
               setIsPdf(!isPdf)
             }}
+            disabled={
+              isFetching ||
+              isFetchingProducts ||
+              isFetchingHistory ||
+              isFetchingCustomerContact ||
+              !queryBasic?.data
+            }
           >
             {t('quotas.show.preview')}
           </Button>

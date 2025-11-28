@@ -22,6 +22,7 @@ import {
 } from '@refinedev/core'
 import {
   type Customer,
+  CustomerDeliveryAddress,
   ParameterResourceEnum,
   PermissionEnum,
 } from '@sdk/hey-api/types.gen'
@@ -30,6 +31,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
 import { Button, Collapse, Space, Typography } from 'antd'
+import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import React from 'react'
@@ -108,7 +110,7 @@ export default function CustomerShowPage() {
     },
   ]
 
-  const deliveryColumns = [
+  const deliveryColumns: ColumnsType<CustomerDeliveryAddress> = [
     {
       title: (
         <span className={styles.tableTitle}>
@@ -117,6 +119,7 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'delivery_address_code',
       key: 'delivery_address_code',
+      width: 200,
     },
     {
       title: (
@@ -127,6 +130,19 @@ export default function CustomerShowPage() {
       dataIndex: 'delivery_address_name',
       key: 'delivery_address_name',
       render: (text: string) => (text == 'T' ? '△' : text),
+      width: '20%',
+      align: 'left',
+    },
+    {
+      title: (
+        <span className={styles.tableTitle}>
+          {t('customers.delivery.post_code')}
+        </span>
+      ),
+      dataIndex: 'post_code',
+      key: 'post_code',
+      render: (text: string) => (text == 'T' ? '△' : text),
+      width: 200,
     },
     {
       title: (
@@ -137,16 +153,7 @@ export default function CustomerShowPage() {
       dataIndex: 'address',
       key: 'address',
       render: (text: string) => (text == 'T' ? '△' : text),
-    },
-    {
-      title: (
-        <span className={styles.tableTitle}>
-          {t('customers.delivery.contact_person')}
-        </span>
-      ),
-      dataIndex: 'contact_person_name',
-      key: 'contact_person_name',
-      render: (text: string) => (text == 'T' ? '△' : text),
+      align: 'left',
     },
     {
       title: (
@@ -157,16 +164,7 @@ export default function CustomerShowPage() {
       dataIndex: 'phone',
       key: 'phone',
       render: (text: string) => (text == 'T' ? '△' : text),
-    },
-    {
-      title: (
-        <span className={styles.tableTitle}>
-          {t('customers.delivery.email')}
-        </span>
-      ),
-      dataIndex: 'mail',
-      key: 'mail',
-      render: (text: string) => (text == 'T' ? '△' : text),
+      width: 200,
     },
   ]
 

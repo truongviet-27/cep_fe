@@ -5,7 +5,15 @@ import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
 import type { FormInstance } from 'antd'
-import { Button, Checkbox, Form, Input, InputNumber, Table } from 'antd'
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Table,
+} from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { CheckboxChangeEvent } from 'antd/lib'
 import type { MutableRefObject } from 'react'
@@ -89,7 +97,28 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                 <Form.Item
                   name={[index, 'name']}
                   required
-                  rules={[{ required: true, message: '' }]}
+                  rules={[
+                    { required: true, message: '' },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value) {
+                          return Promise.resolve()
+                        }
+                        const packagings = getFieldValue('packagings') || []
+                        const isDuplicate = packagings.some(
+                          (item: { name: string }, i: number) =>
+                            i !== index && item?.name?.trim() === value?.trim(),
+                        )
+                        if (isDuplicate) {
+                          message.warning(`${value}という荷姿名は複数です。`)
+                          return Promise.reject(
+                            new Error(t('validation.duplicate_name')),
+                          )
+                        }
+                        return Promise.resolve()
+                      },
+                    }),
+                  ]}
                   className="ant-form-item-hidden-margin"
                   style={{ marginBottom: '0px !important' }}
                   help=""

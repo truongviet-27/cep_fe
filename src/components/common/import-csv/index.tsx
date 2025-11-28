@@ -271,14 +271,9 @@ function ImportCsv({
 
                     // read file content
                     const arrayBuffer = await file.arrayBuffer()
-                    const uint8Array = new Uint8Array(arrayBuffer)
-                    console.log(
-                      'File bytes:',
-                      JSON.stringify(uint8Array.slice(0, 50)),
-                    ) // Log first 50 bytes for debugging
 
                     const encodingInfo = detectEncodingWithInfo(arrayBuffer)
-
+                    console.log('Encoding info:', encodingInfo)
                     // Validate encoding
                     const supportedEncodings = [
                       'UTF-8',

@@ -7,7 +7,7 @@ import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
 import { Button, Collapse, Form, Input, Space } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from '../styles.module.css'
 
 const { Panel } = Collapse
@@ -17,9 +17,46 @@ function DeliveryDestinations(
 ) {
   const { t, rule, form } = props
 
-  const [index, setIndex] = React.useState(0)
+  const customerCode = Form.useWatch('customer_code', form)
+  const mainPostCode = Form.useWatch('post_code', form)
+  const mainAddress = Form.useWatch('address', form)
+  const mainBuilding = Form.useWatch('building', form)
+  const mainPhone = Form.useWatch('phone', form)
 
-  const code = Form.useWatch('customer_code', form)
+  useEffect(() => {
+    if (!customerCode) return
+
+    const currentList = form.getFieldValue('delivery_addresses') || []
+    const fullAddress = [mainAddress, mainBuilding].filter(Boolean).join(' ')
+
+    const firstRecordData = {
+      delivery_address_code: `${customerCode}-1`,
+      post_code: mainPostCode,
+      address: fullAddress,
+      phone: mainPhone,
+      delivery_address_name: currentList[0]?.delivery_address_name || '本社',
+    }
+
+    const firstItem = currentList[0]
+    const isDifferent =
+      !firstItem ||
+      firstItem.delivery_address_code !==
+        firstRecordData.delivery_address_code ||
+      firstItem.post_code !== firstRecordData.post_code ||
+      firstItem.address !== firstRecordData.address ||
+      firstItem.phone !== firstRecordData.phone
+
+    if (isDifferent) {
+      const newList = [...currentList]
+      if (newList.length === 0) {
+        newList.push(firstRecordData)
+      } else {
+        newList[0] = { ...newList[0], ...firstRecordData }
+      }
+
+      form.setFieldValue('delivery_addresses', newList)
+    }
+  }, [customerCode, mainPostCode, mainAddress, mainBuilding, mainPhone, form])
 
   return (
     <Collapse
@@ -56,15 +93,16 @@ function DeliveryDestinations(
                         {t('customers.delivery.code')}
                       </span>
                     ),
-                    key: 'code',
+                    key: 'delivery_address_code',
+                    width: 200,
                     render: (field) => (
                       <Form.Item
-                        name={[field.name, 'code']}
+                        name={[field.name, 'delivery_address_code']}
                         rules={[rule]}
                         noStyle
                         required
                       >
-                        <Input style={{ maxWidth: 560 }} disabled />
+                        <Input style={{ width: '100%' }} disabled />
                       </Form.Item>
                     ),
                   },
@@ -75,14 +113,33 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'name',
-                    render: (field) => (
+                    width: '16%',
+                    render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'delivery_address_name']}
                         rules={[rule]}
                         required
                         noStyle
                       >
-                        <Input style={{ maxWidth: 560 }} />
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
+                      </Form.Item>
+                    ),
+                  },
+                  {
+                    title: (
+                      <span className={styles.tableTitle}>
+                        {t('customers.delivery.post_code')}
+                      </span>
+                    ),
+                    key: 'post_code',
+                    width: 200,
+                    render: (field, _, idx) => (
+                      <Form.Item
+                        name={[field.name, 'post_code']}
+                        rules={[rule]}
+                        noStyle
+                      >
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
                       </Form.Item>
                     ),
                   },
@@ -93,31 +150,14 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'address',
-                    render: (field) => (
+                    render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'address']}
                         rules={[rule]}
                         noStyle
                         required
                       >
-                        <Input style={{ maxWidth: 560 }} />
-                      </Form.Item>
-                    ),
-                  },
-                  {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.delivery.contact_person')}
-                      </span>
-                    ),
-                    key: 'contact_person_name',
-                    render: (field) => (
-                      <Form.Item
-                        name={[field.name, 'contact_person_name']}
-                        rules={[rule]}
-                        noStyle
-                      >
-                        <Input style={{ maxWidth: 560 }} />
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
                       </Form.Item>
                     ),
                   },
@@ -128,30 +168,14 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'phone',
-                    render: (field) => (
+                    width: 200,
+                    render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'phone']}
                         rules={[rule]}
                         noStyle
                       >
-                        <Input style={{ maxWidth: 560 }} />
-                      </Form.Item>
-                    ),
-                  },
-                  {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.delivery.email')}
-                      </span>
-                    ),
-                    key: 'mail',
-                    render: (field) => (
-                      <Form.Item
-                        name={[field.name, 'mail']}
-                        rules={[rule]}
-                        noStyle
-                      >
-                        <Input style={{ maxWidth: 560 }} />
+                        <Input style={{ width: '100%' }} disabled={idx === 0} />
                       </Form.Item>
                     ),
                   },
@@ -162,12 +186,13 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'actions',
-                    width: '100px',
+                    width: 200,
                     align: 'center',
-                    render: (field) => (
+                    render: (field, _, idx) => (
                       <Button
                         danger
                         icon={<DeleteOutlined />}
+                        disabled={idx === 0}
                         onClick={() => remove(field.name)}
                       />
                     ),
@@ -177,21 +202,34 @@ function DeliveryDestinations(
               <Button
                 type="primary"
                 onClick={() => {
-                  if (!code) {
+                  if (!customerCode) {
                     form.focusField('customer_code')
                     form.validateFields().then(() => {})
                   } else {
+                    const currentValues =
+                      form.getFieldValue('delivery_addresses') || []
+                    const maxSuffix = currentValues.reduce(
+                      (
+                        max: number,
+                        item: { delivery_address_code: string },
+                      ) => {
+                        if (!item || !item.delivery_address_code) return max
+                        const parts = item.delivery_address_code.split('-')
+                        const lastPart = parts[parts.length - 1]
+                        const num = parseInt(lastPart, 10)
+                        return !isNaN(num) && num > max ? num : max
+                      },
+                      0,
+                    )
+
                     add({
-                      code: code + '-' + index,
-                      name: null,
+                      delivery_address_code: `${customerCode}-${maxSuffix + 1}`,
+                      delivery_address_name: null,
+                      post_code: null,
                       address: null,
-                      contact_person: null,
                       phone: null,
-                      email: null,
-                      key: index,
                     })
                   }
-                  setIndex(index + 1)
                 }}
                 className="float-right mt-4"
               >
