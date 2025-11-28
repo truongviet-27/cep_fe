@@ -182,6 +182,7 @@ function useTags() {
       values,
       successNotification: (data) => {
         setValue('rows', values as any)
+        setEdited(false)
         return {
           message: t('notifications.success'),
           description: t('notifications.success'),
@@ -207,7 +208,6 @@ function useTags() {
 
     if (!values.length) return
     handleUpdateOrdering(values as TagRow[])
-    setEdited(false)
   }
 
   const saveRow = (index: number) => {

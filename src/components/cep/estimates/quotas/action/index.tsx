@@ -176,6 +176,29 @@ function QuotaAction() {
     )
   }
 
+  const defaultOptionalProduct = [
+    {
+      group_name: '',
+      products: [
+        {
+          product: null,
+          product_id: null,
+          package_id: null,
+          name: '',
+          code: '',
+          package_name: '',
+          cost_price: 0,
+          selling_price: 0,
+          quantity: 0,
+          profit_margin: 0,
+          is_add_total: false,
+          tax_rate: 0,
+          unit: null,
+        },
+      ],
+    },
+  ]
+
   useEffect(() => {
     if (isCloneVersion) {
       if (dataBasicInfo?.data && dataProducts?.data && dataHistory?.data) {
@@ -207,17 +230,17 @@ function QuotaAction() {
               unit: item2.unit_name ?? '-',
             })),
           })),
-          optional_product: dataProducts.data.optional_product.map(
-            (item: any) => ({
-              ...item,
-              products: item.products.map((item2: any) => ({
-                ...item2,
-                product: { value: item2.product_id, label: item2.name },
-                tax_rate: item2.tax_rate ?? 0,
-                unit: item2.unit_name ?? '-',
-              })),
-            }),
-          ),
+          optional_product: dataProducts.data.optional_product?.length
+            ? dataProducts.data.optional_product.map((item: any) => ({
+                ...item,
+                products: item.products.map((item2: any) => ({
+                  ...item2,
+                  product: { value: item2.product_id, label: item2.name },
+                  tax_rate: item2.tax_rate ?? 0,
+                  unit: item2.unit_name ?? '-',
+                })),
+              }))
+            : defaultOptionalProduct,
           ...dataHistory?.data?.data,
         })
       }
@@ -260,17 +283,17 @@ function QuotaAction() {
               unit: item2.unit_name ?? '-',
             })),
           })),
-          optional_product: dataProducts.data.optional_product.map(
-            (item: any) => ({
-              ...item,
-              products: item.products.map((item2: any) => ({
-                ...item2,
-                product: { value: item2.product_id, label: item2.name },
-                tax_rate: item2.tax_rate ?? 0,
-                unit: item2.unit_name ?? '-',
-              })),
-            }),
-          ),
+          optional_product: dataProducts.data.optional_product?.length
+            ? dataProducts.data.optional_product.map((item: any) => ({
+                ...item,
+                products: item.products.map((item2: any) => ({
+                  ...item2,
+                  product: { value: item2.product_id, label: item2.name },
+                  tax_rate: item2.tax_rate ?? 0,
+                  unit: item2.unit_name ?? '-',
+                })),
+              }))
+            : defaultOptionalProduct,
           ...dataHistory?.data?.data,
         })
       }
@@ -304,14 +327,16 @@ function QuotaAction() {
             unit: item2.unit_name ?? '-',
           })),
         })),
-        optional_product: quoteTemplate?.optional_product?.map((item: any) => ({
-          ...item,
-          products: item.products.map((item2: any) => ({
-            ...item2,
-            product: { value: item2.product_id, label: item2.name },
-            unit: item2.unit_name ?? '-',
-          })),
-        })),
+        optional_product: quoteTemplate?.optional_product?.length
+          ? quoteTemplate.optional_product.map((item: any) => ({
+              ...item,
+              products: item.products.map((item2: any) => ({
+                ...item2,
+                product: { value: item2.product_id, label: item2.name },
+                unit: item2.unit_name ?? '-',
+              })),
+            }))
+          : defaultOptionalProduct,
         tags: (quoteTemplate?.tags ?? []).map(({ id, name }) => ({
           label: name,
           value: id,
@@ -362,28 +387,7 @@ function QuotaAction() {
             ],
           },
         ],
-        optional_product: [
-          {
-            group_name: '',
-            products: [
-              {
-                product: null,
-                product_id: null,
-                package_id: null,
-                name: '',
-                code: '',
-                package_name: '',
-                cost_price: 0,
-                selling_price: 0,
-                quantity: 0,
-                profit_margin: 0,
-                is_add_total: false,
-                tax_rate: 0,
-                unit: null,
-              },
-            ],
-          },
-        ],
+        optional_product: defaultOptionalProduct,
       })
     }
   }, [data, quoteTemplateQuery?.data?.data])
