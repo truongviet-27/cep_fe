@@ -25,16 +25,7 @@ import {
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
-import {
-  Breadcrumb,
-  Button,
-  Divider,
-  Flex,
-  Form,
-  Modal,
-  Space,
-  Spin,
-} from 'antd'
+import { Breadcrumb, Button, Divider, Form, Modal, Spin } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -149,23 +140,221 @@ function QuotaDetail() {
       title={
         <div className="flex justify-between">
           {t('quotas.detail')}
-          <Button
-            color="primary"
-            variant="outlined"
-            onClick={async () => {
-              await form.validateFields()
-              setIsPdf(!isPdf)
-            }}
-            disabled={
-              isFetching ||
-              isFetchingProducts ||
-              isFetchingHistory ||
-              isFetchingCustomerContact ||
-              !queryBasic?.data
-            }
-          >
-            {t('quotas.show.preview')}
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="default"
+              onClick={() => {
+                go({
+                  to: '/quotas',
+                })
+              }}
+            >
+              {t('buttons.back')}
+            </Button>
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={async () => {
+                await form.validateFields()
+                setIsPdf(!isPdf)
+              }}
+              disabled={
+                isFetching ||
+                isFetchingProducts ||
+                isFetchingHistory ||
+                isFetchingCustomerContact ||
+                !queryBasic?.data
+              }
+            >
+              {t('quotas.show.preview')}
+            </Button>
+            {queryBasic?.data?.has_approval_route &&
+              queryBasic?.data?.status === QuotaStatus.Creating &&
+              (permission?.is_module_admin || queryBasic?.data?.is_author) && (
+                <Button
+                  style={{
+                    background: '#10B981',
+                    color: WHITE,
+                  }}
+                  icon={null}
+                  size={'middle'}
+                  onClick={() => {
+                    handleChangeStatus('send-to-approver', {
+                      quota_ids: [queryBasic?.data.id],
+                    })
+                  }}
+                >
+                  {t('quotas.show.actions.request_approval')}
+                </Button>
+              )}
+            {queryBasic?.data?.status === QuotaStatus.SentToCustomer && (
+              <Button
+                type="default"
+                style={{
+                  background: '#faad14',
+                  color: WHITE,
+                }}
+                size="middle"
+                onClick={() => {
+                  go({
+                    to: `/quotas/clone/${id}?actionType=VERSION`,
+                  })
+                }}
+              >
+                {t('quotas.actions.re_estimate')}
+              </Button>
+            )}
+            {queryBasic?.data?.has_approval_route &&
+              queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
+              (permission?.is_module_admin || queryBasic?.data?.display) && (
+                <>
+                  <Button
+                    style={{
+                      background: '#721C24',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('approval-steps', [
+                        {
+                          quota_id: queryBasic?.data?.id,
+                          status: 'rejected',
+                          comment: form.getFieldValue('reason'),
+                        },
+                      ])
+                    }}
+                  >
+                    {t('quotas.show.actions.reject')}
+                  </Button>
+                  <Button
+                    style={{
+                      background: '#10B981',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('approval-steps', [
+                        {
+                          quota_id: queryBasic?.data?.id,
+                          status: 'approved',
+                          comment: form.getFieldValue('reason'),
+                        },
+                      ])
+                    }}
+                  >
+                    {t('quotas.show.actions.approve')}
+                  </Button>
+                </>
+              )}
+
+            {(queryBasic?.data?.has_approval_route
+              ? queryBasic?.data?.status === QuotaStatus.Approved
+              : queryBasic?.data?.status === QuotaStatus.Creating) &&
+              (permission?.is_module_admin || queryBasic?.data?.is_author) && (
+                <Button
+                  style={{
+                    background: '#10B981',
+                    color: WHITE,
+                  }}
+                  icon={null}
+                  size={'middle'}
+                  onClick={() => {
+                    handleChangeStatus('send-to-customer', {
+                      quota_ids: [queryBasic?.data.id],
+                      status: 'sent_to_customer',
+                    })
+                  }}
+                >
+                  {t('quotas.show.actions.send')}
+                </Button>
+              )}
+
+            {queryBasic?.data?.status === QuotaStatus.SentToCustomer &&
+              (permission?.is_module_admin ||
+                queryBasic.data?.display ||
+                queryBasic?.data?.is_author) && (
+                <>
+                  <Button
+                    style={{
+                      background: '#721C24',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('cancel-quota', {
+                        quota_ids: [queryBasic?.data.id],
+                      })
+                    }}
+                  >
+                    {t('quotas.show.actions.move_to_cancel')}
+                  </Button>
+                  <Button
+                    style={{
+                      background: '#10B981',
+                      color: WHITE,
+                    }}
+                    icon={null}
+                    size={'middle'}
+                    onClick={() => {
+                      handleChangeStatus('mark-completed', {
+                        quota_ids: [queryBasic?.data.id],
+                      })
+                    }}
+                  >
+                    {t('quotas.show.actions.move_to_order')}
+                  </Button>
+                </>
+              )}
+
+            {(queryBasic?.data?.status === QuotaStatus.Completed ||
+              queryBasic?.data?.status === QuotaStatus.Cancelled) &&
+              (permission?.is_module_admin || queryBasic.data?.display) && (
+                <Button
+                  style={{
+                    background: '#721C24',
+                    color: WHITE,
+                  }}
+                  icon={null}
+                  size={'middle'}
+                  onClick={() => {
+                    handleChangeStatus('back-to-sent-customer', {
+                      quota_ids: [queryBasic?.data.id],
+                    })
+                  }}
+                >
+                  {t('quotas.show.actions.move_to_send')}
+                </Button>
+              )}
+
+            {(queryBasic?.data?.status === QuotaStatus.Creating ||
+              queryBasic?.data?.status === QuotaStatus.Rejected) &&
+              (permission?.is_module_admin || queryBasic.data?.is_author) && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    go({
+                      to: `/quotas/edit/${id}`,
+                    })
+                  }}
+                >
+                  {t('buttons.edit')}
+                </Button>
+              )}
+
+            {(permission?.is_module_admin || queryBasic?.data?.is_author) && (
+              <DeleteButton
+                icon={null}
+                onSuccess={() => {
+                  go({
+                    to: '/quotas',
+                  })
+                }}
+              />
+            )}
+          </div>
         </div>
       }
     >
@@ -228,219 +417,6 @@ function QuotaDetail() {
               },
             ]}
           />
-          <Flex
-            justify="space-between"
-            style={{
-              marginTop: 40,
-            }}
-          >
-            <Space>
-              {(permission?.is_module_admin || queryBasic?.data?.is_author) && (
-                <DeleteButton
-                  icon={null}
-                  size={'small'}
-                  onSuccess={() => {
-                    go({
-                      to: '/quotas',
-                    })
-                  }}
-                />
-              )}
-            </Space>
-
-            <Space>
-              {queryBasic?.data?.has_approval_route &&
-                queryBasic?.data?.status === QuotaStatus.Creating &&
-                (permission?.is_module_admin ||
-                  queryBasic?.data?.is_author) && (
-                  <Button
-                    style={{
-                      background: '#10B981',
-                      color: WHITE,
-                    }}
-                    icon={null}
-                    size={'middle'}
-                    onClick={() => {
-                      handleChangeStatus('send-to-approver', {
-                        quota_ids: [queryBasic?.data.id],
-                      })
-                    }}
-                  >
-                    {t('quotas.show.actions.request_approval')}
-                  </Button>
-                )}
-              {queryBasic?.data?.status === QuotaStatus.SentToCustomer && (
-                <Button
-                  type="default"
-                  style={{
-                    background: '#faad14',
-                    color: WHITE,
-                  }}
-                  size="middle"
-                  onClick={() => {
-                    go({
-                      to: `/quotas/clone/${id}?actionType=VERSION`,
-                    })
-                  }}
-                >
-                  {t('quotas.actions.re_estimate')}
-                </Button>
-              )}
-              {queryBasic?.data?.has_approval_route &&
-                queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
-                (permission?.is_module_admin || queryBasic?.data?.display) && (
-                  <>
-                    <Button
-                      style={{
-                        background: '#721C24',
-                        color: WHITE,
-                      }}
-                      icon={null}
-                      size={'middle'}
-                      onClick={() => {
-                        handleChangeStatus('approval-steps', [
-                          {
-                            quota_id: queryBasic?.data?.id,
-                            status: 'rejected',
-                            comment: form.getFieldValue('reason'),
-                          },
-                        ])
-                      }}
-                    >
-                      {t('quotas.show.actions.reject')}
-                    </Button>
-                    <Button
-                      style={{
-                        background: '#10B981',
-                        color: WHITE,
-                      }}
-                      icon={null}
-                      size={'middle'}
-                      onClick={() => {
-                        handleChangeStatus('approval-steps', [
-                          {
-                            quota_id: queryBasic?.data?.id,
-                            status: 'approved',
-                            comment: form.getFieldValue('reason'),
-                          },
-                        ])
-                      }}
-                    >
-                      {t('quotas.show.actions.approve')}
-                    </Button>
-                  </>
-                )}
-
-              {(queryBasic?.data?.has_approval_route
-                ? queryBasic?.data?.status === QuotaStatus.Approved
-                : queryBasic?.data?.status === QuotaStatus.Creating) &&
-                (permission?.is_module_admin ||
-                  queryBasic?.data?.is_author) && (
-                  <Button
-                    style={{
-                      background: '#10B981',
-                      color: WHITE,
-                    }}
-                    icon={null}
-                    size={'middle'}
-                    onClick={() => {
-                      handleChangeStatus('send-to-customer', {
-                        quota_ids: [queryBasic?.data.id],
-                        status: 'sent_to_customer',
-                      })
-                    }}
-                  >
-                    {t('quotas.show.actions.send')}
-                  </Button>
-                )}
-
-              {queryBasic?.data?.status === QuotaStatus.SentToCustomer &&
-                (permission?.is_module_admin ||
-                  queryBasic.data?.display ||
-                  queryBasic?.data?.is_author) && (
-                  <>
-                    <Button
-                      style={{
-                        background: '#721C24',
-                        color: WHITE,
-                      }}
-                      icon={null}
-                      size={'middle'}
-                      onClick={() => {
-                        handleChangeStatus('cancel-quota', {
-                          quota_ids: [queryBasic?.data.id],
-                        })
-                      }}
-                    >
-                      {t('quotas.show.actions.move_to_cancel')}
-                    </Button>
-                    <Button
-                      style={{
-                        background: '#10B981',
-                        color: WHITE,
-                      }}
-                      icon={null}
-                      size={'middle'}
-                      onClick={() => {
-                        handleChangeStatus('mark-completed', {
-                          quota_ids: [queryBasic?.data.id],
-                        })
-                      }}
-                    >
-                      {t('quotas.show.actions.move_to_order')}
-                    </Button>
-                  </>
-                )}
-
-              {(queryBasic?.data?.status === QuotaStatus.Completed ||
-                queryBasic?.data?.status === QuotaStatus.Cancelled) &&
-                (permission?.is_module_admin || queryBasic.data?.display) && (
-                  <Button
-                    style={{
-                      background: '#721C24',
-                      color: WHITE,
-                    }}
-                    icon={null}
-                    size={'middle'}
-                    onClick={() => {
-                      handleChangeStatus('back-to-sent-customer', {
-                        quota_ids: [queryBasic?.data.id],
-                      })
-                    }}
-                  >
-                    {t('quotas.show.actions.move_to_send')}
-                  </Button>
-                )}
-            </Space>
-
-            <Space className="items-end">
-              <Button
-                type="default"
-                onClick={() => {
-                  go({
-                    to: '/quotas',
-                  })
-                }}
-              >
-                {t('buttons.back')}
-              </Button>
-
-              {(queryBasic?.data?.status === QuotaStatus.Creating ||
-                queryBasic?.data?.status === QuotaStatus.Rejected) &&
-                (permission?.is_module_admin || queryBasic.data?.is_author) && (
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      go({
-                        to: `/quotas/edit/${id}`,
-                      })
-                    }}
-                  >
-                    {t('buttons.edit')}
-                  </Button>
-                )}
-            </Space>
-          </Flex>
         </Form>
       </Spin>
       <Modal
