@@ -240,6 +240,7 @@ function CustomerContacts(
                   })
                 }}
                 className="float-right mt-4"
+                autoInsertSpace={false}
               >
                 {t('customers.receivers.add_button')}
               </Button>

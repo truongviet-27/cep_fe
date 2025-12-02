@@ -232,6 +232,7 @@ function DeliveryDestinations(
                   }
                 }}
                 className="float-right mt-4"
+                autoInsertSpace={false}
               >
                 {t('buttons.add_delivery_destination')}
               </Button>
