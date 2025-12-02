@@ -45,7 +45,7 @@
     "csv_bulk_register": "CSV一括登録",
     "suspend": "停止",
     "resume": "開始",
-    "add_delivery_destination": "納品先追加",
+    "add_delivery_destination": "追加",
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
     "show": "show",
@@ -177,7 +177,7 @@
       "contact_person_name": "氏名",
       "email": "メールアドレス",
       "created_at": "登録日",
-      "add_button": "経理者追加",
+      "add_button": "追加",
       "min_one_required": "最低1件の連絡先を登録してください。"
     },
     "enums": {
