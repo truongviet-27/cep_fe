@@ -133,7 +133,8 @@
       "contact_email": "担当者メール",
       "contact_phone": "担当者電話番号",
       "accounting_contact": "経理者情報",
-      "corporate_research": "企業調査情報"
+      "corporate_research": "企業調査情報",
+      "no_unit_price_rank_code": "適用しない"
     },
     "research": {
       "document_name": "資料名",
