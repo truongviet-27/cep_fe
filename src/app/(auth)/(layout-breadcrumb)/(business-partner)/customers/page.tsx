@@ -289,18 +289,21 @@ export default function CustomerListPage() {
         dataIndex: 'rank',
         key: 'rank',
         width: '8%', // Tỷ lệ 5
-        render: (rank) => (
-          <Link
-            href={`/ranks`}
-            className="!underline"
-            onClick={(event) => {
-              event.preventDefault()
-              editModalShow(rank.id)
-            }}
-          >
-            {rank?.code}
-          </Link>
-        ),
+        render: (rank) =>
+          rank?.code ? (
+            <Link
+              href={`/ranks`}
+              className="!underline"
+              onClick={(event) => {
+                event.preventDefault()
+                editModalShow(rank.id)
+              }}
+            >
+              {rank?.code}
+            </Link>
+          ) : (
+            <>-</>
+          ),
       },
       {
         title: (
