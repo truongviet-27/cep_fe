@@ -295,7 +295,7 @@
     "list": {
       "list": "ランク",
       "filters": {
-        "search_label": "単価ランクコード・単価ランク名",
+        "search_label": "ランク・説明",
         "search_placeholder": "部分一致"
       }
     },
@@ -317,6 +317,11 @@
       "serial_length": "連番桁数",
       "preview_code": "採番例",
       "total": "現在値"
+    },
+    "table": {
+      "code": "ランク",
+      "name": "説明",
+      "unit_price": "単価"
     }
   },
   "merchandise": {
@@ -1007,8 +1012,8 @@
     "list_received": "確定見積一覧"
   },
   "price_groups": {
-    "message": "ランク別商品単価について",
-    "message_description": "顧客ランクごとに商品の販売単価を設定することができます。見積書作成時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
+    "message": "ランク別単価について",
+    "message_description": "掛率で自動設定後に「操作」から絶対値金額に修正可能です。見積書作成時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
     "price_groups": "ランク別単価",
     "product_price_by_rank": "ランク別単価",
     "business_partner": "取引先",
@@ -1027,7 +1032,8 @@
       "rate": "換率",
       "absolute": "絶対",
       "percentage": "掛率"
-    }
+    },
+    "rank_prices_title": "ランク"
   },
   "agreed_prices": {
     "parent": "確定見積一覧",
