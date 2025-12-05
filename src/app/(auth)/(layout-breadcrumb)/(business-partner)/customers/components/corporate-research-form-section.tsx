@@ -33,7 +33,7 @@ const { Panel } = Collapse
 
 type CurrentType = {
   index: number
-  type: 'credit' | 'anti-social' | 'certified'
+  type: 'credit' | 'anti-social' | 'certified' | 'contract'
   fileList: UploadFile[]
   judgement: string
   name: string
@@ -157,11 +157,14 @@ export const CorporateResearchFormSection = (
             type="primary"
             icon={null}
             onClick={() => {
-              let type: 'credit' | 'anti-social' | 'certified' = 'credit'
+              let type: 'credit' | 'anti-social' | 'certified' | 'contract' =
+                'credit'
               if (index === 1) {
                 type = 'anti-social'
               } else if (index === 2) {
                 type = 'certified'
+              } else if (index === 3) {
+                type = 'contract'
               }
 
               const fileList =
@@ -198,7 +201,7 @@ export const CorporateResearchFormSection = (
               form.setFieldValue(['company_research_information', index], {
                 id: record?.id,
                 material_name: record.material_name,
-                judgement: '未定',
+                judgement: index === 0 || index === 1 ? '未定' : '-',
                 files: [],
               })
               formTrigger()
@@ -218,6 +221,8 @@ export const CorporateResearchFormSection = (
       case 'anti-social':
         return antiSocialCheckOptions
       case 'certified':
+        return []
+      case 'contract':
         return []
     }
   }
@@ -316,7 +321,8 @@ export const CorporateResearchFormSection = (
               label={boldText(t('customers.research.judgement'))}
               name={`temp.${currentType.index}`}
             >
-              {currentType.type !== 'certified' ? (
+              {currentType.type !== 'certified' &&
+              currentType.type !== 'contract' ? (
                 <Select
                   allowClear
                   style={{ maxWidth: 235 }}
@@ -328,7 +334,7 @@ export const CorporateResearchFormSection = (
                   }}
                 />
               ) : (
-                <Typography.Text>未定</Typography.Text>
+                <Typography.Text>-</Typography.Text>
               )}
             </Form.Item>
             <Form.Item label={boldText(t('customers.research.file'))}>
