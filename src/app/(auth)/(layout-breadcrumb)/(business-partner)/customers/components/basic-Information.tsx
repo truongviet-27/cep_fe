@@ -303,7 +303,7 @@ function BasicInformation(
             ],
           }}
           formItemProps={{
-            label: boldText(t('ranks.fields.code')),
+            label: boldText(t('customers.fields.unit_price_rank_code')),
             name: 'price_rank_id',
             rules: [rule],
             style: { marginTop: -8 },

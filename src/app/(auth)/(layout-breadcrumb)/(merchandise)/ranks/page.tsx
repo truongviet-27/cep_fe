@@ -28,6 +28,7 @@ import CommonTable from '@components/common/table'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/create/modal'
 import boldText from '@utility/bold-text'
+import Link from 'next/link'
 
 const { Title, Text } = Typography
 
@@ -36,6 +37,14 @@ export default function Page() {
   const [isShow, setIsShow] = useState(false)
   const { tableProps, searchFormProps, setFilters } = useTable<Rank>({
     syncWithLocation: true,
+    sorters: {
+      initial: [
+        {
+          field: '-created_at',
+          order: 'desc',
+        },
+      ],
+    },
     onSearch: (values: any) => [
       {
         field: 'q',
@@ -48,7 +57,7 @@ export default function Page() {
   const columns: ColumnsType<Rank> = [
     {
       dataIndex: 'code',
-      title: t('ranks.fields.code'),
+      title: t('ranks.table.code'),
       render: (_, record) => (
         <Button
           type={'link'}
@@ -62,14 +71,22 @@ export default function Page() {
         </Button>
       ),
     },
-    { dataIndex: 'name', title: t('ranks.fields.name'), align: 'left' },
+    { dataIndex: 'name', title: t('ranks.table.name'), align: 'left' },
+    {
+      dataIndex: 'rank_group',
+      title: t('ranks.table.unit_price'),
+      render: (_, record) => (
+        <Link href={'/price-groups'} className="!h-4 !underline">
+          {record.code + ' ランク別単価'}
+        </Link>
+      ),
+    },
     { dataIndex: 'rate', title: t('ranks.fields.rate'), align: 'right' },
     {
       dataIndex: 'number_of_customers',
       title: t('ranks.fields.number_of_customers'),
       align: 'right',
     },
-    { dataIndex: 'note', title: t('ranks.fields.remarks'), align: 'left' },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
