@@ -217,7 +217,18 @@ function QuotaList() {
           <div>
             <div>{record?.author}</div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
-              {record.approvers?.map((item: string) => item).join(', ')}
+              {record.approvers?.map((item: any, index: number) => {
+                const isApproved = item.status === 'approved'
+                const numberIcon = String.fromCharCode(9312 + index)
+                return (
+                  <span
+                    key={index}
+                    className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
+                  >
+                    {numberIcon} {item.name}
+                  </span>
+                )
+              })}
             </div>
           </div>
         ),

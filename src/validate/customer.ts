@@ -333,6 +333,13 @@ export const validateCustomerRule = (t: any) => {
               })
               return
             }
+            if (!/^\d+$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.customer.phone.numeric_only'),
+              })
+              return
+            }
             if (!/^0\d+$/.test(val)) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
