@@ -226,11 +226,6 @@ export const validateCustomerRule = (t: any) => {
           })
           .nullable(),
       ),
-      price_rank_id: z
-        .int({
-          error: t('validation.customer.price_rank_id.required'),
-        })
-        .min(1, { error: t('validation.customer.price_rank_id.required') }),
       country: z.optional(
         z
           .string({ error: t('validation.customer.country.required') })
@@ -335,6 +330,13 @@ export const validateCustomerRule = (t: any) => {
                 type: 'string',
                 inclusive: true,
                 message: t('validation.customer.phone.required'),
+              })
+              return
+            }
+            if (!/^\d+$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.customer.phone.numeric_only'),
               })
               return
             }

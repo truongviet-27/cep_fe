@@ -7,7 +7,7 @@ import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { IDepartments } from '@interfaces/departments'
-import { DeleteButton, EditButton, EmailField, useTable } from '@refinedev/antd'
+import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
@@ -141,7 +141,6 @@ export default function Page() {
             <Table.Column
               dataIndex={['email']}
               title={t('employees.fields.email')}
-              render={(value) => <EmailField value={value} />}
             />
             <Table.Column
               dataIndex={['role', 'display_name']}

@@ -70,6 +70,12 @@ function Page() {
 
   const { data: ranks, isLoading } = useList<Rank>({
     resource: 'ranks',
+    sorters: [
+      {
+        field: '-created_at',
+        order: 'desc',
+      },
+    ],
   })
 
   const watch = Form.useWatch([], form)
@@ -323,10 +329,14 @@ function Page() {
               )
             }}
           />
-
-          {ranks?.data
-            ?.sort((a, b) => (a?.rate ?? 0) - (b?.rate ?? 0))
-            .map((item, indexChild) => {
+          <Table.ColumnGroup
+            title={
+              <Link href="/ranks" className="!h-4 !underline">
+                {t('price_groups.rank_prices_title')}
+              </Link>
+            }
+          >
+            {(ranks?.data ?? []).map((item, indexChild) => {
               return (
                 <Table.Column<PriceGroupItem>
                   key={indexChild}
@@ -379,6 +389,7 @@ function Page() {
                 />
               )
             })}
+          </Table.ColumnGroup>
 
           <Table.Column
             title={t('employees.fields.actions')}

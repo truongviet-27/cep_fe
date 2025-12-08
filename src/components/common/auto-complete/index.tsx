@@ -47,9 +47,10 @@ function CoreAutoComplete({
 
   useEffect(() => {
     if (query.data?.data) {
-      const result = query.data.data
-        ?.filter((item) => item.role.name !== 'employee')
-        .map((item) => ({ label: item.name, value: item.id })) as any
+      const result = query.data.data.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })) as any
 
       setOptions(result)
     }

@@ -9,6 +9,10 @@ export const defaultCustomerCompanyResearchInformation = [
   },
   {
     material_name: '登記簿謄本',
-    judgement: '未定',
+    judgement: '-',
+  },
+  {
+    material_name: '契約書',
+    judgement: '-',
   },
 ]

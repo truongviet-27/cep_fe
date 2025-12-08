@@ -9,7 +9,8 @@ import {
 } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
-import { Button, Flex, Space, Typography } from 'antd'
+import { PRIMARY } from '@utility/color'
+import { Button, Flex, Space, Tooltip, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableProps } from 'antd/lib'
 import dayjs from 'dayjs'
@@ -118,15 +119,21 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
               resource="quota-templates"
             />
           )}
-          <Button
-            size="small"
-            icon={<ReconciliationOutlined />}
-            onClick={() => {
-              go({
-                to: '/quotas/create?templateId=' + record.id,
-              })
-            }}
-          />
+          <Tooltip
+            title={t('quota_templates.list.createFromTemplate')}
+            color={PRIMARY}
+          >
+            <Button
+              size="small"
+              icon={<ReconciliationOutlined />}
+              style={{ color: PRIMARY, borderColor: PRIMARY }}
+              onClick={() => {
+                go({
+                  to: '/quotas/create?templateId=' + record.id,
+                })
+              }}
+            />
+          </Tooltip>
           {(permission?.is_module_admin ||
             permission?.user?.id === record.author?.id) && (
             <DeleteButton

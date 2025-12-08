@@ -245,7 +245,7 @@ function BasicInformation(
         <Form.Item label={boldText(t('customers.fields.country'))}>
           <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
             <Col>
-              <Form.Item name="country" rules={[rule]}>
+              <Form.Item name="country" rules={[rule]} initialValue="日本">
                 <Select
                   allowClear
                   style={{ minWidth: 200 }}
@@ -294,9 +294,16 @@ function BasicInformation(
             queryOptions: {
               enabled: allowRankResource,
             },
+            filters: [
+              {
+                field: 'null_option',
+                operator: 'eq',
+                value: true,
+              },
+            ],
           }}
           formItemProps={{
-            label: boldText(t('ranks.fields.code')),
+            label: boldText(t('customers.fields.unit_price_rank_code')),
             name: 'price_rank_id',
             rules: [rule],
             style: { marginTop: -8 },

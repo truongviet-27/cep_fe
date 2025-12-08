@@ -119,7 +119,8 @@
       "module_admin": "Manager (Default)"
     },
     "show": {
-      "show": "Show Employee"
+      "show": "Show Employee",
+      "no_unit_price_rank_code": "Not applicable"
     }
   },
   "permission_settings": {

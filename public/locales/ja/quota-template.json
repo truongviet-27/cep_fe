@@ -18,7 +18,8 @@
     "numberOfItems": "商品数",
     "bassPrice": "基本金額",
     "description": "説明",
-    "operation": "操作"
+    "operation": "操作",
+    "createFromTemplate": "テンプレートから作成"
   },
   "button": {
     "search": "検索",

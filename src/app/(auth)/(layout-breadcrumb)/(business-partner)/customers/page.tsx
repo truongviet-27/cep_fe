@@ -224,7 +224,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.code'),
         dataIndex: 'customer_code',
         key: 'customer_code',
-        width: '9%', // Tỷ lệ 1
+        width: 130,
         render: (text, record) => (
           <Link
             href={
@@ -244,7 +244,7 @@ export default function CustomerListPage() {
         dataIndex: 'name',
         key: 'name',
         align: 'left',
-        width: '18%', // Tỷ lệ 2
+        width: '35%',
         ellipsis: true,
       },
       {
@@ -252,14 +252,15 @@ export default function CustomerListPage() {
         dataIndex: 'country',
         key: 'country',
         align: 'left',
-        width: '8%', // Tỷ lệ 3
+        width: 100,
+        render: (country) =>
+          country && <div className="min-w-[100px]">{country}</div>,
       },
       {
         title: t('customers.fields.department'),
         dataIndex: 'department_in_charge',
         key: 'person_in_charge_department',
         align: 'left',
-        width: '11%', // Tỷ lệ 4
         ellipsis: true,
         render: (department) => {
           if (!department) return null
@@ -270,13 +271,7 @@ export default function CustomerListPage() {
             >
               {department.name}
               {department.deleted_at && (
-                <Tooltip
-                  title={
-                    t('departments.is_deleted') ||
-                    'Phòng ban đã ngừng hoạt động'
-                  }
-                  color="red"
-                >
+                <Tooltip title={t('departments.is_deleted')} color="red">
                   <ExclamationCircleOutlined style={{ color: 'red' }} />
                 </Tooltip>
               )}
@@ -288,19 +283,22 @@ export default function CustomerListPage() {
         title: t('customers.fields.unit_price_rank_code'),
         dataIndex: 'rank',
         key: 'rank',
-        width: '8%', // Tỷ lệ 5
-        render: (rank) => (
-          <Link
-            href={`/ranks`}
-            className="!underline"
-            onClick={(event) => {
-              event.preventDefault()
-              editModalShow(rank.id)
-            }}
-          >
-            {rank?.code}
-          </Link>
-        ),
+        width: 80,
+        render: (rank) =>
+          rank?.code ? (
+            <Link
+              href={`/ranks`}
+              className="!underline"
+              onClick={(event) => {
+                event.preventDefault()
+                editModalShow(rank.id)
+              }}
+            >
+              {rank?.code}
+            </Link>
+          ) : (
+            <>-</>
+          ),
       },
       {
         title: (
@@ -317,9 +315,9 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'credit_rank',
         key: 'credit_rank',
-        width: '8%', // Tỷ lệ 6
+        width: 110,
         render: (_, record) => (
-          <Space direction={'vertical'}>
+          <Space direction={'vertical'} className="min-w-[100px]">
             <Text strong>{record?.credit_rank}</Text>
             <Text className={'!font-light !italic'}>
               {record?.credit_rank_update_at &&
@@ -343,9 +341,9 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
-        width: '8%', // Tỷ lệ 7
+        width: 100,
         render: (_, record) => (
-          <Space direction={'vertical'}>
+          <Space direction={'vertical'} className="min-w-[100px]">
             <Text strong>
               {record?.anti_social_rank === 'T'
                 ? '△'
@@ -362,23 +360,33 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        width: '10%', // Tỷ lệ 8
-        render: (text) => text && dayjs(text).format(FORMAT_DATE),
+        width: 100,
+        render: (text) =>
+          text && (
+            <div className="min-w-[100px]">
+              {dayjs(text).format(FORMAT_DATE)}
+            </div>
+          ),
       },
       {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
         align: 'left',
-        width: '10%', // Tỷ lệ 9
-        render: (text) => text && dayjs(text).format(FORMAT_DATE),
+        width: 100,
+        render: (text) =>
+          text && (
+            <div className="min-w-[100px]">
+              {dayjs(text).format(FORMAT_DATE)}
+            </div>
+          ),
       },
       {
         title: t('customers.fields.actions'),
         key: 'actions',
         align: 'center',
         dataIndex: 'actions',
-        width: '10%', // Tỷ lệ 10
+        width: 130,
         render: (_, record) => (
           <Space>
             {!record.deleted_at && (
