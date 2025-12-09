@@ -142,6 +142,7 @@ function DetailInfo() {
       product: null,
       product_id: null,
       package_id: null,
+      package_name: '-',
       name: '',
       code: '',
       quantity: 0,
@@ -151,6 +152,7 @@ function DetailInfo() {
       tax_rate: 0,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
+      unit_name: t('quotas.action.detail_info.default_values.default_unit'),
     }
 
     const newProducts = [...products]
@@ -437,6 +439,16 @@ function DetailInfo() {
                               'products',
                               record.index2,
                               'unit',
+                            ],
+                            valueOption?.unit,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'unit_name',
                             ],
                             valueOption?.unit,
                           )
@@ -931,6 +943,7 @@ function DetailInfo() {
                             product: null,
                             product_id: null,
                             package_id: null,
+                            package_name: '-',
                             name: '',
                             code: '',
                             quantity: 0,
@@ -940,6 +953,9 @@ function DetailInfo() {
                             tax_rate: 0,
                             is_add_total: true,
                             unit: t(
+                              'quotas.action.detail_info.default_values.default_unit',
+                            ),
+                            unit_name: t(
                               'quotas.action.detail_info.default_values.default_unit',
                             ),
                           },
