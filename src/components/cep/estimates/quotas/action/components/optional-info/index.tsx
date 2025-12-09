@@ -30,6 +30,7 @@ function OptionalInfo() {
       product: null,
       product_id: null,
       package_id: null,
+      package_name: '-',
       name: '',
       code: '',
       quantity: 0,
@@ -39,6 +40,7 @@ function OptionalInfo() {
       tax_rate: 0,
       is_add_total: true,
       unit: '-',
+      unit_name: '-',
     }
 
     const newProducts = [...products]
@@ -227,6 +229,16 @@ function OptionalInfo() {
                               record.index,
                               'products',
                               record.index2,
+                              'package_name',
+                            ],
+                            '-',
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
                               'product_id',
                             ],
                             valueOption?.id,
@@ -258,6 +270,16 @@ function OptionalInfo() {
                               'products',
                               record.index2,
                               'unit',
+                            ],
+                            valueOption?.unit,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'unit_name',
                             ],
                             valueOption?.unit,
                           )
@@ -690,6 +712,7 @@ function OptionalInfo() {
                             product: null,
                             product_id: null,
                             package_id: null,
+                            package_name: '-',
                             name: '',
                             code: '',
                             quantity: 0,
@@ -699,6 +722,7 @@ function OptionalInfo() {
                             is_add_total: true,
                             tax_rate: 0,
                             unit: '-',
+                            unit_name: '-',
                           },
                         ],
                       },
