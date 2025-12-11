@@ -152,8 +152,8 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       <Select
         {...selectProps}
         options={options.map((opt) => ({
-          label: opt.name,
-          value: opt.id,
+          label: get(opt, optionLabel),
+          value: get(opt, optionValue),
           data: opt,
         }))}
         defaultValue={defaultValue}

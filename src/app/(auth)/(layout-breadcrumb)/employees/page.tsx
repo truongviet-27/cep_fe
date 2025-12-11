@@ -1,6 +1,7 @@
 /* eslint-disable */
 'use client'
 import { RightOutlined, WarningOutlined } from '@ant-design/icons'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -11,7 +12,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Table, Typography } from 'antd'
 import Link from 'next/link'
-import { SelectPagination } from '@components/common/select-pagination'
+import { useEffect } from 'react'
 
 const { Text } = Typography
 
@@ -28,6 +29,7 @@ function Page() {
   }
 
   const { tableProps, searchFormProps, setFilters, setCurrent } = useTable()
+
   const breadcrumbItems = [
     {
       title: boldText(t('employees.employees')),
@@ -39,13 +41,22 @@ function Page() {
     return !record.email || !record.code ? 'bg-gray-200' : ''
   }
 
+  useEffect(() => {
+    searchFormProps.form?.resetFields()
+    setFilters([], 'replace')
+  }, [])
+
   const handleSearch = (values: any) => {
     setCurrent(1)
     setFilters([
       { field: 'q', operator: 'contains', value: values.q },
       { field: 'email', operator: 'contains', value: values.email },
-      { field: 'department_id', operator: 'null', value: values.department_id },
-      { field: 'role_id', operator: 'null', value: values.role_id },
+      {
+        field: 'department_id',
+        operator: 'null',
+        value: values.department_id?.value,
+      },
+      { field: 'role_id', operator: 'null', value: values.role_id?.value },
     ])
   }
 
@@ -102,33 +113,23 @@ function Page() {
             </Form.Item>
           </Col>
           <Col xs={24} md={4}>
-            <SelectPagination
-              selectProps={{
-                resource: 'departments',
-              }}
-              formItemProps={{
-                name: 'department_id',
-                label: boldText(t('departments.departments')),
-              }}
-              selectComponentProps={{
-                placeholder: t('placeholders.partial_match'),
-              }}
+            <CoreAutocompleteAPI
+              name={'department_id'}
+              labelInValue={true}
+              resource="departments"
+              label={boldText(t('departments.departments'))}
+              placeholder={t('placeholders.partial_match')}
             />
           </Col>
           <Col xs={24} md={4}>
-            <SelectPagination
-              selectProps={{
-                resource: 'roles',
-              }}
+            <CoreAutocompleteAPI
+              name={'role_id'}
               optionLabel={'display_name'}
               optionValue={'id'}
-              formItemProps={{
-                name: 'role_id',
-                label: boldText(t('employees.fields.role')),
-              }}
-              selectComponentProps={{
-                placeholder: t('placeholders.select'),
-              }}
+              labelInValue={true}
+              resource="roles"
+              label={boldText(t('employees.fields.role'))}
+              placeholder={t('placeholders.select')}
             />
           </Col>
 
@@ -150,8 +151,8 @@ function Page() {
       </Form>
 
       <CommonTable
-        className={'mt-6'}
         {...tableProps}
+        className={'mt-6'}
         rowKey="id"
         onRow={(record) => ({
           className: getRowClassName(record),
