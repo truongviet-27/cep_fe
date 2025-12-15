@@ -18,7 +18,16 @@ import {
 import boldText from '@utility/bold-text'
 import { cn } from '@utility/cn'
 import { BLACK, GREY, PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Card, Form, List, Space, Typography } from 'antd'
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Form,
+  List,
+  Radio,
+  Space,
+  Typography,
+} from 'antd'
 import Dragger from 'antd/es/upload/Dragger'
 import axios from 'axios'
 import Image from 'next/image'
@@ -73,6 +82,9 @@ function ImportCsv({
 
   const [isResult, setIsResult] = useState(false)
   const [isError, setIsError] = useState(true)
+  const [registrationType, setRegistrationType] = useState<
+    'basic' | 'packaging'
+  >('basic')
 
   const { mutate } = useCustomMutation()
   const { mutate: mutate2 } = useCustomMutation()
@@ -81,17 +93,24 @@ function ImportCsv({
 
   const go = useGo()
 
-  const handleDownload = async () => {
-    const response = await axiosInstance.get(
-      `${apiUrl}/csv-imports/${name}/template`,
-      {
-        responseType: 'blob',
-      },
-    )
+  // Check if this is a special case that needs two import options
+  const hasTwoImportOptions = name === 'CUSTOMERS' || name === 'PRODUCTS'
+
+  const handleDownload = async (type?: 'basic' | 'packaging') => {
+    const templateType = hasTwoImportOptions && type ? type : undefined
+    const endpoint = templateType
+      ? `${apiUrl}/csv-imports/${name}/template?type=${templateType}`
+      : `${apiUrl}/csv-imports/${name}/template`
+
+    const response = await axiosInstance.get(endpoint, {
+      responseType: 'blob',
+    })
 
     if (!response?.data) return
 
-    const filename = `${name.toLowerCase()}_example.csv`
+    const filename = templateType
+      ? `${name.toLowerCase()}_${templateType}_example.csv`
+      : `${name.toLowerCase()}_example.csv`
 
     const url = URL.createObjectURL(response.data)
     const downloadLink = document.createElement('a')
@@ -205,205 +224,526 @@ function ImportCsv({
           </Card>
         ) : (
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <div
-              className={cn(
-                'rounded-[8px] border-[1px] border-solid border-[#FFD591] bg-[#E6F7FF] p-6',
-              )}
-            >
-              <Text strong style={{ color: '#FA8C16' }}>
-                {t('csv.step_1.alertTitle')}
-              </Text>
-              <Paragraph style={{ margin: '8px 0 0', color: GREY }}>
-                {t('csv.step_1.alertDesc1')}
-              </Paragraph>
-              <Paragraph style={{ margin: 0, color: GREY }}>
-                {t('csv.step_1.alertDesc2')}
-              </Paragraph>
-              <Button
-                type="link"
-                icon={<DownloadOutlined />}
-                style={{ paddingLeft: 0 }}
-                onClick={handleDownload}
-              >
-                {t('csv.step_1.downloadButton')}
-              </Button>
-            </div>
-
-            <Form.Item
-              layout="vertical"
-              name={'file'}
-              rules={[
-                {
-                  required: true,
-                  message: t('csv.step_1.error.required'),
-                },
-                {
-                  validator: async (_, fileList) => {
-                    setIsError(false)
-                    const file = fileList.file
-
-                    const isCSV = file.name.toLowerCase().endsWith('.csv')
-                    if (!isCSV) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {t('csv.step_1.error.pattern')}
-                        </div>,
-                      )
-                    }
-
-                    // check file name <= 255 characters
-                    if (file.name.length > 255) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {t('csv.validation_error.max_name_file')}
-                        </div>,
-                      )
-                    }
-
-                    // Check file size <= 5MB
-                    const isTooLarge = file.size / 1024 / 1024 > 5
-                    if (isTooLarge) {
-                      setIsError(true)
-                      return Promise.reject(t('csv.step_1.error.5mb'))
-                    }
-
-                    // read file content
-                    const arrayBuffer = await file.arrayBuffer()
-
-                    const encodingInfo = detectEncodingWithInfo(arrayBuffer)
-                    console.log('Encoding info:', encodingInfo)
-                    // Validate encoding
-                    const supportedEncodings = [
-                      'UTF-8',
-                      'UTF-8 (BOM)',
-                      'Shift-JIS',
-                      'SJIS',
-                    ]
-                    const isSupported = supportedEncodings.some((enc) =>
-                      encodingInfo.encoding
-                        .toUpperCase()
-                        .includes(enc.toUpperCase()),
-                    )
-
-                    if (!isSupported) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {t('csv.step_1.error.pattern') +
-                            ` (${encodingInfo.encoding})`}
-                        </div>,
-                      )
-                    }
-
-                    // Convert to UTF-8 if necessary
-                    const utf8Text = encodingInfo.decodedText || ''
-                    const detectedEncoding = encodingInfo.encoding
-
-                    console.log('Final detected encoding:', detectedEncoding)
-
-                    // Validate CSV content using PapaParse
-                    const result = Papa.parse(utf8Text, {
-                      skipEmptyLines: true,
-                    })
-                    const numLines = result.data.length
-
-                    if (numLines === 0) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {t('csv.step_1.error.file_empty')}
-                        </div>,
-                      )
-                    }
-
-                    if (numLines > 1000) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {t('csv.step_1.error.max_rows')}
-                        </div>,
-                      )
-                    }
-
-                    // Validate required headers
-                    const headers = result.data[0] as string[]
-                    const requiredHeaders = REQUIRED_HEADERS[name] || []
-                    const missingHeaders = requiredHeaders.filter(
-                      (requiredHeader) =>
-                        !headers.some(
-                          (header) => header?.trim() === requiredHeader.trim(),
-                        ),
-                    )
-                    if (headers.length === 0) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {t('csv.step_1.error.missing_headers')}
-                        </div>,
-                      )
-                    }
-
-                    if (missingHeaders.length > 0) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {missingHeaders.join(', ')} :{' '}
-                          {t('csv.step_1.error.required_column')}
-                        </div>,
-                      )
-                    }
-
-                    return Promise.resolve()
-                  },
-                },
-              ]}
-            >
-              <Dragger
-                style={{
-                  border: '1px dashed #d9d9d9',
-                  textAlign: 'center',
-                }}
-                accept=".csv"
-                name="file"
-                maxCount={1}
-                beforeUpload={() => false}
-                onRemove={() => {
-                  form.setFields([{ name: 'file', errors: [], value: [] }])
-                }}
-              >
-                <div className="m-6 flex flex-col items-center gap-3">
-                  <FileAddOutlined
-                    style={{ fontSize: 40, color: BLACK, marginBottom: 12 }}
-                  />
-                  <Paragraph style={{ marginBottom: 8, color: BLACK }}>
-                    {t('csv.step_1.dragDrop')}
+            {hasTwoImportOptions ? (
+              <>
+                {/* Light blue instruction box */}
+                <div
+                  className={cn(
+                    'rounded-[8px] border-[1px] border-solid border-[#91D5FF] bg-[#E6F7FF] p-6',
+                  )}
+                >
+                  <Paragraph style={{ margin: 0, color: '#1890FF' }}>
+                    正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。
                   </Paragraph>
-                  <Paragraph style={{ marginBottom: 20, color: GREY }}>
-                    {t('csv.step_1.orSelectFile')}
-                  </Paragraph>
-                  <Button type="primary" size="large">
-                    {t('csv.step_1.selectFileButton')}
-                  </Button>
+                  <div
+                    style={{
+                      marginTop: 16,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                    }}
+                  >
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleDownload('basic')
+                      }}
+                      style={{
+                        color: '#1890FF',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: 6,
+                          height: 6,
+                          borderRadius: '50%',
+                          backgroundColor: '#FF4D4F',
+                        }}
+                      />
+                      商品基本情報登録テンプレート
+                    </a>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleDownload('packaging')
+                      }}
+                      style={{
+                        color: '#1890FF',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: 6,
+                          height: 6,
+                          borderRadius: '50%',
+                          backgroundColor: '#FF4D4F',
+                        }}
+                      />
+                      商品の荷姿登録テンプレート
+                    </a>
+                  </div>
                 </div>
-              </Dragger>
-            </Form.Item>
 
-            <Card
-              size="small"
-              title={t('csv.step_1.noteTitle')}
-              headStyle={{ borderBottom: 'none', margin: '10px 0 0 10px' }}
-            >
-              <List
-                size="small"
-                split={false}
-                dataSource={dataSource}
-                renderItem={(item) => (
-                  <List.Item style={{ padding: 2 }}>・{item}</List.Item>
+                {/* Registration type selection */}
+                <div
+                  style={{
+                    border: '1px solid #FF4D4F',
+                    borderRadius: 8,
+                    padding: '16px 20px',
+                    backgroundColor: '#fff',
+                  }}
+                >
+                  <div
+                    style={{ display: 'flex', alignItems: 'center', gap: 16 }}
+                  >
+                    <Text strong style={{ fontSize: 16 }}>
+                      登録:
+                    </Text>
+                    <Radio.Group
+                      value={registrationType}
+                      onChange={(e) => setRegistrationType(e.target.value)}
+                      style={{ display: 'flex', gap: 24 }}
+                    >
+                      <Radio value="basic">基本情報</Radio>
+                      <Radio value="packaging">荷姿情報</Radio>
+                    </Radio.Group>
+                  </div>
+                </div>
+
+                {/* Content area with dashed border */}
+                <div
+                  style={{
+                    border: '1px dashed #d9d9d9',
+                    borderRadius: 8,
+                    padding: 20,
+                    backgroundColor: '#fff',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: 16,
+                    }}
+                  >
+                    <Text style={{ color: '#FF4D4F', fontWeight: 500 }}>
+                      basic
+                    </Text>
+                    <Text style={{ color: '#FF4D4F', fontWeight: 500 }}>
+                      detail
+                    </Text>
+                  </div>
+                  <Form.Item
+                    layout="vertical"
+                    name={'file'}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('csv.step_1.error.required'),
+                      },
+                      {
+                        validator: async (_, fileList) => {
+                          setIsError(false)
+                          const file = fileList.file
+
+                          const isCSV = file.name.toLowerCase().endsWith('.csv')
+                          if (!isCSV) {
+                            setIsError(true)
+                            return Promise.reject(
+                              <div style={{ whiteSpace: 'pre-line' }}>
+                                {t('csv.step_1.error.pattern')}
+                              </div>,
+                            )
+                          }
+
+                          // check file name <= 255 characters
+                          if (file.name.length > 255) {
+                            setIsError(true)
+                            return Promise.reject(
+                              <div style={{ whiteSpace: 'pre-line' }}>
+                                {t('csv.validation_error.max_name_file')}
+                              </div>,
+                            )
+                          }
+
+                          // Check file size <= 5MB
+                          const isTooLarge = file.size / 1024 / 1024 > 5
+                          if (isTooLarge) {
+                            setIsError(true)
+                            return Promise.reject(t('csv.step_1.error.5mb'))
+                          }
+
+                          // read file content
+                          const arrayBuffer = await file.arrayBuffer()
+
+                          const encodingInfo =
+                            detectEncodingWithInfo(arrayBuffer)
+                          console.log('Encoding info:', encodingInfo)
+                          // Validate encoding
+                          const supportedEncodings = [
+                            'UTF-8',
+                            'UTF-8 (BOM)',
+                            'Shift-JIS',
+                            'SJIS',
+                          ]
+                          const isSupported = supportedEncodings.some((enc) =>
+                            encodingInfo.encoding
+                              .toUpperCase()
+                              .includes(enc.toUpperCase()),
+                          )
+
+                          if (!isSupported) {
+                            setIsError(true)
+                            return Promise.reject(
+                              <div style={{ whiteSpace: 'pre-line' }}>
+                                {t('csv.step_1.error.pattern') +
+                                  ` (${encodingInfo.encoding})`}
+                              </div>,
+                            )
+                          }
+
+                          // Convert to UTF-8 if necessary
+                          const utf8Text = encodingInfo.decodedText || ''
+                          const detectedEncoding = encodingInfo.encoding
+
+                          console.log(
+                            'Final detected encoding:',
+                            detectedEncoding,
+                          )
+
+                          // Validate CSV content using PapaParse
+                          const result = Papa.parse(utf8Text, {
+                            skipEmptyLines: true,
+                          })
+                          const numLines = result.data.length
+
+                          if (numLines === 0) {
+                            setIsError(true)
+                            return Promise.reject(
+                              <div style={{ whiteSpace: 'pre-line' }}>
+                                {t('csv.step_1.error.file_empty')}
+                              </div>,
+                            )
+                          }
+
+                          if (numLines > 1000) {
+                            setIsError(true)
+                            return Promise.reject(
+                              <div style={{ whiteSpace: 'pre-line' }}>
+                                {t('csv.step_1.error.max_rows')}
+                              </div>,
+                            )
+                          }
+
+                          // Validate required headers
+                          const headers = result.data[0] as string[]
+                          const requiredHeaders = REQUIRED_HEADERS[name] || []
+                          const missingHeaders = requiredHeaders.filter(
+                            (requiredHeader) =>
+                              !headers.some(
+                                (header) =>
+                                  header?.trim() === requiredHeader.trim(),
+                              ),
+                          )
+                          if (headers.length === 0) {
+                            setIsError(true)
+                            return Promise.reject(
+                              <div style={{ whiteSpace: 'pre-line' }}>
+                                {t('csv.step_1.error.missing_headers')}
+                              </div>,
+                            )
+                          }
+
+                          if (missingHeaders.length > 0) {
+                            setIsError(true)
+                            return Promise.reject(
+                              <div style={{ whiteSpace: 'pre-line' }}>
+                                {missingHeaders.join(', ')} :{' '}
+                                {t('csv.step_1.error.required_column')}
+                              </div>,
+                            )
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
+                    <Dragger
+                      style={{
+                        border: '1px dashed #d9d9d9',
+                        textAlign: 'center',
+                      }}
+                      accept=".csv"
+                      name="file"
+                      maxCount={1}
+                      beforeUpload={() => false}
+                      onRemove={() => {
+                        form.setFields([
+                          { name: 'file', errors: [], value: [] },
+                        ])
+                      }}
+                    >
+                      <div className="m-6 flex flex-col items-center gap-3">
+                        <FileAddOutlined
+                          style={{
+                            fontSize: 40,
+                            color: BLACK,
+                            marginBottom: 12,
+                          }}
+                        />
+                        <Paragraph style={{ marginBottom: 8, color: BLACK }}>
+                          {t('csv.step_1.dragDrop')}
+                        </Paragraph>
+                        <Paragraph style={{ marginBottom: 20, color: GREY }}>
+                          {t('csv.step_1.orSelectFile')}
+                        </Paragraph>
+                        <Button type="primary" size="large">
+                          {t('csv.step_1.selectFileButton')}
+                        </Button>
+                      </div>
+                    </Dragger>
+                  </Form.Item>
+                </div>
+              </>
+            ) : (
+              <div
+                className={cn(
+                  'rounded-[8px] border-[1px] border-solid border-[#FFD591] bg-[#E6F7FF] p-6',
                 )}
-              />
-            </Card>
+              >
+                <Text strong style={{ color: '#FA8C16' }}>
+                  {t('csv.step_1.alertTitle')}
+                </Text>
+                <Paragraph style={{ margin: '8px 0 0', color: GREY }}>
+                  {t('csv.step_1.alertDesc1')}
+                </Paragraph>
+                <Paragraph style={{ margin: 0, color: GREY }}>
+                  {t('csv.step_1.alertDesc2')}
+                </Paragraph>
+                <Button
+                  type="link"
+                  icon={<DownloadOutlined />}
+                  style={{ paddingLeft: 0 }}
+                  onClick={() => handleDownload()}
+                >
+                  {t('csv.step_1.downloadButton')}
+                </Button>
+              </div>
+            )}
+
+            {!hasTwoImportOptions && (
+              <>
+                <Form.Item
+                  layout="vertical"
+                  name={'file'}
+                  rules={[
+                    {
+                      required: true,
+                      message: t('csv.step_1.error.required'),
+                    },
+                    {
+                      validator: async (_, fileList) => {
+                        setIsError(false)
+                        const file = fileList.file
+
+                        const isCSV = file.name.toLowerCase().endsWith('.csv')
+                        if (!isCSV) {
+                          setIsError(true)
+                          return Promise.reject(
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {t('csv.step_1.error.pattern')}
+                            </div>,
+                          )
+                        }
+
+                        // check file name <= 255 characters
+                        if (file.name.length > 255) {
+                          setIsError(true)
+                          return Promise.reject(
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {t('csv.validation_error.max_name_file')}
+                            </div>,
+                          )
+                        }
+
+                        // Check file size <= 5MB
+                        const isTooLarge = file.size / 1024 / 1024 > 5
+                        if (isTooLarge) {
+                          setIsError(true)
+                          return Promise.reject(t('csv.step_1.error.5mb'))
+                        }
+
+                        // read file content
+                        const arrayBuffer = await file.arrayBuffer()
+
+                        const encodingInfo = detectEncodingWithInfo(arrayBuffer)
+                        console.log('Encoding info:', encodingInfo)
+                        // Validate encoding
+                        const supportedEncodings = [
+                          'UTF-8',
+                          'UTF-8 (BOM)',
+                          'Shift-JIS',
+                          'SJIS',
+                        ]
+                        const isSupported = supportedEncodings.some((enc) =>
+                          encodingInfo.encoding
+                            .toUpperCase()
+                            .includes(enc.toUpperCase()),
+                        )
+
+                        if (!isSupported) {
+                          setIsError(true)
+                          return Promise.reject(
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {t('csv.step_1.error.pattern') +
+                                ` (${encodingInfo.encoding})`}
+                            </div>,
+                          )
+                        }
+
+                        // Convert to UTF-8 if necessary
+                        const utf8Text = encodingInfo.decodedText || ''
+                        const detectedEncoding = encodingInfo.encoding
+
+                        console.log(
+                          'Final detected encoding:',
+                          detectedEncoding,
+                        )
+
+                        // Validate CSV content using PapaParse
+                        const result = Papa.parse(utf8Text, {
+                          skipEmptyLines: true,
+                        })
+                        const numLines = result.data.length
+
+                        if (numLines === 0) {
+                          setIsError(true)
+                          return Promise.reject(
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {t('csv.step_1.error.file_empty')}
+                            </div>,
+                          )
+                        }
+
+                        if (numLines > 1000) {
+                          setIsError(true)
+                          return Promise.reject(
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {t('csv.step_1.error.max_rows')}
+                            </div>,
+                          )
+                        }
+
+                        // Validate required headers
+                        const headers = result.data[0] as string[]
+                        const requiredHeaders = REQUIRED_HEADERS[name] || []
+                        const missingHeaders = requiredHeaders.filter(
+                          (requiredHeader) =>
+                            !headers.some(
+                              (header) =>
+                                header?.trim() === requiredHeader.trim(),
+                            ),
+                        )
+                        if (headers.length === 0) {
+                          setIsError(true)
+                          return Promise.reject(
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {t('csv.step_1.error.missing_headers')}
+                            </div>,
+                          )
+                        }
+
+                        if (missingHeaders.length > 0) {
+                          setIsError(true)
+                          return Promise.reject(
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {missingHeaders.join(', ')} :{' '}
+                              {t('csv.step_1.error.required_column')}
+                            </div>,
+                          )
+                        }
+
+                        return Promise.resolve()
+                      },
+                    },
+                  ]}
+                >
+                  <Dragger
+                    style={{
+                      border: '1px dashed #d9d9d9',
+                      textAlign: 'center',
+                    }}
+                    accept=".csv"
+                    name="file"
+                    maxCount={1}
+                    beforeUpload={() => false}
+                    onRemove={() => {
+                      form.setFields([{ name: 'file', errors: [], value: [] }])
+                    }}
+                  >
+                    <div className="m-6 flex flex-col items-center gap-3">
+                      <FileAddOutlined
+                        style={{ fontSize: 40, color: BLACK, marginBottom: 12 }}
+                      />
+                      <Paragraph style={{ marginBottom: 8, color: BLACK }}>
+                        {t('csv.step_1.dragDrop')}
+                      </Paragraph>
+                      <Paragraph style={{ marginBottom: 20, color: GREY }}>
+                        {t('csv.step_1.orSelectFile')}
+                      </Paragraph>
+                      <Button type="primary" size="large">
+                        {t('csv.step_1.selectFileButton')}
+                      </Button>
+                    </div>
+                  </Dragger>
+                </Form.Item>
+
+                <Card
+                  size="small"
+                  title={t('csv.step_1.noteTitle')}
+                  headStyle={{ borderBottom: 'none', margin: '10px 0 0 10px' }}
+                >
+                  <List
+                    size="small"
+                    split={false}
+                    dataSource={dataSource}
+                    renderItem={(item) => (
+                      <List.Item style={{ padding: 2 }}>・{item}</List.Item>
+                    )}
+                  />
+                </Card>
+              </>
+            )}
+
+            {hasTwoImportOptions && (
+              <Card
+                size="small"
+                title={t('csv.step_1.noteTitle')}
+                headStyle={{ borderBottom: 'none', margin: '10px 0 0 10px' }}
+              >
+                <List
+                  size="small"
+                  split={false}
+                  dataSource={dataSource}
+                  renderItem={(item) => (
+                    <List.Item style={{ padding: 2 }}>・{item}</List.Item>
+                  )}
+                />
+              </Card>
+            )}
           </Space>
         )}
 
