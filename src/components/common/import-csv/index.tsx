@@ -96,11 +96,14 @@ function ImportCsv({
   // Check if this is a special case that needs two import options
   const hasTwoImportOptions = name === 'CUSTOMERS' || name === 'PRODUCTS'
 
+  // Helper function to get API name with '_DETAIL' suffix when needed
+  const getApiName = (type?: 'basic' | 'packaging') => {
+    return hasTwoImportOptions && type === 'packaging' ? `${name}_DETAIL` : name
+  }
+
   const handleDownload = async (type?: 'basic' | 'packaging') => {
-    const templateType = hasTwoImportOptions && type ? type : undefined
-    const endpoint = templateType
-      ? `${apiUrl}/csv-imports/${name}/template?type=${templateType}`
-      : `${apiUrl}/csv-imports/${name}/template`
+    const apiName = getApiName(type)
+    const endpoint = `${apiUrl}/csv-imports/${apiName}/template`
 
     const response = await axiosInstance.get(endpoint, {
       responseType: 'blob',
@@ -108,9 +111,7 @@ function ImportCsv({
 
     if (!response?.data) return
 
-    const filename = templateType
-      ? `${name.toLowerCase()}_${templateType}_example.csv`
-      : `${name.toLowerCase()}_example.csv`
+    const filename = `${apiName.toLowerCase()}_example.csv`
 
     const url = URL.createObjectURL(response.data)
     const downloadLink = document.createElement('a')
@@ -124,10 +125,12 @@ function ImportCsv({
 
   useEffect(() => {
     if (isResult) {
+      const apiName = getApiName(registrationType)
+
       mutate(
         {
           method: 'post',
-          url: `${apiUrl}/${name}/presigned-url`,
+          url: `${apiUrl}/${apiName}/presigned-url`,
           values: {
             file_name: form.getFieldValue('file')?.file?.name,
             content_type: form.getFieldValue('file')?.file?.type,
@@ -146,7 +149,7 @@ function ImportCsv({
               .then(() => {
                 mutate2({
                   method: 'post',
-                  url: `${apiUrl}/csv-imports/${name}/import`,
+                  url: `${apiUrl}/csv-imports/${apiName}/import`,
                   values: {
                     file_key: data.data.file_key,
                   },
@@ -159,7 +162,7 @@ function ImportCsv({
         },
       )
     }
-  }, [isResult])
+  }, [isResult, registrationType, name])
 
   const dataSource = useMemo(() => {
     return [
@@ -233,7 +236,7 @@ function ImportCsv({
                   )}
                 >
                   <Paragraph style={{ margin: 0, color: '#1890FF' }}>
-                    正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。
+                    {t('csv.step_1.twoOptions.instruction')}
                   </Paragraph>
                   <div
                     style={{
@@ -266,7 +269,7 @@ function ImportCsv({
                           backgroundColor: '#FF4D4F',
                         }}
                       />
-                      商品基本情報登録テンプレート
+                      {t('csv.step_1.twoOptions.basicTemplate')}
                     </a>
                     <a
                       href="#"
@@ -291,7 +294,7 @@ function ImportCsv({
                           backgroundColor: '#FF4D4F',
                         }}
                       />
-                      商品の荷姿登録テンプレート
+                      {t('csv.step_1.twoOptions.packagingTemplate')}
                     </a>
                   </div>
                 </div>
@@ -309,15 +312,19 @@ function ImportCsv({
                     style={{ display: 'flex', alignItems: 'center', gap: 16 }}
                   >
                     <Text strong style={{ fontSize: 16 }}>
-                      登録:
+                      {t('csv.step_1.twoOptions.registrationLabel')}
                     </Text>
                     <Radio.Group
                       value={registrationType}
                       onChange={(e) => setRegistrationType(e.target.value)}
                       style={{ display: 'flex', gap: 24 }}
                     >
-                      <Radio value="basic">基本情報</Radio>
-                      <Radio value="packaging">荷姿情報</Radio>
+                      <Radio value="basic">
+                        {t('csv.step_1.twoOptions.basicInfo')}
+                      </Radio>
+                      <Radio value="packaging">
+                        {t('csv.step_1.twoOptions.packagingInfo')}
+                      </Radio>
                     </Radio.Group>
                   </div>
                 </div>
@@ -339,10 +346,10 @@ function ImportCsv({
                     }}
                   >
                     <Text style={{ color: '#FF4D4F', fontWeight: 500 }}>
-                      basic
+                      {t('csv.step_1.twoOptions.basicLabel')}
                     </Text>
                     <Text style={{ color: '#FF4D4F', fontWeight: 500 }}>
-                      detail
+                      {t('csv.step_1.twoOptions.detailLabel')}
                     </Text>
                   </div>
                   <Form.Item
