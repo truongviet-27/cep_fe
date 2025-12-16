@@ -903,6 +903,28 @@
       "result": {
         "title": "CSV一括登録中です。処理結果はCSVタスク履歴画面で確認してください。",
         "redirect": "CSVタスク履歴画面"
+      },
+      "twoOptions": {
+        "instruction": "正しい形式でデータを登録するため、まずCSVテンプレートをダウンロードしてください。テンプレートに必要事項を入力してからアップロードすることで、エラーを防ぐことができます。",
+        "basicTemplate": "商品基本情報登録テンプレート",
+        "packagingTemplate": "商品の荷姿登録テンプレート",
+        "registrationLabel": "登録:",
+        "basicInfo": "基本情報",
+        "packagingInfo": "荷姿情報",
+        "basicLabel": "basic",
+        "detailLabel": "detail",
+        "customers": {
+          "detailTemplate": "取引先の送付先と納品先",
+          "basicTemplate": "取引先の基本情報",
+          "basicInfo": "基本情報",
+          "detailInfo": "送付先と納品先"
+        },
+        "products": {
+          "detailTemplate": "商品の荷姿登録",
+          "basicTemplate": "商品基本情報登録",
+          "basicInfo": "基本情報",
+          "detailInfo": "荷姿情報"
+        }
       }
     },
     "buttons": {

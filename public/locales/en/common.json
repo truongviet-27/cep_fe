@@ -434,5 +434,19 @@
     "invalid_format": "This field has an invalid format",
     "required": "This is a required field",
     "max255": "This field cannot exceed 255 characters."
+  },
+  "csv": {
+    "step_1": {
+      "twoOptions": {
+        "instruction": "To register data in the correct format, please download the CSV template first. By entering the necessary information into the template and uploading it, you can prevent errors.",
+        "basicTemplate": "Product Basic Information Registration Template",
+        "packagingTemplate": "Product Packaging Registration Template",
+        "registrationLabel": "Registration:",
+        "basicInfo": "Basic Information",
+        "packagingInfo": "Packaging Information",
+        "basicLabel": "basic",
+        "detailLabel": "detail"
+      }
+    }
   }
 }
