@@ -22,7 +22,8 @@
     "quantity": "入数",
     "standardPrice": "標準価格 (円)",
     "isStandard": "標準同額",
-    "actions": "操作"
+    "actions": "操作",
+    "default_category": "なし"
   },
   "unitPriceGroup": {
     "tableTitle": "単価グループ",

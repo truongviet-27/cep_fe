@@ -362,6 +362,17 @@ const DetailInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                if (
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  return null
+                }
                 return form
                   .getFieldValue([
                     'main_product',
@@ -421,6 +432,27 @@ const DetailInfo: FC = () => {
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
+                }
+                if (
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  form.setFieldValue(
+                    [
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'profit_margin',
+                    ],
+                    0,
+                  )
+                  return '0%'
                 }
                 const cost =
                   form.getFieldValue([

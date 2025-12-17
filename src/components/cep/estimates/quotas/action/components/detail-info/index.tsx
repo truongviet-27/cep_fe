@@ -44,6 +44,7 @@ function DetailInfo() {
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
+  const [checkNull, setcheckNull] = useState(false)
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const isProductManager =
@@ -65,6 +66,8 @@ function DetailInfo() {
         const qty = product.quantity || 0
         const selling = (product.selling_price || 0) * qty
         const cost = (product.cost_price || 0) * qty
+
+        if (product.cost_price === null) setcheckNull(true)
 
         costTotal += cost
         sellTotal += selling
@@ -116,7 +119,7 @@ function DetailInfo() {
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setProfitRate(profitRate)
+    setProfitRate(checkNull ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
   }
 
@@ -748,6 +751,27 @@ function DetailInfo() {
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
+                }
+                if (
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  form.setFieldValue(
+                    [
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'profit_margin',
+                    ],
+                    0,
+                  )
+                  return '0%'
                 }
                 const cost =
                   form.getFieldValue([
