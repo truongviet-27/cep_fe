@@ -370,7 +370,7 @@ function DetailInfo() {
                             message: '',
                           },
                         ]}
-                        resource="products"
+                        resource="products/list-all"
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}

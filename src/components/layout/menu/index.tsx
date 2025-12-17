@@ -4,6 +4,7 @@ import { DownOutlined } from '@ant-design/icons'
 import { AppIcon } from '@components/icons/app-icon'
 import { recursiveNestedMenu } from '@components/layout/menu/utils/recursive-nested-menu'
 import { useGo, useMenu } from '@refinedev/core'
+import type { TreeMenuItem } from '@refinedev/core/dist/hooks/menu/useMenu'
 import type { MenuProps } from 'antd'
 import { Menu as MenuAntd } from 'antd'
 import { last } from 'lodash'
@@ -28,7 +29,11 @@ function Menu() {
 
   const selectedKeys = [`/${last(selectedKey.split('/'))}`]
 
-  const items = recursiveNestedMenu(menuItems)
+  const items = recursiveNestedMenu(
+    (menuItems as (TreeMenuItem & { isNotMenu: boolean })[]).filter(
+      (menuItem) => !menuItem.isNotMenu,
+    ),
+  )
 
   return (
     <div className="flex w-2/3 items-center justify-start space-x-8">

@@ -109,6 +109,15 @@ export const hasForbiddenRoute = (pathName: string) => {
       return checkForbidden(PermissionEnum.PRODUCT_EDIT, [
         ParameterResourceEnum.PRODUCTS,
       ])
+    case '/product-combos':
+    case '/product-combos/show':
+      return checkForbidden(null, [ParameterResourceEnum.PRODUCTS])
+    case '/product-combos/csv':
+    case '/product-combos/create':
+    case '/product-combos/edit':
+      return checkForbidden(PermissionEnum.PRODUCT_EDIT, [
+        ParameterResourceEnum.PRODUCTS,
+      ])
     case '/ranks':
     case '/ranks/show':
     case '/ranks/create':

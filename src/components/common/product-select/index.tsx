@@ -21,7 +21,7 @@ const ProductSelect: React.FC<Props> = (props) => {
   const [searchText, setSearchText] = useState<string>('')
 
   const { selectProps: selectPropsProduct, query } = useSelect({
-    resource: 'products',
+    resource: 'products/list-all',
     optionLabel: 'name',
     optionValue: 'id',
     filters: [

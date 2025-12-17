@@ -286,6 +286,69 @@
       }
     }
   },
+  "product_combos": {
+    "sections": {
+      "basicInfo": "基本情報",
+      "productInformation": "商品情報",
+      "unitPriceGroup": "単価グループ"
+    },
+    "productInfoTable": {
+      "header": {
+        "productCode": "商品コード",
+        "productName": "商品名"
+      }
+    },
+    "fields": {
+      "assortmentCode": "アソートコード",
+      "assortmentName": "アソート名",
+      "assortmentNameAbbr": "アソート名 (略称) ",
+      "barcode": "バーコード",
+      "category": "カテゴリ",
+      "unit": "単位",
+      "taxRate": "消費税率",
+      "costPrice": "原価 (円)",
+      "sellingPrice": "販売単価 (円)",
+      "remarks": "備考",
+      "packagingCode": "荷姿コード",
+      "packagingName": "荷姿名",
+      "status": "ステータス",
+      "quantity": "入数",
+      "standardPrice": "標準価格 (円)",
+      "isStandard": "標準同額",
+      "actions": "操作"
+    },
+    "list": {
+      "title": "商品一覧",
+      "searchArea": {
+        "code_or_name": "アソートコード・アソー",
+        "category": "カテゴリ",
+        "productInputPlaceholder": "部分一致",
+        "categoryLabel": "カテゴリ",
+        "categoryPlaceholder": "選択してください",
+        "clearButton": "クリア"
+      },
+      "actions": {
+        "createNewButton": "新規登録",
+        "csvBulkUploadLink": "CSV一括登録"
+      },
+      "table": {
+        "headers": {
+          "assortmentCode": "アソートコード（商品コード）",
+          "assortmentName": "アソート名",
+          "products": "商品",
+          "barcode": "バーコード",
+          "subcategory": "カテゴリ",
+          "unit": "単位",
+          "costPrice": "原価",
+          "sellingPrice": "販売単価",
+          "actions": "操作"
+        },
+        "text": {
+          "pieces": "件"
+        }
+      }
+    }
+  },
   "ranks": {
     "ranks": "ランク",
     "titles": {
