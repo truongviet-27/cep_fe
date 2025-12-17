@@ -101,7 +101,11 @@
     "home": "商品",
     "productList": "商品一覧",
     "productDetail": "商品詳細",
+    "comboDetail": "アソート詳細",
     "productCreate": "商品登録",
-    "productEdit": "商品編集"
+    "productEdit": "商品編集",
+    "productCombos": "アソート一覧",
+    "productComboCreate": "アソート登録",
+    "productComboEdit": "品揃え編集"
   }
 }

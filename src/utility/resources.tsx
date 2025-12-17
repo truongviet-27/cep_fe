@@ -1,6 +1,6 @@
 import type { ResourceProps } from '@refinedev/core'
 
-export const resource: ResourceProps[] = [
+export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
   {
     name: 'estimates',
   },
@@ -113,6 +113,18 @@ export const resource: ResourceProps[] = [
       canCreate: true,
       canEdit: true,
     },
+  },
+  {
+    name: 'product-combos',
+    list: '/product-combos',
+    show: '/product-combos/show/:id',
+    create: '/product-combos/create',
+    edit: '/product-combos/edit/:id',
+    meta: {
+      canDelete: true,
+      canCreate: true,
+    },
+    isNotMenu: true,
   },
   {
     name: 'product-units',
