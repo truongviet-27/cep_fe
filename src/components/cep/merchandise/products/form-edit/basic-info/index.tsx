@@ -1,7 +1,7 @@
 import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CoreInput from '@components/common/core-input'
-import ProductCategoryDropdown from '@components/common/product-category-dropdown'
+import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
 import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
@@ -175,15 +175,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             name="category"
             label={boldText(t('products.fields.category'))}
             colon={false}
-            required={true}
-            rules={[
-              {
-                required: true,
-                message: 'カテゴリは必須です。',
-              },
-            ]}
           >
-            <ProductCategoryDropdown
+            <ProductCategoryEditDropdown
               defaultValue={form.getFieldValue('category')}
               placeholder="選択してください"
               onSelect={handleChooseCategory}
@@ -285,14 +278,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           <CoreInput
             name="cost_price"
             label={t('products.fields.costPrice')}
-            required={true}
             layout="horizontal"
             type="number"
             rules={[
-              {
-                required: true,
-                message: '原価は必須です。',
-              },
               {
                 validator: (_, value) => {
                   if (value === undefined || value === null) {
