@@ -103,7 +103,7 @@ const OptionalInfo: FC<Props> = (props) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return value.toLocaleString()
+        return value?.toLocaleString()
       },
     },
     {

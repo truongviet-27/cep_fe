@@ -559,6 +559,27 @@ function OptionalInfo() {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                if (
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  form.setFieldValue(
+                    [
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'profit_margin',
+                    ],
+                    0,
+                  )
+                  return '0%'
+                }
                 const cost =
                   form.getFieldValue([
                     'optional_product',

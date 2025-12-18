@@ -282,6 +282,17 @@ const OptionalInfo: FC = () => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                if (
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  return null
+                }
                 return form
                   .getFieldValue([
                     'optional_product',
@@ -341,6 +352,27 @@ const OptionalInfo: FC = () => {
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
+                }
+                if (
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  form.setFieldValue(
+                    [
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'profit_margin',
+                    ],
+                    0,
+                  )
+                  return '0%'
                 }
                 const cost =
                   form.getFieldValue([
@@ -460,7 +492,7 @@ const OptionalInfo: FC = () => {
                             name: '',
                             code: '自動採番',
                             quantity: 0,
-                            cost_price: 0,
+                            cost_price: null,
                             selling_price: 0,
                             profit_margin: 0,
                             is_add_total: false,
