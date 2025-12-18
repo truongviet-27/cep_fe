@@ -39,7 +39,7 @@ const authOptions: AuthOptions = {
         if (!credentials?.token) return null
 
         const introspectRes = await fetch(
-          `${process.env.NEXT_PUBLIC_ACC_ADMIN_CONSOLE}/realms/dev/protocol/openid-connect/token/introspect`,
+          `${process.env.NEXT_PUBLIC_ISSUER}/protocol/openid-connect/token/introspect`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -77,7 +77,7 @@ const authOptions: AuthOptions = {
       },
     }),
   ],
-  secret: `UItTuD1HcGXIj8ZfHUswhYdNd40Lc325R8VlxQPUoR0=`,
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, account, user }) {
       const expandUser = user as
