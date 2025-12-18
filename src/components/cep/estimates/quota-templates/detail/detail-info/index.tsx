@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
@@ -12,7 +13,7 @@ import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
 import type { FC } from 'react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 const { Title, Text } = Typography
 
@@ -21,6 +22,13 @@ interface Props {
 }
 
 const DetailInfo: FC<Props> = (props) => {
+  const [expandedKeys, setExpandedKeys] = useState<any[]>([])
+
+  const toggleExpand = (id: any) => {
+    setExpandedKeys((prev) =>
+      prev.includes(id) ? prev.filter((key) => key !== id) : [...prev, id],
+    )
+  }
   const { detail } = props
   const t = useTranslate()
 
@@ -97,14 +105,50 @@ const DetailInfo: FC<Props> = (props) => {
       title: '商品・サービス名',
       dataIndex: 'name',
       key: 'name',
-      align: 'left',
-      width: 200,
-      render: (value, record) => {
-        if (record.isHeader) {
-          return { props: { colSpan: 0 } }
-        }
+      render: (_, record) => {
+        if (record.isHeader) return { props: { colSpan: 0 } }
 
-        return value
+        const isExpanded = expandedKeys.includes(record.id)
+        const hasAssort =
+          record.assort_products && record.assort_products.length > 0
+
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div
+              style={{
+                cursor: hasAssort ? 'pointer' : 'default',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+              onClick={() => hasAssort && toggleExpand(record.id)}
+            >
+              <span>{record.name}</span>
+              {hasAssort &&
+                (isExpanded ? (
+                  <UpOutlined style={{ fontSize: '10px' }} />
+                ) : (
+                  <DownOutlined style={{ fontSize: '10px' }} />
+                ))}
+            </div>
+            {hasAssort && isExpanded && (
+              <div
+                style={{
+                  marginTop: '8px',
+                  color: '#666',
+                  fontSize: '12px',
+                  textAlign: 'left',
+                }}
+              >
+                {record.assort_products.map((item: any, index: number) => (
+                  <div key={index} style={{ marginBottom: '4px' }}>
+                    {item.product?.name} × {item.quantity}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
       },
     },
     {
