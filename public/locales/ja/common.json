@@ -298,6 +298,10 @@
         "productName": "商品名"
       }
     },
+    "button": {
+      "autoNumbering": "自動採番"
+    },
+    "newRegistration": "新規登録",
     "fields": {
       "assortmentCode": "アソートコード",
       "assortmentName": "アソート名",

@@ -57,7 +57,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
 
         const isExpanded = expandedKeys.includes(record.id)
         const hasAssort =
-          record.assortProducts && record.assortProducts.length > 0
+          record.assort_products && record.assort_products.length > 0
 
         return (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -87,7 +87,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                   textAlign: 'left',
                 }}
               >
-                {record.assortProducts.map((item: any, index: number) => (
+                {record.assort_products.map((item: any, index: number) => (
                   <div key={index} style={{ marginBottom: '4px' }}>
                     {item.product?.name} × {item.quantity}
                   </div>
