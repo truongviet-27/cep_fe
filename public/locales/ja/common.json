@@ -295,13 +295,17 @@
     "productInfoTable": {
       "header": {
         "productCode": "商品コード",
-        "productName": "商品名"
+        "productName": "商品名",
+        "costPrice": "原価（円)",
+        "sellingPrice": "販売価格（円)"
       }
     },
-    "button": {
+    "buttons": {
       "autoNumbering": "自動採番"
     },
     "newRegistration": "新規登録",
+    "codeNumberingSettings": "コード採番設定はこちら",
+    "pleaseSelect": "選択してください",
     "fields": {
       "assortmentCode": "アソートコード",
       "assortmentName": "アソート名",
@@ -324,7 +328,7 @@
     "list": {
       "title": "商品一覧",
       "searchArea": {
-        "code_or_name": "アソートコード・アソー",
+        "code_or_name": "アソートコード・アソート名",
         "category": "カテゴリ",
         "productInputPlaceholder": "部分一致",
         "categoryLabel": "カテゴリ",
