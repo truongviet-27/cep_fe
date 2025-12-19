@@ -1,7 +1,7 @@
 import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CoreInput from '@components/common/core-input'
-import ProductCategoryDropdown from '@components/common/product-category-dropdown'
+import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
 import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
@@ -76,16 +76,16 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '商品コードは必須です。',
+                message: 'アソートコードは必須です。',
               },
               {
                 max: 20,
-                message: '商品コードは20文字以内で入力してください',
+                message: 'アソートコードは20文字以内で入力してください',
               },
               {
                 pattern: /^[A-Z0-9-]+$/,
                 message:
-                  '商品コードには A〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
+                  'アソートコードには A〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
               },
             ]}
           />
@@ -129,11 +129,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             rules={[
               {
                 required: true,
-                message: '商品名は必須です。',
+                message: 'アソート名は必須です。',
               },
               {
                 max: 100,
-                message: '商品名は100文字以内で入力してください',
+                message: 'アソート名は100文字以内で入力してください',
               },
             ]}
           />
@@ -177,15 +177,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             name="category"
             label={boldText(t('product_combos.fields.category'))}
             colon={false}
-            required={true}
-            rules={[
-              {
-                required: true,
-                message: 'カテゴリは必須です。',
-              },
-            ]}
           >
-            <ProductCategoryDropdown
+            <ProductCategoryEditDropdown
               defaultValue={form.getFieldValue('category')}
               placeholder="選択してください"
               onSelect={handleChooseCategory}

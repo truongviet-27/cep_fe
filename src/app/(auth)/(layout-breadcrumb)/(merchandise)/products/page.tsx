@@ -44,6 +44,7 @@ function Page() {
         />
       }
     >
+      {boldText(t('products.breadcrumb.productList'), PRIMARY)}
       <TabsProduct
         isEdit={isEdit}
         onChange={onChangeTabs}

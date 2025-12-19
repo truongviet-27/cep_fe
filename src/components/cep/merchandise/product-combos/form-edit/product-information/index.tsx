@@ -9,7 +9,7 @@ import { PRIMARY } from '@utility/color'
 import type { FormInstance } from 'antd'
 import { Button, Card, Flex, Form, InputNumber } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
-import type { MutableRefObject } from 'react'
+import { type MutableRefObject, useEffect } from 'react'
 
 import type { ProductComboFormType } from '../use-product-combo-form'
 
@@ -27,6 +27,24 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
   const idWatch = Form.useWatch('id', form)
   const nameWatch = Form.useWatch('name', form)
   const quantityWatch = Form.useWatch('quantity', form)
+
+  const defaultRow = {
+    id: '',
+    code: '',
+    name: '',
+    quantity: 0,
+    unit: null,
+    cost_price: 0,
+    selling_price: 0,
+  }
+
+  useEffect(() => {
+    if (!productsWatch || productsWatch.length === 0) {
+      form.setFieldsValue({
+        products: [defaultRow],
+      })
+    }
+  }, [productsWatch, form])
 
   return (
     <Card
@@ -159,7 +177,7 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               },
             },
             {
-              title: t('quotas.action.detail_info.table.cost_price'),
+              title: t('product_combos.productInfoTable.header.costPrice'),
               dataIndex: 'cost_price',
               key: 'cost_price',
               render: (_, record) => {
@@ -171,7 +189,7 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               },
             },
             {
-              title: t('quotas.action.detail_info.table.selling_price'),
+              title: t('product_combos.productInfoTable.header.sellingPrice'),
               dataIndex: 'selling_price',
               key: 'selling_price',
               render: (_, record) => {

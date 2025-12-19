@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable simple-import-sort/imports */
-import { RightOutlined } from '@ant-design/icons'
+import { DownOutlined, RightOutlined, UpOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -12,8 +12,16 @@ import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { useState } from 'react'
 
 const AgreedPriceCustomerDetail = () => {
+  const [expandedKeys, setExpandedKeys] = useState<any[]>([])
+
+  const toggleExpand = (id: any) => {
+    setExpandedKeys((prev) =>
+      prev.includes(id) ? prev.filter((key) => key !== id) : [...prev, id],
+    )
+  }
   const t = useTranslate()
   const apiUrl = useApiUrl()
   const params = useParams()
@@ -64,6 +72,52 @@ const AgreedPriceCustomerDetail = () => {
       title: t('agreed_prices.customer_detail.table.product_name'),
       dataIndex: 'product_name',
       key: 'product_name',
+      render: (_, record) => {
+        if (record.isHeader) return { props: { colSpan: 0 } }
+
+        const isExpanded = expandedKeys.includes(record.id)
+        const hasAssort =
+          record.assort_products && record.assort_products.length > 0
+
+        return (
+          <div style={{ flexDirection: 'column', textAlign: 'left' }}>
+            <div
+              style={{
+                cursor: hasAssort ? 'pointer' : 'default',
+              }}
+              onClick={() => hasAssort && toggleExpand(record.id)}
+            >
+              <span>{record.product_name}</span>
+              {hasAssort &&
+                (isExpanded ? (
+                  <UpOutlined
+                    style={{ fontSize: '10px', paddingLeft: '6px' }}
+                  />
+                ) : (
+                  <DownOutlined
+                    style={{ fontSize: '10px', paddingLeft: '6px' }}
+                  />
+                ))}
+            </div>
+            {hasAssort && isExpanded && (
+              <div
+                style={{
+                  marginTop: '8px',
+                  color: '#666',
+                  fontSize: '12px',
+                  textAlign: 'left',
+                }}
+              >
+                {record.assort_products.map((item: any, index: number) => (
+                  <div key={index} style={{ marginBottom: '4px' }}>
+                    {item.name} × {item.quantity}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      },
     },
     {
       title: t('agreed_prices.customer_detail.table.quantity'),

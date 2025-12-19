@@ -25,7 +25,6 @@ export default function TabsProduct({
         label: t('products.breadcrumb.productList'),
         children: (
           <Card
-            title={t('products.breadcrumb.productList')}
             styles={{
               header: {
                 color: PRIMARY,
@@ -51,7 +50,6 @@ export default function TabsProduct({
         label: t('products.breadcrumb.productCombos'),
         children: (
           <Card
-            title={t('products.breadcrumb.productCombos')}
             styles={{
               header: {
                 color: PRIMARY,

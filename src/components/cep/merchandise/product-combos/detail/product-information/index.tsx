@@ -35,7 +35,7 @@ const ProductInformation: React.FC<ProductInformationProps> = ({
       dataIndex: 'unit_name',
     },
     {
-      title: t('product_combos.fields.sellingPrice'),
+      title: t('product_combos.fields.costPrice'),
       dataIndex: 'cost_price',
     },
     {
@@ -56,7 +56,7 @@ const ProductInformation: React.FC<ProductInformationProps> = ({
         pagination={false}
         scroll={{ y: 55 * 5 }}
         summary={
-          products.length == 1
+          products.length < 1
             ? () => (
                 <Table.Summary.Row className="!bg-white">
                   <Table.Summary.Cell
