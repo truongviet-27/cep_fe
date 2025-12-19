@@ -52,7 +52,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                 <div className="w-[150px] text-left font-bold">
                   {t('product_combos.fields.category')}
                 </div>
-                <div>{product?.category?.category_path}</div>
+                <div>
+                  {product?.category?.category_path ??
+                    t('products.fields.default_category')}
+                </div>
               </Flex>
               <Flex>
                 <div className="w-[150px] text-left font-bold">
