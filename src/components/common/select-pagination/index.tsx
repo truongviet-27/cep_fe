@@ -72,9 +72,6 @@ export const SelectPagination = ({
   const isNotReady =
     options?.length === 0 || query.isLoading || query.fetchStatus === 'fetching'
 
-  console.log(options)
-  console.log(query)
-
   return (
     <Form.Item {...formItemProps}>
       {isNotReady ? (

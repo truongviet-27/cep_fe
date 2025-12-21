@@ -38,31 +38,6 @@ import { detectEncodingWithInfo } from '@utility/encoding-sjis'
 const { Text, Paragraph } = Typography
 
 // Define required headers for each CSV type (using Japanese column names)
-const REQUIRED_HEADERS: Record<string, string[]> = {
-  CATEGORY_PRODUCTS: ['カテゴリレベル', 'カテゴリ名'],
-  CUSTOMERS: [
-    '取引先コード',
-    '取引先名',
-    '郵便番号',
-    '住所',
-    '電話番号',
-    'メールアドレス',
-    '担当者名',
-    '担当者部署',
-    '担当者メール',
-  ],
-  DEPARTMENTS: ['部門コード', '部門名（支社/部/課）'],
-  PRODUCTS: [
-    '商品コード',
-    '商品名',
-    'カテゴリ',
-    '単位',
-    '原価（円）',
-    '販売単価（円）',
-    '荷姿名',
-    '入数',
-  ],
-}
 
 const nameToUrlMap: Record<string, string> = {
   PRODUCTS: 'products',
@@ -410,28 +385,11 @@ function ImportCsv({
 
                     // Validate required headers
                     const headers = result.data[0] as string[]
-                    const requiredHeaders = REQUIRED_HEADERS[name] || []
-                    const missingHeaders = requiredHeaders.filter(
-                      (requiredHeader) =>
-                        !headers.some(
-                          (header) => header?.trim() === requiredHeader.trim(),
-                        ),
-                    )
                     if (headers.length === 0) {
                       setIsError(true)
                       return Promise.reject(
                         <div style={{ whiteSpace: 'pre-line' }}>
                           {t('csv.step_1.error.missing_headers')}
-                        </div>,
-                      )
-                    }
-
-                    if (missingHeaders.length > 0) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {missingHeaders.join(', ')} :{' '}
-                          {t('csv.step_1.error.required_column')}
                         </div>,
                       )
                     }
