@@ -39,6 +39,7 @@ function DetailInfo() {
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
   const customerWatch = Form.useWatch('customer', form)
+  const costPriceWatch = Form.useWatch('cost_price', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
@@ -53,6 +54,7 @@ function DetailInfo() {
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
     let sellTotal = 0
+    let hasNullCost = false
 
     // Group products by tax rate for separate calculation
     const taxGroups: { [key: string]: { selling: number; taxRate: number } } =
@@ -67,7 +69,7 @@ function DetailInfo() {
         const selling = (product.selling_price || 0) * qty
         const cost = (product.cost_price || 0) * qty
 
-        if (product.cost_price === null) setcheckNull(true)
+        if (product.cost_price === null) hasNullCost = true
 
         costTotal += cost
         sellTotal += selling
@@ -119,7 +121,8 @@ function DetailInfo() {
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setProfitRate(checkNull ? 0 : profitRate)
+    setcheckNull(hasNullCost)
+    setProfitRate(hasNullCost ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
   }
 

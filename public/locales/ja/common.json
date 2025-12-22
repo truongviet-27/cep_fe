@@ -306,6 +306,7 @@
     "newRegistration": "新規登録",
     "codeNumberingSettings": "コード採番設定はこちら",
     "pleaseSelect": "選択してください",
+    "productCategoryEdit": "アソートカテゴリ新規登録",
     "fields": {
       "assortmentCode": "アソートコード",
       "assortmentName": "アソート名",
