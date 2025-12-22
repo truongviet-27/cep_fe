@@ -280,14 +280,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           <CoreInput
             name="cost_price"
             label={t('product_combos.fields.costPrice')}
-            required={true}
             layout="horizontal"
             type="number"
             rules={[
-              {
-                required: true,
-                message: '原価は必須です。',
-              },
               {
                 validator: (_, value) => {
                   if (value === undefined || value === null) {
