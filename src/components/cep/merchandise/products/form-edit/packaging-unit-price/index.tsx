@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Action } from '@components/common/action'
 import CoreInput from '@components/common/core-input'
 import CommonTable from '@components/common/table'
@@ -42,17 +44,17 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
   const costPriceWatch = Form.useWatch('cost_price', form)
   const sellingPriceWatch = Form.useWatch('selling_price', form)
 
-  const isRequiredFieldsFilled = !!(
-    codeWatch &&
-    nameWatch &&
-    categoryWatch &&
-    unitIdWatch !== undefined &&
-    unitIdWatch !== null &&
-    costPriceWatch !== undefined &&
-    costPriceWatch !== null &&
-    sellingPriceWatch !== undefined &&
-    sellingPriceWatch !== null
-  )
+  // const isRequiredFieldsFilled = !!(
+  //   codeWatch &&
+  //   nameWatch &&
+  //   categoryWatch &&
+  //   unitIdWatch !== undefined &&
+  //   unitIdWatch !== null &&
+  //   costPriceWatch !== undefined &&
+  //   costPriceWatch !== null &&
+  //   sellingPriceWatch !== undefined &&
+  //   sellingPriceWatch !== null
+  // )
 
   const onStandardPriceChange = (event: CheckboxChangeEvent, index: number) => {
     const isChecked = event.target.checked
@@ -333,7 +335,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               <div className="mt-4 text-right">
                 <Button
                   type="primary"
-                  disabled={fields.length < 1 || !isRequiredFieldsFilled}
+                  disabled={fields.length < 1}
                   onClick={() => {
                     const rankObject: Record<string, number> = {}
 

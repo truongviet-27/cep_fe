@@ -30,6 +30,7 @@ function OptionalInfo() {
       product: null,
       product_id: null,
       package_id: null,
+      package_name: '-',
       name: '',
       code: '',
       quantity: 0,
@@ -39,6 +40,7 @@ function OptionalInfo() {
       tax_rate: 0,
       is_add_total: true,
       unit: '-',
+      unit_name: '-',
     }
 
     const newProducts = [...products]
@@ -189,7 +191,7 @@ function OptionalInfo() {
                           'product',
                         ]}
                         labelInValue={true}
-                        resource="products"
+                        resource="products/list-all"
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}
@@ -220,6 +222,16 @@ function OptionalInfo() {
                               'package_id',
                             ],
                             null,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'package_name',
+                            ],
+                            '-',
                           )
                           form.setFieldValue(
                             [
@@ -258,6 +270,16 @@ function OptionalInfo() {
                               'products',
                               record.index2,
                               'unit',
+                            ],
+                            valueOption?.unit,
+                          )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'unit_name',
                             ],
                             valueOption?.unit,
                           )
@@ -537,6 +559,27 @@ function OptionalInfo() {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                if (
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  form.setFieldValue(
+                    [
+                      'optional_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'profit_margin',
+                    ],
+                    0,
+                  )
+                  return '0%'
+                }
                 const cost =
                   form.getFieldValue([
                     'optional_product',
@@ -690,6 +733,7 @@ function OptionalInfo() {
                             product: null,
                             product_id: null,
                             package_id: null,
+                            package_name: '-',
                             name: '',
                             code: '',
                             quantity: 0,
@@ -699,6 +743,7 @@ function OptionalInfo() {
                             is_add_total: true,
                             tax_rate: 0,
                             unit: '-',
+                            unit_name: '-',
                           },
                         ],
                       },

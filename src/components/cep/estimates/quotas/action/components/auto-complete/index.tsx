@@ -133,7 +133,17 @@ function CoreAutoComplete({
         )
 
         form.setFieldValue(
+          [parent, index, 'products', index2, 'package_name'],
+          option?.name ?? data?.data?.packagings?.name,
+        )
+
+        form.setFieldValue(
           [parent, index, 'products', index2, 'unit'],
+          option?.unit ?? data?.data?.unit?.name,
+        )
+
+        form.setFieldValue(
+          [parent, index, 'products', index2, 'unit_name'],
           option?.unit ?? data?.data?.unit?.name,
         )
 

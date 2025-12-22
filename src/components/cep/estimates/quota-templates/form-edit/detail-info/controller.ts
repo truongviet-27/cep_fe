@@ -29,6 +29,7 @@ export const useController = () => {
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
+  const [checkNull, setcheckNull] = useState(false)
 
   const handleAddProduct = (groupIndex: number) => {
     const values = mainProducts || []
@@ -82,6 +83,8 @@ export const useController = () => {
           const selling = (product.selling_price || 0) * qty
           const cost = (product.cost_price || 0) * qty
 
+          if (product.cost_price === null) setcheckNull(true)
+
           costTotal += cost
           sellTotal += selling
 
@@ -130,7 +133,7 @@ export const useController = () => {
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setProfitRate(profitRate)
+    setProfitRate(checkNull ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
     form.setFieldValue('total_price', sellTotal)
     form.setFieldValue('consumption_tax_amount', taxTotal)

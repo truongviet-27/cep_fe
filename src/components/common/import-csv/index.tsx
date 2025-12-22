@@ -18,7 +18,16 @@ import {
 import boldText from '@utility/bold-text'
 import { cn } from '@utility/cn'
 import { BLACK, GREY, PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Card, Form, List, Space, Typography } from 'antd'
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Form,
+  List,
+  Radio,
+  Space,
+  Typography,
+} from 'antd'
 import Dragger from 'antd/es/upload/Dragger'
 import axios from 'axios'
 import Image from 'next/image'
@@ -29,31 +38,6 @@ import { detectEncodingWithInfo } from '@utility/encoding-sjis'
 const { Text, Paragraph } = Typography
 
 // Define required headers for each CSV type (using Japanese column names)
-const REQUIRED_HEADERS: Record<string, string[]> = {
-  CATEGORY_PRODUCTS: ['カテゴリレベル', 'カテゴリ名'],
-  CUSTOMERS: [
-    '取引先コード',
-    '取引先名',
-    '郵便番号',
-    '住所',
-    '電話番号',
-    'メールアドレス',
-    '担当者名',
-    '担当者部署',
-    '担当者メール',
-  ],
-  DEPARTMENTS: ['部門コード', '部門名（支社/部/課）'],
-  PRODUCTS: [
-    '商品コード',
-    '商品名',
-    'カテゴリ',
-    '単位',
-    '原価（円）',
-    '販売単価（円）',
-    '荷姿名',
-    '入数',
-  ],
-}
 
 const nameToUrlMap: Record<string, string> = {
   PRODUCTS: 'products',
@@ -73,6 +57,9 @@ function ImportCsv({
 
   const [isResult, setIsResult] = useState(false)
   const [isError, setIsError] = useState(true)
+  const [registrationType, setRegistrationType] = useState<'basic' | 'detail'>(
+    'basic',
+  )
 
   const { mutate } = useCustomMutation()
   const { mutate: mutate2 } = useCustomMutation()
@@ -81,17 +68,25 @@ function ImportCsv({
 
   const go = useGo()
 
-  const handleDownload = async () => {
-    const response = await axiosInstance.get(
-      `${apiUrl}/csv-imports/${name}/template`,
-      {
-        responseType: 'blob',
-      },
-    )
+  // Check if this is a special case that needs two import options
+  const hasTwoImportOptions = name === 'CUSTOMERS' || name === 'PRODUCTS'
+
+  // Helper function to get API name with '_DETAIL' suffix when needed
+  const getApiName = (type?: 'basic' | 'detail') => {
+    return hasTwoImportOptions && type === 'detail' ? `${name}_DETAIL` : name
+  }
+
+  const handleDownload = async (type?: 'basic' | 'detail') => {
+    const apiName = getApiName(type)
+    const endpoint = `${apiUrl}/csv-imports/${apiName}/template`
+
+    const response = await axiosInstance.get(endpoint, {
+      responseType: 'blob',
+    })
 
     if (!response?.data) return
 
-    const filename = `${name.toLowerCase()}_example.csv`
+    const filename = `${apiName.toLowerCase()}_example.csv`
 
     const url = URL.createObjectURL(response.data)
     const downloadLink = document.createElement('a')
@@ -105,10 +100,12 @@ function ImportCsv({
 
   useEffect(() => {
     if (isResult) {
+      const apiName = getApiName(registrationType)
+
       mutate(
         {
           method: 'post',
-          url: `${apiUrl}/${name}/presigned-url`,
+          url: `${apiUrl}/${apiName}/presigned-url`,
           values: {
             file_name: form.getFieldValue('file')?.file?.name,
             content_type: form.getFieldValue('file')?.file?.type,
@@ -127,7 +124,7 @@ function ImportCsv({
               .then(() => {
                 mutate2({
                   method: 'post',
-                  url: `${apiUrl}/csv-imports/${name}/import`,
+                  url: `${apiUrl}/csv-imports/${apiName}/import`,
                   values: {
                     file_key: data.data.file_key,
                   },
@@ -140,7 +137,7 @@ function ImportCsv({
         },
       )
     }
-  }, [isResult])
+  }, [isResult, registrationType, name])
 
   const dataSource = useMemo(() => {
     return [
@@ -219,15 +216,74 @@ function ImportCsv({
               <Paragraph style={{ margin: 0, color: GREY }}>
                 {t('csv.step_1.alertDesc2')}
               </Paragraph>
-              <Button
-                type="link"
-                icon={<DownloadOutlined />}
-                style={{ paddingLeft: 0 }}
-                onClick={handleDownload}
-              >
-                {t('csv.step_1.downloadButton')}
-              </Button>
+
+              {hasTwoImportOptions ? (
+                <div className="mt-[8px] flex flex-col items-start">
+                  <Button
+                    type="link"
+                    icon={<DownloadOutlined />}
+                    style={{ paddingLeft: 0, height: 'unset' }}
+                    onClick={() => handleDownload('basic')}
+                  >
+                    {t(
+                      'csv.step_1.twoOptions.' +
+                        name.toLowerCase() +
+                        '.basicTemplate',
+                    )}
+                  </Button>
+                  <Button
+                    type="link"
+                    icon={<DownloadOutlined />}
+                    style={{ paddingLeft: 0, height: 'unset' }}
+                    onClick={() => handleDownload('detail')}
+                  >
+                    {t(
+                      'csv.step_1.twoOptions.' +
+                        name.toLowerCase() +
+                        '.detailTemplate',
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  type="link"
+                  icon={<DownloadOutlined />}
+                  style={{ paddingLeft: 0 }}
+                  onClick={() => handleDownload('basic')}
+                >
+                  {t('csv.step_1.downloadButton')}
+                </Button>
+              )}
             </div>
+            {hasTwoImportOptions && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <Text strong style={{ fontSize: 16 }}>
+                    {t('csv.step_1.twoOptions.registrationLabel')}
+                  </Text>
+                  <Radio.Group
+                    value={registrationType}
+                    onChange={(e) => setRegistrationType(e.target.value)}
+                    style={{ display: 'flex', gap: 24 }}
+                  >
+                    <Radio value="basic">
+                      {t(
+                        'csv.step_1.twoOptions.' +
+                          name.toLowerCase() +
+                          '.basicInfo',
+                      )}
+                    </Radio>
+                    <Radio value="detail">
+                      {t(
+                        'csv.step_1.twoOptions.' +
+                          name.toLowerCase() +
+                          '.detailInfo',
+                      )}
+                    </Radio>
+                  </Radio.Group>
+                </div>
+              </div>
+            )}
 
             <Form.Item
               layout="vertical"
@@ -329,28 +385,11 @@ function ImportCsv({
 
                     // Validate required headers
                     const headers = result.data[0] as string[]
-                    const requiredHeaders = REQUIRED_HEADERS[name] || []
-                    const missingHeaders = requiredHeaders.filter(
-                      (requiredHeader) =>
-                        !headers.some(
-                          (header) => header?.trim() === requiredHeader.trim(),
-                        ),
-                    )
                     if (headers.length === 0) {
                       setIsError(true)
                       return Promise.reject(
                         <div style={{ whiteSpace: 'pre-line' }}>
                           {t('csv.step_1.error.missing_headers')}
-                        </div>,
-                      )
-                    }
-
-                    if (missingHeaders.length > 0) {
-                      setIsError(true)
-                      return Promise.reject(
-                        <div style={{ whiteSpace: 'pre-line' }}>
-                          {missingHeaders.join(', ')} :{' '}
-                          {t('csv.step_1.error.required_column')}
                         </div>,
                       )
                     }

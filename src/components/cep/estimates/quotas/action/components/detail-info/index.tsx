@@ -39,11 +39,13 @@ function DetailInfo() {
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
   const customerWatch = Form.useWatch('customer', form)
+  const costPriceWatch = Form.useWatch('cost_price', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
+  const [checkNull, setcheckNull] = useState(false)
 
   const parameterSettings = useUserStore((state) => state.parameterSettings)
   const isProductManager =
@@ -52,6 +54,7 @@ function DetailInfo() {
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
     let sellTotal = 0
+    let hasNullCost = false
 
     // Group products by tax rate for separate calculation
     const taxGroups: { [key: string]: { selling: number; taxRate: number } } =
@@ -65,6 +68,8 @@ function DetailInfo() {
         const qty = product.quantity || 0
         const selling = (product.selling_price || 0) * qty
         const cost = (product.cost_price || 0) * qty
+
+        if (product.cost_price === null) hasNullCost = true
 
         costTotal += cost
         sellTotal += selling
@@ -116,7 +121,8 @@ function DetailInfo() {
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setProfitRate(profitRate)
+    setcheckNull(hasNullCost)
+    setProfitRate(hasNullCost ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
   }
 
@@ -142,6 +148,7 @@ function DetailInfo() {
       product: null,
       product_id: null,
       package_id: null,
+      package_name: '-',
       name: '',
       code: '',
       quantity: 0,
@@ -151,6 +158,7 @@ function DetailInfo() {
       tax_rate: 0,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
+      unit_name: t('quotas.action.detail_info.default_values.default_unit'),
     }
 
     const newProducts = [...products]
@@ -368,7 +376,7 @@ function DetailInfo() {
                             message: '',
                           },
                         ]}
-                        resource="products"
+                        resource="products/list-all"
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}
@@ -437,6 +445,16 @@ function DetailInfo() {
                               'products',
                               record.index2,
                               'unit',
+                            ],
+                            valueOption?.unit,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'unit_name',
                             ],
                             valueOption?.unit,
                           )
@@ -737,6 +755,27 @@ function DetailInfo() {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                if (
+                  form.getFieldValue([
+                    'main_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'cost_price',
+                  ]) === null
+                ) {
+                  form.setFieldValue(
+                    [
+                      'main_product',
+                      record.index,
+                      'products',
+                      record.index2,
+                      'profit_margin',
+                    ],
+                    0,
+                  )
+                  return '0%'
+                }
                 const cost =
                   form.getFieldValue([
                     'main_product',
@@ -931,6 +970,7 @@ function DetailInfo() {
                             product: null,
                             product_id: null,
                             package_id: null,
+                            package_name: '-',
                             name: '',
                             code: '',
                             quantity: 0,
@@ -940,6 +980,9 @@ function DetailInfo() {
                             tax_rate: 0,
                             is_add_total: true,
                             unit: t(
+                              'quotas.action.detail_info.default_values.default_unit',
+                            ),
+                            unit_name: t(
                               'quotas.action.detail_info.default_values.default_unit',
                             ),
                           },

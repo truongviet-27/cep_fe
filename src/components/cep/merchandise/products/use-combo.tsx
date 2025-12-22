@@ -1,0 +1,163 @@
+import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
+import type { HttpError } from '@refinedev/core'
+import { useTranslate } from '@refinedev/core'
+import { PermissionEnum, type ProductListItem } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
+import { Space } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
+import Link from 'next/link'
+import { useMemo } from 'react'
+
+interface ISearch {
+  search: string
+  category_id: string
+}
+
+function useCombo() {
+  const t = useTranslate()
+  const { hasFullAccessModule } = useUserStore.getState()
+  const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
+
+  const { tableProps, searchFormProps, setFilters } = useTable<
+    ProductListItem,
+    HttpError,
+    ISearch
+  >({
+    resource: 'product-combos',
+    filters: {},
+    onSearch: (params) => [
+      {
+        field: 'category_id',
+        operator: 'eq',
+        value: params.category_id ?? null,
+      },
+      {
+        field: 'q',
+        operator: 'eq',
+        value: params.search ?? null,
+      },
+    ],
+  })
+
+  const columns = useMemo(() => {
+    return [
+      {
+        title: t('product_combos.list.table.headers.assortmentCode'), // Product Code
+        dataIndex: 'code',
+        key: 'code',
+        width: 200,
+        render: (_: unknown, record: ProductListItem) => (
+          <Link
+            href={`/product-combos/show/${record.id}`}
+            onClick={() => {
+              sessionStorage.setItem('list_products', 'products')
+            }}
+            className="!underline"
+          >
+            {record.code}
+          </Link>
+        ),
+      },
+      {
+        title: t('product_combos.list.table.headers.assortmentName'), // Product Name
+        dataIndex: 'name',
+        key: 'name',
+        align: 'left',
+        width: '20%',
+      },
+      {
+        title: t('product_combos.list.table.headers.products'), // Bạn có thể đặt tên khác
+        dataIndex: 'products', // Đây là key 'products' từ dữ liệu của bạn
+        key: 'products',
+        width: 250, // Cần tăng width để hiển thị danh sách tên dài
+        render: (products: string[] | undefined) => {
+          if (Array.isArray(products) && products.length > 0) {
+            return products.join(', ')
+          }
+          return '-'
+        },
+      },
+      {
+        title: t('product_combos.list.table.headers.barcode'), // barcode
+        dataIndex: 'barcode',
+        key: 'barcode',
+        width: '10%',
+      },
+      {
+        title: t('product_combos.list.table.headers.subcategory'), // Category small
+        dataIndex: 'category',
+        key: 'category',
+        align: 'left',
+        width: '20%',
+      },
+      {
+        title: t('product_combos.list.table.headers.unit'), // Unit
+        dataIndex: 'unit',
+        key: 'unit',
+      },
+      {
+        title: (
+          <>
+            {t('product_combos.list.table.headers.costPrice')} <br /> (円)
+          </>
+        ), // cost_price (JPY)
+        dataIndex: 'cost_price',
+        key: 'cost_price',
+        align: 'center',
+        render: (item: number) => item?.toLocaleString(),
+      },
+      {
+        title: (
+          <>
+            {t('product_combos.list.table.headers.sellingPrice')} <br /> (円)
+          </>
+        ), // sale_price (JPY)
+        dataIndex: 'sale_price',
+        key: 'sale_price',
+        render: (item: number) => item.toLocaleString(),
+      },
+      {
+        title: t('table.actions'),
+        dataIndex: 'action',
+        key: 'action',
+        width: 120,
+        render(_, record) {
+          return (
+            <Space>
+              <ShowButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                resource={'product-combos'}
+              />
+              <EditButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                resource={'product-combos'}
+              />
+              <DeleteButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                resource={'product-combos'}
+              />
+            </Space>
+          )
+        },
+      },
+    ] as ColumnsType
+  }, [t])
+
+  return [
+    {
+      isFullAccess,
+      columns,
+      tableProps,
+      searchFormProps,
+    },
+    { t, setFilters },
+  ] as const
+}
+
+export default useCombo

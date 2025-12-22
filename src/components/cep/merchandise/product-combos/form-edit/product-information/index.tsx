@@ -1,0 +1,257 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Action, type ActionType } from '@components/common/action'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
+import CommonTable from '@components/common/table'
+import { useTranslate } from '@refinedev/core'
+import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
+import type { FormInstance } from 'antd'
+import { Button, Card, Flex, Form, InputNumber } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
+import { type MutableRefObject, useEffect } from 'react'
+
+import type { ProductComboFormType } from '../use-product-combo-form'
+
+interface ProductInformationProps {
+  form: FormInstance<ProductComboFormType>
+  addRef: MutableRefObject<
+    ((defaultValue?: object, insertIndex?: number) => void) | undefined
+  >
+}
+const ProductInformation: React.FC<ProductInformationProps> = (props) => {
+  const { form, addRef } = props
+  const t = useTranslate()
+
+  const productsWatch = Form.useWatch('products', form) ?? []
+  const idWatch = Form.useWatch('id', form)
+  const nameWatch = Form.useWatch('name', form)
+  const quantityWatch = Form.useWatch('quantity', form)
+
+  const defaultRow = {
+    id: '',
+    code: '',
+    name: '',
+    quantity: 0,
+    unit: null,
+    cost_price: 0,
+    selling_price: 0,
+  }
+
+  useEffect(() => {
+    if (!productsWatch || productsWatch.length === 0) {
+      form.setFieldsValue({
+        products: [defaultRow],
+      })
+    }
+  }, [productsWatch, form])
+
+  return (
+    <Card
+      title={boldText(t('quotas.action.detail_info.title'), PRIMARY, 16)}
+      style={{
+        border: 'none',
+        marginTop: 20,
+      }}
+      styles={{
+        body: { padding: 0 },
+        header: { padding: 0, minHeight: 0 },
+      }}
+    >
+      <Form.List name={'products'}>
+        {(fields, { add, remove }) => {
+          addRef.current = add
+          const columns: ColumnsType = [
+            {
+              title: t('quotas.action.detail_info.table.product_code'),
+              dataIndex: 'code',
+              key: 'code',
+              align: 'left',
+              width: 200,
+              render: (_, record) => {
+                return form.getFieldValue(['products', record.name, 'code'])
+              },
+            },
+            {
+              title: t('product_combos.productInfoTable.header.productName'),
+              dataIndex: 'name',
+              key: 'name',
+              align: 'left',
+              width: 200,
+              render: (_, record, index: number) => {
+                return (
+                  <CoreAutocompleteAPI
+                    name={[index, 'name']}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
+                    defaultValue={{
+                      value: form.getFieldValue(['products', record.name, 'id'])
+                        ?.value,
+                      label: form.getFieldValue([
+                        'products',
+                        record.name,
+                        'name',
+                      ]),
+                    }}
+                    resource="products"
+                    placeholder={t(
+                      'quotas.action.detail_info.placeholders.product_search',
+                    )}
+                    onChangeValue={(valueOption) => {
+                      form.setFieldValue(
+                        ['products', record.name, 'id'],
+                        valueOption?.id,
+                      )
+                      form.setFieldValue(
+                        ['products', record.name, 'name'],
+                        valueOption?.name,
+                      )
+                      form.setFieldValue(
+                        ['products', record.name, 'code'],
+                        valueOption?.code,
+                      )
+                      form.setFieldValue(
+                        ['products', record.name, 'unit_name'],
+                        valueOption?.unit,
+                      )
+                      form.setFieldValue(
+                        ['products', record.name, 'cost_price'],
+                        valueOption?.cost_price,
+                      )
+                      form.setFieldValue(
+                        ['products', record.name, 'selling_price'],
+                        valueOption?.sale_price,
+                      )
+                      form.setFieldValue(
+                        ['products', record.name, 'quantity'],
+                        1,
+                      )
+                      if (!valueOption) {
+                        form.setFieldValue(
+                          ['products', record.name, 'quantity'],
+                          0,
+                        )
+                      }
+                    }}
+                  />
+                )
+              },
+            },
+            {
+              title: t('quotas.action.detail_info.table.unit'),
+              dataIndex: 'unit_name',
+              key: 'unit_name',
+              align: 'center',
+              width: 200,
+              render: (_, record) => {
+                return (
+                  form.getFieldValue(['products', record.name, 'unit_name']) ??
+                  '-'
+                )
+              },
+            },
+            {
+              title: t('quotas.action.detail_info.table.quantity'),
+              dataIndex: 'quantity',
+              key: 'quantity',
+              render: (_: unknown, __: unknown, index: number) => {
+                return (
+                  <Form.Item
+                    className="ant-form-item-hidden-margin"
+                    name={[index, 'quantity']}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
+                    normalize={(val) => val ?? 1}
+                  >
+                    <InputNumber min={1} precision={0} controls={false} />
+                  </Form.Item>
+                )
+              },
+            },
+            {
+              title: t('product_combos.productInfoTable.header.costPrice'),
+              dataIndex: 'cost_price',
+              key: 'cost_price',
+              render: (_, record) => {
+                return form.getFieldValue([
+                  'products',
+                  record.name,
+                  'cost_price',
+                ])
+              },
+            },
+            {
+              title: t('product_combos.productInfoTable.header.sellingPrice'),
+              dataIndex: 'selling_price',
+              key: 'selling_price',
+              render: (_, record) => {
+                return form.getFieldValue([
+                  'products',
+                  record.name,
+                  'selling_price',
+                ])
+              },
+            },
+            {
+              title: t('products.fields.actions'),
+              dataIndex: 'action',
+              className: '!content-start',
+              render: (_: unknown, __: unknown, index: number) => (
+                <Action
+                  actionList={['remove']}
+                  onRemoveAction={() => {
+                    remove(index)
+                  }}
+                />
+              ),
+            },
+          ]
+
+          return (
+            <>
+              <Flex vertical>
+                <CommonTable
+                  columns={columns}
+                  dataSource={fields}
+                  rowClassName={(record) =>
+                    record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
+                  }
+                  pagination={false}
+                  rowKey={'key'}
+                />
+              </Flex>
+              <div className="mt-4 text-right">
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    add({
+                      id: null,
+                      code: null,
+                      name: '',
+                      quantity: 0,
+                      unit: null,
+                      cost_price: 0,
+                      selling_price: 0,
+                    })
+                  }}
+                >
+                  {t('products.buttons.addRow')}
+                </Button>
+              </div>
+            </>
+          )
+        }}
+      </Form.List>
+    </Card>
+  )
+}
+
+export default ProductInformation
