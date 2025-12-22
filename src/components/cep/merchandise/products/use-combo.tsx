@@ -104,7 +104,7 @@ function useCombo() {
         dataIndex: 'cost_price',
         key: 'cost_price',
         align: 'center',
-        render: (item: number) => item.toLocaleString(),
+        render: (item: number) => item?.toLocaleString(),
       },
       {
         title: (
