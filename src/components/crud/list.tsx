@@ -101,7 +101,7 @@ export const List: React.FC<ListProps & CustomProps> = ({
         // {...(headerProps ?? {})}
       >
         <div
-          className="min-h-[82vh] bg-white px-[18px] py-[18px] shadow-sm"
+          className="relative z-10 min-h-[82vh] bg-white px-[18px] py-[18px] shadow-sm"
           {...(contentProps ?? {})}
         >
           <div className={'flex items-center justify-between'}>
