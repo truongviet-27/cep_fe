@@ -113,7 +113,7 @@ function ImportHistory() {
         <Row gutter={[16, 0]}>
           <Col xs={24} md={8}>
             <Form.Item
-              name="creator_name"
+              name="created_by"
               label={
                 <span className="font-bold">
                   {t('import_history.label.created_by')}
