@@ -41,11 +41,11 @@ function useImportHistory() {
         })
       }
 
-      if (data.creator_name) {
+      if (data.created_by) {
         filters.push({
-          field: 'creator_name',
+          field: 'created_by',
           operator: 'eq',
-          value: data.creator_name,
+          value: data.created_by,
         })
       }
       if (data.date) {
@@ -182,15 +182,6 @@ function useImportHistory() {
             ),
             dataIndex: 'data_inserted',
             key: 'data_inserted',
-          },
-          {
-            title: (
-              <span style={{ color: 'orange' }}>
-                {t('import_history.table.headers.update')}
-              </span>
-            ),
-            dataIndex: 'data_updated',
-            key: 'data_updated',
           },
           {
             title: (
