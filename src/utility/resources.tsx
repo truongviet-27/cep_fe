@@ -98,6 +98,16 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     },
   },
   {
+    name: 'agreed-prices/customer',
+    list: '/agreed-prices/customer',
+    meta: {
+      parent: 'business_partner',
+      // canDelete: true,
+      // canCreate: true,
+      // canEdit: true,
+    },
+  },
+  {
     name: 'merchandise',
     list: '/merchandise',
   },

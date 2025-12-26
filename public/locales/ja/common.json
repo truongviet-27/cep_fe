@@ -359,7 +359,7 @@
     }
   },
   "ranks": {
-    "ranks": "ランク",
+    "ranks": "単価ランク",
     "titles": {
       "clone": "clone",
       "edit": "edit"
@@ -402,7 +402,7 @@
   "approve_routes": {
     "home": "見積",
     "parent": "承認ルート",
-    "approve_routes": "承認ルート一覧",
+    "approve_routes": "承認ルート",
     "list": "承認ルート一覧",
     "detail": "承認ルート詳細",
     "create": "承認ルート登録",
@@ -1108,7 +1108,7 @@
   "price_groups": {
     "message": "ランク別単価について",
     "message_description": "掛率で自動設定後に「操作」から絶対値金額に修正可能です。見積書作成時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
-    "price_groups": "ランク別単価",
+    "price_groups": "ランク別商品単価",
     "product_price_by_rank": "ランク別単価",
     "business_partner": "取引先",
     "list": {
@@ -1129,9 +1129,21 @@
     },
     "rank_prices_title": "ランク"
   },
+
+  "agreed_prices/customer": {
+    "agreed_prices/customer": "顧客別継続見積"
+  },
+
+  "continuous_quotes_by_customer": {
+    "title": "継続見積管理",
+    "description": "※顧客別の継続契約に関する見積内容、期限の確認ができます。"
+  },
+
   "agreed_prices": {
+    "title": "継続見積管理",
+    "description": "※継続契約に関する見積内容の確認と見積期限、更新を管理します。",
     "parent": "確定見積一覧",
-    "agreed_prices": "確定見積一覧",
+    "agreed_prices": "継続見積管理",
     "tab": {
       "decided_estimate_list": "確定見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
@@ -1148,7 +1160,7 @@
       "creator": "作成者",
       "department": "部門(支社/部/課)",
       "tag_name": "タグ名",
-      "application_completion": "適用完了",
+      "application_completion": "期間",
       "partial_match": "部分一致",
       "please_select": "選択してください"
     },
@@ -1205,7 +1217,8 @@
       }
     },
     "customer_detail": {
-      "title": "顧客別決定単価",
+      "title": "顧客別継続見積",
+      "description": "顧客別継続見積詳細",
       "basic_info": "基本情報",
       "customer_code": "取引先コード",
       "customer_name": "取引先名",

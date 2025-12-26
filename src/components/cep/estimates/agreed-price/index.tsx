@@ -3,46 +3,22 @@
 
 import { RightOutlined } from '@ant-design/icons'
 import { useTranslate } from '@refinedev/core'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
 
-import TabsAgreedPrice from '@components/cep/estimates/agreed-price/tabs'
 import PageContainer from '@components/common/page-container'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import AgreedPriceQuotaTab from './tabs/content/AgreedPriceQuotaTab'
 
-interface IProps {
-  isShowTitle?: boolean
-}
-
-function AgreedPriceList({ isShowTitle = true }: IProps) {
+function AgreedPriceList() {
   const t = useTranslate()
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [isEdit] = useState(false)
-  const [isLoading] = useState(false)
-
-  const currentTabKey = useMemo(() => {
-    const urlTab = searchParams?.get('tab')
-    return urlTab === 'agreed_price_customer'
-      ? 'agreed_price_customer'
-      : 'agreed_price_quota'
-  }, [searchParams])
-
-  const onChangeTabs = (value: string) => {
-    const params = new URLSearchParams(searchParams?.toString())
-    params.set('tab', value)
-    router.replace(`${pathname}?${params.toString()}`)
-  }
 
   const breadcrumbItems = [
     {
       title: boldText(t('estimates.estimates')),
     },
     {
-      title: boldText(t('agreed_prices.parent'), PRIMARY),
+      title: boldText(t('agreed_prices.title'), PRIMARY),
     },
   ]
 
@@ -51,14 +27,12 @@ function AgreedPriceList({ isShowTitle = true }: IProps) {
       breadcrumbs={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      title={isShowTitle ? t('agreed_prices.parent') : null}
+      title={t('agreed_prices.title')}
     >
-      <TabsAgreedPrice
-        isEdit={isEdit}
-        onChange={onChangeTabs}
-        isLoading={isLoading}
-        activeKey={currentTabKey}
-      />
+      <div className="pb-[16px] text-[16px]">
+        {t('agreed_prices.description')}
+      </div>
+      <AgreedPriceQuotaTab />
     </PageContainer>
   )
 }
