@@ -2,6 +2,7 @@ import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
+import UploadImage from '@components/common/upload-image/upload-image'
 import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import type { Rank } from '@sdk/hey-api'
@@ -383,6 +384,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             layout="horizontal"
           />
         </Col>
+      </Row>
+      <Row>
+        <Form.Item name="image_file">
+          <UploadImage name="image_file" />
+        </Form.Item>
       </Row>
       <CoreInput name="category_id" hidden />
       <Modal
