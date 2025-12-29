@@ -23,6 +23,9 @@ export type ProductFormType = {
   }
   created_at?: string
   updated_at?: string
+  image_file_url?: string
+  image_file_key?: string
+  image_name?: string
 } & StoreProductInput
 
 function useProductForm() {
