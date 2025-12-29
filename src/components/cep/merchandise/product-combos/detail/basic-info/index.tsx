@@ -1,9 +1,10 @@
-import { DownOutlined } from '@ant-design/icons'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { DownOutlined, PictureOutlined } from '@ant-design/icons'
 import { useTranslate } from '@refinedev/core'
 import type { ProductDetail } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { Collapse, Flex } from 'antd'
-import { Space } from 'antd/lib'
+import { Collapse, Row } from 'antd'
 
 interface BasicInfoProps {
   product: ProductDetail
@@ -23,78 +24,101 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
             </span>
           ),
           children: (
-            <Space direction="vertical" className="px-2" size="middle">
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.assortmentCode')}
-                </div>
-                <div>{product.code}</div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.assortmentName')}
-                </div>
-                <div>{product.name}</div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.assortmentNameAbbr')}
-                </div>
-                <div>{product.short_name}</div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.barcode')}
-                </div>
-                <div>{product.barcode}</div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.category')}
-                </div>
-                <div>
-                  {product?.category?.category_path ??
-                    t('products.fields.default_category')}
-                </div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.unit')}
-                </div>
-                <div>{product?.unit?.name}</div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.taxRate')}
-                </div>
-                <div>{product.tax_rate} %</div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.costPrice')}
-                </div>
-                <div>{product.cost_price}</div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.sellingPrice')}
-                </div>
-                <div>
-                  <span
-                    className="rounded-sm p-1 text-white"
-                    style={{ background: PRIMARY }}
-                  >
-                    {product.selling_price}
-                  </span>
-                </div>
-              </Flex>
-              <Flex>
-                <div className="w-[150px] text-left font-bold">
-                  {t('product_combos.fields.remarks')}
-                </div>
-                <div></div>
-              </Flex>
-            </Space>
+            <div className="grid grid-cols-5">
+              <div className="col-span-4 space-y-4">
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.assortmentCode')}
+                  </div>
+                  <div>{product.code}</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.assortmentName')}
+                  </div>
+                  <div>{product.name}</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.assortmentNameAbbr')}
+                  </div>
+                  <div>{product.short_name}</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.barcode')}
+                  </div>
+                  <div>{product.barcode}</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.category')}
+                  </div>
+                  <div>
+                    {product?.category?.category_path ??
+                      t('products.fields.default_category')}
+                  </div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.unit')}
+                  </div>
+                  <div>{product?.unit?.name}</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.taxRate')}
+                  </div>
+                  <div>{product.tax_rate} %</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.costPrice')}
+                  </div>
+                  <div>{product.cost_price}</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.sellingPrice')}
+                  </div>
+                  <div>
+                    <span
+                      className="rounded-sm p-1 text-white"
+                      style={{ background: PRIMARY }}
+                    >
+                      {product.selling_price}
+                    </span>
+                  </div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('product_combos.fields.remarks')}
+                  </div>
+                  <div></div>
+                </Row>
+              </div>
+              <div className="col-span-1">
+                <Row>
+                  {(product as any).image_file_url ? (
+                    <img
+                      src={(product as any).image_file_url}
+                      alt="Product"
+                      className="h-50 w-50 rounded-xl border object-cover shadow-sm"
+                    />
+                  ) : (
+                    <div className="flex h-50 w-50 flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-200 text-gray-400">
+                      <PictureOutlined
+                        style={{
+                          fontSize: '100px',
+                          marginBottom: '8px',
+                          opacity: 0.5,
+                        }}
+                      />
+                    </div>
+                  )}
+                </Row>
+              </div>
+            </div>
           ),
         },
       ]}

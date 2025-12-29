@@ -34,6 +34,9 @@ export type ProductComboFormType = {
       selling_price: number
     },
   ]
+  image_file_url?: string
+  image_file_key?: string
+  image_name?: string
 } & StoreProductInput
 
 function useProductComboForm() {
