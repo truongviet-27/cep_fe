@@ -79,11 +79,18 @@ const authOptions: AuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user, trigger, session: updateSession }) {
       const expandUser = user as
-        | { given_name?: string; family_name?: string }
+        | { given_name?: string; family_name?: string; name?: string }
         | undefined
       const credsUser = user as CredentialsUser
+      console.log('trigger', trigger)
+      console.log('updateSession', updateSession)
+      // Xử lý cập nhật name từ session.update()
+      if (trigger === 'update' && updateSession?.user?.name) {
+        token.name = updateSession.user.name
+      }
+
       if (account || credsUser) {
         token.idToken = account?.id_token ?? credsUser.id_token
         token.accessToken = account?.access_token ?? credsUser.access_token
@@ -93,6 +100,7 @@ const authOptions: AuthOptions = {
         if (user) {
           token.given_name = expandUser?.given_name ?? ''
           token.family_name = expandUser?.family_name ?? ''
+          token.name = expandUser?.name ?? token.name
         }
         return token
       }
@@ -115,6 +123,10 @@ const authOptions: AuthOptions = {
         session.expiresAt = token.expiresAt as number
         session.user.given_name = token.given_name as string
         session.user.family_name = token.family_name as string
+        // Cập nhật name từ token nếu có
+        if (token.name) {
+          session.user.name = token.name as string
+        }
       }
 
       return session

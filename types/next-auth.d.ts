@@ -28,5 +28,8 @@ declare module 'next-auth/jwt' {
     idToken?: string
     expiresAt?: number
     error?: string
+    name?: string
+    given_name?: string
+    family_name?: string
   }
 }

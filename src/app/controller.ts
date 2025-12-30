@@ -4,7 +4,7 @@ import { getSessionOnce } from '@lib/get-session-once'
 import type { ParameterResourceEnum } from '@sdk/hey-api'
 import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
-import { isSupperAdmin } from '@utility/decode-token'
+import { isSupperAdmin, getUserIdFromToken } from '@utility/decode-token'
 import { hasForbiddenRoute } from '@utility/permission'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -58,7 +58,25 @@ export const useBootstrap = () => {
   const validateToken = async () => {
     try {
       if (pathname === '/' && token && refreshToken) {
-        if (isLoggedIn) {
+        // check current user
+        const currentSession = await getSessionOnce()
+        const currentUserId = getUserIdFromToken(currentSession?.accessToken)
+        const newUserId = getUserIdFromToken(token)
+
+        if (
+          currentSession?.accessToken &&
+          currentUserId &&
+          newUserId &&
+          currentUserId !== newUserId
+        ) {
+          useUserStore.getState().logout?.()
+          await signOut({
+            redirect: false,
+          })
+        }
+
+        //if user on token = current user do not login again
+        if (isLoggedIn && currentUserId === newUserId) {
           return false
         }
 
@@ -106,6 +124,20 @@ export const useBootstrap = () => {
 
       if (!permission || !parameterSettings) {
         throw new Error('Failed to fetch permission')
+      }
+
+      // Kiểm tra và cập nhật name trong session nếu khác nhau
+      const apiUserName = permission?.user?.name
+      const sessionUserName = session.data?.user?.name
+
+      if (apiUserName && apiUserName !== sessionUserName) {
+        // Cập nhật session với name mới từ API
+        await session.update({
+          user: {
+            ...session.data?.user,
+            name: apiUserName,
+          },
+        })
       }
 
       const permissionResponse = {

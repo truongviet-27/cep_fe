@@ -62,3 +62,20 @@ export function isSupperAdmin(rawToken: string | null | undefined): boolean {
     return false
   }
 }
+
+export function getUserIdFromToken(
+  rawToken: string | null | undefined,
+): string | null {
+  if (!rawToken) {
+    return null
+  }
+
+  try {
+    const token = stripBearer(rawToken)
+    const payload = jwtDecode<JWTPayload & { sub?: string }>(token)
+    return payload.sub || null
+  } catch (error) {
+    console.error('Failed to decode JWT:', error)
+    return null
+  }
+}
