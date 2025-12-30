@@ -344,16 +344,19 @@ function QuotaDetail() {
                 </Button>
               )}
 
-            {(permission?.is_module_admin || queryBasic?.data?.is_author) && (
-              <DeleteButton
-                icon={null}
-                onSuccess={() => {
-                  go({
-                    to: '/quotas',
-                  })
-                }}
-              />
-            )}
+            {(permission?.is_module_admin || queryBasic?.data?.is_author) &&
+              (queryBasic?.data?.status === QuotaStatus.Creating ||
+                queryBasic?.data?.status === QuotaStatus.Rejected ||
+                queryBasic?.data?.status === QuotaStatus.Cancelled) && (
+                <DeleteButton
+                  icon={null}
+                  onSuccess={() => {
+                    go({
+                      to: '/quotas',
+                    })
+                  }}
+                />
+              )}
           </div>
         </div>
       }
