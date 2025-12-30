@@ -43,8 +43,11 @@
       "regex": "取引先名（カナ）はカタカナのみ使用できます。"
     },
     "customer_type": {
-      "required": "取引先区分は必須です。",
+      "required": "取引先分類は必須です。",
       "in": "選択された取引先区分が無効です。"
+    },
+    "temp_company_type": {
+      "required": "会社種別（手入力）は必須です。"
     },
     "company_type": {
       "required": "会社種別は必須です。",

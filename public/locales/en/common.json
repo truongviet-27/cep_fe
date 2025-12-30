@@ -81,7 +81,11 @@
       "anti_social_check_date": "Anti-Social Check Date",
       "registration_date": "Registration Date",
       "suspension_date": "Suspension Date",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_kana": "Customer Name (Kana)",
+      "corporate_number": "Corporate Number",
+      "company_classification": "Customer Classification",
+      "manual_input_placeholder": "Enter company type manually"
     },
     "filters": {
       "code_name": "Customer Code / Name",
@@ -428,7 +432,12 @@
   "validation": {
     "required": "This is a required field",
     "invalid_format": "This field has an invalid format",
-    "max255": "This field cannot exceed 255 characters."
+    "max255": "This field cannot exceed 255 characters.",
+    "customer": {
+      "temp_company_type": {
+        "required": "Company type (manual input) is required."
+      }
+    }
   },
   "validations": {
     "invalid_format": "This field has an invalid format",
