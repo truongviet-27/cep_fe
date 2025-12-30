@@ -235,5 +235,8 @@
     "selected_contact": {
       "required": "見積送付先は必須です。"
     }
+  },
+  "barcode": {
+    "number_only": "バーコードは数字のみで入力してください"
   }
 }

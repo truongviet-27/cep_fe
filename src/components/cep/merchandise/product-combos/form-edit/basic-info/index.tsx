@@ -172,6 +172,12 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 </span>
               }
               layout="horizontal"
+              rules={[
+                {
+                  pattern: /^[0-9]*$/,
+                  message: t('validation.barcode.number_only'),
+                },
+              ]}
             />
           </Col>
         </Row>

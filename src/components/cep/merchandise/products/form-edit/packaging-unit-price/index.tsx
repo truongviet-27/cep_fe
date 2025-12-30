@@ -138,6 +138,12 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                 <CoreInput
                   name={[index, 'barcode']}
                   styleForm={{ marginBottom: '0px !important' }}
+                  rules={[
+                    {
+                      pattern: /^[0-9]*$/,
+                      message: '',
+                    },
+                  ]}
                 />
               ),
             },
