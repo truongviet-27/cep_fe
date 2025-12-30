@@ -208,8 +208,7 @@ const AgreedPriceQuotaTab = () => {
       {
         title: (
           <div>
-            <div>適用開始</div>
-            <div style={{ fontSize: '14px', color: '#FF6918' }}>適用終了</div>
+            <div>見積期限</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',

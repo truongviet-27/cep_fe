@@ -52,7 +52,9 @@ const AgreedPriceCustomerDetail = () => {
     },
     {
       title: (
-        <Link href="/agreed-prices">{boldText(t('agreed_prices.parent'))}</Link>
+        <Link href="/agreed-prices/customer">
+          {boldText(t('continuous_quotes_by_customer.title'))}
+        </Link>
       ),
     },
     {
@@ -184,7 +186,7 @@ const AgreedPriceCustomerDetail = () => {
       breadcrumbs={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
-      title={t('agreed_prices.customer_detail.title')}
+      title={t('agreed_prices.customer_detail.description')}
     >
       <div className="space-y-6">
         <Card
@@ -275,8 +277,7 @@ const AgreedPriceCustomerDetail = () => {
         <div className="flex justify-end">
           <Link
             href={{
-              pathname: '/agreed-prices',
-              query: { tab: 'agreed_price_customer' },
+              pathname: '/agreed-prices/customer',
             }}
           >
             <Button>{t('buttons.back')}</Button>

@@ -84,7 +84,8 @@
         "unit": "単位",
         "costPrice": "原価",
         "sellingPrice": "販売単価",
-        "actions": "操作"
+        "actions": "操作",
+        "image": "写真"
       },
       "text": {
         "pieces": "件"
