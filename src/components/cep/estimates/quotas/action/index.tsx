@@ -215,7 +215,7 @@ function QuotaAction() {
             ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
           created_at: dataBasicInfo.data.created_at
-            ? dayjs(dataBasicInfo.data.created_at)
+            ? dayjs(dataBasicInfo.data.created_at).tz('Asia/Tokyo')
             : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
@@ -270,7 +270,7 @@ function QuotaAction() {
             ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
             : null,
           created_at: dataBasicInfo.data.created_at
-            ? dayjs(dataBasicInfo.data.created_at)
+            ? dayjs(dataBasicInfo.data.created_at).tz('Asia/Tokyo')
             : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
@@ -582,18 +582,18 @@ function QuotaAction() {
                   value:
                     (dataBasicInfo?.data.author?.name ?? '---') +
                     ' ' +
-                    dayjs(dataBasicInfo?.data.created_at).format(
-                      'YYYY/MM/DD HH:mm',
-                    ),
+                    dayjs(dataBasicInfo?.data.created_at)
+                      .tz('Asia/Tokyo')
+                      .format('YYYY/MM/DD HH:mm'),
                 },
                 {
                   title: t('approve_routes.show.updater'),
                   value:
                     (dataBasicInfo?.data.editor?.name ?? '---') +
                     ' ' +
-                    dayjs(dataBasicInfo?.data?.updated_at).format(
-                      'YYYY/MM/DD HH:mm',
-                    ),
+                    dayjs(dataBasicInfo?.data?.updated_at)
+                      .tz('Asia/Tokyo')
+                      .format('YYYY/MM/DD HH:mm'),
                 },
               ]}
             />

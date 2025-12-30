@@ -161,7 +161,7 @@ function BasicInfo({
               name={'created_at'}
               label={boldText(t('quotas.show.estimate_date'))}
             >
-              {dayjs(data?.created_at).format('YYYY/MM/DD')}
+              {dayjs(data?.created_at).tz('Asia/Tokyo').format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
