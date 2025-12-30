@@ -184,9 +184,33 @@ function BasicInformation(
                   </Form.Item>
                 </Col>
 
-                <Col>
-                  <Form.Item hidden={!isOtherSelected} name="temp_company_type">
+                <Col style={{ display: isOtherSelected ? 'block' : 'none' }}>
+                  <Form.Item
+                    name="temp_company_type"
+                    rules={[
+                      {
+                        validator: (_, value) => {
+                          if (
+                            isOtherSelected &&
+                            (!value || value.trim() === '')
+                          ) {
+                            return Promise.reject(
+                              new Error(
+                                t(
+                                  'validation.customer.temp_company_type.required',
+                                ),
+                              ),
+                            )
+                          }
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
                     <Input
+                      placeholder={t(
+                        'customers.fields.manual_input_placeholder',
+                      )}
                       onChange={(e) => {
                         if (!e.target.value) {
                           form.setFieldsValue({
