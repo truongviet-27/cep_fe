@@ -436,6 +436,9 @@
     "customer": {
       "temp_company_type": {
         "required": "Company type (manual input) is required."
+      },
+      "price_rank_id": {
+        "required": "Rank is required."
       }
     }
   },
