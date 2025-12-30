@@ -41,6 +41,17 @@ const AgreedPriceQuotaTab = () => {
   const go = useGo()
   const apiUrl = useApiUrl()
 
+  // Function to format number with comma separators, hide .00 if it's .00
+  const formatNumberWithCommas = (num: number | undefined | null): string => {
+    if (num === undefined || num === null) return '0'
+
+    // Format with commas first
+    const formatted = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+    // Remove .00 if it exists at the end
+    return formatted.replace(/\.00$/, '')
+  }
+
   const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
 
   const { permission } = useUserStore((state) => state)
@@ -159,6 +170,7 @@ const AgreedPriceQuotaTab = () => {
             onClick={() =>
               go({ to: `/agreed-prices/quota/${record.quota_id}` })
             }
+            style={{ textDecoration: 'underline' }}
           >
             {quotaCode}
           </Button>
@@ -197,11 +209,11 @@ const AgreedPriceQuotaTab = () => {
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
           <div>
             {record.creator?.department_name && (
-              <div style={{ fontSize: '12px', color: '#666' }}>
+              <div style={{ fontSize: '16px', color: '#666' }}>
                 {record.creator?.department_name}
               </div>
             )}
-            <div>{totalPrice?.toLocaleString() || '0'}</div>
+            <div>{formatNumberWithCommas(totalPrice)}</div>
           </div>
         ),
       },
