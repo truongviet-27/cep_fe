@@ -329,7 +329,12 @@ function BasicInformation(
           formItemProps={{
             label: boldText(t('customers.fields.unit_price_rank_code')),
             name: 'price_rank_id',
-            rules: [rule],
+            rules: [
+              {
+                required: true,
+                message: t('validation.customer.price_rank_id.required'),
+              },
+            ],
             style: { marginTop: -8 },
             hidden: !allowRankResource,
             required: true,
