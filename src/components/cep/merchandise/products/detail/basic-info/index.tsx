@@ -5,6 +5,7 @@ import { useTranslate } from '@refinedev/core'
 import type { ProductDetail } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
 import { Collapse, Row } from 'antd'
+import Image from 'next/image'
 
 interface BasicInfoProps {
   product: ProductDetail
@@ -100,9 +101,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
               <div className="col-span-1">
                 <Row>
                   {(product as any).image_file_url ? (
-                    <img
+                    <Image
                       src={(product as any).image_file_url}
-                      alt="Product"
+                      alt="Product Image"
+                      width={200}
+                      height={200}
                       className="h-50 w-50 rounded-xl border object-cover shadow-sm"
                     />
                   ) : (
