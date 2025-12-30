@@ -23,6 +23,7 @@ import {
 import type { UploadFile } from 'antd/lib/upload/interface'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 const { Dragger } = Upload
 const { Text } = Typography
@@ -142,10 +143,12 @@ function UploadImage({
       >
         {displayPreview ? (
           <>
-            <img
+            <Image
               src={displayPreview}
               alt="preview"
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+              width={200}
+              height={200}
+              className="h-50 w-50 object-cover transition-transform duration-300 group-hover:scale-110"
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -274,10 +277,12 @@ function UploadImage({
                   {urlInput && (
                     <div className="flex items-center gap-4 rounded-lg border border-gray-100 bg-gray-50 p-3">
                       <div className="h-12 w-12 overflow-hidden rounded border bg-white">
-                        <img
+                        <Image
                           src={urlInput}
                           alt="Preview"
-                          className="h-full w-full object-cover"
+                          width={200}
+                          height={200}
+                          className="h-50 w-50 object-cover"
                           onError={(e) =>
                             (e.currentTarget.src =
                               'https://placehold.co/100x100?text=Invalid')

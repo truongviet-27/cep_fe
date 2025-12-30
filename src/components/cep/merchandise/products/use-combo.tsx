@@ -8,6 +8,7 @@ import { PermissionEnum, type ProductListItem } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import { Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
@@ -51,9 +52,11 @@ function useCombo() {
         width: 100,
         render: (_: unknown, record: any) =>
           (record as any).image_file_url ? (
-            <img
+            <Image
               src={(record as any).image_file_url}
-              alt="Product"
+              alt="Product Image"
+              width={200}
+              height={200}
               className="h-20 w-20 rounded-xl border object-cover shadow-sm"
             />
           ) : (
