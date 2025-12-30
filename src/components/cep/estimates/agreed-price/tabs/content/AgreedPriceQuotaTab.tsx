@@ -208,9 +208,9 @@ const AgreedPriceQuotaTab = () => {
         align: 'right',
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
           <div>
-            {record.creator?.department_name && (
+            {(record.customer as any)?.department_name && (
               <div style={{ fontSize: '16px', color: '#666' }}>
-                {record.creator?.department_name}
+                {(record.customer as any)?.department_name}
               </div>
             )}
             <div>{formatNumberWithCommas(totalPrice)}</div>

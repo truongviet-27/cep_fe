@@ -45,8 +45,8 @@ function TenantSetting() {
 
   const [previewPdf, setPreviewPdf] = useState('')
 
-  const logo_image = Form.useWatch('company_logo_image', form)
-  const seal_image = Form.useWatch('company_seal_image', form)
+  const logo_image = Form.useWatch('company_logo_image_file_key', form)
+  const seal_image = Form.useWatch('company_seal_image_file_key', form)
 
   const [isPdf, setIsPdf] = useState(false)
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
@@ -115,11 +115,13 @@ function TenantSetting() {
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
 
+  console.log('company_logo_image : ', form.getFieldValue('company_logo_image'))
+
   const handlePreviewPdf = async () => {
     await form.validateFields()
 
-    const logoImageValue = form.getFieldValue('company_logo_image')
-    const sealImageValue = form.getFieldValue('company_seal_image')
+    const logoImageValue = form.getFieldValue('company_logo_image_file_key')
+    const sealImageValue = form.getFieldValue('company_seal_image_file_key')
     const logoImageMatch = logoImageValue?.match(/imports.*?\.(jpg|jpeg|png)/i)
     const sealImageMatch = sealImageValue?.match(/imports.*?\.(jpg|jpeg|png)/i)
 
