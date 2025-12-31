@@ -108,7 +108,7 @@ function UploadImage({
       uploadToS3(file)
     } catch (error) {
       console.error(error)
-      message.error('画像を取得できません（CORSエラーまたはリンク切れ）')
+      message.error('画像を取得できません')
       setLoading(false)
     }
   }
