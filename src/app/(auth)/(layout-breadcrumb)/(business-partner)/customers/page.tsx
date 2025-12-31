@@ -233,7 +233,11 @@ export default function CustomerListPage() {
                 : `/customers/show/${record.id}`
             }
             key={record.id}
-            style={{ textDecoration: 'underline' }}
+            style={{
+              textDecoration: 'underline',
+              whiteSpace: 'nowrap',
+              display: 'inline-block',
+            }}
           >
             {text}
           </Link>

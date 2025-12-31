@@ -168,12 +168,12 @@ export default function Page() {
     {
       dataIndex: 'created_at',
       title: t('departments.fields.created_at'),
-      render: (value: any) => <DateField value={value} />,
+      render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
       dataIndex: 'updated_at',
       title: t('departments.fields.updated_at'),
-      render: (value: any) => <DateField value={value} />,
+      render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
       title: t('table.actions'),

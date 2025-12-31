@@ -15,6 +15,20 @@ const zDeliveryAddressRule = (t: any) =>
           error: t('validation.customer.delivery_address_name.max', {
             max: 50,
           }),
+        })
+        .optional()
+        .or(z.literal(''))
+        .superRefine((val: any, ctx: any) => {
+          if (val && val.length > 0) {
+            if (val.trim().length === 0) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t(
+                  'validation.customer.delivery_address_name.only_spaces',
+                ),
+              })
+            }
+          }
         }),
     ),
     post_code: z.optional(
@@ -26,9 +40,25 @@ const zDeliveryAddressRule = (t: any) =>
         }),
     ),
     address: z.optional(
-      z.string({ error: t('validation.customer.address.string') }).max(255, {
-        error: t('validation.customer.address.max', { max: 255 }),
-      }),
+      z
+        .string({ error: t('validation.customer.address.string') })
+        .max(255, {
+          error: t('validation.customer.address.max', { max: 255 }),
+        })
+        .optional()
+        .or(z.literal(''))
+        .superRefine((val: any, ctx: any) => {
+          if (val && val.length > 0) {
+            if (val.trim().length === 0) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t(
+                  'validation.customer.delivery_address_name.only_spaces',
+                ),
+              })
+            }
+          }
+        }),
     ),
     phone: z.optional(
       z

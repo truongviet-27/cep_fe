@@ -151,27 +151,18 @@ export default function Page() {
         >
           <Row align="middle" gutter={[8, 8]}>
             <Col flex="none">
-              <Form.Item
-                name="code"
-                rules={codeRules}
-                style={{ marginBottom: 0 }}
-              >
-                <Input
-                  placeholder="DEP001"
-                  size="middle"
-                  // style={{ width: 240 }}
-                  className="w-full"
-                />
+              <Form.Item name="code" rules={codeRules} noStyle>
+                <Input placeholder="DEP001" size="middle" className="w-full" />
               </Form.Item>
             </Col>
 
-            <Col flex="none" className="mt-[-16px]">
+            <Col flex="none">
               <Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
                 (A-Z, 0-9, -)
               </Text>
             </Col>
 
-            <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
+            <Col xs={24} sm="auto" flex="none">
               <Space direction="horizontal" size={3} wrap>
                 <Button
                   size="middle"
