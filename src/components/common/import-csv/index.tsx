@@ -296,6 +296,15 @@ function ImportCsv({
                 {
                   validator: async (_, fileList) => {
                     setIsError(false)
+                    if (
+                      !fileList ||
+                      (Array.isArray(fileList) && fileList.length === 0) ||
+                      !fileList.file ||
+                      !(fileList.file instanceof File)
+                    ) {
+                      setIsError(true)
+                      return Promise.reject(t('csv.step_1.error.empty_file'))
+                    }
                     const file = fileList.file
 
                     const isCSV = file.name.toLowerCase().endsWith('.csv')
@@ -329,7 +338,6 @@ function ImportCsv({
                     const arrayBuffer = await file.arrayBuffer()
 
                     const encodingInfo = detectEncodingWithInfo(arrayBuffer)
-                    console.log('Encoding info:', encodingInfo)
                     // Validate encoding
                     const supportedEncodings = [
                       'UTF-8',
