@@ -207,14 +207,14 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
               value:
                 (record?.author?.name ?? '---') +
                 ' ' +
-                dayjs(record?.created_at).format('DD/MM/YYYY HH:mm'),
+                dayjs(record?.created_at).format('YYYY/MM/DD HH:mm'),
             },
             {
               title: t('common.updated_by'),
               value:
                 (record?.editor?.name ?? '---') +
                 ' ' +
-                dayjs(record?.updated_at).format('DD/MM/YYYY HH:mm'),
+                dayjs(record?.updated_at).format('YYYY/MM/DD HH:mm'),
             },
           ]}
         />

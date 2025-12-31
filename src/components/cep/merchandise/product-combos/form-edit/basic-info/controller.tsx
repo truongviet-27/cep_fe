@@ -161,7 +161,7 @@ export const useBasicInfoController = (
           packagings: [
             {
               code: getFieldValue('code'),
-              name: 'ピース',
+              name: getFieldValue('name'),
               quantity_in_package: 1,
               unit_id: getFieldValue('unit_id'),
               selling_price: getFieldValue('selling_price'),
