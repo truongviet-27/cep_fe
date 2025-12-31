@@ -307,76 +307,73 @@ const AgreedPriceQuotaTab = () => {
     url: `${apiUrl}/quota/agreed-prices/count`,
   })
 
-  const { tableProps, searchFormProps, setFilters, tableQuery } = useTable<
-    QuotaAgreedPrice,
-    HttpError,
-    any
-  >({
-    resource: 'quota/agreed-prices',
-    syncWithLocation: true,
-    filters: {
-      initial: [
-        {
-          field: 'status',
-          operator: 'eq',
-          value: status,
-        },
-      ],
-    },
-    onSearch(values) {
-      const v = values as Record<string, unknown>
+  const { tableProps, searchFormProps, setFilters, tableQuery, setCurrent } =
+    useTable<QuotaAgreedPrice, HttpError, any>({
+      resource: 'quota/agreed-prices',
+      syncWithLocation: true,
+      filters: {
+        initial: [
+          {
+            field: 'status',
+            operator: 'eq',
+            value: status,
+          },
+        ],
+      },
+      onSearch(values) {
+        const v = values as Record<string, unknown>
 
-      const range = v.application_completion as
-        | [Dayjs | null, Dayjs | null]
-        | undefined
-      const [start, end] = range ?? []
+        const range = v.application_completion as
+          | [Dayjs | null, Dayjs | null]
+          | undefined
+        const [start, end] = range ?? []
 
-      return [
-        {
-          field: 'status',
-          operator: 'eq',
-          value: status,
-        },
-        {
-          field: 'quota_code',
-          operator: 'eq',
-          value: v.quota_code,
-        },
-        {
-          field: 'customer_name',
-          operator: 'eq',
-          value: v.customer_name,
-        },
-        {
-          field: 'creator_name',
-          operator: 'eq',
-          value: v.creator_name,
-        },
-        {
-          field: 'department_id',
-          operator: 'eq',
-          value: v.department_id
-            ? (v.department_id as { value?: number }).value
-            : undefined,
-        },
-        {
-          field: 'tag_name',
-          operator: 'eq',
-          value: v.tag_name,
-        },
-        {
-          field: 'expiration_date',
-          operator: 'gte',
-          value: start ? start.format('YYYY-MM-DD') : undefined,
-        },
-        {
-          field: 'expiration_date',
-          operator: 'lte',
-          value: end ? end.format('YYYY-MM-DD') : undefined,
-        },
-      ]
-    },
-  })
+        return [
+          {
+            field: 'status',
+            operator: 'eq',
+            value: status,
+          },
+          {
+            field: 'quota_code',
+            operator: 'eq',
+            value: v.quota_code,
+          },
+          {
+            field: 'customer_name',
+            operator: 'eq',
+            value: v.customer_name,
+          },
+          {
+            field: 'creator_name',
+            operator: 'eq',
+            value: v.creator_name,
+          },
+          {
+            field: 'department_id',
+            operator: 'eq',
+            value: v.department_id
+              ? (v.department_id as { value?: number }).value
+              : undefined,
+          },
+          {
+            field: 'tag_name',
+            operator: 'eq',
+            value: v.tag_name,
+          },
+          {
+            field: 'expiration_date',
+            operator: 'gte',
+            value: start ? start.format('YYYY-MM-DD') : undefined,
+          },
+          {
+            field: 'expiration_date',
+            operator: 'lte',
+            value: end ? end.format('YYYY-MM-DD') : undefined,
+          },
+        ]
+      },
+    })
 
   const statusDashboard = useMemo(() => {
     const c = count?.data
@@ -414,6 +411,7 @@ const AgreedPriceQuotaTab = () => {
 
   const onChangeStatus = useCallback(
     (nextStatus: string | null) => {
+      setCurrent(1)
       setStatus(nextStatus)
       setFilters([
         {

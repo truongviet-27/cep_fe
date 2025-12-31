@@ -68,7 +68,6 @@ function useProductCategories() {
       method: 'post',
       values,
       successNotification: (res: any) => {
-        setTree(updateTree(res?.data?.items, values as any))
         setEditing({})
         setDirty(false)
         return {
