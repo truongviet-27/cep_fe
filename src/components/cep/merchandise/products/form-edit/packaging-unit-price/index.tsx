@@ -112,7 +112,10 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                             i !== index && item?.name?.trim() === value?.trim(),
                         )
                         if (isDuplicate) {
-                          message.warning(`${value}という荷姿名は複数です。`)
+                          message.warning({
+                            content: `${value}という荷姿名は複数です。`,
+                            key: `warn-${value?.trim()}`,
+                          })
                           return Promise.reject(
                             new Error(t('validation.duplicate_name')),
                           )
