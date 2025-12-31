@@ -8,7 +8,7 @@ import { isSupperAdmin, getUserIdFromToken } from '@utility/decode-token'
 import { hasForbiddenRoute } from '@utility/permission'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Fetch and set a tenant for super admin users when no org is present in token
 const getTenantForSuperAdmin = async () => {
@@ -43,17 +43,23 @@ const getTenantForSuperAdmin = async () => {
 }
 
 export const useBootstrap = () => {
-  const session = useSession()
+  const { status, update: updateSession } = useSession()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const { setPermission, setParameterSettings, setIsLoggedIn, logout } =
-    useUserStore((state) => state)
+  const {
+    setPermission,
+    setParameterSettings,
+    setIsLoggedIn,
+    logout,
+    permission,
+  } = useUserStore((state) => state)
   const isLoggedIn = useUserStore.getState().isLoggedIn
   const token = searchParams.get('token')
   const refreshToken = searchParams.get('refreshToken')
-  const { status } = session
+  // check if session name has been updated
+  const hasUpdatedSessionRef = useRef(false)
 
   const validateToken = async () => {
     try {
@@ -126,19 +132,7 @@ export const useBootstrap = () => {
         throw new Error('Failed to fetch permission')
       }
 
-      // Kiểm tra và cập nhật name trong session nếu khác nhau
-      const apiUserName = permission?.user?.name
-      const sessionUserName = session.data?.user?.name
-
-      if (apiUserName && apiUserName !== sessionUserName) {
-        // Cập nhật session với name mới từ API
-        await session.update({
-          user: {
-            ...session.data?.user,
-            name: apiUserName,
-          },
-        })
-      }
+      // Lưu permission để sử dụng trong useEffect sau
 
       const permissionResponse = {
         ...permission,
@@ -206,6 +200,44 @@ export const useBootstrap = () => {
   useEffect(() => {
     initSetup()
   }, [])
+
+  useEffect(() => {
+    const updateSessionName = async () => {
+      // if session is not authenticated or permission is not set or updateSession is not available or session name has been updated, return
+      if (
+        status !== 'authenticated' ||
+        !permission?.user?.name ||
+        !updateSession ||
+        hasUpdatedSessionRef.current
+      ) {
+        return
+      }
+
+      try {
+        const currentSession = await getSessionOnce()
+        const apiUserName = permission.user.name
+        const sessionUserName = currentSession?.user?.name
+
+        if (apiUserName && apiUserName !== sessionUserName) {
+          console.log('Calling updateSession with:', { name: apiUserName })
+          await updateSession({
+            user: {
+              ...currentSession?.user,
+              name: apiUserName,
+            },
+          })
+          hasUpdatedSessionRef.current = true
+          console.log('updateSession called successfully')
+        } else {
+          hasUpdatedSessionRef.current = true
+        }
+      } catch (error) {
+        console.error('Error updating session name:', error)
+      }
+    }
+
+    updateSessionName()
+  }, [status, permission?.user?.name, updateSession])
 
   return {
     isLoadingPage: isLoading || status === 'loading',
