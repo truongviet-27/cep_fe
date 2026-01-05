@@ -544,9 +544,28 @@ function OptionalInfo() {
                   <Form.Item
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    normalize={(val) => val ?? 1}
+                    normalize={(val) => val ?? 0}
+                    rules={[
+                      {
+                        validator(_, value) {
+                          const name = form.getFieldValue([
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'name',
+                          ])
+
+                          if (name && !value) {
+                            return Promise.reject()
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
                   >
-                    <InputNumber min={1} precision={0} controls={false} />
+                    <InputNumber min={0} precision={0} controls={false} />
                   </Form.Item>
                 )
               },
