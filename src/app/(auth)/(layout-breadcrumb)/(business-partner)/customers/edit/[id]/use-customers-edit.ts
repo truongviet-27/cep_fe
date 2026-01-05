@@ -63,11 +63,11 @@ export const useCustomerEdit = () => {
 
       const receivers = values?.receivers || []
 
-      let company_type = values?.company_type
+      let company_type =
+        values?.company_type === 'other'
+          ? values?.temp_company_type
+          : values?.company_type
       let industry = values?.industry
-      if (values?.temp_company_type) {
-        company_type = values?.temp_company_type
-      }
       if (!values?.industry && values?.temp_industry) {
         industry = values?.temp_industry
       }

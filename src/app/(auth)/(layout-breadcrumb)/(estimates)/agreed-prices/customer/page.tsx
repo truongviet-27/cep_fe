@@ -14,7 +14,7 @@ export default function AgreedPriceCustomer() {
   const t = useTranslate()
   const breadcrumbItems = [
     {
-      title: boldText(t('estimates.estimates')),
+      title: boldText(t('continuous_quotes_by_customer.parent_title')),
     },
     {
       title: boldText(t('continuous_quotes_by_customer.title'), PRIMARY),
