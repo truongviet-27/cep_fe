@@ -329,21 +329,17 @@ function BasicInformation(
           formItemProps={{
             label: boldText(t('customers.fields.unit_price_rank_code')),
             name: 'price_rank_id',
-            rules: [
-              {
-                required: true,
-                message: t('validation.customer.price_rank_id.required'),
-              },
-            ],
             style: { marginTop: -8 },
             hidden: !allowRankResource,
             required: true,
           }}
+          allowClear={false}
           optionLabel={'code'}
           optionValue={'id'}
           selectComponentProps={{
             placeholder: t('placeholders.select'),
             style: { maxWidth: 560, minWidth: '150px' },
+            defaultValue: null,
           }}
         />
       </Panel>

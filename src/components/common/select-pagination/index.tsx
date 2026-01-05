@@ -12,6 +12,7 @@ type Props = {
   optionLabel?: any
   optionValue?: any
   fieldSearch?: string
+  allowClear?: boolean
 }
 
 export const SelectPagination = ({
@@ -21,6 +22,7 @@ export const SelectPagination = ({
   optionLabel = 'name',
   optionValue = 'id',
   fieldSearch = 'q',
+  allowClear = true,
 }: Props) => {
   const [page, setPage] = useState<number>(1)
   const [options, setOptions] = useState<SelectProps['options']>([])
@@ -84,7 +86,7 @@ export const SelectPagination = ({
           {...selectComponentProps}
           {...props}
           onSearch={props.onSearch} // Đảm bảo search hoạt động
-          allowClear
+          allowClear={allowClear}
           showSearch
           filterOption={false}
           onPopupScroll={(event) => {

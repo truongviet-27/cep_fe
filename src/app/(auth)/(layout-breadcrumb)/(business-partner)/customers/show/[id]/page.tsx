@@ -326,7 +326,7 @@ export default function CustomerShowPage() {
                 {record?.customer_code}
               </DetailItem>
               <DetailItem label={t('customers.fields.name')}>
-                {record?.name}
+                {(record as any)?.full_name}
               </DetailItem>
               <DetailItem label={t('customers.fields.name_kana')}>
                 {record?.customer_name_by_kana}
