@@ -98,6 +98,7 @@ const AgreedPriceByCustomerTab = () => {
         title: t('agreed_prices.customer_tab.table.unit_price_rank_code'),
         dataIndex: 'rank_code',
         key: 'rank_code',
+        render: (value) => value ?? '-',
       },
       {
         title: t('agreed_prices.customer_tab.table.product_count'),
