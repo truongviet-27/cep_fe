@@ -108,13 +108,13 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
               dataIndex: 'name',
               key: 'name',
               width: 200,
-              render: (_: unknown, __: unknown, index: number) => {
+              render: () => {
                 return (
                   <Form.Item
                     shouldUpdate
                     className="ant-form-item-hidden-margin"
                   >
-                    {() => getFieldValue(['packagings', index, 'name'])}
+                    {() => getFieldValue(['name'])}
                   </Form.Item>
                 )
               },

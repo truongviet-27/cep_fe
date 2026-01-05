@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import { CloseOutlined } from '@ant-design/icons'
 import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
 import { useTranslate } from '@refinedev/core'
 import { Checkbox, Col, Form, Radio, Select, Space, Typography } from 'antd'
@@ -30,31 +29,6 @@ function Right() {
           <div className="flex flex-1 content-center items-center">
             <div className="flex w-3/4 content-center items-center px-4">
               <Form.Item name={'company_logo_image_name'} hidden />
-              {watchCompanyLogoImage &&
-                !form.getFieldValue('company_logo_image_file_key') && (
-                  <div className="relative mr-4 rounded-lg border border-[#d9d9d9] p-2">
-                    <Image
-                      src={watchCompanyLogoImage}
-                      alt="watchCompanySealImage"
-                      width={85}
-                      height={85}
-                      style={{
-                        height: 85,
-                        width: 85,
-                      }}
-                    />
-                    <CloseOutlined
-                      style={{
-                        fontSize: 14,
-                      }}
-                      onClick={() => {
-                        form.setFieldValue('company_logo_image', null)
-                        form.setFieldValue(`company_logo_image_name`, null)
-                      }}
-                      className="absolute top-1 right-1 cursor-pointer"
-                    />
-                  </div>
-                )}
               <Form.Item
                 name="company_logo_image"
                 style={{
@@ -65,6 +39,7 @@ function Right() {
                 <UploadSetting
                   name={'company_logo_image'}
                   fileListProp={null}
+                  initialUrl={form.getFieldValue('company_logo_image')}
                 />
               </Form.Item>
             </div>
@@ -87,31 +62,6 @@ function Right() {
           <div className="flex flex-1 content-center items-center">
             <div className="flex w-3/4 content-center items-center px-4">
               <Form.Item name={'company_seal_image_name'} hidden />
-              {watchCompanySealImage &&
-                !form.getFieldValue('company_seal_image_file_key') && (
-                  <div className="relative mr-4 rounded-lg border border-[#d9d9d9] p-2">
-                    <Image
-                      src={watchCompanySealImage}
-                      alt="watchCompanySealImage"
-                      width={85}
-                      height={85}
-                      style={{
-                        height: 85,
-                        width: 85,
-                      }}
-                    />
-                    <CloseOutlined
-                      style={{
-                        fontSize: 14,
-                      }}
-                      onClick={() => {
-                        form.setFieldValue('company_seal_image', null)
-                        form.setFieldValue(`company_seal_image_name`, null)
-                      }}
-                      className="absolute top-1 right-1 cursor-pointer"
-                    />
-                  </div>
-                )}
               <Form.Item
                 name="company_seal_image"
                 style={{
@@ -122,6 +72,7 @@ function Right() {
                 <UploadSetting
                   name={'company_seal_image'}
                   fileListProp={null}
+                  initialUrl={form.getFieldValue('company_seal_image')}
                 />
               </Form.Item>
             </div>

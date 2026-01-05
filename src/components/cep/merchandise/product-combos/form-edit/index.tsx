@@ -209,7 +209,7 @@ const ProductComboFormContainer: React.FC = () => {
                 size={'small'}
                 onSuccess={() => {
                   go({
-                    to: '/products',
+                    to: `/products?tab=combo`,
                   })
                 }}
               />

@@ -204,6 +204,7 @@ function useTags() {
         id: isString(r.id) ? null : r.id,
         order: maxOrder - index,
         _isEditing: false,
+        _isNew: false,
       }))
 
     if (!values.length) return

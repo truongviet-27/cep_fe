@@ -23,9 +23,11 @@ const getBase64 = (file: FileType): Promise<string> =>
 function UploadSetting({
   name,
   fileListProp,
+  initialUrl,
 }: {
   name: string
   fileListProp: UploadFile[] | null
+  initialUrl: string
 }) {
   const form = Form.useFormInstance()
 
@@ -85,10 +87,20 @@ function UploadSetting({
   }
 
   useEffect(() => {
-    if (fileListProp) {
+    if (fileListProp && fileListProp.length > 0) {
       setFileList(fileListProp)
+    } else if (initialUrl && fileList.length === 0) {
+      // Chỉ set initialUrl nếu chưa có file nào được upload
+      setFileList([
+        {
+          uid: '-1',
+          name: form.getFieldValue(`${name}_name`) || 'image.png',
+          status: 'done',
+          url: initialUrl,
+        },
+      ])
     }
-  }, [fileListProp])
+  }, [fileListProp, initialUrl]) // Thêm initialUrl vào dependency
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {

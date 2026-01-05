@@ -89,7 +89,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
               >
                 {record.assort_products.map((item: any, index: number) => (
                   <div key={index} style={{ marginBottom: '4px' }}>
-                    {item.product?.name} × {item.quantity}
+                    {item.name} × {item.quantity}
                   </div>
                 ))}
               </div>

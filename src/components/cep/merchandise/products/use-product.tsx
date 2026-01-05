@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { PictureOutlined } from '@ant-design/icons'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
@@ -5,6 +8,7 @@ import { PermissionEnum, type ProductListItem } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import { Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
@@ -42,10 +46,30 @@ function useProduct() {
   const columns = useMemo(() => {
     return [
       {
+        title: t('products.list.table.headers.image'),
+        dataIndex: 'code',
+        key: 'code',
+        width: 100,
+        render: (_: unknown, record: any) =>
+          (record as any).image_file_url ? (
+            <Image
+              src={(record as any).image_file_url}
+              alt="Product Image"
+              width={200}
+              height={200}
+              className="h-20 w-20 rounded-xl border object-cover shadow-sm"
+            />
+          ) : (
+            <div className="flex h-20 w-20 flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-200 text-gray-400">
+              <PictureOutlined style={{ fontSize: '40px', opacity: 0.5 }} />
+            </div>
+          ),
+      },
+      {
         title: t('products.list.table.headers.productCode'), // Product Code
         dataIndex: 'code',
         key: 'code',
-        width: 200,
+        width: 120,
         render: (_: unknown, record: ProductListItem) => (
           <Link
             href={`/products/show/${record.id}`}
@@ -69,7 +93,7 @@ function useProduct() {
         title: t('products.list.table.headers.packagingQuantity'), // packaging_count
         dataIndex: 'packaging_count',
         key: 'packaging_count',
-        width: 120,
+        width: 80,
         render: (value: number) => {
           if (typeof value === 'number') {
             return value - 1 //minus main product

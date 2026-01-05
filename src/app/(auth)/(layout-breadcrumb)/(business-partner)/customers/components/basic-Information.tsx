@@ -184,9 +184,33 @@ function BasicInformation(
                   </Form.Item>
                 </Col>
 
-                <Col>
-                  <Form.Item hidden={!isOtherSelected} name="temp_company_type">
+                <Col style={{ display: isOtherSelected ? 'block' : 'none' }}>
+                  <Form.Item
+                    name="temp_company_type"
+                    rules={[
+                      {
+                        validator: (_, value) => {
+                          if (
+                            isOtherSelected &&
+                            (!value || value.trim() === '')
+                          ) {
+                            return Promise.reject(
+                              new Error(
+                                t(
+                                  'validation.customer.temp_company_type.required',
+                                ),
+                              ),
+                            )
+                          }
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
                     <Input
+                      placeholder={t(
+                        'customers.fields.manual_input_placeholder',
+                      )}
                       onChange={(e) => {
                         if (!e.target.value) {
                           form.setFieldsValue({
@@ -305,16 +329,17 @@ function BasicInformation(
           formItemProps={{
             label: boldText(t('customers.fields.unit_price_rank_code')),
             name: 'price_rank_id',
-            rules: [rule],
             style: { marginTop: -8 },
             hidden: !allowRankResource,
             required: true,
           }}
+          allowClear={false}
           optionLabel={'code'}
           optionValue={'id'}
           selectComponentProps={{
             placeholder: t('placeholders.select'),
             style: { maxWidth: 560, minWidth: '150px' },
+            defaultValue: null,
           }}
         />
       </Panel>

@@ -9,7 +9,7 @@ import type { CatNode } from '@interfaces/tree'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import type { FormInstance } from 'antd'
-import { Button, Form, Input, Space, Tag, Typography } from 'antd'
+import { Button, Form, Input, Space, Tag, Tooltip, Typography } from 'antd'
 import React from 'react'
 
 const { Text } = Typography
@@ -102,7 +102,11 @@ const TreeRow: React.FC<TreeRowProps> = ({
             </Form>
           </div>
         ) : (
-          <Text className="truncate font-medium">{cat.name}</Text>
+          <Tooltip title={cat.name} mouseEnterDelay={0.5}>
+            <Text className="block max-w-[300px] truncate font-medium">
+              {cat.name}
+            </Text>
+          </Tooltip>
         )}
 
         {cat.code && !isEditing && (
