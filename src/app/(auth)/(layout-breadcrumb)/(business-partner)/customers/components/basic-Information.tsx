@@ -59,10 +59,22 @@ function BasicInformation(
     ParameterResourceEnum.RANKS,
   )
 
-  if (companyType && isOtherSelected && companyType !== 'other') {
-    form.setFieldValue('temp_company_type', companyType)
-    form.setFieldValue('company_type', 'other')
-  }
+  React.useEffect(() => {
+    const companyType = form.getFieldValue('company_type')
+
+    if (companyType) {
+      const isKnownType = typesCompanyOptions.some(
+        (opt) => opt.value === companyType,
+      )
+
+      if (!isKnownType && companyType !== 'other') {
+        form.setFieldsValue({
+          company_type: 'other',
+          temp_company_type: companyType,
+        })
+      }
+    }
+  }, [companyType, typesCompanyOptions])
 
   return (
     <Collapse

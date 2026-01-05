@@ -905,7 +905,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
-                    onChangeStatus(QuotaStatus.Creating)
+                    onChangeStatus(status)
                   }}
                 >
                   {t('buttons.clear')}
