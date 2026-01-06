@@ -23,9 +23,11 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
   const { close } = modalProps
 
   const handleFinish = async (values: any) => {
-    const result = await formProps.onFinish?.(values)
-    form.resetFields()
-    close()
+    const result: any = await formProps.onFinish?.(values)
+    if (result?.data) {
+      form.resetFields()
+      close()
+    }
     return result
   }
 
@@ -38,7 +40,14 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
       contentProps={{ style: { boxShadow: 'none' } }}
       rightFooterButtons={
         <Space className={'flex w-full justify-end'}>
-          <Button onClick={close}>{t('buttons.cancel')}</Button>
+          <Button
+            onClick={() => {
+              close()
+              form.resetFields()
+            }}
+          >
+            {t('buttons.cancel')}
+          </Button>
           <CreateButton {...saveButtonProps} type="primary" icon={null}>
             {t('buttons.create')}
           </CreateButton>
@@ -78,7 +87,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           label={boldText(t('ranks.fields.name'))}
           name="name"
           rules={[validateRankRule(t)]}
-          style={{ marginTop: -20 }}
+          style={{ marginTop: -12 }}
         >
           <Input style={{ width: '50%' }} />
         </Form.Item>
