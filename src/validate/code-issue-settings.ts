@@ -11,7 +11,9 @@ export const validateCodeIssueSettingsRule = (t: any) => {
         }),
       ),
       prefix: z.string().superRefine((val, ctx) => {
-        if (val.length < 1) {
+        const trimmedVal = val.replace(/\s/g, '')
+
+        if (trimmedVal.length < 1) {
           ctx.addIssue({
             code: z.ZodIssueCode.too_small,
             origin: 'string',
@@ -23,7 +25,7 @@ export const validateCodeIssueSettingsRule = (t: any) => {
           return
         }
 
-        if (val.length > 2) {
+        if (trimmedVal.length > 2) {
           ctx.addIssue({
             code: z.ZodIssueCode.too_big,
             origin: 'string',
@@ -35,7 +37,7 @@ export const validateCodeIssueSettingsRule = (t: any) => {
           return
         }
 
-        if (!/^[A-Z]+$/.test(val)) {
+        if (!/^[A-Z ]+$/.test(val)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             validation: 'regex',

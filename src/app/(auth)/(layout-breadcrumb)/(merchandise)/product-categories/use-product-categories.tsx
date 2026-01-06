@@ -328,6 +328,8 @@ function useProductCategories() {
   const toTreeData = React.useCallback(
     (nodes: readonly CatNode[]): TreeDataNode[] =>
       nodes.map((n) => {
+        const childrenCount = n.children?.length || 0
+
         return {
           key: String(n.id),
           title: (
@@ -336,6 +338,7 @@ function useProductCategories() {
               isNew={n._isNew}
               cat={n}
               hasChildren={Boolean(n.children?.length)}
+              childrenCount={childrenCount}
               onToggle={toggle}
               onAddChild={addChild}
               onStartEdit={startEdit}
