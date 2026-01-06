@@ -1083,7 +1083,7 @@
       "label": "消費税（デフォルト）",
       "taxExclusive": "外税",
       "taxInclusive": "内税",
-      "taxExempt": "税抜",
+      "taxExempt": "非課税",
       "taxRateLabel": "消費税率"
     },
     "taxRounding": {
