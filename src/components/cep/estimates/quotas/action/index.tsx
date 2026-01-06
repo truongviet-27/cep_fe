@@ -212,10 +212,10 @@ function QuotaAction() {
           },
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
+            ? dayjs(dataBasicInfo.data.delivery_date)
             : null,
-          created_at: dataBasicInfo.data.created_at
-            ? dayjs(dataBasicInfo.data.created_at).tz('Asia/Tokyo')
+          issue_date: dataBasicInfo.data.issue_date
+            ? dayjs(dataBasicInfo.data.issue_date)
             : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
@@ -267,10 +267,10 @@ function QuotaAction() {
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
           tax_rounding_method: data?.data?.tax_rounding_method,
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
+            ? dayjs(dataBasicInfo.data.delivery_date)
             : null,
-          created_at: dataBasicInfo.data.created_at
-            ? dayjs(dataBasicInfo.data.created_at).tz('Asia/Tokyo')
+          issue_date: dataBasicInfo.data.issue_date
+            ? dayjs(dataBasicInfo.data.issue_date)
             : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
@@ -308,7 +308,7 @@ function QuotaAction() {
   useEffect(() => {
     const quoteTemplate = quoteTemplateQuery?.data?.data
     if (quoteTemplate) {
-      delete quoteTemplate.created_at
+      delete (quoteTemplate as any).issue_date
       delete quoteTemplate.updated_at
       delete quoteTemplate.author
       delete quoteTemplate.editor
@@ -358,7 +358,7 @@ function QuotaAction() {
         customer: null,
         customer_contact_id: null,
         status: 'creating',
-        created_at: dayjs(),
+        issue_date: dayjs(),
         delivery_date: null,
         delivery_method: data?.data.default_delivery_method,
         payment_due_date: data?.data.default_payment_due_date,
@@ -420,7 +420,7 @@ function QuotaAction() {
                   .startOf('day')
                   .toISOString()
               : null,
-            created_at: dayjs(values.created_at)
+            issue_date: dayjs(values.issue_date)
               .utc(true)
               .startOf('day')
               .toISOString(),
@@ -460,7 +460,7 @@ function QuotaAction() {
                   .startOf('day')
                   .toISOString()
               : null,
-            created_at: dayjs(values.created_at)
+            issue_date: dayjs(values.issue_date)
               .utc(true)
               .startOf('day')
               .toISOString(),
@@ -551,7 +551,7 @@ function QuotaAction() {
             category: 'merchandise',
             consumption_tax: 'exclusive',
             delivery_date: dayjs(),
-            created_at: dayjs(),
+            issue_date: dayjs(),
           }}
           scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
           autoComplete="off"
@@ -582,18 +582,18 @@ function QuotaAction() {
                   value:
                     (dataBasicInfo?.data.author?.name ?? '---') +
                     ' ' +
-                    dayjs(dataBasicInfo?.data.created_at)
-                      .tz('Asia/Tokyo')
-                      .format('YYYY/MM/DD HH:mm'),
+                    dayjs(dataBasicInfo?.data.created_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
                 {
                   title: t('approve_routes.show.updater'),
                   value:
                     (dataBasicInfo?.data.editor?.name ?? '---') +
                     ' ' +
-                    dayjs(dataBasicInfo?.data?.updated_at)
-                      .tz('Asia/Tokyo')
-                      .format('YYYY/MM/DD HH:mm'),
+                    dayjs(dataBasicInfo?.data?.updated_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
               ]}
             />

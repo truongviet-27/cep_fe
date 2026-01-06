@@ -136,7 +136,7 @@ function Right() {
                   </div>
                 )}
 
-                <div className="mt-10 ml-[60%] flex flex-col">
+                <div className="mt-10 mr-[100px] ml-[60%] flex flex-col">
                   <Space>{watchCompanyName}</Space>
                   <Space>{watchAddress}</Space>
                   <Space>{watchPhone}</Space>
