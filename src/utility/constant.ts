@@ -14,7 +14,7 @@ export const CONSUMPTION_TAX: Record<string, { value: string; label: string }> =
     // },
     [ConsumptionTaxEnum.EXTERNAL]: {
       value: ConsumptionTaxEnum.EXTERNAL,
-      label: '税抜',
+      label: '非課税',
     },
   } as const
 

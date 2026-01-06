@@ -1,4 +1,8 @@
-import { CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
+import {
+  CaretDownOutlined,
+  CloseCircleFilled,
+  SearchOutlined,
+} from '@ant-design/icons'
 import type { Category } from '@utility/renderCategories'
 import renderCategories from '@utility/renderCategories'
 import { Dropdown, Empty, Select, Spin } from 'antd'
@@ -44,6 +48,12 @@ const ProductCategoryDropdown: React.FC<Props> = (props) => {
     setTimeout(() => {
       setIsOpenDropdown(false)
     })
+  }
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation() // Ngăn chặn việc mở Dropdown khi nhấn xóa
+    setValue('')
+    onSelect?.(0, [], [], undefined) // Trả về giá trị rỗng cho component cha
   }
 
   return (
@@ -106,12 +116,25 @@ const ProductCategoryDropdown: React.FC<Props> = (props) => {
           placeholder={placeholder}
           readOnly
           suffix={
-            <CaretDownOutlined
-              style={{
-                color: '#00000040',
-                fontSize: '12px',
-              }}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {value && !disabled ? (
+                <CloseCircleFilled
+                  onClick={handleClear}
+                  style={{
+                    color: '#00000040',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                  }}
+                />
+              ) : (
+                <CaretDownOutlined
+                  style={{
+                    color: '#00000040',
+                    fontSize: '12px',
+                  }}
+                />
+              )}
+            </div>
           }
         />
       )}
