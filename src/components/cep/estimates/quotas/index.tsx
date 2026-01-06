@@ -39,7 +39,7 @@ import {
 } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
-import { BLACK, PRIMARY } from '@utility/color'
+import { BLACK, PRIMARY, WHITE } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 import {
   Button,
@@ -104,6 +104,20 @@ function QuotaList() {
     setOptions(options)
     setSelectedRowKeys(newSelectedRowKeys)
   }
+
+  const handleChangeStatus = useCallback(
+    (resource: string, values: any) => {
+      mutate({
+        values,
+        method: 'put',
+        url: `${apiUrl}/quotas/${resource}`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    },
+    [t],
+  )
 
   const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
@@ -389,6 +403,27 @@ function QuotaList() {
                   }}
                 >
                   {t('quotas.actions.decide_move')}
+                </Button>
+              )}
+
+            {(record.status === QuotaStatus.Completed ||
+              record.status === QuotaStatus.Cancelled) &&
+              (permission?.is_module_admin || record.display) &&
+              !record?.has_agreed_price && (
+                <Button
+                  type="default"
+                  style={{
+                    background: '#721C24',
+                    color: WHITE,
+                  }}
+                  size={'small'}
+                  onClick={() => {
+                    handleChangeStatus('back-to-sent-customer', {
+                      quota_ids: [record.id],
+                    })
+                  }}
+                >
+                  {t('quotas.show.actions.move_to_send')}
                 </Button>
               )}
           </Space>
