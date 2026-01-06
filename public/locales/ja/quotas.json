@@ -260,7 +260,7 @@
         "total_profit_margin": "合計利益率",
         "total_amount": "合計金額",
         "subtotal": "小計",
-        "tax_exclusive": "税抜",
+        "tax_exclusive": "非課税",
         "tax_inclusive": "税込"
       },
       "buttons": {
