@@ -112,8 +112,7 @@ function useTags() {
   const stashedRowRef = useRef<TagRow[]>([])
   const addNew = () => {
     setTotalPage(
-      (pre) =>
-        (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + pageCount,
+      (pre) => (pre == 0 ? (tableProps?.pagination as any)?.total : pre) + 1,
     )
     forceUpdate.current = true
     const order = (getValues(`rows.0`)?.order ?? 0) + 1
@@ -146,6 +145,7 @@ function useTags() {
     const row = getValues(`rows.${index}`)
     if (row._isNew) {
       remove(index)
+      setTotalPage(0)
       const rowToRestore = stashedRowRef.current.pop()
       if (rowToRestore) {
         append(rowToRestore)
@@ -271,11 +271,13 @@ function useTags() {
     )
   }
 
-  const dataSource: RowVM[] = useMemo(
-    () =>
-      (watchedRows as TagRow[]).map((r, i) => ({ ...r, __index: String(i) })),
-    [watchedRows],
-  )
+  const dataSource: RowVM[] = useMemo(() => {
+    console.log(watchedRows)
+    return (watchedRows as TagRow[])
+      .map((r, i) => ({ ...r, __index: String(i) }))
+      .filter((r) => r.id || r.order)
+  }, [watchedRows])
+
   React.useEffect(() => {
     // 1. Nếu đang load data thì KHÔNG làm gì cả để tránh tính toán sai lúc total = 0
     if (isLoading || isFetching || !tableProps?.pagination) {

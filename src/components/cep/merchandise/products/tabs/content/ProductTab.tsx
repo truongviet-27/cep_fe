@@ -50,6 +50,7 @@ export default function ProductTab() {
           <div className="mr-auto flex flex-1 gap-4">
             <Button
               type="primary"
+              htmlType="submit"
               onClick={searchFormProps.form?.submit}
               autoInsertSpace={false}
             >

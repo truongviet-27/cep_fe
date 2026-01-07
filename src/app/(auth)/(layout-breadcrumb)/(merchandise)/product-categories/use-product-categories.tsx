@@ -62,6 +62,18 @@ function useProductCategories() {
   const apiUrl = useApiUrl()
   const { mutate: updateAll } = useCustomMutation()
 
+  const hasEditingDescendant = (
+    node: CatNode,
+    editingKeys: string[],
+  ): boolean => {
+    if (!node.children || node.children.length === 0) return false
+    return node.children.some(
+      (child) =>
+        editingKeys.includes(String(child.id)) ||
+        hasEditingDescendant(child, editingKeys),
+    )
+  }
+
   const handleUpdateAll = (values: SavePayloadNode[]) => {
     updateAll({
       url: `${apiUrl}/${resource}/update-tree`,
@@ -326,10 +338,12 @@ function useProductCategories() {
   }
 
   const toTreeData = React.useCallback(
-    (nodes: readonly CatNode[]): TreeDataNode[] =>
-      nodes.map((n) => {
+    (nodes: readonly CatNode[]): TreeDataNode[] => {
+      const editingKeys = Object.keys(editing)
+      return nodes.map((n) => {
         const childrenCount = n.children?.length || 0
 
+        const childIsEditing = hasEditingDescendant(n, editingKeys)
         return {
           key: String(n.id),
           title: (
@@ -351,11 +365,13 @@ function useProductCategories() {
               onDelete={() => del(String(n.id))}
               depth={MAX_DEPTH}
               level={n.level ?? 1}
+              hasChildEditing={childIsEditing}
             />
           ),
           children: n.children ? toTreeData(n.children) : undefined,
         }
-      }),
+      })
+    },
     [
       editing,
       saving,

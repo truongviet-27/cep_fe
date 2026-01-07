@@ -119,9 +119,9 @@ function Page() {
   const { t } = usePriceGroups()
 
   const getCurrentPrices = (index: number) => {
-    return tableProps?.dataSource?.[index].rank_prices
-      ?.sort((a, b) => (a.rate ?? 0) - (b.rate ?? 0))
-      .filter((i) => !!i.rate)
+    return tableProps?.dataSource?.[index].rank_prices?.sort(
+      (a, b) => (a.rate ?? 0) - (b.rate ?? 0),
+    )
   }
 
   const breadcrumbItems = [
