@@ -315,7 +315,8 @@ function QuotaDetail() {
 
             {(queryBasic?.data?.status === QuotaStatus.Completed ||
               queryBasic?.data?.status === QuotaStatus.Cancelled) &&
-              (permission?.is_module_admin || queryBasic.data?.display) && (
+              (permission?.is_module_admin || queryBasic.data?.display) &&
+              !queryBasic?.data?.has_agreed_price && (
                 <Button
                   style={{
                     background: '#721C24',
