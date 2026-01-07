@@ -10,7 +10,6 @@ import {
 } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useState } from 'react'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
 
@@ -18,7 +17,6 @@ export const useCustomerCreate = () => {
   const t = useTranslate()
   const apiUrl = useApiUrl()
   const go = useGo()
-  const [deletedReceiverIds, setDeletedReceiverIds] = useState<number[]>([])
 
   const {
     formProps,
@@ -30,8 +28,6 @@ export const useCustomerCreate = () => {
     action: 'create',
     redirect: false,
   })
-
-  const { mutateAsync: createContacts } = useCustomMutation()
 
   const handleFinish = async (values: any) => {
     try {
@@ -48,35 +44,28 @@ export const useCustomerCreate = () => {
         industry = values?.temp_industry
       }
 
-      // Filter to get only new contacts (contacts without id)
-      const newContacts = receivers.filter((receiver: any) => !receiver.id)
-      const newContactEmails = newContacts.map((contact: any) => contact.email)
+      // Prepare contacts data for API
+      const contacts = receivers
+        .filter(
+          (receiver: any) => receiver.contact_person_name || receiver.email,
+        ) // Filter out empty contacts
+        .map((receiver: any) => ({
+          contact_person_name: receiver.contact_person_name,
+          email: receiver.email,
+          department_name: receiver.department_name,
+        }))
 
       // Remove receivers from customer data
       const { receivers: _, ...customerData } = values
 
-      // Step 1: Create customer with new contacts emails for validation
+      // Create customer with contacts in single API call
       const customerResponse = await onFinish({
         ...customerData,
-        new_contacts_emails: newContactEmails, // Send only new contact emails
+        contacts,
         company_type,
         industry,
       })
       const customerId = customerResponse?.data?.id
-
-      // Step 2: Create customer contacts
-      const contacts = receivers.map((receiver: any) => ({
-        customer_id: customerId,
-        department_name: receiver.department_name,
-        contact_person_name: receiver.contact_person_name,
-        email: receiver.email,
-      }))
-
-      await createContacts({
-        url: `${apiUrl}/customer-contacts`,
-        method: 'patch',
-        values: { contacts },
-      })
 
       go({
         to: `/customers/show/${customerId}`,
@@ -89,47 +78,7 @@ export const useCustomerCreate = () => {
         error?.message ||
         t('notifications.createError')
 
-      // Handle duplicate contact errors
-      const errorData = error?.response?.data
-
-      // Check for new_contacts_emails error (duplicate emails)
-      if (errorData?.errors?.new_contacts_emails) {
-        const errorFields: any[] = []
-        const newContactsEmailsError =
-          errorData.errors.new_contacts_emails[0] ||
-          errorData.errors.new_contacts_emails
-
-        // Extract duplicate emails from error message like: "(3333@gmail.com, sfsdfssssdf@gmail.com)"
-        const emailRegex = /\(([^)]+)\)/
-        const match = newContactsEmailsError.match(emailRegex)
-
-        if (match) {
-          const duplicateEmailsStr = match[1]
-          const duplicateEmails = duplicateEmailsStr
-            .split(', ')
-            .map((email: string) => email.trim())
-
-          // Find receivers with duplicate emails and highlight them
-          values.receivers.forEach((receiver: any, index: number) => {
-            if (duplicateEmails.includes(receiver.email)) {
-              errorFields.push({
-                name: ['receivers', index, 'email'],
-                errors: [t('')],
-                value: receiver.email,
-              })
-            }
-          })
-        }
-
-        if (errorFields.length > 0) {
-          try {
-            form.setFields(errorFields)
-          } catch (e) {}
-        }
-      }
-
-      // Remove error message notification - only show field validation errors
-      // message.error(errorMessage)
+      message.error(errorMessage)
     }
   }
 
@@ -180,7 +129,5 @@ export const useCustomerCreate = () => {
     modalFormCorporate,
     handleFinish,
     isAutomatic,
-    deletedReceiverIds,
-    setDeletedReceiverIds,
   }
 }

@@ -812,10 +812,7 @@ export type Customer = {
   /**
    * Department in charge
    */
-  department_in_charge?: {
-    name: string | null
-    deleted_at: string | null
-  } | null
+  department_in_charge?: string | null
   /**
    * Soft deletion status
    */
@@ -847,6 +844,24 @@ export type Customer = {
    * Customer delivery addresses
    */
   delivery_addresses?: Array<CustomerDeliveryAddress>
+  /**
+   * Customer contacts
+   */
+  contacts?: Array<CustomerContact>
+}
+
+/**
+ * Customer Contact Store Request
+ * Fields to create or update a customer contact. Include 'id' for updates, omit 'id' for new contacts.
+ */
+export type CustomerContactStoreRequest = {
+  /**
+   * Contact ID (include for updates, omit for new contacts)
+   */
+  id?: number | null
+  contact_person_name: string
+  email: string
+  department_name?: string | null
 }
 
 /**
@@ -980,6 +995,10 @@ export type CustomerStoreRequest = {
    * List of delivery addresses for the customer.
    */
   delivery_addresses?: Array<CustomerDeliveryAddressStoreRequest> | null
+  /**
+   * List of customer contacts. Existing contacts (with id) will be updated, new contacts (without id) will be created, and missing contacts will be soft deleted.
+   */
+  contacts?: Array<CustomerContactStoreRequest> | null
 }
 
 /**
@@ -1020,6 +1039,10 @@ export type CustomerUpdateRequest = {
    * List of delivery addresses to add, update, or delete.
    */
   delivery_addresses?: Array<CustomerDeliveryAddressUpdateRequest> | null
+  /**
+   * List of customer contacts to add, update, or delete. Existing contacts (with id) will be updated, new contacts (without id) will be created, and missing contacts will be soft deleted.
+   */
+  contacts?: Array<CustomerContactStoreRequest> | null
 }
 
 /**
@@ -6188,6 +6211,8 @@ export type E821554Cdf9A1C547Bbe990Db9Dc76Data = {
       | 'CATEGORY_PRODUCTS'
       | 'CUSTOMERS'
       | 'DEPARTMENTS'
+      | 'CUSTOMERS_DETAIL'
+      | 'PRODUCTS_DETAIL'
       | 'OTHER'
   }
   query?: never
@@ -6249,6 +6274,8 @@ export type ImportControllerGetTemplateData = {
       | 'CATEGORY_PRODUCTS'
       | 'CUSTOMERS'
       | 'DEPARTMENTS'
+      | 'CUSTOMERS_DETAIL'
+      | 'PRODUCTS_DETAIL'
       | 'OTHER'
   }
   query?: never
@@ -6302,6 +6329,8 @@ export type ImportControllerImportData = {
       | 'CATEGORY_PRODUCTS'
       | 'CUSTOMERS'
       | 'DEPARTMENTS'
+      | 'CUSTOMERS_DETAIL'
+      | 'PRODUCTS_DETAIL'
       | 'OTHER'
   }
   query?: never
@@ -6385,7 +6414,7 @@ export type ImportControllerGetImportHistoryData = {
       | 'OTHER'
     start_date?: string
     end_date?: string
-    created_by?: number
+    created_by?: string
     id?: number
   }
   url: '/api/v1/csv-imports/history'
@@ -6987,6 +7016,52 @@ export type E475E7Ead1848Aa17C399Ba311C51Responses = {
 
 export type E475E7Ead1848Aa17C399Ba311C51Response =
   E475E7Ead1848Aa17C399Ba311C51Responses[keyof E475E7Ead1848Aa17C399Ba311C51Responses]
+
+export type ProductControllerListAllData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Search keyword for code or name
+     */
+    q?: string
+    _page?: number
+    _per_page?: number
+    /**
+     * Filter by category id
+     */
+    category_id?: number
+  }
+  url: '/api/v1/products/list-all'
+}
+
+export type ProductControllerListAllErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductControllerListAllError =
+  ProductControllerListAllErrors[keyof ProductControllerListAllErrors]
+
+export type ProductControllerListAllResponses = {
+  /**
+   * Products retrieved successfully
+   */
+  200: ProductsListResponse
+}
+
+export type ProductControllerListAllResponse =
+  ProductControllerListAllResponses[keyof ProductControllerListAllResponses]
 
 export type ProductControllerDestroyData = {
   body?: never
@@ -7671,6 +7746,197 @@ export type ProductCategoryControllerGetProductsResponses = {
 
 export type ProductCategoryControllerGetProductsResponse =
   ProductCategoryControllerGetProductsResponses[keyof ProductCategoryControllerGetProductsResponses]
+
+export type ProductComboControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Search keyword for code or name
+     */
+    q?: string
+    _page?: number
+    _per_page?: number
+    /**
+     * Filter by category id
+     */
+    category_id?: number
+  }
+  url: '/api/v1/product-combos'
+}
+
+export type ProductComboControllerIndexErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductComboControllerIndexError =
+  ProductComboControllerIndexErrors[keyof ProductComboControllerIndexErrors]
+
+export type ProductComboControllerIndexResponses = {
+  /**
+   * Product combos retrieved successfully
+   */
+  200: ProductsListResponse
+}
+
+export type ProductComboControllerIndexResponse =
+  ProductComboControllerIndexResponses[keyof ProductComboControllerIndexResponses]
+
+export type F460B8466Cbeabe273F75688D70C36B1Data = {
+  body: UpdateProductInput
+  path?: never
+  query?: never
+  url: '/api/v1/product-combos'
+}
+
+export type F460B8466Cbeabe273F75688D70C36B1Errors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type F460B8466Cbeabe273F75688D70C36B1Error =
+  F460B8466Cbeabe273F75688D70C36B1Errors[keyof F460B8466Cbeabe273F75688D70C36B1Errors]
+
+export type F460B8466Cbeabe273F75688D70C36B1Responses = {
+  /**
+   * Created
+   */
+  201: ProductDetailResponse
+}
+
+export type F460B8466Cbeabe273F75688D70C36B1Response =
+  F460B8466Cbeabe273F75688D70C36B1Responses[keyof F460B8466Cbeabe273F75688D70C36B1Responses]
+
+export type ProductComboControllerDestroyData = {
+  body?: never
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/product-combos/{id}'
+}
+
+export type ProductComboControllerDestroyErrors = {
+  /**
+   * Not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductComboControllerDestroyError =
+  ProductComboControllerDestroyErrors[keyof ProductComboControllerDestroyErrors]
+
+export type ProductComboControllerDestroyResponses = {
+  /**
+   * Soft deleted
+   */
+  200: {
+    data?: unknown | null
+    message?: string
+  }
+}
+
+export type ProductComboControllerDestroyResponse =
+  ProductComboControllerDestroyResponses[keyof ProductComboControllerDestroyResponses]
+
+export type ProductComboControllerShowData = {
+  body?: never
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/product-combos/{id}'
+}
+
+export type ProductComboControllerShowErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductComboControllerShowError =
+  ProductComboControllerShowErrors[keyof ProductComboControllerShowErrors]
+
+export type ProductComboControllerShowResponses = {
+  /**
+   * Product combo detail retrieved
+   */
+  200: ProductDetailResponse
+}
+
+export type ProductComboControllerShowResponse =
+  ProductComboControllerShowResponses[keyof ProductComboControllerShowResponses]
+
+export type E970E89Ca243F0694B1C00Fa9Aec3272Data = {
+  body: UpdateProductInput
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/product-combos/{id}'
+}
+
+export type E970E89Ca243F0694B1C00Fa9Aec3272Errors = {
+  /**
+   * Validation error
+   */
+  400: ValidationErrorResponse
+  /**
+   * Not found
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type E970E89Ca243F0694B1C00Fa9Aec3272Error =
+  E970E89Ca243F0694B1C00Fa9Aec3272Errors[keyof E970E89Ca243F0694B1C00Fa9Aec3272Errors]
+
+export type E970E89Ca243F0694B1C00Fa9Aec3272Responses = {
+  /**
+   * OK
+   */
+  200: ProductDetailResponse
+}
+
+export type E970E89Ca243F0694B1C00Fa9Aec3272Response =
+  E970E89Ca243F0694B1C00Fa9Aec3272Responses[keyof E970E89Ca243F0694B1C00Fa9Aec3272Responses]
 
 export type ProductUnitControllerIndexData = {
   body?: never
