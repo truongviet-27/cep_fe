@@ -388,12 +388,9 @@ export default function CustomerShowPage() {
                   dayjs(record?.date_of_establishment).format(FORMAT_DATE)}
               </DetailItem>
               <DetailItem label={t('customers.show.department_in_charge')}>
-                {record?.department_in_charge?.name as string}
-                {record?.department_in_charge?.deleted_at && (
-                  <span className="ml-4 rounded-full bg-red-500 px-2 py-1 text-white">
-                    {t('departments.is_deleted')}
-                  </span>
-                )}
+                {typeof record?.department_in_charge === 'object'
+                  ? (record?.department_in_charge as any)?.name
+                  : record?.department_in_charge}
               </DetailItem>
             </div>
           ),

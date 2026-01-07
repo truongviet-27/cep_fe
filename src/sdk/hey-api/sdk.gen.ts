@@ -169,6 +169,9 @@ import type {
   E475E7Ead1848Aa17C399Ba311C51Data,
   E475E7Ead1848Aa17C399Ba311C51Responses,
   E475E7Ead1848Aa17C399Ba311C51Errors,
+  ProductControllerListAllData,
+  ProductControllerListAllResponses,
+  ProductControllerListAllErrors,
   ProductControllerDestroyData,
   ProductControllerDestroyResponses,
   ProductControllerDestroyErrors,
@@ -205,6 +208,21 @@ import type {
   ProductCategoryControllerGetProductsData,
   ProductCategoryControllerGetProductsResponses,
   ProductCategoryControllerGetProductsErrors,
+  ProductComboControllerIndexData,
+  ProductComboControllerIndexResponses,
+  ProductComboControllerIndexErrors,
+  F460B8466Cbeabe273F75688D70C36B1Data,
+  F460B8466Cbeabe273F75688D70C36B1Responses,
+  F460B8466Cbeabe273F75688D70C36B1Errors,
+  ProductComboControllerDestroyData,
+  ProductComboControllerDestroyResponses,
+  ProductComboControllerDestroyErrors,
+  ProductComboControllerShowData,
+  ProductComboControllerShowResponses,
+  ProductComboControllerShowErrors,
+  E970E89Ca243F0694B1C00Fa9Aec3272Data,
+  E970E89Ca243F0694B1C00Fa9Aec3272Responses,
+  E970E89Ca243F0694B1C00Fa9Aec3272Errors,
   ProductUnitControllerIndexData,
   ProductUnitControllerIndexResponses,
   ProductUnitControllerIndexErrors,
@@ -418,6 +436,7 @@ import {
   zPriceGroupControllerUpdateData,
   zProductControllerIndexData,
   zE475E7Ead1848Aa17C399Ba311C51Data,
+  zProductControllerListAllData,
   zProductControllerDestroyData,
   zProductControllerShowData,
   zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data,
@@ -430,6 +449,11 @@ import {
   zProductCategoryControllerShowData,
   zProductCategoryControllerUpdateData,
   zProductCategoryControllerGetProductsData,
+  zProductComboControllerIndexData,
+  zF460B8466Cbeabe273F75688D70C36B1Data,
+  zProductComboControllerDestroyData,
+  zProductComboControllerShowData,
+  zE970E89Ca243F0694B1C00Fa9Aec3272Data,
   zProductUnitControllerIndexData,
   zProductUnitControllerStoreData,
   zProductUnitControllerUpsertData,
@@ -1025,7 +1049,7 @@ export const customerControllerIndex = <ThrowOnError extends boolean = false>(
 
 /**
  * Create a new customer
- * Create a new customer with nested company research information and files.
+ * Create a new customer with nested company research information, delivery addresses, and contacts.
  */
 export const customerControllerStore = <ThrowOnError extends boolean = false>(
   options: Options<CustomerControllerStoreData, ThrowOnError>,
@@ -1107,7 +1131,7 @@ export const customerControllerShow = <ThrowOnError extends boolean = false>(
 
 /**
  * Update a customer
- * Update an existing customer with nested company research information and files.
+ * Update an existing customer with nested company research information, delivery addresses, and contacts.
  */
 export const customerControllerUpdate = <ThrowOnError extends boolean = false>(
   options: Options<CustomerControllerUpdateData, ThrowOnError>,
@@ -2087,6 +2111,31 @@ export const e475E7Ead1848Aa17C399Ba311C51 = <
 }
 
 /**
+ * Get list of products
+ */
+export const productControllerListAll = <ThrowOnError extends boolean = false>(
+  options?: Options<ProductControllerListAllData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ProductControllerListAllResponses,
+    ProductControllerListAllErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductControllerListAllData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/products/list-all',
+    ...options,
+  })
+}
+
+/**
  * Soft delete product (and related packagings & rank prices)
  */
 export const productControllerDestroy = <ThrowOnError extends boolean = false>(
@@ -2427,6 +2476,141 @@ export const productCategoryControllerGetProducts = <
     ],
     url: '/api/v1/product-categories/{id}/products',
     ...options,
+  })
+}
+
+/**
+ * Get list of product combos
+ * Retrieve products where type = combo
+ */
+export const productComboControllerIndex = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ProductComboControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ProductComboControllerIndexResponses,
+    ProductComboControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductComboControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-combos',
+    ...options,
+  })
+}
+
+/**
+ * Create a new product combo
+ * Create a combo product and link child items in assort_products table
+ */
+export const f460B8466Cbeabe273F75688D70C36B1 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<F460B8466Cbeabe273F75688D70C36B1Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    F460B8466Cbeabe273F75688D70C36B1Responses,
+    F460B8466Cbeabe273F75688D70C36B1Errors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zF460B8466Cbeabe273F75688D70C36B1Data.parseAsync(data)
+    },
+    url: '/api/v1/product-combos',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Soft delete product combo
+ */
+export const productComboControllerDestroy = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductComboControllerDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    ProductComboControllerDestroyResponses,
+    ProductComboControllerDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductComboControllerDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-combos/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Get product combo detail
+ * Get combo details along with its assort items (child products)
+ */
+export const productComboControllerShow = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductComboControllerShowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ProductComboControllerShowResponses,
+    ProductComboControllerShowErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductComboControllerShowData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/product-combos/{id}',
+    ...options,
+  })
+}
+
+/**
+ * Update product combo
+ * Update combo info and sync assort items (add/remove/update quantity)
+ */
+export const e970E89Ca243F0694B1C00Fa9Aec3272 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<E970E89Ca243F0694B1C00Fa9Aec3272Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    E970E89Ca243F0694B1C00Fa9Aec3272Responses,
+    E970E89Ca243F0694B1C00Fa9Aec3272Errors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zE970E89Ca243F0694B1C00Fa9Aec3272Data.parseAsync(data)
+    },
+    url: '/api/v1/product-combos/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 
