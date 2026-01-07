@@ -205,6 +205,7 @@ export const useBasicInfoController = (
         return index === 0
           ? {
               ...item,
+              barcode: getFieldValue('barcode'),
               selling_price: getFieldValue('selling_price'),
               ...rankObject,
             }

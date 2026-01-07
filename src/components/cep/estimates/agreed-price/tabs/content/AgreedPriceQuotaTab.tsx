@@ -252,8 +252,8 @@ const AgreedPriceQuotaTab = () => {
       },
       {
         title: t('agreed_prices.table.reference_count'),
-        dataIndex: 'number_updating',
-        key: 'number_updating',
+        dataIndex: 'number_references',
+        key: 'number_references',
         align: 'right',
       },
       {
@@ -261,9 +261,6 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'number_updating',
         key: 'number_updating',
         align: 'center',
-        render: () => {
-          return '-'
-        },
       },
       {
         title: t('agreed_prices.table.operation'),
