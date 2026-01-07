@@ -504,6 +504,23 @@ export const zCustomerDeliveryAddress = z.object({
 })
 
 /**
+ * Customer Contact Model
+ * Represents a customer contact record.
+ */
+export const zCustomerContact = z.object({
+  id: z.optional(z.int()),
+  customer_id: z.optional(z.int()),
+  customer_name: z.optional(z.string()),
+  department_name: z.optional(z.union([z.string().max(50), z.null()])),
+  contact_person_name: z.optional(z.string().max(50)),
+  email: z.optional(z.email().max(100)),
+  created_by: z.optional(z.union([z.int(), z.null()])),
+  updated_by: z.optional(z.union([z.int(), z.null()])),
+  created_at: z.optional(z.iso.datetime()),
+  updated_at: z.optional(z.iso.datetime()),
+})
+
+/**
  * Customer Model
  * Represents a customer record.
  */
@@ -542,6 +559,18 @@ export const zCustomer = z.object({
     z.array(zCompanyResearchInformation),
   ),
   delivery_addresses: z.optional(z.array(zCustomerDeliveryAddress)),
+  contacts: z.optional(z.array(zCustomerContact)),
+})
+
+/**
+ * Customer Contact Store Request
+ * Fields to create or update a customer contact. Include 'id' for updates, omit 'id' for new contacts.
+ */
+export const zCustomerContactStoreRequest = z.object({
+  id: z.optional(z.union([z.int(), z.null()])),
+  contact_person_name: z.string().max(50),
+  email: z.email().max(100),
+  department_name: z.optional(z.union([z.string().max(50), z.null()])),
 })
 
 /**
@@ -601,6 +630,9 @@ export const zCustomerStoreRequest = z.object({
   delivery_addresses: z.optional(
     z.union([z.array(zCustomerDeliveryAddressStoreRequest), z.null()]),
   ),
+  contacts: z.optional(
+    z.union([z.array(zCustomerContactStoreRequest), z.null()]),
+  ),
 })
 
 /**
@@ -634,6 +666,9 @@ export const zCustomerUpdateRequest = z.object({
   ),
   delivery_addresses: z.optional(
     z.union([z.array(zCustomerDeliveryAddressUpdateRequest), z.null()]),
+  ),
+  contacts: z.optional(
+    z.union([z.array(zCustomerContactStoreRequest), z.null()]),
   ),
 })
 
@@ -688,23 +723,6 @@ export const zCustomersPaginatedResponse = z.object({
     }),
   ),
   message: z.optional(z.string()),
-})
-
-/**
- * Customer Contact Model
- * Represents a customer contact record.
- */
-export const zCustomerContact = z.object({
-  id: z.optional(z.int()),
-  customer_id: z.optional(z.int()),
-  customer_name: z.optional(z.string()),
-  department_name: z.optional(z.union([z.string().max(50), z.null()])),
-  contact_person_name: z.optional(z.string().max(50)),
-  email: z.optional(z.email().max(100)),
-  created_by: z.optional(z.union([z.int(), z.null()])),
-  updated_by: z.optional(z.union([z.int(), z.null()])),
-  created_at: z.optional(z.iso.datetime()),
-  updated_at: z.optional(z.iso.datetime()),
 })
 
 /**
@@ -3356,6 +3374,8 @@ export const zE821554Cdf9A1C547Bbe990Db9Dc76Data = z.object({
       'CATEGORY_PRODUCTS',
       'CUSTOMERS',
       'DEPARTMENTS',
+      'CUSTOMERS_DETAIL',
+      'PRODUCTS_DETAIL',
       'OTHER',
     ]),
   }),
@@ -3387,6 +3407,8 @@ export const zImportControllerGetTemplateData = z.object({
       'CATEGORY_PRODUCTS',
       'CUSTOMERS',
       'DEPARTMENTS',
+      'CUSTOMERS_DETAIL',
+      'PRODUCTS_DETAIL',
       'OTHER',
     ]),
   }),
@@ -3408,6 +3430,8 @@ export const zImportControllerImportData = z.object({
       'CATEGORY_PRODUCTS',
       'CUSTOMERS',
       'DEPARTMENTS',
+      'CUSTOMERS_DETAIL',
+      'PRODUCTS_DETAIL',
       'OTHER',
     ]),
   }),
@@ -3449,7 +3473,7 @@ export const zImportControllerGetImportHistoryData = z.object({
       ),
       start_date: z.optional(z.iso.date()),
       end_date: z.optional(z.iso.date()),
-      created_by: z.optional(z.int()),
+      created_by: z.optional(z.string()),
       id: z.optional(z.int()),
     }),
   ),
@@ -3756,6 +3780,24 @@ export const zE475E7Ead1848Aa17C399Ba311C51Data = z.object({
  */
 export const zE475E7Ead1848Aa17C399Ba311C51Response = zProductDetailResponse
 
+export const zProductControllerListAllData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      q: z.optional(z.string()),
+      _page: z.optional(z.int()).default(1),
+      _per_page: z.optional(z.int()).default(10),
+      category_id: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Products retrieved successfully
+ */
+export const zProductControllerListAllResponse = zProductsListResponse
+
 export const zProductControllerDestroyData = z.object({
   body: z.optional(z.never()),
   path: z.object({
@@ -4045,6 +4087,77 @@ export const zProductCategoryControllerGetProductsResponse = z.object({
     }),
   ),
 })
+
+export const zProductComboControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      q: z.optional(z.string()),
+      _page: z.optional(z.int()).default(1),
+      _per_page: z.optional(z.int()).default(10),
+      category_id: z.optional(z.int()),
+    }),
+  ),
+})
+
+/**
+ * Product combos retrieved successfully
+ */
+export const zProductComboControllerIndexResponse = zProductsListResponse
+
+export const zF460B8466Cbeabe273F75688D70C36B1Data = z.object({
+  body: zUpdateProductInput,
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Created
+ */
+export const zF460B8466Cbeabe273F75688D70C36B1Response = zProductDetailResponse
+
+export const zProductComboControllerDestroyData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Soft deleted
+ */
+export const zProductComboControllerDestroyResponse = z.object({
+  data: z.optional(z.union([z.unknown(), z.null()])),
+  message: z.optional(z.string()),
+})
+
+export const zProductComboControllerShowData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Product combo detail retrieved
+ */
+export const zProductComboControllerShowResponse = zProductDetailResponse
+
+export const zE970E89Ca243F0694B1C00Fa9Aec3272Data = z.object({
+  body: zUpdateProductInput,
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * OK
+ */
+export const zE970E89Ca243F0694B1C00Fa9Aec3272Response = zProductDetailResponse
 
 export const zProductUnitControllerIndexData = z.object({
   body: z.optional(z.never()),

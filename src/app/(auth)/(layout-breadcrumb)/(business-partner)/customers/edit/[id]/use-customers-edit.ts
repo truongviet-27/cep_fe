@@ -12,8 +12,7 @@ import {
 } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useEffect, useState } from 'react'
-import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
+import { useEffect } from 'react'
 import { message } from 'antd'
 import { useParams } from 'next/navigation'
 
@@ -23,7 +22,6 @@ export const useCustomerEdit = () => {
   const go = useGo()
   const params = useParams()
   const customerId = params?.id as string
-  const [deletedReceiverIds, setDeletedReceiverIds] = useState<number[]>([])
 
   const {
     formProps,
@@ -38,12 +36,11 @@ export const useCustomerEdit = () => {
     redirect: false,
   })
 
-  const { mutateAsync: updateContacts } = useCustomMutation()
-
   const record = queryResult?.data?.data
 
+  // TODO: Remove this when customer API show endpoint includes contacts in response
   // Fetch customer contacts only after customer data is loaded
-  const { data: contactsData, refetch: refetchContacts } = useCustom({
+  const { data: contactsData } = useCustom({
     url: `${apiUrl}/customer-contacts`,
     method: 'get',
     config: {
@@ -72,47 +69,27 @@ export const useCustomerEdit = () => {
         industry = values?.temp_industry
       }
 
-      // Filter to get only new contacts (contacts without id)
-      const newContacts = receivers.filter((receiver: any) => !receiver.id)
-      const newContactEmails = newContacts.map((contact: any) => contact.email)
+      // Prepare contacts data for API
+      const contacts = receivers
+        .filter(
+          (receiver: any) => receiver.contact_person_name || receiver.email,
+        ) // Filter out empty contacts
+        .map((receiver: any) => ({
+          id: receiver.id, // Include id for updates, omit for new contacts
+          contact_person_name: receiver.contact_person_name,
+          email: receiver.email,
+          department_name: receiver.department_name,
+        }))
 
       // Remove receivers from customer data
       const { receivers: _, ...customerData } = values
 
-      // Step 1: Update customer with new contacts emails for validation
+      // Update customer with contacts in single API call
       await onFinish({
         ...customerData,
-        new_contacts_emails: newContactEmails, // Send only new contact emails
+        contacts,
         company_type,
         industry,
-      })
-
-      // Step 2: Delete contacts if any
-      if (deletedReceiverIds.length > 0) {
-        await axiosInstance.delete(`${apiUrl}/customer-contacts`, {
-          data: { ids: deletedReceiverIds },
-        })
-      }
-
-      // Step 3: Update/Create customer contacts
-      const contacts = receivers.map((receiver: any) => {
-        const contact: any = {
-          customer_id: Number(customerId),
-          department_name: receiver.department_name,
-          contact_person_name: receiver.contact_person_name,
-          email: receiver.email,
-        }
-        // Include id if exists (for update)
-        if (receiver.id) {
-          contact.id = receiver.id
-        }
-        return contact
-      })
-
-      await updateContacts({
-        url: `${apiUrl}/customer-contacts`,
-        method: 'patch',
-        values: { contacts },
       })
 
       go({
@@ -126,49 +103,7 @@ export const useCustomerEdit = () => {
         error?.message ||
         t('notifications.updateError')
 
-      // Handle duplicate contact errors
-      const errorData = error?.response?.data
-
-      // Check for new_contacts_emails error (duplicate emails)
-      if (errorData?.errors?.new_contacts_emails) {
-        const errorFields: any[] = []
-        const newContactsEmailsError =
-          errorData.errors.new_contacts_emails[0] ||
-          errorData.errors.new_contacts_emails
-
-        // Extract duplicate emails from error message like: "(3333@gmail.com, sfsdfssssdf@gmail.com)"
-        const emailRegex = /\(([^)]+)\)/
-        const match = newContactsEmailsError.match(emailRegex)
-
-        if (match) {
-          const duplicateEmailsStr = match[1]
-          const duplicateEmails = duplicateEmailsStr
-            .split(', ')
-            .map((email: string) => email.trim())
-
-          // Find receivers with duplicate emails and highlight them
-          values.receivers.forEach((receiver: any, index: number) => {
-            if (duplicateEmails.includes(receiver.email)) {
-              errorFields.push({
-                name: ['receivers', index, 'email'],
-                errors: [t('')],
-                value: receiver.email,
-              })
-            }
-          })
-        }
-
-        if (errorFields.length > 0) {
-          try {
-            form.setFields(errorFields)
-          } catch (e) {
-            console.error('Error setting field validation:', e)
-          }
-        }
-      }
-
-      // Remove error message notification - only show field validation errors
-      // message.error(errorMessage)
+      message.error(errorMessage)
     }
   }
 
@@ -211,7 +146,7 @@ export const useCustomerEdit = () => {
       form.setFieldsValue(recordWithoutReceivers)
     }
   }, [record, form])
-  // Set receivers into form only after customer data is loaded
+  // Set receivers into form only after customer data is loaded and contacts are fetched
   useEffect(() => {
     if (record && contactsData?.data !== undefined) {
       const receivers = contactsData.data
@@ -246,7 +181,5 @@ export const useCustomerEdit = () => {
     modalFormCorporate,
     handleFinish,
     isAutomatic,
-    deletedReceiverIds,
-    setDeletedReceiverIds,
   }
 }
