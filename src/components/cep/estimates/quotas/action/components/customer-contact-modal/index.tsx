@@ -140,11 +140,30 @@ function CustomerContactSelectionModal({
   const handleDelete = async (contactId: number) => {
     setIsSaving(true)
     try {
-      await axiosInstance.delete(`${apiUrl}/customer-contacts`, {
-        data: {
-          ids: [contactId],
+      const response = await axiosInstance.delete(
+        `${apiUrl}/customer-contacts`,
+        {
+          data: {
+            ids: [contactId],
+          },
         },
-      })
+      )
+
+      // Check if deletion actually failed even with 200 status
+      const responseData = response?.data?.data
+      if (responseData?.error_count > 0) {
+        // Show the specific reason from the first error
+        const errorReason = responseData.errors?.[0]?.reason
+        const errorMessage =
+          errorReason ||
+          response?.data?.message ||
+          t('notifications.deleteError')
+        message.error(errorMessage)
+        // Refetch to update the contact list (contact still exists)
+        await refetch()
+        return
+      }
+
       message.success(t('notifications.deleteSuccess'))
       await refetch()
       // Auto add new row if no contacts remain after delete
