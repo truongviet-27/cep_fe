@@ -109,7 +109,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
           <Tooltip title={cat.name} mouseEnterDelay={0.5}>
             <Text className="block max-w-[300px] truncate font-medium">
               {cat.name}
-              {childrenCount && childrenCount > 0 && (
+              {Number(childrenCount) > 0 && (
                 <span className="ml-2">({childrenCount})</span>
               )}
             </Text>
