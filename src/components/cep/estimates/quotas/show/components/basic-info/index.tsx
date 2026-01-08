@@ -28,8 +28,6 @@ function BasicInfo({
 }) {
   const t = useTranslate()
 
-  console.log('BasicInfo customerContact:', customerContact)
-
   const consumptionTax: Record<ConsumptionTaxKey, string> = useMemo(() => {
     return {
       exclusive: t('tenant_settings.consumptionTax.taxExclusive'),
