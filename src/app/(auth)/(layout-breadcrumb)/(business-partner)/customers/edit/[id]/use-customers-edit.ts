@@ -13,6 +13,7 @@ import {
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 import { useEffect } from 'react'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
 import { useParams } from 'next/navigation'
 
@@ -84,13 +85,44 @@ export const useCustomerEdit = () => {
       // Remove receivers from customer data
       const { receivers: _, ...customerData } = values
 
-      // Update customer with contacts in single API call
-      await onFinish({
-        ...customerData,
-        contacts,
-        company_type,
-        industry,
-      })
+      try {
+        // Update customer with contacts in single API call
+        const response = await onFinish({
+          ...customerData,
+          contacts,
+          company_type,
+          industry,
+        })
+        try {
+          const refetchResult = await axiosInstance.get(
+            `${apiUrl}/customer-contacts?customer_id=${customerId}`,
+          )
+          const freshContacts = refetchResult?.data?.data
+          if (freshContacts) {
+            form.setFieldsValue({ receivers: freshContacts })
+          }
+        } catch (refetchError) {
+          console.error('Failed to refetch contacts:', refetchError)
+        }
+
+        go({
+          to: `/customers/show/${customerId}`,
+          type: 'push',
+        })
+      } catch (error: any) {
+        try {
+          const refetchResult = await axiosInstance.get(
+            `${apiUrl}/customer-contacts?customer_id=${customerId}`,
+          )
+          const freshContacts = refetchResult?.data?.data
+          if (freshContacts) {
+            form.setFieldsValue({ receivers: freshContacts })
+          }
+        } catch (refetchError) {
+          console.error('Failed to refetch contacts after error:', refetchError)
+        }
+        return
+      }
 
       go({
         to: `/customers/show/${customerId}`,
