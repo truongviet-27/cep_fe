@@ -18,12 +18,14 @@ import {
   Row,
   Select,
   Space,
+  Tag,
   Typography,
 } from 'antd'
 
 import styles from '../styles.module.css'
 import React from 'react'
 import { SelectPagination } from '@components/common/select-pagination'
+import { CustomerStatusStyle } from './utils/customer-status-style'
 
 const { Title, Text } = Typography
 const { Panel } = Collapse
@@ -117,6 +119,41 @@ function BasicInformation(
               >
                 {t('departments.create.popup_number_setting')}
               </Button>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item label={boldText(t('customers.fields.status'))} required>
+          <Row align="middle" gutter={8}>
+            <Col flex="none">
+              <Form.Item rules={[rule]} name="status" required noStyle>
+                <Select
+                  value={status}
+                  style={{ width: '100%' }}
+                  options={[
+                    'new',
+                    'prospecting',
+                    'contracted',
+                    'lost',
+                    'suspended',
+                  ].map((key) => {
+                    const style = CustomerStatusStyle(key, t)
+                    return {
+                      value: key,
+                      label: (
+                        <Tag
+                          color={style.background}
+                          style={{
+                            color: style.color,
+                            textAlign: 'center',
+                          }}
+                        >
+                          {style.text}
+                        </Tag>
+                      ),
+                    }
+                  })}
+                />
+              </Form.Item>
             </Col>
           </Row>
         </Form.Item>
@@ -323,37 +360,52 @@ function BasicInformation(
             )}
           </Row>
         </Form.Item>
-
-        <SelectPagination
-          selectProps={{
-            resource: 'ranks',
-            queryOptions: {
-              enabled: allowRankResource,
-            },
-            filters: [
-              {
-                field: 'null_option',
-                operator: 'eq',
-                value: true,
-              },
-            ],
-          }}
-          formItemProps={{
-            label: boldText(t('customers.fields.unit_price_rank_code')),
-            name: 'price_rank_id',
-            style: { marginTop: -8 },
-            hidden: !allowRankResource,
-            required: true,
-          }}
-          allowClear={false}
-          optionLabel={'code'}
-          optionValue={'id'}
-          selectComponentProps={{
-            placeholder: t('placeholders.select'),
-            style: { maxWidth: 560, minWidth: '150px' },
-            defaultValue: null,
-          }}
-        />
+        <Form.Item
+          label={boldText(t('customers.fields.unit_price_rank_code'))}
+          required
+          hidden={!allowRankResource}
+          style={{ marginTop: -10 }}
+        >
+          <Row align="middle" gutter={12}>
+            <Col flex="none" style={{ width: 570 }}>
+              <SelectPagination
+                selectProps={{
+                  resource: 'ranks',
+                  queryOptions: { enabled: allowRankResource },
+                  filters: [
+                    { field: 'null_option', operator: 'eq', value: true },
+                  ],
+                }}
+                formItemProps={{
+                  name: 'price_rank_id',
+                  noStyle: true,
+                  required: true,
+                }}
+                allowClear={false}
+                optionLabel={'code'}
+                optionValue={'id'}
+                selectComponentProps={{
+                  placeholder: t('placeholders.select'),
+                  style: { width: '100%' },
+                  defaultValue: null,
+                }}
+              />
+            </Col>
+            <Col>
+              <Tag
+                color="#BCC2BC"
+                style={{
+                  color: '#000000',
+                  textAlign: 'center',
+                  margin: 0, // Bỏ margin thừa vì đã có gutter của Row
+                  padding: '4px 8px',
+                }}
+              >
+                去年取引実績: {form.getFieldValue('total_revenue')}円
+              </Tag>
+            </Col>
+          </Row>
+        </Form.Item>
       </Panel>
     </Collapse>
   )
