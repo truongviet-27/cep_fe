@@ -43,7 +43,7 @@ import {
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 import Link from 'next/link'
 
@@ -227,6 +227,7 @@ function QuotaAction() {
             products: item.products.map((item2: any) => ({
               ...item2,
               product: { value: item2.product_id, label: item2.name },
+              package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
               unit_name: item2.unit_name ?? '-',
@@ -238,6 +239,10 @@ function QuotaAction() {
                 products: item.products.map((item2: any) => ({
                   ...item2,
                   product: { value: item2.product_id, label: item2.name },
+                  package: {
+                    value: item2.package_id,
+                    label: item2.package_name,
+                  },
                   tax_rate: item2.tax_rate ?? 0,
                   unit: item2.unit_name ?? '-',
                   unit_name: item2.unit_name ?? '-',
@@ -282,6 +287,7 @@ function QuotaAction() {
             products: item.products.map((item2: any) => ({
               ...item2,
               product: { value: item2.product_id, label: item2.name },
+              package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
               unit_name: item2.unit_name ?? '-',
@@ -293,6 +299,10 @@ function QuotaAction() {
                 products: item.products.map((item2: any) => ({
                   ...item2,
                   product: { value: item2.product_id, label: item2.name },
+                  package: {
+                    value: item2.package_id,
+                    label: item2.package_name,
+                  },
                   tax_rate: item2.tax_rate ?? 0,
                   unit: item2.unit_name ?? '-',
                   unit_name: item2.unit_name ?? '-',
@@ -328,6 +338,7 @@ function QuotaAction() {
           products: item.products.map((item2: any) => ({
             ...item2,
             product: { value: item2.product_id, label: item2.name },
+            package: { value: item2.package_id, label: item2.package_name },
             tax_rate: item2.tax_rate ?? 0,
             unit: item2.unit_name ?? '-',
             unit_name: item2.unit_name ?? '-',
@@ -339,6 +350,7 @@ function QuotaAction() {
               products: item.products.map((item2: any) => ({
                 ...item2,
                 product: { value: item2.product_id, label: item2.name },
+                package: { value: item2.package_id, label: item2.package_name },
                 unit: item2.unit_name ?? '-',
                 unit_name: item2.unit_name ?? '-',
               })),
@@ -379,6 +391,7 @@ function QuotaAction() {
               {
                 product: null,
                 product_id: null,
+                package: null,
                 package_id: null,
                 name: '',
                 code: '',
@@ -485,6 +498,18 @@ function QuotaAction() {
     }
   }
 
+  const [productPrincing, setProductPrincing] = useState<number[]>()
+  const [productPrincingOptional, setProductPrincingptional] =
+    useState<number[]>()
+
+  const handleChangeProductPrincing = useCallback(
+    (productIds: number[], productIdsOptional: number[]) => {
+      setProductPrincing(() => [...productIds])
+      setProductPrincingptional(() => [...productIdsOptional])
+    },
+    [],
+  )
+
   return (
     <PageContainer
       breadcrumbs={
@@ -557,9 +582,17 @@ function QuotaAction() {
           autoComplete="off"
           name="basic"
         >
-          <BasicInfo />
-          <DetailInfo />
-          <OptionalInfo />
+          <BasicInfo
+            handleChangeProductPrincing={handleChangeProductPrincing}
+          />
+          <DetailInfo
+            productPrincing={productPrincing}
+            mainProduct={dataProducts?.data.main_product}
+          />
+          <OptionalInfo
+            productPrincing={productPrincingOptional}
+            optionalProduct={dataProducts?.data.main_product}
+          />
           <Row>
             <Col xs={24}>
               <Note />

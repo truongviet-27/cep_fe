@@ -18,6 +18,9 @@ function CoreAutoComplete({
   index,
   index2,
   parent,
+  data,
+  customer,
+  productsData,
   ...rest
 }: {
   resource: string
@@ -31,10 +34,11 @@ function CoreAutoComplete({
   index: number
   index2: number
   parent: string
+  data: any
+  customer: any
+  productsData: any
 }) {
   const t = useTranslate()
-
-  const apiUrl = useApiUrl()
 
   const form = useFormInstance()
 
@@ -42,72 +46,34 @@ function CoreAutoComplete({
     useState<{ label: string | undefined; value: number | undefined }[]>()
 
   const product = Form.useWatch(filterPath1, form)
-  const customer = Form.useWatch(filterPath2, form)
-
-  const package_id = Form.useWatch(
-    ['main_product', index, 'products', index2, 'package_id'],
+  const packageWatch = Form.useWatch(
+    [parent, index, 'products', index2, 'package'],
     form,
   )
 
-  const { data } = useCustom<any>({
-    url: `${apiUrl}/${resource}/${product?.value}/customer-pricing/${customer?.value}`,
-    method: 'get',
-    queryOptions: {
-      enabled: !!product?.value && !!customer?.value,
-    },
-  })
-
-  const { query: productResponse } = useShow<ProductDetail>({
-    resource: 'products',
-    id: product?.value,
-    queryOptions: {},
-  })
-
   useEffect(() => {
-    if (data?.data) {
+    if (data?.packagings) {
       setOptions(
-        data.data.packagings.map((item: any) => ({
+        data?.packagings.map((item: any) => ({
           label: item.name,
           value: item.id,
         })),
       )
-      form.setFieldValue(
-        [parent, index, 'products', index2, 'package_id'],
-        data?.data?.packagings[0]?.id || null,
-      )
-    } else if (productResponse?.data?.data) {
-      setOptions(
-        productResponse.data?.data?.packagings?.map((item) => ({
-          label: item?.name,
-          value: item?.id,
-        })),
-      )
     }
-  }, [data, productResponse?.data?.data])
+  }, [data])
 
   useEffect(() => {
-    const option = data?.data.packagings?.find(
-      (item: any) => item?.id === package_id,
-    )
+    if (data) {
+      const option = data?.packagings?.find(
+        (item: any) => item?.id === packageWatch?.value,
+      )
 
-    if (option) {
       form.setFieldValue(
         [parent, index, 'products', index2, 'selling_price'],
         option?.rank_prices ? option?.rank_prices : option?.selling_price,
       )
-    } else {
-      form.setFieldValue(
-        [parent, index, 'products', index2, 'selling_price'],
-        data?.data?.packagings[0]?.rank_prices
-          ? data?.data?.packagings[0]?.rank_prices
-          : (data?.data?.selling_price ?? 0),
-      )
     }
-    form.setFieldValue(
-      [parent, index, 'products', index2, 'tax_rate'],
-      option?.tax_rate ?? data?.data?.tax_rate,
-    )
-  }, [data, customer])
+  }, [data])
 
   return (
     <Select
@@ -122,48 +88,48 @@ function CoreAutoComplete({
           .includes(input.toLowerCase())
       }
       onSearch={() => {}}
-      // autoClearSearchValue
-      // allowClear
       onChange={(value) => {
         if (onChange) {
           onChange(value)
         }
-        const option = (data?.data.packagings).find(
-          (item: any) => item?.id === value,
-        )
+        const option = data?.packagings.find((item: any) => item?.id === value)
 
         form.setFieldValue(
+          [parent, index, 'products', index2, 'package_id'],
+          option?.id,
+        )
+        form.setFieldValue(
           [parent, index, 'products', index2, 'package_name'],
-          option?.name ?? data?.data?.packagings?.name,
+          option?.name,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'unit'],
-          option?.unit ?? data?.data?.unit?.name,
+          option?.unit,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'unit_name'],
-          option?.unit ?? data?.data?.unit?.name,
+          option?.unit ?? data?.unit?.name,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'tax_rate'],
-          option?.tax_rate ?? data?.data?.tax_rate,
+          option?.tax_rate ?? data?.tax_rate,
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'cost_price'],
           value
-            ? (data?.data?.cost_price ?? 0) * (option?.quantity_in_package ?? 0)
-            : (data?.data?.cost_price ?? 0),
+            ? (data?.cost_price ?? 0) * (option?.quantity_in_package ?? 0)
+            : (data?.cost_price ?? 0),
         )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'selling_price'],
           option?.rank_prices * 1
             ? (option?.rank_prices ?? 0)
-            : (option?.selling_price ?? data?.data.selling_price),
+            : (option?.selling_price ?? data?.selling_price),
         )
 
         form.setFieldValue([parent, index, 'products', index2, 'quantity'], 1)
