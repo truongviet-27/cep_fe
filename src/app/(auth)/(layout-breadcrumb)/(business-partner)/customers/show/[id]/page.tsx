@@ -30,11 +30,12 @@ import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
-import { Button, Collapse, Space, Typography } from 'antd'
+import { Button, Collapse, Space, Tag, Typography } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import React from 'react'
+import { CustomerStatusStyle } from '../../components/utils/customer-status-style'
 
 const { Title } = Typography
 const { Panel } = Collapse
@@ -324,6 +325,20 @@ export default function CustomerShowPage() {
             <>
               <DetailItem label={t('customers.fields.code')}>
                 {record?.customer_code}
+                <Tag
+                  color={
+                    CustomerStatusStyle((record as any)?.status, t).background
+                  }
+                  style={{
+                    color: CustomerStatusStyle((record as any)?.status, t)
+                      .color,
+                    width: '60px',
+                    textAlign: 'center',
+                    marginLeft: '12px',
+                  }}
+                >
+                  {CustomerStatusStyle((record as any)?.status, t).text}
+                </Tag>
               </DetailItem>
               <DetailItem label={t('customers.fields.name')}>
                 {(record as any)?.full_name}
@@ -341,6 +356,20 @@ export default function CustomerShowPage() {
                 <DetailItem label={t('customers.fields.unit_price_rank_code')}>
                   {record?.rank?.code ??
                     t('customers.show.no_unit_price_rank_code')}
+                  <Tag
+                    color="#BCC2BC"
+                    style={{
+                      color: '#000000',
+                      textAlign: 'center',
+                      marginLeft: '12px',
+                    }}
+                  >
+                    去年取引実績:{' '}
+                    {Number((record as any)?.total_revenue ?? 0).toLocaleString(
+                      'en-US',
+                    )}
+                    円
+                  </Tag>
                 </DetailItem>
               )}
               <DetailItem label={t('customers.fields.credit_rank')}>

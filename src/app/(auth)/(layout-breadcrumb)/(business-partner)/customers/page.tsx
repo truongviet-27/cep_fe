@@ -14,6 +14,9 @@ import {
 } from '@refinedev/antd'
 import {
   type BaseRecord,
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
   useGo,
   useNotification,
   useTranslate,
@@ -46,15 +49,18 @@ import {
   Select,
   Space,
   TableColumnsType,
+  Tag,
   Tooltip,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import AutoHeading from '@components/common/auto-heading'
 import { SelectPagination } from '@components/common/select-pagination'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
+import StatusDashboard from './components/status-dashboard'
+import { CustomerStatusStyle } from './components/utils/customer-status-style'
 
 const { RangePicker } = DatePicker
 const { Title, Text } = Typography
@@ -73,9 +79,14 @@ interface ICustomer {
 }
 
 export default function CustomerListPage() {
+  const statusKeys = ['new', 'prospecting', 'contracted', 'lost', 'suspended']
+  const [status, setStatus] = useState<string | null>('new')
   const t = useTranslate()
   const go = useGo()
+  const apiUrl = useApiUrl()
   const [isShow, setIsShow] = useState(true)
+  const [updatingId, setUpdatingId] = useState<number | null>(null)
+  const { mutateAsync: updateStatusMutation } = useCustomMutation()
 
   const { mutate, isLoading } = useUpdate()
   const { parameterSettings, hasFullAccessModule } = useUserStore(
@@ -97,67 +108,85 @@ export default function CustomerListPage() {
     autoResetForm: true,
   })
 
+  const { data: count, refetch: refetchCount } = useCustom({
+    method: 'get',
+    url: `${apiUrl}/customers/count`,
+  })
   const {
     show: editModalShow,
     close: editModalClose,
     open: editModalOpen,
   } = modalFormProps
 
-  const { tableProps, setFilters, searchFormProps, setCurrent } =
-    useTable<ICustomer>({
-      syncWithLocation: true,
-      onSearch: (values: any) => [
+  const {
+    tableProps,
+    setFilters,
+    searchFormProps,
+    setCurrent,
+    tableQueryResult,
+  } = useTable<ICustomer>({
+    syncWithLocation: true,
+    filters: {
+      initial: [
         {
-          field: 'q',
-          operator: 'null',
-          value: values?.q,
-        },
-        {
-          field: 'country',
-          operator: 'null',
-          value: values?.country,
-        },
-        {
-          field: 'department_in_charge_id',
-          operator: 'null',
-          value: values?.department_in_charge_id,
-        },
-        {
-          field: 'price_rank_id',
-          operator: 'null',
-          value: values?.price_rank_id,
-        },
-        {
-          field: 'credit_rank',
-          operator: 'null',
-          value: values?.credit_rank,
-        },
-        {
-          field: 'anti_social_rank',
-          operator: 'null',
-          value: values?.anti_social_rank,
-        },
-        {
-          field: 'search_date_type',
-          operator: 'null',
-          value: values?.search_date_type,
-        },
-        {
-          field: 'date_start',
-          operator: 'null',
-          value: values.date_range?.[0]
-            ? dayjs(values.date_range[0]).format(FORMAT_DATE)
-            : undefined,
-        },
-        {
-          field: 'date_end',
-          operator: 'null',
-          value: values.date_range?.[1]
-            ? dayjs(values.date_range[1]).format(FORMAT_DATE)
-            : undefined,
+          field: 'status',
+          operator: 'eq',
+          value: status,
         },
       ],
-    })
+    },
+    onSearch: (values: any) => [
+      {
+        field: 'q',
+        operator: 'null',
+        value: values?.q,
+      },
+      {
+        field: 'country',
+        operator: 'null',
+        value: values?.country,
+      },
+      {
+        field: 'department_in_charge_id',
+        operator: 'null',
+        value: values?.department_in_charge_id,
+      },
+      {
+        field: 'price_rank_id',
+        operator: 'null',
+        value: values?.price_rank_id,
+      },
+      {
+        field: 'credit_rank',
+        operator: 'null',
+        value: values?.credit_rank,
+      },
+      {
+        field: 'anti_social_rank',
+        operator: 'null',
+        value: values?.anti_social_rank,
+      },
+      {
+        field: 'search_date_type',
+        operator: 'null',
+        value: values?.search_date_type,
+      },
+      {
+        field: 'date_start',
+        operator: 'null',
+        value: values.date_range?.[0]
+          ? dayjs(values.date_range[0]).format(FORMAT_DATE)
+          : undefined,
+      },
+      {
+        field: 'date_end',
+        operator: 'null',
+        value: values.date_range?.[1]
+          ? dayjs(values.date_range[1]).format(FORMAT_DATE)
+          : undefined,
+      },
+    ],
+  })
 
   const handleSearch = (values: any) => {
     setCurrent(1)
@@ -248,8 +277,59 @@ export default function CustomerListPage() {
         dataIndex: 'name',
         key: 'name',
         align: 'left',
-        width: '35%',
+        width: '20%',
         ellipsis: true,
+      },
+      {
+        title: t('customers.fields.status'),
+        dataIndex: 'status',
+        key: 'status',
+        ellipsis: true,
+        render: (status, record) => (
+          <Select
+            value={status}
+            style={{ width: '110px' }}
+            disabled={!isFullAccess || updatingId === record.id}
+            loading={updatingId === record.id}
+            onChange={async (value) => {
+              setUpdatingId(record.id ?? null)
+              try {
+                await updateStatusMutation({
+                  url: `${apiUrl}/customers/${record.id}/status`,
+                  method: 'patch',
+                  values: { status: value },
+                })
+                await refetchCount()
+                await tableQueryResult.refetch()
+                notification.open?.({
+                  type: 'success',
+                  message: t('customers.message.status_updated_successfully'),
+                })
+              } catch (error) {
+              } finally {
+                setUpdatingId(null)
+              }
+            }}
+            options={statusKeys.map((key) => {
+              const style = CustomerStatusStyle(key, t)
+              return {
+                value: key,
+                label: (
+                  <Tag
+                    color={style.background}
+                    style={{
+                      color: style.color,
+                      width: '55px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {style.text}
+                  </Tag>
+                ),
+              }
+            })}
+          />
+        ),
       },
       {
         title: t('customers.fields.country'),
@@ -361,6 +441,11 @@ export default function CustomerListPage() {
         ),
       },
       {
+        title: t('customers.fields.total_revenue'),
+        dataIndex: 'total_revenue',
+        key: 'total_revenue',
+      },
+      {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
@@ -451,7 +536,17 @@ export default function CustomerListPage() {
         ),
       },
     ],
-    [t, go, isFullAccess, isLoading, mutate, editModalShow],
+    [
+      t,
+      go,
+      isFullAccess,
+      isLoading,
+      mutate,
+      editModalShow,
+      refetchCount,
+      tableQueryResult,
+      updatingId,
+    ],
   )
 
   const handleClear = () => {
@@ -468,6 +563,47 @@ export default function CustomerListPage() {
     },
   ]
 
+  const statusDashboard = useMemo(() => {
+    const c = count?.data
+
+    const stats = statusKeys.map((key) => {
+      const style = CustomerStatusStyle(key, t)
+      const countItem = c?.status_counts?.find((s: any) => s.status === key)
+
+      return {
+        title: style.text,
+        value: countItem?.count ?? 0,
+        color: style.color,
+        background: style.background,
+        key: key,
+      }
+    })
+
+    return [
+      ...stats,
+      {
+        title: t('agreed_prices.summary.all'),
+        value: c?.total ?? 0,
+        key: null as string | null,
+      },
+    ]
+  }, [count, t])
+
+  const onChangeStatus = useCallback(
+    (nextStatus: string | null) => {
+      setCurrent(1)
+      setStatus(nextStatus)
+      setFilters([
+        {
+          field: 'status',
+          operator: 'eq',
+          value: nextStatus,
+        },
+      ])
+    },
+    [setFilters],
+  )
+
   return (
     <List
       title={
@@ -475,6 +611,13 @@ export default function CustomerListPage() {
       }
       i18nHeading={'customers.list.list'}
     >
+      <Form.Item name={'status'} hidden />
+      <StatusDashboard
+        statusData={statusDashboard}
+        status={status}
+        onChangeStatus={onChangeStatus}
+      />
+
       <Form
         colon={false}
         {...searchFormProps}
