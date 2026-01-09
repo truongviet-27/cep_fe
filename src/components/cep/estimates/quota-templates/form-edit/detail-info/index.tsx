@@ -150,13 +150,13 @@ const DetailInfo: FC = () => {
                       <Form.Item
                         name={[record.index, 'group_name']}
                         className="ant-form-item-hidden-margin"
-                        required
-                        rules={[
-                          {
-                            required: true,
-                            message: '',
-                          },
-                        ]}
+                        // required
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: '',
+                        //   },
+                        // ]}
                       >
                         <Input
                           placeholder="商品リスト名入力"

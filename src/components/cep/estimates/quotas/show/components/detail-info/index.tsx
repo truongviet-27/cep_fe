@@ -22,10 +22,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
 
   const t = useTranslate()
   const dataSource: any[] = (data ?? []).flatMap((item: any) => [
-    {
-      isHeader: true,
-      title: item.group_name,
-    },
+    ...(item.group_name ? [{ isHeader: true, title: item.group_name }] : []),
     ...(item.products ?? []).flatMap((item2: any) => [
       {
         ...item2,
@@ -129,7 +126,10 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.cost_price?.toLocaleString()
+        if (record.cost_price === undefined || record.cost_price === null)
+          return '-'
+
+        return Number(record.cost_price).toLocaleString()
       },
     },
     {
@@ -291,10 +291,12 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
                 <Table.Summary.Cell index={6}></Table.Summary.Cell>
                 <Table.Summary.Cell index={7}></Table.Summary.Cell>
                 <Table.Summary.Cell index={8} align="center">
-                  {basicInfo?.consumption_tax === 'exclusive'
-                    ? +basicInfo?.total_price_tax_included -
-                      +basicInfo?.consumption_tax_amount
-                    : +basicInfo?.total_price_tax_included}
+                  {Number(
+                    basicInfo?.consumption_tax === 'exclusive'
+                      ? +basicInfo?.total_price_tax_included -
+                          +basicInfo?.consumption_tax_amount
+                      : +basicInfo?.total_price_tax_included,
+                  ).toLocaleString()}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             )

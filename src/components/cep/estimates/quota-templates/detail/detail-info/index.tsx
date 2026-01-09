@@ -34,12 +34,16 @@ const DetailInfo: FC<Props> = (props) => {
 
   const dataSource = (detail?.main_product ?? []).flatMap(
     (item: QuotaTemplateProductGroupResponse, index: number) => [
-      {
-        index,
-        key: `header-${index}`,
-        isHeader: true,
-        title: item.group_name,
-      },
+      ...(item.group_name
+        ? [
+            {
+              index,
+              key: `header-${index}`,
+              isHeader: true,
+              title: item.group_name,
+            },
+          ]
+        : []),
       ...(item.products ?? []).flatMap(
         (item2: QuotaTemplateProductResponse, index2: number) => [
           {

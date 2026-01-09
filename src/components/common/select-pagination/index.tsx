@@ -71,14 +71,17 @@ export const SelectPagination = ({
     if (data.length === 0 && page > 1) hasMore.current = false
   }, [query?.data])
 
-  const isNotReady =
-    options?.length === 0 || query.isLoading || query.fetchStatus === 'fetching'
+  const isNotReady = query.isLoading || query.fetchStatus === 'fetching'
 
   return (
     <Form.Item {...formItemProps}>
       {isNotReady ? (
         <div>
-          <Select disabled {...selectComponentProps} placeholder="Loading..." />
+          <Select
+            disabled
+            {...selectComponentProps}
+            placeholder="読み込み中..."
+          />
         </div>
       ) : (
         <Select

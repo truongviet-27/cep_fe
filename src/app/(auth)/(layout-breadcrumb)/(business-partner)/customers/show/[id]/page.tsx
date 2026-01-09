@@ -335,6 +335,7 @@ export default function CustomerShowPage() {
                     width: '60px',
                     textAlign: 'center',
                     marginLeft: '12px',
+                    fontSize: '14px',
                   }}
                 >
                   {CustomerStatusStyle((record as any)?.status, t).text}
@@ -362,12 +363,13 @@ export default function CustomerShowPage() {
                       color: '#000000',
                       textAlign: 'center',
                       marginLeft: '12px',
+                      fontSize: '14px',
                     }}
                   >
                     去年取引実績:{' '}
-                    {Number((record as any)?.total_revenue ?? 0).toLocaleString(
-                      'en-US',
-                    )}
+                    {Number(
+                      (record as any)?.total_revenue ?? 0,
+                    ).toLocaleString()}
                     円
                   </Tag>
                 </DetailItem>
