@@ -113,6 +113,9 @@ function Right() {
                       style={{
                         marginRight: 40,
                         borderRadius: 8,
+                        width: 80,
+                        height: 80,
+                        objectFit: 'fill',
                       }}
                     />
                   </div>
@@ -131,6 +134,9 @@ function Right() {
                       height={80}
                       style={{
                         borderRadius: 8,
+                        width: 80,
+                        height: 80,
+                        objectFit: 'fill',
                       }}
                     />
                   </div>

@@ -19,10 +19,7 @@ function OptionalInfo({ data }: { data: any }) {
 
   const t = useTranslate()
   const dataSource: any[] = (data ?? []).flatMap((item: any) => [
-    {
-      isHeader: true,
-      title: item.group_name,
-    },
+    ...(item.group_name ? [{ isHeader: true, title: item.group_name }] : []),
     ...(item.products ?? []).flatMap((item2: any) => [
       {
         ...item2,
@@ -126,7 +123,10 @@ function OptionalInfo({ data }: { data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return record?.cost_price?.toLocaleString()
+        if (record.cost_price === undefined || record.cost_price === null)
+          return '-'
+
+        return Number(record.cost_price).toLocaleString()
       },
     },
     {

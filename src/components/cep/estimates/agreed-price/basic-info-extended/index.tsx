@@ -284,7 +284,8 @@ function BasicInfoExtended({
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item label={boldText('納入期日')}>
-            {dayjs(data?.delivery_date).format('YYYY/MM/DD')}
+            {data?.delivery_date &&
+              dayjs(data.delivery_date).format('YYYY/MM/DD')}
           </Form.Item>
         </Col>
       </Row>
