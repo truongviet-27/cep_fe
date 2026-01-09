@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import CoreAutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
+import AutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import { Action, type ActionType } from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
-import { useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import { ConsumptionTaxEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -26,11 +26,19 @@ import {
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 const { Text } = Typography
 
-function DetailInfo() {
+function DetailInfo({
+  productPrincing,
+  // handleChangeProductPrincing,
+  mainProduct,
+}: {
+  productPrincing?: number[]
+  // handleChangeProductPrincing: (productIds: number[]) => void
+  mainProduct: any
+}) {
   const t = useTranslate()
   const form = Form.useFormInstance()
 
@@ -146,6 +154,7 @@ function DetailInfo() {
 
     const newProduct = {
       product: null,
+      package: null,
       product_id: null,
       package_id: null,
       package_name: '-',
@@ -250,6 +259,52 @@ function DetailInfo() {
     form.setFieldValue('tax_rate_group', taxRate)
     return taxRate
   }, [dataSource])
+
+  const apiUrl = useApiUrl()
+
+  const [productPrincingState, setProductPrincingState] = useState<number[]>([])
+
+  const productIds = (Form.useWatch(['main_product'], form) ?? []).flatMap(
+    (item: any) => item.products.map((p: any) => p.product_id),
+  )
+
+  const customer = Form.useWatch(['customer'], form)
+
+  useEffect(() => {
+    if (productPrincing) {
+      setProductPrincingState(productPrincing)
+    }
+  }, [productPrincing])
+
+  const { data } = useCustom<any>({
+    url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
+    method: 'get',
+    queryOptions: {
+      // enabled: !!customer?.value && productIds.every((p: any) => !!p),
+      enabled:
+        !!customer?.value &&
+        productPrincingState.filter((x) => x != null).length > 0,
+    },
+
+    config: {
+      filters: [
+        {
+          field: 'ids',
+          operator: 'eq',
+          value: productPrincingState.join(','),
+        },
+      ],
+    },
+  })
+
+  const handleChangeProductPrincingMain = useCallback(
+    (productIds: number[], isSimple?: boolean, isCallApi?: boolean) => {
+      setProductPrincingState((prev) => [
+        ...new Set(isSimple ? [...productIds] : [...prev, ...productIds]),
+      ])
+    },
+    [],
+  )
 
   return (
     <Card
@@ -380,6 +435,7 @@ function DetailInfo() {
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}
+                        pageSize={30}
                         disabled={!customerWatch}
                         defaultValue={{
                           value: form.getFieldValue([
@@ -398,16 +454,36 @@ function DetailInfo() {
                           ]),
                         }}
                         onChangeValue={(valueOption) => {
-                          form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'package_id',
-                            ],
-                            null,
-                          )
+                          if (!valueOption) {
+                            form.setFieldValue(
+                              [
+                                'main_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'package',
+                              ],
+                              null,
+                            )
+                            form.setFieldValue(
+                              [
+                                'main_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'quantity',
+                              ],
+                              0,
+                            )
+                          }
+
+                          if (valueOption) {
+                            handleChangeProductPrincingMain(
+                              [valueOption.id],
+                              true,
+                            )
+                          }
+
                           form.setFieldValue(
                             [
                               'main_product',
@@ -437,6 +513,19 @@ function DetailInfo() {
                               'code',
                             ],
                             valueOption?.code,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'package',
+                            ],
+                            {
+                              value: (valueOption?.packagings ?? [])[0]?.id,
+                              label: '-',
+                            },
                           )
                           form.setFieldValue(
                             [
@@ -476,7 +565,7 @@ function DetailInfo() {
                               record.index2,
                               'selling_price',
                             ],
-                            valueOption?.sale_price,
+                            null,
                           )
                           form.setFieldValue(
                             [
@@ -488,18 +577,16 @@ function DetailInfo() {
                             ],
                             1,
                           )
-                          if (!valueOption) {
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'quantity',
-                              ],
-                              0,
-                            )
-                          }
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'tax_rate',
+                            ],
+                            valueOption?.tax_rate,
+                          )
                         }}
                       />
                     )
@@ -584,8 +671,8 @@ function DetailInfo() {
             },
             {
               title: t('quotas.action.detail_info.table.package'),
-              dataIndex: 'package_id',
-              key: 'package_id',
+              dataIndex: 'package',
+              key: 'package',
               width: 200,
               align: 'left',
               render: (_, record) => {
@@ -593,6 +680,16 @@ function DetailInfo() {
                   return { props: { colSpan: 0 } }
                 } else {
                   if (isProductManager) {
+                    const product = (data?.data ?? []).find(
+                      (item: any) => item.id === record?.product_id,
+                    )
+
+                    const productInit =
+                      mainProduct &&
+                      mainProduct[record?.index ?? 0]?.products[
+                        record?.index2 ?? 0
+                      ]?.product
+
                     return (
                       <Form.Item
                         className="ant-form-item-hidden-margin"
@@ -600,10 +697,10 @@ function DetailInfo() {
                           record.index,
                           'products',
                           record.index2,
-                          'package_id',
+                          'package',
                         ]}
                       >
-                        <CoreAutoComplete
+                        <AutoComplete
                           filterPath1={[
                             'main_product',
                             record.index,
@@ -611,6 +708,9 @@ function DetailInfo() {
                             record.index2,
                             'product',
                           ]}
+                          productsData={productInit}
+                          customer={customer}
+                          data={product}
                           index={record.index}
                           index2={record.index2}
                           filterPath2={['customer']}
@@ -717,7 +817,19 @@ function DetailInfo() {
                     ]}
                     normalize={(val) => val ?? 0}
                   >
-                    <InputNumber min={0} precision={0} controls={false} />
+                    <InputNumber
+                      min={0}
+                      precision={0}
+                      controls={false}
+                      onChange={() => {
+                        handleChangeProductPrincingMain(
+                          productPrincingState.filter(
+                            (item) => item !== record?.product_id,
+                          ),
+                          true,
+                        )
+                      }}
+                    />
                   </Form.Item>
                 )
               },
@@ -742,7 +854,20 @@ function DetailInfo() {
                     ]}
                     normalize={(val) => val ?? 1}
                   >
-                    <InputNumber min={1} precision={0} controls={false} />
+                    <InputNumber
+                      min={1}
+                      precision={0}
+                      controls={false}
+                      onChange={() => {
+                        handleChangeProductPrincingMain(
+                          productPrincingState.filter(
+                            (item) => item !== record?.product_id,
+                          ),
+                          true,
+                          false,
+                        )
+                      }}
+                    />
                   </Form.Item>
                 )
               },
@@ -968,6 +1093,7 @@ function DetailInfo() {
                         products: [
                           {
                             product: null,
+                            package: null,
                             product_id: null,
                             package_id: null,
                             package_name: '-',
@@ -1214,8 +1340,13 @@ function DetailInfo() {
         okButtonProps={{ style: { display: 'none' } }}
         title={t('quotas.action.detail_info.modal.add_from_category')}
         footer={null}
+        destroyOnHidden
       >
-        <ProductCategoryModal name="main_product" close={handleClose} />
+        <ProductCategoryModal
+          name="main_product"
+          close={handleClose}
+          handleChangeProductPrincing={handleChangeProductPrincingMain}
+        />
       </Modal>
     </Card>
   )

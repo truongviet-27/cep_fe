@@ -115,8 +115,6 @@ function TenantSetting() {
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
 
-  console.log('company_logo_image : ', form.getFieldValue('company_logo_image'))
-
   const handlePreviewPdf = async () => {
     await form.validateFields()
 

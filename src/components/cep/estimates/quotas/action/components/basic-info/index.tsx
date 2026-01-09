@@ -29,7 +29,14 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 
-const BasicInfo = () => {
+const BasicInfo = ({
+  handleChangeProductPrincing,
+}: {
+  handleChangeProductPrincing: (
+    productIds: number[],
+    productIdsOptional: number[],
+  ) => void
+}) => {
   const t = useTranslate()
 
   const { params } = useParsed()
@@ -407,6 +414,17 @@ const BasicInfo = () => {
                         // Clear selected contact when customer changes
                         setSelectedContact(null)
                         form.setFieldsValue({ customer_contact_id: null })
+                        handleChangeProductPrincing(
+                          (form.getFieldValue(['main_product']) ?? []).flatMap(
+                            (item: any) =>
+                              item.products.map((p: any) => p.product_id),
+                          ),
+                          (
+                            form.getFieldValue(['optional_product']) ?? []
+                          ).flatMap((item: any) =>
+                            item.products.map((p: any) => p.product_id),
+                          ),
+                        )
                       }}
                     />
                   </Form.Item>
