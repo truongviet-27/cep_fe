@@ -13,7 +13,6 @@ import {
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 import { useEffect } from 'react'
-import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
 import { useParams } from 'next/navigation'
 
@@ -41,7 +40,7 @@ export const useCustomerEdit = () => {
 
   // TODO: Remove this when customer API show endpoint includes contacts in response
   // Fetch customer contacts only after customer data is loaded
-  const { data: contactsData } = useCustom({
+  const { data: contactsData, refetch: refetchContacts } = useCustom({
     url: `${apiUrl}/customer-contacts`,
     method: 'get',
     config: {
@@ -94,10 +93,8 @@ export const useCustomerEdit = () => {
           industry,
         })
         try {
-          const refetchResult = await axiosInstance.get(
-            `${apiUrl}/customer-contacts?customer_id=${customerId}`,
-          )
-          const freshContacts = refetchResult?.data?.data
+          const response = await refetchContacts()
+          const freshContacts = response?.data?.data
           if (freshContacts) {
             form.setFieldsValue({ receivers: freshContacts })
           }
@@ -111,10 +108,8 @@ export const useCustomerEdit = () => {
         })
       } catch (error: any) {
         try {
-          const refetchResult = await axiosInstance.get(
-            `${apiUrl}/customer-contacts?customer_id=${customerId}`,
-          )
-          const freshContacts = refetchResult?.data?.data
+          const response = await refetchContacts()
+          const freshContacts = response?.data?.data
           if (freshContacts) {
             form.setFieldsValue({ receivers: freshContacts })
           }
