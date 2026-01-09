@@ -321,6 +321,7 @@ export default function CustomerListPage() {
                       color: style.color,
                       width: '55px',
                       textAlign: 'center',
+                      fontSize: '14px',
                     }}
                   >
                     {style.text}
@@ -444,6 +445,11 @@ export default function CustomerListPage() {
         title: t('customers.fields.total_revenue'),
         dataIndex: 'total_revenue',
         key: 'total_revenue',
+        render: (_, record) => (
+          <div className="min-w-[120px] text-[14px] font-semibold">
+            {Number((record as any)?.total_revenue).toLocaleString()}
+          </div>
+        ),
       },
       {
         title: t('customers.fields.registration_date'),

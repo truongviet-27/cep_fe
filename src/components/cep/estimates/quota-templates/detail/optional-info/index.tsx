@@ -31,12 +31,16 @@ const OptionalInfo: FC<Props> = (props) => {
 
   const dataSource = (optionalProducts ?? []).flatMap(
     (item: QuotaTemplateProductGroupResponse, index: number) => [
-      {
-        index,
-        key: `header-${index}`,
-        isHeader: true,
-        title: item.group_name,
-      },
+      ...(item.group_name
+        ? [
+            {
+              index,
+              key: `header-${index}`,
+              isHeader: true,
+              title: item.group_name,
+            },
+          ]
+        : []),
       ...(item.products ?? []).flatMap(
         (item2: QuotaTemplateProductResponse, index2: number) => [
           {

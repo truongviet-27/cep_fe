@@ -145,6 +145,7 @@ function BasicInformation(
                           style={{
                             color: style.color,
                             textAlign: 'center',
+                            fontSize: '14px',
                           }}
                         >
                           {style.text}
@@ -399,9 +400,15 @@ function BasicInformation(
                   textAlign: 'center',
                   margin: 0, // Bỏ margin thừa vì đã có gutter của Row
                   padding: '4px 8px',
+                  fontSize: '14px',
                 }}
               >
-                去年取引実績: {form.getFieldValue('total_revenue')}円
+                去年取引実績:{' '}
+                {Number(
+                  form.getFieldValue('total_revenue') ?? 0,
+                ).toLocaleString()}
+                円
+                {/* 去年取引実績: {Number(312434324340).toLocaleString()}円 */}
               </Tag>
             </Col>
           </Row>

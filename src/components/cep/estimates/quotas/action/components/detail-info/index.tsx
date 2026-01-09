@@ -761,13 +761,16 @@ function DetailInfo({
                   return { props: { colSpan: 0 } }
                 } else {
                   if (isProductManager) {
-                    return form.getFieldValue([
+                    const cost_price = form.getFieldValue([
                       'main_product',
                       record.index,
                       'products',
                       record.index2,
                       'cost_price',
                     ])
+                    if (cost_price === undefined || cost_price === null)
+                      return '-'
+                    return Number(cost_price).toLocaleString()
                   }
 
                   return (
@@ -976,7 +979,7 @@ function DetailInfo({
                     record.index2,
                     'selling_price',
                   ]) || 0
-                return quantity * selling
+                return Number(quantity * selling).toLocaleString()
               },
             },
             {
