@@ -55,7 +55,7 @@ function useProductCategories() {
 
   const t = useTranslations()
   const { tableProps } = useTable<ITree>()
-  const { mutate: createRow } = useCreate({
+  const { mutate: createRow, isLoading: isCreating } = useCreate({
     resource,
     invalidates: [],
   })
@@ -90,7 +90,7 @@ function useProductCategories() {
       },
     })
   }
-  const { mutate: updateRow, isLoading: saving } = useUpdate({
+  const { mutate: updateRow, isLoading: isUpdating } = useUpdate({
     resource,
   })
 
@@ -359,7 +359,7 @@ function useProductCategories() {
               onSave={saveEdit}
               onCancel={cancelEdit}
               editingName={editing?.[String(n.id)]?.name}
-              saving={saving}
+              saving={n._isNew ? isCreating : isUpdating}
               canAddChild={(n.level ?? 1) < MAX_DEPTH}
               tag={toLevelLabel(n.level ?? 1)}
               onDelete={() => del(String(n.id))}
@@ -374,7 +374,8 @@ function useProductCategories() {
     },
     [
       editing,
-      saving,
+      isCreating,
+      isUpdating,
       addChild,
       changeName,
       startEdit,
