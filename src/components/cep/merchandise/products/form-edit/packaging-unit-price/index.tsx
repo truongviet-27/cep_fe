@@ -146,6 +146,27 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       pattern: /^[0-9]*$/,
                       message: '',
                     },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value) {
+                          return Promise.resolve()
+                        }
+                        const packagings = getFieldValue('packagings') || []
+                        const isDuplicate = packagings.some(
+                          (item: { barcode: string }, i: number) =>
+                            i !== index &&
+                            item?.barcode?.trim() === value?.trim(),
+                        )
+                        if (isDuplicate) {
+                          message.warning({
+                            content: `${value}というバーコードは複数です。`,
+                            key: `warn-${value?.trim()}`,
+                          })
+                          return Promise.reject(new Error(''))
+                        }
+                        return Promise.resolve()
+                      },
+                    }),
                   ]}
                 />
               ),
