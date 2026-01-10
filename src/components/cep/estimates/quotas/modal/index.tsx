@@ -150,14 +150,14 @@ function ModalAgreePrice({
           {
             title: t('approve_routes.show.creator'),
             value:
-              (data?.author ?? '---') +
+              (data?.author?.name ?? '---') +
               ' ' +
               dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
           },
           {
             title: t('approve_routes.show.updater'),
             value:
-              (data?.editor ?? '---') +
+              (data?.editor?.name ?? '---') +
               ' ' +
               dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
           },
