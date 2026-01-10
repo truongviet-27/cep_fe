@@ -271,19 +271,36 @@ function DetailInfo({
   const customer = Form.useWatch(['customer'], form)
 
   useEffect(() => {
-    if (productPrincing) {
-      setProductPrincingState(productPrincing)
+    const currentMainProduct = form.getFieldValue('main_product')
+    if (currentMainProduct && Array.isArray(currentMainProduct)) {
+      const initialIds = currentMainProduct
+        .flatMap((group: any) => group.products ?? [])
+        .map((p: any) => p.product_id)
+        .filter((id) => id !== null && id !== undefined)
+
+      if (initialIds.length > 0) {
+        setProductPrincingState((prev) => [
+          ...new Set([...prev, ...initialIds]),
+        ])
+      }
     }
-  }, [productPrincing])
+  }, [customer?.value])
+
+  const watchedProductIds = useMemo(() => {
+    return (mainProductWatch ?? [])
+      .flatMap((item: any) =>
+        (item.products ?? []).map((p: any) => p.product_id),
+      )
+      .filter(Boolean)
+  }, [mainProductWatch])
 
   const { data } = useCustom<any>({
     url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      // enabled: !!customer?.value && productIds.every((p: any) => !!p),
       enabled:
         !!customer?.value &&
-        productPrincingState.filter((x) => x != null).length > 0,
+        (productPrincingState.length > 0 || watchedProductIds.length > 0),
     },
 
     config: {
@@ -291,7 +308,9 @@ function DetailInfo({
         {
           field: 'ids',
           operator: 'eq',
-          value: productPrincingState.join(','),
+          value: [
+            ...new Set([...productPrincingState, ...watchedProductIds]),
+          ].join(','),
         },
       ],
     },
