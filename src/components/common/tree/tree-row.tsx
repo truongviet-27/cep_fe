@@ -19,6 +19,7 @@ type Id = string | number
 export type TreeRowProps = {
   cat: CatNode
   hasChildren: boolean
+  childrenCount?: number
   onToggle: (id: Id) => void
   onAddChild: (id: Id) => void
   onStartEdit: (id: Id) => void
@@ -33,11 +34,13 @@ export type TreeRowProps = {
   canAddChild?: boolean
   depth?: number
   level?: number
+  hasChildEditing?: boolean
 }
 
 const TreeRow: React.FC<TreeRowProps> = ({
   cat,
   hasChildren,
+  childrenCount,
   onToggle,
   onAddChild,
   onStartEdit,
@@ -50,6 +53,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
   tag,
   isNew,
   formFields,
+  hasChildEditing = false,
 }) => {
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
@@ -105,6 +109,9 @@ const TreeRow: React.FC<TreeRowProps> = ({
           <Tooltip title={cat.name} mouseEnterDelay={0.5}>
             <Text className="block max-w-[300px] truncate font-medium">
               {cat.name}
+              {Number(childrenCount) > 0 && (
+                <span className="ml-2">({childrenCount})</span>
+              )}
             </Text>
           </Tooltip>
         )}
@@ -138,6 +145,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             hideText
             size="middle"
             onClick={() => onStartEdit(cat.id)}
+            disabled={hasChildEditing}
           />
         )}
         <CreateButton
@@ -147,7 +155,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
           icon={<PlusOutlined />}
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
           type={'default'}
-          disabled={isNew}
+          disabled={isNew || isEditing}
         />
 
         {!cat?._isNew ? (
@@ -159,6 +167,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             }
             invalidates={[]}
             onSuccess={onDelete}
+            disabled={hasChildEditing}
           />
         ) : (
           <CommonButton hideText onClick={onDelete} type="delete" />

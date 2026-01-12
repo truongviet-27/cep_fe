@@ -16,7 +16,7 @@ const { Panel } = Collapse
 function CustomerContacts(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
-  const { t, form, setDeletedReceiverIds } = props
+  const { t, form } = props
 
   return (
     <Collapse
@@ -193,24 +193,13 @@ function CustomerContacts(
                     width: '100px',
                     align: 'center',
                     render: (field) => {
-                      const receiver = form.getFieldValue([
-                        'receivers',
-                        field.name,
-                      ])
                       return (
                         <Button
                           danger
                           icon={<DeleteOutlined />}
                           disabled={fields.length === 1}
                           onClick={() => {
-                            // If receiver has id, add to deletedReceiverIds
-                            if (receiver?.id && setDeletedReceiverIds) {
-                              setDeletedReceiverIds((prev: number[]) => [
-                                ...prev,
-                                receiver.id,
-                              ])
-                            }
-                            // Remove from form
+                            // Remove from form - API will handle soft delete automatically
                             remove(field.name)
                           }}
                         />

@@ -30,7 +30,7 @@ import { RankModalCreate } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/r
 import boldText from '@utility/bold-text'
 import Link from 'next/link'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 export default function Page() {
   const t = useTranslate()
@@ -218,6 +218,7 @@ export default function Page() {
       <Modal
         open={modalCreate.visible}
         onCancel={modalCreate.close}
+        destroyOnClose={true}
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
       >

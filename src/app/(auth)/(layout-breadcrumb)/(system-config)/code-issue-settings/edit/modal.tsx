@@ -162,7 +162,6 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
             placeholder={t('placeholders.select')}
             options={segmentOptions}
             disabled={isManual}
-            allowClear
           />
         </Form.Item>
 
@@ -171,11 +170,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
           name="serial_length"
           rules={[rule]}
         >
-          <Select
-            allowClear
-            placeholder={t('placeholders.select')}
-            disabled={isManual}
-          >
+          <Select placeholder={t('placeholders.select')} disabled={isManual}>
             {[...Array(10)].map((_, i) => (
               <Select.Option key={i + 1} value={i + 1}>
                 {i + 1}

@@ -28,8 +28,6 @@ function BasicInfo({
 }) {
   const t = useTranslate()
 
-  console.log('BasicInfo customerContact:', customerContact)
-
   const consumptionTax: Record<ConsumptionTaxKey, string> = useMemo(() => {
     return {
       exclusive: t('tenant_settings.consumptionTax.taxExclusive'),
@@ -158,10 +156,10 @@ function BasicInfo({
         <Row gutter={[100, 0]} wrap>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              name={'created_at'}
+              name={'issue_date'}
               label={boldText(t('quotas.show.estimate_date'))}
             >
-              {dayjs(data?.created_at).tz('Asia/Tokyo').format('YYYY/MM/DD')}
+              {dayjs(data?.issue_date).format('YYYY/MM/DD')}
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
@@ -171,9 +169,7 @@ function BasicInfo({
               )}
             >
               {data?.delivery_date
-                ? dayjs(data?.delivery_date)
-                    .tz('Asia/Tokyo')
-                    .format('YYYY/MM/DD')
+                ? dayjs(data?.delivery_date).format('YYYY/MM/DD')
                 : ''}
             </Form.Item>
           </Col>
@@ -216,7 +212,7 @@ function BasicInfo({
                 >
                   {data?.expiration_date &&
                     dayjs(
-                      getExpiryDate(data?.expiration_date, data?.created_at),
+                      getExpiryDate(data?.expiration_date, data?.issue_date),
                     ).format('YYYY/MM/DD') + `${'まで'}`}
                 </span>
               </Form.Item>

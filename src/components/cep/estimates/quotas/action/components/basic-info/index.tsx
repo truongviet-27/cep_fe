@@ -29,7 +29,14 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE } from '@utility/instances'
 
-const BasicInfo = () => {
+const BasicInfo = ({
+  handleChangeProductPrincing,
+}: {
+  handleChangeProductPrincing: (
+    productIds: number[],
+    productIdsOptional: number[],
+  ) => void
+}) => {
   const t = useTranslate()
 
   const { params } = useParsed()
@@ -51,7 +58,7 @@ const BasicInfo = () => {
   )
 
   const expirationDate = Form.useWatch('expiration_date', form)
-  const createdAt = Form.useWatch('created_at', form)
+  const issueDate = Form.useWatch('issue_date', form)
   const customer = Form.useWatch('customer', form)
   const selectedContactId = Form.useWatch('customer_contact_id', form)
 
@@ -106,7 +113,11 @@ const BasicInfo = () => {
       const filtered = query.data.data.filter(
         (it: any) => it.deleted_at == null,
       )
-      setOptions((prev) => [...prev, ...filtered])
+      if (current === 1) {
+        setOptions(filtered)
+      } else {
+        setOptions((prev) => [...prev, ...filtered])
+      }
     }
   }, [query.data?.data])
 
@@ -390,20 +401,30 @@ const BasicInfo = () => {
                       showSearch
                       disabled={isCloneVersion}
                       labelInValue
-                      onSearch={() => {}}
                       loading={query.isFetching}
                       onPopupScroll={handlePopupScroll}
-                      filterOption={(input, option) =>
-                        ((option?.label ?? '') as string)
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
+                      onSearch={(val) => {
+                        setCurrent(1)
+                        selectPropsCt.onSearch?.(val)
+                      }}
+                      filterOption={false}
                       onChange={(value) => {
                         setSelectedCustomerId(value?.value || null)
                         form.setFieldsValue({ customer: value })
                         // Clear selected contact when customer changes
                         setSelectedContact(null)
                         form.setFieldsValue({ customer_contact_id: null })
+                        handleChangeProductPrincing(
+                          (form.getFieldValue(['main_product']) ?? []).flatMap(
+                            (item: any) =>
+                              item.products.map((p: any) => p.product_id),
+                          ),
+                          (
+                            form.getFieldValue(['optional_product']) ?? []
+                          ).flatMap((item: any) =>
+                            item.products.map((p: any) => p.product_id),
+                          ),
+                        )
                       }}
                     />
                   </Form.Item>
@@ -489,7 +510,7 @@ const BasicInfo = () => {
         <Row gutter={[100, 0]} wrap>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              name={'created_at'}
+              name={'issue_date'}
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_date'),
               )}
@@ -515,8 +536,8 @@ const BasicInfo = () => {
             >
               <DatePicker
                 style={{ width: '100%' }}
-                placeholder={FORMAT_DATE}
-                minDate={Form.useWatch('created_at', form)}
+                placeholder={'YYYY/MM/DD'}
+                minDate={Form.useWatch('issue_date', form)}
               />
             </Form.Item>
           </Col>
@@ -654,7 +675,7 @@ const BasicInfo = () => {
                 <Form.Item style={{ marginBottom: 0 }}>
                   {expirationDate && (
                     <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
-                      {dayjs(getExpiryDate(expirationDate, createdAt)).format(
+                      {dayjs(getExpiryDate(expirationDate, issueDate)).format(
                         'YYYY/MM/DD',
                       )}
                       {t('quotas.action.basic_info.labels.until')}

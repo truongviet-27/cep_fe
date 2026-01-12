@@ -43,7 +43,7 @@ import {
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 import Link from 'next/link'
 
@@ -212,10 +212,10 @@ function QuotaAction() {
           },
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
+            ? dayjs(dataBasicInfo.data.delivery_date)
             : null,
-          created_at: dataBasicInfo.data.created_at
-            ? dayjs(dataBasicInfo.data.created_at).tz('Asia/Tokyo')
+          issue_date: dataBasicInfo.data.issue_date
+            ? dayjs(dataBasicInfo.data.issue_date)
             : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
@@ -227,6 +227,7 @@ function QuotaAction() {
             products: item.products.map((item2: any) => ({
               ...item2,
               product: { value: item2.product_id, label: item2.name },
+              package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
               unit_name: item2.unit_name ?? '-',
@@ -238,6 +239,10 @@ function QuotaAction() {
                 products: item.products.map((item2: any) => ({
                   ...item2,
                   product: { value: item2.product_id, label: item2.name },
+                  package: {
+                    value: item2.package_id,
+                    label: item2.package_name,
+                  },
                   tax_rate: item2.tax_rate ?? 0,
                   unit: item2.unit_name ?? '-',
                   unit_name: item2.unit_name ?? '-',
@@ -267,10 +272,10 @@ function QuotaAction() {
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
           tax_rounding_method: data?.data?.tax_rounding_method,
           delivery_date: dataBasicInfo.data.delivery_date
-            ? dayjs(dataBasicInfo.data.delivery_date).tz('Asia/Tokyo')
+            ? dayjs(dataBasicInfo.data.delivery_date)
             : null,
-          created_at: dataBasicInfo.data.created_at
-            ? dayjs(dataBasicInfo.data.created_at).tz('Asia/Tokyo')
+          issue_date: dataBasicInfo.data.issue_date
+            ? dayjs(dataBasicInfo.data.issue_date)
             : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
@@ -282,6 +287,7 @@ function QuotaAction() {
             products: item.products.map((item2: any) => ({
               ...item2,
               product: { value: item2.product_id, label: item2.name },
+              package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               unit: item2.unit_name ?? '-',
               unit_name: item2.unit_name ?? '-',
@@ -293,6 +299,10 @@ function QuotaAction() {
                 products: item.products.map((item2: any) => ({
                   ...item2,
                   product: { value: item2.product_id, label: item2.name },
+                  package: {
+                    value: item2.package_id,
+                    label: item2.package_name,
+                  },
                   tax_rate: item2.tax_rate ?? 0,
                   unit: item2.unit_name ?? '-',
                   unit_name: item2.unit_name ?? '-',
@@ -308,7 +318,7 @@ function QuotaAction() {
   useEffect(() => {
     const quoteTemplate = quoteTemplateQuery?.data?.data
     if (quoteTemplate) {
-      delete quoteTemplate.created_at
+      delete (quoteTemplate as any).issue_date
       delete quoteTemplate.updated_at
       delete quoteTemplate.author
       delete quoteTemplate.editor
@@ -328,6 +338,7 @@ function QuotaAction() {
           products: item.products.map((item2: any) => ({
             ...item2,
             product: { value: item2.product_id, label: item2.name },
+            package: { value: item2.package_id, label: item2.package_name },
             tax_rate: item2.tax_rate ?? 0,
             unit: item2.unit_name ?? '-',
             unit_name: item2.unit_name ?? '-',
@@ -339,6 +350,7 @@ function QuotaAction() {
               products: item.products.map((item2: any) => ({
                 ...item2,
                 product: { value: item2.product_id, label: item2.name },
+                package: { value: item2.package_id, label: item2.package_name },
                 unit: item2.unit_name ?? '-',
                 unit_name: item2.unit_name ?? '-',
               })),
@@ -358,7 +370,7 @@ function QuotaAction() {
         customer: null,
         customer_contact_id: null,
         status: 'creating',
-        created_at: dayjs(),
+        issue_date: dayjs(),
         delivery_date: null,
         delivery_method: data?.data.default_delivery_method,
         payment_due_date: data?.data.default_payment_due_date,
@@ -379,6 +391,7 @@ function QuotaAction() {
               {
                 product: null,
                 product_id: null,
+                package: null,
                 package_id: null,
                 name: '',
                 code: '',
@@ -420,7 +433,7 @@ function QuotaAction() {
                   .startOf('day')
                   .toISOString()
               : null,
-            created_at: dayjs(values.created_at)
+            issue_date: dayjs(values.issue_date)
               .utc(true)
               .startOf('day')
               .toISOString(),
@@ -460,7 +473,7 @@ function QuotaAction() {
                   .startOf('day')
                   .toISOString()
               : null,
-            created_at: dayjs(values.created_at)
+            issue_date: dayjs(values.issue_date)
               .utc(true)
               .startOf('day')
               .toISOString(),
@@ -484,6 +497,18 @@ function QuotaAction() {
       )
     }
   }
+
+  const [productPrincing, setProductPrincing] = useState<number[]>()
+  const [productPrincingOptional, setProductPrincingptional] =
+    useState<number[]>()
+
+  const handleChangeProductPrincing = useCallback(
+    (productIds: number[], productIdsOptional: number[]) => {
+      setProductPrincing(() => [...productIds])
+      setProductPrincingptional(() => [...productIdsOptional])
+    },
+    [],
+  )
 
   return (
     <PageContainer
@@ -551,15 +576,23 @@ function QuotaAction() {
             category: 'merchandise',
             consumption_tax: 'exclusive',
             delivery_date: dayjs(),
-            created_at: dayjs(),
+            issue_date: dayjs(),
           }}
           scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
           autoComplete="off"
           name="basic"
         >
-          <BasicInfo />
-          <DetailInfo />
-          <OptionalInfo />
+          <BasicInfo
+            handleChangeProductPrincing={handleChangeProductPrincing}
+          />
+          <DetailInfo
+            productPrincing={productPrincing}
+            mainProduct={dataProducts?.data.main_product}
+          />
+          <OptionalInfo
+            productPrincing={productPrincingOptional}
+            optionalProduct={dataProducts?.data.main_product}
+          />
           <Row>
             <Col xs={24}>
               <Note />
@@ -582,18 +615,18 @@ function QuotaAction() {
                   value:
                     (dataBasicInfo?.data.author?.name ?? '---') +
                     ' ' +
-                    dayjs(dataBasicInfo?.data.created_at)
-                      .tz('Asia/Tokyo')
-                      .format('YYYY/MM/DD HH:mm'),
+                    dayjs(dataBasicInfo?.data.created_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
                 {
                   title: t('approve_routes.show.updater'),
                   value:
                     (dataBasicInfo?.data.editor?.name ?? '---') +
                     ' ' +
-                    dayjs(dataBasicInfo?.data?.updated_at)
-                      .tz('Asia/Tokyo')
-                      .format('YYYY/MM/DD HH:mm'),
+                    dayjs(dataBasicInfo?.data?.updated_at).format(
+                      'YYYY/MM/DD HH:mm',
+                    ),
                 },
               ]}
             />

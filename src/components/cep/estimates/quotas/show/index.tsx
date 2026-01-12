@@ -12,7 +12,7 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
-import { DeleteButton, useForm } from '@refinedev/antd'
+import { DeleteButton, useForm, useModal } from '@refinedev/antd'
 import {
   type OpenNotificationParams,
   useApiUrl,
@@ -30,10 +30,14 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
+import ModalAgreePrice from '../modal'
+
 function QuotaDetail() {
   const t = useTranslate()
 
   const { permission } = useUserStore.getState()
+  const [dataAgreedPrice, setDataAgreedPrice] = useState<any>()
+  const { modalProps, close, show } = useModal()
 
   const { form, formProps } = useForm()
 
@@ -311,7 +315,8 @@ function QuotaDetail() {
 
             {(queryBasic?.data?.status === QuotaStatus.Completed ||
               queryBasic?.data?.status === QuotaStatus.Cancelled) &&
-              (permission?.is_module_admin || queryBasic.data?.display) && (
+              (permission?.is_module_admin || queryBasic.data?.display) &&
+              !queryBasic?.data?.has_agreed_price && (
                 <Button
                   style={{
                     background: '#721C24',
@@ -341,6 +346,21 @@ function QuotaDetail() {
                   }}
                 >
                   {t('buttons.edit')}
+                </Button>
+              )}
+
+            {queryBasic?.data?.status === QuotaStatus.Completed &&
+              (permission?.is_module_admin || queryBasic?.data?.is_author) &&
+              !queryBasic?.data?.has_agreed_price && (
+                <Button
+                  type="default"
+                  size="middle"
+                  onClick={() => {
+                    show()
+                    setDataAgreedPrice(queryBasic?.data)
+                  }}
+                >
+                  {t('quotas.actions.decide_move')}
                 </Button>
               )}
 
@@ -449,6 +469,22 @@ function QuotaDetail() {
 
           {/* <PreviewPdf previewPdf={previewPdf} /> */}
         </div>
+      </Modal>
+
+      <Modal
+        {...modalProps}
+        footer={false}
+        title={boldText(
+          t('quotas.modal.move_to_decided_estimate'),
+          PRIMARY,
+          16,
+        )}
+      >
+        <ModalAgreePrice
+          data={dataAgreedPrice}
+          close={close}
+          onSuccess={notificationFunction}
+        />
       </Modal>
     </PageContainer>
   )

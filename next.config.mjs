@@ -13,6 +13,11 @@ const nextConfig = {
         hostname: 'dev-cep-erp-private.s3.ap-northeast-1.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'prod-cep-erp-private.s3.ap-northeast-1.amazonaws.com',
+        pathname: '/**',
+      },
     ],
   },
   webpack: (config) => {

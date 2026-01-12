@@ -113,6 +113,9 @@ function Right() {
                       style={{
                         marginRight: 40,
                         borderRadius: 8,
+                        width: 80,
+                        height: 80,
+                        objectFit: 'fill',
                       }}
                     />
                   </div>
@@ -131,12 +134,15 @@ function Right() {
                       height={80}
                       style={{
                         borderRadius: 8,
+                        width: 80,
+                        height: 80,
+                        objectFit: 'fill',
                       }}
                     />
                   </div>
                 )}
 
-                <div className="mt-10 ml-[60%] flex flex-col">
+                <div className="mt-10 mr-[100px] ml-[60%] flex flex-col">
                   <Space>{watchCompanyName}</Space>
                   <Space>{watchAddress}</Space>
                   <Space>{watchPhone}</Space>

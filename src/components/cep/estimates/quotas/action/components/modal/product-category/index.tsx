@@ -14,9 +14,14 @@ import ProductCategoryDropdown from '@components/common/product-category-dropdow
 export const ProductCategoryModal = ({
   name,
   close,
+  handleChangeProductPrincing,
 }: {
   name: string
   close: () => void
+  handleChangeProductPrincing: (
+    productIds: number[],
+    isSimple?: boolean,
+  ) => void
 }) => {
   const t = useTranslate()
   const form = Form.useFormInstance()
@@ -29,7 +34,7 @@ export const ProductCategoryModal = ({
 
   const { open } = useNotification()
 
-  const { data } = useCustom({
+  const { data, isFetching } = useCustom({
     method: 'get',
     url: `${apiUrl}/product-categories/${categoryIdWatch}/products?rank_id=${customerIdWatch}`,
     queryOptions: {
@@ -51,14 +56,25 @@ export const ProductCategoryModal = ({
                     value: item.id,
                     label: item.name,
                   },
-                  package_id: null,
+                  package: {
+                    value:
+                      item?.packagings.length > 0
+                        ? item?.packagings[0]?.id
+                        : null,
+                    label:
+                      item?.packagings.length > 0
+                        ? item?.packagings[0]?.name
+                        : null,
+                  },
+                  package_id: item?.packagings[0]?.id,
+                  package_name: item?.packagings[0]?.name,
                   product_id: item.id,
                   name: item?.name,
                   code: item?.code,
                   unit: item?.unit?.name,
                   cost_price: item?.cost_price,
                   quantity: 1,
-                  selling_price: item?.selling_price,
+                  selling_price: 0,
                   profit_margin: 0,
                   is_add_total: true,
                 })),
@@ -72,19 +88,33 @@ export const ProductCategoryModal = ({
                     value: item.id,
                     label: item.name,
                   },
-                  package_id: null,
+                  package: {
+                    value:
+                      item?.packagings.length > 0
+                        ? item?.packagings[0]?.id
+                        : null,
+                    label:
+                      item?.packagings.length > 0
+                        ? item?.packagings[0]?.name
+                        : null,
+                  },
                   product_id: item.id,
                   name: item?.name,
                   code: item?.code,
                   unit: item?.unit?.name,
                   cost_price: item?.cost_price,
                   quantity: 1,
-                  selling_price: item?.selling_price,
+                  selling_price: 0,
                   profit_margin: 0,
                   is_add_total: true,
                 })),
               },
             ],
+      )
+
+      handleChangeProductPrincing(
+        data?.data.products?.map((item: any) => item.id),
+        true,
       )
       close()
     } else {
@@ -129,7 +159,7 @@ export const ProductCategoryModal = ({
         <Button
           type="primary"
           onClick={handleCreateCategory}
-          disabled={!categoryIdWatch}
+          disabled={!categoryIdWatch || isFetching}
         >
           {t('products.buttons.save')}
         </Button>

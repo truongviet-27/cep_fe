@@ -55,12 +55,24 @@ function useProductCategories() {
 
   const t = useTranslations()
   const { tableProps } = useTable<ITree>()
-  const { mutate: createRow } = useCreate({
+  const { mutate: createRow, isLoading: isCreating } = useCreate({
     resource,
     invalidates: [],
   })
   const apiUrl = useApiUrl()
   const { mutate: updateAll } = useCustomMutation()
+
+  const hasEditingDescendant = (
+    node: CatNode,
+    editingKeys: string[],
+  ): boolean => {
+    if (!node.children || node.children.length === 0) return false
+    return node.children.some(
+      (child) =>
+        editingKeys.includes(String(child.id)) ||
+        hasEditingDescendant(child, editingKeys),
+    )
+  }
 
   const handleUpdateAll = (values: SavePayloadNode[]) => {
     updateAll({
@@ -78,7 +90,7 @@ function useProductCategories() {
       },
     })
   }
-  const { mutate: updateRow, isLoading: saving } = useUpdate({
+  const { mutate: updateRow, isLoading: isUpdating } = useUpdate({
     resource,
   })
 
@@ -326,8 +338,12 @@ function useProductCategories() {
   }
 
   const toTreeData = React.useCallback(
-    (nodes: readonly CatNode[]): TreeDataNode[] =>
-      nodes.map((n) => {
+    (nodes: readonly CatNode[]): TreeDataNode[] => {
+      const editingKeys = Object.keys(editing)
+      return nodes.map((n) => {
+        const childrenCount = n.children?.length || 0
+
+        const childIsEditing = hasEditingDescendant(n, editingKeys)
         return {
           key: String(n.id),
           title: (
@@ -336,26 +352,30 @@ function useProductCategories() {
               isNew={n._isNew}
               cat={n}
               hasChildren={Boolean(n.children?.length)}
+              childrenCount={childrenCount}
               onToggle={toggle}
               onAddChild={addChild}
               onStartEdit={startEdit}
               onSave={saveEdit}
               onCancel={cancelEdit}
               editingName={editing?.[String(n.id)]?.name}
-              saving={saving}
+              saving={n._isNew ? isCreating : isUpdating}
               canAddChild={(n.level ?? 1) < MAX_DEPTH}
               tag={toLevelLabel(n.level ?? 1)}
               onDelete={() => del(String(n.id))}
               depth={MAX_DEPTH}
               level={n.level ?? 1}
+              hasChildEditing={childIsEditing}
             />
           ),
           children: n.children ? toTreeData(n.children) : undefined,
         }
-      }),
+      })
+    },
     [
       editing,
-      saving,
+      isCreating,
+      isUpdating,
       addChild,
       changeName,
       startEdit,

@@ -1,18 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import CoreAutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
+import AutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { Action, type ActionType } from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
-import { useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Card, Flex, Form, Input, InputNumber, Modal } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-function OptionalInfo() {
+function OptionalInfo({
+  productPrincing,
+  optionalProduct,
+}: {
+  productPrincing?: number[]
+  optionalProduct: any
+}) {
   const t = useTranslate()
   const form = Form.useFormInstance()
 
@@ -28,6 +34,7 @@ function OptionalInfo() {
 
     const newProduct = {
       product: null,
+      package: null,
       product_id: null,
       package_id: null,
       package_name: '-',
@@ -67,6 +74,50 @@ function OptionalInfo() {
   const handleClose = () => {
     setIsModalOpen(false)
   }
+
+  const apiUrl = useApiUrl()
+
+  // const productIds = (Form.useWatch(['optional_product'], form) ?? []).flatMap(
+  //   (item: any) => item.products.map((p: any) => p.product_id),
+  // )
+  const [productPrincingState, setProductPrincingState] = useState<number[]>([])
+
+  useEffect(() => {
+    if (productPrincing) {
+      setProductPrincingState(productPrincing)
+    }
+  }, [productPrincing])
+
+  const customer = Form.useWatch(['customer'], form)
+
+  const { data } = useCustom<any>({
+    url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
+    method: 'get',
+    queryOptions: {
+      // enabled: !!customer?.value && productIds.every((p: any) => !!p),
+      enabled:
+        !!customer?.value &&
+        productPrincingState.filter((x) => x != null).length > 0,
+    },
+    config: {
+      filters: [
+        {
+          field: 'ids',
+          operator: 'eq',
+          value: productPrincingState.join(', '),
+        },
+      ],
+    },
+  })
+
+  const handleChangeProductPrincingOptional = useCallback(
+    (productIds: number[], isSimple?: boolean) => {
+      setProductPrincingState((prev) => [
+        ...new Set(isSimple ? productIds : [...prev, ...productIds]),
+      ])
+    },
+    [],
+  )
 
   return (
     <Card
@@ -213,15 +264,41 @@ function OptionalInfo() {
                           ]),
                         }}
                         onChangeValue={(valueOption) => {
+                          if (!valueOption) {
+                            form.setFieldValue(
+                              [
+                                'main_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'package',
+                              ],
+                              null,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'quantity',
+                              ],
+                              0,
+                            )
+                          }
+
                           form.setFieldValue(
                             [
                               'optional_product',
                               record.index,
                               'products',
                               record.index2,
-                              'package_id',
+                              'package',
                             ],
-                            null,
+                            {
+                              value: (valueOption?.packagings ?? [])[0]?.id,
+                              label: '-',
+                            },
                           )
                           form.setFieldValue(
                             [
@@ -233,6 +310,12 @@ function OptionalInfo() {
                             ],
                             '-',
                           )
+                          if (valueOption) {
+                            handleChangeProductPrincingOptional([
+                              valueOption.id,
+                            ])
+                          }
+
                           form.setFieldValue(
                             [
                               'optional_product',
@@ -323,19 +406,6 @@ function OptionalInfo() {
                             ],
                             1,
                           )
-
-                          if (!valueOption) {
-                            form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'quantity',
-                              ],
-                              0,
-                            )
-                          }
                         }}
                       />
                     )
@@ -412,8 +482,8 @@ function OptionalInfo() {
             },
             {
               title: t('quotas.action.optional_info.table.package'),
-              dataIndex: 'package_id',
-              key: 'package_id',
+              dataIndex: 'package',
+              key: 'package',
               width: 200,
               align: 'left',
               render: (_, record) => {
@@ -421,6 +491,14 @@ function OptionalInfo() {
                   return { props: { colSpan: 0 } }
                 } else {
                   if (isProductManager) {
+                    const product = (data?.data ?? []).find(
+                      (item: any) => item.id === record?.product_id,
+                    )
+                    const productInit =
+                      optionalProduct &&
+                      optionalProduct[record.index]?.products[record.index2]
+                        ?.product
+
                     return (
                       <Form.Item
                         className="ant-form-item-hidden-margin"
@@ -428,10 +506,10 @@ function OptionalInfo() {
                           record.index,
                           'products',
                           record.index2,
-                          'package_id',
+                          'package',
                         ]}
                       >
-                        <CoreAutoComplete
+                        <AutoComplete
                           filterPath1={[
                             'optional_product',
                             record.index,
@@ -439,6 +517,9 @@ function OptionalInfo() {
                             record.index2,
                             'product',
                           ]}
+                          productsData={productInit}
+                          customer={customer}
+                          data={product}
                           parent="optional_product"
                           index={record.index}
                           index2={record.index2}
@@ -484,13 +565,16 @@ function OptionalInfo() {
                   return { props: { colSpan: 0 } }
                 } else {
                   if (isProductManager) {
-                    return form.getFieldValue([
+                    const cost_price = form.getFieldValue([
                       'optional_product',
                       record.index,
                       'products',
                       record.index2,
                       'cost_price',
                     ])
+                    if (cost_price === undefined || cost_price === null)
+                      return '-'
+                    return Number(cost_price).toLocaleString()
                   }
                   return (
                     <Form.Item
@@ -527,7 +611,16 @@ function OptionalInfo() {
                     ]}
                     normalize={(val) => val ?? 0}
                   >
-                    <InputNumber min={0} precision={0} controls={false} />
+                    <InputNumber
+                      min={0}
+                      precision={0}
+                      controls={false}
+                      onChange={() => {
+                        setProductPrincingState((prev) =>
+                          prev.filter((item) => item !== record?.product_id),
+                        )
+                      }}
+                    />
                   </Form.Item>
                 )
               },
@@ -544,9 +637,37 @@ function OptionalInfo() {
                   <Form.Item
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    normalize={(val) => val ?? 1}
+                    normalize={(val) => val ?? 0}
+                    rules={[
+                      {
+                        validator(_, value) {
+                          const name = form.getFieldValue([
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'name',
+                          ])
+
+                          if (name && !value) {
+                            return Promise.reject()
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
                   >
-                    <InputNumber min={1} precision={0} controls={false} />
+                    <InputNumber
+                      min={0}
+                      precision={0}
+                      controls={false}
+                      onChange={() => {
+                        setProductPrincingState((prev) =>
+                          prev.filter((item) => item !== record?.product_id),
+                        )
+                      }}
+                    />
                   </Form.Item>
                 )
               },
@@ -696,7 +817,7 @@ function OptionalInfo() {
                     record.index2,
                     'selling_price',
                   ]) || 0
-                return quantity * selling
+                return Number(quantity * selling).toLocaleString()
               },
             },
 
@@ -731,6 +852,7 @@ function OptionalInfo() {
                         products: [
                           {
                             product: null,
+                            package: null,
                             product_id: null,
                             package_id: null,
                             package_name: '-',
@@ -811,8 +933,13 @@ function OptionalInfo() {
         okButtonProps={{ style: { display: 'none' } }}
         title={t('products.productCategoryEdit')}
         footer={null}
+        destroyOnHidden
       >
-        <ProductCategoryModal name="optional_product" close={handleClose} />
+        <ProductCategoryModal
+          name="optional_product"
+          close={handleClose}
+          handleChangeProductPrincing={handleChangeProductPrincingOptional}
+        />
       </Modal>
     </Card>
   )
