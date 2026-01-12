@@ -122,14 +122,20 @@ function QuotaList() {
   const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange,
-    getCheckboxProps: (record) => ({
-      disabled: getActionPermissions(
+    getCheckboxProps: (record) => {
+      const isPermissionDisabled = getActionPermissions(
         record.status,
         record?.is_author,
         record?.display,
         permission?.is_module_admin,
-      ),
-    }),
+      )
+      const isAgreedPriceDisabled =
+        record.status === QuotaStatus.Completed &&
+        record.has_agreed_price === true
+      return {
+        disabled: isPermissionDisabled || isAgreedPriceDisabled,
+      }
+    },
   }
 
   const { modalProps, close, show } = useModal()
