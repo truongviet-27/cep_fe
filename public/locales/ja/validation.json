@@ -238,5 +238,14 @@
   },
   "barcode": {
     "number_only": "バーコードは数字のみで入力してください"
+  },
+  "date": {
+    "end_date": {
+      "required": "終了日を入力してください",
+      "before_start_date": "終了日は開始日以降の日付を選択してください"
+    },
+    "start_date": {
+      "required": "開始日を入力してください"
+    }
   }
 }
