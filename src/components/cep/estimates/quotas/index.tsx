@@ -265,7 +265,11 @@ function QuotaList() {
         render: (_, record) => (
           <div className="flex flex-col gap-2">
             <div>{record.department_in_charge}</div>
-            <div>{record?.total_price}</div>
+            <div>
+              {Number(
+                record?.total_price?.toString().replace(/,/g, '') || 0,
+              ).toLocaleString()}
+            </div>
           </div>
         ),
       },

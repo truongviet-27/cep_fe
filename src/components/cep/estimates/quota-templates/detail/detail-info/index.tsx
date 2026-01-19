@@ -221,7 +221,7 @@ const DetailInfo: FC<Props> = (props) => {
           return { props: { colSpan: 0 } }
         }
 
-        return `${profit_margin}%`
+        return `${Number(profit_margin).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
       },
     },
     {
@@ -333,7 +333,7 @@ const DetailInfo: FC<Props> = (props) => {
                     原価合計
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{(detail?.total_price || 0).toLocaleString()}
+                    ¥{Number(detail?.total_price || 0).toLocaleString()}
                   </Text>
                 </div>
               </Col>
@@ -356,7 +356,11 @@ const DetailInfo: FC<Props> = (props) => {
                     消費税金額
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    {(detail.total_profit_margin || 0).toLocaleString()}%
+                    {Number(detail.total_profit_margin || 0).toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 2 },
+                    )}
+                    %
                   </Text>
                 </div>
               </Col>
@@ -384,7 +388,7 @@ const DetailInfo: FC<Props> = (props) => {
                       {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{item.total}
+                      ¥{Number(item.total).toLocaleString()}
                     </Text>
                   </div>
                 </Col>
@@ -408,7 +412,10 @@ const DetailInfo: FC<Props> = (props) => {
                     合計金額（税込）
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{(detail?.total_price_tax_included || 0).toLocaleString()}
+                    ¥
+                    {Number(
+                      detail?.total_price_tax_included || 0,
+                    ).toLocaleString()}
                   </Text>
                 </div>
               </Col>
