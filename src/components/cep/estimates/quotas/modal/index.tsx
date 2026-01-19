@@ -65,6 +65,8 @@ function ModalAgreePrice({
     )
   }
 
+  const validFrom = Form.useWatch('valid_from', form)
+
   return (
     <Form
       labelCol={{ xs: 24, sm: 8 }}
@@ -117,7 +119,7 @@ function ModalAgreePrice({
             rules={[
               {
                 required: true,
-                message: t('quotas.modal.agreed_price.required'),
+                message: t('validation.date.start_date.required'),
               },
             ]}
           >
@@ -125,6 +127,10 @@ function ModalAgreePrice({
               style={{ width: '80%' }}
               placeholder={'YYYY/MM/DD'}
               format={'YYYY/MM/DD'}
+              inputReadOnly
+              disabledDate={(current) =>
+                current && current < dayjs().startOf('day')
+              }
             />
           </Form.Item>
         </Col>
@@ -134,11 +140,41 @@ function ModalAgreePrice({
           <Form.Item
             label={boldText(t('quotas.modal.agreed_price.valid_to'))}
             name={'valid_to'}
+            rules={[
+              {
+                required: true,
+                message: t('validation.date.end_date.required'),
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const start = getFieldValue('valid_from')
+                  if (!value || !start) {
+                    return Promise.resolve()
+                  }
+                  if (dayjs(value).isBefore(dayjs(start), 'day')) {
+                    return Promise.reject(
+                      new Error(
+                        t('validation.date.end_date.before_start_date'),
+                      ),
+                    )
+                  }
+                  return Promise.resolve()
+                },
+              }),
+            ]}
           >
             <DatePicker
               style={{ width: '80%' }}
               placeholder={'YYYY/MM/DD'}
               format={'YYYY/MM/DD'}
+              inputReadOnly
+              disabledDate={(current) => {
+                const isPast = current && current < dayjs().startOf('day')
+                const isBeforeFrom = validFrom
+                  ? current < dayjs(validFrom).startOf('day')
+                  : false
+                return isPast || isBeforeFrom
+              }}
             />
           </Form.Item>
         </Col>
