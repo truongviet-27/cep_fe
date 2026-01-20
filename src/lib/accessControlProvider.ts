@@ -41,6 +41,7 @@ export const accessControlProvider: AccessControlProvider = {
           can: hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT),
         }
       case 'products':
+      case 'product-combos':
       case 'price-groups':
         return {
           can: hasFullAccessModule(PermissionEnum.PRODUCT_EDIT),
