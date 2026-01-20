@@ -235,7 +235,7 @@ function QuotaList() {
         key: 'creator',
         render: (_, record) => (
           <div>
-            <div>{record?.author}</div>
+            <div>{record?.author?.name}</div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: any, index: number) => {
                 const isApproved = item.status === 'approved'

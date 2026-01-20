@@ -14,6 +14,7 @@ import {
   Input,
   InputNumber,
   message,
+  notification,
   Table,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -112,9 +113,11 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                             i !== index && item?.name?.trim() === value?.trim(),
                         )
                         if (isDuplicate) {
-                          message.warning({
-                            content: `${value}という荷姿名は複数です。`,
-                            key: `warn-${value?.trim()}`,
+                          notification.error({
+                            message: `${value}という荷姿名は複数です。`,
+                            description: 'エラー',
+                            key: `name-${value?.trim()}`,
+                            placement: 'topRight',
                           })
                           return Promise.reject(
                             new Error(t('validation.duplicate_name')),
@@ -158,9 +161,11 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                             item?.barcode?.trim() === value?.trim(),
                         )
                         if (isDuplicate) {
-                          message.warning({
-                            content: `${value}というバーコードは複数です。`,
-                            key: `warn-${value?.trim()}`,
+                          notification.error({
+                            message: `${value}という荷姿名は複数存在します。`,
+                            description: 'エラー',
+                            key: `barcode-${value?.trim()}`,
+                            placement: 'topRight',
                           })
                           return Promise.reject(new Error(''))
                         }
