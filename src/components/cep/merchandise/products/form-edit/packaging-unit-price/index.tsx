@@ -249,8 +249,14 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               className: '!content-start',
               render: (value: string, __: unknown, index: number) => (
                 <div className="mt-1">
-                  {getFieldValue('selling_price') *
-                    getFieldValue(['packagings', index, 'quantity_in_package'])}
+                  {Number(
+                    getFieldValue('selling_price') *
+                      getFieldValue([
+                        'packagings',
+                        index,
+                        'quantity_in_package',
+                      ]),
+                  ).toLocaleString()}
                 </div>
               ),
             },

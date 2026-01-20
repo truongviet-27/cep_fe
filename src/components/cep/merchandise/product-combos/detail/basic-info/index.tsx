@@ -76,7 +76,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                   <div className="w-[150px] text-left font-bold">
                     {t('product_combos.fields.costPrice')}
                   </div>
-                  <div>{product.cost_price}</div>
+                  <div>
+                    {product.cost_price
+                      ? Number(product.cost_price).toLocaleString()
+                      : ''}
+                  </div>
                 </Row>
                 <Row>
                   <div className="w-[150px] text-left font-bold">
@@ -87,7 +91,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                       className="rounded-sm p-1 text-white"
                       style={{ background: PRIMARY }}
                     >
-                      {product.selling_price}
+                      {Number(product.selling_price).toLocaleString()}
                     </span>
                   </div>
                 </Row>
