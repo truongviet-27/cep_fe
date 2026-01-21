@@ -26,7 +26,6 @@ type SelectPropsForm<
   overwriteOptionsOnSearch?: boolean
   onChangeValue?: (value: any, option?: any) => void
   onChangeClear?: (fn: ((value: string) => void) | undefined) => void
-  onSelect?: (value: any, option?: any) => void
 }
 
 export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
@@ -51,7 +50,6 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     overwriteOptionsOnSearch = false,
     onChangeValue,
     onChangeClear,
-    onSelect,
     ...restProps
   } = props
 
@@ -189,14 +187,6 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
           }
           if (value) {
             if (selectProps?.onSearch) selectProps.onSearch('')
-          }
-        }}
-        onSelect={(value, option) => {
-          if (onSelect) {
-            const valueOption = options.find(
-              (opt) => opt?.id === (labelInValue ? value?.value : value),
-            )
-            onSelect(valueOption, option)
           }
         }}
         value={value}

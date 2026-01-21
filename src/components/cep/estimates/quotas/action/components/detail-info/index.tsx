@@ -502,24 +502,26 @@ function DetailInfo({
                               true,
                             )
                           }
-                        }}
-                        onSelect={(valueOption) => {
-                          // Cập nhật field product với tên mới từ API khi select
-                          if (valueOption) {
-                            form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'product',
-                              ],
-                              {
-                                value: valueOption.id,
-                                label: valueOption.name, // Luôn lấy tên mới từ API
-                              },
-                            )
-                          }
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'product_id',
+                            ],
+                            valueOption?.id,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'name',
+                            ],
+                            valueOption?.name,
+                          )
                           form.setFieldValue(
                             [
                               'main_product',
