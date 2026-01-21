@@ -67,11 +67,12 @@ function CoreAutoComplete({
       const option = data?.packagings?.find(
         (item: any) => item?.id === packageWatch?.value,
       )
-
-      form.setFieldValue(
-        [parent, index, 'products', index2, 'selling_price'],
-        option?.rank_prices ? option?.rank_prices : option?.selling_price,
-      )
+      if (option) {
+        form.setFieldValue(
+          [parent, index, 'products', index2, 'selling_price'],
+          option?.rank_prices ? option?.rank_prices : option?.selling_price,
+        )
+      }
     }
   }, [data])
 

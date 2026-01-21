@@ -271,20 +271,10 @@ function DetailInfo({
   const customer = Form.useWatch(['customer'], form)
 
   useEffect(() => {
-    const currentMainProduct = form.getFieldValue('main_product')
-    if (currentMainProduct && Array.isArray(currentMainProduct)) {
-      const initialIds = currentMainProduct
-        .flatMap((group: any) => group.products ?? [])
-        .map((p: any) => p.product_id)
-        .filter((id) => id !== null && id !== undefined)
-
-      if (initialIds.length > 0) {
-        setProductPrincingState((prev) => [
-          ...new Set([...prev, ...initialIds]),
-        ])
-      }
+    if (productPrincing) {
+      setProductPrincingState(productPrincing)
     }
-  }, [customer?.value])
+  }, [productPrincing])
 
   const watchedProductIds = useMemo(() => {
     return (mainProductWatch ?? [])
@@ -300,7 +290,7 @@ function DetailInfo({
     queryOptions: {
       enabled:
         !!customer?.value &&
-        (productPrincingState.length > 0 || watchedProductIds.length > 0),
+        productPrincingState.filter((x) => x != null).length > 0,
     },
 
     config: {
@@ -308,9 +298,7 @@ function DetailInfo({
         {
           field: 'ids',
           operator: 'eq',
-          value: [
-            ...new Set([...productPrincingState, ...watchedProductIds]),
-          ].join(','),
+          value: productPrincingState.join(','),
         },
       ],
     },
@@ -556,6 +544,16 @@ function DetailInfo({
                               record.index,
                               'products',
                               record.index2,
+                              'package_id',
+                            ],
+                            (valueOption?.packagings ?? [])[0]?.id,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
                               'package',
                             ],
                             {
@@ -716,9 +714,23 @@ function DetailInfo({
                   return { props: { colSpan: 0 } }
                 } else {
                   if (isProductManager) {
-                    const product = (data?.data ?? []).find(
-                      (item: any) => item.id === record?.product_id,
-                    )
+                    let product = null
+                    if (data?.data) {
+                      product = (data?.data ?? []).find(
+                        (item: any) => item.id === record?.product_id,
+                      )
+                    } else {
+                      product =
+                        mainProduct
+                          ?.flatMap((group: any) => group.products || [])
+                          .find(
+                            (item: any) =>
+                              item.product_id === record?.product_id,
+                          ) ??
+                        (data?.data ?? []).find(
+                          (item: any) => item.id === record?.product_id,
+                        )
+                    }
 
                     const productInit =
                       mainProduct &&
