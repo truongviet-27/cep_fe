@@ -526,6 +526,26 @@ function DetailInfo({
                               record.index,
                               'products',
                               record.index2,
+                              'product_id',
+                            ],
+                            valueOption?.id,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'name',
+                            ],
+                            valueOption?.name,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
                               'code',
                             ],
                             valueOption?.code,
