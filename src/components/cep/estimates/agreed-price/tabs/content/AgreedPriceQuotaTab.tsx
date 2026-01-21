@@ -688,10 +688,7 @@ const AgreedPriceQuotaTab = () => {
                 rules={[
                   {
                     required: true,
-                    message:
-                      t(
-                        'validation.agreed_prices.modal.applicable_start.required',
-                      ) || '必須',
+                    message: t('validation.date.start_date.required'),
                   },
                 ]}
                 noStyle
@@ -700,6 +697,10 @@ const AgreedPriceQuotaTab = () => {
                   style={{ width: '65%' }}
                   placeholder="YYYY/MM/DD"
                   format="YYYY/MM/DD"
+                  inputReadOnly
+                  disabledDate={(current) =>
+                    current && current < dayjs().startOf('day')
+                  }
                 />
               </Form.Item>
 
@@ -721,10 +722,24 @@ const AgreedPriceQuotaTab = () => {
             rules={[
               {
                 required: true,
-                message:
-                  t('validation.agreed_prices.modal.applicable_end.required') ||
-                  '必須',
+                message: t('validation.date.end_date.required'),
               },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const start = getFieldValue('start_date')
+                  if (!value || !start) {
+                    return Promise.resolve()
+                  }
+                  if (dayjs(value).isBefore(dayjs(start), 'day')) {
+                    return Promise.reject(
+                      new Error(
+                        t('validation.date.end_date.before_start_date'),
+                      ),
+                    )
+                  }
+                  return Promise.resolve()
+                },
+              }),
             ]}
             style={{ marginBottom: 16 }}
           >
@@ -732,6 +747,15 @@ const AgreedPriceQuotaTab = () => {
               style={{ width: '65%' }}
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
+              inputReadOnly
+              disabledDate={(current) => {
+                if (!current) return false
+                const today = dayjs().startOf('day')
+                const start = startDate
+                  ? dayjs(startDate).startOf('day')
+                  : today
+                return current < today || current < start
+              }}
               defaultPickerValue={endDate || startDate}
             />
           </Form.Item>
