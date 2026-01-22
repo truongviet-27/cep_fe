@@ -999,7 +999,7 @@ function DetailInfo({
                   ),
                 )
 
-                return `${selling > 0 ? (((selling - cost) / selling) * 100).toFixed(2) : 0}%`
+                return `${selling > 0 ? Number(((selling - cost) / selling) * 100).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 0}%`
               },
             },
             {
@@ -1047,7 +1047,7 @@ function DetailInfo({
                       record.index2,
                       'tax_rate',
                     ]) || 0
-                  return `${taxRate}%`
+                  return `${Number(taxRate).toLocaleString()}%`
                 }
 
                 return (
@@ -1252,7 +1252,7 @@ function DetailInfo({
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
                       <Table.Summary.Cell index={6} align="center">
-                        {total || 0}
+                        {Number(total).toLocaleString() || 0}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
@@ -1314,7 +1314,10 @@ function DetailInfo({
                     {t('quotas.action.detail_info.summary.total_profit_margin')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    {profitRate}%
+                    {Number(profitRate).toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                    %
                   </Text>
                   <Form.Item name="total_profit_margin" hidden>
                     <InputNumber />
@@ -1345,7 +1348,7 @@ function DetailInfo({
                       {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{item.total}
+                      ¥{Number(item.total).toLocaleString()}
                     </Text>
                   </div>
                 </Col>
