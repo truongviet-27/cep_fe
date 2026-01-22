@@ -162,7 +162,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
         }
-        return `${record?.profit_margin}%`
+        return `${Number(record?.profit_margin).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
       },
     },
     {
