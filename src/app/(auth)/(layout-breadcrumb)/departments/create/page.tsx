@@ -166,7 +166,7 @@ export default function Page() {
               <Space direction="horizontal" size={3} wrap>
                 <Button
                   size="middle"
-                  type="default"
+                  type="primary"
                   loading={loadingDp}
                   onClick={() => {
                     refetch().then(() => {
@@ -181,7 +181,7 @@ export default function Page() {
                   type="link"
                   onClick={() => show(data?.data?.id)}
                   className="text-blue-500"
-                  style={{ marginLeft: -16, marginTop: -10 }}
+                  style={{ marginLeft: -16 }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>

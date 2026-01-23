@@ -9,12 +9,17 @@ import Breadcrumbs from '@components/layout/breadcrumbs'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import AgreedPriceByCustomerTab from '@components/cep/estimates/agreed-price/tabs/content/AgreedPriceByCustomerTab'
+import Link from 'next/link'
 
 export default function AgreedPriceCustomer() {
   const t = useTranslate()
   const breadcrumbItems = [
     {
-      title: boldText(t('continuous_quotes_by_customer.parent_title')),
+      title: (
+        <Link href="/customers">
+          {boldText(t('continuous_quotes_by_customer.parent_title'))}
+        </Link>
+      ),
     },
     {
       title: boldText(t('continuous_quotes_by_customer.title'), PRIMARY),
