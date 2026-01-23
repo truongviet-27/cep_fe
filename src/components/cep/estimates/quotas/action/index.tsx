@@ -591,7 +591,7 @@ function QuotaAction() {
           />
           <OptionalInfo
             productPrincing={productPrincingOptional}
-            optionalProduct={dataProducts?.data.main_product}
+            optionalProduct={dataProducts?.data.optional_product}
           />
           <Row>
             <Col xs={24}>
