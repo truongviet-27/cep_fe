@@ -29,6 +29,8 @@ const ProductInformation: React.FC<ProductInformationProps> = ({
     {
       title: t('product_combos.fields.quantity'),
       dataIndex: 'quantity',
+      render: (value: number) =>
+        value !== null && value !== undefined ? value.toLocaleString() : '',
     },
     {
       title: t('product_combos.fields.unit'),
@@ -37,10 +39,14 @@ const ProductInformation: React.FC<ProductInformationProps> = ({
     {
       title: t('product_combos.fields.costPrice'),
       dataIndex: 'cost_price',
+      render: (value: number) =>
+        value !== null && value !== undefined ? value.toLocaleString() : '',
     },
     {
       title: t('product_combos.fields.sellingPrice'),
       dataIndex: 'selling_price',
+      render: (value: number) =>
+        value !== null && value !== undefined ? value.toLocaleString() : '',
     },
   ] as ColumnsType
 

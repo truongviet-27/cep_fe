@@ -34,6 +34,8 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
         title: t('products.unitPriceGroup.sellingPrice'),
         dataIndex: 'selling_price',
         key: 'selling_price',
+        render: (value: number) =>
+          value !== null && value !== undefined ? value.toLocaleString() : '-',
       },
       {
         title: t('products.unitPriceGroup.settingMethod'),
@@ -57,6 +59,10 @@ const PriceGroup: React.FC<PriceGroupProps> = ({ product }) => {
           ),
           dataIndex: `rank_${rank.rank_id}`,
           key: `rank_${rank.rank_id}`,
+          render: (value: number) =>
+            value !== null && value !== undefined
+              ? value.toLocaleString()
+              : '-',
         })
       })
     }

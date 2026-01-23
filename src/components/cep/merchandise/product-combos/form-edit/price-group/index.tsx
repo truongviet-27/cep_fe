@@ -68,7 +68,7 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                     controls={false}
                   />
                 </Form.Item>
-                {isRateBased ? caculator : ''}
+                {isRateBased ? Number(caculator).toLocaleString() : ''}
               </div>
               {currentRankPrice < costPriceWatch ? (
                 <span className="text-[8px] text-red-500">
@@ -131,7 +131,9 @@ const PriceGroup: React.FC<PriceGroupProps> = (props) => {
                     className="ant-form-item-hidden-margin"
                   >
                     {() =>
-                      getFieldValue(['packagings', index, 'selling_price'])
+                      Number(
+                        getFieldValue(['packagings', index, 'selling_price']),
+                      ).toLocaleString()
                     }
                   </Form.Item>
                 )
