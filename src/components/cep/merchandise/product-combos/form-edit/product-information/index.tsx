@@ -181,11 +181,10 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               dataIndex: 'cost_price',
               key: 'cost_price',
               render: (_, record) => {
-                return form.getFieldValue([
-                  'products',
-                  record.name,
-                  'cost_price',
-                ])
+                return Number(
+                  form.getFieldValue(['products', record.name, 'cost_price']) ??
+                    0,
+                ).toLocaleString()
               },
             },
             {
@@ -193,11 +192,13 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               dataIndex: 'selling_price',
               key: 'selling_price',
               render: (_, record) => {
-                return form.getFieldValue([
-                  'products',
-                  record.name,
-                  'selling_price',
-                ])
+                return Number(
+                  form.getFieldValue([
+                    'products',
+                    record.name,
+                    'selling_price',
+                  ]),
+                ).toLocaleString()
               },
             },
             {
