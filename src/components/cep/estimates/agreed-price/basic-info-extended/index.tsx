@@ -279,7 +279,7 @@ function BasicInfoExtended({
       <Row gutter={[100, 0]} wrap>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item name={'created_at'} label={boldText('見積日')}>
-            {dayjs(data?.created_at).format('YYYY/MM/DD')}
+            {dayjs(data?.issue_date).format('YYYY/MM/DD')}
           </Form.Item>
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
