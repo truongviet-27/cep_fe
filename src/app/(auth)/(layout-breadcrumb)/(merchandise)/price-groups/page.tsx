@@ -270,6 +270,11 @@ function Page() {
                 </>
               )
             }}
+            render={(value) => {
+              return value !== null && value !== undefined
+                ? Number(value).toLocaleString()
+                : '-'
+            }}
           />
 
           <Table.Column
@@ -358,7 +363,7 @@ function Page() {
                       record?.packaging_id &&
                       includes(editIds, record.packaging_id)
 
-                    if (!isEditing) return currentPrice
+                    if (!isEditing) return Number(currentPrice).toLocaleString()
 
                     if (isEditing && !is_rate_based) {
                       return (

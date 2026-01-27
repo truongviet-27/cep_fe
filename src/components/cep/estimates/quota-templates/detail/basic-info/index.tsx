@@ -1,4 +1,3 @@
-import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
@@ -9,7 +8,6 @@ import {
   PAYMENT_DUE_DATE,
 } from '@utility/constant'
 import { Col, Flex, Form, Row, Typography } from 'antd'
-import dayjs from 'dayjs'
 
 const { Title } = Typography
 
@@ -116,23 +114,6 @@ const BasicInfo: React.FC<Props> = (props) => {
             label={boldText(t('quota_templates.form.label.validity_period'))}
           >
             {EXPIRATION_DATE?.[detail.expiration_date ?? '']?.label}
-            <span
-              style={{
-                whiteSpace: 'nowrap',
-                fontWeight: 500,
-                marginLeft: 10,
-              }}
-            >
-              (
-              {EXPIRATION_DATE?.[detail.expiration_date ?? ''] &&
-                dayjs(
-                  getExpiryDate(
-                    EXPIRATION_DATE?.[detail.expiration_date ?? ''].value,
-                    detail?.created_at,
-                  ),
-                ).format('YYYY/MM/DD') + `${'まで'}`}
-              )
-            </span>
           </Form.Item>
         </Col>
       </Row>
