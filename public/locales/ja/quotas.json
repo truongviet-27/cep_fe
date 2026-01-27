@@ -121,8 +121,8 @@
       "approve": "承認",
       "send": "送信",
       "move_to_cancel": "失注へ移動",
-      "move_to_order": "受注へ移動",
-      "move_to_send": "送信へ移動"
+      "move_to_order": "送信済へ移動",
+      "move_to_send": "送信済へ移動"
     },
     "table": {
       "step": "ステップ",
@@ -181,7 +181,7 @@
       "send": "送信",
       "move_to_cancel": "失注へ移動",
       "move_to_order": "受注へ移動",
-      "move_to_send": "送信へ移動"
+      "move_to_send": "送信済へ移動"
     },
     "table": {
       "step": "ステップ",
