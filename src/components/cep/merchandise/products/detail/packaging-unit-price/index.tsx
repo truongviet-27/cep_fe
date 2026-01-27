@@ -26,6 +26,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = ({ product }) => {
     {
       title: t('products.fields.quantity'),
       dataIndex: 'quantity_in_package',
+      render: (value: number) =>
+        value !== null && value !== undefined ? value.toLocaleString() : '-',
     },
     {
       title: t('products.fields.unit'),
@@ -34,10 +36,14 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = ({ product }) => {
     {
       title: t('products.fields.standardPrice'),
       dataIndex: 'standard_price',
+      render: (value: number) =>
+        value !== null && value !== undefined ? value.toLocaleString() : '-',
     },
     {
       title: t('products.fields.sellingPrice'),
       dataIndex: 'selling_price',
+      render: (value: number) =>
+        value !== null && value !== undefined ? value.toLocaleString() : '-',
     },
   ] as ColumnsType
 

@@ -125,9 +125,14 @@ function BasicInformation(
         <Form.Item label={boldText(t('customers.fields.status'))} required>
           <Row align="middle" gutter={8}>
             <Col flex="none">
-              <Form.Item rules={[rule]} name="status" required noStyle>
+              <Form.Item
+                rules={[rule]}
+                name="status"
+                required
+                noStyle
+                initialValue="new"
+              >
                 <Select
-                  value={status}
                   style={{ width: '100%' }}
                   options={[
                     'new',

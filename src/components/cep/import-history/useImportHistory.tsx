@@ -17,50 +17,42 @@ function useImportHistory() {
     resource: 'csv-imports/history',
     onSearch: (data: any) => {
       const filters = [] as CrudFilters
-      if (data.common_name) {
-        filters.push({
-          field: 'common_name',
-          operator: 'eq',
-          value: data.common_name,
-        })
-      }
 
-      if (data.status) {
-        filters.push({
-          field: 'status',
-          operator: 'eq',
-          value: data.status,
-        })
-      }
+      filters.push({
+        field: 'common_name',
+        operator: 'eq',
+        value: data.common_name,
+      })
 
-      if (data.id) {
-        filters.push({
-          field: 'id',
-          operator: 'eq',
-          value: data.id,
-        })
-      }
+      filters.push({
+        field: 'status',
+        operator: 'eq',
+        value: data.status,
+      })
 
-      if (data.created_by) {
-        filters.push({
-          field: 'created_by',
-          operator: 'eq',
-          value: data.created_by,
-        })
-      }
-      if (data.date) {
-        const [start, end] = data.date
-        filters.push({
-          field: 'start_date',
-          operator: 'eq',
-          value: dayjs(start).format('YYYY-MM-DD'),
-        })
-        filters.push({
-          field: 'end_date',
-          operator: 'eq',
-          value: dayjs(end).format('YYYY-MM-DD'),
-        })
-      }
+      filters.push({
+        field: 'id',
+        operator: 'eq',
+        value: data.id,
+      })
+
+      filters.push({
+        field: 'created_by',
+        operator: 'eq',
+        value: data.created_by,
+      })
+
+      const [start, end] = data.date || []
+      filters.push({
+        field: 'start_date',
+        operator: 'eq',
+        value: start ? dayjs(start).format('YYYY-MM-DD') : undefined,
+      })
+      filters.push({
+        field: 'end_date',
+        operator: 'eq',
+        value: end ? dayjs(end).format('YYYY-MM-DD') : undefined,
+      })
 
       return filters
     },
@@ -213,6 +205,10 @@ function useImportHistory() {
         dataIndex: 'url_file_failed',
         title: t('import_history.table.headers.errorResult'),
         render(value, record) {
+          if (record.status == 'PENDING') {
+            return null
+          }
+
           return record.status === 'COMPLETED' ? null : !value ||
             record.status === 'FAILED' ? (
             <Text

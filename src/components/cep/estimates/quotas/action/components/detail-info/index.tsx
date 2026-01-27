@@ -271,20 +271,10 @@ function DetailInfo({
   const customer = Form.useWatch(['customer'], form)
 
   useEffect(() => {
-    const currentMainProduct = form.getFieldValue('main_product')
-    if (currentMainProduct && Array.isArray(currentMainProduct)) {
-      const initialIds = currentMainProduct
-        .flatMap((group: any) => group.products ?? [])
-        .map((p: any) => p.product_id)
-        .filter((id) => id !== null && id !== undefined)
-
-      if (initialIds.length > 0) {
-        setProductPrincingState((prev) => [
-          ...new Set([...prev, ...initialIds]),
-        ])
-      }
+    if (productPrincing) {
+      setProductPrincingState(productPrincing)
     }
-  }, [customer?.value])
+  }, [productPrincing])
 
   const watchedProductIds = useMemo(() => {
     return (mainProductWatch ?? [])
@@ -300,7 +290,7 @@ function DetailInfo({
     queryOptions: {
       enabled:
         !!customer?.value &&
-        (productPrincingState.length > 0 || watchedProductIds.length > 0),
+        productPrincingState.filter((x) => x != null).length > 0,
     },
 
     config: {
@@ -308,9 +298,7 @@ function DetailInfo({
         {
           field: 'ids',
           operator: 'eq',
-          value: [
-            ...new Set([...productPrincingState, ...watchedProductIds]),
-          ].join(','),
+          value: productPrincingState.join(','),
         },
       ],
     },
@@ -502,7 +490,24 @@ function DetailInfo({
                               true,
                             )
                           }
-
+                        }}
+                        onSelect={(valueOption) => {
+                          // Cập nhật field product với tên mới từ API khi select
+                          if (valueOption) {
+                            form.setFieldValue(
+                              [
+                                'main_product',
+                                record.index,
+                                'products',
+                                record.index2,
+                                'product',
+                              ],
+                              {
+                                value: valueOption.id,
+                                label: valueOption.name, // Luôn lấy tên mới từ API
+                              },
+                            )
+                          }
                           form.setFieldValue(
                             [
                               'main_product',
@@ -532,6 +537,16 @@ function DetailInfo({
                               'code',
                             ],
                             valueOption?.code,
+                          )
+                          form.setFieldValue(
+                            [
+                              'main_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'package_id',
+                            ],
+                            (valueOption?.packagings ?? [])[0]?.id,
                           )
                           form.setFieldValue(
                             [
@@ -699,9 +714,23 @@ function DetailInfo({
                   return { props: { colSpan: 0 } }
                 } else {
                   if (isProductManager) {
-                    const product = (data?.data ?? []).find(
-                      (item: any) => item.id === record?.product_id,
-                    )
+                    let product = null
+                    if (data?.data) {
+                      product = (data?.data ?? []).find(
+                        (item: any) => item.id === record?.product_id,
+                      )
+                    } else {
+                      product =
+                        mainProduct
+                          ?.flatMap((group: any) => group.products || [])
+                          .find(
+                            (item: any) =>
+                              item.product_id === record?.product_id,
+                          ) ??
+                        (data?.data ?? []).find(
+                          (item: any) => item.id === record?.product_id,
+                        )
+                    }
 
                     const productInit =
                       mainProduct &&
@@ -970,7 +999,7 @@ function DetailInfo({
                   ),
                 )
 
-                return `${selling > 0 ? (((selling - cost) / selling) * 100).toFixed(2) : 0}%`
+                return `${selling > 0 ? Number(((selling - cost) / selling) * 100).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 0}%`
               },
             },
             {
@@ -1018,7 +1047,7 @@ function DetailInfo({
                       record.index2,
                       'tax_rate',
                     ]) || 0
-                  return `${taxRate}%`
+                  return `${Number(taxRate).toLocaleString()}%`
                 }
 
                 return (
@@ -1223,7 +1252,7 @@ function DetailInfo({
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
                       <Table.Summary.Cell index={6} align="center">
-                        {total || 0}
+                        {Number(total).toLocaleString() || 0}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
                       <Table.Summary.Cell index={8}></Table.Summary.Cell>
@@ -1285,7 +1314,10 @@ function DetailInfo({
                     {t('quotas.action.detail_info.summary.total_profit_margin')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    {profitRate}%
+                    {Number(profitRate).toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                    %
                   </Text>
                   <Form.Item name="total_profit_margin" hidden>
                     <InputNumber />
@@ -1316,7 +1348,7 @@ function DetailInfo({
                       {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{item.total}
+                      ¥{Number(item.total).toLocaleString()}
                     </Text>
                   </div>
                 </Col>

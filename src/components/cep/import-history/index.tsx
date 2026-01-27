@@ -62,6 +62,7 @@ function ImportHistory() {
               <Select
                 showSearch
                 placeholder={t('import_history.placeholder.status')}
+                allowClear
               >
                 <Select.Option value="PROCESSING">
                   {t('import_history.text.status.PROCESSING')}
@@ -89,6 +90,7 @@ function ImportHistory() {
               <Select
                 showSearch
                 placeholder={t('import_history.placeholder.common_name')}
+                allowClear
               >
                 <Select.Option value="PRODUCTS">
                   {t('import_history.text.category.PRODUCTS')}

@@ -365,7 +365,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                     className="mr-2 rounded-sm p-1 text-white"
                     style={{ background: PRIMARY }}
                   >
-                    {form.getFieldValue('selling_price')}
+                    {Number(
+                      form.getFieldValue('selling_price'),
+                    ).toLocaleString()}
                   </span>
                   <EditFilled
                     onClick={() => {

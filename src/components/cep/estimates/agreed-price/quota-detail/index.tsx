@@ -75,13 +75,16 @@ function AgreedPriceQuotaDetail() {
   const { mutate: mutateUpdateExpiration, isPending: isUpdatingExpiration } =
     useCustomMutation()
 
-  const openUpdateExpiration = (newEndDate?: dayjs.Dayjs) => {
+  const openUpdateExpiration = (
+    newStartDate?: dayjs.Dayjs,
+    newEndDate?: dayjs.Dayjs,
+  ) => {
     if (newEndDate) {
       if (!agreedPriceId) return
       const validTo = newEndDate.format('YYYY/MM/DD')
-      const validFrom = agrredPriceValidTo
-        ? dayjs(agrredPriceValidTo).add(1, 'day').format('YYYY/MM/DD')
-        : undefined
+      const validFrom = newStartDate
+        ? newStartDate.format('YYYY/MM/DD')
+        : dayjs(agreedPriceValidFrom).format('YYYY/MM/DD')
       mutateUpdateExpiration(
         {
           method: 'put',
@@ -434,7 +437,7 @@ function AgreedPriceQuotaDetail() {
                       })
                     }}
                   >
-                    送信へ移動
+                    {t('quotas.actions.move_to_send')}
                   </Button>
                 )}
             </Space>

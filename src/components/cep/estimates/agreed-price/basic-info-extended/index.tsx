@@ -12,8 +12,6 @@ import { Button, Card, Col, DatePicker, Form, Row, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 
-const { RangePicker } = DatePicker
-
 type ConsumptionTaxKey = 'exclusive' | 'inclusive' | 'external'
 
 interface BasicInfoExtendedProps {
@@ -21,7 +19,10 @@ interface BasicInfoExtendedProps {
   showApplicablePeriod?: boolean
   agrredPriceValidTo?: string
   agreedPriceId?: number
-  onUpdateExpiration?: (newEndDate: dayjs.Dayjs) => void
+  onUpdateExpiration?: (
+    startNewDate?: dayjs.Dayjs,
+    newEndDate?: dayjs.Dayjs,
+  ) => void
   agreedPriceValidFrom?: string
 }
 
@@ -63,14 +64,14 @@ function BasicInfoExtended({
 
   const handleEditPeriod = () => {
     const end = agrredPriceValidTo ? dayjs(agrredPriceValidTo) : null
-    const start = end ? end.add(1, 'day') : null
-    setPeriodValue([start, null])
+    const start = agreedPriceValidFrom ? dayjs(agreedPriceValidFrom) : null
+    setPeriodValue([start, end])
     setIsEditingPeriod(true)
   }
 
   const handleSavePeriod = () => {
     if (periodValue && periodValue[1] && onUpdateExpiration) {
-      onUpdateExpiration(periodValue[1])
+      onUpdateExpiration(periodValue[0] ?? undefined, periodValue[1])
     }
     setIsEditingPeriod(false)
   }
@@ -146,13 +147,42 @@ function BasicInfoExtended({
                 <Col>
                   <Form.Item>
                     {isEditingPeriod ? (
-                      <RangePicker
-                        value={periodValue}
-                        onChange={(dates) => setPeriodValue(dates)}
-                        format="YYYY/MM/DD"
-                        style={{ width: '100%' }}
-                        placeholder={['YYYY/MM/DD', 'YYYY/MM/DD']}
-                      />
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <DatePicker
+                          value={periodValue?.[0]}
+                          onChange={(date) =>
+                            setPeriodValue([date, periodValue?.[1] || null])
+                          }
+                          format="YYYY/MM/DD"
+                          placeholder="開始日"
+                          disabledDate={(current) =>
+                            current && current < dayjs().startOf('day')
+                          }
+                        />
+                        <span>〜</span>
+                        <DatePicker
+                          value={periodValue?.[1]}
+                          onChange={(date) =>
+                            setPeriodValue([periodValue?.[0] || null, date])
+                          }
+                          format="YYYY/MM/DD"
+                          placeholder="終了日"
+                          disabledDate={(current) => {
+                            if (!current) return false
+                            const today = dayjs().startOf('day')
+                            const start = agreedPriceValidFrom
+                              ? dayjs(agreedPriceValidFrom).startOf('day')
+                              : today
+                            return current < today || current < start
+                          }}
+                        />
+                      </div>
                     ) : (
                       <>
                         {agreedPriceValidFrom

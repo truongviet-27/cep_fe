@@ -122,14 +122,20 @@ function QuotaList() {
   const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange,
-    getCheckboxProps: (record) => ({
-      disabled: getActionPermissions(
+    getCheckboxProps: (record) => {
+      const isPermissionDisabled = getActionPermissions(
         record.status,
         record?.is_author,
         record?.display,
         permission?.is_module_admin,
-      ),
-    }),
+      )
+      const isAgreedPriceDisabled =
+        record.status === QuotaStatus.Completed &&
+        record.has_agreed_price === true
+      return {
+        disabled: isPermissionDisabled || isAgreedPriceDisabled,
+      }
+    },
   }
 
   const { modalProps, close, show } = useModal()
@@ -229,7 +235,7 @@ function QuotaList() {
         key: 'creator',
         render: (_, record) => (
           <div>
-            <div>{record?.author}</div>
+            <div>{record?.author?.name}</div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: any, index: number) => {
                 const isApproved = item.status === 'approved'
@@ -259,7 +265,7 @@ function QuotaList() {
         render: (_, record) => (
           <div className="flex flex-col gap-2">
             <div>{record.department_in_charge}</div>
-            <div>{record?.total_price}</div>
+            <div>{Number(record?.total_price || 0).toLocaleString()}</div>
           </div>
         ),
       },

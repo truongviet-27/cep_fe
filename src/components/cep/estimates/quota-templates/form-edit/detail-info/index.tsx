@@ -486,7 +486,7 @@ const DetailInfo: FC = () => {
                   ).toFixed(2),
                 )
 
-                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
+                return `${Number(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
               },
             },
             {
@@ -709,7 +709,7 @@ const DetailInfo: FC = () => {
                     {t('quotas.action.detail_info.summary.cost_total')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{costTotal || 0}
+                    ¥{Number(costTotal).toLocaleString() || 0}
                   </Text>
                   <Form.Item name="total_price" hidden>
                     <InputNumber />
@@ -736,7 +736,10 @@ const DetailInfo: FC = () => {
                     {t('quotas.action.detail_info.summary.total_profit_margin')}
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 'bold' }}>
-                    {profitRate.toFixed(2) || 0}%
+                    {Number(profitRate).toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    }) || 0}
+                    %
                   </Text>
                   <Form.Item name="total_profit_margin" hidden>
                     <InputNumber />
@@ -767,7 +770,7 @@ const DetailInfo: FC = () => {
                       {`${t('quotas.action.detail_info.summary.tax_amount')} (${item.taxRate}%)`}
                     </Text>
                     <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                      ¥{item.total}
+                      ¥{Number(item.total).toLocaleString()}
                     </Text>
                   </div>
                 </Col>
@@ -792,7 +795,7 @@ const DetailInfo: FC = () => {
                     {t('quotas.action.detail_info.summary.tax_inclusive')}）
                   </Text>
                   <Text style={{ color: '#1890ff', fontWeight: 500 }}>
-                    ¥{sellTotalWithTax || 0}
+                    ¥{Number(sellTotalWithTax).toLocaleString() || 0}
                   </Text>
                   <Form.Item name="total_price_tax_included" hidden>
                     <InputNumber />
