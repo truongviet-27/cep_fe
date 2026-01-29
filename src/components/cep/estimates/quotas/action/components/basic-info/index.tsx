@@ -27,7 +27,7 @@ import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 
 const BasicInfo = ({
   handleChangeProductPrincing,
@@ -524,7 +524,11 @@ const BasicInfo = ({
                 },
               ]}
             >
-              <DatePicker style={{ width: '100%' }} placeholder={FORMAT_DATE} />
+              <DatePicker
+                style={{ width: '100%' }}
+                placeholder={FORMAT_DATE_CROSS}
+                format={FORMAT_DATE_CROSS}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
@@ -536,7 +540,8 @@ const BasicInfo = ({
             >
               <DatePicker
                 style={{ width: '100%' }}
-                placeholder={'YYYY/MM/DD'}
+                placeholder={FORMAT_DATE_CROSS}
+                format={FORMAT_DATE_CROSS}
                 minDate={Form.useWatch('issue_date', form)}
               />
             </Form.Item>
