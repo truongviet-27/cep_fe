@@ -157,8 +157,9 @@ export const useCustomerEdit = () => {
 
   const modalFormCorporate = useModal()
 
-  const handleAutoNumber = () => {
-    const code = codeGenData?.data?.preview_code
+  const handleAutoNumber = async () => {
+    const { data: latestData } = await refetchCodeGen()
+    const code = latestData?.data?.preview_code
     if (code) {
       form.setFieldsValue({ customer_code: code })
     }
