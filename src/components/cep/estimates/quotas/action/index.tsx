@@ -325,6 +325,7 @@ function QuotaAction() {
       form.setFieldsValue({
         ...form.getFieldsValue(),
         category: quoteTemplate?.category,
+        title: quoteTemplate?.name,
         type: quoteTemplate?.type,
         delivery_method: quoteTemplate?.delivery_method,
         payment_due_date: quoteTemplate?.payment_due_date,
