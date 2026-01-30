@@ -128,7 +128,7 @@ export default function Page() {
             type="primary"
             htmlType="submit"
             loading={isLoading}
-            onClick={() => onSubmit(form.getFieldsValue())}
+            onClick={() => form.submit()}
           >
             {t('buttons.create')}
           </Button>
@@ -143,6 +143,7 @@ export default function Page() {
         layout="horizontal"
         colon={false}
         autoComplete="off"
+        onFinish={onSubmit}
       >
         <Form.Item
           required

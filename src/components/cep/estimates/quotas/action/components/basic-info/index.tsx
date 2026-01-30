@@ -167,8 +167,9 @@ const BasicInfo = ({
     },
   })
 
-  const handleAutoNumber = () => {
-    const code = codeIssueSetting?.data?.preview_code
+  const handleAutoNumber = async () => {
+    const { data: latestData } = await refetchIssueSetting()
+    const code = latestData?.data?.preview_code
     if (code) {
       form.setFieldsValue({ code })
     }

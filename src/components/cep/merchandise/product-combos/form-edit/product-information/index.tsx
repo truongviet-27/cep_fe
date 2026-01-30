@@ -7,7 +7,7 @@ import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import type { FormInstance } from 'antd'
-import { Button, Card, Flex, Form, InputNumber } from 'antd'
+import { Button, Card, Flex, Form, InputNumber, notification } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { type MutableRefObject, useEffect } from 'react'
 
@@ -86,6 +86,28 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
                       {
                         required: true,
                         message: '',
+                      },
+                      {
+                        validator: async (_: any, value: any) => {
+                          const products = form.getFieldValue('products') || []
+                          const currentId = products[index]?.id
+                          console.log(value)
+                          if (!currentId) return Promise.resolve()
+                          const isDuplicate = products.some(
+                            (item: any, idx: number) =>
+                              item.id === currentId && idx !== index,
+                          )
+                          if (isDuplicate) {
+                            notification.error({
+                              message: `${value?.label ?? value}という商品名は複数です。`,
+                              description: 'エラー',
+                              key: `name-${value?.label ?? value}`,
+                              placement: 'topRight',
+                            })
+                            return Promise.reject()
+                          }
+                          return Promise.resolve()
+                        },
                       },
                     ]}
                     defaultValue={{
