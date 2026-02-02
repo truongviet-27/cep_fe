@@ -1,13 +1,11 @@
-import { CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
+import { SearchOutlined } from '@ant-design/icons'
 import type { Category } from '@utility/renderCategories'
 import renderCategories from '@utility/renderCategories'
-import { Dropdown, Empty, Select, Spin } from 'antd'
-import Input from 'antd/es/input/Input'
+import { Empty, Select, Spin } from 'antd'
 import { useTranslations } from 'next-intl'
 import { memo, useState } from 'react'
 
 import { useController } from './controller'
-import styles from './index.module.css'
 
 interface Props {
   placeholder?: string
@@ -32,11 +30,9 @@ const ProductCategoryEditDropdown: React.FC<Props> = (props) => {
     { setSearchText, setAllowFetchData },
   ] = useController()
 
-  // Nếu defaultValue là null hoặc undefined hoặc empty, hiển thị "なし"
   const initialValue = defaultValue || t('products.fields.default_category')
   const [value, setValue] = useState<string>(initialValue)
-  const [isOpenSelect, setIsOpenSelect] = useState<boolean>(false)
-  const [isOpenDropdown, setIsOpenDropdown] = useState<boolean>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const handleSelect = (
     level: number,
@@ -45,88 +41,54 @@ const ProductCategoryEditDropdown: React.FC<Props> = (props) => {
     categoryId?: number,
   ) => {
     onSelect?.(level, currentPath, currentCat, categoryId)
-    // Nếu categoryId là null (category "なし"), hiển thị "なし"
-    const displayValue =
-      categoryId === null
-        ? t('products.fields.default_category')
-        : currentPath.join(' > ')
+    const displayValue = !categoryId
+      ? t('products.fields.default_category')
+      : currentPath.join(' > ')
     setValue(displayValue)
-    setIsOpenSelect(false)
-    setTimeout(() => {
-      setIsOpenDropdown(false)
-    })
+    setIsOpen(false)
   }
 
+  if (hidden) return null
+  if (valueOnly) return <>{value}</>
+
   return (
-    <Dropdown
-      trigger={['click']}
-      placement="bottomRight"
-      open={isOpenDropdown}
+    <Select
+      className="w-full"
+      open={isOpen}
+      onDropdownVisibleChange={setIsOpen}
+      value={value}
+      placeholder={placeholder}
       disabled={disabled}
-      onOpenChange={(visible) => {
-        setTimeout(() => {
-          setIsOpenDropdown(visible)
-        })
+      showSearch
+      filterOption={false}
+      onSearch={(val) => {
+        setSearchText?.(val)
+        debounceFetcher?.(val)
       }}
-      popupRender={() => (
-        <div className={styles.popupRenderContainer}>
-          <Select
-            open={isOpenSelect}
-            popupMatchSelectWidth
-            labelInValue
-            showSearch
-            allowClear
-            filterOption={false}
-            onOpenChange={(visible) => setIsOpenSelect(visible)}
-            onSearch={debounceFetcher}
-            options={options}
-            style={{ width: '100%' }}
-            onChange={setSearchText}
-            placeholder="検索..."
-            suffixIcon={<SearchOutlined />}
-            notFoundContent={isLoading ? <Spin size="small" /> : <Empty />}
-            loading={isLoading}
-            popupRender={() => {
-              if (isLoading) return <Spin size="small" />
-
-              if (!options?.length) return <Empty />
-
-              return (
-                <div className="my-2 max-h-[300px] overflow-y-auto px-2">
-                  {renderCategories(
-                    categories?.data || [],
-                    1,
-                    [],
-                    [],
-                    handleSelect,
-                  )}
-                </div>
-              )
-            }}
-            onFocus={setAllowFetchData}
-          />
+      onFocus={setAllowFetchData}
+      suffixIcon={<SearchOutlined />}
+      dropdownRender={() => (
+        <div>
+          {isLoading ? (
+            <div className="flex justify-center p-4">
+              <Spin size="small" />
+            </div>
+          ) : categories?.data?.length || options?.length ? (
+            <div className="my-2 max-h-[300px] overflow-y-auto px-2">
+              {renderCategories(
+                categories?.data || [],
+                1,
+                [],
+                [],
+                handleSelect,
+              )}
+            </div>
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
         </div>
       )}
-    >
-      {valueOnly ? (
-        value
-      ) : (
-        <Input
-          hidden={hidden}
-          value={value}
-          placeholder={placeholder}
-          readOnly
-          suffix={
-            <CaretDownOutlined
-              style={{
-                color: '#00000040',
-                fontSize: '12px',
-              }}
-            />
-          }
-        />
-      )}
-    </Dropdown>
+    />
   )
 }
 
