@@ -21,6 +21,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  notification,
   Row,
   Typography,
 } from 'antd'
@@ -402,6 +403,34 @@ function DetailInfo({
                           pattern: /^[A-Z0-9-]+$/,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'main_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentCode = products[record.index2]?.code
+                            if (!currentCode) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.code === currentCode &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `code-main-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -436,6 +465,35 @@ function DetailInfo({
                           {
                             required: true,
                             message: '',
+                          },
+                          {
+                            validator: async () => {
+                              const products =
+                                form.getFieldValue([
+                                  'main_product',
+                                  record.index,
+                                  'products',
+                                ]) || []
+                              const currentProductId =
+                                products[record.index2]?.product_id
+                              if (!currentProductId) return Promise.resolve()
+                              const isDuplicate = products.some(
+                                (item: any, idx: number) =>
+                                  item.product_id === currentProductId &&
+                                  idx !== record.index2,
+                              )
+                              if (isDuplicate) {
+                                notification.error({
+                                  message: t(
+                                    'quotas.action.detail_info.duplicate_product',
+                                  ),
+                                  key: `name-main-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
+                              }
+                              return Promise.resolve()
+                            },
                           },
                         ]}
                         resource="products/list-all"
@@ -641,6 +699,35 @@ function DetailInfo({
                         {
                           max: 255,
                           message: '',
+                        },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'main_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentName = products[record.index2]?.name
+                            console.log('products', products)
+                            if (!currentName) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.name === currentName &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `name-main-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
                         },
                       ]}
                       style={{
