@@ -49,6 +49,10 @@ function UploadImage({
     initialUrl ?? null,
   )
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+  const ALLOWED_EXTENSIONS_TEXT = 'JPG, PNG, WEBP'
+
   useEffect(() => {
     if (fileValue instanceof File) {
       const objectUrl = URL.createObjectURL(fileValue)
@@ -104,19 +108,54 @@ function UploadImage({
       setLoading(true)
       const response = await fetch(urlInput)
       const blob = await response.blob()
+      if (blob.size > MAX_FILE_SIZE) {
+        message.error(
+          '画像サイズが5MBを超えています。別の画像を選択してください。',
+        )
+        setLoading(false)
+        return
+      }
       const file = new File([blob], 'image-from-url.jpg', { type: blob.type })
       uploadToS3(file)
     } catch (error) {
       console.error(error)
-      message.error('画像を取得できません')
+      message.error(
+        'この画像リンクには著作権があります。著作権のないリンクを使用するか、画像アップロード機能をご利用ください。',
+      )
       setLoading(false)
     }
   }
 
+  // const handleConfirm = () => {
+  //   if (activeTab === '1') {
+  //     if (localFileList.length > 0 && localFileList[0].originFileObj) {
+  //       if ( localFileList[0].originFileObj.size > MAX_FILE_SIZE) {
+  //         return message.error('ファイルサイズは5MB以下にしてください。');
+  //       }
+  //       uploadToS3(localFileList[0].originFileObj)
+  //     } else {
+  //       message.warning('ファイルを選択してください')
+  //     }
+  //   } else {
+  //     handleUrlUpload()
+  //   }
+  // }
+
   const handleConfirm = () => {
     if (activeTab === '1') {
-      if (localFileList.length > 0 && localFileList[0].originFileObj) {
-        uploadToS3(localFileList[0].originFileObj)
+      const fileObj = localFileList[0]?.originFileObj
+      if (fileObj) {
+        const isJpgOrPng = ALLOWED_TYPES.includes(fileObj.type)
+        const isLt5M = fileObj.size < MAX_FILE_SIZE
+        if (!isJpgOrPng) {
+          return message.error(
+            `${ALLOWED_EXTENSIONS_TEXT}形式のファイルのみアップロード可能です。`,
+          )
+        }
+        if (!isLt5M) {
+          return message.error('画像サイズは5MB以下にしてください。')
+        }
+        uploadToS3(fileObj)
       } else {
         message.warning('ファイルを選択してください')
       }
@@ -227,6 +266,7 @@ function UploadImage({
                       <p className="text-sm text-gray-400">
                         対応形式: JPG, PNG, WEBP
                       </p>
+                      <p className="text-sm text-gray-400">最大容量：5MB</p>
                     </Dragger>
                   ) : (
                     <div className="flex flex-col items-center rounded-xl border border-dashed border-blue-200 bg-blue-50 py-8">
@@ -273,29 +313,6 @@ function UploadImage({
                       className="rounded-lg"
                     />
                   </div>
-
-                  {urlInput && (
-                    <div className="flex items-center gap-4 rounded-lg border border-gray-100 bg-gray-50 p-3">
-                      <div className="h-12 w-12 overflow-hidden rounded border bg-white">
-                        <Image
-                          src={urlInput}
-                          alt="Preview"
-                          width={200}
-                          height={200}
-                          className="h-50 w-50 object-cover"
-                          onError={(e) =>
-                            (e.currentTarget.src =
-                              'https://placehold.co/100x100?text=Invalid')
-                          }
-                        />
-                      </div>
-                      <div className="flex-1 overflow-hidden">
-                        <Text className="block truncate text-xs text-gray-500">
-                          {urlInput}
-                        </Text>
-                      </div>
-                    </div>
-                  )}
 
                   <div className="rounded-lg bg-amber-50 p-3">
                     <p className="text-[12px] leading-relaxed text-amber-700 italic">
