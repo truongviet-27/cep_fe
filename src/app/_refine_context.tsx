@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable simple-import-sort/imports */
 'use client'
 
@@ -10,11 +11,7 @@ import { accessControlProvider } from '@lib/accessControlProvider'
 import { corporationProvider } from '@providers/corporation-provider'
 import authProvider from '@providers/keycloak-provider'
 import '@refinedev/antd/dist/reset.css'
-import type {
-  NotificationProvider,
-  type I18nProvider,
-  Refine,
-} from '@refinedev/core'
+import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import routerProvider from '@refinedev/nextjs-router'
 import { resource } from '@utility/resources'
@@ -23,6 +20,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
 import { useBootstrap } from './controller'
 import { notification } from 'antd'
+import { NotificationProvider } from '@refinedev/core'
 
 type RefineContextProps = {
   defaultMode?: string
