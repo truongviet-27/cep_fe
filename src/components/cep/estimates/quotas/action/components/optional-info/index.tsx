@@ -386,16 +386,16 @@ function OptionalInfo({
                             ],
                             valueOption?.sale_price,
                           )
-                          // form.setFieldValue(
-                          //   [
-                          //     'optional_product',
-                          //     record.index,
-                          //     'products',
-                          //     record.index2,
-                          //     'tax_rate',
-                          //   ],
-                          //   valueOption?.tax_rate,
-                          // )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'tax_rate',
+                            ],
+                            valueOption?.tax_rate,
+                          )
                           form.setFieldValue(
                             [
                               'optional_product',
@@ -760,7 +760,7 @@ function OptionalInfo({
                 if (isProductManager) {
                   const taxRate =
                     form.getFieldValue([
-                      'main_product',
+                      'optional_product',
                       record.index,
                       'products',
                       record.index2,

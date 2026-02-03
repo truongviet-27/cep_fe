@@ -1,12 +1,7 @@
-import {
-  CaretDownOutlined,
-  CloseCircleFilled,
-  SearchOutlined,
-} from '@ant-design/icons'
+import { SearchOutlined } from '@ant-design/icons'
 import type { Category } from '@utility/renderCategories'
 import renderCategories from '@utility/renderCategories'
-import { Dropdown, Empty, Select, Spin } from 'antd'
-import Input from 'antd/es/input/Input'
+import { Empty, Select, Spin } from 'antd'
 import { memo, useState } from 'react'
 
 import { useController } from './controller'
@@ -33,112 +28,68 @@ const ProductCategoryDropdown: React.FC<Props> = (props) => {
     { options, debounceFetcher, isLoading, categories },
     { setSearchText, setAllowFetchData },
   ] = useController()
-  const [value, setValue] = useState<string>(defaultValue ?? '')
-  const [isOpenSelect, setIsOpenSelect] = useState<boolean>(false)
-  const [isOpenDropdown, setIsOpenDropdown] = useState<boolean>(false)
+
+  const [value, setValue] = useState<string | undefined>(defaultValue)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
   const handleSelect = (
     level: number,
     currentPath: string[],
     currentCat: Category[],
     categoryId?: number,
   ) => {
+    const fullPath = currentPath.join(' > ')
     onSelect?.(level, currentPath, currentCat, categoryId)
-    setValue(currentPath.join(' > '))
-    setIsOpenSelect(false)
-    setTimeout(() => {
-      setIsOpenDropdown(false)
-    })
+    setValue(fullPath)
+    setIsOpen(false) // Đóng menu sau khi chọn xong
   }
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation() // Ngăn chặn việc mở Dropdown khi nhấn xóa
-    setValue('')
-    onSelect?.(0, [], [], undefined) // Trả về giá trị rỗng cho component cha
-  }
+  if (hidden) return null
+  if (valueOnly) return <>{value}</>
 
   return (
-    <Dropdown
-      trigger={['click']}
-      placement="bottomRight"
-      open={isOpenDropdown}
+    <Select
+      className={styles.widthFull} // Đảm bảo width: 100%
+      open={isOpen}
+      onDropdownVisibleChange={setIsOpen}
+      value={value}
+      placeholder={placeholder || 'カテゴリーを選択'}
       disabled={disabled}
-      onOpenChange={(visible) => {
-        setTimeout(() => {
-          setIsOpenDropdown(visible)
-        })
+      showSearch
+      allowClear
+      onClear={() => {
+        setValue(undefined)
+        onSelect?.(0, [], [], undefined)
       }}
-      popupRender={() => (
-        <div className={styles.popupRenderContainer}>
-          <Select
-            open={isOpenSelect}
-            popupMatchSelectWidth
-            labelInValue
-            showSearch
-            allowClear
-            filterOption={false}
-            onOpenChange={(visible) => setIsOpenSelect(visible)}
-            onSearch={debounceFetcher}
-            options={options}
-            style={{ width: '100%' }}
-            onChange={setSearchText}
-            placeholder="検索..."
-            suffixIcon={<SearchOutlined />}
-            notFoundContent={isLoading ? <Spin size="small" /> : <Empty />}
-            loading={isLoading}
-            popupRender={() => {
-              if (isLoading) return <Spin size="small" />
-
-              if (!options?.length) return <Empty />
-
-              return (
-                <div className="my-2 max-h-[300px] overflow-y-auto px-2">
-                  {renderCategories(
-                    categories?.data || [],
-                    1,
-                    [],
-                    [],
-                    handleSelect,
-                  )}
-                </div>
-              )
-            }}
-            onFocus={setAllowFetchData}
-          />
-        </div>
-      )}
-    >
-      {valueOnly ? (
-        value
-      ) : (
-        <Input
-          hidden={hidden}
-          value={value}
-          placeholder={placeholder}
-          readOnly
-          suffix={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {value && !disabled ? (
-                <CloseCircleFilled
-                  onClick={handleClear}
-                  style={{
-                    color: '#00000040',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                  }}
-                />
-              ) : (
-                <CaretDownOutlined
-                  style={{
-                    color: '#00000040',
-                    fontSize: '12px',
-                  }}
-                />
+      filterOption={false}
+      onSearch={(val) => {
+        setSearchText?.(val)
+        debounceFetcher?.(val)
+      }}
+      onFocus={setAllowFetchData}
+      suffixIcon={<SearchOutlined />}
+      dropdownRender={() => (
+        <div style={{ padding: '8px' }}>
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <Spin size="small" />
+            </div>
+          ) : categories?.data?.length || options?.length ? (
+            <div className="max-h-[300px] overflow-y-auto">
+              {renderCategories(
+                categories?.data || [],
+                1,
+                [],
+                [],
+                handleSelect,
               )}
             </div>
-          }
-        />
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
+        </div>
       )}
-    </Dropdown>
+    />
   )
 }
 
