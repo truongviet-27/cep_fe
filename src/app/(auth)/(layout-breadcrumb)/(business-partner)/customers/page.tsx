@@ -526,10 +526,7 @@ export default function CustomerListPage() {
                   if (notification && notification.open) {
                     notification.open({
                       type: 'success',
-                      message: t('customers.suspend_success_title'),
-                      description: t('customers.suspend_success_desc', {
-                        code: record.customer_code,
-                      }),
+                      message: t('customers.suspend_success_desc'),
                       key: `delete-${record.id}`,
                     })
                   }

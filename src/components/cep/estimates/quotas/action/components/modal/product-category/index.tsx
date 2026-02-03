@@ -125,8 +125,7 @@ export const ProductCategoryModal = ({
     } else {
       open &&
         open({
-          message: t('quotas.action.modal.no_products.message'),
-          description: t('quotas.action.modal.no_products.description'),
+          message: t('quotas.action.modal.no_products.description'),
           type: 'error',
         })
     }
