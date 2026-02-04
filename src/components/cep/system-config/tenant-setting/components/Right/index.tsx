@@ -2,6 +2,8 @@
 'use client'
 import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
 import { useTranslate } from '@refinedev/core'
+import { ParameterResourceEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import { Checkbox, Col, Form, Radio, Select, Space, Typography } from 'antd'
 import Image from 'next/image'
 
@@ -11,6 +13,10 @@ const { Group } = Radio
 function Right() {
   const t = useTranslate()
   const form = Form.useFormInstance()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+
+  const hasApproveRoutePermission =
+    parameterSettings?.get?.(ParameterResourceEnum.APPROVE_ROUTES) ?? false
 
   const watchCompanyLogoImage = Form.useWatch('company_logo_image', form)
   const watchCompanySealImage = Form.useWatch('company_seal_image', form)
@@ -170,6 +176,7 @@ function Right() {
                     {
                       value: true,
                       label: t('tenant_settings.digitalStamp.withStamp'),
+                      disabled: !hasApproveRoutePermission,
                     },
                     {
                       value: false,
