@@ -24,7 +24,11 @@ import {
   useShow,
   useTranslate,
 } from '@refinedev/core'
-import { type QuotaFormSettingResponse } from '@sdk/hey-api'
+import type {
+  RoundingMethodEnumType,
+  QuotaFormSettingResponse,
+} from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -59,6 +63,9 @@ function QuotaAction() {
   })
 
   const { id, action, params } = useParsed()
+
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
 
   const { actionType } = params as any
   const isClone = action === 'clone'
@@ -129,6 +136,24 @@ function QuotaAction() {
     },
   })
 
+  useEffect(() => {
+    // neu edit => phai lay setting cua cua quota
+    if (isEdit) {
+      if (dataBasicInfo) {
+        setTaxRoundingMethod(dataBasicInfo.data.tax_rounding_method)
+      }
+    } else if (isClone) {
+      // neu clone => phai lay setting cua quota
+      if (dataBasicInfo) {
+        setTaxRoundingMethod(dataBasicInfo.data.tax_rounding_method)
+      }
+    } else {
+      if (data?.data) {
+        // neu create => lay setting cua tenant
+        setTaxRoundingMethod(data.data.tax_rounding_method)
+      }
+    }
+  }, [data?.data, isClone, isEdit, dataBasicInfo])
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -587,6 +612,7 @@ function QuotaAction() {
             handleChangeProductPrincing={handleChangeProductPrincing}
           />
           <DetailInfo
+            taxRoundingMethod={taxRoundingMethod}
             productPrincing={productPrincing}
             mainProduct={dataProducts?.data.main_product}
           />
