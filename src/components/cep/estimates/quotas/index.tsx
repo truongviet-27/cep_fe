@@ -21,6 +21,7 @@ import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import useCurrency from '@hook/use-currency'
 import {
   CloneButton,
   DeleteButton,
@@ -75,7 +76,7 @@ const { RangePicker } = DatePicker
 
 function QuotaList() {
   const t = useTranslate()
-
+  const { convertCurrency } = useCurrency()
   const apiUrl = useApiUrl()
 
   const { permission } = useUserStore.getState()
@@ -613,6 +614,11 @@ function QuotaList() {
   const statusDashboard = useMemo(() => {
     return statusData.map((item) => ({
       ...item,
+      total_amount: convertCurrency(
+        data?.data['total_amount_' + item.key],
+        true,
+        false,
+      ),
       value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
   }, [data, t])
