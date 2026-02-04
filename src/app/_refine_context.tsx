@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable simple-import-sort/imports */
 'use client'
 
@@ -9,7 +10,6 @@ import { NProgressProvider } from '@components/common/progress-provider'
 import { accessControlProvider } from '@lib/accessControlProvider'
 import { corporationProvider } from '@providers/corporation-provider'
 import authProvider from '@providers/keycloak-provider'
-import { useNotificationProvider } from '@refinedev/antd'
 import '@refinedev/antd/dist/reset.css'
 import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
@@ -19,6 +19,8 @@ import { SessionProvider } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import React from 'react'
 import { useBootstrap } from './controller'
+import { notification } from 'antd'
+import { NotificationProvider } from '@refinedev/core'
 
 type RefineContextProps = {
   defaultMode?: string
@@ -54,6 +56,23 @@ const App = (props: React.PropsWithChildren) => {
     changeLocale: setUserLocale,
   }
 
+  const customNotificationProvider: NotificationProvider = {
+    open: ({ message, type, key }) => {
+      if (type !== 'progress') {
+        notification[type]({
+          message: message,
+          key,
+        })
+      } else {
+        notification.info({
+          message: message,
+          key,
+        })
+      }
+    },
+    close: (key) => notification.destroy(key),
+  }
+
   return (
     <RefineKbarProvider>
       <AntdRegistry>
@@ -62,7 +81,7 @@ const App = (props: React.PropsWithChildren) => {
           i18nProvider={i18nProvider}
           routerProvider={routerProvider}
           dataProvider={{ default: dataProvider, corporationProvider }}
-          notificationProvider={useNotificationProvider}
+          notificationProvider={customNotificationProvider}
           authProvider={authProvider}
           resources={resource}
           accessControlProvider={accessControlProvider}
