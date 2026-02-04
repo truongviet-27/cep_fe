@@ -150,6 +150,7 @@ const ProductComboFormContainer: React.FC = () => {
             <Collapse
               style={{
                 marginTop: '20px',
+                display: 'none',
               }}
               items={[
                 {
