@@ -123,7 +123,7 @@ function TenantSetting() {
     const logoImageMatch = logoImageValue?.match(/imports.*?\.(jpg|jpeg|png)/i)
     const sealImageMatch = sealImageValue?.match(/imports.*?\.(jpg|jpeg|png)/i)
 
-    const customValues: QuotaFormSettingResponse = {
+    const customValues = {
       ...form.getFieldsValue(),
       id: form.getFieldValue('id'),
       company_logo_image:
