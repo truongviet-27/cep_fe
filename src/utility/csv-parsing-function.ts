@@ -1,8 +1,29 @@
 export function parseHoujinCsv(csvString: string) {
-  const values = csvString
-    .split(',')
-    .map((value) => value.replace(/^"|"$/g, ''))
+  const lines = csvString
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
 
+  if (lines.length === 0) {
+    return {
+      lastUpdateDate: '',
+      count: 0,
+      divideNumber: 0,
+      divideSize: 0,
+      corporations: [],
+    }
+  }
+
+  const headerLine = lines[0]
+  const headerValues = parseCsvLine(headerLine)
+  const metadata = {
+    lastUpdateDate: headerValues[0] || '',
+    count: parseInt(headerValues[1] || '0', 10),
+    divideNumber: parseInt(headerValues[2] || '0', 10),
+    divideSize: parseInt(headerValues[3] || '0', 10),
+  }
+
+  // Parse các dòng còn lại (corporation records)
   const corporationKeys = [
     'corporateNumber',
     'process',
@@ -41,26 +62,21 @@ export function parseHoujinCsv(csvString: string) {
     'corporateNameFurigana',
   ]
 
-  const metadata = {
-    lastUpdateDate: values[0],
-    count: parseInt(values[1], 10),
-    divideNumber: parseInt(values[2], 10),
-    divideSize: parseInt(values[3], 10),
-  }
-
   const corporations = []
-  const recordData = values.slice(4)
-  const recordSize = 35
 
-  for (let i = 0; i < recordData.length; i += recordSize) {
-    const chunk = recordData.slice(i, i + recordSize)
-    if (chunk.length < recordSize || !chunk[0]) {
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i]
+    const values = parseCsvLine(line)
+
+    const recordData = values.slice(1)
+
+    if (recordData.length === 0 || !recordData[0]) {
       continue
     }
 
     const corporationObject: { [key: string]: string | number } = {}
     corporationKeys.forEach((key, index) => {
-      corporationObject[key] = chunk[index]
+      corporationObject[key] = recordData[index] || ''
     })
     corporations.push(corporationObject)
   }
@@ -69,4 +85,33 @@ export function parseHoujinCsv(csvString: string) {
     ...metadata,
     corporations,
   }
+}
+
+function parseCsvLine(line: string): string[] {
+  const values: string[] = []
+  let current = ''
+  let inQuotes = false
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]
+    const nextChar = line[i + 1]
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        current += '"'
+        i++
+      } else {
+        inQuotes = !inQuotes
+      }
+    } else if (char === ',' && !inQuotes) {
+      values.push(current.trim())
+      current = ''
+    } else {
+      current += char
+    }
+  }
+
+  values.push(current.trim())
+
+  return values.map((value) => value.replace(/^"|"$/g, ''))
 }
