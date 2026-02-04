@@ -42,6 +42,8 @@ function DetailInfo({
   const t = useTranslate()
   const form = Form.useFormInstance()
 
+  const [productList, setProductList] = useState<any[]>([])
+
   const mainProductWatch = Form.useWatch('main_product', form)
   const taxRateWatch = Form.useWatch('tax_rate', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
@@ -303,6 +305,18 @@ function DetailInfo({
       ],
     },
   })
+
+  useEffect(() => {
+    if (data?.data && Array.isArray(data.data)) {
+      setProductList((prev) => {
+        const productMap = new Map(prev.map((item) => [item.id, item]))
+        data.data.forEach((newItem: any) => {
+          productMap.set(newItem.id, newItem)
+        })
+        return Array.from(productMap.values())
+      })
+    }
+  }, [data])
 
   const handleChangeProductPrincingMain = useCallback(
     (productIds: number[], isSimple?: boolean, isCallApi?: boolean) => {
@@ -715,20 +729,15 @@ function DetailInfo({
                 } else {
                   if (isProductManager) {
                     let product = null
-                    if (data?.data) {
-                      product = (data?.data ?? []).find(
+                    if (productList) {
+                      product = productList.find(
                         (item: any) => item.id === record?.product_id,
                       )
                     } else {
-                      product =
-                        mainProduct
-                          ?.flatMap((group: any) => group.products || [])
-                          .find(
-                            (item: any) =>
-                              item.product_id === record?.product_id,
-                          ) ??
-                        (data?.data ?? []).find(
-                          (item: any) => item.id === record?.product_id,
+                      product = mainProduct
+                        ?.flatMap((group: any) => group.products || [])
+                        .find(
+                          (item: any) => item.product_id === record?.product_id,
                         )
                     }
 
