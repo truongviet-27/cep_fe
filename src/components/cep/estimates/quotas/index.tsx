@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // done
-import {
-  CommentOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  DownloadOutlined,
-  DownOutlined,
-  EditOutlined,
-  EyeOutlined,
-  RightOutlined,
-} from '@ant-design/icons'
+import { CommentOutlined, DownOutlined, RightOutlined } from '@ant-design/icons'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
@@ -183,9 +174,29 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
+        minWidth: 110,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 110,
+            minWidth: 110,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (value, record) => (
           <Button
             type="link"
+            style={{
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
             className="underline"
             title={value}
             onClick={() => {
@@ -207,21 +218,75 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
+        minWidth: 200,
         onCell: () => ({
           style: {
-            maxWidth: 150,
+            padding: '2px 2px',
+            maxWidth: 200,
+            minWidth: 200,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            verticalAlign: 'center',
           },
         }),
 
         render: (_, record) => (
-          <div className="flex flex-col gap-1">
+          <div
+            className="flex flex-col gap-1"
+            style={{
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
+          >
             <div className="overflow-hidden" title={record.title}>
               {record.title}
             </div>
             <span>{record.customer_name}</span>
+          </div>
+        ),
+      },
+      {
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.transaction_type')}</span>
+          </div>
+        ),
+        dataIndex: 'transaction_type',
+        key: 'transaction_type',
+        minWidth: 120,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 120,
+            minWidth: 120,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
+
+        render: (_, record) => (
+          <div
+            className="flex flex-col gap-1"
+            style={{
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
+          >
+            <div className="overflow-hidden" title={record.transaction_type}>
+              {record.transaction_type &&
+                t(`quotas.transaction_type.${record.transaction_type}`)}
+            </div>
           </div>
         ),
       },
@@ -332,28 +397,43 @@ function QuotaList() {
         render: (_, record) => (
           <Space>
             <ShowButton
-              hideText
-              size="small"
-              icon={<EyeOutlined />}
+              size="middle"
+              icon={null}
               recordItemId={record.id}
-            />
+              style={{
+                color: '#2784FF',
+                borderColor: '#2784FF',
+              }}
+            >
+              {t('quotas.goDetailLabel')}
+            </ShowButton>
             {(record.status === QuotaStatus.Creating ||
               record.status === QuotaStatus.Rejected) &&
               (permission?.is_module_admin || record.is_author) && (
                 <EditButton
-                  hideText
-                  size="small"
-                  icon={<EditOutlined />}
+                  size="middle"
+                  icon={null}
                   recordItemId={record.id}
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#1FDB51',
+                  }}
+                >
+                  {t('quotas.goEditLabel')}
+                </EditButton>
               )}
 
             <CloneButton
-              hideText
-              size="small"
-              icon={<CopyOutlined />}
+              size="middle"
+              icon={null}
               recordItemId={record.id}
-            />
+              style={{
+                color: '#FFFFFF',
+                background: '#0161D3',
+              }}
+            >
+              {t('quotas.goDetailCLoneLabel')}
+            </CloneButton>
 
             {/* {record.status === QuotaStatus.Completed && (
               <Button
@@ -369,7 +449,16 @@ function QuotaList() {
             )} */}
 
             <Link href={record?.pdf_path} target="_blank">
-              <Button size="small" icon={<DownloadOutlined />} />
+              <Button
+                size="middle"
+                type="default"
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('quotas.downloadLabel')}
+              </Button>
             </Link>
 
             {(record.status === QuotaStatus.Creating ||
@@ -377,17 +466,26 @@ function QuotaList() {
               record.status === QuotaStatus.Cancelled) &&
               (record.is_author || permission?.is_module_admin) && (
                 <DeleteButton
-                  hideText
-                  size="small"
-                  icon={<DeleteOutlined />}
+                  size="middle"
+                  icon={null}
                   recordItemId={record.id}
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#E74C3C',
+                  }}
+                >
+                  {t('quotas.actions.delete')}
+                </DeleteButton>
               )}
 
             {record.status === QuotaStatus.SentToCustomer && (
               <Button
                 type="default"
-                size="small"
+                size="middle"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#C5AF08',
+                }}
                 onClick={() => {
                   go({
                     to: `quotas/clone/${record.id}?actionType=VERSION`,
@@ -449,6 +547,9 @@ function QuotaList() {
     tableQuery: { refetch },
     filters,
   } = useTable({
+    pagination: {
+      pageSize: 20,
+    },
     filters: {
       initial: [
         {
@@ -1078,6 +1179,27 @@ function QuotaList() {
           rowSelection={rowSelection}
           columns={columns}
           {...tableProps}
+          components={{
+            header: {
+              cell: ({ children, style, ...rest }: any) => {
+                return (
+                  <th
+                    style={{
+                      ...style,
+                      border: 'none',
+                      padding: '4px 2px',
+                      color: PRIMARY,
+                      textAlign: 'center',
+                      backgroundColor: '#F0F9FF',
+                    }}
+                    {...rest}
+                  >
+                    {children}
+                  </th>
+                )
+              },
+            },
+          }}
         />
       </Form>
       <Modal
