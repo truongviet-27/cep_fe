@@ -611,6 +611,7 @@ function QuotaList() {
   })
 
   const statusData = [
+    { title: t('quotas.status.all'), value: 0, key: null },
     { title: t('quotas.status.creating'), value: 0, key: QuotaStatus.Creating },
     {
       title: t('quotas.status.waiting_approval'),
@@ -618,6 +619,12 @@ function QuotaList() {
       color: '#faad14',
       key: QuotaStatus.WaitingApproval,
     }, // vàng
+    {
+      title: t('quotas.status.rejected'),
+      value: 0,
+      color: '#fa541c',
+      key: QuotaStatus.Rejected,
+    }, // cam
     {
       title: t('quotas.status.approved'),
       value: 0,
@@ -631,12 +638,6 @@ function QuotaList() {
       key: QuotaStatus.SentToCustomer,
     }, // xanh đậm
     {
-      title: t('quotas.status.rejected'),
-      value: 0,
-      color: '#fa541c',
-      key: QuotaStatus.Rejected,
-    }, // cam
-    {
       title: t('quotas.status.completed'),
       value: 0,
       color: '#52c41a',
@@ -648,7 +649,6 @@ function QuotaList() {
       color: '#ff4d4f',
       key: QuotaStatus.Cancelled,
     }, // đỏ
-    { title: t('quotas.status.all'), value: 0, key: null },
   ]
 
   const statusDashboard = useMemo(() => {
