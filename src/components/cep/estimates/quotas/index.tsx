@@ -397,7 +397,7 @@ function QuotaList() {
         render: (_, record) => (
           <Space>
             <ShowButton
-              size="middle"
+              size="small"
               icon={null}
               recordItemId={record.id}
               style={{
@@ -411,7 +411,7 @@ function QuotaList() {
               record.status === QuotaStatus.Rejected) &&
               (permission?.is_module_admin || record.is_author) && (
                 <EditButton
-                  size="middle"
+                  size="small"
                   icon={null}
                   recordItemId={record.id}
                   style={{
@@ -424,7 +424,7 @@ function QuotaList() {
               )}
 
             <CloneButton
-              size="middle"
+              size="small"
               icon={null}
               recordItemId={record.id}
               style={{
@@ -450,7 +450,7 @@ function QuotaList() {
 
             <Link href={record?.pdf_path} target="_blank">
               <Button
-                size="middle"
+                size="small"
                 type="default"
                 style={{
                   color: '#2784FF',
@@ -466,7 +466,7 @@ function QuotaList() {
               record.status === QuotaStatus.Cancelled) &&
               (record.is_author || permission?.is_module_admin) && (
                 <DeleteButton
-                  size="middle"
+                  size="small"
                   icon={null}
                   recordItemId={record.id}
                   style={{
@@ -481,7 +481,7 @@ function QuotaList() {
             {record.status === QuotaStatus.SentToCustomer && (
               <Button
                 type="default"
-                size="middle"
+                size="small"
                 style={{
                   color: '#FFFFFF',
                   background: '#C5AF08',
@@ -501,7 +501,7 @@ function QuotaList() {
               !record?.has_agreed_price && (
                 <Button
                   type="default"
-                  size="middle"
+                  size="small"
                   onClick={() => {
                     show()
                     setDataAgreedPrice(record)
@@ -517,7 +517,7 @@ function QuotaList() {
               !record?.has_agreed_price && (
                 <Button
                   type="default"
-                  size="middle"
+                  size="small"
                   style={{
                     background: '#721C24',
                     color: WHITE,
