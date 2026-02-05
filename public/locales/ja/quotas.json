@@ -2,9 +2,9 @@
   "quotas": "見積一覧",
   "confirmed_quota": "確定見積",
   "transaction_type": {
-    "short_term_service": "個別・役務サービス",
+    "short_term_service": "個別・役務ｻｰﾋﾞｽ",
     "short_term_merchandise": "個別・物販",
-    "long_term_service": "継続・役務サービス",
+    "long_term_service": "継続・役務ｻｰﾋﾞｽ",
     "long_term_merchandise": "継続・物販"
   },
   "confirmed_quota_detail": "確定見積詳細",
