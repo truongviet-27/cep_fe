@@ -230,8 +230,9 @@ function Page() {
           scroll={{ x: 'max-content' }}
         >
           <Table.Column
-            dataIndex={['product_code']}
+            dataIndex={['packaging_code']}
             title={t('price-groups.fields.product_code')}
+            align="left"
             render={(product_code, record) => (
               <Link
                 href={`/products/show/${record.product_id}`}
@@ -247,14 +248,7 @@ function Page() {
           <Table.Column
             dataIndex="product_name"
             title={t('price-groups.fields.product_name')}
-          />
-          <Table.Column
-            dataIndex="category"
-            title={t('price-groups.fields.category')}
-          />
-          <Table.Column
-            dataIndex="unit"
-            title={t('price-groups.fields.unit')}
+            align="left"
           />
           <Table.Column
             dataIndex="packaging_name"
@@ -415,15 +409,20 @@ function Page() {
                     <SaveButton
                       onClick={handleSaveAll}
                       loading={loadingCreate}
-                      hideText
                       size="small"
-                    />
+                      icon={false}
+                      autoInsertSpace={false}
+                    >
+                      {t('buttons.save')}
+                    </SaveButton>
                     <DeleteButton
-                      hideText
-                      icon={<CloseOutlined />}
+                      icon={false}
                       size="small"
                       onClick={onClick}
-                    />
+                      autoInsertSpace={false}
+                    >
+                      {t('buttons.delete')}
+                    </DeleteButton>
                   </Space>
                 )
               }
@@ -431,9 +430,13 @@ function Page() {
                 <EditButton
                   onClick={onClick}
                   loading={tableProps.loading}
-                  hideText
                   size="small"
-                />
+                  icon={false}
+                  autoInsertSpace={false}
+                  type="primary"
+                >
+                  {t('buttons.edit')}
+                </EditButton>
               )
             }}
           />
