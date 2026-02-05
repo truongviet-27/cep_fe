@@ -501,7 +501,7 @@ function QuotaList() {
               !record?.has_agreed_price && (
                 <Button
                   type="default"
-                  size="small"
+                  size="middle"
                   onClick={() => {
                     show()
                     setDataAgreedPrice(record)
@@ -517,11 +517,11 @@ function QuotaList() {
               !record?.has_agreed_price && (
                 <Button
                   type="default"
+                  size="middle"
                   style={{
                     background: '#721C24',
                     color: WHITE,
                   }}
-                  size={'small'}
                   onClick={() => {
                     handleChangeStatus('back-to-sent-customer', {
                       quota_ids: [record.id],
