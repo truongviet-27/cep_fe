@@ -99,7 +99,8 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
                           )
                           if (isDuplicate) {
                             notification.error({
-                              message: `${value?.label ?? value}という商品名は複数です。`,
+                              message: '',
+                              description: `${value?.label ?? value}という商品名は複数です。`,
                               key: `name-${value?.label ?? value}`,
                               placement: 'topRight',
                             })

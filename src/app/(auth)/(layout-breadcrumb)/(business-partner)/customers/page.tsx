@@ -303,7 +303,10 @@ export default function CustomerListPage() {
                 await tableQueryResult.refetch()
                 notification.open?.({
                   type: 'success',
-                  message: t('customers.message.status_updated_successfully'),
+                  message: '',
+                  description: t(
+                    'customers.message.status_updated_successfully',
+                  ),
                 })
               } catch (error) {
               } finally {
@@ -526,7 +529,8 @@ export default function CustomerListPage() {
                   if (notification && notification.open) {
                     notification.open({
                       type: 'success',
-                      message: t('customers.suspend_success_desc'),
+                      message: '',
+                      description: t('customers.suspend_success_desc'),
                       key: `delete-${record.id}`,
                     })
                   }
