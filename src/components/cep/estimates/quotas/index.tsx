@@ -70,7 +70,6 @@ function QuotaList() {
   const t = useTranslate()
 
   const apiUrl = useApiUrl()
-
   const { permission } = useUserStore.getState()
 
   const department = Form.useWatch(
@@ -259,12 +258,12 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        minWidth: 120,
+        minWidth: 90,
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 120,
-            minWidth: 120,
+            maxWidth: 90,
+            minWidth: 90,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -300,15 +299,48 @@ function QuotaList() {
         ),
         dataIndex: 'creator',
         key: 'creator',
+        minWidth: 180,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 180,
+            minWidth: 180,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (_, record) => (
           <div>
-            <div>{record?.author?.name}</div>
+            <div
+              title={record?.author?.name}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {record?.author?.name}
+            </div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: any, index: number) => {
                 const isApproved = item.status === 'approved'
                 const numberIcon = String.fromCharCode(9312 + index)
                 return (
                   <span
+                    title={item.name}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      textAlign: 'center',
+                    }}
                     key={index}
                     className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
                   >
@@ -329,10 +361,46 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
+        minWidth: 150,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 150,
+            minWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (_, record) => (
           <div className="flex flex-col gap-2">
-            <div>{record.department_in_charge}</div>
-            <div>{Number(record?.total_price || 0).toLocaleString()}</div>
+            <div
+              title={record.department_in_charge}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {record.department_in_charge}
+            </div>
+            <div
+              title={Number(record?.total_price || 0).toLocaleString()}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {Number(record?.total_price || 0).toLocaleString()}
+            </div>
           </div>
         ),
       },
