@@ -39,6 +39,7 @@ import {
   DatePicker,
   Dropdown,
   Empty,
+  Flex,
   Form,
   Input,
   Modal,
@@ -395,45 +396,66 @@ function QuotaList() {
         title: t('quotas.table.actions'),
         key: 'action',
         render: (_, record) => (
-          <Space>
-            <ShowButton
-              size="small"
-              icon={null}
-              recordItemId={record.id}
-              style={{
-                color: '#2784FF',
-                borderColor: '#2784FF',
-              }}
-            >
-              {t('quotas.goDetailLabel')}
-            </ShowButton>
-            {(record.status === QuotaStatus.Creating ||
-              record.status === QuotaStatus.Rejected) &&
-              (permission?.is_module_admin || record.is_author) && (
-                <EditButton
+          <Flex vertical={true} gap={4}>
+            <Space>
+              <ShowButton
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('quotas.goDetailLabel')}
+              </ShowButton>
+
+              {(record.status === QuotaStatus.Creating ||
+                record.status === QuotaStatus.Rejected) &&
+                (permission?.is_module_admin || record.is_author) && (
+                  <EditButton
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#1FDB51',
+                    }}
+                  >
+                    {t('quotas.goEditLabel')}
+                  </EditButton>
+                )}
+
+              <CloneButton
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                style={{
+                  color: '#FFFFFF',
+                  background: '#0161D3',
+                }}
+              >
+                {t('quotas.goDetailCLoneLabel')}
+              </CloneButton>
+
+              {record.status === QuotaStatus.SentToCustomer && (
+                <Button
+                  type="default"
                   size="small"
-                  icon={null}
-                  recordItemId={record.id}
                   style={{
                     color: '#FFFFFF',
-                    background: '#1FDB51',
+                    background: '#C5AF08',
+                  }}
+                  onClick={() => {
+                    go({
+                      to: `quotas/clone/${record.id}?actionType=VERSION`,
+                    })
                   }}
                 >
-                  {t('quotas.goEditLabel')}
-                </EditButton>
+                  {t('quotas.actions.re_estimate')}
+                </Button>
               )}
-
-            <CloneButton
-              size="small"
-              icon={null}
-              recordItemId={record.id}
-              style={{
-                color: '#FFFFFF',
-                background: '#0161D3',
-              }}
-            >
-              {t('quotas.goDetailCLoneLabel')}
-            </CloneButton>
+            </Space>
 
             {/* {record.status === QuotaStatus.Completed && (
               <Button
@@ -448,90 +470,74 @@ function QuotaList() {
               </Button>
             )} */}
 
-            <Link href={record?.pdf_path} target="_blank">
-              <Button
-                size="small"
-                type="default"
-                style={{
-                  color: '#2784FF',
-                  borderColor: '#2784FF',
-                }}
-              >
-                {t('quotas.downloadLabel')}
-              </Button>
-            </Link>
+            <Space>
+              {(record.status === QuotaStatus.Creating ||
+                record.status === QuotaStatus.Rejected ||
+                record.status === QuotaStatus.Cancelled) &&
+                (record.is_author || permission?.is_module_admin) && (
+                  <DeleteButton
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#E74C3C',
+                    }}
+                  >
+                    {t('quotas.actions.delete')}
+                  </DeleteButton>
+                )}
 
-            {(record.status === QuotaStatus.Creating ||
-              record.status === QuotaStatus.Rejected ||
-              record.status === QuotaStatus.Cancelled) &&
-              (record.is_author || permission?.is_module_admin) && (
-                <DeleteButton
-                  size="small"
-                  icon={null}
-                  recordItemId={record.id}
-                  style={{
-                    color: '#FFFFFF',
-                    background: '#E74C3C',
-                  }}
-                >
-                  {t('quotas.actions.delete')}
-                </DeleteButton>
-              )}
-
-            {record.status === QuotaStatus.SentToCustomer && (
-              <Button
-                type="default"
-                size="small"
-                style={{
-                  color: '#FFFFFF',
-                  background: '#C5AF08',
-                }}
-                onClick={() => {
-                  go({
-                    to: `quotas/clone/${record.id}?actionType=VERSION`,
-                  })
-                }}
-              >
-                {t('quotas.actions.re_estimate')}
-              </Button>
-            )}
-
-            {record.status === QuotaStatus.Completed &&
-              (permission?.is_module_admin || record.is_author) &&
-              !record?.has_agreed_price && (
+              <Link href={record?.pdf_path} target="_blank">
                 <Button
-                  type="default"
                   size="small"
-                  onClick={() => {
-                    show()
-                    setDataAgreedPrice(record)
-                  }}
-                >
-                  {t('quotas.actions.decide_move')}
-                </Button>
-              )}
-
-            {(record.status === QuotaStatus.Completed ||
-              record.status === QuotaStatus.Cancelled) &&
-              (permission?.is_module_admin || record.display) &&
-              !record?.has_agreed_price && (
-                <Button
                   type="default"
-                  size="small"
                   style={{
-                    background: '#721C24',
-                    color: WHITE,
-                  }}
-                  onClick={() => {
-                    handleChangeStatus('back-to-sent-customer', {
-                      quota_ids: [record.id],
-                    })
+                    color: '#2784FF',
+                    borderColor: '#2784FF',
                   }}
                 >
-                  {t('quotas.show.actions.move_to_send')}
+                  {t('quotas.downloadLabel')}
                 </Button>
-              )}
-          </Space>
+              </Link>
+
+              {record.status === QuotaStatus.Completed &&
+                (permission?.is_module_admin || record.is_author) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    size="small"
+                    onClick={() => {
+                      show()
+                      setDataAgreedPrice(record)
+                    }}
+                  >
+                    {t('quotas.actions.decide_move')}
+                  </Button>
+                )}
+
+              {(record.status === QuotaStatus.Completed ||
+                record.status === QuotaStatus.Cancelled) &&
+                (permission?.is_module_admin || record.display) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    size="small"
+                    style={{
+                      background: '#721C24',
+                      color: WHITE,
+                    }}
+                    onClick={() => {
+                      handleChangeStatus('back-to-sent-customer', {
+                        quota_ids: [record.id],
+                      })
+                    }}
+                  >
+                    {t('quotas.show.actions.move_to_send')}
+                  </Button>
+                )}
+            </Space>
+          </Flex>
         ),
       },
     ]
