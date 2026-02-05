@@ -4,7 +4,13 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { DeleteButton } from '@refinedev/antd'
-import { useGo, useShow, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useGo,
+  useShow,
+  useTranslate,
+} from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -13,6 +19,12 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
+import type {
+  RoundingMethodEnumType,
+  QuotaFormSettingResponse,
+} from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
+import { useEffect, useState } from 'react'
 import BasicInfo from './basic-info'
 import DetailInfo from './detail-info'
 import NoteForm from './note'
@@ -23,6 +35,9 @@ const QuoteTemplateDetailContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
   const { id } = useParams<{ id: string }>()
+  const apiUrl = useApiUrl()
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
 
   const { permission } = useUserStore()
 
@@ -33,6 +48,18 @@ const QuoteTemplateDetailContainer: FC = () => {
       enabled: !!id,
     },
   })
+
+  const { data } = useCustom<QuotaFormSettingResponse>({
+    method: 'get',
+    url: `${apiUrl}/quota-form-settings`,
+  })
+
+  useEffect(() => {
+    // quota template, thi lay setting lam tron thue tu tenant
+    if (data?.data) {
+      setTaxRoundingMethod(data.data.tax_rounding_method)
+    }
+  }, [data?.data])
 
   const quoteTemplateDetail = query.data?.data
 
@@ -93,7 +120,10 @@ const QuoteTemplateDetailContainer: FC = () => {
           }}
         >
           <BasicInfo detail={quoteTemplateDetail} />
-          <DetailInfo detail={quoteTemplateDetail} />
+          <DetailInfo
+            detail={quoteTemplateDetail}
+            taxRoundingMethod={taxRoundingMethod}
+          />
           <OptionalInfo
             optionalProducts={quoteTemplateDetail?.optional_product ?? []}
           />

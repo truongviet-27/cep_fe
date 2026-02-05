@@ -1,4 +1,5 @@
 import { parseHoujinCsv } from '@utility/csv-parsing-function'
+import moji from 'moji'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
@@ -6,7 +7,7 @@ const HOUJIN_API_BASE_URL = 'https://api.houjin-bangou.nta.go.jp/4/name'
 
 export async function POST(req: NextRequest) {
   try {
-    const { name } = await req.json()
+    const { name, address } = await req.json()
 
     const apiKey = 'Kd4y5Y2BQgn52'
 
@@ -25,12 +26,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const fullWidthName = moji(name).convert('HE', 'ZE').toString()
+
     const params = new URLSearchParams({
       id: apiKey,
-      name: name,
+      name: fullWidthName,
+      mode: '2',
       type: '02',
       history: '0',
     })
+
+    if (address && address !== '') {
+      params.append('address', String(address))
+    }
 
     const fullUrl = `${HOUJIN_API_BASE_URL}?${params.toString()}`
 

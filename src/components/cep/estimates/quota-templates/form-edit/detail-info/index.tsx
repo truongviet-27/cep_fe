@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
 import ProductSelect from '@components/common/product-select'
@@ -9,7 +8,9 @@ import { useTranslate } from '@refinedev/core'
 import type {
   QuotaTemplateProductGroupRequest,
   QuotaTemplateProductItemRequest,
+  RoundingMethodEnumType,
 } from '@sdk/hey-api'
+import { calculateTax } from '@shared/tax/tax.utils'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -26,7 +27,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { type FC, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
@@ -34,7 +35,11 @@ import { useController } from './controller'
 
 const { Title, Text } = Typography
 
-const DetailInfo: FC = () => {
+function DetailInfo({
+  taxRoundingMethod,
+}: {
+  taxRoundingMethod: RoundingMethodEnumType
+}) {
   const {
     form,
     mainProducts,
@@ -48,9 +53,6 @@ const DetailInfo: FC = () => {
   } = useController()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  // Get taxRoundingMethodWatch from form
-  const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
 
   const t = useTranslate()
 
@@ -97,18 +99,8 @@ const DetailInfo: FC = () => {
 
     return Object.entries(totalByTaxRate).map(
       ([taxRateKey, group]: [string, any]) => {
-        const rawTax = group.sellingTotal * (group.taxRate / 100)
-        let roundedTax = 0
-
-        // Apply rounding method per tax group (same as calculateSummary)
-        if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-          roundedTax = Math.floor(rawTax)
-        } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-          roundedTax = Math.ceil(rawTax)
-        } else {
-          roundedTax = Number(rawTax.toFixed(0))
-        }
-
+        const rawTax = (group.sellingTotal * group.taxRate) / 100
+        const roundedTax = calculateTax(rawTax, taxRoundingMethod)
         return {
           taxRate: parseFloat(taxRateKey),
           total: roundedTax.toString(),
@@ -121,7 +113,7 @@ const DetailInfo: FC = () => {
     const taxRate = calculateGroupedTotal(dataSource)
     form.setFieldValue('tax_rate_group', taxRate)
     return taxRate
-  }, [dataSource, taxRoundingMethodWatch])
+  }, [dataSource, taxRoundingMethod])
 
   return (
     <>
