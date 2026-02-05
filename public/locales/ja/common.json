@@ -382,7 +382,7 @@
     "list": {
       "list": "ランク",
       "filters": {
-        "search_label": "ランク・説明",
+        "search_label": "ランク・備考",
         "search_placeholder": "部分一致"
       }
     },
