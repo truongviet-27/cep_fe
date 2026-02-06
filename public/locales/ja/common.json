@@ -166,6 +166,11 @@
       "status": "ステータス",
       "total_revenue": "年間取引額 (円)"
     },
+    "tables": {
+      "header": {
+        "code": "コード"
+      }
+    },
     "delivery": {
       "code": "納品先コード",
       "name": "納品先名",
