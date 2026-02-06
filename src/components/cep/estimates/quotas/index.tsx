@@ -20,6 +20,7 @@ import {
   getActionPermissions,
   getExpiryDate,
   getQuotaStatusStyle,
+  STATUS_DATE_RULES,
 } from '@components/cep/estimates/quotas/utils'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
@@ -537,12 +538,21 @@ function QuotaList() {
     },
   })
 
+  const form = searchFormProps.form
+
   useEffect(() => {
-    setStatus(
+    if (!form) return
+    const currentStatus =
       filters?.find((filter: any) => filter?.field === 'status')?.value ||
-        QuotaStatus.Creating,
-    )
-  }, [])
+      QuotaStatus.Creating
+
+    setStatus(currentStatus)
+    const rule = STATUS_DATE_RULES[currentStatus]
+    form.setFieldsValue({
+      search_date_type: rule?.dateType ?? 'created_at',
+      date: rule?.getRange ? rule.getRange() : null,
+    })
+  }, [form])
 
   const onChangeStatus = useCallback(
     (status: string | null) => {
@@ -554,9 +564,18 @@ function QuotaList() {
           value: status,
         },
       ])
+
+      if (form) {
+        const rule = status ? STATUS_DATE_RULES[status] : undefined
+        form?.setFieldsValue({
+          search_date_type: rule?.dateType ?? 'created_at',
+          date: rule?.getRange ? rule.getRange() : null,
+        })
+      }
+
       setCurrent(1)
     },
-    [status, setFilters, setCurrent],
+    [form, status, setFilters, setCurrent],
   )
 
   const handleOptions = (data: any[]) => {
@@ -980,7 +999,6 @@ function QuotaList() {
                   {t('buttons.search')}
                 </Button>
                 <Button
-                  htmlType="reset"
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
