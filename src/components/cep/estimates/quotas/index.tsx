@@ -11,7 +11,10 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import {
+  QuotaStatus,
+  TRANSACTION_TYPES,
+} from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
 import {
   getActionPermissions,
@@ -32,6 +35,7 @@ import {
   useTable,
 } from '@refinedev/antd'
 import {
+  type CrudFilters,
   type OpenNotificationParams,
   useApiUrl,
   useCustom,
@@ -461,7 +465,7 @@ function QuotaList() {
       ],
     },
     onSearch(values: any) {
-      return [
+      const filters: CrudFilters = [
         {
           field: 'status',
           operator: 'eq',
@@ -480,12 +484,12 @@ function QuotaList() {
         {
           field: 'customer_name',
           operator: 'eq',
-          value: values.customer_name,
+          value: values.customer_name?.label?.trim(),
         },
         {
           field: 'creator_name',
           operator: 'eq',
-          value: values.creator_name,
+          value: values.creator_name?.label?.trim(),
         },
         {
           field: 'tag_name',
@@ -495,7 +499,7 @@ function QuotaList() {
         {
           field: 'approver_name',
           operator: 'eq',
-          value: values.approver_name,
+          value: values.approver_name?.label?.trim(),
         },
         {
           field: 'department_in_charge',
@@ -522,6 +526,14 @@ function QuotaList() {
             : null,
         },
       ]
+      if (values.transaction_type) {
+        filters.push({
+          field: 'transaction_type',
+          operator: 'eq',
+          value: values.transaction_type?.trim(),
+        })
+      }
+      return filters
     },
   })
 
@@ -808,17 +820,17 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.customer')}
-                  </span>
-                }
-                layout="vertical"
-                name={'customer_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="customer_name"
+                pageSize={10}
+                optionLabel={'name'}
+                resource="customers"
+                label={<span>{boldText(t('quotas.filters.customer'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
@@ -832,30 +844,28 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.creator')}
-                  </span>
-                }
-                layout="vertical"
-                name={'creator_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="creator_name"
+                pageSize={10}
+                resource="employees"
+                label={<span>{boldText(t('quotas.filters.creator'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.approver')}
-                  </span>
-                }
-                layout="vertical"
-                name={'approver_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="approver_name"
+                pageSize={10}
+                resource="employees"
+                label={<span>{boldText(t('quotas.filters.approver'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
               <CoreAutocompleteAPI
@@ -936,6 +946,26 @@ function QuotaList() {
                   disabled={
                     !Form.useWatch('search_date_type', searchFormProps.form)
                   }
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={12} md={6} lg={4}>
+              <Form.Item
+                label={
+                  <span>{boldText(t('quotas.filters.transaction_type'))}</span>
+                }
+                layout="vertical"
+                name={'transaction_type'}
+              >
+                <Select
+                  allowClear={true}
+                  placeholder={t('placeholders.select')}
+                  options={[
+                    ...TRANSACTION_TYPES.map((type) => ({
+                      ...type,
+                      label: t(type.labelKey),
+                    })),
+                  ]}
                 />
               </Form.Item>
             </Col>

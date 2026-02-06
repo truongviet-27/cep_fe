@@ -41,3 +41,22 @@ export enum ExpirationDate {
   MONTHS_6 = 'months_6',
   YEARS_1 = 'years_1',
 }
+
+export const TRANSACTION_TYPES = [
+  {
+    labelKey: 'quotas.transaction_type.short_term_service',
+    value: 'short_term_service',
+  },
+  {
+    labelKey: 'quotas.transaction_type.short_term_merchandise',
+    value: 'short_term_merchandise',
+  },
+  {
+    labelKey: 'quotas.transaction_type.long_term_service',
+    value: 'long_term_service',
+  },
+  {
+    labelKey: 'quotas.transaction_type.long_term_merchandise',
+    value: 'long_term_merchandise',
+  },
+]
