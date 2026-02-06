@@ -2,7 +2,7 @@
 'use client'
 import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
 import { useTranslate } from '@refinedev/core'
-import { Checkbox, Col, Form, Radio, Select, Space, Typography } from 'antd'
+import { Checkbox, Col, Form, Radio, Space, Typography } from 'antd'
 import Image from 'next/image'
 
 const { Text } = Typography
@@ -210,7 +210,7 @@ function Right() {
           </div>
         </div>
 
-        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
+        {/* <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
           <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
             <Text strong>{t('tenant_settings.taxRounding.label')}</Text>
           </div>
@@ -272,7 +272,7 @@ function Right() {
               />
             </Form.Item>
           </div>
-        </div>
+        </div> */}
       </div>
     </Col>
   )
