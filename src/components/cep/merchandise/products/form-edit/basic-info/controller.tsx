@@ -198,16 +198,6 @@ export const useBasicInfoController = (
               barcode: getFieldValue('barcode'),
               ...rankObject,
             },
-            {
-              code: getFieldValue('code') ? `${getFieldValue('code')}-1` : '1',
-              name: '',
-              quantity_in_package: 1,
-              unit_id: getFieldValue('unit_id'),
-              selling_price: getFieldValue(`selling_price`),
-              is_standard_price: true,
-              is_rate_based: true,
-              ...rankObject,
-            },
           ],
         })
       }

@@ -4,8 +4,6 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton, EditButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
-import { ParameterResourceEnum } from '@sdk/hey-api'
-import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Divider, Flex, Space, Typography } from 'antd'
@@ -14,7 +12,6 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 
 import BasicInfo from './basic-info'
-import PriceGroup from './price-group'
 import ProductInformation from './product-information'
 import useProductComboDetail from './use-product-combo-detail'
 
@@ -24,7 +21,6 @@ const ProductComboDetailContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
   const { product, isLoading } = useProductComboDetail()
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   return (
     <PageContainer
@@ -56,10 +52,6 @@ const ProductComboDetailContainer: React.FC = () => {
           <>
             <BasicInfo product={product} />
             <ProductInformation products={product.products} />
-            {parameterSettings.get(ParameterResourceEnum.RANKS) && (
-              <PriceGroup product={product} />
-            )}
-
             <Divider />
             <ShowMoreInfo
               descriptions={[
