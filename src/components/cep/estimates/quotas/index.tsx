@@ -239,8 +239,9 @@ function QuotaList() {
             <div>{record?.author?.name}</div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: any, index: number) => {
+                const numSteps = item?.number_step ?? 1
                 const isApproved = item.status === 'approved'
-                const numberIcon = String.fromCharCode(9312 + index)
+                const numberIcon = String.fromCharCode(9311 + numSteps)
                 return (
                   <span
                     key={index}
