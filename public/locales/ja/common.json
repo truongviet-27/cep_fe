@@ -1140,7 +1140,8 @@
       "is_rate_based": "設定方式",
       "rate": "換率",
       "absolute": "絶対",
-      "percentage": "掛率"
+      "percentage": "掛率",
+      "list_price": "定価"
     },
     "rank_prices_title": "ランク"
   },

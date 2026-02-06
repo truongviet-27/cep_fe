@@ -272,12 +272,15 @@ function Page() {
           />
 
           <Table.Column
-            dataIndex={['is_rate_based']}
+            dataIndex="pricing_method"
             title={t('price-groups.fields.is_rate_based')}
             render={(value, record, index) => {
               const currentVal = value
+              value === 'percentage'
                 ? t('price_groups.fields.percentage')
-                : t('price_groups.fields.absolute')
+                : value === 'list_price'
+                  ? t('price_groups.fields.list_price')
+                  : t('price_groups.fields.absolute')
               return (
                 <>
                   <Form.Item
@@ -291,7 +294,7 @@ function Page() {
 
                   <Form.Item
                     initialValue={value}
-                    name={[index, 'is_rate_based']}
+                    name={[index, 'pricing_method']}
                     className={'!m-0 !h-0 !p-0 !pb-5'}
                   >
                     {record?.packaging_id &&
@@ -299,11 +302,11 @@ function Page() {
                       currentVal
                     ) : (
                       <Radio.Group className={''}>
-                        <Radio value={true}>
+                        <Radio value="percentage">
                           {t('price_groups.fields.percentage')}
                         </Radio>
                         <Radio
-                          value={false}
+                          value="fixed"
                           onChange={() => {
                             const rankPrices = getCurrentPrices(index)
 
@@ -320,6 +323,9 @@ function Page() {
                           }}
                         >
                           {t('price_groups.fields.absolute')}
+                        </Radio>
+                        <Radio value="list_price">
+                          {t('price_groups.fields.list_price')}
                         </Radio>
                       </Radio.Group>
                     )}
@@ -348,8 +354,12 @@ function Page() {
                   }
                   render={(value, record, index) => {
                     const rankPrices = getCurrentPrices(index)
-                    const is_rate_based = !!(watch as any)?.[index]
-                      ?.is_rate_based
+
+                    const pricing_method =
+                      (watch as any)?.[index]?.pricing_method ?? 'percentage'
+                    if (pricing_method === 'list_price') {
+                      return Number(record?.selling_price).toLocaleString()
+                    }
 
                     const currentPrice =
                       rankPrices?.find((i) => i.rank_id === item.id)?.price ?? 0
@@ -359,7 +369,7 @@ function Page() {
 
                     if (!isEditing) return Number(currentPrice).toLocaleString()
 
-                    if (isEditing && !is_rate_based) {
+                    if (isEditing && pricing_method === 'fixed') {
                       return (
                         <>
                           <Form.Item
@@ -398,7 +408,7 @@ function Page() {
               const onClick = () => {
                 form.setFieldValue([index], {
                   packaging_id: record.packaging_id,
-                  is_rate_based: record.is_rate_based,
+                  pricing_method: record.pricing_method,
                 })
                 onEditRow(record.packaging_id)
               }
@@ -433,7 +443,6 @@ function Page() {
                   size="small"
                   icon={false}
                   autoInsertSpace={false}
-                  type="primary"
                 >
                   {t('buttons.edit')}
                 </EditButton>
