@@ -10,6 +10,7 @@ import {
   EyeOutlined,
   RightOutlined,
 } from '@ant-design/icons'
+import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
@@ -91,9 +92,13 @@ function QuotaList() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [options, setOptions] = useState<ItemType[]>([])
   const [selectedRows, setSelectedRows] = useState<any>()
-
+  const rightOptions: ItemType[] = [
+    { key: 1, label: t('quotas.actions.new_create') },
+    { key: 2, label: t('quotas.actions.create_from_template') },
+  ]
+  const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
   const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
-
+  console.log('isCreateFromTemplate', isCreateFromTemplate)
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
     selectedRows: any,
@@ -1046,28 +1051,26 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="flex justify-end gap-2">
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  onClick={() => {
-                    go({
-                      to: 'quota-templates',
-                    })
+              <div className="flex justify-end">
+                <Dropdown
+                  menu={{
+                    items: rightOptions,
+                    onClick: ({ key }) => {
+                      if (key == '1') {
+                        go({ to: 'quotas/create' })
+                      } else if (key == '2') {
+                        setIsCreateFromTemplate(true)
+                      }
+                    },
                   }}
                 >
-                  {t('quotas.actions.template_list')}
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    go({
-                      to: 'quotas/create',
-                    })
-                  }}
-                >
-                  {t('quotas.actions.new_create')}
-                </Button>
+                  <Button type="primary">
+                    <Space>
+                      {t('quotas.create_quota')}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
               </div>
             </Col>
           </Row>
@@ -1095,6 +1098,13 @@ function QuotaList() {
           onSuccess={notificationFunction}
         />
       </Modal>
+      {isCreateFromTemplate && (
+        <CreateFromTemplate
+          open={isCreateFromTemplate}
+          t={t}
+          onClose={() => setIsCreateFromTemplate(false)}
+        ></CreateFromTemplate>
+      )}
     </List>
   )
 }
