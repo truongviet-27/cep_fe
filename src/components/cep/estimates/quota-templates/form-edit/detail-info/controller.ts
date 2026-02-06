@@ -1,4 +1,3 @@
-import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import type {
   QuotaTemplateFormType,
   QuotaTemplateMainProductType,
@@ -10,6 +9,7 @@ import {
   type QuotaTemplateProductGroupRequest,
   type QuotaTemplateProductItemRequest,
 } from '@sdk/hey-api'
+import { calculateTax } from '@shared/tax/tax.utils'
 import { Form } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -104,18 +104,8 @@ export const useController = () => {
     // Calculate tax for each tax rate group with rounding
     let taxTotal = 0
     Object.values(taxGroups).forEach((group) => {
-      const rawTax = group.selling * (group.taxRate / 100)
-      let roundedTax = 0
-
-      // Apply rounding method per tax group
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        roundedTax = Math.floor(rawTax)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        roundedTax = Math.ceil(rawTax)
-      } else {
-        roundedTax = Number(rawTax.toFixed(0))
-      }
-
+      const rawTax = (group.selling * group.taxRate) / 100
+      const roundedTax = calculateTax(rawTax, taxRoundingMethodWatch)
       taxTotal += roundedTax
     })
 

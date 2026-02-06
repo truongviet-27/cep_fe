@@ -171,11 +171,16 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
           rules={[rule]}
         >
           <Select placeholder={t('placeholders.select')} disabled={isManual}>
-            {[...Array(10)].map((_, i) => (
-              <Select.Option key={i + 1} value={i + 1}>
-                {i + 1}
-              </Select.Option>
-            ))}
+            {[...Array(10)].map((_, i) => {
+              const value = i + 1
+              // Skip value 2 (when i === 1)
+              if (i != 0)
+                return (
+                  <Select.Option key={value} value={value}>
+                    {value}
+                  </Select.Option>
+                )
+            })}
           </Select>
         </Form.Item>
 

@@ -22,6 +22,8 @@ import {
   useParsed,
   useTranslate,
 } from '@refinedev/core'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
@@ -36,6 +38,8 @@ function QuotaDetail() {
   const t = useTranslate()
 
   const { permission } = useUserStore.getState()
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
   const [dataAgreedPrice, setDataAgreedPrice] = useState<any>()
   const { modalProps, close, show } = useModal()
 
@@ -60,7 +64,12 @@ function QuotaDetail() {
     url: `${apiUrl}/quotas/${id}`,
     method: 'get',
   })
-
+  useEffect(() => {
+    // khi quota show, lay setting cua quota, khong lay setting cua tenant
+    if (queryBasic?.data) {
+      setTaxRoundingMethod(queryBasic.data.tax_rounding_method)
+    }
+  }, [queryBasic?.data])
   const {
     data: dataProducts,
     isFetching: isFetchingProducts,
@@ -404,6 +413,7 @@ function QuotaDetail() {
             }
           />
           <DetailInfo
+            taxRoundingMethod={taxRoundingMethod}
             data={dataProducts?.data?.main_product}
             basicInfo={queryBasic?.data}
           />

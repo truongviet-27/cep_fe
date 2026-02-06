@@ -19,7 +19,8 @@ import TagForm from './tag'
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const { isUpdateMode, isLoading, methods } = useController()
+  const { isUpdateMode, isLoading, methods, taxRoundingMethod } =
+    useController()
 
   return (
     <PageContainer
@@ -65,7 +66,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
           }}
         >
           <BasicInfo />
-          <DetailInfo />
+          <DetailInfo taxRoundingMethod={taxRoundingMethod} />
           <OptionalInfo />
           <NoteForm />
           <TagForm />

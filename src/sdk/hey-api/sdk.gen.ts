@@ -69,6 +69,12 @@ import type {
   CustomerControllerUpdateData,
   CustomerControllerUpdateResponses,
   CustomerControllerUpdateErrors,
+  CustomerControllerUpdateStatusData,
+  CustomerControllerUpdateStatusResponses,
+  CustomerControllerUpdateStatusErrors,
+  CustomerControllerCountData,
+  CustomerControllerCountResponses,
+  CustomerControllerCountErrors,
   CustomerControllerRestoreData,
   CustomerControllerRestoreResponses,
   CustomerControllerRestoreErrors,
@@ -402,6 +408,8 @@ import {
   zCustomerControllerDestroyData,
   zCustomerControllerShowData,
   zCustomerControllerUpdateData,
+  zCustomerControllerUpdateStatusData,
+  zCustomerControllerCountData,
   zCustomerControllerRestoreData,
   zCustomerContactControllerBatchDeleteData,
   zCustomerContactControllerIndexData,
@@ -1156,6 +1164,60 @@ export const customerControllerUpdate = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Update customer status
+ * Update the status (e.g., active, inactive) of an existing customer by their ID.
+ */
+export const customerControllerUpdateStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CustomerControllerUpdateStatusData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    CustomerControllerUpdateStatusResponses,
+    CustomerControllerUpdateStatusErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerUpdateStatusData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers/id}/status',
+    ...options,
+  })
+}
+
+/**
+ * Get customer count by status
+ * Retrieve the total number of customers grouped by their status (e.g., new, negotiating, contracted, etc.).
+ */
+export const customerControllerCount = <ThrowOnError extends boolean = false>(
+  options?: Options<CustomerControllerCountData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    CustomerControllerCountResponses,
+    CustomerControllerCountErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerCountData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers/count',
+    ...options,
   })
 }
 

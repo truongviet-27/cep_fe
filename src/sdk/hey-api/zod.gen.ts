@@ -1710,10 +1710,20 @@ export const zQuotaProductGroupResource = z.object({
 })
 
 /**
+ * Tax rounding methods
+ */
+export const zRoundingMethodEnumType = z.enum([
+  'round_down',
+  'round_up',
+  'round_nearest',
+])
+
+/**
  * Schema for quota response resource
  */
 export const zQuotaResource = z.object({
   id: z.optional(z.int()),
+  tax_rounding_method: zRoundingMethodEnumType,
   code: z.optional(z.string()),
   tenant_id: z.optional(z.string()),
   customer_id: z.optional(z.union([z.int(), z.null()])),
@@ -2011,9 +2021,7 @@ export const zQuotaFormSettingResponse = z.object({
   consumption_tax: z.optional(z.enum(['exclusive', 'inclusive', 'external'])),
   tax_rate: z.optional(z.union([z.int(), z.null()])),
   formatted_tax_rate: z.optional(z.string()),
-  tax_rounding_method: z.optional(
-    z.enum(['round_down', 'round_up', 'round_nearest']),
-  ),
+  tax_rounding_method: zRoundingMethodEnumType,
   sale_price_rounding_method: z.optional(
     z.enum(['round_down', 'round_up', 'round_nearest']),
   ),
@@ -3114,6 +3122,50 @@ export const zCustomerControllerUpdateData = z.object({
 export const zCustomerControllerUpdateResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zCustomer),
+})
+
+export const zCustomerControllerUpdateStatusData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer status updated successfully
+ */
+export const zCustomerControllerUpdateStatusResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(zCustomer),
+})
+
+export const zCustomerControllerCountData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Customer counts retrieved successfully
+ */
+export const zCustomerControllerCountResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      total: z.optional(z.int()),
+      status_counts: z.optional(
+        z.array(
+          z.object({
+            status: z.optional(z.string()),
+            label: z.optional(z.string()),
+            count: z.optional(z.int()),
+          }),
+        ),
+      ),
+    }),
+  ),
 })
 
 export const zCustomerControllerRestoreData = z.object({

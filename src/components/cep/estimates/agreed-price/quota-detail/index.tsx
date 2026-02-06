@@ -21,6 +21,8 @@ import {
   useParsed,
   useTranslate,
 } from '@refinedev/core'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
 import {
@@ -41,6 +43,8 @@ import { useCallback, useEffect, useState } from 'react'
 function AgreedPriceQuotaDetail() {
   const t = useTranslate()
   const { form, formProps } = useForm()
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
 
   const [isPdf, setIsPdf] = useState(false)
 
@@ -152,6 +156,12 @@ function AgreedPriceQuotaDetail() {
     },
   })
 
+  useEffect(() => {
+    if (queryBasic?.data) {
+      setTaxRoundingMethod(queryBasic.data.tax_rounding_method)
+    }
+  }, [queryBasic?.data])
+
   const pdfUrl = queryBasic?.data?.pdf_path
 
   const {
@@ -259,6 +269,7 @@ function AgreedPriceQuotaDetail() {
             onUpdateExpiration={openUpdateExpiration}
           />
           <DetailInfo
+            taxRoundingMethod={taxRoundingMethod}
             data={dataProducts?.data?.main_product}
             basicInfo={queryBasic?.data}
           />

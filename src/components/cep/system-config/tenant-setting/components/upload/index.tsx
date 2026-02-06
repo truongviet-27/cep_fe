@@ -1,7 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable import/newline-after-import */
 import UploadImage from '@/assets/svg/upload.svg'
-import { useApiUrl, useCustomMutation } from '@refinedev/core'
+import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
 import { Form, Image, message, Typography, Upload } from 'antd'
 import type { RcFile } from 'antd/es/upload'
@@ -33,6 +33,8 @@ function UploadSetting({
 }) {
   const form = Form.useFormInstance()
 
+  const t = useTranslate()
+
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
 
@@ -44,7 +46,7 @@ function UploadSetting({
   const beforeUpload = (file: FileType) => {
     const isLt5M = file.size < MAX_FILE_SIZE
     if (!isLt5M) {
-      message.error('画像サイズは5MB以下にしてください。')
+      message.error(t('images.notifications.size_limit'))
     }
     return false
   }

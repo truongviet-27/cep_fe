@@ -397,6 +397,7 @@ const BasicInfo = ({
                       options={options.map((item) => ({
                         label: item.name,
                         value: item.id,
+                        rank_id: item?.rank?.id,
                       }))}
                       allowClear
                       showSearch
@@ -410,6 +411,11 @@ const BasicInfo = ({
                       }}
                       filterOption={false}
                       onChange={(value) => {
+                        const selectedOption = options.find(
+                          (item) => item.id === value?.value,
+                        )
+                        const rankId = selectedOption?.rank?.id ?? null
+                        form.setFieldsValue({ rank_id: rankId })
                         setSelectedCustomerId(value?.value || null)
                         form.setFieldsValue({ customer: value })
                         // Clear selected contact when customer changes
