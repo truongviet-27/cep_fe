@@ -8,6 +8,8 @@ import { CommonButton } from '@components/common/common-button'
 import type { CatNode } from '@interfaces/tree'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
+import type { PermissionEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
 import type { FormInstance } from 'antd'
 import { Button, Form, Input, Space, Tag, Tooltip, Typography } from 'antd'
 import React from 'react'
@@ -35,6 +37,7 @@ export type TreeRowProps = {
   depth?: number
   level?: number
   hasChildEditing?: boolean
+  permissionEnum?: PermissionEnum
 }
 
 const TreeRow: React.FC<TreeRowProps> = ({
@@ -54,10 +57,15 @@ const TreeRow: React.FC<TreeRowProps> = ({
   isNew,
   formFields,
   hasChildEditing = false,
+  permissionEnum,
 }) => {
   const isEditing = typeof editingName === 'string' && cat.id !== undefined
 
   const t = useTranslate()
+  const { hasFullAccessModule } = useUserStore.getState()
+  const isFullAccess = permissionEnum
+    ? hasFullAccessModule(permissionEnum)
+    : true
 
   const localName = Form.useWatch(cat.id, formFields)
 
@@ -145,7 +153,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             hideText
             size="middle"
             onClick={() => onStartEdit(cat.id)}
-            disabled={hasChildEditing}
+            disabled={hasChildEditing || !isFullAccess}
           />
         )}
         <CreateButton
@@ -155,7 +163,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
           icon={<PlusOutlined />}
           style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
           type={'default'}
-          disabled={isNew || isEditing}
+          disabled={isNew || isEditing || !isFullAccess}
         />
 
         {!cat?._isNew ? (
@@ -167,7 +175,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
             }
             invalidates={[]}
             onSuccess={onDelete}
-            disabled={hasChildEditing}
+            disabled={hasChildEditing || !isFullAccess}
           />
         ) : (
           <CommonButton hideText onClick={onDelete} type="delete" />
