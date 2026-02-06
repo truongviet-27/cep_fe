@@ -12,6 +12,7 @@ import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
+import { useEffect } from 'react'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
@@ -112,6 +113,17 @@ export const useCustomerCreate = () => {
       form.setFieldsValue({ customer_code: code })
     }
   }
+
+  useEffect(() => {
+    if (isAutomatic && !form.getFieldValue('customer_code')) {
+      refetchCodeGen().then(({ data: latestData }) => {
+        const code = latestData?.data?.preview_code
+        if (code) {
+          form.setFieldsValue({ customer_code: code })
+        }
+      })
+    }
+  }, [isAutomatic, form, refetchCodeGen])
 
   const rule = validateCustomerRule(t)
 
