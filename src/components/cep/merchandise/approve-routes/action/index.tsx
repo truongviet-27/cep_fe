@@ -88,23 +88,6 @@ function ApproveAction() {
     queryOptions: { enabled: isUpdate },
   })
 
-  const { selectProps: selectPropsDp, query: querySelectDp1 } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-    filters: [
-      {
-        field: 'without_approve_route',
-        operator: 'eq',
-        value: true,
-      },
-    ],
-    pagination: {
-      mode: 'server',
-      pageSize: 100,
-    },
-  })
-
   const { selectProps: selectPropsDp2, query: querySelectDp2 } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
@@ -209,7 +192,6 @@ function ApproveAction() {
         spinning={
           isUpdate
             ? query.isFetching ||
-              querySelectDp1.isLoading ||
               querySelectDp2.isLoading ||
               querySelectEp.isLoading
             : false
@@ -333,7 +315,7 @@ function ApproveAction() {
                 ]}
               >
                 <Select
-                  {...selectPropsDp}
+                  {...selectPropsDp2}
                   mode="multiple"
                   onSearch={() => {}}
                   maxTagCount={'responsive'}
@@ -344,23 +326,7 @@ function ApproveAction() {
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
-                  options={(() => {
-                    const optionFromDp2 = selectPropsDp2?.options?.filter(
-                      (opt) =>
-                        query.data?.data.departments
-                          ?.map((item: any) => item.id)
-                          ?.includes(opt.value),
-                    )
-
-                    const optionsFromDp = selectPropsDp?.options || []
-
-                    const newOptions = [
-                      ...(optionFromDp2 ?? []),
-                      ...optionsFromDp,
-                    ]
-
-                    return newOptions
-                  })()}
+                  options={selectPropsDp2?.options || []}
                   onChange={() => {}}
                 />
               </Form.Item>
