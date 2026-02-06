@@ -250,6 +250,7 @@
         "row_edit": "行編集",
         "tax_rate": "消費税率"
       },
+      "duplicate_product": "商品が重複しています。",
       "placeholders": {
         "product_list_name": "商品リスト名入力",
         "product_search": "商品名・サービス名で検索"
