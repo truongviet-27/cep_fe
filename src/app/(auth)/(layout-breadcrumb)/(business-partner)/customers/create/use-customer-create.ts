@@ -73,12 +73,48 @@ export const useCustomerCreate = () => {
       })
     } catch (error: any) {
       console.error('Error creating customer:', error)
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        t('notifications.createError')
 
-      message.error(errorMessage)
+      // Parse and set field errors from API response
+      const apiErrors = error?.response?.data?.errors
+      const fieldErrors: Array<{
+        name: (string | number)[]
+        errors: string[]
+      }> = []
+
+      if (apiErrors && typeof apiErrors === 'object') {
+        // Convert API error format (contacts.0.email) to form field path (receivers[0].email)
+        Object.keys(apiErrors).forEach((errorKey) => {
+          // Match pattern: contacts.0.email, contacts.1.email, etc.
+          const match = errorKey.match(/^contacts\.(\d+)\.(.+)$/)
+          if (match) {
+            const index = parseInt(match[1], 10)
+            const fieldName = match[2] // 'email', 'contact_person_name', etc.
+            const errorMessages = Array.isArray(apiErrors[errorKey])
+              ? apiErrors[errorKey]
+              : [String(apiErrors[errorKey])]
+
+            fieldErrors.push({
+              name: ['receivers', index, fieldName],
+              errors: errorMessages,
+            })
+          }
+        })
+      }
+
+      // Set field errors to highlight invalid fields
+      if (fieldErrors.length > 0) {
+        form.setFields(fieldErrors)
+      }
+
+      // Only show error message if there are no field-specific errors
+      // If field errors exist, they will be displayed at the field level
+      if (fieldErrors.length === 0) {
+        const errorMessage =
+          error?.response?.data?.message ||
+          error?.message ||
+          t('notifications.createError')
+        message.error(errorMessage)
+      }
     }
   }
 
