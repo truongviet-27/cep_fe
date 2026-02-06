@@ -13,6 +13,15 @@
   "edit": "見積編集",
   "detail": "見積詳細",
   "page_list": {},
+  "create_quota": "見積作成",
+  "popups": {
+    "createFromTemplate": {
+      "title": "テンプレートから作成",
+      "created_at": "登録日：{dateFormatted}",
+      "number_product": "商品数: {number_product}点",
+      "place_holder": "テンプレート名で検索..."
+    }
+  },
   "page_detail": {},
   "page_action": {},
   "table": {
@@ -76,7 +85,8 @@
     "decide_move": "確定移動",
     "re_estimate": "再見積",
     "template_list": "見積テンプレート一覧",
-    "new_create": "新規作成"
+    "new_create": "新規作成",
+    "create_from_template": "テンプレートから作成"
   },
   "modal": {
     "move_to_decided_estimate": "決定見積へ移動",
