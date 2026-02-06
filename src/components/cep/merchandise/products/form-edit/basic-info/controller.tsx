@@ -48,6 +48,20 @@ export const useBasicInfoController = (
     })
   }
 
+  useEffect(() => {
+    if (
+      codeIssueSetting?.data?.issue_method === 'automatic' &&
+      !form.getFieldValue('code')
+    ) {
+      refetch().then((response) => {
+        const codeGen = response?.data?.data
+        if (codeGen?.preview_code) {
+          form?.setFieldsValue({ code: codeGen.preview_code })
+        }
+      })
+    }
+  }, [codeIssueSetting?.data?.issue_method, form, refetch])
+
   const modalFormProps = useModalForm({
     action: 'edit',
     resource: 'code-issue-settings',
