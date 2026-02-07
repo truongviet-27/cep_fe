@@ -89,7 +89,7 @@
     "basic_info": "基本情報",
     "estimate_number": "見積番号",
     "estimate_type": "見積種類",
-    "estimate_category": "見積区分",
+    "estimate_category": "取引区分",
     "title": "タイトル",
     "customer": "取引先",
     "estimate_date": "見積日",
@@ -99,9 +99,16 @@
     "expiration_date": "有効期限",
     "consumption_tax": "消費税",
     "tax_rate": "消費税率",
+    "department_name": "部門",
+    "approve_route": "承認ルート",
     "type": {
       "normal": "通常",
       "limited": "販路限定"
+    },
+    "customer_term": "取引区分",
+    "customer_terms": {
+      "long_term": "継続",
+      "short_term": "個別"
     },
     "category": {
       "merchandise": "物販",
@@ -154,7 +161,7 @@
     "preview": "プレビュー",
     "preview_pdf": "Preview PDF",
     "estimate_number": "見積番号",
-    "estimate_type": "見積区分",
+    "estimate_type": "取引区分",
     "title": "タイトル",
     "customer": "取引先",
     "estimate_date": "見積日",
@@ -209,7 +216,7 @@
     },
     "fields": {
       "code": "見積番号",
-      "type": "見積区分",
+      "type": "取引区分",
       "title": "タイトル",
       "customer": "取引先",
       "created_at": "見積日",
@@ -280,7 +287,7 @@
       "fields": {
         "estimate_number": "見積番号",
         "estimate_type": "見積種類",
-        "estimate_category": "見積区分",
+        "estimate_category": "取引区分",
         "title": "タイトル",
         "customer": "取引先",
         "estimate_date": "見積日",
@@ -288,15 +295,22 @@
         "delivery_method": "納品方法",
         "payment_due_date": "支払期日",
         "expiration_date": "有効期限",
-        "consumption_tax": "消費税"
+        "consumption_tax": "消費税",
+        "department_name": "部門",
+        "approve_route": "承認ルート",
+        "customer_term": "取引区分"
       },
       "types": {
         "normal": "通常",
         "limited": "販路限定"
       },
+      "customer_term": {
+        "long_term": "継続",
+        "short_term": "個別"
+      },
       "categories": {
         "merchandise": "物販",
-        "service": "役務"
+        "service": "役務サービス"
       },
       "labels": {
         "until": "まで",

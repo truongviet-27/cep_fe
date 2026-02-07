@@ -14,6 +14,7 @@ import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { DeleteButton, useForm } from '@refinedev/antd'
+import type { CrudFilter } from '@refinedev/core'
 import {
   useApiUrl,
   useCustom,
@@ -69,7 +70,6 @@ function QuotaAction() {
   const isUpdate = !!id
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin()
-
   const go = useGo()
   const apiUrl = useApiUrl()
 
@@ -126,6 +126,45 @@ function QuotaAction() {
           },
         } as unknown as any
       },
+    },
+  })
+
+  let queryOptions: CrudFilter[] = []
+
+  if (isUpdate) {
+    queryOptions = [
+      {
+        field: 'id',
+        operator: 'eq',
+        value: dataBasicInfo?.data.department?.id,
+      },
+    ]
+  } else if (permission?.department) {
+    queryOptions = [
+      {
+        field: 'id',
+        operator: 'eq',
+        value: permission.department.id,
+      },
+    ]
+  } else {
+    queryOptions = [
+      {
+        field: 'name',
+        operator: 'eq',
+        value: '部門',
+      },
+    ]
+  }
+
+  const { data: departmentData } = useCustom({
+    method: 'get',
+    url: `${apiUrl}/departments/find-first`,
+    queryOptions: {
+      enabled: true,
+    },
+    config: {
+      filters: queryOptions,
     },
   })
 
@@ -217,6 +256,8 @@ function QuotaAction() {
           issue_date: dataBasicInfo.data.issue_date
             ? dayjs(dataBasicInfo.data.issue_date)
             : null,
+          department_id: departmentData?.data.id,
+          department_name: departmentData?.data.name,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
@@ -264,6 +305,7 @@ function QuotaAction() {
           value: dataBasicInfo.data.customer_id,
           label: dataBasicInfo.data.customer_name,
         }
+        console.log('dataBasicInfo: ', dataBasicInfo)
 
         form.setFieldsValue({
           ...basicData,
@@ -271,6 +313,11 @@ function QuotaAction() {
           customer: customerField,
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
           tax_rounding_method: data?.data?.tax_rounding_method,
+          department_id: departmentData?.data.id,
+          department_name: departmentData?.data.name,
+          approve_routes: departmentData?.data.approve_routes || [],
+          approve_route_id: dataBasicInfo.data.approve_route?.id,
+          customer_term: dataBasicInfo.data.customer_term,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date)
             : null,
@@ -313,7 +360,7 @@ function QuotaAction() {
         })
       }
     }
-  }, [dataProducts, dataHistory, dataBasicInfo])
+  }, [departmentData, dataProducts, dataHistory, dataBasicInfo])
 
   useEffect(() => {
     const quoteTemplate = quoteTemplateQuery?.data?.data
@@ -333,6 +380,11 @@ function QuotaAction() {
         tax_rate: quoteTemplate?.tax_rate,
         note: quoteTemplate?.note,
         tax_rounding_method: data?.data?.tax_rounding_method,
+        department_id: departmentData?.data.id,
+        department_name: departmentData?.data.department_name,
+        approve_route_id: departmentData?.data.approve_routes
+          ? departmentData?.data.approve_routes[0].id
+          : null,
         main_product: quoteTemplate?.main_product?.map((item: any) => ({
           ...item,
           products: item.products.map((item2: any) => ({
@@ -384,6 +436,13 @@ function QuotaAction() {
         total_profit_margin: 0,
         total_price_tax_included: 0,
         tax_rounding_method: data.data?.tax_rounding_method,
+        customer_term: 'long_term',
+        department_id: departmentData?.data.id,
+        department_name: departmentData?.data.name,
+        approve_routes: departmentData?.data.approve_routes || [],
+        approve_route_id: departmentData?.data.approve_routes
+          ? departmentData?.data.approve_routes[0].id
+          : null,
         main_product: [
           {
             group_name: '',
@@ -410,8 +469,10 @@ function QuotaAction() {
         ],
         optional_product: defaultOptionalProduct,
       })
+
+      console.log('form value: ', form.getFieldsValue())
     }
-  }, [data, quoteTemplateQuery?.data?.data])
+  }, [departmentData, data, quoteTemplateQuery?.data?.data])
 
   const onFinish = (values: any) => {
     if (isUpdate && isEdit) {

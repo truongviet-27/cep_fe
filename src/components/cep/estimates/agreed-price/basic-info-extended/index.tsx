@@ -130,7 +130,7 @@ function BasicInfoExtended({
           </Form.Item>
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <Form.Item name={'category'} label={boldText('見積区分')}>
+          <Form.Item name={'category'} label={boldText('取引区分')}>
             {data?.category === 'merchandise' ? '物販' : '役務'}
           </Form.Item>
         </Col>
