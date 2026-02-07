@@ -41,3 +41,8 @@ export enum ExpirationDate {
   MONTHS_6 = 'months_6',
   YEARS_1 = 'years_1',
 }
+
+export enum CustomerTerm {
+  ShortTerm = 'short_term',
+  LongTerm = 'long_term',
+}

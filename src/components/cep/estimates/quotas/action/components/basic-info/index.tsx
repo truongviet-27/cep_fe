@@ -233,7 +233,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_number'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
               className="[&>.ant-row]:!flex-nowrap"
             >
               <div className="flex flex-row flex-nowrap items-center gap-4">
@@ -301,7 +301,7 @@ const BasicInfo = ({
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               label={boldText(t('quotas.action.basic_info.fields.customer'))}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
               required
             >
               <Row gutter={[8, 0]} align="top" wrap={false}>
@@ -381,7 +381,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_type'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
               rules={[
                 {
                   required: true,
@@ -409,7 +409,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.customer_term'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 5 }}
               rules={[
                 {
                   required: true,
@@ -435,14 +435,21 @@ const BasicInfo = ({
               />
             </Form.Item>
           </Col>
-          <Col xs={24} sm={16} md={5} lg={5} xl={5}>
+          <Col
+            xs={24}
+            sm={16}
+            md={5}
+            lg={5}
+            xl={5}
+            style={{ paddingLeft: '0px' }}
+          >
             <Form.Item
               required
               name={'category'}
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_category'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 5 }}
               rules={[
                 {
                   required: true,
@@ -473,7 +480,7 @@ const BasicInfo = ({
                 ),
               )}
               name="customer_contact_id"
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
               rules={[
                 {
                   required: true,
@@ -522,7 +529,7 @@ const BasicInfo = ({
                 >
                   <strong>
                     {t('quotas.action.customer_contact_modal.email')}:
-                  </strong>
+                  </strong>{' '}
                   {selectedContact?.email || ''}
                 </Col>
               </Row>
@@ -534,7 +541,7 @@ const BasicInfo = ({
             md={10}
             lg={10}
             xl={2}
-            style={{ paddingLeft: '0px' }}
+            style={{ paddingLeft: '0px', marginLeft: '-20px' }}
           >
             <div style={{ display: 'flex', gap: '8px' }}>
               <Button
@@ -571,7 +578,7 @@ const BasicInfo = ({
               required
               label={boldText(t('quotas.action.basic_info.fields.title'))}
               name={'title'}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
               rules={[
                 {
                   required: true,
@@ -596,7 +603,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.delivery_date'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
             >
               <DatePicker
                 style={{ width: '100%' }}
@@ -615,7 +622,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_date'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
               required
               rules={[
                 {
@@ -635,7 +642,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.payment_due_date'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
             >
               <Select
                 allowClear
@@ -690,7 +697,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.delivery_method'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
             >
               <Input />
             </Form.Item>
@@ -704,7 +711,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.department_name'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
             >
               <Input disabled style={{ width: '100%' }} />
             </Form.Item>
@@ -718,7 +725,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.expiration_date'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
             >
               <div style={{ alignItems: 'center', gap: 12 }}>
                 <Form.Item
@@ -799,7 +806,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.approve_route'),
               )}
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
             >
               <Select
                 style={{ width: '100%' }}

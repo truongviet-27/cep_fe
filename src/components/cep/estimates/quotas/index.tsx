@@ -10,7 +10,10 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import {
+  CustomerTerm,
+  QuotaStatus,
+} from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
 import {
   getActionPermissions,
@@ -398,6 +401,7 @@ function QuotaList() {
             )}
 
             {record.status === QuotaStatus.Completed &&
+              record.customer_term === CustomerTerm.LongTerm &&
               (permission?.is_module_admin || record.is_author) &&
               !record?.has_agreed_price && (
                 <Button
