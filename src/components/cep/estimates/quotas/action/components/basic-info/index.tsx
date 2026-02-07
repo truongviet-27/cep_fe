@@ -460,7 +460,7 @@ const BasicInfo = ({
                     onClick={() => setOpenModalCreateCustomer(true)}
                     style={{ marginBottom: 12 }}
                   >
-                    {t('quotas.action.customer_contact_modal.select_button')}
+                    {t('quotas.action.create_customer_button')}
                   </Button>
                 </Col>
               </Row>

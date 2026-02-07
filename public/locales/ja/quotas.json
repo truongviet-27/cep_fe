@@ -353,7 +353,8 @@
       "created_at": "登録日",
       "select_button": "見積送付先を選択",
       "selected_contact_label": "見積送付先"
-    }
+    },
+    "create_customer_button": "取引先新規登録"
   },
   "validation": {
     "basic_info": {
