@@ -13,7 +13,7 @@ import React from 'react'
 
 function Menu() {
   const { menuItems, selectedKey } = useMenu()
-  const t = useTranslations('common')
+  const t = useTranslations()
 
   const go = useGo()
 
