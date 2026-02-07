@@ -8,7 +8,16 @@ import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Card, Flex, Form, Input, InputNumber, Modal } from 'antd'
+import {
+  Button,
+  Card,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+} from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -209,6 +218,34 @@ function OptionalInfo({
                           pattern: /^[A-Z0-9-]+$/,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'optional_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentCode = products[record.index2]?.code
+                            if (!currentCode) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.code === currentCode &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `code-optional-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -235,6 +272,37 @@ function OptionalInfo({
                   if (isProductManager) {
                     return (
                       <CoreAutocompleteAPI
+                        rules={[
+                          {
+                            validator: async () => {
+                              const products =
+                                form.getFieldValue([
+                                  'optional_product',
+                                  record.index,
+                                  'products',
+                                ]) || []
+                              const currentProductId =
+                                products[record.index2]?.product_id
+                              if (!currentProductId) return Promise.resolve()
+                              const isDuplicate = products.some(
+                                (item: any, idx: number) =>
+                                  item.product_id === currentProductId &&
+                                  idx !== record.index2,
+                              )
+                              if (isDuplicate) {
+                                notification.error({
+                                  message: t(
+                                    'quotas.action.detail_info.duplicate_product',
+                                  ),
+                                  key: `name-optional-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
+                              }
+                              return Promise.resolve()
+                            },
+                          },
+                        ]}
                         name={[
                           record.index,
                           'products',
@@ -386,16 +454,16 @@ function OptionalInfo({
                             ],
                             valueOption?.sale_price,
                           )
-                          // form.setFieldValue(
-                          //   [
-                          //     'optional_product',
-                          //     record.index,
-                          //     'products',
-                          //     record.index2,
-                          //     'tax_rate',
-                          //   ],
-                          //   valueOption?.tax_rate,
-                          // )
+                          form.setFieldValue(
+                            [
+                              'optional_product',
+                              record.index,
+                              'products',
+                              record.index2,
+                              'tax_rate',
+                            ],
+                            valueOption?.tax_rate,
+                          )
                           form.setFieldValue(
                             [
                               'optional_product',
@@ -423,6 +491,35 @@ function OptionalInfo({
                         {
                           max: 255,
                           message: '',
+                        },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'optional_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentName = products[record.index2]?.name
+                            console.log('products', products)
+                            if (!currentName) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.name === currentName &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `name-optional-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
                         },
                       ]}
                       style={{
@@ -760,7 +857,7 @@ function OptionalInfo({
                 if (isProductManager) {
                   const taxRate =
                     form.getFieldValue([
-                      'main_product',
+                      'optional_product',
                       record.index,
                       'products',
                       record.index2,

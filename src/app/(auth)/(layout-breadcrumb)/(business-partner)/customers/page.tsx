@@ -80,7 +80,7 @@ interface ICustomer {
 
 export default function CustomerListPage() {
   const statusKeys = ['new', 'prospecting', 'contracted', 'lost', 'suspended']
-  const [status, setStatus] = useState<string | null>('new')
+  const [status, setStatus] = useState<string | null>(null)
   const t = useTranslate()
   const go = useGo()
   const apiUrl = useApiUrl()
@@ -126,6 +126,7 @@ export default function CustomerListPage() {
     tableQueryResult,
   } = useTable<ICustomer>({
     syncWithLocation: true,
+    pagination: { pageSize: 20 },
     filters: {
       initial: [
         {
@@ -250,7 +251,7 @@ export default function CustomerListPage() {
   const columns: TableColumnsType<SimpleCustomer> = useMemo(
     () => [
       {
-        title: t('customers.fields.code'),
+        title: t('customers.tables.header.code'),
         dataIndex: 'customer_code',
         key: 'customer_code',
         width: 130,
@@ -303,7 +304,10 @@ export default function CustomerListPage() {
                 await tableQueryResult.refetch()
                 notification.open?.({
                   type: 'success',
-                  message: t('customers.message.status_updated_successfully'),
+                  message: '',
+                  description: t(
+                    'customers.message.status_updated_successfully',
+                  ),
                 })
               } catch (error) {
               } finally {
@@ -467,7 +471,6 @@ export default function CustomerListPage() {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
-        align: 'left',
         width: 100,
         render: (text) =>
           text && (
@@ -493,50 +496,6 @@ export default function CustomerListPage() {
               >
                 {t('buttons.edit')}
               </EditButton>
-            )}
-            {record.deleted_at ? (
-              <Button
-                size="small"
-                type="primary"
-                loading={isLoading}
-                disabled={!isFullAccess}
-                onClick={() => {
-                  mutate({
-                    resource: 'customers',
-                    id: record.id,
-                    values: {},
-                    meta: { action: 'restore' },
-                  })
-                }}
-              >
-                {t('buttons.resume')}
-              </Button>
-            ) : (
-              <DeleteButton
-                icon={null}
-                danger
-                confirmOkText={t('buttons.suspend')}
-                recordItemId={record.id}
-                size={'small'}
-                type={'primary'}
-                className={isFullAccess ? '' : '!bg-gray-100'}
-                disabled={!isFullAccess}
-                successNotification={false}
-                onSuccess={() => {
-                  if (notification && notification.open) {
-                    notification.open({
-                      type: 'success',
-                      message: t('customers.suspend_success_title'),
-                      description: t('customers.suspend_success_desc', {
-                        code: record.customer_code,
-                      }),
-                      key: `delete-${record.id}`,
-                    })
-                  }
-                }}
-              >
-                {t('buttons.suspend')}
-              </DeleteButton>
             )}
           </Space>
         ),
@@ -586,12 +545,12 @@ export default function CustomerListPage() {
     })
 
     return [
-      ...stats,
       {
         title: t('agreed_prices.summary.all'),
         value: c?.total ?? 0,
         key: null as string | null,
       },
+      ...stats,
     ]
   }, [count, t])
 
@@ -721,6 +680,7 @@ export default function CustomerListPage() {
             <Form.Item
               label={boldText(t('customers.filters.date_range'))}
               name="search_date_type"
+              initialValue={searchDateTypeOptions[0]?.value}
             >
               <Select
                 allowClear

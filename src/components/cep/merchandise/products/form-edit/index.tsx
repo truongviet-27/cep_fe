@@ -44,6 +44,7 @@ const ProductFormContainer: React.FC = () => {
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
   const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
   const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const [showEditPackaging, setShowEditPackaging] = useState<boolean>(false)
 
   return (
     <PageContainer
@@ -120,6 +121,11 @@ const ProductFormContainer: React.FC = () => {
           <Collapse
             style={{
               marginTop: '20px',
+              display:
+                showEditPackaging ||
+                (form.getFieldValue('packagings')?.length ?? 0) >= 2
+                  ? 'block'
+                  : 'none',
             }}
             items={[
               {
@@ -151,6 +157,7 @@ const ProductFormContainer: React.FC = () => {
             <Collapse
               style={{
                 marginTop: '20px',
+                display: 'none',
               }}
               items={[
                 {
@@ -234,6 +241,15 @@ const ProductFormContainer: React.FC = () => {
                 {isUpdateMode
                   ? t('products.buttons.save')
                   : t('products.buttons.register')}
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowEditPackaging(true)
+                }}
+                color="primary"
+                variant="outlined"
+              >
+                {t('products.buttons.addPackage')}
               </Button>
             </Space>
           </Flex>

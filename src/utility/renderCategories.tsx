@@ -1,3 +1,5 @@
+import { Typography } from 'antd'
+
 export type Category = {
   id: number
   order: number
@@ -43,7 +45,13 @@ const renderCategories = (
               }
             }}
           >
-            {cat.name}
+            <Typography.Text
+              ellipsis={{ tooltip: true }}
+              style={{ width: '100%', display: 'block', margin: 0 }}
+            >
+              {cat.name}
+            </Typography.Text>
+
             {hasChildren &&
               renderCategories(
                 cat.children,

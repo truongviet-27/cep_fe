@@ -46,3 +46,22 @@ export enum CustomerTerm {
   ShortTerm = 'short_term',
   LongTerm = 'long_term',
 }
+
+export const TRANSACTION_TYPES = [
+  {
+    labelKey: 'quotas.transaction_type.short_term_service',
+    value: 'short_term_service',
+  },
+  {
+    labelKey: 'quotas.transaction_type.short_term_merchandise',
+    value: 'short_term_merchandise',
+  },
+  {
+    labelKey: 'quotas.transaction_type.long_term_service',
+    value: 'long_term_service',
+  },
+  {
+    labelKey: 'quotas.transaction_type.long_term_merchandise',
+    value: 'long_term_merchandise',
+  },
+]

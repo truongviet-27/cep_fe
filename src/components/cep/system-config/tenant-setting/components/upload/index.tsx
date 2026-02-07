@@ -1,9 +1,9 @@
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable import/newline-after-import */
 import UploadImage from '@/assets/svg/upload.svg'
-import { useApiUrl, useCustomMutation } from '@refinedev/core'
+import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
-import { Form, Image, Typography, Upload } from 'antd'
+import { Form, Image, message, Typography, Upload } from 'antd'
 import type { RcFile } from 'antd/es/upload'
 import axios from 'axios'
 import ImageNext from 'next/image'
@@ -11,6 +11,8 @@ import { useEffect, useState } from 'react'
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
 const { Text } = Typography
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024
 
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -31,6 +33,8 @@ function UploadSetting({
 }) {
   const form = Form.useFormInstance()
 
+  const t = useTranslate()
+
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
 
@@ -38,6 +42,14 @@ function UploadSetting({
 
   const { mutate } = useCustomMutation()
   const apiUrl = useApiUrl()
+
+  const beforeUpload = (file: FileType) => {
+    const isLt5M = file.size < MAX_FILE_SIZE
+    if (!isLt5M) {
+      message.error(t('images.notifications.size_limit'))
+    }
+    return false
+  }
 
   const handleChange = ({
     file,
@@ -118,7 +130,7 @@ function UploadSetting({
         accept=".png,.jpg,.jpeg"
         listType="picture-card"
         maxCount={1}
-        beforeUpload={() => false}
+        beforeUpload={beforeUpload}
         fileList={fileList}
         onChange={handleChange}
         style={{

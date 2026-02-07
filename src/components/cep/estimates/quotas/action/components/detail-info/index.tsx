@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// done
 import AutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
@@ -7,7 +8,9 @@ import { Action, type ActionType } from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
 import { ConsumptionTaxEnum } from '@sdk/hey-api'
+import { calculateTax } from '@shared/tax/tax.utils'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -21,6 +24,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  notification,
   Row,
   Typography,
 } from 'antd'
@@ -32,19 +36,22 @@ const { Text } = Typography
 
 function DetailInfo({
   productPrincing,
+  taxRoundingMethod,
   // handleChangeProductPrincing,
   mainProduct,
 }: {
   productPrincing?: number[]
+  taxRoundingMethod: RoundingMethodEnumType
   // handleChangeProductPrincing: (productIds: number[]) => void
   mainProduct: any
 }) {
   const t = useTranslate()
   const form = Form.useFormInstance()
 
+  const [productList, setProductList] = useState<any[]>([])
+
   const mainProductWatch = Form.useWatch('main_product', form)
   const taxRateWatch = Form.useWatch('tax_rate', form)
-  const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
   const customerWatch = Form.useWatch('customer', form)
   const costPriceWatch = Form.useWatch('cost_price', form)
@@ -97,18 +104,8 @@ function DetailInfo({
     // Calculate tax for each tax rate group with rounding
     let taxTotal = 0
     Object.values(taxGroups).forEach((group) => {
-      const rawTax = group.selling * (group.taxRate / 100)
-      let roundedTax = 0
-
-      // Apply rounding method per tax group
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        roundedTax = Math.floor(rawTax)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        roundedTax = Math.ceil(rawTax)
-      } else {
-        roundedTax = Number(rawTax.toFixed(0))
-      }
-
+      const rawTax = (group.selling * group.taxRate) / 100
+      const roundedTax = calculateTax(rawTax, taxRoundingMethod)
       taxTotal += roundedTax
     })
 
@@ -231,21 +228,10 @@ function DetailInfo({
 
       return acc
     }, {})
-
     return Object.entries(totalByTaxRate).map(
       ([taxRateKey, group]: [string, any]) => {
-        const rawTax = group.sellingTotal * (group.taxRate / 100)
-        let roundedTax = 0
-
-        // Apply rounding method per tax group (same as calculateSummary)
-        if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-          roundedTax = Math.floor(rawTax)
-        } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-          roundedTax = Math.ceil(rawTax)
-        } else {
-          roundedTax = Number(rawTax.toFixed(0))
-        }
-
+        const rawTax = (group.sellingTotal * group.taxRate) / 100
+        const roundedTax = calculateTax(rawTax, taxRoundingMethod)
         return {
           taxRate: parseFloat(taxRateKey),
           total: roundedTax.toString(),
@@ -258,7 +244,7 @@ function DetailInfo({
     const taxRate = calculateGroupedTotal(dataSource)
     form.setFieldValue('tax_rate_group', taxRate)
     return taxRate
-  }, [dataSource])
+  }, [dataSource, taxRoundingMethod])
 
   const apiUrl = useApiUrl()
 
@@ -303,6 +289,18 @@ function DetailInfo({
       ],
     },
   })
+
+  useEffect(() => {
+    if (data?.data && Array.isArray(data.data)) {
+      setProductList((prev) => {
+        const productMap = new Map(prev.map((item) => [item.id, item]))
+        data.data.forEach((newItem: any) => {
+          productMap.set(newItem.id, newItem)
+        })
+        return Array.from(productMap.values())
+      })
+    }
+  }, [data])
 
   const handleChangeProductPrincingMain = useCallback(
     (productIds: number[], isSimple?: boolean, isCallApi?: boolean) => {
@@ -402,6 +400,34 @@ function DetailInfo({
                           pattern: /^[A-Z0-9-]+$/,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'main_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentCode = products[record.index2]?.code
+                            if (!currentCode) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.code === currentCode &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `code-main-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -436,6 +462,35 @@ function DetailInfo({
                           {
                             required: true,
                             message: '',
+                          },
+                          {
+                            validator: async () => {
+                              const products =
+                                form.getFieldValue([
+                                  'main_product',
+                                  record.index,
+                                  'products',
+                                ]) || []
+                              const currentProductId =
+                                products[record.index2]?.product_id
+                              if (!currentProductId) return Promise.resolve()
+                              const isDuplicate = products.some(
+                                (item: any, idx: number) =>
+                                  item.product_id === currentProductId &&
+                                  idx !== record.index2,
+                              )
+                              if (isDuplicate) {
+                                notification.error({
+                                  message: t(
+                                    'quotas.action.detail_info.duplicate_product',
+                                  ),
+                                  key: `name-main-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
+                              }
+                              return Promise.resolve()
+                            },
                           },
                         ]}
                         resource="products/list-all"
@@ -642,6 +697,35 @@ function DetailInfo({
                           max: 255,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'main_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentName = products[record.index2]?.name
+                            console.log('products', products)
+                            if (!currentName) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.name === currentName &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `name-main-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -715,20 +799,15 @@ function DetailInfo({
                 } else {
                   if (isProductManager) {
                     let product = null
-                    if (data?.data) {
-                      product = (data?.data ?? []).find(
+                    if (productList) {
+                      product = productList.find(
                         (item: any) => item.id === record?.product_id,
                       )
                     } else {
-                      product =
-                        mainProduct
-                          ?.flatMap((group: any) => group.products || [])
-                          .find(
-                            (item: any) =>
-                              item.product_id === record?.product_id,
-                          ) ??
-                        (data?.data ?? []).find(
-                          (item: any) => item.id === record?.product_id,
+                      product = mainProduct
+                        ?.flatMap((group: any) => group.products || [])
+                        .find(
+                          (item: any) => item.product_id === record?.product_id,
                         )
                     }
 

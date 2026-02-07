@@ -25,7 +25,11 @@ import {
   useShow,
   useTranslate,
 } from '@refinedev/core'
-import { type QuotaFormSettingResponse } from '@sdk/hey-api'
+import type {
+  RoundingMethodEnumType,
+  QuotaFormSettingResponse,
+} from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -60,6 +64,9 @@ function QuotaAction() {
   })
 
   const { id, action, params } = useParsed()
+
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
 
   const { actionType } = params as any
   const isClone = action === 'clone'
@@ -168,6 +175,24 @@ function QuotaAction() {
     },
   })
 
+  useEffect(() => {
+    // neu edit => phai lay setting cua cua quota
+    if (isEdit) {
+      if (dataBasicInfo) {
+        setTaxRoundingMethod(dataBasicInfo.data.tax_rounding_method)
+      }
+    } else if (isClone) {
+      // neu clone => phai lay setting cua quota
+      if (dataBasicInfo) {
+        setTaxRoundingMethod(dataBasicInfo.data.tax_rounding_method)
+      }
+    } else {
+      if (data?.data) {
+        // neu create => lay setting cua tenant
+        setTaxRoundingMethod(data.data.tax_rounding_method)
+      }
+    }
+  }, [data?.data, isClone, isEdit, dataBasicInfo])
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -188,8 +213,12 @@ function QuotaAction() {
     useCustomMutation()
 
   const handlePreviewPdf = () => {
+    const delivery_date = form.getFieldValue('delivery_date')
+      ? form.getFieldValue('delivery_date').format('YYYY/MM/DD HH:mm')
+      : null
     const customValues = {
       ...form.getFieldsValue(),
+      delivery_date: delivery_date,
       tags: form.getFieldValue('tags').map((item: any) => ({
         id: item?.value,
         name: item?.label,
@@ -198,7 +227,6 @@ function QuotaAction() {
       customer_name: form.getFieldValue('customer')?.label,
       status: QuotaStatus.Creating,
     }
-
     mutatePreviewPdf(
       {
         values: customValues,
@@ -372,6 +400,7 @@ function QuotaAction() {
       form.setFieldsValue({
         ...form.getFieldsValue(),
         category: quoteTemplate?.category,
+        title: quoteTemplate?.name,
         type: quoteTemplate?.type,
         delivery_method: quoteTemplate?.delivery_method,
         payment_due_date: quoteTemplate?.payment_due_date,
@@ -647,12 +676,13 @@ function QuotaAction() {
             handleChangeProductPrincing={handleChangeProductPrincing}
           />
           <DetailInfo
+            taxRoundingMethod={taxRoundingMethod}
             productPrincing={productPrincing}
             mainProduct={dataProducts?.data.main_product}
           />
           <OptionalInfo
             productPrincing={productPrincingOptional}
-            optionalProduct={dataProducts?.data.main_product}
+            optionalProduct={dataProducts?.data.optional_product}
           />
           <Row>
             <Col xs={24}>

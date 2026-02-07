@@ -1,6 +1,6 @@
 /* eslint-disable */
 'use client'
-
+// todo confirm BA
 import { CloseOutlined, RightOutlined } from '@ant-design/icons'
 import usePriceGroups from '@app/(auth)/(layout-breadcrumb)/(merchandise)/price-groups/use-price-groups'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
@@ -270,6 +270,11 @@ function Page() {
                 </>
               )
             }}
+            render={(value) => {
+              return value !== null && value !== undefined
+                ? Number(value).toLocaleString()
+                : '-'
+            }}
           />
 
           <Table.Column
@@ -358,7 +363,7 @@ function Page() {
                       record?.packaging_id &&
                       includes(editIds, record.packaging_id)
 
-                    if (!isEditing) return currentPrice
+                    if (!isEditing) return Number(currentPrice).toLocaleString()
 
                     if (isEditing && !is_rate_based) {
                       return (

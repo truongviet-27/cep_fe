@@ -61,13 +61,27 @@ export const useBootstrap = () => {
   // check if session name has been updated
   const hasUpdatedSessionRef = useRef(false)
 
+  console.log('refresh token: ', refreshToken)
+  console.log('token: ', token)
+
   const validateToken = async () => {
     try {
-      if (pathname === '/' && token && refreshToken) {
+      console.log('pathname: ', pathname)
+      console.log('token: ', token)
+      console.log('refreshToken: ', refreshToken)
+
+      if (pathname === '/' && token) {
         // check current user
         const currentSession = await getSessionOnce()
         const currentUserId = getUserIdFromToken(currentSession?.accessToken)
         const newUserId = getUserIdFromToken(token)
+
+        console.log(
+          'Current User ID:',
+          currentUserId,
+          'New User ID:',
+          newUserId,
+        )
 
         if (
           currentSession?.accessToken &&
@@ -76,6 +90,7 @@ export const useBootstrap = () => {
           currentUserId !== newUserId
         ) {
           useUserStore.getState().logout?.()
+          useTenantStore.getState().clearTenant() // Clear tenant when user changes
           await signOut({
             redirect: false,
           })
@@ -182,6 +197,7 @@ export const useBootstrap = () => {
       const isTokenValid = await validateToken()
       const sessionOnce = await getSessionOnce()
       const accessToken = sessionOnce?.accessToken
+
       if (isSupperAdmin(accessToken)) {
         await getTenantForSuperAdmin()
       }

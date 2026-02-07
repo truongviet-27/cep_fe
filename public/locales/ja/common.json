@@ -48,7 +48,7 @@
     "add_delivery_destination": "追加",
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
-    "show": "show",
+    "show": "詳細",
     "refresh": "refresh",
     "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？",
     "clone": "クローン",
@@ -165,6 +165,11 @@
       "manual_input_placeholder": "会社種別を手入力",
       "status": "ステータス",
       "total_revenue": "年間取引額 (円)"
+    },
+    "tables": {
+      "header": {
+        "code": "コード"
+      }
     },
     "delivery": {
       "code": "納品先コード",
@@ -382,7 +387,7 @@
     "list": {
       "list": "ランク",
       "filters": {
-        "search_label": "ランク・説明",
+        "search_label": "ランク・備考",
         "search_placeholder": "部分一致"
       }
     },
@@ -407,7 +412,7 @@
     },
     "table": {
       "code": "ランク",
-      "name": "説明",
+      "name": "備考",
       "unit_price": "単価"
     }
   },
@@ -615,10 +620,10 @@
     "form": {
       "subject": "件名",
       "body": "本文",
-      "titleMail": "【見積書送付】お知らせメール",
-      "titlePassword": "【見積書パスワード送付】お知らせメール",
-      "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付の通りお見積りを送付いたします。\nよろしくご査収ください。",
-      "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先程と送付致しましたお見積書のパスワードを送付致します。\nパスワードは\n\n[[パスワード]]\n\nです。\nよろしくお願い致します。",
+      "titleMail": "【見積書送付のご案内】",
+      "titlePassword": "【見積書パスワードのご案内】",
+      "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付にてお見積書をお送りいたします。\nご確認のほどよろしくお願いいたします。\nご不明点等ございましたらお気軽にお申し付けください。",
+      "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先ほどお送りしたお見積書のパスワードをお知らせいたします。\nパスワードは下記の通りです。\n\n[[パスワード]]\n\nよろしくお願いいたします。",
       "signature": {
         "label": "署名（自動挿入）",
         "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team email: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"
@@ -1266,6 +1271,40 @@
     "created_at": "作成日",
     "not_set": "未設定",
     "coming_soon": "近日公開",
-    "error_loading_data": "データの読み込み中にエラーが発生しました"
+    "error_loading_data": "データの読み込み中にエラーが発生しました",
+    "note": "注意"
+  },
+
+  "images": {
+    "modal": { "title": "画像を更新" },
+    "tabs": {
+      "computer": "コンピュータから",
+      "web_link": "ウェブリンク"
+    },
+    "actions": {
+      "change": "画像を変更",
+      "delete": "削除",
+      "upload": "画像をアップロード",
+      "select_another": "別のファイルを選択"
+    },
+    "dragger": {
+      "hint": "ここにファイルをドラッグ＆ドロップ",
+      "formats": "対応形式: JPG, PNG, WEBP",
+      "max_size": "最大容量：5MB"
+    },
+    "url_input": {
+      "label": "画像のURL",
+      "placeholder": "URLを貼り付け (https://...)",
+      "warning_note": "リンク切れを防ぐため、この画像はシステムにダウンロードされ保存されます。"
+    },
+    "notifications": {
+      "upload_success": "画像のアップロードに成功しました",
+      "input_url_warning": "画像のリンクを入力してください",
+      "size_error": "画像サイズが5MBを超えています。別の画像を選択してください。",
+      "copyright_error": "この画像リンクには著作権があります。著作権のないリンクを使用するか、画像アップロード機能をご利用ください。",
+      "format_error": "形式のファイルのみアップロード可能です。",
+      "size_limit": "画像サイズは5MB以下にしてください。",
+      "select_file_warning": "ファイルを選択してください"
+    }
   }
 }

@@ -28,7 +28,7 @@ import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 
 const BasicInfo = ({
   handleChangeProductPrincing,
@@ -179,12 +179,27 @@ const BasicInfo = ({
     },
   })
 
-  const handleAutoNumber = () => {
-    const code = codeIssueSetting?.data?.preview_code
+  const handleAutoNumber = async () => {
+    const { data: latestData } = await refetchIssueSetting()
+    const code = latestData?.data?.preview_code
     if (code) {
       form.setFieldsValue({ code })
     }
   }
+
+  useEffect(() => {
+    if (
+      codeIssueSetting?.data?.issue_method === 'automatic' &&
+      !form.getFieldValue('code')
+    ) {
+      refetchIssueSetting().then(({ data: latestData }) => {
+        const code = latestData?.data?.preview_code
+        if (code) {
+          form.setFieldsValue({ code })
+        }
+      })
+    }
+  }, [codeIssueSetting?.data?.issue_method, form, refetchIssueSetting])
 
   const handleOpenContactModal = () => {
     if (!selectedCustomerId) {
@@ -324,6 +339,7 @@ const BasicInfo = ({
                       options={options.map((item) => ({
                         label: item.name,
                         value: item.id,
+                        rank_id: item?.rank?.id,
                       }))}
                       allowClear
                       showSearch
@@ -337,6 +353,11 @@ const BasicInfo = ({
                       }}
                       filterOption={false}
                       onChange={(value) => {
+                        const selectedOption = options.find(
+                          (item) => item.id === value?.value,
+                        )
+                        const rankId = selectedOption?.rank?.id ?? null
+                        form.setFieldsValue({ rank_id: rankId })
                         setSelectedCustomerId(value?.value || null)
                         form.setFieldsValue({ customer: value })
                         // Clear selected contact when customer changes
@@ -633,7 +654,39 @@ const BasicInfo = ({
                 },
               ]}
             >
-              <DatePicker style={{ width: '100%' }} placeholder={FORMAT_DATE} />
+              <DatePicker
+                style={{ width: '100%' }}
+                placeholder={FORMAT_DATE_CROSS}
+                format={FORMAT_DATE_CROSS}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_date'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_date'),
+              )}
+            >
+              <DatePicker
+                style={{ width: '100%' }}
+                placeholder={FORMAT_DATE_CROSS}
+                format={FORMAT_DATE_CROSS}
+                minDate={Form.useWatch('issue_date', form)}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_method'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_method'),
+              )}
+            >
+              <Input />
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>

@@ -5,14 +5,20 @@ import type {
 import { useForm } from '@refinedev/antd'
 import type { GetOneResponse } from '@refinedev/core'
 import { useApiUrl, useCustom, useGo, useParsed } from '@refinedev/core'
-import type { QuotaFormSettingResponse } from '@sdk/hey-api'
+import type {
+  QuotaFormSettingResponse,
+  RoundingMethodEnumType,
+} from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export function useController() {
   const { params } = useParsed()
   const isUpdateMode = !!params?.id
   const go = useGo()
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
   const permission = useUserStore((state) => state.permission)
 
   const methods = useForm<QuotaTemplateFormType>({
@@ -76,11 +82,14 @@ export function useController() {
   const { data } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
     url: `${apiUrl}/quota-form-settings`,
-    queryOptions: {
-      enabled: !isUpdateMode,
-    },
   })
 
+  useEffect(() => {
+    // quota template, thi lay setting lam tron thue tu tenant
+    if (data?.data) {
+      setTaxRoundingMethod(data.data.tax_rounding_method)
+    }
+  }, [data?.data])
   useEffect(() => {
     if (!isUpdateMode && data?.data) {
       form.setFieldsValue({
@@ -147,6 +156,7 @@ export function useController() {
   }, [data])
 
   return {
+    taxRoundingMethod,
     isUpdateMode,
     methods,
     isLoading: isUpdateMode && (query?.isLoading || query?.isFetching),

@@ -8,7 +8,7 @@ import {
   UploadOutlined,
   CloudUploadOutlined,
 } from '@ant-design/icons'
-import { useApiUrl, useCustomMutation } from '@refinedev/core'
+import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
 import {
   Button,
   Form,
@@ -35,6 +35,7 @@ function UploadImage({
   name: string
   initialUrl?: string
 }) {
+  const t = useTranslate()
   const form = Form.useFormInstance()
   const apiUrl = useApiUrl()
   const { mutate } = useCustomMutation()
@@ -48,6 +49,10 @@ function UploadImage({
   const [displayPreview, setDisplayPreview] = useState<string | null>(
     initialUrl ?? null,
   )
+
+  const MAX_FILE_SIZE = 5 * 1024 * 1024
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+  const ALLOWED_EXTENSIONS_TEXT = 'JPG, PNG, WEBP'
 
   useEffect(() => {
     if (fileValue instanceof File) {
@@ -83,7 +88,7 @@ function UploadImage({
               form.setFieldValue(name, file)
               form.setFieldValue(`${name}_file_key`, data.data.file_key)
               form.setFieldValue(`${name}_name`, file?.name || 'web-image.jpg')
-              message.success('画像のアップロードに成功しました')
+              message.success(t('images.notifications.upload_success'))
               setIsModalOpen(false)
               setLoading(false)
               setLocalFileList([])
@@ -99,26 +104,43 @@ function UploadImage({
   }
 
   const handleUrlUpload = async () => {
-    if (!urlInput) return message.warning('画像のリンクを入力してください')
+    if (!urlInput)
+      return message.warning(t('images.notifications.input_url_warning'))
     try {
       setLoading(true)
       const response = await fetch(urlInput)
       const blob = await response.blob()
+      if (blob.size > MAX_FILE_SIZE) {
+        message.error(t('images.notifications.size_error'))
+        setLoading(false)
+        return
+      }
       const file = new File([blob], 'image-from-url.jpg', { type: blob.type })
       uploadToS3(file)
     } catch (error) {
       console.error(error)
-      message.error('画像を取得できません')
+      message.error(t('images.notifications.copyright_error'))
       setLoading(false)
     }
   }
 
   const handleConfirm = () => {
     if (activeTab === '1') {
-      if (localFileList.length > 0 && localFileList[0].originFileObj) {
-        uploadToS3(localFileList[0].originFileObj)
+      const fileObj = localFileList[0]?.originFileObj
+      if (fileObj) {
+        const isJpgOrPng = ALLOWED_TYPES.includes(fileObj.type)
+        const isLt5M = fileObj.size < MAX_FILE_SIZE
+        if (!isJpgOrPng) {
+          return message.error(
+            `${ALLOWED_EXTENSIONS_TEXT}${t('images.notifications.format_error')}`,
+          )
+        }
+        if (!isLt5M) {
+          return message.error(t('images.notifications.size_limit'))
+        }
+        uploadToS3(fileObj)
       } else {
-        message.warning('ファイルを選択してください')
+        message.warning(t('images.notifications.select_file_warning'))
       }
     } else {
       handleUrlUpload()
@@ -153,13 +175,13 @@ function UploadImage({
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <div className="flex gap-4">
-                <Tooltip title="画像を変更">
+                <Tooltip title={t('images.actions.change')}>
                   <UploadOutlined
                     className="cursor-pointer text-2xl text-white transition-colors hover:text-blue-400"
                     style={{ color: 'white', fontSize: '20px' }}
                   />
                 </Tooltip>
-                <Tooltip title="削除">
+                <Tooltip title={t('images.actions.delete')}>
                   <DeleteOutlined
                     onClick={handleRemove}
                     className="cursor-pointer text-2xl text-white transition-colors hover:text-red-500"
@@ -173,7 +195,7 @@ function UploadImage({
           <div className="flex h-full flex-col items-center justify-center space-y-1">
             <CloudUploadOutlined className="text-2xl text-gray-400" />
             <span className="text-[11px] font-medium text-gray-500">
-              画像をアップロード
+              {t('images.actions.upload')}
             </span>
           </div>
         )}
@@ -182,7 +204,7 @@ function UploadImage({
       <Modal
         title={
           <div className="border-b pb-3 text-lg font-semibold text-gray-800">
-            画像を更新
+            {t('images.modal.title')}
           </div>
         }
         open={isModalOpen}
@@ -192,8 +214,8 @@ function UploadImage({
         destroyOnClose
         width={520}
         centered
-        okText="完了"
-        cancelText="キャンセル"
+        okText={t('buttons.confirm', '完了')}
+        cancelText={t('buttons.cancel', 'キャンセル')}
       >
         <Tabs
           activeKey={activeTab}
@@ -205,7 +227,7 @@ function UploadImage({
               key: '1',
               label: (
                 <span className="flex items-center gap-2">
-                  <UploadOutlined /> コンピュータから
+                  <UploadOutlined /> {t('images.tabs.computer')}
                 </span>
               ),
               children: (
@@ -222,10 +244,13 @@ function UploadImage({
                         <PlusOutlined />
                       </p>
                       <p className="mt-4 text-base font-medium text-gray-700">
-                        ここにファイルをドラッグ＆ドロップ
+                        {t('images.dragger.hint')}
                       </p>
                       <p className="text-sm text-gray-400">
-                        対応形式: JPG, PNG, WEBP
+                        {t('images.dragger.formats')}
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        {t('images.dragger.max_size')}
                       </p>
                     </Dragger>
                   ) : (
@@ -243,7 +268,7 @@ function UploadImage({
                         icon={<DeleteOutlined />}
                         onClick={() => setLocalFileList([])}
                       >
-                        別のファイルを選択
+                        {t('images.actions.select_another')}
                       </Button>
                     </div>
                   )}
@@ -254,17 +279,17 @@ function UploadImage({
               key: '2',
               label: (
                 <span className="flex items-center gap-2">
-                  <LinkOutlined /> ウェブリンク
+                  <LinkOutlined /> {t('images.tabs.web_link')}
                 </span>
               ),
               children: (
                 <div className="space-y-6 px-2 py-6">
                   <div className="space-y-2">
                     <Text className="text-sm font-medium text-gray-600">
-                      画像のURL
+                      {t('images.url_input.label')}
                     </Text>
                     <Input
-                      placeholder="URLを貼り付け (https://...)"
+                      placeholder={t('images.url_input.placeholder')}
                       prefix={<LinkOutlined className="text-gray-400" />}
                       size="large"
                       value={urlInput}
@@ -274,33 +299,10 @@ function UploadImage({
                     />
                   </div>
 
-                  {urlInput && (
-                    <div className="flex items-center gap-4 rounded-lg border border-gray-100 bg-gray-50 p-3">
-                      <div className="h-12 w-12 overflow-hidden rounded border bg-white">
-                        <Image
-                          src={urlInput}
-                          alt="Preview"
-                          width={200}
-                          height={200}
-                          className="h-50 w-50 object-cover"
-                          onError={(e) =>
-                            (e.currentTarget.src =
-                              'https://placehold.co/100x100?text=Invalid')
-                          }
-                        />
-                      </div>
-                      <div className="flex-1 overflow-hidden">
-                        <Text className="block truncate text-xs text-gray-500">
-                          {urlInput}
-                        </Text>
-                      </div>
-                    </div>
-                  )}
-
                   <div className="rounded-lg bg-amber-50 p-3">
                     <p className="text-[12px] leading-relaxed text-amber-700 italic">
-                      💡 <b>注意:</b>{' '}
-                      リンク切れを防ぐため、この画像はシステムにダウンロードされ保存されます。
+                      💡 <b>{t('common.note')}:</b>{' '}
+                      {t('images.url_input.warning_note')}
                     </p>
                   </div>
                 </div>

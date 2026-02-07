@@ -12,6 +12,7 @@ import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
+import { useEffect } from 'react'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
@@ -73,12 +74,48 @@ export const useCustomerCreate = () => {
       })
     } catch (error: any) {
       console.error('Error creating customer:', error)
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        t('notifications.createError')
 
-      message.error(errorMessage)
+      // Parse and set field errors from API response
+      const apiErrors = error?.response?.data?.errors
+      const fieldErrors: Array<{
+        name: (string | number)[]
+        errors: string[]
+      }> = []
+
+      if (apiErrors && typeof apiErrors === 'object') {
+        // Convert API error format (contacts.0.email) to form field path (receivers[0].email)
+        Object.keys(apiErrors).forEach((errorKey) => {
+          // Match pattern: contacts.0.email, contacts.1.email, etc.
+          const match = errorKey.match(/^contacts\.(\d+)\.(.+)$/)
+          if (match) {
+            const index = parseInt(match[1], 10)
+            const fieldName = match[2] // 'email', 'contact_person_name', etc.
+            const errorMessages = Array.isArray(apiErrors[errorKey])
+              ? apiErrors[errorKey]
+              : [String(apiErrors[errorKey])]
+
+            fieldErrors.push({
+              name: ['receivers', index, fieldName],
+              errors: errorMessages,
+            })
+          }
+        })
+      }
+
+      // Set field errors to highlight invalid fields
+      if (fieldErrors.length > 0) {
+        form.setFields(fieldErrors)
+      }
+
+      // Only show error message if there are no field-specific errors
+      // If field errors exist, they will be displayed at the field level
+      if (fieldErrors.length === 0) {
+        const errorMessage =
+          error?.response?.data?.message ||
+          error?.message ||
+          t('notifications.createError')
+        message.error(errorMessage)
+      }
     }
   }
 
@@ -105,12 +142,24 @@ export const useCustomerCreate = () => {
 
   const modalFormCorporate = useModal()
 
-  const handleAutoNumber = () => {
-    const code = codeGenData?.data?.preview_code
+  const handleAutoNumber = async () => {
+    const { data: latestData } = await refetchCodeGen()
+    const code = latestData?.data?.preview_code
     if (code) {
       form.setFieldsValue({ customer_code: code })
     }
   }
+
+  useEffect(() => {
+    if (isAutomatic && !form.getFieldValue('customer_code')) {
+      refetchCodeGen().then(({ data: latestData }) => {
+        const code = latestData?.data?.preview_code
+        if (code) {
+          form.setFieldsValue({ customer_code: code })
+        }
+      })
+    }
+  }, [isAutomatic, form, refetchCodeGen])
 
   const rule = validateCustomerRule(t)
 
