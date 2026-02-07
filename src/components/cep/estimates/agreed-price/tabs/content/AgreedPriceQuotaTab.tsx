@@ -52,7 +52,7 @@ const AgreedPriceQuotaTab = () => {
     return formatted.replace(/\.00$/, '')
   }
 
-  const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
+  const [status, setStatus] = useState<string | null>(null)
 
   const { permission } = useUserStore((state) => state)
 
@@ -177,6 +177,20 @@ const AgreedPriceQuotaTab = () => {
         ),
       },
       {
+        title: t('agreed_prices.table.category'),
+        dataIndex: 'category',
+        key: 'category',
+        render: (category: string) => {
+          if (category === 'merchandise') {
+            return t('agreed_prices.category.merchandise')
+          }
+          if (category === 'service') {
+            return t('agreed_prices.category.service')
+          }
+          return '-'
+        },
+      },
+      {
         title: t('agreed_prices.table.customer'),
         key: 'customer_name',
         render: (_: unknown, record: QuotaAgreedPrice) =>
@@ -250,12 +264,12 @@ const AgreedPriceQuotaTab = () => {
           )
         },
       },
-      {
-        title: t('agreed_prices.table.reference_count'),
-        dataIndex: 'number_references',
-        key: 'number_references',
-        align: 'right',
-      },
+      // {
+      //   title: t('agreed_prices.table.reference_count'),
+      //   dataIndex: 'number_references',
+      //   key: 'number_references',
+      //   align: 'right',
+      // },
       {
         title: '更新',
         dataIndex: 'number_updating',
@@ -265,16 +279,44 @@ const AgreedPriceQuotaTab = () => {
       {
         title: t('agreed_prices.table.operation'),
         key: 'operation',
-        render: (_, record) => (
+        render: (_: unknown, record: QuotaAgreedPrice) => (
           <Space>
             <ShowButton
-              hideText
               size="small"
               recordItemId={(record as any).quota_id as number}
               resource="agreed-prices"
+              style={{
+                color: '#2784FF',
+                borderColor: '#2784FF',
+                backgroundColor: '#fff',
+              }}
+              icon={false}
             />
+            <Button
+              size="small"
+              onClick={() => openUpdate(record)}
+              style={{
+                color: '#fff',
+                backgroundColor: '#1FDB51',
+                borderColor: '#1FDB51',
+              }}
+            >
+              {t('agreed_prices.action.update')}
+            </Button>
+            <Button
+              size="small"
+              onClick={() => {
+                // TODO: Implement duplicate functionality
+              }}
+              style={{
+                color: '#fff',
+                backgroundColor: '#0161D3',
+                borderColor: '#0161D3',
+              }}
+            >
+              {t('agreed_prices.action.duplicate_quota')}
+            </Button>
             <DeleteButton
-              hideText
               size="small"
               recordItemId={record.id as number}
               resource="quota/agreed-prices"
@@ -284,14 +326,13 @@ const AgreedPriceQuotaTab = () => {
                 !permission?.is_module_admin &&
                 permission?.user?.id !== record.creator?.id
               }
+              style={{
+                color: '#fff',
+                backgroundColor: '#E74C3C',
+                borderColor: '#E74C3C',
+              }}
+              icon={false}
             />
-            <Button
-              size="small"
-              type="default"
-              onClick={() => openUpdate(record)}
-            >
-              {t('agreed_prices.action.update')}
-            </Button>
           </Space>
         ),
       },
@@ -342,6 +383,11 @@ const AgreedPriceQuotaTab = () => {
             value: v.customer_name,
           },
           {
+            field: 'category',
+            operator: 'eq',
+            value: v.category,
+          },
+          {
             field: 'creator_name',
             operator: 'eq',
             value: v.creator_name,
@@ -379,6 +425,11 @@ const AgreedPriceQuotaTab = () => {
 
     return [
       {
+        title: t('agreed_prices.summary.all'),
+        value: c?.total ?? 0,
+        key: null as string | null,
+      },
+      {
         title: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).text,
         value: get('active'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).color,
@@ -397,11 +448,6 @@ const AgreedPriceQuotaTab = () => {
         value: get('expired'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Expired, t).color,
         key: 'expired',
-      },
-      {
-        title: t('agreed_prices.summary.all'),
-        value: c?.total ?? 0,
-        key: null as string | null,
       },
     ]
   }, [count, t])
@@ -448,11 +494,11 @@ const AgreedPriceQuotaTab = () => {
             <Form.Item
               label={
                 <span className="font-bold">
-                  {t('agreed_prices.search.estimate_number')}
+                  {t('agreed_prices.search.customer')}
                 </span>
               }
               layout="vertical"
-              name={'quota_code'}
+              name={'customer_name'}
             >
               <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
@@ -461,11 +507,37 @@ const AgreedPriceQuotaTab = () => {
             <Form.Item
               label={
                 <span className="font-bold">
-                  {t('agreed_prices.search.customer')}
+                  {t('agreed_prices.search.category')}
                 </span>
               }
               layout="vertical"
-              name={'customer_name'}
+              name={'category'}
+            >
+              <Select
+                allowClear
+                placeholder={t('agreed_prices.search.please_select')}
+                options={[
+                  {
+                    label: t('agreed_prices.category.merchandise'),
+                    value: 'merchandise',
+                  },
+                  {
+                    label: t('agreed_prices.category.service'),
+                    value: 'service',
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6} lg={3} xxl={3}>
+            <Form.Item
+              label={
+                <span className="font-bold">
+                  {t('agreed_prices.search.estimate_number')}
+                </span>
+              }
+              layout="vertical"
+              name={'quota_code'}
             >
               <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
@@ -567,8 +639,7 @@ const AgreedPriceQuotaTab = () => {
             </div>
           </Col>
         </Row>
-
-        <Row gutter={[24, 24]}>
+        {/* <Row gutter={[24, 24]}>
           <Col xs={24}>
             <div className="mt-7 flex justify-end gap-2">
               <Button
@@ -598,7 +669,7 @@ const AgreedPriceQuotaTab = () => {
               </Button>
             </div>
           </Col>
-        </Row>
+        </Row> */}
       </div>
 
       {(() => {

@@ -1161,10 +1161,10 @@
   },
 
   "agreed_prices": {
-    "title": "継続見積管理",
-    "description": "※継続契約に関する見積内容の確認と見積期限、更新を管理します。",
+    "title": "継続見積一覧",
+    "description": "※基本契約に基づく継続見積の契約期間管理です。",
     "parent": "確定見積一覧",
-    "agreed_prices": "継続見積管理",
+    "agreed_prices": "継続見積一覧",
     "tab": {
       "decided_estimate_list": "確定見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
@@ -1178,16 +1178,18 @@
     "search": {
       "estimate_number": "見積番号",
       "customer": "取引先",
+      "category": "取引区分",
       "creator": "作成者",
       "department": "部門(支社/部/課)",
       "tag_name": "タグ名",
-      "application_completion": "期間",
+      "application_completion": "見積期間",
       "partial_match": "部分一致",
       "please_select": "選択してください"
     },
     "table": {
       "status": "状態",
       "estimate_number": "見積番号",
+      "category": "取引区分",
       "customer": "取引先",
       "creator": "作成者",
       "product_count": "商品数",
@@ -1204,11 +1206,16 @@
       "expired": "期限切れ",
       "nearing_expiration": "期限間近"
     },
+    "category": {
+      "merchandise": "物販",
+      "service": "役務サービス"
+    },
     "action": {
       "search": "検索",
       "clear": "クリア",
       "add_from_estimate_list": "見積一覧から追加",
-      "update": "更新"
+      "update": "更新",
+      "duplicate_quota": "複製"
     },
     "modal": {
       "update_title": "決定見積更新",
