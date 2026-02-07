@@ -28,6 +28,7 @@ import CustomerContactSelectionModal from '@components/cep/estimates/quotas/acti
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
+import CreateCustomerModal from '../create-customer-modal'
 
 const BasicInfo = ({
   handleChangeProductPrincing,
@@ -56,6 +57,8 @@ const BasicInfo = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
     null,
   )
+  const [openModalCreateCustomer, setOpenModalCreateCustomer] =
+    useState<boolean>(false)
 
   const expirationDate = Form.useWatch('expiration_date', form)
   const issueDate = Form.useWatch('issue_date', form)
@@ -454,8 +457,7 @@ const BasicInfo = ({
                   <Button
                     color="primary"
                     variant="outlined"
-                    onClick={handleOpenContactModal}
-                    disabled={!selectedCustomerId}
+                    onClick={() => setOpenModalCreateCustomer(true)}
                     style={{ marginBottom: 12 }}
                   >
                     {t('quotas.action.customer_contact_modal.select_button')}
@@ -523,6 +525,16 @@ const BasicInfo = ({
                     {t('quotas.action.customer_contact_modal.email')}:
                   </strong>
                   {selectedContact?.email || ''}
+                </Col>
+                <Col>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleOpenContactModal}
+                    disabled={!selectedCustomerId}
+                  >
+                    {t('quotas.action.customer_contact_modal.select_button')}
+                  </Button>
                 </Col>
               </Row>
             </Form.Item>
@@ -759,6 +771,13 @@ const BasicInfo = ({
         customerId={selectedCustomerId}
         onSelect={handleSelectContact}
       />
+
+      {openModalCreateCustomer && (
+        <CreateCustomerModal
+          open={openModalCreateCustomer}
+          onClose={() => setOpenModalCreateCustomer(false)}
+        />
+      )}
     </Card>
   )
 }
