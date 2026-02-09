@@ -557,16 +557,6 @@ const BasicInfo = ({
                   </strong>{' '}
                   {selectedContact?.email || ''}
                 </Col>
-                <Col>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={handleOpenContactModal}
-                    disabled={!selectedCustomerId}
-                  >
-                    {t('quotas.action.customer_contact_modal.select_button')}
-                  </Button>
-                </Col>
               </Row>
             </Form.Item>
           </Col>
