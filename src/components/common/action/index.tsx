@@ -8,18 +8,23 @@ import {
   ImportOutlined,
   PlusOutlined,
 } from '@ant-design/icons'
-import { Button } from 'antd'
+import { useTranslate } from '@refinedev/core'
+import { Button, Popover } from 'antd'
+import { useState } from 'react'
 
 export type ActionType =
   | 'delete'
   | 'view'
   | 'edit'
   | 'append'
+  | 'onAppendFromMasterOrCreateNewAction'
   | 'remove'
   | 'copy'
   | 'export'
   | 'import'
   | 'history'
+
+export type CreateProductType = 'create_new' | 'create_from_master'
 
 type Props = {
   actionList: ActionType[]
@@ -27,6 +32,7 @@ type Props = {
   onEditAction?: () => void
   onViewAction?: () => void
   onAppendAction?: () => void
+  onAppendFromMasterOrCreateNewAction?: (type: CreateProductType) => void
   onRemoveAction?: () => void
   onCopyAction?: () => void
   onExportAction?: () => void
@@ -39,11 +45,38 @@ export const Action = ({
   onEditAction,
   onViewAction,
   onAppendAction,
+  onAppendFromMasterOrCreateNewAction,
   onRemoveAction,
   onCopyAction,
   onExportAction,
   onImportAction,
 }: Props) => {
+  const [open, setOpen] = useState(false)
+  const t = useTranslate()
+  const content = (
+    <div style={{ width: 200 }}>
+      <div
+        className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+        onClick={() => {
+          setOpen(false)
+          onAppendFromMasterOrCreateNewAction?.('create_from_master')
+        }}
+      >
+        {t('products.createFromMaster')}
+      </div>
+
+      <div
+        className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+        onClick={() => {
+          setOpen(false)
+          onAppendFromMasterOrCreateNewAction?.('create_new')
+        }}
+      >
+        {t('products.createNew')}
+      </div>
+    </div>
+  )
+
   return (
     <div className="flex items-center justify-center gap-4">
       {actionList.includes('view') && (
@@ -88,6 +121,29 @@ export const Action = ({
           }}
           className="cursor-pointer hover:!opacity-70"
         />
+      )}
+
+      {actionList.includes('onAppendFromMasterOrCreateNewAction') && (
+        <Popover
+          trigger="click"
+          open={open}
+          onOpenChange={setOpen}
+          content={content}
+          placement="bottomLeft"
+        >
+          <Button
+            className="cursor-pointer"
+            color="blue"
+            variant="outlined"
+            icon={
+              <PlusOutlined
+                style={{
+                  fontSize: 12,
+                }}
+              />
+            }
+          />
+        </Popover>
       )}
 
       {actionList.includes('append') && (

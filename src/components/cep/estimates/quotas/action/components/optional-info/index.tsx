@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
-import { Action, type ActionType } from '@components/common/action'
+import {
+  DEFAULT_TAX_RATES,
+  getDefaultTaxRate,
+} from '@components/cep/estimates/quotas/utils'
+import {
+  Action,
+  type ActionType,
+  type CreateProductType,
+} from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
-import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -17,6 +24,7 @@ import {
   InputNumber,
   Modal,
   notification,
+  Select,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
@@ -33,16 +41,17 @@ function OptionalInfo({
 
   const customerWatch = Form.useWatch('customer', form)
 
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const isProductManager =
-    parameterSettings?.get && parameterSettings?.get('products')
-
-  const handleAddProduct = (groupIndex: number, productIndex: number) => {
+  const handleAddProduct = (
+    groupIndex: number,
+    productIndex: number,
+    isSelfCreate = false,
+  ) => {
     const values = form?.getFieldValue('optional_product') || []
     const products = values[groupIndex].products || []
 
     const newProduct = {
       product: null,
+      isSelfCreate: isSelfCreate,
       package: null,
       product_id: null,
       package_id: null,
@@ -53,7 +62,7 @@ function OptionalInfo({
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
-      tax_rate: 0,
+      tax_rate: getDefaultTaxRate(),
       is_add_total: true,
       unit: '-',
       unit_name: '-',
@@ -191,7 +200,7 @@ function OptionalInfo({
                     props: { colSpan: columns.length - 1 },
                   }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return form.getFieldValue([
                       'optional_product',
                       record.index,
@@ -269,7 +278,7 @@ function OptionalInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return (
                       <CoreAutocompleteAPI
                         rules={[
@@ -542,7 +551,7 @@ function OptionalInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return (
                       form.getFieldValue([
                         'optional_product',
@@ -587,7 +596,7 @@ function OptionalInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     const product = (data?.data ?? []).find(
                       (item: any) => item.id === record?.product_id,
                     )
@@ -661,7 +670,7 @@ function OptionalInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     const cost_price = form.getFieldValue([
                       'optional_product',
                       record.index,
@@ -854,7 +863,7 @@ function OptionalInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                if (isProductManager) {
+                if (!record.isSelfCreate) {
                   const taxRate =
                     form.getFieldValue([
                       'optional_product',
@@ -865,7 +874,6 @@ function OptionalInfo({
                     ]) || 0
                   return `${taxRate}%`
                 }
-
                 return (
                   <Form.Item
                     name={[record.index, 'products', record.index2, 'tax_rate']}
@@ -877,13 +885,9 @@ function OptionalInfo({
                       },
                     ]}
                   >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      precision={0}
+                    <Select
                       style={{ width: 100 }}
-                      addonAfter="%"
-                      controls={false}
+                      options={DEFAULT_TAX_RATES}
                     />
                   </Form.Item>
                 )
@@ -938,8 +942,8 @@ function OptionalInfo({
                     ? ['append', 'remove']
                     : ['append']
                   : lengthProduct
-                    ? ['append', 'remove']
-                    : ['append']
+                    ? ['onAppendFromMasterOrCreateNewAction', 'remove']
+                    : ['onAppendFromMasterOrCreateNewAction']
 
                 const handleAppend = () => {
                   if (isHeader) {
@@ -973,6 +977,17 @@ function OptionalInfo({
                   }
                 }
 
+                const onAppendFromMasterOrCreateNewAction = (
+                  type: CreateProductType,
+                ) => {
+                  const _isSelfCreate = type === 'create_new'
+                  handleAddProduct(
+                    record.index,
+                    record.index2 + 1,
+                    _isSelfCreate,
+                  )
+                }
+
                 const handleRemove = () => {
                   if (isHeader) {
                     remove(record.index)
@@ -984,6 +999,9 @@ function OptionalInfo({
                 return (
                   <Action
                     actionList={actionList}
+                    onAppendFromMasterOrCreateNewAction={
+                      onAppendFromMasterOrCreateNewAction
+                    }
                     onAppendAction={handleAppend}
                     onRemoveAction={handleRemove}
                   />

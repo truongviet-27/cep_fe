@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 
 import { Button, Col, Form, Input, Row, Select, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { List, ShowButton, useSelect, useTable } from '@refinedev/antd'
+import { List, useSelect, useTable } from '@refinedev/antd'
 import { type HttpError, useGo, useTranslate } from '@refinedev/core'
 import CommonTable from '@components/common/table'
 import type { QuotaAgreedPriceCustomer } from '@sdk/hey-api/types.gen'
@@ -67,16 +67,17 @@ const AgreedPriceByCustomerTab = () => {
             whiteSpace: 'wrap',
           },
         }),
-        render: (value, record) => {
+        render: (value) => {
           return (
             <Button
               type="link"
               className="underline"
               title={value}
               onClick={() => {
-                go({
-                  to: `/agreed-prices/customer/${record.customer_id}`,
-                })
+                // Temporarily disabled - agreed-prices/customer route
+                // go({
+                //   to: `/agreed-prices/customer/${record.customer_id}`,
+                // })
               }}
             >
               {value}
@@ -111,14 +112,15 @@ const AgreedPriceByCustomerTab = () => {
       {
         title: t('agreed_prices.customer_tab.table.operation'),
         key: 'operation',
-        render: (_, record) => (
+        render: () => (
           <Space>
-            <ShowButton
+            {/* Temporarily disabled - agreed-prices/customer route */}
+            {/* <ShowButton
               hideText
               size="small"
               recordItemId={record.customer_id as number}
               resource="agreed-prices/customer"
-            />
+            /> */}
           </Space>
         ),
       },
