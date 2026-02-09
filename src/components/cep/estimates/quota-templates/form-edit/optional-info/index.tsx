@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type { ActionType } from '@components/common/action'
 import { Action } from '@components/common/action'
 import ProductSelect from '@components/common/product-select'
@@ -8,7 +10,16 @@ import type {
   QuotaTemplateProductItemRequest,
 } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { Button, Flex, Form, Input, InputNumber, Modal, Typography } from 'antd'
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+  Typography,
+} from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { type FC, useState } from 'react'
 
@@ -138,11 +149,39 @@ const OptionalInfo: FC = () => {
                       'product_id',
                     ]}
                     className="ant-form-item-hidden-margin"
-                    // required
                     rules={[
                       {
                         required: false,
                         message: '',
+                      },
+                      {
+                        validator: async () => {
+                          const products =
+                            form.getFieldValue([
+                              'optional_product',
+                              record.index,
+                              'products',
+                            ]) || []
+                          const currentProductId =
+                            products[record.index2]?.product_id
+                          if (!currentProductId) return Promise.resolve()
+                          const isDuplicate = products.some(
+                            (item: any, idx: number) =>
+                              item.product_id === currentProductId &&
+                              idx !== record.index2,
+                          )
+                          if (isDuplicate) {
+                            notification.error({
+                              message: t(
+                                'quotas.action.detail_info.duplicate_product',
+                              ),
+                              key: `name-optional-product`,
+                              placement: 'topRight',
+                            })
+                            return Promise.reject()
+                          }
+                          return Promise.resolve()
+                        },
                       },
                     ]}
                   >

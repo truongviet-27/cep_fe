@@ -3,6 +3,7 @@ import {
   PaymentDueDate,
   QuotaStatus,
 } from '@components/cep/estimates/quotas/enum'
+import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 
 type QuotaStatusInfo = {
@@ -10,6 +11,54 @@ type QuotaStatusInfo = {
   color: string
   text: string
 }
+type DateRangeGenerator = () => [Dayjs, Dayjs]
+
+export const STATUS_DATE_RULES: Record<
+  string,
+  {
+    dateType: string
+    getRange?: DateRangeGenerator
+  }
+> = {
+  [QuotaStatus.Creating]: {
+    dateType: 'created_at',
+  },
+
+  [QuotaStatus.WaitingApproval]: {
+    dateType: 'created_at',
+  },
+
+  [QuotaStatus.Approved]: {
+    dateType: 'created_at',
+  },
+
+  [QuotaStatus.Rejected]: {
+    dateType: 'created_at',
+  },
+
+  [QuotaStatus.SentToCustomer]: {
+    dateType: 'created_at',
+  },
+
+  [QuotaStatus.Completed]: {
+    dateType: 'customer_accepted_date',
+    getRange: () => [dayjs().startOf('month'), dayjs().endOf('month')],
+  },
+
+  [QuotaStatus.Cancelled]: {
+    dateType: 'customer_cancelled_date',
+    getRange: () => [dayjs().startOf('month'), dayjs().endOf('month')],
+  },
+}
+
+export const DEFAULT_TAX_RATES = [
+  { label: '0%', value: 0 },
+  { label: '8%', value: 8 },
+  { label: '10%', value: 10, isDefault: true },
+]
+
+export const getDefaultTaxRate = () =>
+  DEFAULT_TAX_RATES.find((item) => item.isDefault)?.value
 
 export function getQuotaStatusStyle(
   status: QuotaStatus,

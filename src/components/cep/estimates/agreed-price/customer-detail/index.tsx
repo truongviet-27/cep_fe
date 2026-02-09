@@ -53,11 +53,12 @@ const AgreedPriceCustomerDetail = () => {
       ),
     },
     {
-      title: (
-        <Link href="/agreed-prices/customer">
-          {boldText(t('continuous_quotes_by_customer.title'))}
-        </Link>
-      ),
+      title:
+        // Temporarily disabled - agreed-prices/customer route
+        // <Link href="/agreed-prices/customer">
+        //   {boldText(t('continuous_quotes_by_customer.title'))}
+        // </Link>
+        boldText(t('continuous_quotes_by_customer.title')),
     },
     {
       title: boldText(t('agreed_prices.customer_detail.description'), PRIMARY),
@@ -277,11 +278,15 @@ const AgreedPriceCustomerDetail = () => {
         </Card>
 
         <div className="flex justify-end">
-          <Link
+          {/* Temporarily disabled - agreed-prices/customer route */}
+          {/* <Link
             href={{
               pathname: '/agreed-prices/customer',
             }}
           >
+            <Button>{t('buttons.back')}</Button>
+          </Link> */}
+          <Link href="/customers">
             <Button>{t('buttons.back')}</Button>
           </Link>
         </div>

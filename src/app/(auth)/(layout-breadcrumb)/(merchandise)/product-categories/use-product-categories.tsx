@@ -29,6 +29,7 @@ import {
   useResource,
   useUpdate,
 } from '@refinedev/core'
+import { PermissionEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Form, message, type TreeDataNode, type TreeProps } from 'antd'
@@ -366,6 +367,7 @@ function useProductCategories() {
               depth={MAX_DEPTH}
               level={n.level ?? 1}
               hasChildEditing={childIsEditing}
+              permissionEnum={PermissionEnum.PRODUCT_CATEGORY_EDIT}
             />
           ),
           children: n.children ? toTreeData(n.children) : undefined,

@@ -4,8 +4,6 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton, EditButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
-import { ParameterResourceEnum } from '@sdk/hey-api'
-import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Divider, Flex, Space, Typography } from 'antd'
@@ -15,7 +13,6 @@ import Link from 'next/link'
 
 import BasicInfo from './basic-info'
 import PackagingUnitPrice from './packaging-unit-price'
-import PriceGroup from './price-group'
 import useProductDetail from './use-product-detail'
 
 const { Title } = Typography
@@ -24,7 +21,6 @@ const ProductDetailContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
   const { product, isLoading } = useProductDetail()
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   return (
     <PageContainer
@@ -56,10 +52,6 @@ const ProductDetailContainer: React.FC = () => {
           <>
             <BasicInfo product={product} />
             <PackagingUnitPrice product={product} />
-            {parameterSettings.get(ParameterResourceEnum.RANKS) && (
-              <PriceGroup product={product} />
-            )}
-
             <Divider />
             <ShowMoreInfo
               descriptions={[

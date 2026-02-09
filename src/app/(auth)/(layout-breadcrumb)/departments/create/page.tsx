@@ -19,7 +19,7 @@ import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import Link from 'next/link'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const { Text } = Typography
 
@@ -89,6 +89,17 @@ export default function Page() {
   }
 
   const isAutomatic = data?.data?.issue_method === 'automatic'
+
+  useEffect(() => {
+    if (isAutomatic && !form.getFieldValue('code')) {
+      refetch().then(() => {
+        const codeGen = data?.data
+        if (codeGen?.preview_code) {
+          form?.setFieldsValue({ code: codeGen.preview_code })
+        }
+      })
+    }
+  }, [isAutomatic, form, refetch, data?.data])
 
   const onSubmit = (values: DepartmentPayload) => {
     create(

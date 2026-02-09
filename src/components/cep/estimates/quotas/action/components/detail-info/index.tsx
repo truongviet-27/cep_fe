@@ -4,7 +4,15 @@
 import AutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
-import { Action, type ActionType } from '@components/common/action'
+import {
+  DEFAULT_TAX_RATES,
+  getDefaultTaxRate,
+} from '@components/cep/estimates/quotas/utils'
+import {
+  Action,
+  type ActionType,
+  type CreateProductType,
+} from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
@@ -24,7 +32,9 @@ import {
   Input,
   InputNumber,
   Modal,
+  notification,
   Row,
+  Select,
   Typography,
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
@@ -60,10 +70,6 @@ function DetailInfo({
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
   const [checkNull, setcheckNull] = useState(false)
-
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const isProductManager =
-    parameterSettings?.get && parameterSettings?.get('products')
 
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
@@ -144,12 +150,17 @@ function DetailInfo({
     )
   }, [taxRateWatch, mainProductWatch, consumptionTaxWatch])
 
-  const handleAddProduct = (groupIndex: number, productIndex: number) => {
+  const handleAddProduct = (
+    groupIndex: number,
+    productIndex: number,
+    isSelfCreate = false,
+  ) => {
     const values = form?.getFieldValue('main_product') || []
     const products = values[groupIndex].products || []
 
     const newProduct = {
       product: null,
+      isSelfCreate: isSelfCreate,
       package: null,
       product_id: null,
       package_id: null,
@@ -160,7 +171,7 @@ function DetailInfo({
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
-      tax_rate: 0,
+      tax_rate: getDefaultTaxRate(),
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
       unit_name: t('quotas.action.detail_info.default_values.default_unit'),
@@ -369,7 +380,7 @@ function DetailInfo({
                     props: { colSpan: columns.length - 1 },
                   }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return form.getFieldValue([
                       'main_product',
                       record.index,
@@ -399,6 +410,34 @@ function DetailInfo({
                           pattern: /^[A-Z0-9-]+$/,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'main_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentCode = products[record.index2]?.code
+                            if (!currentCode) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.code === currentCode &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `code-main-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -420,7 +459,7 @@ function DetailInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return (
                       <CoreAutocompleteAPI
                         name={[
@@ -433,6 +472,35 @@ function DetailInfo({
                           {
                             required: true,
                             message: '',
+                          },
+                          {
+                            validator: async () => {
+                              const products =
+                                form.getFieldValue([
+                                  'main_product',
+                                  record.index,
+                                  'products',
+                                ]) || []
+                              const currentProductId =
+                                products[record.index2]?.product_id
+                              if (!currentProductId) return Promise.resolve()
+                              const isDuplicate = products.some(
+                                (item: any, idx: number) =>
+                                  item.product_id === currentProductId &&
+                                  idx !== record.index2,
+                              )
+                              if (isDuplicate) {
+                                notification.error({
+                                  message: t(
+                                    'quotas.action.detail_info.duplicate_product',
+                                  ),
+                                  key: `name-main-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
+                              }
+                              return Promise.resolve()
+                            },
                           },
                         ]}
                         resource="products/list-all"
@@ -639,6 +707,35 @@ function DetailInfo({
                           max: 255,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const products =
+                              form.getFieldValue([
+                                'main_product',
+                                record.index,
+                                'products',
+                              ]) || []
+                            const currentName = products[record.index2]?.name
+                            console.log('products', products)
+                            if (!currentName) return Promise.resolve()
+                            const isDuplicate = products.some(
+                              (item: any, idx: number) =>
+                                item.name === currentName &&
+                                idx !== record.index2,
+                            )
+                            if (isDuplicate) {
+                              notification.error({
+                                message: t(
+                                  'quotas.action.detail_info.duplicate_product',
+                                ),
+                                key: `name-main-product`,
+                                placement: 'topRight',
+                              })
+                              return Promise.reject()
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
                       style={{
                         width: 300,
@@ -660,7 +757,7 @@ function DetailInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return (
                       form.getFieldValue([
                         'main_product',
@@ -710,7 +807,7 @@ function DetailInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     let product = null
                     if (productList) {
                       product = productList.find(
@@ -800,7 +897,7 @@ function DetailInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     const cost_price = form.getFieldValue([
                       'main_product',
                       record.index,
@@ -1030,7 +1127,7 @@ function DetailInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                if (isProductManager) {
+                if (!record.isSelfCreate) {
                   const taxRate =
                     form.getFieldValue([
                       'main_product',
@@ -1052,15 +1149,10 @@ function DetailInfo({
                         message: '',
                       },
                     ]}
-                    normalize={(val) => val ?? 0}
                   >
-                    <InputNumber
-                      min={0}
-                      max={100}
+                    <Select
                       style={{ width: 100 }}
-                      precision={0}
-                      addonAfter="%"
-                      controls={false}
+                      options={DEFAULT_TAX_RATES}
                     />
                   </Form.Item>
                 )
@@ -1125,8 +1217,8 @@ function DetailInfo({
                     ? ['append', 'remove']
                     : ['append']
                   : lengthProduct
-                    ? ['append', 'remove']
-                    : ['append']
+                    ? ['onAppendFromMasterOrCreateNewAction', 'remove']
+                    : ['onAppendFromMasterOrCreateNewAction']
 
                 const handleAppend = () => {
                   if (isHeader) {
@@ -1164,6 +1256,17 @@ function DetailInfo({
                   }
                 }
 
+                const onAppendFromMasterOrCreateNewAction = (
+                  type: CreateProductType,
+                ) => {
+                  const _isSelfCreate = type === 'create_new'
+                  handleAddProduct(
+                    record.index,
+                    record.index2 + 1,
+                    _isSelfCreate,
+                  )
+                }
+
                 const handleRemove = () => {
                   if (isHeader) {
                     remove(record.index)
@@ -1175,6 +1278,9 @@ function DetailInfo({
                 return (
                   <Action
                     actionList={actionList}
+                    onAppendFromMasterOrCreateNewAction={
+                      onAppendFromMasterOrCreateNewAction
+                    }
                     onAppendAction={handleAppend}
                     onRemoveAction={handleRemove}
                   />
