@@ -39,9 +39,13 @@ export default function Page() {
   const { data, isLoading } = useList<ParameterSettingControllerIndexResponse>({
     queryOptions: {
       select: (data) => {
+        const allowedNames = ['単価ランクマスタ', '承認ルート設定']
+        const filteredData = data.data.filter((item: any) =>
+          allowedNames.includes(item.name),
+        )
         return {
           ...data,
-          data: sortBy(data.data, ({ resource }: ParameterItemType) => {
+          data: sortBy(filteredData, ({ resource }: ParameterItemType) => {
             return resource && !PARAMETER_SETTING_EXCLUDE.has(resource)
           }),
         } as GetListResponse<ParameterSettingControllerIndexResponse>

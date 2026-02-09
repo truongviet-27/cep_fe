@@ -97,42 +97,51 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               align: 'left',
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
-                <Form.Item
-                  name={[index, 'name']}
-                  required
-                  rules={[
-                    { required: true, message: '' },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value) {
-                          return Promise.resolve()
-                        }
-                        const packagings = getFieldValue('packagings') || []
-                        const isDuplicate = packagings.some(
-                          (item: { name: string }, i: number) =>
-                            i !== index && item?.name?.trim() === value?.trim(),
-                        )
-                        if (isDuplicate) {
-                          notification.error({
-                            message: '',
-                            description: `${value}という荷姿名は複数です。`,
-                            key: `name-${value?.trim()}`,
-                            placement: 'topRight',
-                          })
-                          return Promise.reject(
-                            new Error(t('validation.duplicate_name')),
+                <>
+                  {index === 0 && (
+                    <div className="mt-1">
+                      {form.getFieldValue(['packagings', index, 'name'])}
+                    </div>
+                  )}
+                  <Form.Item
+                    name={[index, 'name']}
+                    hidden={index === 0}
+                    required
+                    rules={[
+                      { required: true, message: '' },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value) {
+                            return Promise.resolve()
+                          }
+                          const packagings = getFieldValue('packagings') || []
+                          const isDuplicate = packagings.some(
+                            (item: { name: string }, i: number) =>
+                              i !== index &&
+                              item?.name?.trim() === value?.trim(),
                           )
-                        }
-                        return Promise.resolve()
-                      },
-                    }),
-                  ]}
-                  className="ant-form-item-hidden-margin"
-                  style={{ marginBottom: '0px !important' }}
-                  help=""
-                >
-                  <Input />
-                </Form.Item>
+                          if (isDuplicate) {
+                            notification.error({
+                              message: ``,
+                              description: `${value}という荷姿名は複数です。`,
+                              key: `name-${value?.trim()}`,
+                              placement: 'topRight',
+                            })
+                            return Promise.reject(
+                              new Error(t('validation.duplicate_name')),
+                            )
+                          }
+                          return Promise.resolve()
+                        },
+                      }),
+                    ]}
+                    className="ant-form-item-hidden-margin"
+                    style={{ marginBottom: '0px !important' }}
+                    help=""
+                  >
+                    <Input />
+                  </Form.Item>
+                </>
               ),
             },
             {
@@ -141,39 +150,47 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               width: 15,
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
-                <CoreInput
-                  name={[index, 'barcode']}
-                  styleForm={{ marginBottom: '0px !important' }}
-                  rules={[
-                    {
-                      pattern: /^[0-9]*$/,
-                      message: '',
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value) {
-                          return Promise.resolve()
-                        }
-                        const packagings = getFieldValue('packagings') || []
-                        const isDuplicate = packagings.some(
-                          (item: { barcode: string }, i: number) =>
-                            i !== index &&
-                            item?.barcode?.trim() === value?.trim(),
-                        )
-                        if (isDuplicate) {
-                          notification.error({
-                            message: '',
-                            description: `${value}というバーコードは複数です。`,
-                            key: `barcode-${value?.trim()}`,
-                            placement: 'topRight',
-                          })
-                          return Promise.reject(new Error(''))
-                        }
-                        return Promise.resolve()
+                <>
+                  {index === 0 && (
+                    <div className="mt-1">
+                      {form.getFieldValue(['packagings', index, 'barcode'])}
+                    </div>
+                  )}
+                  <CoreInput
+                    name={[index, 'barcode']}
+                    styleForm={{ marginBottom: '0px !important' }}
+                    hidden={index === 0}
+                    rules={[
+                      {
+                        pattern: /^[0-9]*$/,
+                        message: '',
                       },
-                    }),
-                  ]}
-                />
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value) {
+                            return Promise.resolve()
+                          }
+                          const packagings = getFieldValue('packagings') || []
+                          const isDuplicate = packagings.some(
+                            (item: { barcode: string }, i: number) =>
+                              i !== index &&
+                              item?.barcode?.trim() === value?.trim(),
+                          )
+                          if (isDuplicate) {
+                            notification.error({
+                              message: ``,
+                              description: `${value}というバーコードは複数です。`,
+                              key: `barcode-${value?.trim()}`,
+                              placement: 'topRight',
+                            })
+                            return Promise.reject(new Error(''))
+                          }
+                          return Promise.resolve()
+                        },
+                      }),
+                    ]}
+                  />
+                </>
               ),
             },
             {
@@ -182,57 +199,70 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               width: 10,
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
-                <Form.Item
-                  name={[index, 'quantity_in_package']}
-                  required
-                  rules={[{ required: true, message: '' }]}
-                  className="ant-form-item-hidden-margin"
-                  style={{ marginBottom: '0px !important' }}
-                  help=""
-                >
-                  <InputNumber
-                    min={1}
-                    controls={false}
-                    onChange={(value) => {
-                      const costPrice =
-                        (value as number) * getFieldValue('selling_price')
-                      setFieldValue(
-                        ['packagings', index, 'cost_price' as keyof object],
-                        costPrice,
-                      )
-
-                      if (
-                        getFieldValue([
-                          'packagings',
-                          index,
-                          'is_standard_price',
-                        ])
-                      ) {
+                <>
+                  {index === 0 && (
+                    <div className="mt-1">
+                      {form.getFieldValue([
+                        'packagings',
+                        index,
+                        'quantity_in_package',
+                      ])}
+                    </div>
+                  )}
+                  <Form.Item
+                    name={[index, 'quantity_in_package']}
+                    required
+                    hidden={index === 0}
+                    rules={[{ required: true, message: '' }]}
+                    className="ant-form-item-hidden-margin"
+                    style={{ marginBottom: '0px !important' }}
+                    help=""
+                  >
+                    <InputNumber
+                      min={1}
+                      controls={false}
+                      onChange={(value) => {
+                        const costPrice =
+                          (value as number) * getFieldValue('selling_price')
                         setFieldValue(
-                          ['packagings', index, 'selling_price'],
+                          ['packagings', index, 'cost_price' as keyof object],
                           costPrice,
                         )
-                      }
 
-                      const rankObject: Record<string, number> = {}
+                        if (
+                          getFieldValue([
+                            'packagings',
+                            index,
+                            'is_standard_price',
+                          ])
+                        ) {
+                          setFieldValue(
+                            ['packagings', index, 'selling_price'],
+                            costPrice,
+                          )
+                        }
 
-                      ranks?.data?.forEach(({ id, rate }) => {
-                        rankObject[`rank_${id}`] = Math.round(
-                          ((rate ?? 0) / 100) * getFieldValue('selling_price'),
-                        )
+                        const rankObject: Record<string, number> = {}
 
-                        setFieldValue(
-                          ['packagings', index, `rank_${id}` as keyof object],
-                          Math.round(
+                        ranks?.data?.forEach(({ id, rate }) => {
+                          rankObject[`rank_${id}`] = Math.round(
                             ((rate ?? 0) / 100) *
-                              (value as number) *
                               getFieldValue('selling_price'),
-                          ),
-                        )
-                      })
-                    }}
-                  />
-                </Form.Item>
+                          )
+
+                          setFieldValue(
+                            ['packagings', index, `rank_${id}` as keyof object],
+                            Math.round(
+                              ((rate ?? 0) / 100) *
+                                (value as number) *
+                                getFieldValue('selling_price'),
+                            ),
+                          )
+                        })
+                      }}
+                    />
+                  </Form.Item>
+                </>
               ),
             },
             {
@@ -272,20 +302,34 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => {
                 return (
-                  <Form.Item
-                    className="ant-form-item-hidden-margin"
-                    name={[index, 'selling_price']}
-                    required
-                    rules={[
-                      { required: true, message: t('validation.required') },
-                    ]}
-                  >
-                    <InputNumber
-                      min={0}
-                      controls={false}
-                      disabled={packagings?.[index]?.is_standard_price}
-                    />
-                  </Form.Item>
+                  <>
+                    {index === 0 && (
+                      <div className="mt-1">
+                        {Number(
+                          form.getFieldValue([
+                            'packagings',
+                            index,
+                            'selling_price',
+                          ]),
+                        ).toLocaleString()}
+                      </div>
+                    )}
+                    <Form.Item
+                      className="ant-form-item-hidden-margin"
+                      name={[index, 'selling_price']}
+                      required
+                      hidden={index === 0}
+                      rules={[
+                        { required: true, message: t('validation.required') },
+                      ]}
+                    >
+                      <InputNumber
+                        min={0}
+                        controls={false}
+                        disabled={packagings?.[index]?.is_standard_price}
+                      />
+                    </Form.Item>
+                  </>
                 )
               },
             },
@@ -345,9 +389,12 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   columns={columns}
                   dataSource={fields}
                   pagination={false}
-                  // rowClassName="bg-[#BBBBBB] hover:!bg-[#ccc]"
                   scroll={fields.length ? { y: 55 * 5, x: 1500 } : { x: 1000 }}
-                  rowClassName={(_, index) => (!index ? 'hidden' : '')}
+                  rowClassName={(_, index) =>
+                    index === 0
+                      ? 'bg-gray-200 opacity-80 pointer-events-none'
+                      : ''
+                  }
                   locale={{
                     emptyText: (
                       <div className="text-center text-gray-300">
@@ -355,22 +402,6 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       </div>
                     ),
                   }}
-                  summary={
-                    fields.length == 1
-                      ? () => (
-                          <Table.Summary.Row className="!bg-white">
-                            <Table.Summary.Cell
-                              index={0}
-                              colSpan={9}
-                              align="center"
-                              className="!p-[11px] text-gray-300"
-                            >
-                              データがありません。
-                            </Table.Summary.Cell>
-                          </Table.Summary.Row>
-                        )
-                      : undefined
-                  }
                 />
               </Form.Item>
               <div className="mt-4 text-right">

@@ -22,6 +22,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  notification,
   Row,
   Typography,
 } from 'antd'
@@ -216,6 +217,35 @@ function DetailInfo({
                       {
                         required: true,
                         message: '',
+                      },
+                      {
+                        validator: async () => {
+                          const products =
+                            form.getFieldValue([
+                              'main_product',
+                              record.index,
+                              'products',
+                            ]) || []
+                          const currentProductId =
+                            products[record.index2]?.product_id
+                          if (!currentProductId) return Promise.resolve()
+                          const isDuplicate = products.some(
+                            (item: any, idx: number) =>
+                              item.product_id === currentProductId &&
+                              idx !== record.index2,
+                          )
+                          if (isDuplicate) {
+                            notification.error({
+                              message: t(
+                                'quotas.action.detail_info.duplicate_product',
+                              ),
+                              key: `name-main-product`,
+                              placement: 'topRight',
+                            })
+                            return Promise.reject()
+                          }
+                          return Promise.resolve()
+                        },
                       },
                     ]}
                   >

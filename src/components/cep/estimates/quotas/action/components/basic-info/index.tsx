@@ -175,6 +175,20 @@ const BasicInfo = ({
     }
   }
 
+  useEffect(() => {
+    if (
+      codeIssueSetting?.data?.issue_method === 'automatic' &&
+      !form.getFieldValue('code')
+    ) {
+      refetchIssueSetting().then(({ data: latestData }) => {
+        const code = latestData?.data?.preview_code
+        if (code) {
+          form.setFieldsValue({ code })
+        }
+      })
+    }
+  }, [codeIssueSetting?.data?.issue_method, form, refetchIssueSetting])
+
   const handleOpenContactModal = () => {
     if (!selectedCustomerId) {
       return

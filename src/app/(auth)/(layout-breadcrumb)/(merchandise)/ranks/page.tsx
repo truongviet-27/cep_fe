@@ -93,23 +93,39 @@ export default function Page() {
       render: (_: any, record: BaseRecord) => (
         <Space>
           <ShowButton
-            hideText
+            icon={false}
             size="small"
             onClick={() => {
               setIsShow(true)
               editModalShow(record.id)
             }}
-          />
+            autoInsertSpace={false}
+          >
+            <span>{t('buttons.show')}</span>
+          </ShowButton>
+
           <EditButton
-            hideText
+            icon={false}
             size="small"
+            type="primary"
             onClick={() => {
               setIsShow(false)
               editModalShow(record.id)
             }}
             recordItemId={record.id}
-          />
-          <DeleteButton hideText size="small" recordItemId={record.id} />
+            autoInsertSpace={false}
+          >
+            {t('buttons.edit')}
+          </EditButton>
+
+          <DeleteButton
+            icon={false}
+            size="small"
+            recordItemId={record.id}
+            autoInsertSpace={false}
+          >
+            {t('buttons.delete')}
+          </DeleteButton>
         </Space>
       ),
     },

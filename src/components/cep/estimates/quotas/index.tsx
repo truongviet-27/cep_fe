@@ -10,18 +10,24 @@ import {
   EyeOutlined,
   RightOutlined,
 } from '@ant-design/icons'
+import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import {
+  QuotaStatus,
+  TRANSACTION_TYPES,
+} from '@components/cep/estimates/quotas/enum'
 import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
 import {
   getActionPermissions,
   getExpiryDate,
   getQuotaStatusStyle,
+  STATUS_DATE_RULES,
 } from '@components/cep/estimates/quotas/utils'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import useCurrency from '@hook/use-currency'
 import {
   CloneButton,
   DeleteButton,
@@ -31,6 +37,7 @@ import {
   useTable,
 } from '@refinedev/antd'
 import {
+  type CrudFilters,
   type OpenNotificationParams,
   useApiUrl,
   useCustom,
@@ -76,7 +83,7 @@ const { RangePicker } = DatePicker
 
 function QuotaList() {
   const t = useTranslate()
-
+  const { convertCurrency } = useCurrency()
   const apiUrl = useApiUrl()
 
   const { permission } = useUserStore.getState()
@@ -91,9 +98,13 @@ function QuotaList() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [options, setOptions] = useState<ItemType[]>([])
   const [selectedRows, setSelectedRows] = useState<any>()
-
+  const rightOptions: ItemType[] = [
+    { key: 1, label: t('quotas.actions.new_create') },
+    { key: 2, label: t('quotas.actions.create_from_template') },
+  ]
+  const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
   const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
-
+  console.log('isCreateFromTemplate', isCreateFromTemplate)
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
     selectedRows: any,
@@ -239,8 +250,9 @@ function QuotaList() {
             <div>{record?.author?.name}</div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: any, index: number) => {
+                const numSteps = item?.number_step ?? 1
                 const isApproved = item.status === 'approved'
-                const numberIcon = String.fromCharCode(9312 + index)
+                const numberIcon = String.fromCharCode(9311 + numSteps)
                 return (
                   <span
                     key={index}
@@ -459,7 +471,7 @@ function QuotaList() {
       ],
     },
     onSearch(values: any) {
-      return [
+      const filters: CrudFilters = [
         {
           field: 'status',
           operator: 'eq',
@@ -478,12 +490,12 @@ function QuotaList() {
         {
           field: 'customer_name',
           operator: 'eq',
-          value: values.customer_name,
+          value: values.customer_name?.label?.trim(),
         },
         {
           field: 'creator_name',
           operator: 'eq',
-          value: values.creator_name,
+          value: values.creator_name?.label?.trim(),
         },
         {
           field: 'tag_name',
@@ -493,7 +505,7 @@ function QuotaList() {
         {
           field: 'approver_name',
           operator: 'eq',
-          value: values.approver_name,
+          value: values.approver_name?.label?.trim(),
         },
         {
           field: 'department_in_charge',
@@ -520,15 +532,32 @@ function QuotaList() {
             : null,
         },
       ]
+      if (values.transaction_type) {
+        filters.push({
+          field: 'transaction_type',
+          operator: 'eq',
+          value: values.transaction_type?.trim(),
+        })
+      }
+      return filters
     },
   })
 
+  const form = searchFormProps.form
+
   useEffect(() => {
-    setStatus(
+    if (!form) return
+    const currentStatus =
       filters?.find((filter: any) => filter?.field === 'status')?.value ||
-        QuotaStatus.Creating,
-    )
-  }, [])
+      QuotaStatus.Creating
+
+    setStatus(currentStatus)
+    const rule = STATUS_DATE_RULES[currentStatus]
+    form.setFieldsValue({
+      search_date_type: rule?.dateType ?? 'created_at',
+      date: rule?.getRange ? rule.getRange() : null,
+    })
+  }, [form])
 
   const onChangeStatus = useCallback(
     (status: string | null) => {
@@ -540,9 +569,18 @@ function QuotaList() {
           value: status,
         },
       ])
+
+      if (form) {
+        const rule = status ? STATUS_DATE_RULES[status] : undefined
+        form?.setFieldsValue({
+          search_date_type: rule?.dateType ?? 'created_at',
+          date: rule?.getRange ? rule.getRange() : null,
+        })
+      }
+
       setCurrent(1)
     },
-    [status, setFilters, setCurrent],
+    [form, status, setFilters, setCurrent],
   )
 
   const handleOptions = (data: any[]) => {
@@ -614,6 +652,11 @@ function QuotaList() {
   const statusDashboard = useMemo(() => {
     return statusData.map((item) => ({
       ...item,
+      total_amount: convertCurrency(
+        data?.data['total_amount_' + item.key],
+        true,
+        false,
+      ),
       value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
   }, [data, t])
@@ -801,17 +844,17 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.customer')}
-                  </span>
-                }
-                layout="vertical"
-                name={'customer_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="customer_name"
+                pageSize={10}
+                optionLabel={'name'}
+                resource="customers"
+                label={<span>{boldText(t('quotas.filters.customer'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
@@ -825,30 +868,28 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.creator')}
-                  </span>
-                }
-                layout="vertical"
-                name={'creator_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="creator_name"
+                pageSize={10}
+                resource="employees"
+                label={<span>{boldText(t('quotas.filters.creator'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.approver')}
-                  </span>
-                }
-                layout="vertical"
-                name={'approver_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="approver_name"
+                pageSize={10}
+                resource="employees"
+                label={<span>{boldText(t('quotas.filters.approver'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
               <CoreAutocompleteAPI
@@ -932,6 +973,26 @@ function QuotaList() {
                 />
               </Form.Item>
             </Col>
+            <Col xs={12} md={6} lg={4}>
+              <Form.Item
+                label={
+                  <span>{boldText(t('quotas.filters.transaction_type'))}</span>
+                }
+                layout="vertical"
+                name={'transaction_type'}
+              >
+                <Select
+                  allowClear={true}
+                  placeholder={t('placeholders.select')}
+                  options={[
+                    ...TRANSACTION_TYPES.map((type) => ({
+                      ...type,
+                      label: t(type.labelKey),
+                    })),
+                  ]}
+                />
+              </Form.Item>
+            </Col>
 
             <Col xs={12} md={6}>
               <div className="mt-7 mb-6 flex gap-2">
@@ -943,7 +1004,6 @@ function QuotaList() {
                   {t('buttons.search')}
                 </Button>
                 <Button
-                  htmlType="reset"
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
@@ -1046,28 +1106,26 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="flex justify-end gap-2">
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  onClick={() => {
-                    go({
-                      to: 'quota-templates',
-                    })
+              <div className="flex justify-end">
+                <Dropdown
+                  menu={{
+                    items: rightOptions,
+                    onClick: ({ key }) => {
+                      if (key == '1') {
+                        go({ to: 'quotas/create' })
+                      } else if (key == '2') {
+                        setIsCreateFromTemplate(true)
+                      }
+                    },
                   }}
                 >
-                  {t('quotas.actions.template_list')}
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    go({
-                      to: 'quotas/create',
-                    })
-                  }}
-                >
-                  {t('quotas.actions.new_create')}
-                </Button>
+                  <Button type="primary">
+                    <Space>
+                      {t('quotas.create_quota')}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
               </div>
             </Col>
           </Row>
@@ -1095,6 +1153,13 @@ function QuotaList() {
           onSuccess={notificationFunction}
         />
       </Modal>
+      {isCreateFromTemplate && (
+        <CreateFromTemplate
+          open={isCreateFromTemplate}
+          t={t}
+          onClose={() => setIsCreateFromTemplate(false)}
+        ></CreateFromTemplate>
+      )}
     </List>
   )
 }

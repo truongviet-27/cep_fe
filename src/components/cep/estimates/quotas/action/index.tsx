@@ -174,8 +174,12 @@ function QuotaAction() {
     useCustomMutation()
 
   const handlePreviewPdf = () => {
+    const delivery_date = form.getFieldValue('delivery_date')
+      ? form.getFieldValue('delivery_date').format('YYYY/MM/DD HH:mm')
+      : null
     const customValues = {
       ...form.getFieldsValue(),
+      delivery_date: delivery_date,
       tags: form.getFieldValue('tags').map((item: any) => ({
         id: item?.value,
         name: item?.label,
@@ -184,7 +188,6 @@ function QuotaAction() {
       customer_name: form.getFieldValue('customer')?.label,
       status: QuotaStatus.Creating,
     }
-
     mutatePreviewPdf(
       {
         values: customValues,
