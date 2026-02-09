@@ -190,7 +190,7 @@ function Page() {
           </Col>
           <Col xs={12} sm={6} md={6}>
             <Form.Item
-              label={boldText(t('price_groups.fields.is_rate_based'))}
+              label={boldText(t('price_groups.fields.pricing_method'))}
               layout="vertical"
               name="setting_method"
             >
@@ -230,8 +230,9 @@ function Page() {
           scroll={{ x: 'max-content' }}
         >
           <Table.Column
-            dataIndex={['product_code']}
+            dataIndex={['packaging_code']}
             title={t('price-groups.fields.product_code')}
+            align="left"
             render={(product_code, record) => (
               <Link
                 href={`/products/show/${record.product_id}`}
@@ -247,14 +248,7 @@ function Page() {
           <Table.Column
             dataIndex="product_name"
             title={t('price-groups.fields.product_name')}
-          />
-          <Table.Column
-            dataIndex="category"
-            title={t('price-groups.fields.category')}
-          />
-          <Table.Column
-            dataIndex="unit"
-            title={t('price-groups.fields.unit')}
+            align="left"
           />
           <Table.Column
             dataIndex="packaging_name"
@@ -278,12 +272,15 @@ function Page() {
           />
 
           <Table.Column
-            dataIndex={['is_rate_based']}
-            title={t('price-groups.fields.is_rate_based')}
+            dataIndex="pricing_method"
+            title={t('price-groups.fields.pricing_method')}
             render={(value, record, index) => {
-              const currentVal = value
-                ? t('price_groups.fields.percentage')
-                : t('price_groups.fields.absolute')
+              const currentVal =
+                value === 'percentage'
+                  ? t('price_groups.fields.percentage')
+                  : value === 'list_price'
+                    ? t('price_groups.fields.list_price')
+                    : t('price_groups.fields.absolute')
               return (
                 <>
                   <Form.Item
@@ -297,25 +294,22 @@ function Page() {
 
                   <Form.Item
                     initialValue={value}
-                    name={[index, 'is_rate_based']}
+                    name={[index, 'pricing_method']}
                     className={'!m-0 !h-0 !p-0 !pb-5'}
                   >
                     {record?.packaging_id &&
                     !includes(editIds, record.packaging_id) ? (
                       currentVal
                     ) : (
-                      <Radio.Group className={''}>
-                        <Radio value={true}>
-                          {t('price_groups.fields.percentage')}
-                        </Radio>
-                        <Radio
-                          value={false}
-                          onChange={() => {
+                      <Select
+                        style={{ width: '80px' }}
+                        placeholder={t('price_groups.fields.pricing_method')}
+                        onChange={(value) => {
+                          if (value === 'fixed') {
                             const rankPrices = getCurrentPrices(index)
-
                             rankPrices?.forEach((item, indexChild) => {
                               form.setFieldValue(
-                                [indexChild, 'rank_prices', index, `price`],
+                                [indexChild, 'rank_prices', index, 'price'],
                                 Math.round(
                                   ((record?.selling_price ?? 0) *
                                     (item?.rate ?? 0)) /
@@ -323,11 +317,23 @@ function Page() {
                                 ),
                               )
                             })
-                          }}
-                        >
-                          {t('price_groups.fields.absolute')}
-                        </Radio>
-                      </Radio.Group>
+                          }
+                        }}
+                        options={[
+                          {
+                            label: t('price_groups.fields.percentage'),
+                            value: 'percentage',
+                          },
+                          {
+                            label: t('price_groups.fields.absolute'),
+                            value: 'fixed',
+                          },
+                          {
+                            label: t('price_groups.fields.list_price'),
+                            value: 'list_price',
+                          },
+                        ]}
+                      />
                     )}
                   </Form.Item>
                 </>
@@ -354,8 +360,12 @@ function Page() {
                   }
                   render={(value, record, index) => {
                     const rankPrices = getCurrentPrices(index)
-                    const is_rate_based = !!(watch as any)?.[index]
-                      ?.is_rate_based
+
+                    const pricing_method =
+                      (watch as any)?.[index]?.pricing_method ?? 'percentage'
+                    if (pricing_method === 'list_price') {
+                      return Number(record?.selling_price).toLocaleString()
+                    }
 
                     const currentPrice =
                       rankPrices?.find((i) => i.rank_id === item.id)?.price ?? 0
@@ -365,7 +375,7 @@ function Page() {
 
                     if (!isEditing) return Number(currentPrice).toLocaleString()
 
-                    if (isEditing && !is_rate_based) {
+                    if (isEditing && pricing_method === 'fixed') {
                       return (
                         <>
                           <Form.Item
@@ -404,7 +414,7 @@ function Page() {
               const onClick = () => {
                 form.setFieldValue([index], {
                   packaging_id: record.packaging_id,
-                  is_rate_based: record.is_rate_based,
+                  pricing_method: record.pricing_method,
                 })
                 onEditRow(record.packaging_id)
               }
@@ -415,15 +425,20 @@ function Page() {
                     <SaveButton
                       onClick={handleSaveAll}
                       loading={loadingCreate}
-                      hideText
                       size="small"
-                    />
+                      icon={false}
+                      autoInsertSpace={false}
+                    >
+                      {t('buttons.save')}
+                    </SaveButton>
                     <DeleteButton
-                      hideText
-                      icon={<CloseOutlined />}
+                      icon={false}
                       size="small"
                       onClick={onClick}
-                    />
+                      autoInsertSpace={false}
+                    >
+                      {t('buttons.delete')}
+                    </DeleteButton>
                   </Space>
                 )
               }
@@ -431,9 +446,12 @@ function Page() {
                 <EditButton
                   onClick={onClick}
                   loading={tableProps.loading}
-                  hideText
                   size="small"
-                />
+                  icon={false}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.edit')}
+                </EditButton>
               )
             }}
           />

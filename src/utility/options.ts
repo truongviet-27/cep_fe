@@ -280,7 +280,8 @@ export const settingMethodOptions: {
   label: string
 }[] = [
   { value: 'percentage', label: '掛率' },
-  { value: 'absolute', label: '絶対' },
+  { value: 'fixed', label: '絶対' },
+  { value: 'list_price', label: '掛率' },
 ]
 
 export const prefectureOptions = [

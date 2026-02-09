@@ -3,9 +3,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import CoreInput from '@components/common/core-input'
 import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
 import UploadImage from '@components/common/upload-image/upload-image'
-import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
-import type { Rank } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -33,13 +31,11 @@ interface BasicInfoProps {
   >
   isAllowedSaveButton: boolean
 
-  ranks?: GetListResponse<Rank>
   setIsAllowedSaveButton: (value: boolean) => void
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
-  const { form, addRef, isAllowedSaveButton, ranks, setIsAllowedSaveButton } =
-    props
+  const { form, addRef, isAllowedSaveButton, setIsAllowedSaveButton } = props
   const t = useTranslate()
   const [
     {
@@ -56,7 +52,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       handleSearchProductUnit,
       handleAppendPackaging,
     },
-  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton, ranks)
+  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton)
 
   const { show, close, open } = modalFormProps
   const {

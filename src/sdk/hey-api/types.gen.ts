@@ -1889,7 +1889,10 @@ export type PriceGroupItem = {
   unit?: string
   selling_price?: number
   is_active?: boolean
-  is_rate_based?: boolean
+  /**
+   * Pricing method used for this packaging
+   */
+  pricing_method?: 'rate' | 'absolute' | 'fixed'
   rank_prices?: Array<{
     rank_id?: number
     rank_code?: string
@@ -1943,7 +1946,10 @@ export type PriceGroupListResponse = {
  */
 export type PriceGroupUpdateItem = {
   packaging_id: number
-  is_rate_based?: boolean | null
+  /**
+   * Pricing method used for this packaging
+   */
+  pricing_method?: 'rate' | 'absolute' | 'fixed'
   rank_prices?: Array<PackagingRankPriceInput> | null
 }
 
@@ -2000,7 +2006,10 @@ export type ProductCustomerPricingPackaging = {
   standard_price?: number
   selling_price?: number
   is_active?: boolean
-  is_rate_based?: boolean
+  /**
+   * Pricing method used for this packaging
+   */
+  pricing_method?: 'rate' | 'absolute' | 'fixed'
   is_standard_price?: boolean
   is_default_packaging?: boolean
   /**
@@ -2067,10 +2076,8 @@ export type ProductPackaging = {
   unit?: string
   standard_price?: number
   selling_price?: number
-  is_rate_based?: boolean
   is_standard_price?: boolean
   is_default_packaging?: boolean
-  rank_prices?: Array<PackagingRankPrice>
 }
 
 /**
@@ -2106,17 +2113,9 @@ export type ProductPackagingInput = {
    */
   is_standard_price: boolean
   /**
-   * If true rank prices are generated from rank rate * selling_price
-   */
-  is_rate_based: boolean
-  /**
    * Manual selling price (ignored if is_standard_price = true)
    */
   selling_price?: number | null
-  /**
-   * Manual rank prices list when not rate based
-   */
-  rank_prices?: Array<PackagingRankPriceInput> | null
 }
 
 /**
@@ -7838,7 +7837,10 @@ export type ProductCategoryControllerGetProductsResponses = {
           standard_price?: number | null
           selling_price?: number | null
           is_active?: boolean
-          is_rate_based?: boolean
+          /**
+           * Pricing method used for this packaging
+           */
+          pricing_method?: 'rate' | 'absolute' | 'fixed'
           is_standard_price?: boolean
           rank_prices?: Array<{
             rank_id?: number
