@@ -216,7 +216,7 @@ function BasicInfo({
               name="department"
               label={boldText(t('quotas.show.department_name'))}
             >
-              {data?.department.name}
+              {data?.department?.name}
             </Form.Item>
           </Col>
         </Row>
@@ -251,7 +251,7 @@ function BasicInfo({
               name="approve_route"
               label={boldText(t('quotas.show.approve_route'))}
             >
-              {data?.approve_route.name}
+              {data?.approve_route?.name}
             </Form.Item>
           </Col>
         </Row>
