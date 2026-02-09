@@ -190,7 +190,7 @@ function Page() {
           </Col>
           <Col xs={12} sm={6} md={6}>
             <Form.Item
-              label={boldText(t('price_groups.fields.is_rate_based'))}
+              label={boldText(t('price_groups.fields.pricing_method'))}
               layout="vertical"
               name="setting_method"
             >
@@ -273,14 +273,14 @@ function Page() {
 
           <Table.Column
             dataIndex="pricing_method"
-            title={t('price-groups.fields.is_rate_based')}
+            title={t('price-groups.fields.pricing_method')}
             render={(value, record, index) => {
-              const currentVal = value
-              value === 'percentage'
-                ? t('price_groups.fields.percentage')
-                : value === 'list_price'
-                  ? t('price_groups.fields.list_price')
-                  : t('price_groups.fields.absolute')
+              const currentVal =
+                value === 'percentage'
+                  ? t('price_groups.fields.percentage')
+                  : value === 'list_price'
+                    ? t('price_groups.fields.list_price')
+                    : t('price_groups.fields.absolute')
               return (
                 <>
                   <Form.Item
@@ -301,18 +301,15 @@ function Page() {
                     !includes(editIds, record.packaging_id) ? (
                       currentVal
                     ) : (
-                      <Radio.Group className={''}>
-                        <Radio value="percentage">
-                          {t('price_groups.fields.percentage')}
-                        </Radio>
-                        <Radio
-                          value="fixed"
-                          onChange={() => {
+                      <Select
+                        style={{ width: '80px' }}
+                        placeholder={t('price_groups.fields.pricing_method')}
+                        onChange={(value) => {
+                          if (value === 'fixed') {
                             const rankPrices = getCurrentPrices(index)
-
                             rankPrices?.forEach((item, indexChild) => {
                               form.setFieldValue(
-                                [indexChild, 'rank_prices', index, `price`],
+                                [indexChild, 'rank_prices', index, 'price'],
                                 Math.round(
                                   ((record?.selling_price ?? 0) *
                                     (item?.rate ?? 0)) /
@@ -320,14 +317,23 @@ function Page() {
                                 ),
                               )
                             })
-                          }}
-                        >
-                          {t('price_groups.fields.absolute')}
-                        </Radio>
-                        <Radio value="list_price">
-                          {t('price_groups.fields.list_price')}
-                        </Radio>
-                      </Radio.Group>
+                          }
+                        }}
+                        options={[
+                          {
+                            label: t('price_groups.fields.percentage'),
+                            value: 'percentage',
+                          },
+                          {
+                            label: t('price_groups.fields.absolute'),
+                            value: 'fixed',
+                          },
+                          {
+                            label: t('price_groups.fields.list_price'),
+                            value: 'list_price',
+                          },
+                        ]}
+                      />
                     )}
                   </Form.Item>
                 </>

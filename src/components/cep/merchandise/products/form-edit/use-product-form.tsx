@@ -1,10 +1,7 @@
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useForm } from '@refinedev/antd'
-import { useList, useParsed } from '@refinedev/core'
-import type { ProductDetail, Rank, StoreProductInput } from '@sdk/hey-api'
-import { ParameterResourceEnum } from '@sdk/hey-api'
-import { useUserStore } from '@stores/useUserStore'
-import { isNumber } from 'lodash'
+import { useParsed } from '@refinedev/core'
+import type { ProductDetail, StoreProductInput } from '@sdk/hey-api'
 
 export type ProductFormType = {
   unit: string
@@ -30,7 +27,6 @@ export type ProductFormType = {
 
 function useProductForm() {
   const { params } = useParsed()
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   const methods = useForm<ProductFormType>({
     resource: 'products',
@@ -49,16 +45,8 @@ function useProductForm() {
             unit: data?.unit?.name,
             unit_id: data?.unit?.id,
             packagings: packagings.map((packaging) => {
-              const ranks: Record<string, number> = {}
-              ;(packaging.rank_prices || []).forEach(({ rank_id, price }) => {
-                if (rank_id && isNumber(rank_id) && isNumber(price)) {
-                  ranks[`rank_${rank_id}`] = price
-                }
-              })
-
               return {
                 ...packaging,
-                ...ranks,
                 cost_price: data.cost_price || 0,
               }
             }),
@@ -68,32 +56,11 @@ function useProductForm() {
     },
   })
 
-  const { data: ranks } = useList<Rank>({
-    resource: 'ranks',
-    queryOptions: {
-      enabled: parameterSettings?.get?.(ParameterResourceEnum.RANKS),
-    },
-  })
-
   const handleOnSubmit = (values: ProductFormType) => {
     const packagings = (values?.packagings || []).map(
       (packaging: ProductPackagingInputType) => {
-        const rank_prices: Array<{
-          rank_id: number
-          price: number
-        }> = []
-        ranks?.data?.forEach(({ id }) => {
-          if (!id) return
-
-          rank_prices.push({
-            rank_id: id,
-            price: (packaging?.[`rank_${id}`] ?? 0) as number,
-          })
-        })
-
         return {
           ...packaging,
-          rank_prices,
         }
       },
     )
@@ -111,7 +78,6 @@ function useProductForm() {
       methods,
       isLoadingSubmit: methods.saveButtonProps.loading,
       isUpdateMode: !!params?.id,
-      ranks,
     },
     { handleOnSubmit },
   ] as const

@@ -4,8 +4,6 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
-import { ParameterResourceEnum } from '@sdk/hey-api'
-import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -26,7 +24,6 @@ import { useRef, useState } from 'react'
 
 import BasicInfo from './basic-info'
 import PackagingUnitPrice from './packaging-unit-price'
-import PriceGroup from './price-group'
 import type { ProductFormType } from './use-product-form'
 import useProductForm from './use-product-form'
 
@@ -35,15 +32,12 @@ const { Title } = Typography
 const ProductFormContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const [
-    { ranks, methods, isLoadingSubmit, isUpdateMode },
-    { handleOnSubmit },
-  ] = useProductForm()
+  const [{ methods, isLoadingSubmit, isUpdateMode }, { handleOnSubmit }] =
+    useProductForm()
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
   const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
   const [showEditPackaging, setShowEditPackaging] = useState<boolean>(false)
 
   return (
@@ -103,7 +97,6 @@ const ProductFormContainer: React.FC = () => {
                     addRef={addRef}
                     isAllowedSaveButton={isAllowedSaveButton}
                     setIsAllowedSaveButton={setIsAllowedSaveButton}
-                    ranks={ranks}
                   />
                 ),
               },
@@ -139,7 +132,6 @@ const ProductFormContainer: React.FC = () => {
                   <PackagingUnitPrice
                     form={form as unknown as FormInstance<ProductFormType>}
                     addRef={addRef}
-                    ranks={ranks}
                   />
                 ),
               },
@@ -153,38 +145,6 @@ const ProductFormContainer: React.FC = () => {
               />
             )}
           />
-          {parameterSettings.get(ParameterResourceEnum.RANKS) && (
-            <Collapse
-              style={{
-                marginTop: '20px',
-                display: 'none',
-              }}
-              items={[
-                {
-                  key: 1,
-                  label: (
-                    <span className="font-bold">
-                      {t('products.unitPriceGroup.tableTitle')}
-                    </span>
-                  ),
-                  children: (
-                    <PriceGroup
-                      form={form as unknown as FormInstance<ProductFormType>}
-                      ranks={ranks}
-                    />
-                  ),
-                },
-              ]}
-              expandIconPosition="end"
-              defaultActiveKey={[1]}
-              expandIcon={({ isActive }) => (
-                <DownOutlined
-                  style={{ transition: '0.3s' }}
-                  rotate={isActive ? 180 : 0}
-                />
-              )}
-            />
-          )}
 
           {isUpdateMode && (
             <>
