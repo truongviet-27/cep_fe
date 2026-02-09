@@ -1,20 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
-import ShowMoreInfo from '@components/common/show-more-info'
 import { useForm } from '@refinedev/antd'
 import { useCreate, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import {
-  Button,
-  Col,
-  DatePicker,
-  Divider,
-  Flex,
-  Form,
-  Row,
-  Space,
-  Tag,
-} from 'antd'
+import { Button, Col, DatePicker, Flex, Form, Row, Space, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo } from 'react'
 
@@ -179,26 +168,6 @@ function ModalAgreePrice({
           </Form.Item>
         </Col>
       </Row>
-
-      <Divider />
-      <ShowMoreInfo
-        descriptions={[
-          {
-            title: t('approve_routes.show.creator'),
-            value:
-              (data?.author?.name ?? '---') +
-              ' ' +
-              dayjs(data?.created_at).format('YYYY/MM/DD HH:mm'),
-          },
-          {
-            title: t('approve_routes.show.updater'),
-            value:
-              (data?.editor?.name ?? '---') +
-              ' ' +
-              dayjs(data?.updated_at).format('YYYY/MM/DD HH:mm'),
-          },
-        ]}
-      />
 
       <Flex
         justify="end"

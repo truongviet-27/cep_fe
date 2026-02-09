@@ -2664,6 +2664,7 @@ export type QuotaResource = {
    * Quota ID
    */
   id?: number
+  tax_rounding_method: RoundingMethodEnumType
   /**
    * Unique quota code
    */
@@ -3271,10 +3272,7 @@ export type QuotaFormSettingResponse = {
    * Formatted tax rate with percentage sign
    */
   formatted_tax_rate?: string
-  /**
-   * Tax calculation rounding method
-   */
-  tax_rounding_method?: 'round_down' | 'round_up' | 'round_nearest'
+  tax_rounding_method: RoundingMethodEnumType
   /**
    * Sale price rounding method
    */
@@ -4216,6 +4214,21 @@ export type Role = {
    */
   display_name?: string | null
 }
+
+/**
+ * Tax rounding methods
+ */
+export const RoundingMethodEnumType = {
+  ROUND_DOWN: 'round_down',
+  ROUND_UP: 'round_up',
+  ROUND_NEAREST: 'round_nearest',
+} as const
+
+/**
+ * Tax rounding methods
+ */
+export type RoundingMethodEnumType =
+  (typeof RoundingMethodEnumType)[keyof typeof RoundingMethodEnumType]
 
 /**
  * Rank price item for a packaging
@@ -5491,6 +5504,103 @@ export type CustomerControllerUpdateResponses = {
 
 export type CustomerControllerUpdateResponse =
   CustomerControllerUpdateResponses[keyof CustomerControllerUpdateResponses]
+
+export type CustomerControllerUpdateStatusData = {
+  body?: never
+  path: {
+    /**
+     * The unique identifier of the customer
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/customers/id}/status'
+}
+
+export type CustomerControllerUpdateStatusErrors = {
+  /**
+   * Customer not found
+   */
+  404: {
+    message?: string
+  }
+  /**
+   * Validation error
+   */
+  422: {
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type CustomerControllerUpdateStatusError =
+  CustomerControllerUpdateStatusErrors[keyof CustomerControllerUpdateStatusErrors]
+
+export type CustomerControllerUpdateStatusResponses = {
+  /**
+   * Customer status updated successfully
+   */
+  200: {
+    message?: string
+    data?: Customer
+  }
+}
+
+export type CustomerControllerUpdateStatusResponse =
+  CustomerControllerUpdateStatusResponses[keyof CustomerControllerUpdateStatusResponses]
+
+export type CustomerControllerCountData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/customers/count'
+}
+
+export type CustomerControllerCountErrors = {
+  /**
+   * Validation error
+   */
+  422: {
+    success?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type CustomerControllerCountError =
+  CustomerControllerCountErrors[keyof CustomerControllerCountErrors]
+
+export type CustomerControllerCountResponses = {
+  /**
+   * Customer counts retrieved successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      total?: number
+      status_counts?: Array<{
+        status?: string
+        label?: string
+        count?: number
+      }>
+    }
+  }
+}
+
+export type CustomerControllerCountResponse =
+  CustomerControllerCountResponses[keyof CustomerControllerCountResponses]
 
 export type CustomerControllerRestoreData = {
   body?: never

@@ -57,15 +57,15 @@ const App = (props: React.PropsWithChildren) => {
   }
 
   const customNotificationProvider: NotificationProvider = {
-    open: ({ message, type, key }) => {
+    open: ({ description, type, key }) => {
       if (type !== 'progress') {
         notification[type]({
-          message: message,
+          message: description,
           key,
         })
       } else {
         notification.info({
-          message: message,
+          message: description,
           key,
         })
       }

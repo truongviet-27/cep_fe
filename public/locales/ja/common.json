@@ -48,7 +48,7 @@
     "add_delivery_destination": "追加",
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
-    "show": "show",
+    "show": "詳細",
     "refresh": "refresh",
     "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？",
     "clone": "クローン",
@@ -97,9 +97,9 @@
     "business_partner": "取引先"
   },
   "customers": {
-    "customers": "取引先一覧",
+    "customers": "取引一覧",
     "list": {
-      "list": "取引先一覧"
+      "list": "取引一覧"
     },
     "create": {
       "create": "取引先登録",
@@ -165,6 +165,11 @@
       "manual_input_placeholder": "会社種別を手入力",
       "status": "ステータス",
       "total_revenue": "年間取引額 (円)"
+    },
+    "tables": {
+      "header": {
+        "code": "コード"
+      }
     },
     "delivery": {
       "code": "納品先コード",
@@ -374,7 +379,7 @@
     }
   },
   "ranks": {
-    "ranks": "単価ランク",
+    "ranks": "単価ランクマスタ",
     "titles": {
       "clone": "clone",
       "edit": "edit"
@@ -382,7 +387,7 @@
     "list": {
       "list": "ランク",
       "filters": {
-        "search_label": "ランク・説明",
+        "search_label": "ランク・備考",
         "search_placeholder": "部分一致"
       }
     },
@@ -407,7 +412,7 @@
     },
     "table": {
       "code": "ランク",
-      "name": "説明",
+      "name": "備考",
       "unit_price": "単価"
     }
   },
@@ -416,8 +421,8 @@
   },
   "approve_routes": {
     "home": "見積",
-    "parent": "承認ルート",
-    "approve_routes": "承認ルート",
+    "parent": "承認ルート設定",
+    "approve_routes": "承認ルート設定",
     "list": "承認ルート一覧",
     "detail": "承認ルート詳細",
     "create": "承認ルート登録",
@@ -580,7 +585,7 @@
     }
   },
   "product_categories": {
-    "product_categories": "商品カテゴリ設定",
+    "product_categories": "商品カテゴリ一覧",
     "all_open": "すべて閉じる",
     "all_close": "すべて開く",
     "validate": {
@@ -598,7 +603,7 @@
     "no_data_on_page": "このページにはデータがありません"
   },
   "parameter_settings": {
-    "parameter_settings": "パラメーター設定",
+    "parameter_settings": "パラメパラメーター設定",
     "description": "説明",
     "is_manage": "管理する",
     "not_manage": "管理しない"
@@ -858,6 +863,9 @@
       }
     }
   },
+  "user_management": {
+    "user_management": "ユーザー管理"
+  },
   "departments": {
     "departments": "部門",
     "list": {
@@ -917,7 +925,7 @@
     }
   },
   "product_units": {
-    "product_units": "商品単位設定",
+    "product_units": "単位設定",
     "filters": {
       "label": "単位名",
       "placeholder": "部分一致",
@@ -1123,7 +1131,7 @@
   "price_groups": {
     "message": "ランク別単価について",
     "message_description": "掛率で自動設定後に「操作」から絶対値金額に修正可能です。見積書作成時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
-    "price_groups": "ランク別商品単価",
+    "price_groups": "単価ランク（商品別)",
     "product_price_by_rank": "ランク別単価",
     "business_partner": "取引先",
     "list": {
@@ -1156,10 +1164,11 @@
   },
 
   "agreed_prices": {
-    "title": "継続見積管理",
+    "title": "継続見積一覧",
     "description": "※継続契約に関する見積内容の確認と見積期限、更新を管理します。",
     "parent": "確定見積一覧",
-    "agreed_prices": "継続見積管理",
+    "agreed_prices": "継続見積一覧",
+    "tooltip": "基本契約に基づく継続契約の見積一覧です。",
     "tab": {
       "decided_estimate_list": "確定見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
@@ -1266,6 +1275,40 @@
     "created_at": "作成日",
     "not_set": "未設定",
     "coming_soon": "近日公開",
-    "error_loading_data": "データの読み込み中にエラーが発生しました"
+    "error_loading_data": "データの読み込み中にエラーが発生しました",
+    "note": "注意"
+  },
+
+  "images": {
+    "modal": { "title": "画像を更新" },
+    "tabs": {
+      "computer": "コンピュータから",
+      "web_link": "ウェブリンク"
+    },
+    "actions": {
+      "change": "画像を変更",
+      "delete": "削除",
+      "upload": "画像をアップロード",
+      "select_another": "別のファイルを選択"
+    },
+    "dragger": {
+      "hint": "ここにファイルをドラッグ＆ドロップ",
+      "formats": "対応形式: JPG, PNG, WEBP",
+      "max_size": "最大容量：5MB"
+    },
+    "url_input": {
+      "label": "画像のURL",
+      "placeholder": "URLを貼り付け (https://...)",
+      "warning_note": "リンク切れを防ぐため、この画像はシステムにダウンロードされ保存されます。"
+    },
+    "notifications": {
+      "upload_success": "画像のアップロードに成功しました",
+      "input_url_warning": "画像のリンクを入力してください",
+      "size_error": "画像サイズが5MBを超えています。別の画像を選択してください。",
+      "copyright_error": "この画像リンクには著作権があります。著作権のないリンクを使用するか、画像アップロード機能をご利用ください。",
+      "format_error": "形式のファイルのみアップロード可能です。",
+      "size_limit": "画像サイズは5MB以下にしてください。",
+      "select_file_warning": "ファイルを選択してください"
+    }
   }
 }

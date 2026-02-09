@@ -1,6 +1,6 @@
 /* eslint-disable */
 'use client'
-
+// todo confirm BA
 import { CloseOutlined, RightOutlined } from '@ant-design/icons'
 import usePriceGroups from '@app/(auth)/(layout-breadcrumb)/(merchandise)/price-groups/use-price-groups'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'

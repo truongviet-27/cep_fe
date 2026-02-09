@@ -11,6 +11,10 @@ export type PermissionType = {
     id: number
     name: string
   }
+  department?: {
+    id: number
+    name: string
+  }
   permissions: Set<PermissionEnum>
 }
 

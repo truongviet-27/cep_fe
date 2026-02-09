@@ -10,6 +10,7 @@ import {
   Select,
   Space,
   TableColumnsType,
+  Tooltip,
 } from 'antd'
 import React, { useState } from 'react'
 import CommonTable from '@components/common/table'
@@ -62,7 +63,6 @@ export const CorporateNumberSearchModal: React.FC<
 > = ({ modalProps, onSelect }) => {
   const t = useTranslate()
   const [searchForm] = Form.useForm()
-  const watchName = Form.useWatch('name', searchForm)
 
   const { visible, close } = modalProps
 
@@ -72,13 +72,13 @@ export const CorporateNumberSearchModal: React.FC<
     history: string
     address: null | number
   }>({
-    name: '国税庁',
+    name: '',
     type: '02',
     history: '0',
     address: null,
   })
 
-  const { data, isLoading } = useCustom({
+  const { data, isFetching } = useCustom({
     url: `/api/corporate-number`,
     dataProviderName: 'corporationProvider',
     method: 'post',
@@ -90,6 +90,9 @@ export const CorporateNumberSearchModal: React.FC<
         { field: 'address', operator: 'eq', value: params.address },
       ],
       payload: params,
+    },
+    queryOptions: {
+      enabled: !!params.name || !!params.address,
     },
   })
 
@@ -103,17 +106,34 @@ export const CorporateNumberSearchModal: React.FC<
       title: t('customers.modal.name'),
       dataIndex: 'name',
       key: 'name',
+      width: 250,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text: string) => (
+        <Tooltip placement="topLeft" title={text} color="rgb(240, 249, 255)">
+          {text}
+        </Tooltip>
+      ),
     },
     {
       title: t('customers.modal.address'),
       dataIndex: 'address_outside',
       key: 'streetNumber',
+      width: 250,
+      ellipsis: {
+        showTitle: false,
+      },
       render: (_, record) => {
+        const addressText = `${record.prefectureName || ''}${record.cityName || ''}${record.streetNumber || ''}`
         return (
-          <div>
-            {record.streetNumber}
-            {record.cityName}
-          </div>
+          <Tooltip
+            placement="topLeft"
+            title={addressText}
+            color="rgb(240, 249, 255)"
+          >
+            {addressText}
+          </Tooltip>
         )
       },
     },
@@ -121,10 +141,16 @@ export const CorporateNumberSearchModal: React.FC<
       title: t('customers.modal.corporate_number'),
       dataIndex: 'corporateNumber',
       key: 'corporateNumber',
-      render: (_, record) => {
+      width: 200,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text: string, record) => {
         return (
           <Space size={20} direction={'horizontal'}>
-            {record.corporateNumber}
+            <span style={{ display: 'inline-block', maxWidth: 150 }}>
+              {text}
+            </span>
             <Button
               type="primary"
               onClick={() => handleSelect(record)}
@@ -147,6 +173,12 @@ export const CorporateNumberSearchModal: React.FC<
 
   const handleClear = () => {
     searchForm.resetFields()
+    setParams({
+      name: '',
+      type: '02',
+      history: '0',
+      address: null,
+    })
   }
 
   return (
@@ -157,7 +189,6 @@ export const CorporateNumberSearchModal: React.FC<
         onFinish={handleSearch}
         className="mb-4"
         colon={false}
-        initialValues={params}
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} md={6}>
@@ -194,14 +225,18 @@ export const CorporateNumberSearchModal: React.FC<
           <Col xs={24} md={6}>
             <Form.Item className={'!mt-7.5'}>
               <Space>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={!watchName}
-                  autoInsertSpace={false}
-                >
-                  {t('buttons.search')}
-                </Button>
+                <Form.Item shouldUpdate noStyle>
+                  {({ getFieldValue }) => (
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      disabled={!getFieldValue('name')}
+                      autoInsertSpace={false}
+                    >
+                      {t('buttons.search')}
+                    </Button>
+                  )}
+                </Form.Item>
                 <Button onClick={handleClear}>{t('buttons.clear')}</Button>
               </Space>
             </Form.Item>
@@ -210,11 +245,17 @@ export const CorporateNumberSearchModal: React.FC<
       </Form>
 
       <CommonTable
-        loading={isLoading}
-        dataSource={data?.data?.corporations}
+        loading={isFetching}
+        dataSource={
+          !!params.name || !!params.address
+            ? data?.data?.corporations
+            : undefined
+        }
         columns={columns as any}
-        rowKey="id"
+        rowKey="corporateNumber"
         pagination={false}
+        scroll={{ y: 400 }}
+        tableLayout="fixed"
       />
     </div>
   )

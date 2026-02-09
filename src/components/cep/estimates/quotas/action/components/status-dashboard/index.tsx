@@ -10,6 +10,7 @@ const StatusDashboard = ({
   statusData: {
     title: string
     value: number
+    total_amount: string
     color?: string
     key: string | null
   }[]
@@ -48,9 +49,14 @@ const StatusDashboard = ({
             {isLoading ? (
               <Spin size="small" />
             ) : (
-              <div style={{ color: item.color || 'inherit', fontSize: 16 }}>
-                {item.value}
-              </div>
+              <>
+                <div style={{ color: item.color || 'inherit', fontSize: 16 }}>
+                  {item.value}
+                </div>
+                {item.key && (
+                  <div style={{ fontSize: 16 }}>({item.total_amount})</div>
+                )}
+              </>
             )}
             <div style={{ marginTop: 8, fontSize: 12 }}>{item.title}</div>
           </Card>

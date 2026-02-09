@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RightOutlined } from '@ant-design/icons'
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import {
+  CustomerTerm,
+  QuotaStatus,
+} from '@components/cep/estimates/quotas/enum'
 import BasicInfo from '@components/cep/estimates/quotas/show/components/basic-info'
 import DetailInfo from '@components/cep/estimates/quotas/show/components/detail-info'
 import History from '@components/cep/estimates/quotas/show/components/history'
@@ -22,6 +25,8 @@ import {
   useParsed,
   useTranslate,
 } from '@refinedev/core'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
@@ -36,6 +41,8 @@ function QuotaDetail() {
   const t = useTranslate()
 
   const { permission } = useUserStore.getState()
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
   const [dataAgreedPrice, setDataAgreedPrice] = useState<any>()
   const { modalProps, close, show } = useModal()
 
@@ -60,7 +67,12 @@ function QuotaDetail() {
     url: `${apiUrl}/quotas/${id}`,
     method: 'get',
   })
-
+  useEffect(() => {
+    // khi quota show, lay setting cua quota, khong lay setting cua tenant
+    if (queryBasic?.data) {
+      setTaxRoundingMethod(queryBasic.data.tax_rounding_method)
+    }
+  }, [queryBasic?.data])
   const {
     data: dataProducts,
     isFetching: isFetchingProducts,
@@ -350,6 +362,7 @@ function QuotaDetail() {
               )}
 
             {queryBasic?.data?.status === QuotaStatus.Completed &&
+              queryBasic?.data?.customer_term === CustomerTerm.LongTerm &&
               (permission?.is_module_admin || queryBasic?.data?.is_author) &&
               !queryBasic?.data?.has_agreed_price && (
                 <Button
@@ -404,6 +417,7 @@ function QuotaDetail() {
             }
           />
           <DetailInfo
+            taxRoundingMethod={taxRoundingMethod}
             data={dataProducts?.data?.main_product}
             basicInfo={queryBasic?.data}
           />

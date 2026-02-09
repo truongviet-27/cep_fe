@@ -27,7 +27,7 @@ export const ProductCategoryModal = ({
   const form = Form.useFormInstance()
   const apiUrl = useApiUrl()
   const categoryIdWatch = Form.useWatch('category_id', form)
-  const customerIdWatch = Form.useWatch('customer', form)?.value
+  const rankIdWatch = form.getFieldValue('rank_id')
   const mainProductWatch = Form.useWatch(name, form)
 
   const isDirtyProduct = (mainProductWatch ?? [])[0]?.products[0]?.product_id
@@ -36,7 +36,7 @@ export const ProductCategoryModal = ({
 
   const { data, isFetching } = useCustom({
     method: 'get',
-    url: `${apiUrl}/product-categories/${categoryIdWatch}/products?rank_id=${customerIdWatch}`,
+    url: `${apiUrl}/product-categories/${categoryIdWatch}/products?rank_id=${rankIdWatch}`,
     queryOptions: {
       enabled: !!categoryIdWatch,
     },
@@ -75,7 +75,10 @@ export const ProductCategoryModal = ({
                   unit_name: item?.unit?.name,
                   cost_price: item?.cost_price,
                   quantity: 1,
-                  selling_price: 0,
+                  selling_price:
+                    item?.packagings[0]?.rank_prices != 0
+                      ? item?.packagings[0]?.rank_prices
+                      : item?.packagings[0]?.selling_price,
                   tax_rate: item?.tax_rate,
                   profit_margin: 0,
                   is_add_total: true,
@@ -109,7 +112,10 @@ export const ProductCategoryModal = ({
                   cost_price: item?.cost_price,
                   quantity: 1,
                   tax_rate: item?.tax_rate,
-                  selling_price: 0,
+                  selling_price:
+                    item?.packagings[0]?.rank_prices != 0
+                      ? item?.packagings[0]?.rank_prices
+                      : item?.packagings[0]?.selling_price,
                   profit_margin: 0,
                   is_add_total: true,
                 })),
@@ -125,7 +131,8 @@ export const ProductCategoryModal = ({
     } else {
       open &&
         open({
-          message: t('quotas.action.modal.no_products.description'),
+          message: '',
+          description: t('quotas.action.modal.no_products.description'),
           type: 'error',
         })
     }

@@ -281,7 +281,8 @@ export default function CustomerShowPage() {
             type="primary"
             disabled={
               params?.disable ||
-              !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
+              !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT) ||
+              !!(record as any)?.deleted_at
             }
             onClick={() =>
               data?.data.id &&

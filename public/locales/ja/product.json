@@ -44,7 +44,8 @@
     "register": "登録",
     "edit": "編集",
     "save": "保存",
-    "back": "戻る"
+    "back": "戻る",
+    "addPackage": "荷姿追加"
   },
   "links": {
     "csvUpload": "CSV一括登録"
@@ -97,6 +98,8 @@
   },
   "codeNumberingSettings": "コード採番設定はこちら",
   "newRegistration": "新規登録",
+  "createNew": "新規入力",
+  "createFromMaster": "マスターから選択",
   "pleaseSelect": "選択してください",
   "productCategoryEdit": "商品カテゴリ新規登録",
   "breadcrumb": {
