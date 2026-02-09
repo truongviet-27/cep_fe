@@ -13,6 +13,7 @@ import {
 import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
+  CustomerTerm,
   QuotaStatus,
   TRANSACTION_TYPES,
 } from '@components/cep/estimates/quotas/enum'
@@ -411,6 +412,7 @@ function QuotaList() {
             )}
 
             {record.status === QuotaStatus.Completed &&
+              record.customer_term === CustomerTerm.LongTerm &&
               (permission?.is_module_admin || record.is_author) &&
               !record?.has_agreed_price && (
                 <Button

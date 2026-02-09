@@ -42,6 +42,11 @@ export enum ExpirationDate {
   YEARS_1 = 'years_1',
 }
 
+export enum CustomerTerm {
+  ShortTerm = 'short_term',
+  LongTerm = 'long_term',
+}
+
 export const TRANSACTION_TYPES = [
   {
     labelKey: 'quotas.transaction_type.short_term_service',

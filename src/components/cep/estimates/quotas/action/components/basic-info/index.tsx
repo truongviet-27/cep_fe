@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line simple-import-sort/imports */
 import { useCallback, useEffect, useState } from 'react'
+import './basic-info.css'
 
 import {
   Button,
@@ -64,6 +65,18 @@ const BasicInfo = ({
   const issueDate = Form.useWatch('issue_date', form)
   const customer = Form.useWatch('customer', form)
   const selectedContactId = Form.useWatch('customer_contact_id', form)
+
+  // Set default approve_route when approve_routes data is available
+  useEffect(() => {
+    const approveRoutes = form.getFieldValue('approve_routes')
+    const currentApproveRoute = form.getFieldValue('approve_route_id')
+
+    if (approveRoutes?.length > 0 && !currentApproveRoute) {
+      form.setFieldsValue({
+        approve_route: approveRoutes[0].id,
+      })
+    }
+  }, [form.getFieldValue('approve_routes')])
 
   const { data: customerContactData } = useCustom<CustomerContact>({
     url: selectedContactId
@@ -231,13 +244,15 @@ const BasicInfo = ({
           </Col>
         </Row>
 
-        <Row gutter={[8, 0]}>
+        {/* Row 1: Estimate Number + Customer */}
+        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               required
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_number'),
               )}
+              labelCol={{ span: 4 }}
               className="[&>.ant-row]:!flex-nowrap"
             >
               <div className="flex flex-row flex-nowrap items-center gap-4">
@@ -302,96 +317,10 @@ const BasicInfo = ({
               </div>
             </Form.Item>
           </Col>
-        </Row>
-        <Row>
-          <Col xs={24} xl={5}>
-            <Form.Item
-              required
-              name={'type'}
-              label={boldText(
-                t('quotas.action.basic_info.fields.estimate_type'),
-              )}
-              rules={[
-                {
-                  required: true,
-                  message: t('validations.required'),
-                },
-              ]}
-            >
-              <Radio.Group
-                options={[
-                  {
-                    value: 'normal',
-                    label: t('quotas.action.basic_info.types.normal'),
-                  },
-                  {
-                    value: 'channel_limited',
-                    label: t('quotas.action.basic_info.types.limited'),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} xl={5}>
-            <Form.Item
-              required
-              name={'category'}
-              label={boldText(
-                t('quotas.action.basic_info.fields.estimate_category'),
-              )}
-              rules={[
-                {
-                  required: true,
-                  message: t('validations.required'),
-                },
-              ]}
-            >
-              <Radio.Group
-                options={[
-                  {
-                    value: 'merchandise',
-                    label: t('quotas.action.basic_info.categories.merchandise'),
-                  },
-                  {
-                    value: 'service',
-                    label: t('quotas.action.basic_info.categories.service'),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              required
-              label={boldText(t('quotas.action.basic_info.fields.title'))}
-              name={'title'}
-              rules={[
-                {
-                  required: true,
-                  message: t('quotas.validation.basic_info.required.title'),
-                },
-                {
-                  whitespace: true,
-                  message: t('quotas.validation.basic_info.invalid_format'),
-                },
-                {
-                  max: 255,
-                  message: t('quotas.validation.basic_info.max255'),
-                },
-              ]}
-            >
-              <Input disabled={isCloneVersion} />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               label={boldText(t('quotas.action.basic_info.fields.customer'))}
+              labelCol={{ span: 4 }}
               required
             >
               <Row gutter={[8, 0]} align="top" wrap={false}>
@@ -406,7 +335,7 @@ const BasicInfo = ({
                         ),
                       },
                     ]}
-                    style={{ marginBottom: 0 }}
+                    className="no-margin-bottom-important"
                   >
                     <Select
                       key={`customer-select-${selectedCustomerId}`}
@@ -466,6 +395,107 @@ const BasicInfo = ({
               </Row>
             </Form.Item>
           </Col>
+        </Row>
+        {/* Row 2: Customer Term, Estimate Category + Customer Contact */}
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={5} lg={5} xl={5}>
+            <Form.Item
+              required
+              name={'type'}
+              className="hidden"
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_type'),
+              )}
+              labelCol={{ span: 4 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: 'normal',
+                    label: t('quotas.action.basic_info.types.normal'),
+                  },
+                  {
+                    value: 'channel_limited',
+                    label: t('quotas.action.basic_info.types.limited'),
+                  },
+                ]}
+              />
+            </Form.Item>
+
+            <Form.Item
+              required
+              name={'customer_term'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.customer_term'),
+              )}
+              labelCol={{ span: 5 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: 'short_term',
+                    label: t(
+                      'quotas.action.basic_info.customer_term.short_term',
+                    ),
+                  },
+                  {
+                    value: 'long_term',
+                    label: t(
+                      'quotas.action.basic_info.customer_term.long_term',
+                    ),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+          <Col
+            xs={24}
+            sm={16}
+            md={5}
+            lg={5}
+            xl={5}
+            style={{ paddingLeft: '0px' }}
+          >
+            <Form.Item
+              required
+              name={'category'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_category'),
+              )}
+              labelCol={{ span: 5 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: 'merchandise',
+                    label: t('quotas.action.basic_info.categories.merchandise'),
+                  },
+                  {
+                    value: 'service',
+                    label: t('quotas.action.basic_info.categories.service'),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             {/* Display selected contact information with validation */}
             <Form.Item
@@ -475,6 +505,7 @@ const BasicInfo = ({
                 ),
               )}
               name="customer_contact_id"
+              labelCol={{ span: 4 }}
               rules={[
                 {
                   required: true,
@@ -523,7 +554,7 @@ const BasicInfo = ({
                 >
                   <strong>
                     {t('quotas.action.customer_contact_modal.email')}:
-                  </strong>
+                  </strong>{' '}
                   {selectedContact?.email || ''}
                 </Col>
                 <Col>
@@ -539,14 +570,94 @@ const BasicInfo = ({
               </Row>
             </Form.Item>
           </Col>
+          <Col
+            xs={24}
+            sm={16}
+            md={10}
+            lg={10}
+            xl={2}
+            style={{ paddingLeft: '0px', marginLeft: '-20px' }}
+          >
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={handleOpenContactModal}
+                disabled={!selectedCustomerId}
+                size="small"
+                className="text-sm"
+              >
+                {t('quotas.action.customer_contact_modal.select_button')}
+              </Button>
+              <Button
+                color="danger"
+                variant="outlined"
+                onClick={() => {
+                  setSelectedContact(null)
+                  form.setFieldsValue({ customer_contact_id: null })
+                }}
+                disabled={!selectedContact}
+                size="small"
+                className="text-sm"
+              >
+                クリア
+              </Button>
+            </div>
+          </Col>
         </Row>
-        <Row gutter={[100, 0]} wrap>
+
+        {/* Row 3: Title + Delivery Date */}
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              required
+              label={boldText(t('quotas.action.basic_info.fields.title'))}
+              name={'title'}
+              labelCol={{ span: 4 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('quotas.validation.basic_info.required.title'),
+                },
+                {
+                  whitespace: true,
+                  message: t('quotas.validation.basic_info.invalid_format'),
+                },
+                {
+                  max: 255,
+                  message: t('quotas.validation.basic_info.max255'),
+                },
+              ]}
+            >
+              <Input disabled={isCloneVersion} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_date'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_date'),
+              )}
+              labelCol={{ span: 4 }}
+            >
+              <DatePicker
+                style={{ width: '100%' }}
+                placeholder={'YYYY/MM/DD'}
+                minDate={Form.useWatch('issue_date', form)}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* Row 4: Estimate Date + Payment Due Date */}
+        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               name={'issue_date'}
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_date'),
               )}
+              labelCol={{ span: 4 }}
               required
               rules={[
                 {
@@ -598,6 +709,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.payment_due_date'),
               )}
+              labelCol={{ span: 4 }}
             >
               <Select
                 allowClear
@@ -644,17 +756,49 @@ const BasicInfo = ({
           </Col>
         </Row>
 
+        {/* Row 5: Delivery Method + Department Name */}
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_method'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_method'),
+              )}
+              labelCol={{ span: 4 }}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item name={'department_id'} className="hidden">
+              <Input style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              name={'department_name'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.department_name'),
+              )}
+              labelCol={{ span: 4 }}
+            >
+              <Input disabled style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* Row 6: Expiration Date + Approve Route */}
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               label={boldText(
                 t('quotas.action.basic_info.fields.expiration_date'),
               )}
+              labelCol={{ span: 4 }}
             >
               <div style={{ alignItems: 'center', gap: 12 }}>
                 <Form.Item
+                  className="no-margin-bottom-important"
                   name={'expiration_date'}
-                  style={{ marginBottom: 0, flex: 1 }}
+                  style={{ flex: 1 }}
                 >
                   <Select
                     allowClear
@@ -710,7 +854,7 @@ const BasicInfo = ({
                     ]}
                   />
                 </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }}>
+                <Form.Item>
                   {expirationDate && (
                     <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
                       {dayjs(getExpiryDate(expirationDate, issueDate)).format(
@@ -723,40 +867,52 @@ const BasicInfo = ({
               </div>
             </Form.Item>
           </Col>
-
-          <Col xs={24} sm={16} md={14} lg={14} xl={11} xxl={10}>
-            <div className="flex flex-wrap gap-4">
-              <Form.Item
-                name="consumption_tax"
-                label={boldText(
-                  t('quotas.action.basic_info.fields.consumption_tax'),
-                )}
-                style={{ marginBottom: 0, flex: 1 }}
-                rules={[
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'approve_route_id'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.approve_route'),
+              )}
+              labelCol={{ span: 4 }}
+            >
+              <Select
+                style={{ width: '100%' }}
+                options={
+                  form.getFieldValue('approve_routes')?.map((route: any) => ({
+                    value: route.id,
+                    label: route.name,
+                  })) || []
+                }
+              />
+            </Form.Item>
+            {/* hidden form */}
+            <Form.Item
+              name="consumption_tax"
+              className="hidden"
+              label={boldText(
+                t('quotas.action.basic_info.fields.consumption_tax'),
+              )}
+              style={{ marginBottom: 0, flex: 1 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
                   {
-                    required: true,
-                    message: t('validations.required'),
+                    value: 'exclusive',
+                    label: t('tenant_settings.consumptionTax.taxExclusive'),
+                  },
+                  {
+                    value: 'external',
+                    label: t('tenant_settings.consumptionTax.taxExempt'),
                   },
                 ]}
-              >
-                <Radio.Group
-                  options={[
-                    {
-                      value: 'exclusive',
-                      label: t('tenant_settings.consumptionTax.taxExclusive'),
-                    },
-                    // {
-                    //   value: 'inclusive',
-                    //   label: t('tenant_settings.consumptionTax.taxInclusive'),
-                    // },
-                    {
-                      value: 'external',
-                      label: t('tenant_settings.consumptionTax.taxExempt'),
-                    },
-                  ]}
-                />
-              </Form.Item>
-            </div>
+              />
+            </Form.Item>
           </Col>
         </Row>
       </div>
