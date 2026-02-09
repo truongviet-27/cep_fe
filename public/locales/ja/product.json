@@ -98,6 +98,8 @@
   },
   "codeNumberingSettings": "コード採番設定はこちら",
   "newRegistration": "新規登録",
+  "createNew": "新規入力",
+  "createFromMaster": "マスターから選択",
   "pleaseSelect": "選択してください",
   "productCategoryEdit": "商品カテゴリ新規登録",
   "breadcrumb": {

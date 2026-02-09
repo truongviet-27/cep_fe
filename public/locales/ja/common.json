@@ -97,9 +97,9 @@
     "business_partner": "取引先"
   },
   "customers": {
-    "customers": "取引先一覧",
+    "customers": "取引一覧",
     "list": {
-      "list": "取引先一覧"
+      "list": "取引一覧"
     },
     "create": {
       "create": "取引先登録",
@@ -379,7 +379,7 @@
     }
   },
   "ranks": {
-    "ranks": "単価ランク",
+    "ranks": "単価ランクマスタ",
     "titles": {
       "clone": "clone",
       "edit": "edit"
@@ -421,8 +421,8 @@
   },
   "approve_routes": {
     "home": "見積",
-    "parent": "承認ルート",
-    "approve_routes": "承認ルート",
+    "parent": "承認ルート設定",
+    "approve_routes": "承認ルート設定",
     "list": "承認ルート一覧",
     "detail": "承認ルート詳細",
     "create": "承認ルート登録",
@@ -585,7 +585,7 @@
     }
   },
   "product_categories": {
-    "product_categories": "商品カテゴリ設定",
+    "product_categories": "商品カテゴリ一覧",
     "all_open": "すべて閉じる",
     "all_close": "すべて開く",
     "validate": {
@@ -603,7 +603,7 @@
     "no_data_on_page": "このページにはデータがありません"
   },
   "parameter_settings": {
-    "parameter_settings": "パラメーター設定",
+    "parameter_settings": "パラメパラメーター設定",
     "description": "説明",
     "is_manage": "管理する",
     "not_manage": "管理しない"
@@ -863,6 +863,9 @@
       }
     }
   },
+  "user_management": {
+    "user_management": "ユーザー管理"
+  },
   "departments": {
     "departments": "部門",
     "list": {
@@ -922,7 +925,7 @@
     }
   },
   "product_units": {
-    "product_units": "商品単位設定",
+    "product_units": "単位設定",
     "filters": {
       "label": "単位名",
       "placeholder": "部分一致",
@@ -1128,7 +1131,7 @@
   "price_groups": {
     "message": "ランク別単価について",
     "message_description": "掛率で自動設定後に「操作」から絶対値金額に修正可能です。見積書作成時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
-    "price_groups": "ランク別商品単価",
+    "price_groups": "単価ランク（商品別)",
     "product_price_by_rank": "ランク別単価",
     "business_partner": "取引先",
     "list": {
@@ -1165,6 +1168,7 @@
     "description": "※基本契約に基づく継続見積の契約期間管理です。",
     "parent": "確定見積一覧",
     "agreed_prices": "継続見積一覧",
+    "tooltip": "基本契約に基づく継続契約の見積一覧です。",
     "tab": {
       "decided_estimate_list": "確定見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"

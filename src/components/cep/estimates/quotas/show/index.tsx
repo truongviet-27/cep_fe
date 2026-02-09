@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RightOutlined } from '@ant-design/icons'
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import {
+  CustomerTerm,
+  QuotaStatus,
+} from '@components/cep/estimates/quotas/enum'
 import BasicInfo from '@components/cep/estimates/quotas/show/components/basic-info'
 import DetailInfo from '@components/cep/estimates/quotas/show/components/detail-info'
 import History from '@components/cep/estimates/quotas/show/components/history'
@@ -359,6 +362,7 @@ function QuotaDetail() {
               )}
 
             {queryBasic?.data?.status === QuotaStatus.Completed &&
+              queryBasic?.data?.customer_term === CustomerTerm.LongTerm &&
               (permission?.is_module_admin || queryBasic?.data?.is_author) &&
               !queryBasic?.data?.has_agreed_price && (
                 <Button

@@ -8,10 +8,12 @@ import type { TreeMenuItem } from '@refinedev/core/dist/hooks/menu/useMenu'
 import type { MenuProps } from 'antd'
 import { Menu as MenuAntd } from 'antd'
 import { last } from 'lodash'
+import { useTranslations } from 'next-intl'
 import React from 'react'
 
 function Menu() {
   const { menuItems, selectedKey } = useMenu()
+  const t = useTranslations()
 
   const go = useGo()
 
@@ -33,6 +35,8 @@ function Menu() {
     (menuItems as (TreeMenuItem & { isNotMenu: boolean })[]).filter(
       (menuItem) => !menuItem.isNotMenu,
     ),
+    [],
+    t,
   )
 
   return (
