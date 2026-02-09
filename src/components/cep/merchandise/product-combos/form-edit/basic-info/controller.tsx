@@ -1,13 +1,11 @@
 import { useDebounce } from '@hook/use-debounce'
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useModalForm } from '@refinedev/antd'
-import type { GetListResponse } from '@refinedev/core'
 import { useApiUrl, useCustom, useList } from '@refinedev/core'
 import type {
   CodeIssueSetting,
   ProductPackagingInput,
   ProductUnit,
-  Rank,
 } from '@sdk/hey-api'
 import type { Category } from '@utility/renderCategories'
 import { Form, type FormInstance } from 'antd'
@@ -23,7 +21,6 @@ export const useBasicInfoController = (
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >,
   setIsAllowedSaveButton: (value: boolean) => void,
-  ranks?: GetListResponse<Rank>,
 ) => {
   const apiUrl = useApiUrl()
   const [productUnitSearchText, setProductUnitSearchText] = useState<string>('')
@@ -146,14 +143,6 @@ export const useBasicInfoController = (
     const packagings: ProductPackagingInput[] = (getFieldValue('packagings') ??
       []) as ProductPackagingInput[]
 
-    const rankObject: Record<string, number> = {}
-
-    ranks?.data?.forEach(({ id, rate }) => {
-      rankObject[`rank_${id}`] = Math.round(
-        ((rate ?? 0) / 100) * getFieldValue('selling_price'),
-      )
-    })
-
     if (!packagings.length) {
       if (addRef.current) {
         //eslint-disable-next-line
@@ -166,9 +155,7 @@ export const useBasicInfoController = (
               unit_id: getFieldValue('unit_id'),
               selling_price: getFieldValue('selling_price'),
               is_standard_price: true,
-              is_rate_based: true,
               barcode: getFieldValue('barcode'),
-              ...rankObject,
             },
           ],
         })
@@ -182,15 +169,12 @@ export const useBasicInfoController = (
           ? {
               ...item,
               selling_price: getFieldValue('selling_price'),
-              ...rankObject,
             }
           : {
               ...item,
               selling_price:
                 getFieldValue('selling_price') *
                 getFieldValue(['packagings', index, 'quantity_in_package']),
-              is_rate_based: true,
-              ...rankObject,
             }
       }),
     })

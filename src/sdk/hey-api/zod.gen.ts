@@ -1135,7 +1135,7 @@ export const zPriceGroupItem = z.object({
   unit: z.optional(z.string()),
   selling_price: z.optional(z.int()),
   is_active: z.optional(z.boolean()),
-  is_rate_based: z.optional(z.boolean()),
+  pricing_method: z.optional(z.enum(['rate', 'absolute', 'fixed'])),
   rank_prices: z.optional(
     z.array(
       z.object({
@@ -1192,7 +1192,7 @@ export const zPackagingRankPriceInput = z.object({
  */
 export const zPriceGroupUpdateItem = z.object({
   packaging_id: z.int(),
-  is_rate_based: z.optional(z.union([z.boolean(), z.null()])),
+  pricing_method: z.optional(z.enum(['rate', 'absolute', 'fixed'])),
   rank_prices: z.optional(
     z.union([z.array(zPackagingRankPriceInput), z.null()]),
   ),
@@ -1229,7 +1229,7 @@ export const zProductCustomerPricingPackaging = z.object({
   standard_price: z.optional(z.int()),
   selling_price: z.optional(z.int()),
   is_active: z.optional(z.boolean()),
-  is_rate_based: z.optional(z.boolean()),
+  pricing_method: z.optional(z.enum(['rate', 'absolute', 'fixed'])),
   is_standard_price: z.optional(z.boolean()),
   is_default_packaging: z.optional(z.boolean()),
   rank_prices: z.optional(z.union([z.int(), z.null()])),
@@ -1279,10 +1279,8 @@ export const zProductPackaging = z.object({
   unit: z.optional(z.string()),
   standard_price: z.optional(z.int()),
   selling_price: z.optional(z.int()),
-  is_rate_based: z.optional(z.boolean()),
   is_standard_price: z.optional(z.boolean()),
   is_default_packaging: z.optional(z.boolean()),
-  rank_prices: z.optional(z.array(zPackagingRankPrice)),
 })
 
 /**
@@ -1350,11 +1348,7 @@ export const zProductPackagingInput = z.object({
   quantity_in_package: z.int().gte(1),
   unit_id: z.int(),
   is_standard_price: z.boolean(),
-  is_rate_based: z.boolean(),
   selling_price: z.optional(z.union([z.int(), z.null()])),
-  rank_prices: z.optional(
-    z.union([z.array(zPackagingRankPriceInput), z.null()]),
-  ),
 })
 
 /**
@@ -4116,7 +4110,9 @@ export const zProductCategoryControllerGetProductsResponse = z.object({
                   standard_price: z.optional(z.union([z.int(), z.null()])),
                   selling_price: z.optional(z.union([z.int(), z.null()])),
                   is_active: z.optional(z.boolean()),
-                  is_rate_based: z.optional(z.boolean()),
+                  pricing_method: z.optional(
+                    z.enum(['rate', 'absolute', 'fixed']),
+                  ),
                   is_standard_price: z.optional(z.boolean()),
                   rank_prices: z.optional(
                     z.array(

@@ -3,20 +3,9 @@
 import { Action } from '@components/common/action'
 import CoreInput from '@components/common/core-input'
 import CommonTable from '@components/common/table'
-import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
-import type { Rank } from '@sdk/hey-api'
 import type { FormInstance } from 'antd'
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  notification,
-  Table,
-} from 'antd'
+import { Button, Checkbox, Form, Input, InputNumber, notification } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { CheckboxChangeEvent } from 'antd/lib'
 import type { MutableRefObject } from 'react'
@@ -28,12 +17,10 @@ interface PackagingUnitPriceProps {
   addRef: MutableRefObject<
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >
-
-  ranks?: GetListResponse<Rank>
 }
 
 const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
-  const { form, addRef, ranks } = props
+  const { form, addRef } = props
   const t = useTranslate()
   const { getFieldValue, setFieldValue } = form
   const packagings = Form.useWatch('packagings', form) ?? []
@@ -241,24 +228,6 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                             costPrice,
                           )
                         }
-
-                        const rankObject: Record<string, number> = {}
-
-                        ranks?.data?.forEach(({ id, rate }) => {
-                          rankObject[`rank_${id}`] = Math.round(
-                            ((rate ?? 0) / 100) *
-                              getFieldValue('selling_price'),
-                          )
-
-                          setFieldValue(
-                            ['packagings', index, `rank_${id}` as keyof object],
-                            Math.round(
-                              ((rate ?? 0) / 100) *
-                                (value as number) *
-                                getFieldValue('selling_price'),
-                            ),
-                          )
-                        })
                       }}
                     />
                   </Form.Item>
@@ -409,14 +378,6 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   type="primary"
                   disabled={fields.length < 1}
                   onClick={() => {
-                    const rankObject: Record<string, number> = {}
-
-                    ranks?.data?.forEach(({ id, rate }) => {
-                      rankObject[`rank_${id}`] = Math.round(
-                        ((rate ?? 0) / 100) * getFieldValue('selling_price'),
-                      )
-                    })
-
                     add({
                       code: getFieldValue('code')
                         ? `${getFieldValue('code')}-${fields.length}`
@@ -428,8 +389,6 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       cost_price: getFieldValue(`selling_price`),
                       selling_price: getFieldValue(`selling_price`),
                       is_standard_price: true,
-                      is_rate_based: true,
-                      ...rankObject,
                     })
                   }}
                 >
