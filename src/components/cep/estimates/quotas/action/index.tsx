@@ -159,7 +159,7 @@ function QuotaAction() {
       {
         field: 'name',
         operator: 'eq',
-        value: '部門',
+        value: '全社',
       },
     ]
   }
