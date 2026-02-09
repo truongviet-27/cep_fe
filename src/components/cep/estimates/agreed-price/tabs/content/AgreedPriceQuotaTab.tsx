@@ -236,16 +236,22 @@ const AgreedPriceQuotaTab = () => {
           )
           return (
             <div>
-              <div>
-                {(record as any).valid_from
-                  ? dayjs((record as any).valid_from).format('YYYY/MM/DD')
-                  : '---'}
-              </div>
-              <div style={{ color: style.color }}>
-                {(record as any).valid_to
-                  ? dayjs((record as any).valid_to).format('YYYY/MM/DD')
-                  : '---'}
-              </div>
+              {record?.valid_from && record?.valid_to ? (
+                <>
+                  <div>
+                    {(record as any).valid_from
+                      ? dayjs((record as any).valid_from).format('YYYY/MM/DD')
+                      : '---'}
+                  </div>
+                  <div style={{ color: style.color }}>
+                    {(record as any).valid_to
+                      ? dayjs((record as any).valid_to).format('YYYY/MM/DD')
+                      : '---'}
+                  </div>
+                </>
+              ) : (
+                <span style={{ color: '#1FDB51' }}>無制限</span>
+              )}
             </div>
           )
         },

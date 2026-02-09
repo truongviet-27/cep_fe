@@ -663,34 +663,6 @@ const BasicInfo = ({
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              name={'delivery_date'}
-              label={boldText(
-                t('quotas.action.basic_info.fields.delivery_date'),
-              )}
-            >
-              <DatePicker
-                style={{ width: '100%' }}
-                placeholder={FORMAT_DATE_CROSS}
-                format={FORMAT_DATE_CROSS}
-                minDate={Form.useWatch('issue_date', form)}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'delivery_method'}
-              label={boldText(
-                t('quotas.action.basic_info.fields.delivery_method'),
-              )}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
               name={'payment_due_date'}
               label={boldText(
                 t('quotas.action.basic_info.fields.payment_due_date'),
