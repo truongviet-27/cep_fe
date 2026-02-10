@@ -55,7 +55,7 @@
     "codeHint": "コード体系の定義はこちら"
   },
   "validation": {
-    "codeFormat": "(A-Z, 0-9, .-)"
+    "codeFormat": "(A-Z, 0-9, -)"
   },
   "text": {
     "active": "有効",

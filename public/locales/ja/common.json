@@ -267,7 +267,7 @@
       "codeHint": "コード体系の定義はこちら"
     },
     "validation": {
-      "codeFormat": "(A-Z, 0-9, .-)"
+      "codeFormat": "(A-Z, 0-9, -)"
     },
     "text": {
       "active": "有効",
@@ -385,7 +385,7 @@
       "edit": "edit"
     },
     "list": {
-      "list": "ランク",
+      "list": "単価ランクマスタ",
       "filters": {
         "search_label": "ランク・備考",
         "search_placeholder": "部分一致"
@@ -412,7 +412,7 @@
     },
     "table": {
       "code": "ランク",
-      "name": "備考",
+      "note": "備考",
       "unit_price": "単価"
     }
   },
@@ -605,8 +605,8 @@
   "parameter_settings": {
     "parameter_settings": "パラメパラメーター設定",
     "description": "説明",
-    "is_manage": "管理する",
-    "not_manage": "管理しない"
+    "is_manage": "利用する",
+    "not_manage": "利用しない"
   },
   "estimate_form_settings": {
     "estimate_form_settings": "見積フォーム設定"

@@ -31,7 +31,7 @@ import {
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { CSV_LINK, PRIMARY } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE, FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   antiSocialCheckOptions,
   countryOptions,
@@ -397,8 +397,8 @@ export default function CustomerListPage() {
               style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
-              i18n={'code_issue_settings.fields.updated_at'}
-              style={{ fontSize: 12 }}
+              i18n={'customers.fields.anti_social_check_date'}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
           </div>
         ),
@@ -408,9 +408,10 @@ export default function CustomerListPage() {
         render: (_, record) => (
           <Space direction={'vertical'} className="min-w-[100px]">
             <Text strong>{record?.credit_rank}</Text>
-            <Text className={'!font-light !italic'}>
-              {record?.credit_rank_update_at &&
-                dayjs(record?.credit_rank_update_at).format(FORMAT_DATE)}
+            <Text strong>
+              {record?.anti_social_rank === 'T'
+                ? '△'
+                : record?.anti_social_rank}
             </Text>
           </Space>
         ),
@@ -419,12 +420,12 @@ export default function CustomerListPage() {
         title: (
           <div>
             <AutoHeading
-              i18n={'customers.fields.anti_social_check_date'}
+              i18n={'code_issue_settings.fields.updated_at'}
               style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
-              style={{ fontSize: 12 }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
           </div>
         ),
@@ -433,14 +434,15 @@ export default function CustomerListPage() {
         width: 100,
         render: (_, record) => (
           <Space direction={'vertical'} className="min-w-[100px]">
-            <Text strong>
-              {record?.anti_social_rank === 'T'
-                ? '△'
-                : record?.anti_social_rank}
+            <Text className={'!font-light !italic'}>
+              {record?.credit_rank_update_at &&
+                dayjs(record?.credit_rank_update_at).format(FORMAT_DATE_CROSS)}
             </Text>
             <Text className={'!font-light !italic'}>
               {record?.anti_social_rank_update_at &&
-                dayjs(record.anti_social_rank_update_at).format(FORMAT_DATE)}
+                dayjs(record.anti_social_rank_update_at).format(
+                  FORMAT_DATE_CROSS,
+                )}
             </Text>
           </Space>
         ),
@@ -463,7 +465,7 @@ export default function CustomerListPage() {
         render: (text) =>
           text && (
             <div className="min-w-[100px]">
-              {dayjs(text).format(FORMAT_DATE)}
+              {dayjs(text).format(FORMAT_DATE_CROSS)}
             </div>
           ),
       },
@@ -475,7 +477,7 @@ export default function CustomerListPage() {
         render: (text) =>
           text && (
             <div className="min-w-[100px]">
-              {dayjs(text).format(FORMAT_DATE)}
+              {dayjs(text).format(FORMAT_DATE_CROSS)}
             </div>
           ),
       },
@@ -693,7 +695,7 @@ export default function CustomerListPage() {
             <Form.Item label={<></>} name="date_range">
               <RangePicker
                 className="w-full"
-                placeholder={[FORMAT_DATE, FORMAT_DATE]}
+                placeholder={[FORMAT_DATE_CROSS, FORMAT_DATE_CROSS]}
               />
             </Form.Item>
           </Col>
