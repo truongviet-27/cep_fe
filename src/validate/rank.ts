@@ -9,15 +9,51 @@ export const validateRankRule = (t: any) => {
       code: z.optional(
         z
           .string()
-          .max(20, { error: t('validation.rank.code.max', { max: 20 }) })
-          .regex(/^[A-Z0-9]+$/, {
-            error: t('validation.rank.code.regex'),
+          .or(z.literal(''))
+          .superRefine((val, ctx) => {
+            if (val.trim().length === 0) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.rank.code.required'),
+              })
+              return z.NEVER
+            }
+            if (val.length > 20) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.rank.code.max', { max: 20 }),
+              })
+              return z.NEVER
+            }
+            if (!/^[A-Z0-9-]+$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.rank.code.regex'),
+              })
+              return z.NEVER
+            }
           }),
       ),
       name: z.optional(
         z
           .string()
-          .max(50, { error: t('validation.rank.name.max', { max: 50 }) }),
+          .or(z.literal(''))
+          .superRefine((val, ctx) => {
+            if (val.trim().length === 0) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.rank.name.required'),
+              })
+              return z.NEVER
+            }
+            if (val.length > 50) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('validation.rank.name.max', { max: 50 }),
+              })
+              return z.NEVER
+            }
+          }),
       ),
       rate: z.optional(
         z
