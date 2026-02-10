@@ -51,6 +51,7 @@ import utc from 'dayjs/plugin/utc'
 import { useCallback, useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 import Link from 'next/link'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -159,7 +160,7 @@ function QuotaAction() {
       {
         field: 'name',
         operator: 'eq',
-        value: '部門',
+        value: DEPARTMENT_DEFAULT,
       },
     ]
   }
