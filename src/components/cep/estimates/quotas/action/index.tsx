@@ -139,14 +139,26 @@ function QuotaAction() {
 
   let queryOptions: CrudFilter[] = []
 
+  // if isupdate = true , get department of quota, if department is null => set default department , if department is not null => set department of user login
   if (isUpdate) {
-    queryOptions = [
-      {
-        field: 'id',
-        operator: 'eq',
-        value: dataBasicInfo?.data.department?.id,
-      },
-    ]
+    // if there is no department in permission and user is not admin, set default department filter
+    if (!dataBasicInfo?.data.department) {
+      queryOptions = [
+        {
+          field: 'name',
+          operator: 'eq',
+          value: DEPARTMENT_DEFAULT,
+        },
+      ]
+    } else {
+      queryOptions = [
+        {
+          field: 'id',
+          operator: 'eq',
+          value: dataBasicInfo?.data.department?.id,
+        },
+      ]
+    }
   } else if (permission?.department) {
     queryOptions = [
       {
@@ -417,7 +429,7 @@ function QuotaAction() {
         department_id: departmentData?.data.id,
         department_name: departmentData?.data.department_name,
         approve_route_id: departmentData?.data.approve_routes
-          ? departmentData?.data.approve_routes[0].id
+          ? departmentData?.data.approve_routes[0]?.id
           : null,
         main_product: quoteTemplate?.main_product?.map((item: any) => ({
           ...item,
@@ -475,7 +487,7 @@ function QuotaAction() {
         department_name: departmentData?.data.name,
         approve_routes: departmentData?.data.approve_routes || [],
         approve_route_id: departmentData?.data.approve_routes
-          ? departmentData?.data.approve_routes[0].id
+          ? departmentData?.data.approve_routes[0]?.id
           : null,
         main_product: [
           {
