@@ -66,10 +66,8 @@ export const useCustomerCreate = () => {
         company_type,
         industry,
       })
-      const customerId = customerResponse?.data?.id
-
       go({
-        to: `/customers/show/${customerId}`,
+        to: `/customers`,
         type: 'push',
       })
     } catch (error: any) {

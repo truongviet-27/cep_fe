@@ -33,10 +33,31 @@ const zDeliveryAddressRule = (t: any) =>
     ),
     post_code: z.optional(
       z
-        .string({ error: t('validation.customer.phone.string') })
-        .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-        .regex(/^\d+$/, {
-          error: t('validation.customer.phone.regex'),
+        .string({ error: t('validation.customer.post_code.string') })
+        .max(20, { error: t('validation.customer.post_code.max', { max: 20 }) })
+        .superRefine((val, ctx) => {
+          if (!val) return
+          // Remove hyphens for validation
+          const normalized = val.replace(/-/g, '')
+          // Check if contains only digits and hyphens
+          if (!/^[\d-]+$/.test(val)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('validation.customer.post_code.numeric_only'),
+            })
+            return
+          }
+          // Check length of normalized value (without hyphens)
+          if (normalized.length > 10) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_big,
+              origin: 'string',
+              maximum: 10,
+              type: 'string',
+              inclusive: true,
+              message: t('validation.customer.post_code.max', { max: 10 }),
+            })
+          }
         }),
     ),
     address: z.optional(
@@ -64,8 +85,16 @@ const zDeliveryAddressRule = (t: any) =>
       z
         .string({ error: t('validation.customer.phone.string') })
         .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-        .regex(/^0\d{9,10}$/, {
-          error: t('validation.customer.phone.regex'),
+        .superRefine((val, ctx) => {
+          if (!val) return
+          // Remove hyphens for validation
+          const normalized = val.replace(/-/g, '')
+          if (!/^0\d{9,10}$/.test(normalized)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('validation.customer.phone.regex'),
+            })
+          }
         }),
     ),
   })
@@ -291,7 +320,19 @@ export const validateCustomerRule = (t: any) => {
             })
             return
           }
-          if (val.length > 10) {
+          // Remove hyphens for validation
+          const normalized = val.replace(/-/g, '')
+          // Check if contains only digits and hyphens
+          if (!/^[\d-]+$/.test(val)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              validation: 'regex',
+              message: t('validation.customer.post_code.numeric_only'),
+            })
+            return
+          }
+          // Check length of normalized value (without hyphens)
+          if (normalized.length > 10) {
             ctx.addIssue({
               code: z.ZodIssueCode.too_big,
               origin: 'string',
@@ -299,14 +340,6 @@ export const validateCustomerRule = (t: any) => {
               type: 'string',
               inclusive: true,
               message: t('validation.customer.post_code.max', { max: 10 }),
-            })
-            return
-          }
-          if (!/^[0-9]+$/.test(val)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              validation: 'regex',
-              message: t('validation.customer.post_code.numeric_only'),
             })
             return
           }
@@ -363,21 +396,26 @@ export const validateCustomerRule = (t: any) => {
               })
               return
             }
-            if (!/^\d+$/.test(val)) {
+            // Remove hyphens for validation
+            const normalized = val.replace(/-/g, '')
+            // Check if contains only digits and hyphens
+            if (!/^[\d-]+$/.test(val)) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: t('validation.customer.phone.numeric_only'),
               })
               return
             }
-            if (!/^0\d+$/.test(val)) {
+            // Check if starts with 0
+            if (!/^0/.test(normalized)) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: t('validation.customer.phone.regex'),
               })
               return
             }
-            if (val.length < 10 || val.length > 11) {
+            // Check length (10-11 digits)
+            if (normalized.length < 10 || normalized.length > 11) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: t('validation.customer.phone.regex', {

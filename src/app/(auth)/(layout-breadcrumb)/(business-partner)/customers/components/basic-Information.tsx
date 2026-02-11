@@ -304,7 +304,7 @@ function BasicInformation(
                   <Form.Item>
                     {form.getFieldValue('company_name_display_format') ===
                       'after'}
-                    <Typography.Text>{parts.join(' ')}</Typography.Text>
+                    <Typography.Text>{parts.join('')}</Typography.Text>
                   </Form.Item>
                 </Space>
               </Col>
