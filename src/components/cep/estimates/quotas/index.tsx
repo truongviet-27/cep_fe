@@ -25,6 +25,8 @@ import {
   STATUS_DATE_RULES,
 } from '@components/cep/estimates/quotas/utils'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
+import CoreInput from '@components/common/core-input'
+import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -541,6 +543,20 @@ function QuotaList() {
           value: values.transaction_type?.trim(),
         })
       }
+      if (values.product_name) {
+        filters.push({
+          field: 'product_name',
+          operator: 'eq',
+          value: values.product_name,
+        })
+      }
+      if (values.category_id) {
+        filters.push({
+          field: 'category_id',
+          operator: 'eq',
+          value: values.category_id,
+        })
+      }
       return filters
     },
   })
@@ -923,7 +939,7 @@ function QuotaList() {
             </Col>
           </Row>
           <Row gutter={[24, 0]}>
-            <Col xs={12} md={6} lg={4}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={
                   <span className="font-bold">{t('quotas.filters.date')}</span>
@@ -975,7 +991,7 @@ function QuotaList() {
                 />
               </Form.Item>
             </Col>
-            <Col xs={12} md={6} lg={4}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={
                   <span>{boldText(t('quotas.filters.transaction_type'))}</span>
@@ -992,6 +1008,39 @@ function QuotaList() {
                       label: t(type.labelKey),
                     })),
                   ]}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={12} md={6} lg={3} xxl={3}>
+              <CoreInput
+                name="product_name"
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.productName')}
+                  </span>
+                }
+                placeholder={t('quotas.filters.partial_match')}
+              />
+            </Col>
+            <Col xs={12} md={6} lg={3} xxl={3}>
+              <Form.Item
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.categoryLabel')}
+                  </span>
+                }
+                layout="vertical"
+                name="category_id"
+              >
+                <ProductCategoryDropdown
+                  placeholder={t('placeholders.select')}
+                  onSelect={(_, __, ___, categoryId) => {
+                    searchFormProps.form?.setFieldValue(
+                      'category_id',
+                      categoryId,
+                    )
+                  }}
+                  suffixIcon={<DownOutlined />}
                 />
               </Form.Item>
             </Col>

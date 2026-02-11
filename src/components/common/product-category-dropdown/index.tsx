@@ -2,6 +2,7 @@ import { SearchOutlined } from '@ant-design/icons'
 import type { Category } from '@utility/renderCategories'
 import renderCategories from '@utility/renderCategories'
 import { Empty, Select, Spin } from 'antd'
+import type { ReactNode } from 'react'
 import { memo, useState } from 'react'
 
 import { useController } from './controller'
@@ -19,11 +20,19 @@ interface Props {
     currentCat: Category[],
     categoryId?: number,
   ) => void
+  suffixIcon?: ReactNode
 }
 
 const ProductCategoryDropdown: React.FC<Props> = (props) => {
-  const { placeholder, hidden, valueOnly, defaultValue, disabled, onSelect } =
-    props
+  const {
+    placeholder,
+    hidden,
+    valueOnly,
+    defaultValue,
+    disabled,
+    onSelect,
+    suffixIcon,
+  } = props
   const [
     { options, debounceFetcher, isLoading, categories },
     { setSearchText, setAllowFetchData },
@@ -67,7 +76,7 @@ const ProductCategoryDropdown: React.FC<Props> = (props) => {
         debounceFetcher?.(val)
       }}
       onFocus={setAllowFetchData}
-      suffixIcon={<SearchOutlined />}
+      suffixIcon={suffixIcon || <SearchOutlined />}
       dropdownRender={() => (
         <div style={{ padding: '8px' }}>
           {isLoading ? (

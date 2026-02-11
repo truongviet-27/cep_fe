@@ -47,6 +47,8 @@ function CommonTable<T extends object>(
       pagination={
         isPaging
           ? {
+              defaultPageSize: 20,
+              pageSizeOptions: ['20', '50', '100'],
               showTotal: (total, range) =>
                 `${range[0]}-${range[1]} / ${total}件`,
               showSizeChanger: true,

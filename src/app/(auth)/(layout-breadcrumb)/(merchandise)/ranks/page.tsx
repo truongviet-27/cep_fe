@@ -71,7 +71,7 @@ export default function Page() {
         </Button>
       ),
     },
-    { dataIndex: 'name', title: t('ranks.table.name'), align: 'left' },
+    { dataIndex: 'note', title: t('ranks.table.note'), align: 'left' },
     {
       dataIndex: 'rank_group',
       title: t('ranks.table.unit_price'),
@@ -133,7 +133,7 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('business_partner.business_partner')),
+      title: boldText(t('products.breadcrumb.home')),
     },
     {
       title: boldText(t('ranks.list.list'), PRIMARY),
