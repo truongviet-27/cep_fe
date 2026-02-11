@@ -321,6 +321,7 @@
   "agreed_prices": {
     "agreed_prices": "Agreed Price",
     "tooltip": "This is a list of estimates for continuous contracts based on basic contracts.",
+    "basic_info_note": "※Please match the display content with general estimates for both display and editing.",
     "tab": {
       "decided_estimate_list": "Decided Estimate List",
       "agreed_price_by_customer": "Agreed Price by Customer"

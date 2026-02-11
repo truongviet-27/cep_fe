@@ -603,7 +603,7 @@
     "no_data_on_page": "このページにはデータがありません"
   },
   "parameter_settings": {
-    "parameter_settings": "パラメパラメーター設定",
+    "parameter_settings": "パラメーター設定",
     "description": "説明",
     "is_manage": "管理する",
     "not_manage": "管理しない"
@@ -1126,7 +1126,7 @@
   "forbiddenMessage": "申し訳ありませんが、このページへのアクセス権限がありません。",
   "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
   "list_received": {
-    "list_received": "確定見積一覧"
+    "list_received": "継続見積一覧"
   },
   "price_groups": {
     "message": "単価ランク（商品別）について",
@@ -1167,11 +1167,12 @@
   "agreed_prices": {
     "title": "継続見積一覧",
     "description": "※継続契約に関する見積内容の確認と見積期限、更新を管理します。",
-    "parent": "確定見積一覧",
+    "parent": "継続見積一覧",
     "agreed_prices": "継続見積一覧",
     "tooltip": "基本契約に基づく継続契約の見積一覧です。",
+    "basic_info_note": "※表示と編集ともに一般の見積と表示内容を合わせてください。",
     "tab": {
-      "decided_estimate_list": "確定見積一覧",
+      "decided_estimate_list": "継続見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
     },
     "summary": {
