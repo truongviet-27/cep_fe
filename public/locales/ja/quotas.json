@@ -53,6 +53,8 @@
     "department": "部門（支社/部/課）",
     "tag_name": "タグ名",
     "date": "日付",
+    "productName": "商品名",
+    "categoryLabel": "カテゴリ",
     "partial_match": "部分一致",
     "please_select": "選択してください"
   },
@@ -333,6 +335,9 @@
       "labels": {
         "until": "まで",
         "default_tax_rate": "デフォルト"
+      },
+      "warnings": {
+        "no_approve_routes": "利用可能な承認ルートがありません"
       }
     },
     "optional_info": {

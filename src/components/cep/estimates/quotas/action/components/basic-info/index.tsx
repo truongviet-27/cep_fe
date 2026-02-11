@@ -30,14 +30,17 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
 import CreateCustomerModal from '../create-customer-modal'
+import type { ParameterSettingType } from '@interfaces/permission'
 
 const BasicInfo = ({
   handleChangeProductPrincing,
+  parameterSettings,
 }: {
   handleChangeProductPrincing: (
     productIds: number[],
     productIdsOptional: number[],
   ) => void
+  parameterSettings: ParameterSettingType
 }) => {
   const t = useTranslate()
 
@@ -225,7 +228,6 @@ const BasicInfo = ({
   }
 
   const { show, close, open } = modalFormProps
-
   return (
     <Card
       title={boldText(t('quotas.action.basic_info.title'), PRIMARY, 16)}
@@ -742,7 +744,7 @@ const BasicInfo = ({
               )}
               labelCol={{ span: 4 }}
             >
-              <Input disabled style={{ width: '100%' }} />
+              <Input readOnly style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>
@@ -830,23 +832,89 @@ const BasicInfo = ({
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'approve_route_id'}
-              label={boldText(
-                t('quotas.action.basic_info.fields.approve_route'),
-              )}
-              labelCol={{ span: 4 }}
-            >
-              <Select
-                style={{ width: '100%' }}
-                options={
-                  form.getFieldValue('approve_routes')?.map((route: any) => ({
-                    value: route.id,
-                    label: route.name,
-                  })) || []
+            {(() => {
+              const approveRoutes = form.getFieldValue('approve_routes')
+              const isSingleRoute = approveRoutes?.length === 1
+
+              if (isSingleRoute) {
+                const singleRoute = approveRoutes[0]
+                if (!parameterSettings.get('approve-routes')) {
+                  form.setFieldsValue({ approve_route_id: '' })
                 }
-              />
-            </Form.Item>
+                return (
+                  <>
+                    <Form.Item
+                      name={'approve_route_id'}
+                      className="hidden"
+                      initialValue={
+                        parameterSettings.get('approve-routes')
+                          ? singleRoute?.id
+                          : ''
+                      }
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      name={'approve_route_name'}
+                      label={boldText(
+                        t('quotas.action.basic_info.fields.approve_route'),
+                      )}
+                      labelCol={{ span: 4 }}
+                      initialValue={
+                        parameterSettings.get('approve-routes')
+                          ? singleRoute?.name
+                          : ''
+                      }
+                    >
+                      <Input
+                        disabled={!parameterSettings.get('approve-routes')}
+                        readOnly
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                  </>
+                )
+              }
+              return (
+                <Form.Item
+                  name={'approve_route_id'}
+                  label={boldText(
+                    t('quotas.action.basic_info.fields.approve_route'),
+                  )}
+                  labelCol={{ span: 4 }}
+                >
+                  <Select
+                    disabled={!parameterSettings.get('approve-routes')}
+                    style={{ width: '100%' }}
+                    options={
+                      approveRoutes?.map((route: any) => ({
+                        value: route.id,
+                        label: route.name,
+                      })) || []
+                    }
+                  />
+                </Form.Item>
+              )
+            })()}
+            {(() => {
+              const approveRoutes = form.getFieldValue('approve_routes')
+              if (!approveRoutes || approveRoutes.length === 0) {
+                return (
+                  <div
+                    style={{
+                      color: '#ff4d4f',
+                      fontSize: '12px',
+                      marginTop: '4px',
+                    }}
+                  >
+                    ⚠️{' '}
+                    {t('quotas.action.basic_info.warnings.no_approve_routes') ||
+                      'No approve routes available'}
+                  </div>
+                )
+              }
+              return null
+            })()}
             {/* hidden form */}
             <Form.Item
               name="consumption_tax"

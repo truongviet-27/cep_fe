@@ -18,6 +18,7 @@ export const CONSUMPTION_TAX: Record<string, { value: string; label: string }> =
     },
   } as const
 
+export const DEPARTMENT_DEFAULT = '全社'
 export const EXPIRATION_DATE: Record<string, { value: string; label: string }> =
   {
     days_7: {

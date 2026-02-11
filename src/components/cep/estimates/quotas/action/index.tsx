@@ -51,6 +51,7 @@ import utc from 'dayjs/plugin/utc'
 import { useCallback, useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 import Link from 'next/link'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -80,7 +81,7 @@ function QuotaAction() {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const permission = useUserStore((state) => state.permission)
+  const { permission, parameterSettings } = useUserStore.getState()
 
   const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -138,14 +139,26 @@ function QuotaAction() {
 
   let queryOptions: CrudFilter[] = []
 
+  // if isupdate = true , get department of quota, if department is null => set default department , if department is not null => set department of user login
   if (isUpdate) {
-    queryOptions = [
-      {
-        field: 'id',
-        operator: 'eq',
-        value: dataBasicInfo?.data.department?.id,
-      },
-    ]
+    // if there is no department in permission and user is not admin, set default department filter
+    if (!dataBasicInfo?.data.department) {
+      queryOptions = [
+        {
+          field: 'name',
+          operator: 'eq',
+          value: DEPARTMENT_DEFAULT,
+        },
+      ]
+    } else {
+      queryOptions = [
+        {
+          field: 'id',
+          operator: 'eq',
+          value: dataBasicInfo?.data.department?.id,
+        },
+      ]
+    }
   } else if (permission?.department) {
     queryOptions = [
       {
@@ -159,7 +172,7 @@ function QuotaAction() {
       {
         field: 'name',
         operator: 'eq',
-        value: '全社',
+        value: DEPARTMENT_DEFAULT,
       },
     ]
   }
@@ -286,6 +299,8 @@ function QuotaAction() {
             : null,
           department_id: departmentData?.data.id,
           department_name: departmentData?.data.name,
+          approve_routes: departmentData?.data.approve_routes || [],
+          approve_route_id: dataBasicInfo.data.approve_route?.id,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
@@ -415,8 +430,11 @@ function QuotaAction() {
         tax_rounding_method: data?.data?.tax_rounding_method,
         department_id: departmentData?.data.id,
         department_name: departmentData?.data.department_name,
+        approve_routes: parameterSettings?.get('approve-routes')
+          ? departmentData?.data.approve_routes || []
+          : [],
         approve_route_id: departmentData?.data.approve_routes
-          ? departmentData?.data.approve_routes[0].id
+          ? departmentData?.data.approve_routes[0]?.id
           : null,
         main_product: quoteTemplate?.main_product?.map((item: any) => ({
           ...item,
@@ -474,7 +492,7 @@ function QuotaAction() {
         department_name: departmentData?.data.name,
         approve_routes: departmentData?.data.approve_routes || [],
         approve_route_id: departmentData?.data.approve_routes
-          ? departmentData?.data.approve_routes[0].id
+          ? departmentData?.data.approve_routes[0]?.id
           : null,
         main_product: [
           {
@@ -677,6 +695,7 @@ function QuotaAction() {
           name="basic"
         >
           <BasicInfo
+            parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
           />
           <DetailInfo

@@ -9,7 +9,7 @@ import type {
   ParameterResourceEnum,
   ParameterSettingControllerIndexResponse,
 } from '@sdk/hey-api'
-import { Form, message, Radio, Space, Typography } from 'antd'
+import { Form, message, Radio, Select, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useTranslations } from 'next-intl'
 
@@ -39,7 +39,11 @@ export default function Page() {
   const { data, isLoading } = useList<ParameterSettingControllerIndexResponse>({
     queryOptions: {
       select: (data) => {
-        const allowedNames = ['単価ランクマスタ', '承認ルート設定']
+        const allowedNames = [
+          '単価ランクマスタ',
+          '承認ルート設定',
+          '税額の端数処理',
+        ]
         const filteredData = data.data.filter((item: any) =>
           allowedNames.includes(item.name),
         )
@@ -76,7 +80,19 @@ export default function Page() {
   })
 
   const handleOnFinish = (values: any) => {
-    onFinish(values?.data)
+    const transformedData = values?.data?.map((item: any) => {
+      if (item.value !== undefined) {
+        return {
+          id: item.id,
+          value: item.value,
+        }
+      }
+      return {
+        id: item.id,
+        is_manage: item.is_manage,
+      }
+    })
+    onFinish(transformedData)
   }
 
   const breadcrumbItems = [
@@ -109,27 +125,59 @@ export default function Page() {
       align: 'left',
       className: '!px-4',
       render: (cur, _, index) => {
+        const isTaxRoundingMethod = cur?.resource === 'tax_rounding_method'
+
         return (
           <div className={'!h-5'}>
             <Form.Item name={[index, 'id']} initialValue={cur?.id} hidden />
 
-            <Form.Item name={[index, 'is_manage']} initialValue={cur.is_manage}>
-              <Radio.Group>
-                <Space size={'large'}>
-                  <Radio
-                    value={true}
-                    defaultChecked={PARAMETER_SETTING_EXCLUDE.has(cur.resource)}
-                  >
-                    {t('parameter_settings.is_manage')}
-                  </Radio>
-                  {!PARAMETER_SETTING_EXCLUDE.has(cur.resource) && (
-                    <Radio value={false}>
-                      {t('parameter_settings.not_manage')}
+            {isTaxRoundingMethod ? (
+              <Form.Item
+                name={[index, 'value']}
+                initialValue={cur?.value || 'round_down'}
+              >
+                <Select
+                  style={{ width: '50%' }}
+                  options={[
+                    {
+                      value: 'round_down',
+                      label: t('tenant_settings.taxRounding.options.roundDown'),
+                    },
+                    {
+                      value: 'round_up',
+                      label: t('tenant_settings.taxRounding.options.roundUp'),
+                    },
+                    {
+                      value: 'round_nearest',
+                      label: t('tenant_settings.taxRounding.options.round'),
+                    },
+                  ]}
+                />
+              </Form.Item>
+            ) : (
+              <Form.Item
+                name={[index, 'is_manage']}
+                initialValue={cur.is_manage}
+              >
+                <Radio.Group>
+                  <Space size={'large'}>
+                    <Radio
+                      value={true}
+                      defaultChecked={PARAMETER_SETTING_EXCLUDE.has(
+                        cur.resource,
+                      )}
+                    >
+                      {t('parameter_settings.is_manage')}
                     </Radio>
-                  )}
-                </Space>
-              </Radio.Group>
-            </Form.Item>
+                    {!PARAMETER_SETTING_EXCLUDE.has(cur.resource) && (
+                      <Radio value={false}>
+                        {t('parameter_settings.not_manage')}
+                      </Radio>
+                    )}
+                  </Space>
+                </Radio.Group>
+              </Form.Item>
+            )}
           </div>
         )
       },

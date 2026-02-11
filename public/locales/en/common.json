@@ -363,7 +363,8 @@
       "search": "Search",
       "clear": "Clear",
       "add_from_estimate_list": "Add from Estimate List",
-      "update": "Update"
+      "update": "Update",
+      "duplicate_quota": "Duplicate"
     },
     "modal": {
       "update_title": "Update Agreed Estimate",
