@@ -335,6 +335,9 @@
       "labels": {
         "until": "まで",
         "default_tax_rate": "デフォルト"
+      },
+      "warnings": {
+        "no_approve_routes": "利用可能な承認ルートがありません"
       }
     },
     "optional_info": {

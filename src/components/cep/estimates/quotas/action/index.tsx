@@ -81,7 +81,7 @@ function QuotaAction() {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const permission = useUserStore((state) => state.permission)
+  const { permission, parameterSettings } = useUserStore.getState()
 
   const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -299,6 +299,8 @@ function QuotaAction() {
             : null,
           department_id: departmentData?.data.id,
           department_name: departmentData?.data.name,
+          approve_routes: departmentData?.data.approve_routes || [],
+          approve_route_id: dataBasicInfo.data.approve_route?.id,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
@@ -428,6 +430,9 @@ function QuotaAction() {
         tax_rounding_method: data?.data?.tax_rounding_method,
         department_id: departmentData?.data.id,
         department_name: departmentData?.data.department_name,
+        approve_routes: parameterSettings?.get('approve-routes')
+          ? departmentData?.data.approve_routes || []
+          : [],
         approve_route_id: departmentData?.data.approve_routes
           ? departmentData?.data.approve_routes[0]?.id
           : null,
@@ -690,6 +695,7 @@ function QuotaAction() {
           name="basic"
         >
           <BasicInfo
+            parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
           />
           <DetailInfo
