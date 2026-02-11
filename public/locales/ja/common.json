@@ -609,7 +609,7 @@
     "not_manage": "利用しない"
   },
   "estimate_form_settings": {
-    "estimate_form_settings": "見積フォーム設定"
+    "estimate_form_settings": "見積書フォーム設定"
   },
   "mail_templates": {
     "mail_templates": "メールテンプレート設定",
@@ -1035,7 +1035,7 @@
     "show": "show"
   },
   "tenant_settings": {
-    "tenant_settings": "見積フォーム設定",
+    "tenant_settings": "見積書フォーム設定",
     "hide": "非表示",
     "greeting": {
       "label": "あいさつ文",
@@ -1095,12 +1095,12 @@
       "title": "プレビュー"
     },
     "digitalStamp": {
-      "label": "担当者デジタル捺印",
+      "label": "担当者捺印",
       "withStamp": "捺印あり",
       "withoutStamp": "捺印なし"
     },
     "consumptionTax": {
-      "label": "消費税（デフォルト）",
+      "label": "消費税",
       "taxExclusive": "外税",
       "taxInclusive": "内税",
       "taxExempt": "非課税",
