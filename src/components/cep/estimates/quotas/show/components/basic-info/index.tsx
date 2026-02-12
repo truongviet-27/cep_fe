@@ -8,7 +8,7 @@ import {
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Card, Col, Form, Row, Tag } from 'antd'
+import { Card, Col, Form, Row } from 'antd'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -44,26 +44,23 @@ function BasicInfo({
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item label={boldText(t('quotas.show.estimate_number'))}>
               {data?.code}
-              <Tag
-                color={getQuotaStatusStyle(data?.status, t).background}
-                style={{
-                  color: getQuotaStatusStyle(data?.status, t).color,
-                  marginLeft: 10,
-                }}
-              >
-                {getQuotaStatusStyle(data?.status, t).text}
-              </Tag>
             </Form.Item>
           </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'status'}
+              label={boldText(t('quotas.show.status'))}
+            >
+              {getQuotaStatusStyle(data?.status, t).text}
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item label={boldText(t('quotas.show.customer'))}>
               {data?.customer_name}
             </Form.Item>
           </Col>
-        </Row>
-
-        {/* Row 2: 契約区分 + 見積送付先 */}
-        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               name={'customer_term'}
@@ -74,9 +71,30 @@ function BasicInfo({
                 : t('quotas.show.customer_terms.short_term')}
             </Form.Item>
           </Col>
+        </Row>
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item label={boldText(t('quotas.show.title'))}>
+              {data?.title}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item label={boldText(t('quotas.show.customer'))}>
+              {data?.customer_name}
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              name={'type'}
+              name={'issue_date'}
+              label={boldText(t('quotas.show.estimate_date'))}
+            >
+              {dayjs(data?.issue_date).format('YYYY/MM/DD')}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
               label={boldText(
                 t(
                   'quotas.action.customer_contact_modal.selected_contact_label',
@@ -124,17 +142,13 @@ function BasicInfo({
             </Form.Item>
           </Col>
         </Row>
-
-        {/* Row 3: 取引区分 + 納入期日 */}
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              name={'estimate_category'}
-              label={boldText(t('quotas.show.estimate_category'))}
+              name={'delivery_method'}
+              label={boldText(t('quotas.show.delivery_method'))}
             >
-              {data?.category === 'merchandise'
-                ? t('quotas.show.category.merchandise')
-                : t('quotas.show.category.service')}
+              {data?.delivery_method}
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
@@ -149,65 +163,6 @@ function BasicInfo({
             </Form.Item>
           </Col>
         </Row>
-
-        {/* Row 4: タイトル + 支払期日 */}
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText(t('quotas.show.title'))}>
-              {data?.title}
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'payment_due_date'}
-              label={boldText(t('quotas.show.payment_due_date'))}
-            >
-              {getPaymentDueDateLabel(data?.payment_due_date, t)}
-            </Form.Item>
-          </Col>
-        </Row>
-
-        {/* Row 5: 見積日 + 部門 */}
-        <Row gutter={[100, 0]} wrap>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'issue_date'}
-              label={boldText(t('quotas.show.estimate_date'))}
-            >
-              {dayjs(data?.issue_date).format('YYYY/MM/DD')}
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name="department"
-              label={boldText(t('quotas.show.department_name'))}
-            >
-              {data?.department?.name}
-            </Form.Item>
-          </Col>
-        </Row>
-
-        {/* Row 6: 納品方法 + 承認ルート */}
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'delivery_method'}
-              label={boldText(t('quotas.show.delivery_method'))}
-            >
-              {data?.delivery_method}
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name="approve_route"
-              label={boldText(t('quotas.show.approve_route'))}
-            >
-              {data?.approve_route?.name}
-            </Form.Item>
-          </Col>
-        </Row>
-
-        {/* Row 7: 有効期限 */}
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -231,6 +186,34 @@ function BasicInfo({
                 </span>
               </Form.Item>
             </div>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'payment_due_date'}
+              label={boldText(t('quotas.show.payment_due_date'))}
+            >
+              {getPaymentDueDateLabel(data?.payment_due_date, t)}
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_method'}
+              label={boldText(
+                t('quotas.action.customer_contact_modal.department_name'),
+              )}
+            >
+              {data?.department?.name || '---'}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name="approve_route"
+              label={boldText(t('quotas.show.approve_route'))}
+            >
+              {data?.approve_route?.name}
+            </Form.Item>
           </Col>
         </Row>
       </div>
