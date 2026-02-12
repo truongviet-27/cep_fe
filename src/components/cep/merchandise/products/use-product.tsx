@@ -27,6 +27,7 @@ function useProduct() {
     HttpError,
     ISearch
   >({
+    pagination: { pageSize: 20 },
     resource: 'products',
     filters: {},
     onSearch: (params) => [

@@ -22,6 +22,7 @@ function CreateFromTemplate({
   const { convertDate } = useDate()
   const go = useGo()
   const { tableProps, searchFormProps, setFilters } = useTable({
+    pagination: { pageSize: 20 },
     resource: 'quota-templates',
     syncWithLocation: false,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -157,6 +158,7 @@ function CreateFromTemplate({
               },
             },
           }}
+          showHeader={false}
         />
       </Form>
     </Modal>

@@ -289,7 +289,7 @@ export default function CustomerListPage() {
         render: (status, record) => (
           <Select
             value={status}
-            style={{ width: '110px' }}
+            style={{ width: '120px' }}
             disabled={!isFullAccess || updatingId === record.id}
             loading={updatingId === record.id}
             onChange={async (value) => {
@@ -323,7 +323,7 @@ export default function CustomerListPage() {
                     color={style.background}
                     style={{
                       color: style.color,
-                      width: '55px',
+                      width: '70px',
                       textAlign: 'center',
                       fontSize: '14px',
                     }}

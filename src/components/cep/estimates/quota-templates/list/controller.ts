@@ -14,6 +14,7 @@ export const useController = () => {
     HttpError,
     SearchQuotaTemplateType
   >({
+    pagination: { pageSize: 20 },
     resource: 'quota-templates',
     filters: {},
     onSearch: (params) => {

@@ -395,6 +395,7 @@ const AgreedPriceQuotaTab = () => {
 
   const { tableProps, searchFormProps, setFilters, tableQuery, setCurrent } =
     useTable<QuotaAgreedPrice, HttpError, any>({
+      pagination: { pageSize: 20 },
       resource: 'quota/agreed-prices',
       syncWithLocation: true,
       filters: {

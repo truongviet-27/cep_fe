@@ -28,7 +28,9 @@ function Page() {
     )
   }
 
-  const { tableProps, searchFormProps, setFilters, setCurrent } = useTable()
+  const { tableProps, searchFormProps, setFilters, setCurrent } = useTable({
+    pagination: { pageSize: 20 },
+  })
 
   const breadcrumbItems = [
     {
