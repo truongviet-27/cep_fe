@@ -108,7 +108,7 @@
     "basic_info": "基本情報",
     "estimate_number": "見積番号",
     "estimate_type": "見積種類",
-    "estimate_category": "取引区分",
+    "estimate_category": "取引種類",
     "title": "タイトル",
     "customer": "取引先",
     "estimate_date": "見積日",
@@ -120,11 +120,12 @@
     "tax_rate": "消費税率",
     "department_name": "部門",
     "approve_route": "承認ルート",
+    "status": "ステータス",
     "type": {
       "normal": "通常",
       "limited": "販路限定"
     },
-    "customer_term": "取引区分",
+    "customer_term": "契約区分",
     "customer_terms": {
       "long_term": "継続",
       "short_term": "個別"
@@ -142,13 +143,13 @@
     "creation_history": "作成履歴",
     "rejection_reason": "差戻の理由",
     "actions": {
-      "request_approval": "承認依頼",
-      "reject": "差戻",
-      "approve": "承認",
-      "send": "送信",
-      "move_to_cancel": "失注へ移動",
-      "move_to_order": "送信済へ移動",
-      "move_to_send": "送信済へ移動"
+      "request_approval": "承認待に移動する",
+      "reject": "差戻する",
+      "approve": "承認する",
+      "send": "送信する",
+      "move_to_cancel": "失注に移動する",
+      "move_to_order": "受注に移動する",
+      "move_to_send": "送信済みに移動する"
     },
     "table": {
       "step": "ステップ",
@@ -189,6 +190,7 @@
     "payment_due_date": "支払期日",
     "expiration_date": "有効期限",
     "consumption_tax": "消費税",
+    "update_status": "更新",
     "tax_rate": "消費税率",
     "type": {
       "normal": "通常",

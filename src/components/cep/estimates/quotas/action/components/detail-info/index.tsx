@@ -347,7 +347,15 @@ function DetailInfo({
               dataIndex: 'code',
               key: 'code',
               align: 'left',
-              width: 200,
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return {
@@ -371,7 +379,6 @@ function DetailInfo({
                             'quotas.action.detail_info.placeholders.product_list_name',
                           )}
                           style={{
-                            width: 400,
                             marginBottom: 0,
                           }}
                         />
@@ -439,9 +446,6 @@ function DetailInfo({
                           },
                         },
                       ]}
-                      style={{
-                        width: 300,
-                      }}
                     >
                       <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
@@ -453,8 +457,16 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.product_service_name'),
               dataIndex: 'name',
               key: 'name',
+              width: '15%',
               align: 'left',
-              width: 200,
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -737,9 +749,6 @@ function DetailInfo({
                           },
                         },
                       ]}
-                      style={{
-                        width: 300,
-                      }}
                     >
                       <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
@@ -751,8 +760,16 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.unit'),
               dataIndex: 'unit',
               key: 'unit',
+              width: '7%',
               align: 'center',
-              width: 200,
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -787,9 +804,6 @@ function DetailInfo({
                           message: '',
                         },
                       ]}
-                      style={{
-                        width: '100%',
-                      }}
                     >
                       <Input placeholder={t('placeholders.input_please')} />
                     </Form.Item>
@@ -801,8 +815,16 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.package'),
               dataIndex: 'package',
               key: 'package',
-              width: 200,
+              width: '8%',
               align: 'left',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -852,7 +874,6 @@ function DetailInfo({
                           index2={record.index2}
                           filterPath2={['customer']}
                           resource={`products`}
-                          style={{ width: 200 }}
                           parent="main_product"
                         />
                       </Form.Item>
@@ -893,6 +914,15 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.cost_price'),
               dataIndex: 'cost_price',
               key: 'cost_price',
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -926,7 +956,15 @@ function DetailInfo({
                         },
                       ]}
                     >
-                      <InputNumber min={0} precision={0} controls={false} />
+                      <InputNumber
+                        min={0}
+                        precision={0}
+                        controls={false}
+                        style={{
+                          maxWidth: '100px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -936,6 +974,20 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.selling_price'),
               dataIndex: 'selling_price',
               key: 'selling_price',
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              onCell: () => ({
+                style: {
+                  maxWidth: 12,
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -969,6 +1021,10 @@ function DetailInfo({
                           true,
                         )
                       }}
+                      style={{
+                        maxWidth: '100px',
+                        width: '100%',
+                      }}
                     />
                   </Form.Item>
                 )
@@ -978,6 +1034,15 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.quantity'),
               dataIndex: 'quantity',
               key: 'quantity',
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -1007,6 +1072,10 @@ function DetailInfo({
                           false,
                         )
                       }}
+                      style={{
+                        maxWidth: '100px',
+                        width: '100%',
+                      }}
                     />
                   </Form.Item>
                 )
@@ -1016,6 +1085,15 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.profit_margin'),
               dataIndex: 'profit_margin',
               key: 'profit_margin',
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -1095,6 +1173,15 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.selling_amount'),
               dataIndex: 'sellingAmount',
               key: 'sellingAmount',
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -1123,6 +1210,15 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -1150,10 +1246,7 @@ function DetailInfo({
                       },
                     ]}
                   >
-                    <Select
-                      style={{ width: 100 }}
-                      options={DEFAULT_TAX_RATES}
-                    />
+                    <Select options={DEFAULT_TAX_RATES} />
                   </Form.Item>
                 )
               },
@@ -1162,6 +1255,15 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.total_calculation'),
               dataIndex: 'is_add_total',
               key: 'is_add_total',
+              width: '4%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -1203,6 +1305,15 @@ function DetailInfo({
             {
               title: t('quotas.action.detail_info.table.row_edit'),
               key: 'action',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 const isHeader = record.isHeader
 
@@ -1309,6 +1420,8 @@ function DetailInfo({
                 </Button>
               </Flex>
               <CommonTable
+                scroll={{ x: 800 }}
+                tableLayout="fixed"
                 columns={columns}
                 dataSource={dataSource}
                 rowClassName={(record) =>
