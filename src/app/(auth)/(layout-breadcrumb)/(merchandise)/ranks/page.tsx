@@ -36,6 +36,7 @@ export default function Page() {
   const t = useTranslate()
   const [isShow, setIsShow] = useState(false)
   const { tableProps, searchFormProps, setFilters } = useTable<Rank>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     sorters: {
       initial: [

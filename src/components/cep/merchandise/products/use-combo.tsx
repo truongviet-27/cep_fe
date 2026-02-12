@@ -27,6 +27,7 @@ function useCombo() {
     HttpError,
     ISearch
   >({
+    pagination: { pageSize: 20 },
     resource: 'product-combos',
     filters: {},
     onSearch: (params) => [

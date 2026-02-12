@@ -46,6 +46,7 @@ function Page() {
     form,
     tableQuery,
   } = useEditableTable<PriceGroupItem>({
+    pagination: { pageSize: 20 },
     onSearch: (values: any) => {
       form.setFieldsValue([])
       return [

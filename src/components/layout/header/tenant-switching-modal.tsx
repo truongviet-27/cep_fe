@@ -37,6 +37,7 @@ function TenantSwitchingModal({
     HttpError,
     { q?: string }
   >({
+    pagination: { pageSize: 20 },
     syncWithLocation: false,
     resource: 'tenants',
     onSearch: (values) => {

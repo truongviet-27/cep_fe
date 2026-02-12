@@ -35,6 +35,7 @@ function Approve() {
   const t = useTranslate()
 
   const { tableProps, searchFormProps, setFilters } = useTable({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => {
       setFilters([], 'replace')

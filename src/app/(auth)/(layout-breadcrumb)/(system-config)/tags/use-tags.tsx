@@ -37,7 +37,7 @@ function useTags() {
   const t = useTranslate()
   const { resource } = useResource()
   const apiUrl = useApiUrl()
-  const [pageSize, setPageSize] = React.useState(10)
+  const [pageSize, setPageSize] = React.useState(20)
   const [lastRowEdited, setLastRowEdited] = React.useState<boolean>(false)
   const [totalPage, setTotalPage] = React.useState(0)
   const forceUpdate = useRef(false)
@@ -51,6 +51,7 @@ function useTags() {
     pageCount,
     tableQueryResult: { isLoading, isFetching },
   } = useTable<TagRow>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => [
       {
@@ -93,8 +94,8 @@ function useTags() {
 
   useLayoutEffect(() => {
     if (forceUpdate.current) {
-      setPageSize(10)
-      setPageSize2(10)
+      setPageSize(20)
+      setPageSize2(20)
     }
     const ds = (tableProps?.dataSource as TagRow[]) ?? []
     replace(ds.map((r) => ({ _isNew: false, _isEditing: false, ...r })))
@@ -286,10 +287,10 @@ function useTags() {
 
     const total = (tableProps.pagination as any)?.total || 0
     const currentSize =
-      pageSize || (tableProps.pagination as any)?.pageSize || 10
+      pageSize || (tableProps.pagination as any)?.pageSize || 20
 
     // 2. Tính toán trang cuối cùng thực tế
-    // Ví dụ: Total = 41, size = 10 -> Last page = 5
+    // Ví dụ: Total = 41, size = 20 -> Last page = 5
     const lastPage = Math.ceil(total / currentSize)
 
     // 3. Chỉ nhảy trang nếu:

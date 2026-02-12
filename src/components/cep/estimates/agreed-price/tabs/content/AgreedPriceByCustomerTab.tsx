@@ -133,6 +133,7 @@ const AgreedPriceByCustomerTab = () => {
     HttpError,
     Record<string, unknown>
   >({
+    pagination: { pageSize: 20 },
     resource: 'quota/agreed-prices/customers',
     syncWithLocation: true,
     filters: {
