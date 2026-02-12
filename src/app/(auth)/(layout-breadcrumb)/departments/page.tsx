@@ -185,12 +185,7 @@ export default function Page() {
         return (
           <Space>
             <ShowButton hideText size="small" recordItemId={record.id} />
-            <EditButton
-              hideText
-              size="small"
-              recordItemId={record.id}
-              disabled={isDefaultDepartment}
-            />
+            <EditButton hideText size="small" recordItemId={record.id} />
             <DeleteButton
               hideText
               size="small"
