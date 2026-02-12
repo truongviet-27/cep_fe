@@ -558,21 +558,54 @@ function QuotaList() {
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
-      setFilters([
-        {
-          field: 'status',
-          operator: 'eq',
-          value: status,
-        },
-      ])
+      const rule = status ? STATUS_DATE_RULES[status] : undefined
+      const range = rule?.getRange ? rule.getRange() : null
+      form?.setFieldsValue({
+        search_date_type: rule?.dateType ?? 'created_at',
+        date: range,
+      })
 
-      if (form) {
-        const rule = status ? STATUS_DATE_RULES[status] : undefined
-        form?.setFieldsValue({
-          search_date_type: rule?.dateType ?? 'created_at',
-          date: rule?.getRange ? rule.getRange() : null,
-        })
-      }
+      setFilters((prev) => {
+        const filtered =
+          prev?.filter(
+            (item) =>
+              item.field !== 'start_date' &&
+              item.field !== 'end_date' &&
+              item.field !== 'search_date_type' &&
+              item.field !== 'status',
+          ) ?? []
+
+        const newFilters: CrudFilters = [
+          ...filtered,
+          {
+            field: 'status',
+            operator: 'eq',
+            value: status,
+          },
+        ]
+
+        if (range) {
+          newFilters.push(
+            {
+              field: 'search_date_type',
+              operator: 'eq',
+              value: rule?.dateType ?? 'created_at',
+            },
+            {
+              field: 'start_date',
+              operator: 'eq',
+              value: dayjs(range[0]).format('YYYY-MM-DD'),
+            },
+            {
+              field: 'end_date',
+              operator: 'eq',
+              value: dayjs(range[1]).format('YYYY-MM-DD'),
+            },
+          )
+        }
+
+        return newFilters
+      })
 
       setCurrent(1)
     },
@@ -1034,6 +1067,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
+                    form?.resetFields()
                     onChangeStatus(status)
                   }}
                 >
