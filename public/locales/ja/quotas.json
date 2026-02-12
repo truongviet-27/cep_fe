@@ -1,13 +1,13 @@
 {
   "quotas": "見積一覧",
-  "confirmed_quota": "確定見積",
+  "confirmed_quota": "継続見積",
   "transaction_type": {
     "short_term_service": "個別・役務サービス",
     "short_term_merchandise": "個別・物販",
     "long_term_service": "継続・役務サービス",
     "long_term_merchandise": "継続・物販"
   },
-  "confirmed_quota_detail": "確定見積詳細",
+  "confirmed_quota_detail": "継続見積詳細",
   "list": "見積一覧",
   "create": "見積新規作成",
   "edit": "見積編集",
@@ -84,7 +84,7 @@
     "move_to_order": "受注へ移動",
     "move_to_cancel": "失注へ移動",
     "move_to_send": "送信済へ移動",
-    "decide_move": "確定移動",
+    "decide_move": "継続移動",
     "re_estimate": "再見積",
     "template_list": "見積テンプレート一覧",
     "new_create": "新規作成",

@@ -18,6 +18,7 @@ import { useUserStore } from '@stores/useUserStore'
 import type { TableProps } from 'antd'
 import {
   Button,
+  Checkbox,
   Col,
   DatePicker,
   Divider,
@@ -82,6 +83,7 @@ const AgreedPriceQuotaTab = () => {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [updateForm] = Form.useForm()
   const [selected, setSelected] = useState<QuotaAgreedPrice | null>(null)
+  const [isUnlimitedModal, setIsUnlimitedModal] = useState(false)
   const { mutate: mutateUpdate, isPending: updating } = useCustomMutation()
 
   const openUpdate = (record: QuotaAgreedPrice) => {
@@ -92,7 +94,9 @@ const AgreedPriceQuotaTab = () => {
     const end = (record as any).valid_to
       ? dayjs((record as any).valid_to).add(0, 'day')
       : dayjs().add(1, 'day')
+    const isUnlimited = (record as any).is_unlimited ?? false
     updateForm.setFieldsValue({ start_date: start, end_date: end })
+    setIsUnlimitedModal(isUnlimited)
     setIsUpdateOpen(true)
   }
 
@@ -102,16 +106,30 @@ const AgreedPriceQuotaTab = () => {
   const handleUpdateSubmit = () => {
     updateForm.validateFields().then((values) => {
       if (!selected?.id) return
-      const validFrom = (values.start_date as Dayjs).format('YYYY/MM/DD')
-      const validTo = (values.end_date as Dayjs).format('YYYY/MM/DD')
+
+      const valuesToSend: any = {
+        is_unlimited: isUnlimitedModal,
+      }
+
+      if (isUnlimitedModal) {
+        valuesToSend.valid_from = values.start_date
+          ? (values.start_date as Dayjs).format('YYYY/MM/DD')
+          : null
+        valuesToSend.valid_to = values.end_date
+          ? (values.end_date as Dayjs).format('YYYY/MM/DD')
+          : null
+      } else {
+        valuesToSend.valid_from = (values.start_date as Dayjs).format(
+          'YYYY/MM/DD',
+        )
+        valuesToSend.valid_to = (values.end_date as Dayjs).format('YYYY/MM/DD')
+      }
+
       mutateUpdate(
         {
           method: 'put',
           url: `${apiUrl}/quota/agreed-prices/${selected.id}/expiration-date`,
-          values: {
-            valid_from: validFrom,
-            valid_to: validTo,
-          },
+          values: valuesToSend,
           successNotification: () => ({
             message: t('notifications.success'),
             description: t('notifications.editSuccess'),
@@ -122,6 +140,7 @@ const AgreedPriceQuotaTab = () => {
           onSuccess: () => {
             setIsUpdateOpen(false)
             setSelected(null)
+            setIsUnlimitedModal(false)
             refetchCount?.()
             tableQuery?.refetch?.()
           },
@@ -145,6 +164,33 @@ const AgreedPriceQuotaTab = () => {
     return calculatedStatus
   }
 
+  const mapStatusFromApi = (status?: string): AgreedPriceStatus => {
+    if (!status) return AgreedPriceStatus.Active
+
+    // Map Japanese status values to enum
+    if (status === '有効') {
+      return AgreedPriceStatus.Active
+    }
+    if (status === '無効' || status === '期限切れ') {
+      return AgreedPriceStatus.Expired
+    }
+    if (status === '期限間近') {
+      return AgreedPriceStatus.NearingExpiration
+    }
+
+    // If status is already in enum format, use it directly
+    if (
+      status === 'active' ||
+      status === 'expired' ||
+      status === 'about_to_expire'
+    ) {
+      return status as AgreedPriceStatus
+    }
+
+    // Default to active
+    return AgreedPriceStatus.Active
+  }
+
   const columns: ColumnsType<QuotaAgreedPrice> = useMemo(
     () => [
       {
@@ -152,12 +198,8 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'status',
         key: 'status',
         render: (_: any, record: QuotaAgreedPrice) => {
-          let calculatedStatus = ''
-          const validToDate = record.valid_to
-          if (validToDate) {
-            calculatedStatus = calculatedStatusFromExpiredDate(validToDate)
-          }
-          return getStatusTag(calculatedStatus)
+          const mappedStatus = mapStatusFromApi(record.status)
+          return getStatusTag(mappedStatus)
         },
       },
       {
@@ -250,7 +292,7 @@ const AgreedPriceQuotaTab = () => {
           )
           return (
             <div>
-              {record?.valid_from && record?.valid_to ? (
+              {!record?.is_unlimited ? (
                 <>
                   <div>
                     {(record as any).valid_from
@@ -695,11 +737,14 @@ const AgreedPriceQuotaTab = () => {
           <div
             style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}
           >
-            {t('agreed_prices.modal.update_title') || '確定見積更新'}
+            {t('agreed_prices.modal.update_title') || '継続見積更新'}
           </div>
         }
         open={isUpdateOpen}
-        onCancel={() => setIsUpdateOpen(false)}
+        onCancel={() => {
+          setIsUpdateOpen(false)
+          setIsUnlimitedModal(false)
+        }}
         footer={null}
         destroyOnClose
         style={{ top: 20 }}
@@ -764,7 +809,7 @@ const AgreedPriceQuotaTab = () => {
                 name="start_date"
                 rules={[
                   {
-                    required: true,
+                    required: !isUnlimitedModal,
                     message: t('validation.date.start_date.required'),
                   },
                 ]}
@@ -775,6 +820,7 @@ const AgreedPriceQuotaTab = () => {
                   placeholder="YYYY/MM/DD"
                   format="YYYY/MM/DD"
                   inputReadOnly
+                  disabled={isUnlimitedModal}
                   disabledDate={(current) =>
                     current && current < dayjs().startOf('day')
                   }
@@ -798,11 +844,14 @@ const AgreedPriceQuotaTab = () => {
             name="end_date"
             rules={[
               {
-                required: true,
+                required: !isUnlimitedModal,
                 message: t('validation.date.end_date.required'),
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
+                  if (isUnlimitedModal) {
+                    return Promise.resolve()
+                  }
                   const start = getFieldValue('start_date')
                   if (!value || !start) {
                     return Promise.resolve()
@@ -825,6 +874,7 @@ const AgreedPriceQuotaTab = () => {
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
               inputReadOnly
+              disabled={isUnlimitedModal}
               disabledDate={(current) => {
                 if (!current) return false
                 const today = dayjs().startOf('day')
@@ -835,6 +885,17 @@ const AgreedPriceQuotaTab = () => {
               }}
               defaultPickerValue={endDate || startDate}
             />
+          </Form.Item>
+
+          <Form.Item label=" " style={{ marginBottom: 16 }}>
+            <Checkbox
+              checked={isUnlimitedModal}
+              onChange={(e) => {
+                setIsUnlimitedModal(e.target.checked)
+              }}
+            >
+              無制限
+            </Checkbox>
           </Form.Item>
 
           <Divider style={{ margin: '24px 0' }} />

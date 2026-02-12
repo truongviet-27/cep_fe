@@ -28,7 +28,6 @@ import { PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
-  DatePicker,
   Divider,
   Flex,
   Form,
@@ -56,7 +55,11 @@ function AgreedPriceQuotaDetail() {
 
   const { mutate } = useCustomMutation()
 
-  const { data: agreedPriceList, refetch: refetchAgreedPrice } = useCustom({
+  const {
+    data: agreedPriceList,
+    refetch: refetchAgreedPrice,
+    isFetching: isFetchingAgreedPrice,
+  } = useCustom({
     url: `${apiUrl}/quota/agreed-prices?quota_id=${id}`,
     method: 'get',
     queryOptions: {
@@ -74,75 +77,88 @@ function AgreedPriceQuotaDetail() {
   const agreedPriceValidFrom: string | null | undefined =
     agreedPriceItem?.valid_from
 
-  const [isUpdateOpen, setIsUpdateOpen] = useState(false)
-  const [updateForm] = Form.useForm()
   const { mutate: mutateUpdateExpiration, isPending: isUpdatingExpiration } =
     useCustomMutation()
 
   const openUpdateExpiration = (
     newStartDate?: dayjs.Dayjs,
     newEndDate?: dayjs.Dayjs,
+    isUnlimited?: boolean,
   ) => {
-    if (newEndDate) {
-      if (!agreedPriceId) return
-      const validTo = newEndDate.format('YYYY/MM/DD')
-      const validFrom = newStartDate
+    if (!agreedPriceId) return
+
+    const values: any = {
+      is_unlimited: isUnlimited ?? false,
+    }
+
+    if (isUnlimited) {
+      values.valid_from = newStartDate
+        ? newStartDate.format('YYYY/MM/DD')
+        : null
+      values.valid_to = newEndDate ? newEndDate.format('YYYY/MM/DD') : null
+    } else if (newEndDate) {
+      values.valid_to = newEndDate.format('YYYY/MM/DD')
+      values.valid_from = newStartDate
         ? newStartDate.format('YYYY/MM/DD')
         : dayjs(agreedPriceValidFrom).format('YYYY/MM/DD')
-      mutateUpdateExpiration(
-        {
-          method: 'put',
-          url: `${apiUrl}/quota/agreed-prices/${agreedPriceId}/expiration-date`,
-          values: { valid_from: validFrom, valid_to: validTo },
-          successNotification: () => ({
-            message: t('notifications.success'),
-            description: t('notifications.editSuccess'),
-            type: 'success',
-          }),
-        },
-        {
-          onSuccess: () => {
-            refetchAgreedPrice?.()
-          },
-        },
-      )
     } else {
-      // Open modal for update (fallback)
-      const end = agrredPriceValidTo ? dayjs(agrredPriceValidTo) : null
-      const start = end ? end.add(1, 'day') : null
-      updateForm.setFieldsValue({ valid_from: start, valid_to: null })
-      setIsUpdateOpen(true)
+      return
     }
+
+    mutateUpdateExpiration(
+      {
+        method: 'put',
+        url: `${apiUrl}/quota/agreed-prices/${agreedPriceId}/expiration-date`,
+        values,
+        successNotification: () => ({
+          message: t('notifications.success'),
+          description: t('notifications.editSuccess'),
+          type: 'success',
+        }),
+      },
+      {
+        onSuccess: () => {
+          refetchAgreedPrice?.()
+        },
+      },
+    )
+    // } else {
+    //   // Open modal for update (fallback)
+    //   const end = agrredPriceValidTo ? dayjs(agrredPriceValidTo) : null
+    //   const start = end ? end.add(1, 'day') : null
+    //   updateForm.setFieldsValue({ valid_from: start, valid_to: null })
+    //   setIsUpdateOpen(true)
+    // }
   }
 
-  const handleSubmitUpdateExpiration = () => {
-    updateForm.validateFields().then((values) => {
-      if (!agreedPriceId) return
-      const start: dayjs.Dayjs | undefined = values.valid_from
-      const end: dayjs.Dayjs | undefined = values.valid_to
-      if (!end || !start) return
-      const validFrom = start.format('YYYY/MM/DD')
-      const validTo = end.format('YYYY/MM/DD')
-      mutateUpdateExpiration(
-        {
-          method: 'put',
-          url: `${apiUrl}/quota/agreed-prices/${agreedPriceId}/expiration-date`,
-          values: { valid_from: validFrom, valid_to: validTo },
-          successNotification: () => ({
-            message: t('notifications.success'),
-            description: t('notifications.editSuccess'),
-            type: 'success',
-          }),
-        },
-        {
-          onSuccess: () => {
-            setIsUpdateOpen(false)
-            refetchAgreedPrice?.()
-          },
-        },
-      )
-    })
-  }
+  // const handleSubmitUpdateExpiration = () => {
+  //   updateForm.validateFields().then((values) => {
+  //     if (!agreedPriceId) return
+  //     const start: dayjs.Dayjs | undefined = values.valid_from
+  //     const end: dayjs.Dayjs | undefined = values.valid_to
+  //     if (!end || !start) return
+  //     const validFrom = start.format('YYYY/MM/DD')
+  //     const validTo = end.format('YYYY/MM/DD')
+  //     mutateUpdateExpiration(
+  //       {
+  //         method: 'put',
+  //         url: `${apiUrl}/quota/agreed-prices/${agreedPriceId}/expiration-date`,
+  //         values: { valid_from: validFrom, valid_to: validTo },
+  //         successNotification: () => ({
+  //           message: t('notifications.success'),
+  //           description: t('notifications.editSuccess'),
+  //           type: 'success',
+  //         }),
+  //       },
+  //       {
+  //         onSuccess: () => {
+  //           setIsUpdateOpen(false)
+  //           refetchAgreedPrice?.()
+  //         },
+  //       },
+  //     )
+  //   })
+  // }
 
   const {
     data: queryBasic,
@@ -248,7 +264,14 @@ function AgreedPriceQuotaDetail() {
         </div>
       }
     >
-      <Spin spinning={isFetching || isFetchingProducts}>
+      <Spin
+        spinning={
+          isFetching ||
+          isFetchingProducts ||
+          isUpdatingExpiration ||
+          isFetchingAgreedPrice
+        }
+      >
         <Form
           labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
           labelAlign="left"
@@ -267,6 +290,7 @@ function AgreedPriceQuotaDetail() {
             agreedPriceId={agreedPriceId}
             agreedPriceValidFrom={agreedPriceValidFrom || undefined}
             onUpdateExpiration={openUpdateExpiration}
+            agreedPriceItem={agreedPriceItem}
           />
           <DetailInfo
             taxRoundingMethod={taxRoundingMethod}
@@ -483,7 +507,7 @@ function AgreedPriceQuotaDetail() {
           </Flex>
         </Form>
       </Spin>
-      <Modal
+      {/* <Modal
         title={t('agreed_prices.modal.update_title') || '有効期限の更新'}
         open={isUpdateOpen}
         onCancel={() => setIsUpdateOpen(false)}
@@ -505,7 +529,7 @@ function AgreedPriceQuotaDetail() {
             <DatePicker className="w-full" format="YYYY/MM/DD" />
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
       <Modal
         title="Preview PDF"
         closable={{ 'aria-label': 'Custom Close Button' }}
