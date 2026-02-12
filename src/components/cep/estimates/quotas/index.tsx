@@ -13,11 +13,9 @@ import {
 import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
-  CustomerTerm,
   QuotaStatus,
   TRANSACTION_TYPES,
 } from '@components/cep/estimates/quotas/enum'
-import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
 import {
   getActionPermissions,
   getExpiryDate,
@@ -36,7 +34,6 @@ import {
   DeleteButton,
   EditButton,
   ShowButton,
-  useModal,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -60,7 +57,6 @@ import {
   Empty,
   Form,
   Input,
-  Modal,
   Popconfirm,
   Row,
   Select,
@@ -152,8 +148,6 @@ function QuotaList() {
       }
     },
   }
-
-  const { modalProps, close, show } = useModal()
 
   const columns: ColumnsType<any> = useMemo(() => {
     return [
@@ -412,22 +406,6 @@ function QuotaList() {
                 {t('quotas.actions.re_estimate')}
               </Button>
             )}
-
-            {record.status === QuotaStatus.Completed &&
-              record.customer_term === CustomerTerm.LongTerm &&
-              (permission?.is_module_admin || record.is_author) &&
-              !record?.has_agreed_price && (
-                <Button
-                  type="default"
-                  size="small"
-                  onClick={() => {
-                    show()
-                    setDataAgreedPrice(record)
-                  }}
-                >
-                  {t('quotas.actions.decide_move')}
-                </Button>
-              )}
 
             {(record.status === QuotaStatus.Completed ||
               record.status === QuotaStatus.Cancelled) &&
@@ -820,8 +798,6 @@ function QuotaList() {
     }
   }
 
-  const [dataAgreedPrice, setDataAgreedPrice] = useState()
-
   return (
     <List
       title={
@@ -1189,21 +1165,6 @@ function QuotaList() {
           {...tableProps}
         />
       </Form>
-      <Modal
-        {...modalProps}
-        footer={false}
-        title={boldText(
-          t('quotas.modal.move_to_decided_estimate'),
-          PRIMARY,
-          16,
-        )}
-      >
-        <ModalAgreePrice
-          data={dataAgreedPrice}
-          close={close}
-          onSuccess={notificationFunction}
-        />
-      </Modal>
       {isCreateFromTemplate && (
         <CreateFromTemplate
           open={isCreateFromTemplate}
