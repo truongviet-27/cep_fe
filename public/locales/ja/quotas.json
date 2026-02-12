@@ -17,7 +17,7 @@
   "popups": {
     "createFromTemplate": {
       "title": "テンプレートから作成",
-      "created_at": "登録日：{dateFormatted}",
+      "created_at": "作成日：{dateFormatted}",
       "number_product": "商品数: {number_product}点",
       "place_holder": "テンプレート名で検索..."
     }

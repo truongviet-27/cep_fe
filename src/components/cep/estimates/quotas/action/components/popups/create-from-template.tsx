@@ -157,6 +157,7 @@ function CreateFromTemplate({
               },
             },
           }}
+          showHeader={false}
         />
       </Form>
     </Modal>
