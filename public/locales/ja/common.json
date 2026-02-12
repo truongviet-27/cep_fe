@@ -127,7 +127,7 @@
       "listing_classification": "上場区分",
       "industry": "業種",
       "date_of_establishment": "設立年月日",
-      "department_in_charge": "担当部署",
+      "department_in_charge": "担当部署・担当者名",
       "contact_name": "担当者名",
       "contact_department": "担当者部署",
       "contact_email": "担当者メール",
@@ -603,13 +603,13 @@
     "no_data_on_page": "このページにはデータがありません"
   },
   "parameter_settings": {
-    "parameter_settings": "パラメパラメーター設定",
+    "parameter_settings": "パラメーター設定",
     "description": "説明",
     "is_manage": "利用する",
     "not_manage": "利用しない"
   },
   "estimate_form_settings": {
-    "estimate_form_settings": "見積フォーム設定"
+    "estimate_form_settings": "見積書フォーム設定"
   },
   "mail_templates": {
     "mail_templates": "メールテンプレート設定",
@@ -1035,7 +1035,7 @@
     "show": "show"
   },
   "tenant_settings": {
-    "tenant_settings": "見積フォーム設定",
+    "tenant_settings": "見積書フォーム設定",
     "hide": "非表示",
     "greeting": {
       "label": "あいさつ文",
@@ -1095,12 +1095,12 @@
       "title": "プレビュー"
     },
     "digitalStamp": {
-      "label": "担当者デジタル捺印",
+      "label": "担当者捺印",
       "withStamp": "捺印あり",
       "withoutStamp": "捺印なし"
     },
     "consumptionTax": {
-      "label": "消費税（デフォルト）",
+      "label": "消費税",
       "taxExclusive": "外税",
       "taxInclusive": "内税",
       "taxExempt": "非課税",
@@ -1126,7 +1126,7 @@
   "forbiddenMessage": "申し訳ありませんが、このページへのアクセス権限がありません。",
   "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
   "list_received": {
-    "list_received": "確定見積一覧"
+    "list_received": "継続見積一覧"
   },
   "price_groups": {
     "message": "単価ランク（商品別）について",
@@ -1167,11 +1167,12 @@
   "agreed_prices": {
     "title": "継続見積一覧",
     "description": "※基本契約に基づく継続見積の契約期間管理です。",
-    "parent": "確定見積一覧",
+    "parent": "継続見積一覧",
     "agreed_prices": "継続見積一覧",
     "tooltip": "基本契約に基づく継続契約の見積一覧です。",
+    "basic_info_note": "※表示と編集ともに一般の見積と表示内容を合わせてください。",
     "tab": {
-      "decided_estimate_list": "確定見積一覧",
+      "decided_estimate_list": "継続見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
     },
     "summary": {

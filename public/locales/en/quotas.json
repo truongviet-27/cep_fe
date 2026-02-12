@@ -1,0 +1,12 @@
+{
+  "action": {
+    "basic_info": {
+      "warnings": {
+        "no_approve_routes": "No approve routes available"
+      }
+    }
+  },
+  "tags": {
+    "create_new_tag": "Create tag"
+  }
+}
