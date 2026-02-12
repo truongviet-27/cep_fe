@@ -40,21 +40,33 @@ const BasicInfo = () => {
       </Row>
       <Row gutter={[100, 0]}>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          {/* Row 1: 見積番号 + 説明 */}
           <CoreInput
             label={
               <label className="!text-gray-400">
                 {t('quota_templates.form.label.quote_number')}
               </label>
             }
+            labelCol={{ span: 4 }}
             required={true}
             layout="horizontal"
             disabled
           />
         </Col>
+        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <CoreInput
+            name="description"
+            label={t('quota_templates.form.label.description')}
+            layout="horizontal"
+            labelCol={{ span: 4 }}
+          />
+        </Col>
       </Row>
       <Row gutter={[100, 0]}>
-        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+        <Col xs={24} sm={16} md={5} lg={5} xl={5}>
+          {/* Row 2: 見積タイプ (非表示) + 取引条件 + カテゴリ + 見積日(cột phải) */}
           <Form.Item
+            className="hidden"
             label={boldText(t('quota_templates.form.label.quote_type'))}
             colon={false}
             required
@@ -80,12 +92,38 @@ const BasicInfo = () => {
               ]}
             />
           </Form.Item>
+          <Form.Item
+            required
+            labelCol={{ span: 7 }}
+            name={'customer_term'}
+            label={boldText(t('quotas.action.basic_info.fields.customer_term'))}
+            rules={[
+              {
+                required: true,
+                message: t('validations.required'),
+              },
+            ]}
+          >
+            <Radio.Group
+              options={[
+                {
+                  value: 'short_term',
+                  label: t('quotas.action.basic_info.customer_term.short_term'),
+                },
+                {
+                  value: 'long_term',
+                  label: t('quotas.action.basic_info.customer_term.long_term'),
+                },
+              ]}
+            />
+          </Form.Item>
         </Col>
-        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+        <Col xs={24} sm={16} md={5} lg={5} xl={5}>
           <Form.Item
             label={boldText(t('quota_templates.form.label.quote_category'))}
             colon={false}
             required
+            labelCol={{ span: 4 }}
             name="category"
             rules={[
               {
@@ -109,15 +147,30 @@ const BasicInfo = () => {
             />
           </Form.Item>
         </Col>
+        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <Form.Item
+            label={boldText(
+              <span className="!text-gray-400">
+                {t('quota_templates.form.label.quote_date')}
+              </span>,
+            )}
+            labelCol={{ span: 4 }}
+            colon={false}
+          >
+            <DatePicker placeholder="YYYY/MM/DD" className="!w-full" disabled />
+          </Form.Item>
+        </Col>
       </Row>
 
       <Row gutter={[100, 0]}>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          {/* Row 3: テンプレート名 + 納品方法 */}
           <CoreInput
             name="name"
             label={t('quota_templates.form.label.template_name')}
             required={true}
             layout="horizontal"
+            labelCol={{ span: 4 }}
             rules={[
               {
                 required: true,
@@ -128,65 +181,35 @@ const BasicInfo = () => {
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <CoreInput
-            name="description"
-            label={t('quota_templates.form.label.description')}
+            name="delivery_method"
+            label={t('quota_templates.form.label.delivery_method')}
             layout="horizontal"
+            labelCol={{ span: 4 }}
           />
         </Col>
       </Row>
 
       <Row gutter={[100, 0]}>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          {/* Row 4: 顧客 (無効) + 有効期限 */}
           <Form.Item
             label={boldText(
               <span className="!text-gray-400">
                 {t('quota_templates.form.label.customer')}
               </span>,
             )}
+            labelCol={{ span: 4 }}
             colon={false}
           >
             <Select disabled />
           </Form.Item>
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <Form.Item
-            label={boldText(
-              <span className="!text-gray-400">
-                {t('quota_templates.form.label.quote_date')}
-              </span>,
-            )}
-            colon={false}
-          >
-            <DatePicker placeholder="YYYY/MM/DD" className="!w-full" disabled />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={[100, 0]}>
-        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <Form.Item
-            label={boldText(
-              <span className="!text-gray-400">
-                {t('quota_templates.form.label.delivery_date')}
-              </span>,
-            )}
-            colon={false}
-          >
-            <DatePicker placeholder="YYYY/MM/DD" className="!w-full" disabled />
-          </Form.Item>
-        </Col>
-        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <CoreInput
-            name="delivery_method"
-            label={t('quota_templates.form.label.delivery_method')}
-            layout="horizontal"
-          />
-        </Col>
-      </Row>
-      <Row gutter={[100, 0]}>
-        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          {/* Row 6:  */}
           <Form.Item
             name="payment_due_date"
             label={boldText(t('quota_templates.form.label.payment_due_date'))}
+            labelCol={{ span: 4 }}
             colon={false}
           >
             <Select
@@ -196,9 +219,27 @@ const BasicInfo = () => {
             />
           </Form.Item>
         </Col>
+      </Row>
+
+      <Row gutter={[100, 0]}>
+        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          {/* Row 5: 配送日 (無効) + 支払期日 */}
+          <Form.Item
+            label={boldText(
+              <span className="!text-gray-400">
+                {t('quota_templates.form.label.delivery_date')}
+              </span>,
+            )}
+            labelCol={{ span: 4 }}
+            colon={false}
+          >
+            <DatePicker placeholder="YYYY/MM/DD" className="!w-full" disabled />
+          </Form.Item>
+        </Col>
         <Col xs={24} sm={16} md={10} xl={10} xxl={10}>
           <Form.Item
             label={boldText(t('quota_templates.form.label.validity_period'))}
+            labelCol={{ span: 4 }}
             colon={false}
           >
             <Flex>
@@ -216,16 +257,18 @@ const BasicInfo = () => {
       </Row>
       <Row gutter={[100, 0]}>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          {/* Row 7: 消費税 (非表示) */}
           <Form.Item
+            className="hidden"
+            name="consumption_tax"
             label={boldText(t('quota_templates.form.label.consumption_tax'))}
+            colon={false}
           >
             <Flex gap={12}>
-              <Form.Item name="consumption_tax" colon={false}>
-                <Radio.Group
-                  defaultValue={ConsumptionTaxEnum.EXCLUSIVE}
-                  options={Object.values(CONSUMPTION_TAX)}
-                />
-              </Form.Item>
+              <Radio.Group
+                defaultValue={ConsumptionTaxEnum.EXCLUSIVE}
+                options={Object.values(CONSUMPTION_TAX)}
+              />
             </Flex>
           </Form.Item>
         </Col>
