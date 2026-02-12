@@ -107,9 +107,9 @@ export const useCustomerEdit = () => {
         console.error('Failed to refetch contacts:', refetchError)
       }
 
-      // Navigate to show page on success
+      // Navigate to list page on success
       go({
-        to: `/customers/show/${customerId}`,
+        to: `/customers`,
         type: 'push',
       })
     } catch (error: any) {
