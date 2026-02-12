@@ -43,6 +43,7 @@ export default function Page() {
   const isEditPermission = hasFullAccessModule(PermissionEnum.DEPARTMENT_EDIT)
 
   const { tableProps, searchFormProps, setFilters } = useTable<Department>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => [
       {

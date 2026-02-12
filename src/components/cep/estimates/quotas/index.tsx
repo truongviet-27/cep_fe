@@ -465,6 +465,7 @@ function QuotaList() {
     tableQuery: { refetch },
     filters,
   } = useTable({
+    pagination: { pageSize: 20 },
     filters: {
       initial: [
         {

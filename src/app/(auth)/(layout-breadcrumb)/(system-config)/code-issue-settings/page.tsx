@@ -22,6 +22,7 @@ export default function Page() {
   const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   const { tableProps } = useTable({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     queryOptions: {
       select: (data) => {

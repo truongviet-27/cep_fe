@@ -26,6 +26,7 @@ export default function Page() {
   const departmentData = queryResult?.data?.data
 
   const { tableProps } = useTable({
+    pagination: { pageSize: 20 },
     resource: 'employees',
     filters: {
       permanent: [

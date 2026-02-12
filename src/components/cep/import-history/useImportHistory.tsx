@@ -13,6 +13,7 @@ const { Text } = Typography
 function useImportHistory() {
   const t = useTranslate()
   const { tableProps, searchFormProps, setFilters } = useTable({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     resource: 'csv-imports/history',
     onSearch: (data: any) => {

@@ -54,6 +54,7 @@ export default function useProductUnits() {
     pageCount,
     tableQuery,
   } = useTable<UnitRow>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => {
       if (values.name_lk) {
