@@ -375,6 +375,9 @@
     },
     "create_customer_button": "取引先新規登録"
   },
+  "tags": {
+    "create_new_tag": "タグを作成"
+  },
   "validation": {
     "basic_info": {
       "required": {
