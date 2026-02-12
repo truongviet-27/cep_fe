@@ -59,6 +59,7 @@ export default function Page() {
     {
       dataIndex: 'code',
       title: t('ranks.table.code'),
+      width: '14%',
       render: (_, record) => (
         <Button
           type={'link'}
@@ -72,25 +73,38 @@ export default function Page() {
         </Button>
       ),
     },
-    { dataIndex: 'note', title: t('ranks.table.note'), align: 'left' },
+    {
+      dataIndex: 'note',
+      width: '30%',
+      title: t('ranks.table.note'),
+      align: 'left',
+    },
     {
       dataIndex: 'rank_group',
       title: t('ranks.table.unit_price'),
+      width: '19%',
       render: (_, record) => (
         <Link href={'/price-groups'} className="!h-4 !underline">
           {record.code + ' ランク別単価'}
         </Link>
       ),
     },
-    { dataIndex: 'rate', title: t('ranks.fields.rate'), align: 'right' },
+    {
+      dataIndex: 'rate',
+      width: '9%',
+      title: t('ranks.fields.rate'),
+      align: 'right',
+    },
     {
       dataIndex: 'number_of_customers',
+      width: '9%',
       title: t('ranks.fields.number_of_customers'),
       align: 'right',
     },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
+      width: '19%',
       render: (_: any, record: BaseRecord) => (
         <Space>
           <ShowButton
