@@ -12,7 +12,6 @@ import type { BaseRecord } from '@refinedev/core'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import { Space, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -25,7 +24,6 @@ export default function Page() {
   const go = useGo()
 
   const departmentData = queryResult?.data?.data
-  const isDefaultDepartment = departmentData?.name === DEPARTMENT_DEFAULT
 
   const { tableProps } = useTable({
     resource: 'employees',
@@ -103,13 +101,7 @@ export default function Page() {
           </div>
         </div>
       }
-      rightFooterButtons={
-        <EditButton
-          icon={null}
-          type={'primary'}
-          disabled={isDefaultDepartment}
-        />
-      }
+      rightFooterButtons={<EditButton icon={null} type={'primary'} />}
     >
       <div className="flex flex-col space-y-6">
         <DetailItem label={t('departments.fields.code')}>
