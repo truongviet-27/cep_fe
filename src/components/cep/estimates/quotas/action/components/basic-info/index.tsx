@@ -254,7 +254,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_number'),
               )}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
               className="[&>.ant-row]:!flex-nowrap"
             >
               <div className="flex flex-row flex-nowrap items-center gap-4">
@@ -322,7 +322,7 @@ const BasicInfo = ({
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               label={boldText(t('quotas.action.basic_info.fields.customer'))}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
               required
             >
               <Row gutter={[8, 0]} align="top" wrap={false}>
@@ -403,40 +403,11 @@ const BasicInfo = ({
           <Col xs={24} sm={16} md={5} lg={5} xl={5}>
             <Form.Item
               required
-              name={'type'}
-              className="hidden"
-              label={boldText(
-                t('quotas.action.basic_info.fields.estimate_type'),
-              )}
-              labelCol={{ span: 4 }}
-              rules={[
-                {
-                  required: true,
-                  message: t('validations.required'),
-                },
-              ]}
-            >
-              <Radio.Group
-                options={[
-                  {
-                    value: 'normal',
-                    label: t('quotas.action.basic_info.types.normal'),
-                  },
-                  {
-                    value: 'channel_limited',
-                    label: t('quotas.action.basic_info.types.limited'),
-                  },
-                ]}
-              />
-            </Form.Item>
-
-            <Form.Item
-              required
               name={'customer_term'}
               label={boldText(
                 t('quotas.action.basic_info.fields.customer_term'),
               )}
-              labelCol={{ span: 5 }}
+              labelCol={{ span: 3 }}
               rules={[
                 {
                   required: true,
@@ -476,7 +447,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_category'),
               )}
-              labelCol={{ span: 5 }}
+              labelCol={{ span: 3 }}
               rules={[
                 {
                   required: true,
@@ -507,7 +478,7 @@ const BasicInfo = ({
                 ),
               )}
               name="customer_contact_id"
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
               rules={[
                 {
                   required: true,
@@ -605,7 +576,7 @@ const BasicInfo = ({
               required
               label={boldText(t('quotas.action.basic_info.fields.title'))}
               name={'title'}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
               rules={[
                 {
                   required: true,
@@ -630,7 +601,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.delivery_date'),
               )}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
             >
               <DatePicker
                 style={{ width: '100%' }}
@@ -649,7 +620,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_date'),
               )}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
               required
               rules={[
                 {
@@ -673,7 +644,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.payment_due_date'),
               )}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
             >
               <Select
                 allowClear
@@ -728,7 +699,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.delivery_method'),
               )}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
             >
               <Input />
             </Form.Item>
@@ -742,7 +713,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.department_name'),
               )}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
             >
               <Input readOnly style={{ width: '100%' }} />
             </Form.Item>
@@ -756,7 +727,7 @@ const BasicInfo = ({
               label={boldText(
                 t('quotas.action.basic_info.fields.expiration_date'),
               )}
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 3 }}
             >
               <div style={{ alignItems: 'center', gap: 12 }}>
                 <Form.Item
@@ -859,7 +830,7 @@ const BasicInfo = ({
                       label={boldText(
                         t('quotas.action.basic_info.fields.approve_route'),
                       )}
-                      labelCol={{ span: 4 }}
+                      labelCol={{ span: 3 }}
                       initialValue={
                         parameterSettings.get('approve-routes')
                           ? singleRoute?.name
@@ -881,7 +852,7 @@ const BasicInfo = ({
                   label={boldText(
                     t('quotas.action.basic_info.fields.approve_route'),
                   )}
-                  labelCol={{ span: 4 }}
+                  labelCol={{ span: 3 }}
                 >
                   <Select
                     disabled={!parameterSettings.get('approve-routes')}
