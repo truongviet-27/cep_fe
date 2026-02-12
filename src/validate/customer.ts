@@ -81,22 +81,35 @@ const zDeliveryAddressRule = (t: any) =>
           }
         }),
     ),
-    phone: z.optional(
-      z
-        .string({ error: t('validation.customer.phone.string') })
-        .max(20, { error: t('validation.customer.phone.max', { max: 20 }) })
-        .superRefine((val, ctx) => {
-          if (!val) return
-          // Remove hyphens for validation
-          const normalized = val.replace(/-/g, '')
-          if (!/^0\d{9,10}$/.test(normalized)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: t('validation.customer.phone.regex'),
-            })
-          }
-        }),
-    ),
+    phone: z
+      .union([z.string(), z.null(), z.undefined(), z.literal('')])
+      .optional()
+      .superRefine((val, ctx) => {
+        if (!val || val.length < 1) return
+        // Remove hyphens for validation
+        const normalized = val.replace(/-/g, '')
+        if (!/^[\d-]+$/.test(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.customer.phone.numeric_only'),
+          })
+          return
+        }
+        if (!/^0/.test(normalized)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.customer.phone.regex'),
+          })
+          return
+        }
+        if (normalized.length < 10 || normalized.length > 11) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.customer.phone.regex'),
+          })
+          return
+        }
+      }),
   })
 
 const zCompanyResearchInformationRule = (t: any) =>
@@ -381,52 +394,41 @@ export const validateCustomerRule = (t: any) => {
           .nullable(),
       ),
 
-      phone: z.optional(
-        z
-          .string({ error: t('validation.customer.phone.required') })
-          .superRefine((val, ctx) => {
-            if (val.length < 1) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.too_small,
-                origin: 'string',
-                minimum: 1,
-                type: 'string',
-                inclusive: true,
-                message: t('validation.customer.phone.required'),
-              })
-              return
-            }
-            // Remove hyphens for validation
-            const normalized = val.replace(/-/g, '')
-            // Check if contains only digits and hyphens
-            if (!/^[\d-]+$/.test(val)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: t('validation.customer.phone.numeric_only'),
-              })
-              return
-            }
-            // Check if starts with 0
-            if (!/^0/.test(normalized)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: t('validation.customer.phone.regex'),
-              })
-              return
-            }
-            // Check length (10-11 digits)
-            if (normalized.length < 10 || normalized.length > 11) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: t('validation.customer.phone.regex', {
-                  min: 10,
-                  max: 11,
-                }),
-              })
-              return
-            }
-          }),
-      ),
+      phone: z
+        .union([z.string(), z.null(), z.undefined(), z.literal('')])
+        .optional()
+        .superRefine((val, ctx) => {
+          if (!val || val.length < 1) return
+          // Remove hyphens for validation
+          const normalized = val.replace(/-/g, '')
+          // Check if contains only digits and hyphens
+          if (!/^[\d-]+$/.test(val)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('validation.customer.phone.numeric_only'),
+            })
+            return
+          }
+          // Check if starts with 0
+          if (!/^0/.test(normalized)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('validation.customer.phone.regex'),
+            })
+            return
+          }
+          // Check length (10-11 digits)
+          if (normalized.length < 10 || normalized.length > 11) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('validation.customer.phone.regex', {
+                min: 10,
+                max: 11,
+              }),
+            })
+            return
+          }
+        }),
       fax: z.optional(
         z
           .string({ error: t('validation.customer.fax.required') })
@@ -447,42 +449,31 @@ export const validateCustomerRule = (t: any) => {
             }
           }),
       ),
-      mail: z.optional(
-        z
-          .string({ error: t('validation.customer.mail.required') })
-          .superRefine((val, ctx) => {
-            if (val.length < 1) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.too_small,
-                origin: 'string',
-                minimum: 1,
-                type: 'string',
-                inclusive: true,
-                message: t('validation.customer.mail.required'),
-              })
-              return
-            }
-            if (val.length > 255) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.too_big,
-                origin: 'string',
-                maximum: 255,
-                type: 'string',
-                inclusive: true,
-                message: t('validation.customer.mail.max', { max: 255 }),
-              })
-              return
-            }
-            if (!z.string().email().safeParse(val).success) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                validation: 'email',
-                message: t('validation.customer.mail.email'),
-              })
-              return
-            }
-          }),
-      ),
+      mail: z
+        .union([z.string(), z.null(), z.undefined(), z.literal('')])
+        .optional()
+        .superRefine((val, ctx) => {
+          if (!val || val.length < 1) return
+          if (val.length > 255) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_big,
+              origin: 'string',
+              maximum: 255,
+              type: 'string',
+              inclusive: true,
+              message: t('validation.customer.mail.max', { max: 255 }),
+            })
+            return
+          }
+          if (!z.string().email().safeParse(val).success) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              validation: 'email',
+              message: t('validation.customer.mail.email'),
+            })
+            return
+          }
+        }),
 
       listing_classification: z.optional(
         z
