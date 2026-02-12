@@ -487,7 +487,7 @@ function QuotaAction() {
         total_profit_margin: 0,
         total_price_tax_included: 0,
         tax_rounding_method: data.data?.tax_rounding_method,
-        customer_term: 'long_term',
+        customer_term: 'short_term',
         department_id: departmentData?.data.id,
         department_name: departmentData?.data.name,
         approve_routes: departmentData?.data.approve_routes || [],

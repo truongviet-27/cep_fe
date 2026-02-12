@@ -57,13 +57,8 @@ function BasicInfo({
         </Row>
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'type'}
-              label={boldText(t('quotas.show.estimate_category'))}
-            >
-              {data?.category === 'merchandise'
-                ? t('quotas.show.category.merchandise')
-                : t('quotas.show.category.service')}
+            <Form.Item label={boldText(t('quotas.show.customer'))}>
+              {data?.customer_name}
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
@@ -209,7 +204,7 @@ function BasicInfo({
                 t('quotas.action.customer_contact_modal.department_name'),
               )}
             >
-              {customerContact?.department_name || '---'}
+              {data?.department?.name || '---'}
             </Form.Item>
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>

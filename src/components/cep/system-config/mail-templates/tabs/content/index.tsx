@@ -3,7 +3,7 @@ import { useTranslate } from '@refinedev/core'
 import type { InputRef } from 'antd'
 import { Button, Form, Input, Space, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import './style-email.css'
 import boldText from '@utility/bold-text'
 
@@ -25,34 +25,48 @@ function TabsContent({
       }
     }
   >(null)
+  const [focusedEl, setFocusedEl] = useState<
+    HTMLInputElement | HTMLTextAreaElement | null
+  >(null)
+  const [focusFieldName, setFocusFieldName] = useState<string>('')
   const t = useTranslate()
 
   const methods = Form.useFormInstance()
   const { getFieldValue, setFieldValue } = methods
 
-  const insertAtCursor = (field: string, text: string) => {
-    const input = inputRef.current?.resizableTextArea?.textArea
-    if (!input) return
+  const onFocus = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: string,
+  ) => {
+    setFocusedEl(e.target ?? e.currentTarget)
+    setFocusFieldName(field)
+  }
 
-    const start = input.selectionStart
-    const end = input.selectionEnd
+  const insertAtCursorTextarea = (field: string, text: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const inputEl = (focusedEl as any)?.resizableTextArea?.textArea || focusedEl
+    if (!inputEl) return
+
+    const prevScrollTop = inputEl.scrollTop
     const currentValue = getFieldValue(field) || ''
+    const start = inputEl.selectionStart ?? currentValue.length
+    const end = inputEl.selectionEnd ?? currentValue.length
 
     const cleanText = text.trim()
     const insertValue = `[[${cleanText}]]`
 
     const newValue =
       currentValue.substring(0, start) +
-      `[[${text.trim()}]]` +
+      insertValue +
       currentValue.substring(end)
 
     setFieldValue(field, newValue)
 
     setTimeout(() => {
-      input.focus()
+      inputEl.focus()
       const cursorPos = start + insertValue.length
-      input.setSelectionRange(cursorPos, cursorPos)
-      input.scrollTop = input.scrollHeight
+      inputEl?.setSelectionRange(cursorPos, cursorPos)
+      inputEl.scrollTop = prevScrollTop
     })
   }
 
@@ -119,7 +133,11 @@ function TabsContent({
                       color: '#1890FF',
                     }}
                     onClick={() => {
-                      insertAtCursor(`content_${index}`, tag.text + '\n')
+                      const field = focusFieldName || `content_${index}`
+                      const textToInsert = field.startsWith('signature_')
+                        ? tag.text
+                        : tag.text + '\n'
+                      insertAtCursorTextarea(field, textToInsert)
                     }}
                   >
                     {tag.text}
@@ -154,6 +172,7 @@ function TabsContent({
           variant={isEdit ? 'outlined' : 'borderless'}
           readOnly={!isEdit}
           ref={inputRef}
+          onFocus={(e) => onFocus(e, `content_${index}`)}
         />
       </Form.Item>
 
@@ -187,6 +206,7 @@ function TabsContent({
           variant={isEdit ? 'outlined' : 'borderless'}
           className="!resize-none"
           readOnly={!isEdit}
+          onFocus={(e) => onFocus(e, `signature_${index}`)}
         />
       </Form.Item>
     </>

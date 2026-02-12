@@ -132,7 +132,7 @@
     },
     "category": {
       "merchandise": "物販",
-      "service": "役務"
+      "service": "役務サービス"
     },
     "detail_info": "詳細情報",
     "optional_info": "オプション情報",
@@ -320,7 +320,7 @@
         "consumption_tax": "消費税",
         "department_name": "部門",
         "approve_route": "承認ルート",
-        "customer_term": "取引区分"
+        "customer_term": "契約区分"
       },
       "types": {
         "normal": "通常",
@@ -376,6 +376,9 @@
       "selected_contact_label": "見積送付先"
     },
     "create_customer_button": "取引先新規登録"
+  },
+  "tags": {
+    "create_new_tag": "タグを作成"
   },
   "validation": {
     "basic_info": {

@@ -68,7 +68,6 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
-          required
           label={boldText(t('customers.show.phone'))}
           name="phone"
           rules={[rule]}
@@ -87,7 +86,6 @@ function AddressContact(
           label={boldText(t('customers.delivery.email'))}
           name="mail"
           rules={[rule]}
-          required
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>

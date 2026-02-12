@@ -13,6 +13,8 @@ import { validateCustomerRule } from '@validate/customer'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
 import { useEffect } from 'react'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
+import type { CrudFilter } from '@refinedev/core'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
@@ -158,6 +160,37 @@ export const useCustomerCreate = () => {
       })
     }
   }, [isAutomatic, form, refetchCodeGen])
+
+  const queryOptions: CrudFilter[] = [
+    {
+      field: 'name',
+      operator: 'eq',
+      value: DEPARTMENT_DEFAULT,
+    },
+  ]
+
+  const { data: departmentData } = useCustom({
+    method: 'get',
+    url: `${apiUrl}/departments/find-first`,
+    queryOptions: {
+      enabled: true,
+    },
+    config: {
+      filters: queryOptions,
+    },
+  })
+
+  useEffect(() => {
+    if (departmentData?.data) {
+      form.setFieldsValue({
+        department_in_charge_id: departmentData.data.id,
+        department_in_charge: {
+          name: departmentData.data.name,
+          deleted_at: departmentData.data.deleted_at,
+        },
+      })
+    }
+  }, [departmentData, form])
 
   const rule = validateCustomerRule(t)
 
