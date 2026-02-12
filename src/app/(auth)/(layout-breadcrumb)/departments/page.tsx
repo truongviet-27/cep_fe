@@ -26,6 +26,7 @@ import {
 import { Department, PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import { CSV_LINK, PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -178,13 +179,27 @@ export default function Page() {
     {
       title: t('table.actions'),
       dataIndex: 'actions',
-      render: (_: any, record: BaseRecord) => (
-        <Space>
-          <ShowButton hideText size="small" recordItemId={record.id} />
-          <EditButton hideText size="small" recordItemId={record.id} />
-          <DeleteButton hideText size="small" recordItemId={record.id} />
-        </Space>
-      ),
+      render: (_: any, record: BaseRecord) => {
+        const isDefaultDepartment =
+          (record as Department).name === DEPARTMENT_DEFAULT
+        return (
+          <Space>
+            <ShowButton hideText size="small" recordItemId={record.id} />
+            <EditButton
+              hideText
+              size="small"
+              recordItemId={record.id}
+              disabled={isDefaultDepartment}
+            />
+            <DeleteButton
+              hideText
+              size="small"
+              recordItemId={record.id}
+              disabled={isDefaultDepartment}
+            />
+          </Space>
+        )
+      },
     },
   ]
 
