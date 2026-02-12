@@ -104,6 +104,7 @@ export function useController() {
         payment_due_date: data?.data.default_payment_due_date,
         expiration_date: data?.data.default_expiration_date,
         consumption_tax: data?.data.consumption_tax ?? '0',
+        customer_term: 'short_term',
         tax_rate: data?.data.tax_rate,
         tax_rounding_method: data.data?.tax_rounding_method,
         tax_rate_group: {},

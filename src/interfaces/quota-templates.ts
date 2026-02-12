@@ -92,6 +92,7 @@ export type QuoteTemplateDetailType = {
   type?: 'normal' | 'channel_limited'
   category?: 'merchandise' | 'service'
   delivery_method?: string
+  customer_term?: 'short_term' | 'long_term'
   payment_due_date?:
     | 'monthly_25'
     | 'monthly_10'
