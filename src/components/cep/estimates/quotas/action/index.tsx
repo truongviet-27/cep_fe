@@ -753,17 +753,7 @@ function QuotaAction() {
             }}
           >
             <Space>
-              {isEdit && (
-                <DeleteButton
-                  icon={null}
-                  size={'small'}
-                  onSuccess={() => {
-                    go({
-                      to: '/quotas',
-                    })
-                  }}
-                />
-              )}
+              <> </>
             </Space>
             <Space className="items-end">
               <Button
@@ -773,13 +763,28 @@ function QuotaAction() {
                     to: '/quotas',
                   })
                 }}
+                autoInsertSpace={false}
               >
                 {t('buttons.back')}
               </Button>
-
-              <Button {...saveButtonProps} type="primary">
+              <Button
+                {...saveButtonProps}
+                type="primary"
+                autoInsertSpace={false}
+              >
                 {action === 'edit' ? t('buttons.save') : t('buttons.create')}
               </Button>
+              {isEdit && (
+                <DeleteButton
+                  icon={null}
+                  onSuccess={() => {
+                    go({
+                      to: '/quotas',
+                    })
+                  }}
+                  autoInsertSpace={false}
+                />
+              )}
             </Space>
           </Flex>
         </Form>

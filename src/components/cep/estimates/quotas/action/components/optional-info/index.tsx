@@ -175,7 +175,15 @@ function OptionalInfo({
               dataIndex: 'code',
               key: 'code',
               align: 'left',
-              width: 200,
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return {
@@ -191,9 +199,6 @@ function OptionalInfo({
                           placeholder={t(
                             'quotas.action.optional_info.placeholders.optional_list_name',
                           )}
-                          style={{
-                            width: 400,
-                          }}
                         />
                       </Form.Item>
                     ),
@@ -256,11 +261,14 @@ function OptionalInfo({
                           },
                         },
                       ]}
-                      style={{
-                        width: 300,
-                      }}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input
+                        placeholder={t('placeholders.input_please')}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -273,7 +281,15 @@ function OptionalInfo({
               dataIndex: 'name',
               key: 'name',
               align: 'left',
-              width: 200,
+              width: '15%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -531,11 +547,14 @@ function OptionalInfo({
                           },
                         },
                       ]}
-                      style={{
-                        width: 300,
-                      }}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input
+                        placeholder={t('placeholders.input_please')}
+                        style={{
+                          maxWidth: '500px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -546,7 +565,15 @@ function OptionalInfo({
               dataIndex: 'unit',
               key: 'unit',
               align: 'center',
-              width: 200,
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -576,11 +603,14 @@ function OptionalInfo({
                           message: '',
                         },
                       ]}
-                      style={{
-                        width: '100%',
-                      }}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input
+                        placeholder={t('placeholders.input_please')}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -590,7 +620,15 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.package'),
               dataIndex: 'package',
               key: 'package',
-              width: 200,
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               align: 'left',
               render: (_, record) => {
                 if (record.isHeader) {
@@ -631,7 +669,10 @@ function OptionalInfo({
                           index2={record.index2}
                           filterPath2={['customer']}
                           resource={`products`}
-                          style={{ width: 200 }}
+                          style={{
+                            maxWidth: '200px',
+                            width: '100%',
+                          }}
                         />
                       </Form.Item>
                     )
@@ -656,7 +697,13 @@ function OptionalInfo({
                         },
                       ]}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input
+                        placeholder={t('placeholders.input_please')}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -666,6 +713,15 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.cost_price'),
               dataIndex: 'cost_price',
               key: 'cost_price',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -692,7 +748,15 @@ function OptionalInfo({
                       ]}
                       className="ant-form-item-hidden-margin"
                     >
-                      <InputNumber min={0} precision={0} controls={false} />
+                      <InputNumber
+                        min={0}
+                        precision={0}
+                        controls={false}
+                        style={{
+                          maxWidth: '100px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -702,6 +766,15 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.selling_price'),
               dataIndex: 'selling_price',
               key: 'selling_price',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -726,6 +799,10 @@ function OptionalInfo({
                           prev.filter((item) => item !== record?.product_id),
                         )
                       }}
+                      style={{
+                        maxWidth: '100px',
+                        width: '100%',
+                      }}
                     />
                   </Form.Item>
                 )
@@ -735,6 +812,15 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.quantity'),
               dataIndex: 'quantity',
               key: 'quantity',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -773,6 +859,10 @@ function OptionalInfo({
                           prev.filter((item) => item !== record?.product_id),
                         )
                       }}
+                      style={{
+                        maxWidth: '100px',
+                        width: '100%',
+                      }}
                     />
                   </Form.Item>
                 )
@@ -782,6 +872,15 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.profit_margin'),
               dataIndex: 'profit_margin',
               key: 'profit_margin',
+              width: '6%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -856,9 +955,55 @@ function OptionalInfo({
               },
             },
             {
+              title: t('quotas.action.optional_info.table.selling_amount'),
+              dataIndex: 'sellingAmount',
+              key: 'sellingAmount',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                const quantity =
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'quantity',
+                  ]) || 0
+
+                const selling =
+                  form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'products',
+                    record.index2,
+                    'selling_price',
+                  ]) || 0
+                return Number(quantity * selling).toLocaleString()
+              },
+            },
+            {
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -886,45 +1031,28 @@ function OptionalInfo({
                     ]}
                   >
                     <Select
-                      style={{ width: 100 }}
                       options={DEFAULT_TAX_RATES}
+                      style={{
+                        maxWidth: '200px',
+                        width: '100%',
+                      }}
                     />
                   </Form.Item>
                 )
               },
             },
             {
-              title: t('quotas.action.optional_info.table.selling_amount'),
-              dataIndex: 'sellingAmount',
-              key: 'sellingAmount',
-              render: (_, record) => {
-                if (record.isHeader) {
-                  return { props: { colSpan: 0 } }
-                }
-                const quantity =
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'quantity',
-                  ]) || 0
-
-                const selling =
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'selling_price',
-                  ]) || 0
-                return Number(quantity * selling).toLocaleString()
-              },
-            },
-
-            {
               title: t('quotas.action.optional_info.table.row_edit'),
               key: 'action',
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 const isHeader = record.isHeader
 
@@ -1030,6 +1158,8 @@ function OptionalInfo({
                 </Button>
               </Flex>
               <CommonTable
+                scroll={{ x: 800 }}
+                tableLayout="fixed"
                 columns={columns}
                 dataSource={dataSource}
                 rowClassName={(record) =>
