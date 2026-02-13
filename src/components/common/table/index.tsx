@@ -20,7 +20,6 @@ function CommonTable<T extends object>(
       components={{
         ...components,
         header: {
-          ...components?.header,
           cell: (
             props: React.JSX.IntrinsicAttributes &
               React.ClassAttributes<HTMLTableHeaderCellElement> &
@@ -29,18 +28,19 @@ function CommonTable<T extends object>(
             <th
               {...props}
               style={{
-                ...props.style,
                 backgroundColor: '#F0F9FF',
                 color: PRIMARY,
                 textAlign: 'center',
                 padding: 11,
+                ...props.style,
               }}
             />
           ),
+          ...components?.header,
         },
         body: {
-          ...components?.body,
           cell: EditableCell,
+          ...components?.body,
         },
       }}
       bordered

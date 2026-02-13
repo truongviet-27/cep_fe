@@ -89,7 +89,7 @@ const OptionalInfo: FC = () => {
                         className="ant-form-item-hidden-margin"
                       >
                         <Input
-                          placeholder="商品リスト名入力"
+                          placeholder="タイトル入力"
                           style={{
                             width: 400,
                           }}

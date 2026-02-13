@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // done
-import {
-  CommentOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  DownloadOutlined,
-  DownOutlined,
-  EditOutlined,
-  EyeOutlined,
-  RightOutlined,
-} from '@ant-design/icons'
+import { CommentOutlined, DownOutlined, RightOutlined } from '@ant-design/icons'
 import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
@@ -37,6 +28,7 @@ import {
   useTable,
 } from '@refinedev/antd'
 import {
+  type CrudFilter,
   type CrudFilters,
   type OpenNotificationParams,
   useApiUrl,
@@ -55,6 +47,7 @@ import {
   DatePicker,
   Dropdown,
   Empty,
+  Flex,
   Form,
   Input,
   Popconfirm,
@@ -69,6 +62,7 @@ import { type TableRowSelection } from 'antd/es/table/interface'
 import { type ItemType } from 'antd/lib/menu/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { type MenuInfo } from 'rc-menu/lib/interface'
 import React, {
   type ReactNode,
@@ -81,6 +75,12 @@ import React, {
 const { RangePicker } = DatePicker
 
 function QuotaList() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const urlPage = Number(searchParams.get('current')) || 1
+  const urlPageSize = Number(searchParams.get('pageSize')) || 20
   const t = useTranslate()
   const { convertCurrency } = useCurrency()
   const apiUrl = useApiUrl()
@@ -103,7 +103,7 @@ function QuotaList() {
   ]
   const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
   const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
-  console.log('isCreateFromTemplate', isCreateFromTemplate)
+
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
     selectedRows: any,
@@ -191,9 +191,29 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
+        minWidth: 110,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 110,
+            minWidth: 110,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (value, record) => (
           <Button
             type="link"
+            style={{
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
             className="underline"
             title={value}
             onClick={() => {
@@ -215,21 +235,88 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
+        minWidth: 200,
         onCell: () => ({
           style: {
-            maxWidth: 150,
+            padding: '2px 2px',
+            maxWidth: 200,
+            minWidth: 200,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            verticalAlign: 'center',
           },
         }),
 
         render: (_, record) => (
           <div className="flex flex-col gap-1">
-            <div className="overflow-hidden" title={record.title}>
+            <div
+              className="overflow-hidden"
+              title={record.title}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
               {record.title}
             </div>
-            <span>{record.customer_name}</span>
+            <span
+              title={record.customer_name}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {record.customer_name}
+            </span>
+          </div>
+        ),
+      },
+      {
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.transaction_type')}</span>
+          </div>
+        ),
+        dataIndex: 'transaction_type',
+        key: 'transaction_type',
+        minWidth: 90,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 90,
+            minWidth: 90,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
+
+        render: (_, record) => (
+          <div
+            className="flex flex-col gap-1"
+            style={{
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
+          >
+            <div className="overflow-hidden" title={record.transaction_type}>
+              {record.transaction_type &&
+                t(`quotas.transaction_type.${record.transaction_type}`)}
+            </div>
           </div>
         ),
       },
@@ -242,9 +329,33 @@ function QuotaList() {
         ),
         dataIndex: 'creator',
         key: 'creator',
+        minWidth: 180,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 180,
+            minWidth: 180,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (_, record) => (
           <div>
-            <div>{record?.author?.name}</div>
+            <div
+              title={record?.author?.name}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {record?.author?.name}
+            </div>
             <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
               {record.approvers?.map((item: any, index: number) => {
                 const numSteps = item?.number_step ?? 1
@@ -252,6 +363,15 @@ function QuotaList() {
                 const numberIcon = String.fromCharCode(9311 + numSteps)
                 return (
                   <span
+                    title={item.name}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      textAlign: 'center',
+                    }}
                     key={index}
                     className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
                   >
@@ -272,10 +392,46 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
+        minWidth: 150,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 150,
+            minWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (_, record) => (
           <div className="flex flex-col gap-2">
-            <div>{record.department_in_charge}</div>
-            <div>{Number(record?.total_price || 0).toLocaleString()}</div>
+            <div
+              title={record.department_in_charge}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {record.department_in_charge}
+            </div>
+            <div
+              title={Number(record?.total_price || 0).toLocaleString()}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {Number(record?.total_price || 0).toLocaleString()}
+            </div>
           </div>
         ),
       },
@@ -339,30 +495,66 @@ function QuotaList() {
         title: t('quotas.table.actions'),
         key: 'action',
         render: (_, record) => (
-          <Space>
-            <ShowButton
-              hideText
-              size="small"
-              icon={<EyeOutlined />}
-              recordItemId={record.id}
-            />
-            {(record.status === QuotaStatus.Creating ||
-              record.status === QuotaStatus.Rejected) &&
-              (permission?.is_module_admin || record.is_author) && (
-                <EditButton
-                  hideText
-                  size="small"
-                  icon={<EditOutlined />}
-                  recordItemId={record.id}
-                />
-              )}
+          <Flex vertical={true} gap={4}>
+            <Space>
+              <ShowButton
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('quotas.goDetailLabel')}
+              </ShowButton>
 
-            <CloneButton
-              hideText
-              size="small"
-              icon={<CopyOutlined />}
-              recordItemId={record.id}
-            />
+              {(record.status === QuotaStatus.Creating ||
+                record.status === QuotaStatus.Rejected) &&
+                (permission?.is_module_admin || record.is_author) && (
+                  <EditButton
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#1FDB51',
+                    }}
+                  >
+                    {t('quotas.goEditLabel')}
+                  </EditButton>
+                )}
+
+              <CloneButton
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                style={{
+                  color: '#FFFFFF',
+                  background: '#0161D3',
+                }}
+              >
+                {t('quotas.goDetailCLoneLabel')}
+              </CloneButton>
+
+              {record.status === QuotaStatus.SentToCustomer && (
+                <Button
+                  type="default"
+                  size="small"
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#C5AF08',
+                  }}
+                  onClick={() => {
+                    go({
+                      to: `quotas/clone/${record.id}?actionType=VERSION`,
+                    })
+                  }}
+                >
+                  {t('quotas.actions.re_estimate')}
+                </Button>
+              )}
+            </Space>
 
             {/* {record.status === QuotaStatus.Completed && (
               <Button
@@ -377,64 +569,66 @@ function QuotaList() {
               </Button>
             )} */}
 
-            <Link href={record?.pdf_path} target="_blank">
-              <Button size="small" icon={<DownloadOutlined />} />
-            </Link>
+            <Space>
+              {(record.status === QuotaStatus.Creating ||
+                record.status === QuotaStatus.Rejected ||
+                record.status === QuotaStatus.Cancelled) &&
+                (record.is_author || permission?.is_module_admin) && (
+                  <DeleteButton
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#E74C3C',
+                    }}
+                  >
+                    {t('quotas.actions.delete')}
+                  </DeleteButton>
+                )}
 
-            {(record.status === QuotaStatus.Creating ||
-              record.status === QuotaStatus.Rejected ||
-              record.status === QuotaStatus.Cancelled) &&
-              (record.is_author || permission?.is_module_admin) && (
-                <DeleteButton
-                  hideText
-                  size="small"
-                  icon={<DeleteOutlined />}
-                  recordItemId={record.id}
-                />
-              )}
-
-            {record.status === QuotaStatus.SentToCustomer && (
-              <Button
-                type="default"
-                size="small"
-                onClick={() => {
-                  go({
-                    to: `quotas/clone/${record.id}?actionType=VERSION`,
-                  })
-                }}
-              >
-                {t('quotas.actions.re_estimate')}
-              </Button>
-            )}
-
-            {(record.status === QuotaStatus.Completed ||
-              record.status === QuotaStatus.Cancelled) &&
-              (permission?.is_module_admin || record.display) &&
-              !record?.has_agreed_price && (
+              <Link href={record?.pdf_path} target="_blank">
                 <Button
+                  size="small"
                   type="default"
                   style={{
-                    background: '#D77703',
-                    color: WHITE,
-                  }}
-                  size={'small'}
-                  onClick={() => {
-                    handleChangeStatus('back-to-sent-customer', {
-                      quota_ids: [record.id],
-                    })
+                    color: '#2784FF',
+                    borderColor: '#2784FF',
                   }}
                 >
-                  {t('quotas.show.actions.move_to_send')}
+                  {t('quotas.downloadLabel')}
                 </Button>
-              )}
-          </Space>
+              </Link>
+
+              {(record.status === QuotaStatus.Completed ||
+                record.status === QuotaStatus.Cancelled) &&
+                (permission?.is_module_admin || record.display) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    style={{
+                      background: '#D77703',
+                      color: WHITE,
+                    }}
+                    size={'small'}
+                    onClick={() => {
+                      handleChangeStatus('back-to-sent-customer', {
+                        quota_ids: [record.id],
+                      })
+                    }}
+                  >
+                    {t('quotas.show.actions.move_to_send')}
+                  </Button>
+                )}
+            </Space>
+          </Flex>
         ),
       },
     ]
   }, [t])
 
   const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
-
+  const currentRule = status ? STATUS_DATE_RULES[status] : undefined
   const {
     tableProps,
     searchFormProps,
@@ -443,7 +637,11 @@ function QuotaList() {
     tableQuery: { refetch },
     filters,
   } = useTable({
-    pagination: { pageSize: 20 },
+    syncWithLocation: false,
+    pagination: {
+      current: urlPage,
+      pageSize: urlPageSize,
+    },
     filters: {
       initial: [
         {
@@ -556,24 +754,74 @@ function QuotaList() {
     })
   }, [form])
 
+  useEffect(() => {
+    const pagination = tableProps.pagination
+    if (!pagination || typeof pagination !== 'object') return
+    const current = pagination.current ?? 1
+    const pageSize = pagination.pageSize ?? 20
+
+    const urlCurrent = Number(searchParams.get('current')) || 1
+    const urlPageSize = Number(searchParams.get('pageSize')) || 20
+    if (current === urlCurrent && pageSize === urlPageSize) return
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('current', String(current))
+    params.set('pageSize', String(pageSize))
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [tableProps.pagination, pathname, router])
+
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
-      setFilters([
-        {
-          field: 'status',
-          operator: 'eq',
-          value: status,
-        },
-      ])
+      const rule = status ? STATUS_DATE_RULES[status] : undefined
+      const range = rule?.getRange ? rule.getRange() : null
+      form?.setFieldsValue({
+        search_date_type: rule?.dateType ?? 'created_at',
+        date: range,
+      })
 
-      if (form) {
-        const rule = status ? STATUS_DATE_RULES[status] : undefined
-        form?.setFieldsValue({
-          search_date_type: rule?.dateType ?? 'created_at',
-          date: rule?.getRange ? rule.getRange() : null,
+      setFilters((prev) => {
+        const filtered = prev?.filter((item: CrudFilter) => {
+          if (!('field' in item)) return true
+          return (
+            item.field !== 'start_date' &&
+            item.field !== 'end_date' &&
+            item.field !== 'search_date_type' &&
+            item.field !== 'status'
+          )
         })
-      }
+
+        const newFilters: CrudFilters = [
+          ...filtered,
+          {
+            field: 'status',
+            operator: 'eq',
+            value: status,
+          },
+        ]
+
+        if (range) {
+          newFilters.push(
+            {
+              field: 'search_date_type',
+              operator: 'eq',
+              value: rule?.dateType ?? 'created_at',
+            },
+            {
+              field: 'start_date',
+              operator: 'eq',
+              value: dayjs(range[0]).format('YYYY-MM-DD'),
+            },
+            {
+              field: 'end_date',
+              operator: 'eq',
+              value: dayjs(range[1]).format('YYYY-MM-DD'),
+            },
+          )
+        }
+
+        return newFilters
+      })
 
       setCurrent(1)
     },
@@ -925,6 +1173,7 @@ function QuotaList() {
                 name={'search_date_type'}
               >
                 <Select
+                  disabled={!!currentRule?.getRange}
                   options={[
                     {
                       value: 'created_at',
@@ -1035,6 +1284,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
+                    form?.resetFields()
                     onChangeStatus(status)
                   }}
                 >
@@ -1164,6 +1414,27 @@ function QuotaList() {
           rowSelection={rowSelection}
           columns={columns}
           {...tableProps}
+          components={{
+            header: {
+              cell: ({ children, style, ...rest }: any) => {
+                return (
+                  <th
+                    style={{
+                      ...style,
+                      border: 'none',
+                      padding: '4px 2px',
+                      color: PRIMARY,
+                      textAlign: 'center',
+                      backgroundColor: '#F0F9FF',
+                    }}
+                    {...rest}
+                  >
+                    {children}
+                  </th>
+                )
+              },
+            },
+          }}
         />
       </Form>
       {isCreateFromTemplate && (
@@ -1171,7 +1442,7 @@ function QuotaList() {
           open={isCreateFromTemplate}
           t={t}
           onClose={() => setIsCreateFromTemplate(false)}
-        ></CreateFromTemplate>
+        />
       )}
     </List>
   )

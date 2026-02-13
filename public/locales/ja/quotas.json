@@ -2,13 +2,17 @@
   "quotas": "見積一覧",
   "confirmed_quota": "継続見積",
   "transaction_type": {
-    "short_term_service": "個別・役務サービス",
+    "short_term_service": "個別・役務ｻｰﾋﾞｽ",
     "short_term_merchandise": "個別・物販",
-    "long_term_service": "継続・役務サービス",
+    "long_term_service": "継続・役務ｻｰﾋﾞｽ",
     "long_term_merchandise": "継続・物販"
   },
   "confirmed_quota_detail": "継続見積詳細",
   "list": "見積一覧",
+  "goDetailLabel": "詳細",
+  "goEditLabel": "編集",
+  "downloadLabel": "ダウンロード",
+  "goDetailCLoneLabel": "複製",
   "create": "見積新規作成",
   "edit": "見積編集",
   "detail": "見積詳細",
@@ -29,6 +33,7 @@
     "status_comment_2": "コメント",
     "estimate_number": "見積番号",
     "title_customer_1": "タイトル",
+    "transaction_type": "取引種別",
     "title_customer_2": "取引先",
     "creator_approver_1": "作成者",
     "creator_approver_2": "承認者",
@@ -280,7 +285,7 @@
       },
       "duplicate_product": "商品が重複しています。",
       "placeholders": {
-        "product_list_name": "商品リスト名入力",
+        "product_list_name": "タイトル入力",
         "product_search": "商品名・サービス名で検索"
       },
       "summary": {
@@ -357,7 +362,7 @@
         "row_edit": "行編集"
       },
       "placeholders": {
-        "optional_list_name": "オプションリスト名入力"
+        "optional_list_name": "タイトル入力"
       }
     },
     "modal": {
