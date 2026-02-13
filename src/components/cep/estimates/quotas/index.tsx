@@ -40,7 +40,7 @@ import {
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { BLACK, PRIMARY, WHITE } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   Button,
   Col,
@@ -1210,7 +1210,8 @@ function QuotaList() {
                 <RangePicker
                   allowClear
                   className="w-full"
-                  placeholder={[FORMAT_DATE, FORMAT_DATE]}
+                  placeholder={[FORMAT_DATE_CROSS, FORMAT_DATE_CROSS]}
+                  format={FORMAT_DATE_CROSS}
                   disabled={
                     !Form.useWatch('search_date_type', searchFormProps.form)
                   }
