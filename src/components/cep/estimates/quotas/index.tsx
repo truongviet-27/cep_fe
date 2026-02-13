@@ -28,6 +28,7 @@ import {
   useTable,
 } from '@refinedev/antd'
 import {
+  type CrudFilter,
   type CrudFilters,
   type OpenNotificationParams,
   useApiUrl,
@@ -620,7 +621,7 @@ function QuotaList() {
   }, [t])
 
   const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
-
+  const currentRule = status ? STATUS_DATE_RULES[status] : undefined
   const {
     tableProps,
     searchFormProps,
@@ -745,21 +746,55 @@ function QuotaList() {
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
-      setFilters([
-        {
-          field: 'status',
-          operator: 'eq',
-          value: status,
-        },
-      ])
+      const rule = status ? STATUS_DATE_RULES[status] : undefined
+      const range = rule?.getRange ? rule.getRange() : null
+      form?.setFieldsValue({
+        search_date_type: rule?.dateType ?? 'created_at',
+        date: range,
+      })
 
-      if (form) {
-        const rule = status ? STATUS_DATE_RULES[status] : undefined
-        form?.setFieldsValue({
-          search_date_type: rule?.dateType ?? 'created_at',
-          date: rule?.getRange ? rule.getRange() : null,
+      setFilters((prev) => {
+        const filtered = prev?.filter((item: CrudFilter) => {
+          if (!('field' in item)) return true
+          return (
+            item.field !== 'start_date' &&
+            item.field !== 'end_date' &&
+            item.field !== 'search_date_type' &&
+            item.field !== 'status'
+          )
         })
-      }
+
+        const newFilters: CrudFilters = [
+          ...filtered,
+          {
+            field: 'status',
+            operator: 'eq',
+            value: status,
+          },
+        ]
+
+        if (range) {
+          newFilters.push(
+            {
+              field: 'search_date_type',
+              operator: 'eq',
+              value: rule?.dateType ?? 'created_at',
+            },
+            {
+              field: 'start_date',
+              operator: 'eq',
+              value: dayjs(range[0]).format('YYYY-MM-DD'),
+            },
+            {
+              field: 'end_date',
+              operator: 'eq',
+              value: dayjs(range[1]).format('YYYY-MM-DD'),
+            },
+          )
+        }
+
+        return newFilters
+      })
 
       setCurrent(1)
     },
@@ -1111,6 +1146,7 @@ function QuotaList() {
                 name={'search_date_type'}
               >
                 <Select
+                  disabled={!!currentRule?.getRange}
                   options={[
                     {
                       value: 'created_at',
@@ -1221,6 +1257,7 @@ function QuotaList() {
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
+                    form?.resetFields()
                     onChangeStatus(status)
                   }}
                 >
@@ -1378,7 +1415,7 @@ function QuotaList() {
           open={isCreateFromTemplate}
           t={t}
           onClose={() => setIsCreateFromTemplate(false)}
-        ></CreateFromTemplate>
+        />
       )}
     </List>
   )

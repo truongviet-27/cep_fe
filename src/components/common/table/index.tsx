@@ -39,8 +39,8 @@ function CommonTable<T extends object>(
           ...components?.header,
         },
         body: {
-          ...components?.body,
           cell: EditableCell,
+          ...components?.body,
         },
       }}
       bordered
