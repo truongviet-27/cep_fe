@@ -109,7 +109,7 @@ export const RankModalEdit: React.FC<Props> = ({
           {isShow ? (
             getFieldData('rate')
           ) : (
-            <InputNumber style={{ width: '50%' }} />
+            <InputNumber style={{ width: '50%' }} min={0} max={100} />
           )}
         </Form.Item>
 

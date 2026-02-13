@@ -57,11 +57,6 @@ function BasicInfo({
         </Row>
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item label={boldText(t('quotas.show.customer'))}>
-              {data?.customer_name}
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               name={'customer_term'}
               label={boldText(t('quotas.show.customer_term'))}
@@ -69,6 +64,16 @@ function BasicInfo({
               {data?.customer_term === 'long_term'
                 ? t('quotas.show.customer_terms.long_term')
                 : t('quotas.show.customer_terms.short_term')}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'type'}
+              label={boldText(t('quotas.show.estimate_category'))}
+            >
+              {data?.category === 'merchandise'
+                ? t('quotas.show.category.merchandise')
+                : t('quotas.show.category.service')}
             </Form.Item>
           </Col>
         </Row>
