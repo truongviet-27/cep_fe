@@ -149,7 +149,7 @@
       "send": "送信する",
       "move_to_cancel": "失注に移動する",
       "move_to_order": "受注に移動する",
-      "move_to_send": "送信済みに移動する"
+      "move_to_send": "送信済に戻る"
     },
     "table": {
       "step": "ステップ",
