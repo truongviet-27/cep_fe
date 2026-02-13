@@ -62,6 +62,7 @@ import { type TableRowSelection } from 'antd/es/table/interface'
 import { type ItemType } from 'antd/lib/menu/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { type MenuInfo } from 'rc-menu/lib/interface'
 import React, {
   type ReactNode,
@@ -74,6 +75,12 @@ import React, {
 const { RangePicker } = DatePicker
 
 function QuotaList() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const urlPage = Number(searchParams.get('current')) || 1
+  const urlPageSize = Number(searchParams.get('pageSize')) || 20
   const t = useTranslate()
   const { convertCurrency } = useCurrency()
   const apiUrl = useApiUrl()
@@ -630,7 +637,11 @@ function QuotaList() {
     tableQuery: { refetch },
     filters,
   } = useTable({
-    pagination: { pageSize: 20 },
+    syncWithLocation: false,
+    pagination: {
+      current: urlPage,
+      pageSize: urlPageSize,
+    },
     filters: {
       initial: [
         {
@@ -742,6 +753,22 @@ function QuotaList() {
       date: rule?.getRange ? rule.getRange() : null,
     })
   }, [form])
+
+  useEffect(() => {
+    const pagination = tableProps.pagination
+    if (!pagination || typeof pagination !== 'object') return
+    const current = pagination.current ?? 1
+    const pageSize = pagination.pageSize ?? 20
+
+    const urlCurrent = Number(searchParams.get('current')) || 1
+    const urlPageSize = Number(searchParams.get('pageSize')) || 20
+    if (current === urlCurrent && pageSize === urlPageSize) return
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('current', String(current))
+    params.set('pageSize', String(pageSize))
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [tableProps.pagination, pathname, router])
 
   const onChangeStatus = useCallback(
     (status: string | null) => {
