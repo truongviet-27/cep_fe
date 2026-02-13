@@ -40,7 +40,7 @@ function Menu() {
   )
 
   return (
-    <div className="flex w-2/3 items-center justify-start space-x-8">
+    <div className="flex w-2/3 items-center justify-start space-x-2">
       <AppIcon level={2} />
       <MenuAntd
         mode="horizontal"
