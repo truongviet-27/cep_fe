@@ -434,7 +434,7 @@ function QuotaList() {
   }, [t])
 
   const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
-
+  const currentRule = status ? STATUS_DATE_RULES[status] : undefined
   const {
     tableProps,
     searchFormProps,
@@ -925,6 +925,7 @@ function QuotaList() {
                 name={'search_date_type'}
               >
                 <Select
+                  disabled={!!currentRule?.getRange}
                   options={[
                     {
                       value: 'created_at',
