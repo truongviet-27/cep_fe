@@ -149,8 +149,9 @@ function CreateFromTemplate({
               cell: ({ children, style, ...rest }: any) => {
                 return (
                   <td
-                    style={{ ...style, border: 'none', padding: 10 }}
+                    style={{ ...style, borderRight: 'none', padding: 10 }}
                     {...rest}
+                    className="border-r-0"
                   >
                     {children}
                   </td>

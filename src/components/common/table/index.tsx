@@ -29,18 +29,18 @@ function CommonTable<T extends object>(
             <th
               {...props}
               style={{
-                ...props.style,
                 backgroundColor: '#F0F9FF',
                 color: PRIMARY,
                 textAlign: 'center',
                 padding: 11,
+                ...props.style,
               }}
             />
           ),
         },
         body: {
-          ...components?.body,
           cell: EditableCell,
+          ...components?.body,
         },
       }}
       bordered
