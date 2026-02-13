@@ -607,7 +607,7 @@ function QuotaList() {
                   <Button
                     type="default"
                     style={{
-                      background: '#721C24',
+                      background: '#D77703',
                       color: WHITE,
                     }}
                     size={'small'}
