@@ -5,7 +5,7 @@ import { useSelect } from '@refinedev/antd'
 import { useCreate, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Col, Form, Row, Select, Tag } from 'antd'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 function Tags() {
   const t = useTranslate()
@@ -15,6 +15,7 @@ function Tags() {
   const [newlyCreatedTags, setNewlyCreatedTags] = useState<any[]>([]) // Store newly created tags
   const form = Form.useFormInstance()
   const selectedTags = form?.getFieldValue('tags') || []
+  const creatingTagRef = useRef<string | null>(null) // Prevent duplicate creation
   console.log(updateTrigger)
 
   const { mutate: createTag } = useCreate({
@@ -38,8 +39,20 @@ function Tags() {
     value: item.id,
   }))
 
-  // Combine API options with newly created tags
-  const allOptions = [...baseApiOptions, ...newlyCreatedTags]
+  // Combine API options with newly created tags - DEDUPLICATE by value
+  const allOptions = (() => {
+    const combined = [...baseApiOptions, ...newlyCreatedTags]
+    const seen = new Set<string | number>()
+    return combined.filter((option: any) => {
+      const key = option.value
+      if (seen.has(key)) {
+        console.log('🚫 Removing duplicate option:', option.label)
+        return false
+      }
+      seen.add(key)
+      return true
+    })
+  })()
 
   // Mark selected tags as disabled and grey out
   const apiOptions = allOptions.map((option: any) => {
@@ -109,6 +122,14 @@ function Tags() {
   console.log('Search:', searchValue, 'Total options:', finalOptions.length)
 
   const createNewTag = async (tagName: string) => {
+    // Prevent duplicate creation if already creating this tag
+    if (creatingTagRef.current === tagName) {
+      console.log('⚠️ Tag already being created:', tagName)
+      return
+    }
+
+    console.log('🆕 Starting tag creation for:', tagName)
+    creatingTagRef.current = tagName
     setIsCreating(true)
     try {
       const result = await new Promise((resolve, reject) => {
@@ -123,8 +144,11 @@ function Tags() {
         )
       })
 
-      // Refresh the options list
+      // Refresh the options list to get the new tag from API
       await queryResult.refetch?.()
+
+      // Clear temporary newlyCreatedTags since tag is now in API
+      setNewlyCreatedTags((prev) => prev.filter((tag) => tag.label !== tagName))
 
       // Add the new tag to selected tags
       const newTag = {
@@ -133,18 +157,11 @@ function Tags() {
         key: tagName,
       }
 
-      // Add to newly created tags for options list
-      setNewlyCreatedTags((prev) => {
-        const exists = prev.some((tag) => tag.label === tagName)
-        if (!exists) {
-          return [...prev, { label: tagName, value: newTag.value }]
-        }
-        return prev
-      })
-
+      // NO NEED to add to newlyCreatedTags - it's already in API now!
       const currentTags = form?.getFieldValue('tags') || []
       const updatedTags = [...currentTags, newTag]
       form?.setFieldsValue({ tags: updatedTags })
+      console.log('✅ Tag added to form:', tagName)
 
       // Force re-render
       setUpdateTrigger((prev) => prev + 1)
@@ -152,12 +169,21 @@ function Tags() {
       console.error('Error creating tag:', error)
       // Don't add anything on error - just show error and stop
     } finally {
+      creatingTagRef.current = null
       setIsCreating(false)
       setSearchValue('')
     }
   }
 
   const handleTagChange = async (value: any) => {
+    console.log('handleTagChange called:', value)
+
+    // Prevent if already creating a tag
+    if (isCreating || creatingTagRef.current) {
+      console.log('⚠️ Already creating a tag, ignoring this call')
+      return
+    }
+
     // Handle create new tag
     if (
       typeof value === 'object' &&
@@ -166,6 +192,8 @@ function Tags() {
       value.value.startsWith('__create__')
     ) {
       const tagName = value.value.substring(10) // Remove __create__ prefix
+      console.log('📌 handleTagChange creating tag:', tagName)
+      setSearchValue('') // Clear immediately
       await createNewTag(tagName)
       return
     }
@@ -210,6 +238,7 @@ function Tags() {
       !isSearchValueExists &&
       !isCreating
     ) {
+      console.log('⌨️ handleKeyDown creating tag:', searchValue)
       e.preventDefault()
       e.stopPropagation()
       await createNewTag(searchValue)
