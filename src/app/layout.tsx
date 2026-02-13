@@ -6,10 +6,10 @@ import React, { Suspense } from 'react'
 import { RefineContext } from './_refine_context'
 
 export const metadata: Metadata = {
-  title: 'eeRP',
-  description: 'eeRP',
+  title: 'eerp見積管理',
+  description: 'eerp見積管理',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/icon2.ico',
   },
 }
 
