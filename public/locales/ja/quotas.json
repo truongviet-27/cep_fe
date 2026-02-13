@@ -285,7 +285,7 @@
       },
       "duplicate_product": "商品が重複しています。",
       "placeholders": {
-        "product_list_name": "商品リスト名入力",
+        "product_list_name": "タイトル入力",
         "product_search": "商品名・サービス名で検索"
       },
       "summary": {
@@ -362,7 +362,7 @@
         "row_edit": "行編集"
       },
       "placeholders": {
-        "optional_list_name": "オプションリスト名入力"
+        "optional_list_name": "タイトル入力"
       }
     },
     "modal": {
