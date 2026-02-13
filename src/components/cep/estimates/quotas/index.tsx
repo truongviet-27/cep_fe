@@ -28,6 +28,7 @@ import {
   useTable,
 } from '@refinedev/antd'
 import {
+  type CrudFilter,
   type CrudFilters,
   type OpenNotificationParams,
   useApiUrl,
@@ -753,14 +754,15 @@ function QuotaList() {
       })
 
       setFilters((prev) => {
-        const filtered =
-          prev?.filter(
-            (item) =>
-              item.field !== 'start_date' &&
-              item.field !== 'end_date' &&
-              item.field !== 'search_date_type' &&
-              item.field !== 'status',
-          ) ?? []
+        const filtered = prev?.filter((item: CrudFilter) => {
+          if (!('field' in item)) return true
+          return (
+            item.field !== 'start_date' &&
+            item.field !== 'end_date' &&
+            item.field !== 'search_date_type' &&
+            item.field !== 'status'
+          )
+        })
 
         const newFilters: CrudFilters = [
           ...filtered,
