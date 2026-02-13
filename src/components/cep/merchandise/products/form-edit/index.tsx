@@ -40,6 +40,17 @@ const ProductFormContainer: React.FC = () => {
   const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
   const [showEditPackaging, setShowEditPackaging] = useState<boolean>(false)
 
+  const currentPackagings = form.getFieldValue('packagings') || []
+  const newPackaging = {
+    code: form.getFieldValue('code') ? `${form.getFieldValue('code')}-1` : '1',
+    name: '',
+    quantity_in_package: 1,
+    unit_id: form.getFieldValue('unit_id'),
+    selling_price: form.getFieldValue('selling_price'),
+    is_standard_price: true,
+    is_rate_based: true,
+  }
+
   return (
     <PageContainer
       breadcrumbs={
@@ -111,41 +122,6 @@ const ProductFormContainer: React.FC = () => {
             )}
           />
 
-          <Collapse
-            style={{
-              marginTop: '20px',
-              display:
-                showEditPackaging ||
-                (form.getFieldValue('packagings')?.length ?? 0) >= 2
-                  ? 'block'
-                  : 'none',
-            }}
-            items={[
-              {
-                key: 1,
-                label: (
-                  <span className="font-bold">
-                    {t('products.sections.packagingPrice')}
-                  </span>
-                ),
-                children: (
-                  <PackagingUnitPrice
-                    form={form as unknown as FormInstance<ProductFormType>}
-                    addRef={addRef}
-                  />
-                ),
-              },
-            ]}
-            expandIconPosition="end"
-            defaultActiveKey={[1]}
-            expandIcon={({ isActive }) => (
-              <DownOutlined
-                style={{ transition: '0.3s' }}
-                rotate={isActive ? 180 : 0}
-              />
-            )}
-          />
-
           {isUpdateMode && (
             <>
               <Divider />
@@ -203,8 +179,16 @@ const ProductFormContainer: React.FC = () => {
                   : t('products.buttons.register')}
               </Button>
               <Button
+                disabled={
+                  !isAllowedSaveButton ||
+                  showEditPackaging ||
+                  (form.getFieldValue('packagings')?.length ?? 0) >= 2
+                }
                 onClick={() => {
                   setShowEditPackaging(true)
+                  form.setFieldsValue({
+                    packagings: [...currentPackagings, newPackaging],
+                  })
                 }}
                 color="primary"
                 variant="outlined"
@@ -213,6 +197,40 @@ const ProductFormContainer: React.FC = () => {
               </Button>
             </Space>
           </Flex>
+          <Collapse
+            style={{
+              marginTop: '20px',
+              display:
+                showEditPackaging ||
+                (form.getFieldValue('packagings')?.length ?? 0) >= 2
+                  ? 'block'
+                  : 'none',
+            }}
+            items={[
+              {
+                key: 1,
+                label: (
+                  <span className="font-bold">
+                    {t('products.sections.packagingPrice')}
+                  </span>
+                ),
+                children: (
+                  <PackagingUnitPrice
+                    form={form as unknown as FormInstance<ProductFormType>}
+                    addRef={addRef}
+                  />
+                ),
+              },
+            ]}
+            expandIconPosition="end"
+            defaultActiveKey={[1]}
+            expandIcon={({ isActive }) => (
+              <DownOutlined
+                style={{ transition: '0.3s' }}
+                rotate={isActive ? 180 : 0}
+              />
+            )}
+          />
         </Form>
       </Spin>
     </PageContainer>
