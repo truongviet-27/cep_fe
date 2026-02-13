@@ -807,11 +807,13 @@ const BasicInfo = ({
               const approveRoutes = form.getFieldValue('approve_routes')
               const isSingleRoute = approveRoutes?.length === 1
 
+              if (!parameterSettings.get('approve-routes')) {
+                form.setFieldsValue({ approve_route_id: '' })
+              }
+
               if (isSingleRoute) {
                 const singleRoute = approveRoutes[0]
-                if (!parameterSettings.get('approve-routes')) {
-                  form.setFieldsValue({ approve_route_id: '' })
-                }
+
                 return (
                   <>
                     <Form.Item
@@ -869,7 +871,10 @@ const BasicInfo = ({
             })()}
             {(() => {
               const approveRoutes = form.getFieldValue('approve_routes')
-              if (!approveRoutes || approveRoutes.length === 0) {
+              if (
+                (!approveRoutes || approveRoutes.length === 0) &&
+                parameterSettings.get('approve-routes')
+              ) {
                 return (
                   <div
                     style={{

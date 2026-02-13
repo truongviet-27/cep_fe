@@ -152,7 +152,7 @@ function DetailInfo({
                         // ]}
                       >
                         <Input
-                          placeholder="商品リスト名入力"
+                          placeholder="タイトル入力"
                           style={{
                             width: 400,
                           }}
