@@ -1378,7 +1378,7 @@ function QuotaList() {
           open={isCreateFromTemplate}
           t={t}
           onClose={() => setIsCreateFromTemplate(false)}
-        ></CreateFromTemplate>
+        />
       )}
     </List>
   )
