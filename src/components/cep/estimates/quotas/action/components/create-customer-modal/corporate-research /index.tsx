@@ -39,7 +39,7 @@ export default function CorporateResearch() {
       width: 150,
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'judgement']} noStyle initialValue="A">
-          {record.judgement == 'T' ? '△' : record.judgement}
+          {record.judgement}
         </Form.Item>
       ),
     },
