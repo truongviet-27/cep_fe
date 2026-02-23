@@ -729,7 +729,7 @@ function DetailInfo({
                 } else {
                   if (isProductManager) {
                     let product = null
-                    if (productList) {
+                    if (productList.length > 0) {
                       product = productList.find(
                         (item: any) => item.id === record?.product_id,
                       )
@@ -765,6 +765,7 @@ function DetailInfo({
                             record.index2,
                             'product',
                           ]}
+                          labelInValue={true}
                           productsData={productInit}
                           customer={customer}
                           data={product}
