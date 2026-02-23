@@ -3,15 +3,13 @@ import moji from 'moji'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-const HOUJIN_API_BASE_URL =
-  process.env.HOUJIN_API_BASE_URL ||
-  'https://api.houjin-bangou.nta.go.jp/4/name'
+const HOUJIN_API_BASE_URL = 'https://api.houjin-bangou.nta.go.jp/4/name'
 
 export async function POST(req: NextRequest) {
   try {
     const { name, address } = await req.json()
 
-    const apiKey = process.env.HOUJIN_API_KEY
+    const apiKey = 'Kd4y5Y2BQgn52'
 
     if (!apiKey) {
       console.error('HOUJIN_API_KEY is not defined in environment variables.')

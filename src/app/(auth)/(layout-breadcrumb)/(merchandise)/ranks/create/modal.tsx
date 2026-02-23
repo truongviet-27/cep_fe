@@ -98,7 +98,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           name="rate"
           rules={[validateRankRule(t)]}
         >
-          <InputNumber style={{ width: '50%' }} />
+          <InputNumber style={{ width: '50%' }} min={0} max={100} />
         </Form.Item>
 
         <Form.Item

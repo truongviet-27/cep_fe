@@ -94,7 +94,7 @@ const BasicInfo = () => {
           </Form.Item>
           <Form.Item
             required
-            labelCol={{ span: 7 }}
+            labelCol={{ span: 10 }}
             name={'customer_term'}
             label={boldText(t('quotas.action.basic_info.fields.customer_term'))}
             rules={[
@@ -118,7 +118,14 @@ const BasicInfo = () => {
             />
           </Form.Item>
         </Col>
-        <Col xs={24} sm={16} md={5} lg={5} xl={5}>
+        <Col
+          xs={24}
+          sm={16}
+          md={5}
+          lg={5}
+          xl={5}
+          style={{ paddingLeft: '10px' }}
+        >
           <Form.Item
             label={boldText(t('quota_templates.form.label.quote_category'))}
             colon={false}
