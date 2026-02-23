@@ -503,13 +503,15 @@ export const validateCustomerRule = (t: any) => {
         .nullable(),
       date_of_establishment: z.any().optional(),
 
-      department_in_charge_id: z
-        .int({
-          error: t('validation.customer.department_in_charge.required'),
-        })
-        .min(1, {
-          error: t('validation.customer.department_in_charge.required'),
-        }),
+      department_in_charge_id: z.optional(
+        z
+          .int({
+            error: t('validation.customer.department_in_charge.required'),
+          })
+          .min(1, {
+            error: t('validation.customer.department_in_charge.required'),
+          }),
+      ),
       person_in_charge_name: z.optional(
         z
           .string({
