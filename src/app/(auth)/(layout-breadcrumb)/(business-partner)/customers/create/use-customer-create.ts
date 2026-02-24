@@ -43,8 +43,12 @@ export const useCustomerCreate = () => {
       if (values?.company_type == 'other' && values?.temp_company_type) {
         company_type = values?.temp_company_type
       }
-      if (!values?.industry && values?.temp_industry) {
+      if (values?.industry === -1 && values?.temp_industry) {
         industry = values?.temp_industry
+      } else if (values?.industry === -1) {
+        industry = null
+      } else {
+        industry = values?.industry ?? null
       }
 
       // Prepare contacts data for API
