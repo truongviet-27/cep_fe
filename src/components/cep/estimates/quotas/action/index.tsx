@@ -140,7 +140,7 @@ function QuotaAction() {
   let queryOptions: CrudFilter[] = []
 
   // if isupdate = true , get department of quota, if department is null => set default department , if department is not null => set department of user login
-  if (isUpdate) {
+  if (isUpdate && !isClone) {
     // if there is no department in permission and user is not admin, set default department filter
     if (!dataBasicInfo?.data.department) {
       queryOptions = [
@@ -160,6 +160,7 @@ function QuotaAction() {
       ]
     }
   } else if (permission?.department) {
+    // set department of user login
     queryOptions = [
       {
         field: 'id',
@@ -300,7 +301,9 @@ function QuotaAction() {
           department_id: departmentData?.data.id,
           department_name: departmentData?.data.name,
           approve_routes: departmentData?.data.approve_routes || [],
-          approve_route_id: dataBasicInfo.data.approve_route?.id,
+          approve_route_id: departmentData?.data.approve_routes
+            ? departmentData?.data.approve_routes[0]?.id
+            : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
@@ -350,8 +353,15 @@ function QuotaAction() {
           value: dataBasicInfo.data.customer_id,
           label: dataBasicInfo.data.customer_name,
         }
-        console.log('dataBasicInfo: ', dataBasicInfo)
 
+        let approve_routes = departmentData?.data.approve_routes || []
+        let approve_route_id = dataBasicInfo.data.approve_route?.id
+        if (isCloneNew) {
+          approve_routes = departmentData?.data.approve_routes || []
+          approve_route_id = departmentData?.data.approve_routes
+            ? departmentData?.data.approve_routes[0]?.id
+            : null
+        }
         form.setFieldsValue({
           ...basicData,
           code: isEdit ? dataBasicInfo.data.code : '',
@@ -360,8 +370,8 @@ function QuotaAction() {
           tax_rounding_method: data?.data?.tax_rounding_method,
           department_id: departmentData?.data.id,
           department_name: departmentData?.data.name,
-          approve_routes: departmentData?.data.approve_routes || [],
-          approve_route_id: dataBasicInfo.data.approve_route?.id,
+          approve_routes: approve_routes,
+          approve_route_id: approve_route_id,
           customer_term: dataBasicInfo.data.customer_term,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date)
