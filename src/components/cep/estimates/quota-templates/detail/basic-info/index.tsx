@@ -39,7 +39,7 @@ const BasicInfo: React.FC<Props> = (props) => {
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item
-            label={boldText(t('quota_templates.form.label.quote_category'))}
+            label={boldText(t('quota_templates.form.label.quote_transaction'))}
           >
             {detail.category === 'merchandise' ? '物販' : '役務'}
           </Form.Item>
