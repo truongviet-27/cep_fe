@@ -225,7 +225,7 @@ const OptionalInfo: FC = () => {
                             const currentProduct =
                               allOptionalGroups[record.index]?.products?.[
                                 record.index2
-                                ]
+                              ]
                             const currentProductId = currentProduct?.product_id
 
                             if (!currentProductId) return Promise.resolve()

@@ -302,7 +302,8 @@ function DetailInfo({
                               const products = group?.products || []
                               for (const item of products) {
                                 if (
-                                  item?.product_id === currentProduct?.product_id
+                                  item?.product_id ===
+                                  currentProduct?.product_id
                                 ) {
                                   count++
                                 }
