@@ -484,21 +484,26 @@ export const validateCustomerRule = (t: any) => {
       ),
       industry: z
         .optional(
-          z
-            .string({ error: t('validation.customer.industry.required') })
-            .superRefine((val, ctx) => {
-              if (val.length > 255) {
-                ctx.addIssue({
-                  code: z.ZodIssueCode.too_big,
-                  origin: 'string',
-                  maximum: 255,
-                  type: 'string',
-                  inclusive: true,
-                  message: t('validation.customer.industry.max', { max: 255 }),
-                })
-                return
-              }
-            }),
+          z.union([
+            z.literal(-1),
+            z
+              .string({ error: t('validation.customer.industry.required') })
+              .superRefine((val, ctx) => {
+                if (val.length > 255) {
+                  ctx.addIssue({
+                    code: z.ZodIssueCode.too_big,
+                    origin: 'string',
+                    maximum: 255,
+                    type: 'string',
+                    inclusive: true,
+                    message: t('validation.customer.industry.max', {
+                      max: 255,
+                    }),
+                  })
+                  return
+                }
+              }),
+          ]),
         )
         .nullable(),
       date_of_establishment: z.any().optional(),

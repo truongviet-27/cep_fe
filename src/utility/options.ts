@@ -17,7 +17,9 @@ export const segmentOptions: { value: SegmentValue; label: string }[] = [
   { value: 'year_month_day_range', label: '年月日—（YYMMDD—）' },
 ]
 
-export const industryOptions: { value: string | null; label: string }[] = [
+export const INDUSTRY_OTHER_VALUE = -1
+
+export const industryOptions: { value: string | number; label: string }[] = [
   { value: '食品', label: '食品' },
   { value: '卸-商社', label: '卸-商社' },
   { value: '製造・加工', label: '製造・加工' },
@@ -26,7 +28,7 @@ export const industryOptions: { value: string | null; label: string }[] = [
   { value: '医療', label: '医療' },
   { value: '鉄鋼', label: '鉄鋼' },
   { value: 'ねじ', label: 'ねじ' },
-  { value: null, label: '自分入力' },
+  { value: INDUSTRY_OTHER_VALUE, label: '自分入力' },
 ]
 
 export const fieldDistinctionOptions: { value: string; label: string }[] = [
