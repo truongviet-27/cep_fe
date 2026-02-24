@@ -600,9 +600,9 @@ function QuotaAction() {
           },
         },
         {
-          onSuccess(data) {
+          onSuccess() {
             go({
-              to: `/quotas/show/${data.data.id}`,
+              to: `/quotas`,
             })
           },
         },
