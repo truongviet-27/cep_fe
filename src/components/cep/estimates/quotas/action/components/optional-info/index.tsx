@@ -58,9 +58,9 @@ function OptionalInfo({
       package_name: '-',
       name: '',
       code: '',
-      quantity: 0,
+      quantity: 1,
       cost_price: 0,
-      selling_price: 0,
+      selling_price: 1,
       profit_margin: 0,
       tax_rate: getDefaultTaxRate(),
       is_add_total: true,
@@ -164,6 +164,7 @@ function OptionalInfo({
               {
                 index,
                 index2,
+                isSelfCreate: !item2.product_id,
                 ...item2,
               },
             ]),
@@ -342,14 +343,14 @@ function OptionalInfo({
                         disabled={!customerWatch}
                         defaultValue={{
                           value: form.getFieldValue([
-                            'main_product',
+                            'optional_product',
                             record.index,
                             'products',
                             record.index2,
                             'product',
                           ])?.value,
                           label: form.getFieldValue([
-                            'main_product',
+                            'optional_product',
                             record.index,
                             'products',
                             record.index2,
@@ -360,7 +361,7 @@ function OptionalInfo({
                           if (!valueOption) {
                             form.setFieldValue(
                               [
-                                'main_product',
+                                'optional_product',
                                 record.index,
                                 'products',
                                 record.index2,
@@ -697,13 +698,7 @@ function OptionalInfo({
                         },
                       ]}
                     >
-                      <Input
-                        placeholder={t('placeholders.input_please')}
-                        style={{
-                          maxWidth: '200px',
-                          width: '100%',
-                        }}
-                      />
+                      <Input disabled={record.isSelfCreate} />
                     </Form.Item>
                   )
                 }
@@ -788,7 +783,25 @@ function OptionalInfo({
                       record.index2,
                       'selling_price',
                     ]}
-                    normalize={(val) => val ?? 0}
+                    rules={[
+                      {
+                        validator(_, value) {
+                          const name = form.getFieldValue([
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'name',
+                          ])
+
+                          if (name && !value) {
+                            return Promise.reject()
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
                   >
                     <InputNumber
                       min={0}
@@ -829,7 +842,6 @@ function OptionalInfo({
                   <Form.Item
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    normalize={(val) => val ?? 0}
                     rules={[
                       {
                         validator(_, value) {
@@ -1085,11 +1097,12 @@ function OptionalInfo({
                             product_id: null,
                             package_id: null,
                             package_name: '-',
+                            isSelfCreate: false,
                             name: '',
                             code: '',
-                            quantity: 0,
+                            quantity: 1,
                             cost_price: 0,
-                            selling_price: 0,
+                            selling_price: 1,
                             profit_margin: 0,
                             is_add_total: true,
                             tax_rate: 0,

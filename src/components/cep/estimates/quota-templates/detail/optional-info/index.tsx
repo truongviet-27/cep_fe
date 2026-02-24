@@ -227,7 +227,8 @@ const OptionalInfo: FC<Props> = (props) => {
         {t('quota_templates.form.titleOptionalInfo')}
       </Title>
       <Flex vertical>
-        {optionalProducts?.[0]?.products?.[0]?.product_id ? (
+        {optionalProducts?.[0]?.products &&
+        optionalProducts?.[0]?.products.length > 0 ? (
           <CommonTable
             columns={columns}
             dataSource={dataSource}
