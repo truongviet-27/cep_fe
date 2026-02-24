@@ -490,8 +490,13 @@ function QuotaList() {
         title: t('quotas.table.actions'),
         key: 'action',
         render: (_, record) => (
-          <Flex vertical={true} gap={4}>
-            <Space>
+          <Flex
+            vertical={true}
+            gap={4}
+            align="center"
+            style={{ width: 'fit-content', margin: '0 auto' }}
+          >
+            <Flex gap={4} justify="center" style={{ width: '100%' }}>
               <ShowButton
                 size="small"
                 icon={null}
@@ -549,22 +554,27 @@ function QuotaList() {
                   {t('quotas.actions.re_estimate')}
                 </Button>
               )}
-            </Space>
 
-            {/* {record.status === QuotaStatus.Completed && (
-              <Button
-                type="default"
-                size="small"
-                onClick={() => {
-                  show()
-                  setDataAgreedPrice(record)
-                }}
-              >
-                {t('quotas.actions.decide_move')}
-              </Button>
-            )} */}
+              {(record.status === QuotaStatus.Completed ||
+                record.status === QuotaStatus.Cancelled) &&
+                (permission?.is_module_admin || record.display) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    style={{ background: '#D77703', color: WHITE }}
+                    size={'small'}
+                    onClick={() =>
+                      handleChangeStatus('back-to-sent-customer', {
+                        quota_ids: [record.id],
+                      })
+                    }
+                  >
+                    {t('quotas.show.actions.move_to_send')}
+                  </Button>
+                )}
+            </Flex>
 
-            <Space>
+            <Flex gap={4} style={{ width: '100%' }}>
               {(record.status === QuotaStatus.Creating ||
                 record.status === QuotaStatus.Rejected ||
                 record.status === QuotaStatus.Cancelled) &&
@@ -585,40 +595,20 @@ function QuotaList() {
                   </DeleteButton>
                 )}
 
-              <Link href={record?.pdf_path} target="_blank">
+              <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
                 <Button
                   size="small"
                   type="default"
                   style={{
                     color: '#2784FF',
                     borderColor: '#2784FF',
+                    width: '100%',
                   }}
                 >
                   {t('quotas.downloadLabel')}
                 </Button>
               </Link>
-
-              {(record.status === QuotaStatus.Completed ||
-                record.status === QuotaStatus.Cancelled) &&
-                (permission?.is_module_admin || record.display) &&
-                !record?.has_agreed_price && (
-                  <Button
-                    type="default"
-                    style={{
-                      background: '#D77703',
-                      color: WHITE,
-                    }}
-                    size={'small'}
-                    onClick={() => {
-                      handleChangeStatus('back-to-sent-customer', {
-                        quota_ids: [record.id],
-                      })
-                    }}
-                  >
-                    {t('quotas.show.actions.move_to_send')}
-                  </Button>
-                )}
-            </Space>
+            </Flex>
           </Flex>
         ),
       },
