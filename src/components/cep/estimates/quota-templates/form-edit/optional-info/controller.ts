@@ -1,3 +1,4 @@
+import { getDefaultTaxRate } from '@components/cep/estimates/quotas/utils'
 import type {
   QuotaTemplateFormType,
   QuotaTemplateMainProductType,
@@ -13,7 +14,7 @@ export const useController = () => {
     form,
   ) as QuotaTemplateMainProductType[]
 
-  const handleAddProduct = (groupIndex: number) => {
+  const handleAddProduct = (groupIndex: number, isSelfCreate = false) => {
     const values = optionalProducts || []
     const products = (values[groupIndex].products ||
       []) as QuotaTemplateProductType[]
@@ -23,12 +24,13 @@ export const useController = () => {
       {
         product_id: null,
         name: '',
-        code: '自動採番',
-        quantity: 0,
+        code: isSelfCreate ? '' : '自動採番',
+        quantity: 1,
         cost_price: 0,
-        selling_price: 0,
+        isSelfCreate: isSelfCreate,
+        selling_price: 1,
         profit_margin: 0,
-        tax_rate: 0,
+        tax_rate: getDefaultTaxRate(),
         is_add_total: false,
       } as unknown as QuotaTemplateProductType,
     ]

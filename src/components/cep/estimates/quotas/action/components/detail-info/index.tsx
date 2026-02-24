@@ -167,9 +167,9 @@ function DetailInfo({
       package_name: '-',
       name: '',
       code: '',
-      quantity: 0,
+      quantity: 1,
       cost_price: 0,
-      selling_price: 0,
+      selling_price: 1,
       profit_margin: 0,
       tax_rate: getDefaultTaxRate(),
       is_add_total: true,
@@ -213,6 +213,7 @@ function DetailInfo({
         {
           index,
           index2,
+          isSelfCreate: !item2.product_id,
           ...item2,
         },
       ]),
@@ -904,7 +905,7 @@ function DetailInfo({
                         },
                       ]}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input disabled={record.isSelfCreate} />
                     </Form.Item>
                   )
                 }
@@ -949,12 +950,6 @@ function DetailInfo({
                         'cost_price',
                       ]}
                       className="ant-form-item-hidden-margin"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                      ]}
                     >
                       <InputNumber
                         min={0}
@@ -1007,7 +1002,6 @@ function DetailInfo({
                         message: '',
                       },
                     ]}
-                    normalize={(val) => val ?? 0}
                   >
                     <InputNumber
                       min={0}
@@ -1057,7 +1051,6 @@ function DetailInfo({
                         message: '',
                       },
                     ]}
-                    normalize={(val) => val ?? 1}
                   >
                     <InputNumber
                       min={1}
@@ -1342,12 +1335,13 @@ function DetailInfo({
                             package: null,
                             product_id: null,
                             package_id: null,
+                            isSelfCreate: false,
                             package_name: '-',
                             name: '',
                             code: '',
-                            quantity: 0,
+                            quantity: 1,
                             cost_price: 0,
-                            selling_price: 0,
+                            selling_price: 1,
                             profit_margin: 0,
                             tax_rate: 0,
                             is_add_total: true,
