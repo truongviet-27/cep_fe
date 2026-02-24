@@ -35,7 +35,7 @@ export const useController = () => {
         {
           field: 'creator',
           operator: 'eq',
-          value: params.creator ?? null,
+          value: (params.creator as { label?: string })?.label?.trim() ?? null,
         },
         {
           field: 'start_date',
