@@ -43,22 +43,6 @@ export default function AddressContact() {
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
-        <Form.Item
-          required
-          label={boldText(t('customers.show.phone'))}
-          name="phone"
-          rules={[rule]}
-        >
-          <Input style={{ maxWidth: 560 }} />
-        </Form.Item>
-        <Form.Item
-          label={boldText(t('customers.delivery.email'))}
-          name="mail"
-          rules={[rule]}
-          required
-        >
-          <Input style={{ maxWidth: 560 }} />
-        </Form.Item>
       </Panel>
     </Collapse>
   )
