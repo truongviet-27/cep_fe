@@ -14,7 +14,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space } from 'antd'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useCustomerCreate } from './use-customer-create'
 
@@ -35,6 +35,11 @@ export default function CustomerCreatePage() {
   const { close: closeModal, open: modalOpen } = modalFormProps
 
   const { close, visible } = modalFormCorporate
+
+  const [corporateSearchKey, setCorporateSearchKey] = useState(0)
+  useEffect(() => {
+    if (visible) setCorporateSearchKey((k) => k + 1)
+  }, [visible])
 
   const breadcrumbItems = [
     {
@@ -116,9 +121,11 @@ export default function CustomerCreatePage() {
         open={visible}
         onCancel={close}
         width={800}
+        maskClosable={false}
         footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
       >
         <CorporateNumberSearchModal
+          key={corporateSearchKey}
           modalProps={modalFormCorporate}
           onSelect={(record) =>
             form.setFieldValue('corporate_number', record.corporateNumber)
