@@ -575,6 +575,9 @@ function QuotaList() {
                 record.status === QuotaStatus.Cancelled) &&
                 (record.is_author || permission?.is_module_admin) && (
                   <DeleteButton
+                    successNotification={() => {
+                      return notificationFunction()
+                    }}
                     size="small"
                     icon={null}
                     recordItemId={record.id}
@@ -955,7 +958,7 @@ function QuotaList() {
   )
 
   const notificationFunction = useCallback(
-    (message: string): OpenNotificationParams | false | undefined => {
+    (message?: string): OpenNotificationParams | false | undefined => {
       refetch()
       refetchStats()
       setSelectedRowKeys([])
