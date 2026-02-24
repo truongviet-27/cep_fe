@@ -87,11 +87,6 @@ function QuotaList() {
 
   const { permission } = useUserStore.getState()
 
-  const department = Form.useWatch(
-    'department_in_charge',
-    Form.useFormInstance(),
-  )
-
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
@@ -715,26 +710,22 @@ function QuotaList() {
             ? dayjs((values?.date ?? [])[1]).format('YYYY-MM-DD')
             : null,
         },
-      ]
-      if (values.transaction_type) {
-        filters.push({
+        {
+          field: 'category_id',
+          operator: 'eq',
+          value: values.category_id,
+        },
+        {
           field: 'transaction_type',
           operator: 'eq',
           value: values.transaction_type?.trim(),
-        })
-      }
+        },
+      ]
       if (values.product_name) {
         filters.push({
           field: 'product_name',
           operator: 'eq',
           value: values.product_name,
-        })
-      }
-      if (values.category_id) {
-        filters.push({
-          field: 'category_id',
-          operator: 'eq',
-          value: values.category_id,
         })
       }
       return filters
@@ -1150,7 +1141,7 @@ function QuotaList() {
                 }
                 placeholder={t('placeholders.select')}
                 onChangeClear={(callback) => {
-                  if (callback) callback(department)
+                  if (callback) callback('')
                 }}
               />
             </Col>
