@@ -178,7 +178,11 @@ export default function Page() {
               <Space direction="horizontal" size={3} wrap>
                 <Button
                   size="middle"
-                  type="primary"
+                  style={{
+                    background: '#fff',
+                    borderColor: PRIMARY,
+                    color: PRIMARY,
+                  }}
                   loading={loadingDp}
                   onClick={() => {
                     refetch().then(() => {

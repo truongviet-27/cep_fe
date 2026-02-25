@@ -360,9 +360,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   pagination={false}
                   scroll={fields.length ? { y: 55 * 5, x: 1500 } : { x: 1000 }}
                   rowClassName={(_, index) =>
-                    index === 0
-                      ? 'bg-gray-200 opacity-80 pointer-events-none'
-                      : ''
+                    index === 0 ? 'bg-[#edeff1] pointer-events-none' : ''
                   }
                   locale={{
                     emptyText: (

@@ -87,11 +87,6 @@ function QuotaList() {
 
   const { permission } = useUserStore.getState()
 
-  const department = Form.useWatch(
-    'department_in_charge',
-    Form.useFormInstance(),
-  )
-
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
@@ -575,6 +570,9 @@ function QuotaList() {
                 record.status === QuotaStatus.Cancelled) &&
                 (record.is_author || permission?.is_module_admin) && (
                   <DeleteButton
+                    successNotification={() => {
+                      return notificationFunction()
+                    }}
                     size="small"
                     icon={null}
                     recordItemId={record.id}
@@ -669,14 +667,14 @@ function QuotaList() {
           value: values.title,
         },
         {
-          field: 'customer_name',
+          field: 'customer_id',
           operator: 'eq',
-          value: values.customer_name?.label?.trim(),
+          value: values.customer_name?.value,
         },
         {
-          field: 'creator_name',
+          field: 'creator_id',
           operator: 'eq',
-          value: values.creator_name?.label?.trim(),
+          value: values.creator_name?.value,
         },
         {
           field: 'tag_name',
@@ -684,14 +682,14 @@ function QuotaList() {
           value: values.tag_name,
         },
         {
-          field: 'approver_name',
+          field: 'approver_id',
           operator: 'eq',
-          value: values.approver_name?.label?.trim(),
+          value: values.approver_name?.value,
         },
         {
-          field: 'department_in_charge',
+          field: 'department_in_charge_id',
           operator: 'eq',
-          value: values.department_in_charge?.label,
+          value: values.department_in_charge?.value,
         },
         {
           field: 'search_date_type',
@@ -712,26 +710,22 @@ function QuotaList() {
             ? dayjs((values?.date ?? [])[1]).format('YYYY-MM-DD')
             : null,
         },
-      ]
-      if (values.transaction_type) {
-        filters.push({
+        {
+          field: 'category_id',
+          operator: 'eq',
+          value: values.category_id,
+        },
+        {
           field: 'transaction_type',
           operator: 'eq',
           value: values.transaction_type?.trim(),
-        })
-      }
+        },
+      ]
       if (values.product_name) {
         filters.push({
           field: 'product_name',
           operator: 'eq',
           value: values.product_name,
-        })
-      }
-      if (values.category_id) {
-        filters.push({
-          field: 'category_id',
-          operator: 'eq',
-          value: values.category_id,
         })
       }
       return filters
@@ -955,7 +949,7 @@ function QuotaList() {
   )
 
   const notificationFunction = useCallback(
-    (message: string): OpenNotificationParams | false | undefined => {
+    (message?: string): OpenNotificationParams | false | undefined => {
       refetch()
       refetchStats()
       setSelectedRowKeys([])
@@ -1114,6 +1108,7 @@ function QuotaList() {
               <CoreAutocompleteAPI
                 name="creator_name"
                 pageSize={10}
+                meta={{ field: 'creator' }}
                 resource="employees"
                 label={<span>{boldText(t('quotas.filters.creator'))}</span>}
                 placeholder={t('placeholders.select')}
@@ -1126,6 +1121,7 @@ function QuotaList() {
               <CoreAutocompleteAPI
                 name="approver_name"
                 pageSize={10}
+                meta={{ field: 'approver' }}
                 resource="employees"
                 label={<span>{boldText(t('quotas.filters.approver'))}</span>}
                 placeholder={t('placeholders.select')}
@@ -1145,7 +1141,7 @@ function QuotaList() {
                 }
                 placeholder={t('placeholders.select')}
                 onChangeClear={(callback) => {
-                  if (callback) callback(department)
+                  if (callback) callback('')
                 }}
               />
             </Col>

@@ -350,7 +350,6 @@ function QuotaAction() {
           value: dataBasicInfo.data.customer_id,
           label: dataBasicInfo.data.customer_name,
         }
-        console.log('dataBasicInfo: ', dataBasicInfo)
 
         form.setFieldsValue({
           ...basicData,
@@ -440,6 +439,7 @@ function QuotaAction() {
           ...item,
           products: item.products.map((item2: any) => ({
             ...item2,
+            isSelfCreate: !item2.product_id,
             product: { value: item2.product_id, label: item2.name },
             package: { value: item2.package_id, label: item2.package_name },
             tax_rate: item2.tax_rate ?? 0,
@@ -452,6 +452,7 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
+                isSelfCreate: !item2.product_id,
                 product: { value: item2.product_id, label: item2.name },
                 package: { value: item2.package_id, label: item2.package_name },
                 unit: item2.unit_name ?? '-',

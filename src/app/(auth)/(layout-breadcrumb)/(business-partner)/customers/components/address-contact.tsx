@@ -5,7 +5,11 @@ import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
-import { fieldDistinctionOptions, industryOptions } from '@utility/options'
+import {
+  fieldDistinctionOptions,
+  INDUSTRY_OTHER_VALUE,
+  industryOptions,
+} from '@utility/options'
 import { Col, Collapse, DatePicker, Form, Input, Row, Select } from 'antd'
 import dayjs from 'dayjs'
 
@@ -21,13 +25,21 @@ function AddressContact(
   const industry = Form.useWatch('industry', form)
   const temp_industry = Form.useWatch('temp_industry', form)
 
-  const isOtherSelected = !industryOptions.some(
-    ({ value }) => value == industry && industry !== null,
-  )
+  const isOtherSelected =
+    industry === INDUSTRY_OTHER_VALUE ||
+    (industry != null &&
+      industry !== '' &&
+      !industryOptions.some(({ value }) => value === industry))
 
-  if (isOtherSelected && !temp_industry) {
+  if (
+    industry != null &&
+    industry !== '' &&
+    industry !== INDUSTRY_OTHER_VALUE &&
+    !industryOptions.some(({ value }) => value === industry) &&
+    !temp_industry
+  ) {
     form.setFieldValue('temp_industry', industry)
-    form.setFieldValue('industry', null)
+    form.setFieldValue('industry', INDUSTRY_OTHER_VALUE)
   }
   Form.useWatch('department_in_charge_id')
 

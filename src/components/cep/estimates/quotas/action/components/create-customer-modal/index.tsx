@@ -9,6 +9,7 @@ import React from 'react'
 
 import AddressContact from './address-contact'
 import BasicInformation from './basic-information'
+import CorporateResearch from './corporate-research '
 import CustomerContact from './customer-contact'
 import { useCreateCustomerModal } from './use-create-customer-modal'
 
@@ -73,6 +74,9 @@ export default function CreateCustomerModal({
             <BasicInformation />
             <AddressContact />
             <CustomerContact />
+            <div className="hidden">
+              <CorporateResearch />
+            </div>
           </Space>
         </Form>
       </Create>

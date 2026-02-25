@@ -55,11 +55,23 @@ export const validateRankRule = (t: any) => {
             }
           }),
       ),
-      rate: z.optional(
-        z
-          .int({ error: t('validation.rank.rate.type') })
-          .gte(0, { error: t('validation.rank.rate.min', { min: 0 }) }),
-      ),
+      rate: z.any().superRefine((val, ctx) => {
+        if (val === undefined || val === null || val === '') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.rank.rate.required'),
+          })
+          return z.NEVER
+        }
+        const num = Number(val)
+        if (isNaN(num)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.rank.rate.type'),
+          })
+          return z.NEVER
+        }
+      }),
       note: z.optional(
         z.union([
           z.string().max(255, {

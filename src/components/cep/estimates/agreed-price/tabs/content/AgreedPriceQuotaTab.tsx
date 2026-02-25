@@ -262,11 +262,34 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'total_price',
         key: 'total_price',
         align: 'right',
+        minWidth: 180,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 180,
+            minWidth: 180,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
           <div>
-            {(record.customer as any)?.department_name && (
-              <div style={{ fontSize: '16px', color: '#666' }}>
-                {(record.customer as any)?.department_name}
+            {(record.creator as any)?.department_name && (
+              <div
+                style={{
+                  fontSize: '16px',
+                  color: '#666',
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center',
+                }}
+              >
+                {(record.creator as any)?.department_name}
               </div>
             )}
             <div>{formatNumberWithCommas(totalPrice)}</div>

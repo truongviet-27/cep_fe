@@ -696,6 +696,7 @@ export default function CustomerListPage() {
               <RangePicker
                 className="w-full"
                 placeholder={[FORMAT_DATE_CROSS, FORMAT_DATE_CROSS]}
+                format={FORMAT_DATE_CROSS}
               />
             </Form.Item>
           </Col>

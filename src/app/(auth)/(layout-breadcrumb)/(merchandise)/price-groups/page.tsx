@@ -228,7 +228,7 @@ function Page() {
           {...tableProps}
           loading={tableProps.loading || isLoading}
           rowKey="id"
-          scroll={{ x: 'max-content' }}
+          scroll={{ x: undefined }}
         >
           <Table.Column
             dataIndex={['packaging_code']}
@@ -430,7 +430,7 @@ function Page() {
                       icon={false}
                       autoInsertSpace={false}
                     >
-                      {t('buttons.save')}
+                      {t('buttons.update')}
                     </SaveButton>
                     <DeleteButton
                       icon={false}
@@ -438,7 +438,7 @@ function Page() {
                       onClick={onClick}
                       autoInsertSpace={false}
                     >
-                      {t('buttons.delete')}
+                      {t('buttons.cancel')}
                     </DeleteButton>
                   </Space>
                 )
