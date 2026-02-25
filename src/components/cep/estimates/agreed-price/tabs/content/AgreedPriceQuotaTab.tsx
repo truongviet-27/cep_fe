@@ -133,7 +133,7 @@ const AgreedPriceQuotaTab = () => {
           values: valuesToSend,
           successNotification: () => ({
             message: t('notifications.success'),
-            description: t('notifications.editSuccess'),
+            description: t('notifications.success'),
             type: 'success',
           }),
         },

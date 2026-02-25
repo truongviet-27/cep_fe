@@ -112,7 +112,7 @@ function AgreedPriceQuotaDetail() {
         values,
         successNotification: () => ({
           message: t('notifications.success'),
-          description: t('notifications.editSuccess'),
+          description: t('notifications.success'),
           type: 'success',
         }),
       },
