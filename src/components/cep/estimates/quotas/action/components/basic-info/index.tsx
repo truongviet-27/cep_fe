@@ -35,12 +35,14 @@ import type { ParameterSettingType } from '@interfaces/permission'
 const BasicInfo = ({
   handleChangeProductPrincing,
   parameterSettings,
+  isEdit,
 }: {
   handleChangeProductPrincing: (
     productIds: number[],
     productIdsOptional: number[],
   ) => void
   parameterSettings: ParameterSettingType
+  isEdit?: boolean
 }) => {
   const t = useTranslate()
 
@@ -804,13 +806,14 @@ const BasicInfo = ({
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             {(() => {
-              const approveRoutes = form.getFieldValue('approve_routes')
+              let approveRoutes = form.getFieldValue('approve_routes')
               const isSingleRoute = approveRoutes?.length === 1
 
-              if (!parameterSettings.get('approve-routes')) {
+              // case
+              if (!isEdit && !parameterSettings.get('approve-routes')) {
                 form.setFieldsValue({ approve_route_id: '' })
+                approveRoutes = []
               }
-
               if (isSingleRoute) {
                 const singleRoute = approveRoutes[0]
 
@@ -848,6 +851,7 @@ const BasicInfo = ({
                   </>
                 )
               }
+
               return (
                 <Form.Item
                   name={'approve_route_id'}
