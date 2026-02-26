@@ -120,7 +120,7 @@ function DetailInfo({
   }, [dataSource, taxRoundingMethod])
 
   return (
-    <>
+    <div style={{ marginBottom: 32 }}>
       <Title
         level={5}
         style={{ color: PRIMARY }}
@@ -138,7 +138,7 @@ function DetailInfo({
               dataIndex: 'code',
               key: 'code',
               align: 'left',
-              width: '10%',
+              width: '8%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return {
@@ -146,23 +146,14 @@ function DetailInfo({
                       <Form.Item
                         name={[record.index, 'group_name']}
                         className="ant-form-item-hidden-margin"
-                        // required
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: '',
-                        //   },
-                        // ]}
                       >
                         <Input
                           placeholder="タイトル入力"
-                          style={{
-                            width: 400,
-                          }}
+                          style={{ width: '100%' }}
                         />
                       </Form.Item>
                     ),
-                    props: { colSpan: columns.length - 1 },
+                    props: { colSpan: 11 },
                   }
                 }
                 if (!record.isSelfCreate) {
@@ -244,7 +235,7 @@ function DetailInfo({
               dataIndex: 'name',
               key: 'name',
               align: 'left',
-              width: '13%',
+              width: '18%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -397,7 +388,7 @@ function DetailInfo({
               title: '単位',
               dataIndex: 'unit',
               key: 'unit',
-              width: '7%',
+              width: '5%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -462,7 +453,7 @@ function DetailInfo({
               title: '荷姿',
               dataIndex: 'package_id',
               key: 'package_id',
-              width: '8%',
+              width: '10%',
               align: 'left',
               render: (_, record) => {
                 if (record.isHeader) {
@@ -666,10 +657,12 @@ function DetailInfo({
                       'selling_price',
                     ]}
                     className="ant-form-item-hidden-margin"
+                    style={{ width: '100%' }}
                   >
                     <InputNumber
                       min={0}
                       controls={false}
+                      style={{ width: '100%', minWidth: 0 }}
                       title={(
                         form.getFieldValue([
                           'main_product',
@@ -703,10 +696,12 @@ function DetailInfo({
                     ]}
                     name={[record.index, 'products', record.index2, 'quantity']}
                     className="ant-form-item-hidden-margin"
+                    style={{ width: '100%' }}
                   >
                     <InputNumber
                       min={0}
                       controls={false}
+                      style={{ width: '100%', minWidth: 0 }}
                       title={(
                         form.getFieldValue([
                           'main_product',
@@ -725,7 +720,7 @@ function DetailInfo({
               title: '利益率',
               dataIndex: 'profit_margin',
               key: 'profit_margin',
-              width: '7%',
+              width: '6%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -819,7 +814,7 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
-              width: '7%',
+              width: '5%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -856,7 +851,7 @@ function DetailInfo({
               title: '合計計算',
               dataIndex: 'is_add_total',
               key: 'is_add_total',
-              width: '4%',
+              width: '6%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -987,6 +982,7 @@ function DetailInfo({
                   record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
                 }
                 pagination={false}
+                scroll={undefined}
                 summary={() => {
                   return (
                     <Table.Summary.Row
@@ -1147,7 +1143,7 @@ function DetailInfo({
           close={() => setIsModalOpen(false)}
         />
       </Modal>
-    </>
+    </div>
   )
 }
 

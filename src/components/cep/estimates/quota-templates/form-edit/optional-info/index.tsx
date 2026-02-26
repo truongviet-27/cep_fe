@@ -42,7 +42,7 @@ const OptionalInfo: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <>
+    <div style={{ marginTop: 8 }}>
       <Title
         level={5}
         style={{ color: PRIMARY }}
@@ -81,7 +81,7 @@ const OptionalInfo: FC = () => {
               dataIndex: 'code',
               key: 'code',
               align: 'left',
-              width: '10%',
+              width: '8%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return {
@@ -92,13 +92,11 @@ const OptionalInfo: FC = () => {
                       >
                         <Input
                           placeholder="タイトル入力"
-                          style={{
-                            width: 400,
-                          }}
+                          style={{ width: '100%' }}
                         />
                       </Form.Item>
                     ),
-                    props: { colSpan: columns.length - 1 },
+                    props: { colSpan: 10 },
                   }
                 }
                 if (!record.isSelfCreate) {
@@ -176,7 +174,7 @@ const OptionalInfo: FC = () => {
               dataIndex: 'name',
               key: 'name',
               align: 'left',
-              width: '13%',
+              width: '22%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -324,7 +322,7 @@ const OptionalInfo: FC = () => {
               title: '単位',
               dataIndex: 'unit',
               key: 'unit',
-              width: '7%',
+              width: '5%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -385,7 +383,7 @@ const OptionalInfo: FC = () => {
               title: '荷姿',
               dataIndex: 'package_id',
               key: 'package_id',
-              width: '8%',
+              width: '10%',
               align: 'left',
               render: (_, record) => {
                 if (record.isHeader) {
@@ -599,10 +597,12 @@ const OptionalInfo: FC = () => {
                       'selling_price',
                     ]}
                     className="ant-form-item-hidden-margin"
+                    style={{ width: '100%' }}
                   >
                     <InputNumber
                       min={0}
                       controls={false}
+                      style={{ width: '100%', minWidth: 0 }}
                       title={(
                         form.getFieldValue([
                           'optional_product',
@@ -649,10 +649,12 @@ const OptionalInfo: FC = () => {
                     ]}
                     name={[record.index, 'products', record.index2, 'quantity']}
                     className="ant-form-item-hidden-margin"
+                    style={{ width: '100%' }}
                   >
                     <InputNumber
                       min={0}
                       controls={false}
+                      style={{ width: '100%', minWidth: 0 }}
                       title={(
                         form.getFieldValue([
                           'optional_product',
@@ -671,7 +673,7 @@ const OptionalInfo: FC = () => {
               title: '利益率',
               dataIndex: 'profit_margin',
               key: 'profit_margin',
-              width: '7%',
+              width: '6%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -765,7 +767,7 @@ const OptionalInfo: FC = () => {
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
-              width: '7%',
+              width: '5%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -801,7 +803,7 @@ const OptionalInfo: FC = () => {
             {
               title: '行編集',
               key: 'action',
-              width: '10%',
+              width: '12%',
               render: (_, record) => {
                 const isHeader = record.isHeader
 
@@ -898,6 +900,7 @@ const OptionalInfo: FC = () => {
                   record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
                 }
                 pagination={false}
+                scroll={undefined}
               />
             </Flex>
           )
@@ -916,7 +919,7 @@ const OptionalInfo: FC = () => {
           close={() => setIsModalOpen(false)}
         />
       </Modal>
-    </>
+    </div>
   )
 }
 
