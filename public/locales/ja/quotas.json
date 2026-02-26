@@ -91,10 +91,11 @@
   "actions": {
     "bulk_processing": "一括処理",
     "delete": "削除",
-    "request_approval": "承認依頼",
-    "approve": "承認",
-    "send": "送信",
-    "move_to_order": "受注へ移動",
+    "request_approval": "承認待に移動する",
+    "approve": "承認する",
+    "send": "送信する",
+    "move_to_reject": "差戻する",
+    "move_to_order": "受注に移動する",
     "move_to_cancel": "失注へ移動",
     "move_to_send": "送信済へ移動",
     "resend_email_to_customer": "再送信",
@@ -223,7 +224,7 @@
       "approve": "承認",
       "send": "送信",
       "move_to_cancel": "失注へ移動",
-      "move_to_order": "受注へ移動",
+      "move_to_order": "受注に移動する",
       "move_to_send": "送信済へ移動"
     },
     "table": {
