@@ -24,7 +24,7 @@ export const useController = () => {
       {
         product_id: null,
         name: '',
-        code: isSelfCreate ? '' : '自動採番',
+        code: '',
         quantity: 1,
         cost_price: 0,
         isSelfCreate: isSelfCreate,
