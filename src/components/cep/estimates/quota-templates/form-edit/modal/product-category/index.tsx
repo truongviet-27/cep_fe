@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
-import { Button, Col, Divider, Flex, Form, Row } from 'antd'
+import { Button, Col, Divider, Flex, Form, notification, Row } from 'antd'
 import React, { useState } from 'react'
 
 import CoreInput from '@components/common/core-input'
@@ -20,7 +20,7 @@ export const ProductCategoryModal: React.FC<Props> = (props) => {
   const productWatch = Form.useWatch(name, form)
   const isDirtyProduct = (productWatch ?? [])[0]?.products[0]?.product_id
 
-  const { data } = useCustom({
+  const { data, isFetching } = useCustom({
     method: 'get',
     url: `${apiUrl}/product-categories/${categoryIdWatch}/products`,
     queryOptions: {
@@ -71,6 +71,11 @@ export const ProductCategoryModal: React.FC<Props> = (props) => {
               },
             ],
       )
+    } else {
+      notification.error({
+        message: t('quotas.action.modal.no_products.description'),
+        placement: 'topRight',
+      })
     }
 
     close()
@@ -106,7 +111,7 @@ export const ProductCategoryModal: React.FC<Props> = (props) => {
         <Button
           type="primary"
           onClick={handleCreateCategory}
-          disabled={!(data?.data.products?.length > 0)}
+          disabled={!categoryIdWatch || isFetching}
         >
           {t('products.buttons.save')}
         </Button>

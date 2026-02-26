@@ -235,28 +235,33 @@ function OptionalInfo({
                         },
                         {
                           validator: async () => {
-                            const products =
-                              form.getFieldValue([
-                                'optional_product',
-                                record.index,
-                                'products',
-                              ]) || []
-                            const currentCode = products[record.index2]?.code
+                            const allOptionalGroups =
+                              form.getFieldValue('optional_product') || []
+                            const currentProduct =
+                              allOptionalGroups[record.index]?.products?.[
+                                record.index2
+                              ]
+                            const currentCode = currentProduct?.code
+
                             if (!currentCode) return Promise.resolve()
-                            const isDuplicate = products.some(
-                              (item: any, idx: number) =>
-                                item.code === currentCode &&
-                                idx !== record.index2,
-                            )
-                            if (isDuplicate) {
-                              notification.error({
-                                message: t(
-                                  'quotas.action.detail_info.duplicate_product',
-                                ),
-                                key: `code-optional-product`,
-                                placement: 'topRight',
-                              })
-                              return Promise.reject()
+
+                            let count = 0
+
+                            for (const group of allOptionalGroups) {
+                              const products = group?.products || []
+                              for (const item of products) {
+                                if (item?.code === currentCode) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                                    key: `${currentCode}-code-optional-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
+                                }
+                              }
                             }
                             return Promise.resolve()
                           },
@@ -301,29 +306,36 @@ function OptionalInfo({
                         rules={[
                           {
                             validator: async () => {
-                              const products =
-                                form.getFieldValue([
-                                  'optional_product',
-                                  record.index,
-                                  'products',
-                                ]) || []
+                              const allOptionalGroups =
+                                form.getFieldValue('optional_product') || []
+                              const currentProduct =
+                                allOptionalGroups[record.index]?.products?.[
+                                  record.index2
+                                ]
                               const currentProductId =
-                                products[record.index2]?.product_id
+                                currentProduct?.product_id
+
                               if (!currentProductId) return Promise.resolve()
-                              const isDuplicate = products.some(
-                                (item: any, idx: number) =>
-                                  item.product_id === currentProductId &&
-                                  idx !== record.index2,
-                              )
-                              if (isDuplicate) {
-                                notification.error({
-                                  message: t(
-                                    'quotas.action.detail_info.duplicate_product',
-                                  ),
-                                  key: `name-optional-product`,
-                                  placement: 'topRight',
-                                })
-                                return Promise.reject()
+
+                              let count = 0
+
+                              for (const group of allOptionalGroups) {
+                                const products = group?.products || []
+                                for (const item of products) {
+                                  if (item?.product_id === currentProductId) {
+                                    count++
+                                  }
+                                  if (count > 1) {
+                                    notification.error({
+                                      message: t(
+                                        'quotas.action.detail_info.duplicate_product',
+                                      ),
+                                      key: `name-optional-product`,
+                                      placement: 'topRight',
+                                    })
+                                    return Promise.reject()
+                                  }
+                                }
                               }
                               return Promise.resolve()
                             },
@@ -520,30 +532,35 @@ function OptionalInfo({
                         },
                         {
                           validator: async () => {
-                            const products =
-                              form.getFieldValue([
-                                'optional_product',
-                                record.index,
-                                'products',
-                              ]) || []
-                            const currentName = products[record.index2]?.name
-                            console.log('products', products)
+                            const allOptionalGroups =
+                              form.getFieldValue('optional_product') || []
+                            const currentProduct =
+                              allOptionalGroups[record.index]?.products?.[
+                                record.index2
+                              ]
+                            const currentName = currentProduct?.name
+
                             if (!currentName) return Promise.resolve()
-                            const isDuplicate = products.some(
-                              (item: any, idx: number) =>
-                                item.name === currentName &&
-                                idx !== record.index2,
-                            )
-                            if (isDuplicate) {
-                              notification.error({
-                                message: t(
-                                  'quotas.action.detail_info.duplicate_product',
-                                ),
-                                key: `name-optional-product`,
-                                placement: 'topRight',
-                              })
-                              return Promise.reject()
+
+                            let count = 0
+
+                            for (const group of allOptionalGroups) {
+                              const products = group?.products || []
+                              for (const item of products) {
+                                if (item?.name === currentName) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                                    key: `${currentName}-name-optional-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
+                                }
+                              }
                             }
+
                             return Promise.resolve()
                           },
                         },
