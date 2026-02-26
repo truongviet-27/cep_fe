@@ -96,7 +96,7 @@ const OptionalInfo: FC = () => {
                         />
                       </Form.Item>
                     ),
-                    props: { colSpan: 10 },
+                    props: { colSpan: columns.length - 1 },
                   }
                 }
                 if (!record.isSelfCreate) {

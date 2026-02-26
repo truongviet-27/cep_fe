@@ -153,7 +153,7 @@ function DetailInfo({
                         />
                       </Form.Item>
                     ),
-                    props: { colSpan: 11 },
+                    props: { colSpan: columns.length - 1 },
                   }
                 }
                 if (!record.isSelfCreate) {
