@@ -69,7 +69,6 @@ function DetailInfo({
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
-  const [checkNull, setcheckNull] = useState(false)
 
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
@@ -131,7 +130,6 @@ function DetailInfo({
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setcheckNull(hasNullCost)
     setProfitRate(hasNullCost ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
   }
@@ -167,11 +165,11 @@ function DetailInfo({
       package_name: '-',
       name: '',
       code: '',
-      quantity: 1,
+      quantity: 0,
       cost_price: 0,
-      selling_price: 1,
+      selling_price: 0,
       profit_margin: 0,
-      tax_rate: getDefaultTaxRate(),
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
       unit_name: t('quotas.action.detail_info.default_values.default_unit'),
@@ -1351,9 +1349,9 @@ function DetailInfo({
                             package_name: '-',
                             name: '',
                             code: '',
-                            quantity: 1,
+                            quantity: 0,
                             cost_price: 0,
-                            selling_price: 1,
+                            selling_price: 0,
                             profit_margin: 0,
                             tax_rate: 0,
                             is_add_total: true,
