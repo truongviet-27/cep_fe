@@ -5,17 +5,18 @@ import { useSelect } from '@refinedev/antd'
 import { useCreate, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
 import { Col, Form, Row, Select, Tag } from 'antd'
-import { useState } from 'react'
+import type { KeyboardEvent } from 'react'
+import { useRef, useState } from 'react'
+
+import type { SelectedTag, TagModel, TagOption } from './types'
 
 function Tags() {
   const t = useTranslate()
   const [searchValue, setSearchValue] = useState('')
   const [isCreating, setIsCreating] = useState(false)
-  const [updateTrigger, setUpdateTrigger] = useState(0) // Force re-render
-  const [newlyCreatedTags, setNewlyCreatedTags] = useState<any[]>([]) // Store newly created tags
+  const creatingTagRef = useRef<string | null>(null) // Prevent duplicate creation
   const form = Form.useFormInstance()
-  const selectedTags = form?.getFieldValue('tags') || []
-  console.log(updateTrigger)
+  const selectedTags: SelectedTag[] = form?.getFieldValue('tags') || []
 
   const { mutate: createTag } = useCreate({
     resource: 'tags',
@@ -32,20 +33,22 @@ function Tags() {
     // Remove onSearch since we're doing client-side filtering
   })
 
-  // Get current options from API + newly created tags
-  const baseApiOptions = (queryResult?.data?.data ?? []).map((item: any) => ({
-    label: item.name,
-    value: item.id,
-  }))
+  // Get current options from API
+  const baseApiOptions: TagOption[] = (queryResult?.data?.data ?? []).map(
+    (item: TagModel) => ({
+      label: item.name || '',
+      value: item.id || 0,
+    }),
+  )
 
-  // Combine API options with newly created tags
-  const allOptions = [...baseApiOptions, ...newlyCreatedTags]
+  // Use API options directly
+  const allOptions: TagOption[] = baseApiOptions
 
   // Mark selected tags as disabled and grey out
-  const apiOptions = allOptions.map((option: any) => {
-    const isSelected = selectedTags.some((tag: any) => {
-      const tagValue = tag.value || tag.id
-      const optionValue = option.value || option.id
+  const apiOptions: TagOption[] = allOptions.map((option: TagOption) => {
+    const isSelected = selectedTags.some((tag: SelectedTag) => {
+      const tagValue = tag.value
+      const optionValue = option.value
       return tagValue === optionValue
     })
 
@@ -59,13 +62,14 @@ function Tags() {
   // Check if search value exists in options (only check non-disabled options)
   const isSearchValueExists = searchValue
     ? apiOptions.some(
-        (opt: any) =>
+        (opt: TagOption) =>
+          typeof opt.label === 'string' &&
           opt.label?.toLowerCase().trim() === searchValue.toLowerCase().trim(),
       )
     : false
 
   // Build final options with create option (no manual filtering)
-  const finalOptions =
+  const finalOptions: TagOption[] =
     searchValue && searchValue.trim() && !isSearchValueExists
       ? [
           ...apiOptions,
@@ -91,9 +95,7 @@ function Tags() {
       : apiOptions
 
   // Smart filterOption that handles both string and JSX labels
-  const smartFilterOption = (input: string, option: any) => {
-    console.log('filterOption called:', input, option)
-
+  const smartFilterOption = (input: string, option?: TagOption) => {
     // Always show create option
     if (option?.key === 'create-new') return true
 
@@ -106,12 +108,16 @@ function Tags() {
     return true
   }
 
-  console.log('Search:', searchValue, 'Total options:', finalOptions.length)
-
   const createNewTag = async (tagName: string) => {
+    // Prevent duplicate creation if already creating this tag
+    if (creatingTagRef.current === tagName) {
+      return
+    }
+
+    creatingTagRef.current = tagName
     setIsCreating(true)
     try {
-      const result = await new Promise((resolve, reject) => {
+      const result = await new Promise<any>((resolve, reject) => {
         createTag(
           {
             values: { name: tagName, order: null },
@@ -123,41 +129,30 @@ function Tags() {
         )
       })
 
-      // Refresh the options list
+      // Refresh the options list to get the new tag from API
       await queryResult.refetch?.()
 
       // Add the new tag to selected tags
-      const newTag = {
+      const newTag: SelectedTag = {
         label: tagName,
-        value: (result as any)?.data?.id || `temp_${Date.now()}`,
+        value: result?.data?.id || `temp_${Date.now()}`,
         key: tagName,
       }
 
-      // Add to newly created tags for options list
-      setNewlyCreatedTags((prev) => {
-        const exists = prev.some((tag) => tag.label === tagName)
-        if (!exists) {
-          return [...prev, { label: tagName, value: newTag.value }]
-        }
-        return prev
-      })
-
-      const currentTags = form?.getFieldValue('tags') || []
+      const currentTags: SelectedTag[] = form?.getFieldValue('tags') || []
       const updatedTags = [...currentTags, newTag]
       form?.setFieldsValue({ tags: updatedTags })
-
-      // Force re-render
-      setUpdateTrigger((prev) => prev + 1)
     } catch (error) {
       console.error('Error creating tag:', error)
       // Don't add anything on error - just show error and stop
     } finally {
+      creatingTagRef.current = null
       setIsCreating(false)
       setSearchValue('')
     }
   }
 
-  const handleTagChange = async (value: any) => {
+  const handleTagChange = async (value: SelectedTag) => {
     // Handle create new tag
     if (
       typeof value === 'object' &&
@@ -166,44 +161,39 @@ function Tags() {
       value.value.startsWith('__create__')
     ) {
       const tagName = value.value.substring(10) // Remove __create__ prefix
+      setSearchValue('') // Clear immediately
       await createNewTag(tagName)
       return
     }
 
     // Regular selection from existing options - add to existing tags
-    if (value && form && !value.disabled) {
-      const currentTags = form?.getFieldValue('tags') || []
+    if (value && form && !('disabled' in value && value.disabled)) {
+      const currentTags: SelectedTag[] = form?.getFieldValue('tags') || []
 
       // Check if this tag is already selected by comparing value/id
-      const isAlreadySelected = currentTags.some((tag: any) => {
-        const tagValue = tag.value || tag.id
-        const selectedValue = value.value || value.id
+      const isAlreadySelected = currentTags.some((tag: SelectedTag) => {
+        const tagValue = tag.value
+        const selectedValue = value.value
         return tagValue === selectedValue
       })
 
       if (!isAlreadySelected) {
         const updatedTags = [...currentTags, value]
         form?.setFieldsValue({ tags: updatedTags })
-
-        // Force re-render
-        setUpdateTrigger((prev) => prev + 1)
       }
     }
     setSearchValue('')
   }
 
-  const handleTagRemove = (removedTag: any) => {
-    const currentTags = form?.getFieldValue('tags') || []
+  const handleTagRemove = (removedTag: SelectedTag) => {
+    const currentTags: SelectedTag[] = form?.getFieldValue('tags') || []
     const updatedTags = currentTags.filter(
-      (tag: any) => tag.value !== removedTag.value,
+      (tag: SelectedTag) => tag.value !== removedTag.value,
     )
     form?.setFieldsValue({ tags: updatedTags })
-
-    // Force re-render
-    setUpdateTrigger((prev) => prev + 1)
   }
 
-  const handleKeyDown = async (e: any) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLElement>) => {
     if (
       e.key === 'Enter' &&
       searchValue &&
@@ -241,7 +231,7 @@ function Tags() {
           minHeight: selectedTags.length > 0 ? 'auto' : 0,
         }}
       >
-        {selectedTags.map((tag: any, index: number) => (
+        {selectedTags.map((tag: SelectedTag, index: number) => (
           <Tag
             key={tag.key || tag.value || index}
             closable
@@ -275,7 +265,6 @@ function Tags() {
             loading={isCreating}
             disabled={isCreating}
             onSearch={(value) => {
-              console.log('Search value:', value)
               setSearchValue(value)
             }}
             onChange={handleTagChange}

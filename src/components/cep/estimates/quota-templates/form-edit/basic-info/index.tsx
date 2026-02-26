@@ -127,7 +127,7 @@ const BasicInfo = () => {
           style={{ paddingLeft: '10px' }}
         >
           <Form.Item
-            label={boldText(t('quota_templates.form.label.quote_category'))}
+            label={boldText(t('quota_templates.form.label.quote_transaction'))}
             colon={false}
             required
             labelCol={{ span: 4 }}

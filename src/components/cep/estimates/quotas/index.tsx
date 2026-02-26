@@ -4,6 +4,7 @@ import { CommentOutlined, DownOutlined, RightOutlined } from '@ant-design/icons'
 import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
+  HIDE_CREATOR_APPROVER_2_STATUSES,
   QuotaStatus,
   TRANSACTION_TYPES,
 } from '@components/cep/estimates/quotas/enum'
@@ -37,6 +38,7 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
+import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { BLACK, PRIMARY, WHITE } from '@utility/color'
@@ -83,7 +85,13 @@ function QuotaList() {
   const t = useTranslate()
   const { convertCurrency } = useCurrency()
   const apiUrl = useApiUrl()
-
+  const [useApproveRoute, setUseApproveRoute] = useState<boolean>(false)
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  useEffect(() => {
+    setUseApproveRoute(
+      !!parameterSettings?.get?.(ParameterResourceEnum.APPROVE_ROUTES),
+    )
+  }, [parameterSettings])
   const { permission } = useUserStore.getState()
 
   const go = useGo()
@@ -105,16 +113,33 @@ function QuotaList() {
     setSelectedRows(selectedRows)
 
     const status = handleOptions(selectedRows)
-    const options = statusButton(status, selectedRows?.[0]?.has_approval_route)
+
+    const hasValidApprovers = (item: any): boolean =>
+      item.is_manage_approve_routes === true &&
+      Array.isArray(item?.approvers) &&
+      item.approvers.length > 0
+
+    // tat ca cac record duoc select, deu co nguoi duyet
+    const allHaveApprovers = selectedRows.every(hasValidApprovers)
+
+    // tat ca cac record duoc select, deu khong co nguoi duyet
+    const noneHaveApprovers = selectedRows.every(
+      (item: any) => item.is_manage_approve_routes === false,
+    )
+
+    const hasMixedApprovers = !allHaveApprovers && !noneHaveApprovers
+
+    const options = statusButton(status, allHaveApprovers, hasMixedApprovers)
+
     setOptions(options)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any) => {
+    (resource: string, values: any, method?: any) => {
       mutate({
         values,
-        method: 'put',
+        method: method ? method : 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
@@ -348,47 +373,54 @@ function QuotaList() {
             verticalAlign: 'center',
           },
         }),
-        render: (_, record) => (
-          <div>
-            <div
-              title={record?.author?.name}
-              style={{
-                display: 'block',
-                width: '100%',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'center',
-              }}
-            >
-              {record?.author?.name}
+        render: (_, record) => {
+          const hideApprover = HIDE_CREATOR_APPROVER_2_STATUSES.includes(
+            record.status,
+          )
+          return (
+            <div>
+              <div
+                title={record?.author?.name}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center',
+                }}
+              >
+                {record?.author?.name}
+              </div>
+              {!hideApprover && (
+                <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
+                  {record.approvers?.map((item: any, index: number) => {
+                    const numSteps = item?.number_step ?? 1
+                    const isApproved = item.status === 'approved'
+                    const numberIcon = String.fromCharCode(9311 + numSteps)
+                    return (
+                      <span
+                        title={item.name}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          textAlign: 'center',
+                        }}
+                        key={index}
+                        className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
+                      >
+                        {numberIcon} {item.name}
+                      </span>
+                    )
+                  })}
+                </div>
+              )}
             </div>
-            <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
-              {record.approvers?.map((item: any, index: number) => {
-                const numSteps = item?.number_step ?? 1
-                const isApproved = item.status === 'approved'
-                const numberIcon = String.fromCharCode(9311 + numSteps)
-                return (
-                  <span
-                    title={item.name}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      textAlign: 'center',
-                    }}
-                    key={index}
-                    className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
-                  >
-                    {numberIcon} {item.name}
-                  </span>
-                )
-              })}
-            </div>
-          </div>
-        ),
+          )
+        },
       },
       {
         title: (
@@ -615,7 +647,29 @@ function QuotaList() {
                   </DeleteButton>
                 )}
 
-              <Link href={record?.pdf_path} target="_blank">
+              {record.status === QuotaStatus.SentToCustomer && (
+                <Button
+                  type="default"
+                  size="small"
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#8207BA',
+                  }}
+                  onClick={() =>
+                    handleChangeStatus(
+                      'resend-email-to-customer',
+                      {
+                        quota_ids: [record.id],
+                      },
+                      'post',
+                    )
+                  }
+                >
+                  {t('quotas.actions.resend_email_to_customer')}
+                </Button>
+              )}
+
+              <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
                 <Button
                   size="small"
                   type="default"
@@ -729,14 +783,12 @@ function QuotaList() {
           operator: 'eq',
           value: values.transaction_type?.trim(),
         },
-      ]
-      if (values.product_name) {
-        filters.push({
+        {
           field: 'product_name',
           operator: 'eq',
           value: values.product_name,
-        })
-      }
+        },
+      ]
       return filters
     },
   })
@@ -857,6 +909,7 @@ function QuotaList() {
   })
 
   const statusData = [
+    { title: t('quotas.status.all'), value: 0, key: null },
     { title: t('quotas.status.creating'), value: 0, key: QuotaStatus.Creating },
     {
       title: t('quotas.status.waiting_approval'),
@@ -864,6 +917,12 @@ function QuotaList() {
       color: '#faad14',
       key: QuotaStatus.WaitingApproval,
     }, // vàng
+    {
+      title: t('quotas.status.rejected'),
+      value: 0,
+      color: '#fa541c',
+      key: QuotaStatus.Rejected,
+    }, // cam
     {
       title: t('quotas.status.approved'),
       value: 0,
@@ -877,12 +936,6 @@ function QuotaList() {
       key: QuotaStatus.SentToCustomer,
     }, // xanh đậm
     {
-      title: t('quotas.status.rejected'),
-      value: 0,
-      color: '#fa541c',
-      key: QuotaStatus.Rejected,
-    }, // cam
-    {
       title: t('quotas.status.completed'),
       value: 0,
       color: '#52c41a',
@@ -894,7 +947,6 @@ function QuotaList() {
       color: '#ff4d4f',
       key: QuotaStatus.Cancelled,
     }, // đỏ
-    { title: t('quotas.status.all'), value: 0, key: null },
   ]
 
   const statusDashboard = useMemo(() => {
@@ -913,32 +965,40 @@ function QuotaList() {
     (
       status: QuotaStatus,
       hasApprovalRoutes: boolean,
+      hasMixedApprovers: boolean,
     ): { key: number; label: string | ReactNode }[] => {
-      if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
-        return [
-          {
-            key: 1,
-            label: t('quotas.actions.delete'),
-          },
-          ...(hasApprovalRoutes
-            ? [
-                {
-                  key: 2,
-                  label: t('quotas.actions.request_approval'),
-                },
-              ]
-            : []),
-        ]
+      if (status === QuotaStatus.Creating) {
+        const actions = [{ key: 1, label: t('quotas.actions.delete') }]
+
+        if (!hasMixedApprovers) {
+          if (hasApprovalRoutes) {
+            actions.push({
+              key: 2,
+              label: t('quotas.actions.request_approval'),
+            })
+          } else {
+            actions.push({
+              key: 4,
+              label: t('quotas.actions.send'),
+            })
+          }
+        }
+
+        return actions
       } else if (status === QuotaStatus.WaitingApproval) {
         return [
-          ...(hasApprovalRoutes
-            ? [{ key: 3, label: t('quotas.actions.approve') }]
+          ...(hasApprovalRoutes && !hasMixedApprovers
+            ? [
+                { key: 3, label: t('quotas.actions.approve') },
+                { key: 9, label: t('quotas.actions.move_to_reject') },
+              ]
             : []),
         ]
       } else if (status === QuotaStatus.Approved) {
         return [{ key: 4, label: t('quotas.actions.send') }]
       } else if (status === QuotaStatus.SentToCustomer) {
         return [
+          { key: 8, label: t('quotas.actions.resend_email_to_customer') },
           { key: 5, label: t('quotas.actions.move_to_order') },
           { key: 6, label: t('quotas.actions.move_to_cancel') },
         ]
@@ -947,9 +1007,7 @@ function QuotaList() {
       } else if (status === QuotaStatus.Cancelled) {
         return [
           { key: 1, label: t('quotas.actions.delete') },
-          ...(hasApprovalRoutes
-            ? [{ key: 7, label: t('quotas.actions.move_to_send') }]
-            : []),
+          ...[{ key: 7, label: t('quotas.actions.move_to_send') }],
         ]
       }
       return []
@@ -1047,6 +1105,30 @@ function QuotaList() {
           return notificationFunction(data?.data.message)
         },
       })
+    } else if (Number(info.key) === 8) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'post',
+        url: `${apiUrl}/quotas/resend-email-to-customer`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 9) {
+      mutate({
+        values: selectedRows.map((item: any) => ({
+          quota_id: item?.id,
+          status: 'rejected',
+          comment: '一括差戻',
+        })),
+        method: 'put',
+        url: `${apiUrl}/quotas/approval-steps`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
     }
   }
 
@@ -1069,6 +1151,7 @@ function QuotaList() {
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
         <StatusDashboard
+          useApproveRoute={useApproveRoute}
           statusData={statusDashboard}
           status={status}
           onChangeStatus={onChangeStatus}
