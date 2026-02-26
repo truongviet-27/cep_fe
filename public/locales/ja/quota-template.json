@@ -19,7 +19,8 @@
     "bassPrice": "基本金額",
     "description": "説明",
     "operation": "操作",
-    "createFromTemplate": "テンプレートから作成"
+    "createFromTemplate": "テンプレートから作成",
+    "createFromOldQuota": "過去見積から作成"
   },
   "button": {
     "search": "検索",
@@ -41,6 +42,7 @@
       "quote_number": "見積番号",
       "quote_type": "見積種類",
       "quote_category": "見積区分",
+      "quote_transaction": "取引区分",
       "template_name": "テンプレート名",
       "description": "説明",
       "customer": "取引先",

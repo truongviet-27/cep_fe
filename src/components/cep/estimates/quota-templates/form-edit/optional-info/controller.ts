@@ -24,13 +24,13 @@ export const useController = () => {
       {
         product_id: null,
         name: '',
-        code: isSelfCreate ? '' : '自動採番',
+        code: '',
         quantity: 1,
         cost_price: 0,
         isSelfCreate: isSelfCreate,
-        selling_price: 1,
+        selling_price: 0,
         profit_margin: 0,
-        tax_rate: getDefaultTaxRate(),
+        tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
         is_add_total: false,
       } as unknown as QuotaTemplateProductType,
     ]

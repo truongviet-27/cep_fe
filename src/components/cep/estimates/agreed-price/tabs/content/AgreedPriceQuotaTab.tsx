@@ -3,6 +3,7 @@
 import StatusDashboard from '@components/cep/estimates/agreed-price/components/status-dashboard'
 import { AgreedPriceStatus } from '@components/cep/estimates/agreed-price/enum'
 import { getAgreedPriceStatusStyle } from '@components/cep/estimates/agreed-price/utils'
+import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { DeleteButton, ShowButton, useSelect, useTable } from '@refinedev/antd'
 import {
@@ -777,7 +778,7 @@ const AgreedPriceQuotaTab = () => {
         <Form
           form={updateForm}
           layout="horizontal"
-          labelCol={{ span: 8 }}
+          labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
           labelAlign="left"
           colon={false}
@@ -924,23 +925,26 @@ const AgreedPriceQuotaTab = () => {
 
           <Divider style={{ margin: '24px 0' }} />
 
-          <Form.Item label="登録者:" style={{ marginBottom: 16 }}>
-            <span>
-              {selected?.creator?.name || '伊藤太郎'}{' '}
-              {selected?.created_at
-                ? dayjs(selected.created_at).format('YYYY/MM/DD HH:mm')
-                : '2025/08/04 12:30'}
-            </span>
-          </Form.Item>
-
-          <Form.Item label="更新者:" style={{ marginBottom: 16 }}>
-            <span>
-              {selected?.creator?.name || '伊藤太郎'}{' '}
-              {selected?.updated_at
-                ? dayjs(selected.updated_at).format('YYYY/MM/DD HH:mm')
-                : '2025/08/04 12:30'}
-            </span>
-          </Form.Item>
+          <ShowMoreInfo
+            descriptions={[
+              {
+                title: '登録者',
+                value: `${selected?.creator?.name || '伊藤太郎'} ${
+                  selected?.created_at
+                    ? dayjs(selected.created_at).format('YYYY/MM/DD HH:mm')
+                    : '2025/08/04 12:30'
+                }`,
+              },
+              {
+                title: '更新者',
+                value: `${selected?.creator?.name || '伊藤太郎'} ${
+                  selected?.updated_at
+                    ? dayjs(selected.updated_at).format('YYYY/MM/DD HH:mm')
+                    : '2025/08/04 12:30'
+                }`,
+              },
+            ]}
+          />
 
           <div
             style={{

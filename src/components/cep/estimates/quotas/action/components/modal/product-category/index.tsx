@@ -76,7 +76,8 @@ export const ProductCategoryModal = ({
                   cost_price: item?.cost_price,
                   quantity: 1,
                   selling_price:
-                    item?.packagings[0]?.rank_prices != 0
+                    item?.packagings[0]?.rank_prices != null &&
+                    item?.packagings[0]?.rank_prices !== 0
                       ? item?.packagings[0]?.rank_prices
                       : item?.packagings[0]?.selling_price,
                   tax_rate: item?.tax_rate,
@@ -113,7 +114,8 @@ export const ProductCategoryModal = ({
                   quantity: 1,
                   tax_rate: item?.tax_rate,
                   selling_price:
-                    item?.packagings[0]?.rank_prices != 0
+                    item?.packagings[0]?.rank_prices != null &&
+                    item?.packagings[0]?.rank_prices !== 0
                       ? item?.packagings[0]?.rank_prices
                       : item?.packagings[0]?.selling_price,
                   profit_margin: 0,

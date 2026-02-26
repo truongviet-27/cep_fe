@@ -69,7 +69,6 @@ function DetailInfo({
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
-  const [checkNull, setcheckNull] = useState(false)
 
   const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
     let costTotal = 0
@@ -131,7 +130,6 @@ function DetailInfo({
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setcheckNull(hasNullCost)
     setProfitRate(hasNullCost ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
   }
@@ -167,11 +165,11 @@ function DetailInfo({
       package_name: '-',
       name: '',
       code: '',
-      quantity: 1,
+      quantity: 0,
       cost_price: 0,
-      selling_price: 1,
+      selling_price: 0,
       profit_margin: 0,
-      tax_rate: getDefaultTaxRate(),
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
       unit_name: t('quotas.action.detail_info.default_values.default_unit'),
@@ -420,28 +418,31 @@ function DetailInfo({
                         },
                         {
                           validator: async () => {
-                            const products =
-                              form.getFieldValue([
-                                'main_product',
-                                record.index,
-                                'products',
-                              ]) || []
-                            const currentCode = products[record.index2]?.code
+                            const allGroups =
+                              form.getFieldValue('main_product') || []
+
+                            const currentProduct =
+                              allGroups[record.index]?.products?.[record.index2]
+                            const currentCode = currentProduct?.code
+
                             if (!currentCode) return Promise.resolve()
-                            const isDuplicate = products.some(
-                              (item: any, idx: number) =>
-                                item.code === currentCode &&
-                                idx !== record.index2,
-                            )
-                            if (isDuplicate) {
-                              notification.error({
-                                message: t(
-                                  'quotas.action.detail_info.duplicate_product',
-                                ),
-                                key: `code-main-product`,
-                                placement: 'topRight',
-                              })
-                              return Promise.reject()
+
+                            let count = 0
+                            for (const group of allGroups) {
+                              const products = group?.products || []
+                              for (const item of products) {
+                                if (item?.code === currentCode) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                                    key: `${currentCode}-code-main-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
+                                }
+                              }
                             }
                             return Promise.resolve()
                           },
@@ -488,31 +489,38 @@ function DetailInfo({
                           },
                           {
                             validator: async () => {
-                              const products =
-                                form.getFieldValue([
-                                  'main_product',
-                                  record.index,
-                                  'products',
-                                ]) || []
-                              const currentProductId =
-                                products[record.index2]?.product_id
-                              if (!currentProductId) return Promise.resolve()
-                              const isDuplicate = products.some(
-                                (item: any, idx: number) =>
-                                  item.product_id === currentProductId &&
-                                  idx !== record.index2,
-                              )
-                              if (isDuplicate) {
-                                notification.error({
-                                  message: t(
-                                    'quotas.action.detail_info.duplicate_product',
-                                  ),
-                                  key: `name-main-product`,
-                                  placement: 'topRight',
-                                })
-                                return Promise.reject()
+                              const allGroups =
+                                form.getFieldValue('main_product') || []
+                              const currentProduct =
+                                allGroups[record.index]?.products?.[
+                                  record.index2
+                                ]
+
+                              if (!currentProduct?.product_id)
+                                return Promise.resolve()
+
+                              let count = 0
+                              for (const group of allGroups) {
+                                const products = group?.products || []
+                                for (const item of products) {
+                                  if (
+                                    item?.product_id ===
+                                    currentProduct?.product_id
+                                  ) {
+                                    count++
+                                  }
+                                  if (count > 1) {
+                                    notification.error({
+                                      message: t(
+                                        'quotas.action.detail_info.duplicate_product',
+                                      ),
+                                      key: `name-main-product`,
+                                      placement: 'topRight',
+                                    })
+                                    return Promise.reject()
+                                  }
+                                }
                               }
-                              return Promise.resolve()
                             },
                           },
                         ]}
@@ -722,29 +730,30 @@ function DetailInfo({
                         },
                         {
                           validator: async () => {
-                            const products =
-                              form.getFieldValue([
-                                'main_product',
-                                record.index,
-                                'products',
-                              ]) || []
-                            const currentName = products[record.index2]?.name
-                            console.log('products', products)
+                            const allGroups =
+                              form.getFieldValue('main_product') || []
+                            const currentProduct =
+                              allGroups[record.index]?.products?.[record.index2]
+                            const currentName = currentProduct?.name
+
                             if (!currentName) return Promise.resolve()
-                            const isDuplicate = products.some(
-                              (item: any, idx: number) =>
-                                item.name === currentName &&
-                                idx !== record.index2,
-                            )
-                            if (isDuplicate) {
-                              notification.error({
-                                message: t(
-                                  'quotas.action.detail_info.duplicate_product',
-                                ),
-                                key: `name-main-product`,
-                                placement: 'topRight',
-                              })
-                              return Promise.reject()
+
+                            let count = 0
+                            for (const group of allGroups) {
+                              const products = group?.products || []
+                              for (const item of products) {
+                                if (item?.name === currentName) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                                    key: `${currentName}-name-main-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
+                                }
+                              }
                             }
                             return Promise.resolve()
                           },
@@ -1340,9 +1349,9 @@ function DetailInfo({
                             package_name: '-',
                             name: '',
                             code: '',
-                            quantity: 1,
+                            quantity: 0,
                             cost_price: 0,
-                            selling_price: 1,
+                            selling_price: 0,
                             profit_margin: 0,
                             tax_rate: 0,
                             is_add_total: true,

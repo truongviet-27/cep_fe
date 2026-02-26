@@ -1,64 +1,286 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { PlusOutlined } from '@ant-design/icons'
 import { useSelect } from '@refinedev/antd'
-import { useTranslate } from '@refinedev/core'
+import { useCreate, useTranslate } from '@refinedev/core'
 import { PRIMARY } from '@utility/color'
-import { SEARCH_TIMEOUT } from '@utility/constant'
-import { Empty, Form, Select, Spin, Typography } from 'antd'
-import { debounce } from 'lodash'
-import { useMemo, useState } from 'react'
+import { Col, Form, Row, Select, Tag } from 'antd'
+import type { KeyboardEvent } from 'react'
+import { useRef, useState } from 'react'
 
-const { Title } = Typography
+import type { SelectedTagId, TagDisplay, TagModel, TagOption } from './types'
 
-const TagForm: React.FC = () => {
+function Tags() {
   const t = useTranslate()
-  const [searchText, setSearchText] = useState('')
-  const { selectProps } = useSelect({
+  const [searchValue, setSearchValue] = useState('')
+  const [isCreating, setIsCreating] = useState(false)
+  const creatingTagRef = useRef<string | null>(null) // Prevent duplicate creation
+  const form = Form.useFormInstance()
+  const selectedTagIds: SelectedTagId[] = form?.getFieldValue('tags') || [] // Array of tag IDs
+
+  const { mutate: createTag } = useCreate({
+    resource: 'tags',
+  })
+
+  const { queryResult } = useSelect({
     resource: 'tags',
     optionLabel: 'name',
     optionValue: 'id',
-    filters: [
-      {
-        field: '_per_page',
-        operator: 'eq',
-        value: 30,
-      },
-      {
-        field: 'name_lk',
-        operator: 'eq',
-        value: searchText,
-      },
-    ],
+    pagination: {
+      mode: 'server',
+      pageSize: 100, // Get more records for client-side filtering
+    },
+    // Remove onSearch since we're doing client-side filtering
   })
 
-  const debounceFetcher = useMemo(
-    () => debounce(setSearchText, SEARCH_TIMEOUT),
-    [],
+  // Get current options from API
+  const baseApiOptions: TagOption[] = (queryResult?.data?.data ?? []).map(
+    (item: TagModel) => ({
+      label: item.name || '',
+      value: item.id || 0,
+    }),
   )
 
+  // Use API options directly
+  const allOptions: TagOption[] = baseApiOptions
+
+  // Get selected tags data for display by matching IDs with options
+  const selectedTags: TagDisplay[] = allOptions
+    .filter((option: TagOption) =>
+      selectedTagIds.includes(option.value as number),
+    )
+    .map((option) => ({
+      label: typeof option.label === 'string' ? option.label : '',
+      value: option.value,
+      key: String(option.value),
+    }))
+
+  // Mark selected tags as disabled and grey out
+  const apiOptions: TagOption[] = allOptions.map((option: TagOption) => {
+    const isSelected = selectedTagIds.includes(option.value as number)
+
+    return {
+      ...option,
+      disabled: isSelected,
+      style: isSelected ? { color: '#bfbfbf' } : undefined,
+    }
+  })
+
+  // Check if search value exists in options (only check non-disabled options)
+  const isSearchValueExists = searchValue
+    ? apiOptions.some(
+        (opt: TagOption) =>
+          typeof opt.label === 'string' &&
+          opt.label?.toLowerCase().trim() === searchValue.toLowerCase().trim(),
+      )
+    : false
+
+  // Build final options with create option (no manual filtering)
+  const finalOptions: TagOption[] =
+    searchValue && searchValue.trim() && !isSearchValueExists
+      ? [
+          ...apiOptions,
+          {
+            label: (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: PRIMARY,
+                  padding: '4px 0',
+                }}
+              >
+                <PlusOutlined />
+                <span>{`"${searchValue}" タグ追加`}</span>
+              </div>
+            ),
+            value: `__create__${searchValue}`,
+            key: 'create-new',
+          },
+        ]
+      : apiOptions
+
+  // Smart filterOption that handles both string and JSX labels
+  const smartFilterOption = (input: string, option?: TagOption) => {
+    // Always show create option
+    if (option?.key === 'create-new') return true
+
+    // Handle string labels (normal options)
+    if (typeof option?.label === 'string') {
+      return option.label.toLowerCase().includes(input.toLowerCase())
+    }
+
+    // Fallback - should not happen for normal tags
+    return true
+  }
+
+  const createNewTag = async (tagName: string) => {
+    // Prevent duplicate creation if already creating this tag
+    if (creatingTagRef.current === tagName) {
+      return
+    }
+
+    creatingTagRef.current = tagName
+    setIsCreating(true)
+    try {
+      const result = await new Promise<any>((resolve, reject) => {
+        createTag(
+          {
+            values: { name: tagName, order: null },
+          },
+          {
+            onSuccess: (data: any) => resolve(data),
+            onError: (error: any) => reject(error),
+          },
+        )
+      })
+
+      // Refresh the options list to get the new tag from API
+      await queryResult.refetch?.()
+
+      // Add the new tag ID to selected tags
+      const newTagId = result?.data?.id
+      if (newTagId) {
+        const currentTagIds: SelectedTagId[] = form?.getFieldValue('tags') || []
+        const updatedTagIds = [...currentTagIds, newTagId]
+        form?.setFieldsValue({ tags: updatedTagIds })
+      }
+    } catch (error) {
+      console.error('Error creating tag:', error)
+      // Don't add anything on error - just show error and stop
+    } finally {
+      creatingTagRef.current = null
+      setIsCreating(false)
+      setSearchValue('')
+    }
+  }
+
+  const handleTagChange = async (value: TagOption) => {
+    // Prevent if already creating a tag
+    if (isCreating || creatingTagRef.current) {
+      return
+    }
+
+    // Handle create new tag
+    if (
+      typeof value === 'object' &&
+      value.value &&
+      typeof value.value === 'string' &&
+      value.value.startsWith('__create__')
+    ) {
+      const tagName = value.value.substring(10) // Remove __create__ prefix
+      setSearchValue('') // Clear immediately
+      await createNewTag(tagName)
+      return
+    }
+
+    // Regular selection from existing options - add to existing tags
+    if (value && form && !value.disabled) {
+      const currentTagIds: SelectedTagId[] = form?.getFieldValue('tags') || []
+      const selectedTagId = value.value as number
+
+      // Check if this tag ID is already selected
+      if (!currentTagIds.includes(selectedTagId)) {
+        const updatedTagIds = [...currentTagIds, selectedTagId]
+        form?.setFieldsValue({ tags: updatedTagIds })
+      }
+    }
+    setSearchValue('')
+  }
+
+  const handleTagRemove = (removedTag: TagDisplay) => {
+    const currentTagIds: SelectedTagId[] = form?.getFieldValue('tags') || []
+    const updatedTagIds = currentTagIds.filter(
+      (id: SelectedTagId) => id !== removedTag.value,
+    )
+    form?.setFieldsValue({ tags: updatedTagIds })
+  }
+
+  const handleKeyDown = async (e: KeyboardEvent<HTMLElement>) => {
+    if (
+      e.key === 'Enter' &&
+      searchValue &&
+      !isSearchValueExists &&
+      !isCreating
+    ) {
+      e.preventDefault()
+      e.stopPropagation()
+      await createNewTag(searchValue)
+    }
+  }
+
   return (
-    <>
-      <Title
-        level={5}
-        style={{ color: PRIMARY }}
-        className="!mt-6 !mb-2 border-b-1 border-gray-200 pb-2 text-[14px]"
+    <div style={{ marginTop: 20 }}>
+      <div
+        style={{
+          marginBottom: 8,
+          fontSize: 16,
+          fontWeight: 600,
+          borderBottom: '1px solid #d9d9d9',
+          color: PRIMARY,
+        }}
       >
-        {t('quota_templates.form.titleTag')}
-      </Title>
-      <Form.Item name="tags">
-        <Select
-          {...selectProps}
-          className="!w-96"
-          allowClear
-          showSearch
-          placeholder={'選択してください'}
-          mode="multiple"
-          onSearch={debounceFetcher}
-          notFoundContent={
-            selectProps.loading ? <Spin size="small" /> : <Empty />
-          }
-        />
-      </Form.Item>
-    </>
+        {t('quotas.show.tags')}
+      </div>
+
+      {/* Display selected tags inline */}
+      <div
+        style={{
+          display: 'flex',
+          maxWidth: '50%',
+          flexWrap: 'wrap',
+          gap: '8px',
+          marginBottom: selectedTags.length > 0 ? 12 : 8,
+          minHeight: selectedTags.length > 0 ? 'auto' : 0,
+        }}
+      >
+        {selectedTags.map((tag: TagDisplay, index: number) => (
+          <Tag
+            key={tag.key || tag.value || index}
+            closable
+            onClose={() => handleTagRemove(tag)}
+            style={{
+              borderRadius: 16,
+              padding: '4px 12px',
+              background: '#f6f6f6',
+            }}
+          >
+            {tag.label}
+          </Tag>
+        ))}
+      </div>
+
+      <Row>
+        <Col xs={24} md={12}>
+          <Form.Item name={'tags'} hidden>
+            <Select style={{ display: 'none' }} />
+          </Form.Item>
+
+          <Select
+            allowClear
+            showSearch
+            placeholder={t('placeholders.select')}
+            style={{ width: '50%' }}
+            labelInValue
+            filterOption={smartFilterOption} // Use smart filtering
+            options={finalOptions}
+            value={null}
+            loading={isCreating}
+            disabled={isCreating}
+            onSearch={(value) => {
+              setSearchValue(value)
+            }}
+            onChange={handleTagChange}
+            onKeyDown={handleKeyDown}
+            dropdownStyle={{
+              borderRadius: 8,
+            }}
+          />
+        </Col>
+      </Row>
+    </div>
   )
 }
 
-export default TagForm
+export default Tags

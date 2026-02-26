@@ -30,7 +30,6 @@ export const useController = () => {
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
-  const [checkNull, setcheckNull] = useState(false)
 
   const handleAddProduct = (groupIndex: number, isSelfCreate = false) => {
     const values = mainProducts || []
@@ -42,13 +41,13 @@ export const useController = () => {
       {
         product_id: null,
         name: '',
-        code: isSelfCreate ? '' : '自動採番',
+        code: '',
         quantity: 1,
         cost_price: 0,
         isSelfCreate: isSelfCreate,
-        selling_price: 1,
+        selling_price: 0,
         profit_margin: 0,
-        tax_rate: getDefaultTaxRate(),
+        tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
         is_add_total: true,
       } as unknown as QuotaTemplateProductType,
     ]
@@ -68,6 +67,7 @@ export const useController = () => {
   }
 
   const calculateSummary = () => {
+    let _checkNull = false
     let costTotal = 0
     let sellTotal = 0
 
@@ -85,7 +85,7 @@ export const useController = () => {
           const selling = (product.selling_price || 0) * qty
           const cost = (product.cost_price || 0) * qty
 
-          if (product.cost_price === null) setcheckNull(true)
+          if (product.cost_price === null) _checkNull = true
 
           costTotal += cost
           sellTotal += selling
@@ -125,7 +125,7 @@ export const useController = () => {
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setProfitRate(checkNull ? 0 : profitRate)
+    setProfitRate(_checkNull ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
     form.setFieldValue('total_price', sellTotal)
     form.setFieldValue('consumption_tax_amount', taxTotal)

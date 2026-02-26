@@ -70,7 +70,7 @@ const ProductSelect: React.FC<Props> = (props) => {
       onFocus={() => setIsTriggerGetProduct(true)}
       notFoundContent={query.isFetching ? <Spin size="small" /> : <Empty />}
       loading={query.isFetching}
-      defaultValue={defaultValue}
+      value={defaultValue}
     />
   )
 }

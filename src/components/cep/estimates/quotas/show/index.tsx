@@ -109,10 +109,10 @@ function QuotaDetail() {
   )
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any) => {
+    (resource: string, values: any, method?: any) => {
       mutate({
         values,
-        method: 'put',
+        method: method ? method : 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
@@ -171,6 +171,10 @@ function QuotaDetail() {
       status === QuotaStatus.SentToCustomer &&
       (isAdmin || data?.display || isAuthor)
     ) {
+      actions.push({
+        value: 'resend-email-to-customer',
+        label: t('quotas.show.actions.resend_email_to_customer'),
+      })
       actions.push({
         value: 'cancel-quota',
         label: t('quotas.show.actions.move_to_cancel'),
@@ -257,6 +261,16 @@ function QuotaDetail() {
         handleChangeStatus('mark-completed', {
           quota_ids: [quotaId],
         })
+        break
+
+      case 'resend-email-to-customer':
+        handleChangeStatus(
+          'resend-email-to-customer',
+          {
+            quota_ids: [quotaId],
+          },
+          'post',
+        )
         break
 
       case 'back-to-sent-customer':
