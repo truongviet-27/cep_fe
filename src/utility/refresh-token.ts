@@ -12,11 +12,11 @@ async function refreshAccessToken(token: JWT) {
       body: new URLSearchParams({
         client_id:
           token.provider === 'TokenLogin'
-            ? process.env.NEXT_PUBLIC_CLIENT_ID_TEST!
+            ? process.env.NEXT_PUBLIC_CLIENT_ID_TENANT_ADMIN!
             : process.env.NEXT_PUBLIC_CLIENT_ID!,
         client_secret:
           token.provider === 'TokenLogin'
-            ? process.env.NEXT_PUBLIC_CLIENT_SECRET_TEST!
+            ? process.env.NEXT_PUBLIC_CLIENT_SECRET_TENANT_ADMIN!
             : process.env.NEXT_PUBLIC_CLIENT_SECRET!,
         grant_type: 'refresh_token',
         refresh_token: token.refreshToken!,

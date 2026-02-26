@@ -44,8 +44,9 @@ const authOptions: AuthOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
-              client_id: process.env.NEXT_PUBLIC_CLIENT_ID_TEST || '',
-              client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET_TEST || '',
+              client_id: process.env.NEXT_PUBLIC_CLIENT_ID_TENANT_ADMIN || '',
+              client_secret:
+                process.env.NEXT_PUBLIC_CLIENT_SECRET_TENANT_ADMIN || '',
               token: credentials.token,
             }),
           },
