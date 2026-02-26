@@ -52,6 +52,8 @@ import { useCallback, useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 import Link from 'next/link'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
+import CreateFromTemplate from './components/popups/create-from-template'
+import CreateFromOldQuota from './components/popups/create-from-old-quota'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -68,6 +70,9 @@ function QuotaAction() {
 
   const [taxRoundingMethod, setTaxRoundingMethod] =
     useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
+
+  const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
+  const [isCreateFromOldQuota, setIsCreateFromOldQuota] = useState(false)
 
   const { actionType } = params as any
   const isClone = action === 'clone'
@@ -646,24 +651,54 @@ function QuotaAction() {
       title={
         <div className="flex justify-between">
           {isUpdate ? t('quotas.edit') : t('quotas.create')}
-          <Button
-            color="primary"
-            variant="outlined"
-            onClick={async () => {
-              await form.validateFields()
-              setIsPdf(!isPdf)
-              handlePreviewPdf()
-            }}
-            disabled={
-              isFetching ||
-              isFetchingBasicInfo ||
-              isFetchingProduct ||
-              isFetchingHistory ||
-              quoteTemplateQuery.isFetching
-            }
-          >
-            {t('quotas.action.preview')}
-          </Button>
+          <Flex justify="end" gap={4}>
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={() => setIsCreateFromTemplate(true)}
+              disabled={
+                isFetching ||
+                isFetchingBasicInfo ||
+                isFetchingProduct ||
+                isFetchingHistory ||
+                quoteTemplateQuery.isFetching
+              }
+            >
+              {t('quota_templates.list.createFromTemplate')}
+            </Button>
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={() => setIsCreateFromOldQuota(true)}
+              disabled={
+                isFetching ||
+                isFetchingBasicInfo ||
+                isFetchingProduct ||
+                isFetchingHistory ||
+                quoteTemplateQuery.isFetching
+              }
+            >
+              {t('quota_templates.list.createFromOldQuota')}
+            </Button>
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={async () => {
+                await form.validateFields()
+                setIsPdf(!isPdf)
+                handlePreviewPdf()
+              }}
+              disabled={
+                isFetching ||
+                isFetchingBasicInfo ||
+                isFetchingProduct ||
+                isFetchingHistory ||
+                quoteTemplateQuery.isFetching
+              }
+            >
+              {t('quotas.action.preview')}
+            </Button>
+          </Flex>
         </div>
       }
     >
@@ -822,6 +857,20 @@ function QuotaAction() {
           </div>
         </Modal>
       }
+      {isCreateFromTemplate && (
+        <CreateFromTemplate
+          open={isCreateFromTemplate}
+          t={t}
+          onClose={() => setIsCreateFromTemplate(false)}
+        />
+      )}
+      {isCreateFromOldQuota && (
+        <CreateFromOldQuota
+          open={isCreateFromOldQuota}
+          t={t}
+          onClose={() => setIsCreateFromOldQuota(false)}
+        />
+      )}
     </PageContainer>
   )
 }

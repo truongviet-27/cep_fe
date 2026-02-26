@@ -24,6 +24,14 @@
       "created_at": "作成日：{dateFormatted}",
       "number_product": "商品数: {number_product}点",
       "place_holder": "テンプレート名で検索..."
+    },
+    "createFromOldQuota": {
+      "quota_code": "見積番号",
+      "number_product": "商品数",
+      "title": "過去見積から作成",
+      "created_at": "作成日",
+      "place_holder": "部分一致",
+      "total_price": "金額"
     }
   },
   "page_detail": {},
