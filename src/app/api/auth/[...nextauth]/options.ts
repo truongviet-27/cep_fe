@@ -44,8 +44,8 @@ const authOptions: AuthOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
-              client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
-              client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET || '',
+              client_id: process.env.NEXT_PUBLIC_CLIENT_ID_TEST || '',
+              client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET_TEST || '',
               token: credentials.token,
             }),
           },
@@ -62,6 +62,7 @@ const authOptions: AuthOptions = {
           refreshed = await refreshAccessToken({
             accessToken: credentials.token,
             refreshToken: credentials.refreshToken,
+            provider: 'TokenLogin',
           })
         } catch (err) {
           console.error('Error refreshing tokens:', err)
@@ -71,7 +72,6 @@ const authOptions: AuthOptions = {
           ...introspect,
           access_token: refreshed?.accessToken ?? credentials.token,
           refresh_token: refreshed?.refreshToken ?? credentials.refreshToken,
-          id_token: refreshed?.idToken ?? null, // ✅ có id_token nếu gọi /token thành công
           expires_at: refreshed?.expiresAt ?? introspect.exp,
         }
       },
@@ -91,11 +91,11 @@ const authOptions: AuthOptions = {
       }
 
       if (account || credsUser) {
-        token.idToken = account?.id_token ?? credsUser.id_token
+        // token.idToken = account?.id_token ?? credsUser.id_token
         token.accessToken = account?.access_token ?? credsUser.access_token
-        // token.refreshToken = account?.refresh_token ?? credsUser.refresh_token
+        token.refreshToken = account?.refresh_token ?? credsUser.refresh_token
         token.expiresAt = account?.expires_at ?? credsUser.expires_at
-        // token.error = undefined
+        token.provider = account?.provider ?? undefined
         if (user) {
           token.given_name = expandUser?.given_name ?? ''
           token.family_name = expandUser?.family_name ?? ''
@@ -118,11 +118,11 @@ const authOptions: AuthOptions = {
         session.user = session.user || {}
         session.accessToken = token.accessToken as string
         session.refreshToken = token.refreshToken as string
-        session.idToken = token.idToken as string
         session.expiresAt = token.expiresAt as number
         session.user.given_name = token.given_name as string
         session.user.family_name = token.family_name as string
         session.user.name = token.name as string
+        session.provider = token.provider as string
       }
 
       return session
