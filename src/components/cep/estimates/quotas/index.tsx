@@ -112,10 +112,10 @@ function QuotaList() {
   }
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any) => {
+    (resource: string, values: any, method?: any) => {
       mutate({
         values,
-        method: 'put',
+        method: method ? method : 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
@@ -595,6 +595,28 @@ function QuotaList() {
                   </DeleteButton>
                 )}
 
+              {record.status === QuotaStatus.SentToCustomer && (
+                <Button
+                  type="default"
+                  size="small"
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#8207BA',
+                  }}
+                  onClick={() =>
+                    handleChangeStatus(
+                      'resend-email-to-customer',
+                      {
+                        quota_ids: [record.id],
+                      },
+                      'post',
+                    )
+                  }
+                >
+                  {t('quotas.actions.resend_email_to_customer')}
+                </Button>
+              )}
+
               <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
                 <Button
                   size="small"
@@ -710,14 +732,12 @@ function QuotaList() {
           operator: 'eq',
           value: values.transaction_type?.trim(),
         },
-      ]
-      if (values.product_name) {
-        filters.push({
+        {
           field: 'product_name',
           operator: 'eq',
           value: values.product_name,
-        })
-      }
+        },
+      ]
       return filters
     },
   })
@@ -920,6 +940,7 @@ function QuotaList() {
         return [{ key: 4, label: t('quotas.actions.send') }]
       } else if (status === QuotaStatus.SentToCustomer) {
         return [
+          { key: 8, label: t('quotas.actions.resend_email_to_customer') },
           { key: 5, label: t('quotas.actions.move_to_order') },
           { key: 6, label: t('quotas.actions.move_to_cancel') },
         ]
@@ -1024,6 +1045,17 @@ function QuotaList() {
         },
         method: 'put',
         url: `${apiUrl}/quotas/back-to-sent-customer`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 8) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'post',
+        url: `${apiUrl}/quotas/resend-email-to-customer`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
         },
