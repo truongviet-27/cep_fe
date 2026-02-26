@@ -176,7 +176,13 @@ function BasicInformation(
                 initialValue="company"
                 required
               >
-                <Radio.Group>
+                <Radio.Group
+                  onChange={(e) => {
+                    if (e.target.value === 'company') {
+                      form.setFieldValue('company_name_display_format', 'after')
+                    }
+                  }}
+                >
                   <Radio value="company">
                     {t('customers.enums.corporation')}
                   </Radio>
