@@ -7,6 +7,40 @@ import React from 'react'
 
 export type CustomTableProps<T> = TableProps<T>
 
+const customTableComponent = (
+  props: React.HTMLAttributes<HTMLTableElement>,
+) => (
+  <table
+    {...props}
+    style={{
+      ...props.style,
+      tableLayout: 'fixed',
+      width: '100%',
+      maxWidth: '100%',
+    }}
+  />
+)
+
+const customHeaderCell = (
+  props: React.JSX.IntrinsicAttributes &
+    React.ClassAttributes<HTMLTableHeaderCellElement> &
+    React.ThHTMLAttributes<HTMLTableHeaderCellElement>,
+) => (
+  <th
+    {...props}
+    style={{
+      border: 'none',
+      padding: '4px 2px',
+      backgroundColor: '#F0F9FF',
+      color: PRIMARY,
+      textAlign: 'center',
+      overflow: 'hidden',
+      minWidth: 0,
+      ...props.style,
+    }}
+  />
+)
+
 function CommonTable<T extends object>(
   tableProps: Readonly<CustomTableProps<T>>,
 ): React.ReactElement {
@@ -14,35 +48,23 @@ function CommonTable<T extends object>(
 
   const isPaging = has(restTableProps.pagination, 'total')
 
+  const mergedComponents = {
+    ...components,
+    table: customTableComponent,
+    header: {
+      cell: customHeaderCell,
+      ...components?.header,
+    },
+    body: {
+      cell: EditableCell,
+      ...components?.body,
+    },
+  }
+
   return (
     <Table<T>
       {...restTableProps}
-      components={{
-        ...components,
-        header: {
-          cell: (
-            props: React.JSX.IntrinsicAttributes &
-              React.ClassAttributes<HTMLTableHeaderCellElement> &
-              React.ThHTMLAttributes<HTMLTableHeaderCellElement>,
-          ) => (
-            <th
-              {...props}
-              style={{
-                backgroundColor: '#F0F9FF',
-                color: PRIMARY,
-                textAlign: 'center',
-                padding: 11,
-                ...props.style,
-              }}
-            />
-          ),
-          ...components?.header,
-        },
-        body: {
-          cell: EditableCell,
-          ...components?.body,
-        },
-      }}
+      components={mergedComponents}
       bordered
       pagination={
         isPaging
@@ -56,7 +78,7 @@ function CommonTable<T extends object>(
             }
           : restTableProps.pagination
       }
-      scroll={restTableProps.scroll ?? { x: 'max-content' }}
+      scroll={restTableProps.scroll}
     />
   )
 }

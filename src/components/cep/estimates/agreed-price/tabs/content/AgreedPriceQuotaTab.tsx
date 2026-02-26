@@ -67,19 +67,6 @@ const AgreedPriceQuotaTab = () => {
     },
   })
 
-  const getStatusTag = (status?: string) => {
-    const statusEnum = status as AgreedPriceStatus
-    const result = getAgreedPriceStatusStyle(statusEnum, t)
-    return (
-      <Tag
-        color={result.background}
-        style={{ color: result.color, marginRight: 0 }}
-      >
-        {result.text}
-      </Tag>
-    )
-  }
-
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [updateForm] = Form.useForm()
   const [selected, setSelected] = useState<QuotaAgreedPrice | null>(null)
@@ -197,22 +184,65 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.status'),
         dataIndex: 'status',
         key: 'status',
+        width: '7%',
+        onCell: () => ({
+          style: { padding: '2px 2px', minWidth: 0, overflow: 'hidden' },
+        }),
         render: (_: any, record: QuotaAgreedPrice) => {
           const mappedStatus = mapStatusFromApi(record.status)
-          return getStatusTag(mappedStatus)
+          return (
+            <div
+              style={{
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
+              <Tag
+                color={getAgreedPriceStatusStyle(mappedStatus, t).background}
+                style={{
+                  color: getAgreedPriceStatusStyle(mappedStatus, t).color,
+                  marginRight: 0,
+                  maxWidth: '100%',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: 1.3,
+                }}
+              >
+                {getAgreedPriceStatusStyle(mappedStatus, t).text}
+              </Tag>
+            </div>
+          )
         },
       },
       {
         title: t('agreed_prices.table.estimate_number'),
         dataIndex: 'quota_code',
         key: 'quota_code',
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (quotaCode: string, record: QuotaAgreedPrice) => (
           <Button
             type="link"
             onClick={() =>
               go({ to: `/agreed-prices/quota/${record.quota_id}` })
             }
-            style={{ textDecoration: 'underline' }}
+            style={{
+              textDecoration: 'underline',
+              padding: 0,
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
           >
             {quotaCode}
           </Button>
@@ -222,6 +252,15 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.category'),
         dataIndex: 'category',
         key: 'category',
+        width: '6%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (category: string) => {
           if (category === 'merchandise') {
             return t('agreed_prices.category.merchandise')
@@ -235,19 +274,56 @@ const AgreedPriceQuotaTab = () => {
       {
         title: t('agreed_prices.table.customer'),
         key: 'customer_name',
-        render: (_: unknown, record: QuotaAgreedPrice) =>
-          record.customer?.name ?? '-',
+        width: '12%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (_: unknown, record: QuotaAgreedPrice) => (
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {record.customer?.name ?? '-'}
+          </div>
+        ),
       },
       {
         title: t('agreed_prices.table.creator'),
         key: 'created_by_name',
-        render: (_: unknown, record: QuotaAgreedPrice) =>
-          record.creator?.name ?? '-',
+        width: '10%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (_: unknown, record: QuotaAgreedPrice) => (
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {record.creator?.name ?? '-'}
+          </div>
+        ),
       },
       {
         title: t('agreed_prices.table.product_count'),
         dataIndex: 'number_products',
         key: 'number_products',
+        width: '6%',
         align: 'right',
       },
       {
@@ -261,15 +337,48 @@ const AgreedPriceQuotaTab = () => {
         ),
         dataIndex: 'total_price',
         key: 'total_price',
+        width: '14%',
         align: 'right',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
-          <div>
+          <div
+            style={{
+              minWidth: 0,
+              width: '100%',
+              overflow: 'hidden',
+            }}
+          >
             {(record.customer as any)?.department_name && (
-              <div style={{ fontSize: '16px', color: '#666' }}>
+              <div
+                title={(record.customer as any)?.department_name}
+                style={{
+                  fontSize: '16px',
+                  color: '#666',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {(record.customer as any)?.department_name}
               </div>
             )}
-            <div>{formatNumberWithCommas(totalPrice)}</div>
+            <div
+              title={formatNumberWithCommas(totalPrice)}
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {formatNumberWithCommas(totalPrice)}
+            </div>
           </div>
         ),
       },
@@ -280,6 +389,7 @@ const AgreedPriceQuotaTab = () => {
           </div>
         ),
         key: 'estimateDateApplicationEnd',
+        width: '10%',
         render: (_, record: any) => {
           let calculatedStatus = ''
           const validToDate = record.valid_to
@@ -312,23 +422,19 @@ const AgreedPriceQuotaTab = () => {
           )
         },
       },
-      // {
-      //   title: t('agreed_prices.table.reference_count'),
-      //   dataIndex: 'number_references',
-      //   key: 'number_references',
-      //   align: 'right',
-      // },
       {
         title: '更新',
         dataIndex: 'number_updating',
         key: 'number_updating',
+        width: '5%',
         align: 'center',
       },
       {
         title: t('agreed_prices.table.operation'),
         key: 'operation',
+        width: '22%',
         render: (_: unknown, record: QuotaAgreedPrice) => (
-          <Space>
+          <Space wrap size={4}>
             <ShowButton
               size="small"
               recordItemId={(record as any).quota_id as number}
@@ -727,8 +833,9 @@ const AgreedPriceQuotaTab = () => {
         return (
           <CommonTable<QuotaAgreedPrice>
             {...refinedTableProps}
-            rowKey={'id'}
+            rowKey="id"
             columns={columns}
+            scroll={undefined}
           />
         )
       })()}

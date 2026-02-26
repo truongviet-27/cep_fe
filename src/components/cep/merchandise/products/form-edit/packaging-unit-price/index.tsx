@@ -185,6 +185,9 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'quantity_in_package',
               width: 10,
               className: '!content-start',
+              onCell: () => ({
+                style: { overflow: 'hidden', minWidth: 0, maxWidth: '100%' },
+              }),
               render: (_: unknown, __: unknown, index: number) => (
                 <>
                   {index === 0 && (
@@ -196,41 +199,44 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       ])}
                     </div>
                   )}
-                  <Form.Item
-                    name={[index, 'quantity_in_package']}
-                    required
-                    hidden={index === 0}
-                    rules={[{ required: true, message: '' }]}
-                    className="ant-form-item-hidden-margin"
-                    style={{ marginBottom: '0px !important' }}
-                    help=""
-                  >
-                    <InputNumber
-                      min={1}
-                      controls={false}
-                      onChange={(value) => {
-                        const costPrice =
-                          (value as number) * getFieldValue('selling_price')
-                        setFieldValue(
-                          ['packagings', index, 'cost_price' as keyof object],
-                          costPrice,
-                        )
-
-                        if (
-                          getFieldValue([
-                            'packagings',
-                            index,
-                            'is_standard_price',
-                          ])
-                        ) {
+                  <div style={{ width: '100%', minWidth: 0 }}>
+                    <Form.Item
+                      name={[index, 'quantity_in_package']}
+                      required
+                      hidden={index === 0}
+                      rules={[{ required: true, message: '' }]}
+                      className="ant-form-item-hidden-margin"
+                      style={{ marginBottom: '0px !important', width: '100%' }}
+                      help=""
+                    >
+                      <InputNumber
+                        min={1}
+                        controls={false}
+                        style={{ width: '100%', minWidth: 0 }}
+                        onChange={(value) => {
+                          const costPrice =
+                            (value as number) * getFieldValue('selling_price')
                           setFieldValue(
-                            ['packagings', index, 'selling_price'],
+                            ['packagings', index, 'cost_price' as keyof object],
                             costPrice,
                           )
-                        }
-                      }}
-                    />
-                  </Form.Item>
+
+                          if (
+                            getFieldValue([
+                              'packagings',
+                              index,
+                              'is_standard_price',
+                            ])
+                          ) {
+                            setFieldValue(
+                              ['packagings', index, 'selling_price'],
+                              costPrice,
+                            )
+                          }
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
                 </>
               ),
             },
@@ -269,6 +275,9 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'selling_price',
               width: 10,
               className: '!content-start',
+              onCell: () => ({
+                style: { overflow: 'hidden', minWidth: 0, maxWidth: '100%' },
+              }),
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <>
@@ -283,21 +292,28 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                         ).toLocaleString()}
                       </div>
                     )}
-                    <Form.Item
-                      className="ant-form-item-hidden-margin"
-                      name={[index, 'selling_price']}
-                      required
-                      hidden={index === 0}
-                      rules={[
-                        { required: true, message: t('validation.required') },
-                      ]}
-                    >
-                      <InputNumber
-                        min={0}
-                        controls={false}
-                        disabled={packagings?.[index]?.is_standard_price}
-                      />
-                    </Form.Item>
+                    <div style={{ width: '100%', minWidth: 0 }}>
+                      <Form.Item
+                        className="ant-form-item-hidden-margin"
+                        name={[index, 'selling_price']}
+                        required
+                        hidden={index === 0}
+                        rules={[
+                          { required: true, message: t('validation.required') },
+                        ]}
+                        style={{
+                          marginBottom: '0px !important',
+                          width: '100%',
+                        }}
+                      >
+                        <InputNumber
+                          min={0}
+                          controls={false}
+                          disabled={packagings?.[index]?.is_standard_price}
+                          style={{ width: '100%', minWidth: 0 }}
+                        />
+                      </Form.Item>
+                    </div>
                   </>
                 )
               },

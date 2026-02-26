@@ -160,14 +160,36 @@ function QuotaList() {
         ),
         dataIndex: 'status',
         key: 'status',
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            minWidth: 0,
+            overflow: 'hidden',
+          },
+        }),
         render: (value, record) => {
           const result = getQuotaStatusStyle(value, t)
 
           return (
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div
+              className="flex flex-col items-center justify-center gap-1"
+              style={{
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
               <Tag
                 color={result.background}
-                style={{ color: result.color, marginRight: 0 }}
+                style={{
+                  color: result.color,
+                  marginRight: 0,
+                  maxWidth: '100%',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: 1.3,
+                }}
               >
                 {result.text}
               </Tag>
@@ -191,12 +213,10 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
-        minWidth: 110,
+        width: '8%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 110,
-            minWidth: 110,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -235,23 +255,19 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
-        minWidth: 200,
+        width: '20%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 200,
-            minWidth: 200,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             verticalAlign: 'center',
           },
         }),
-
         render: (_, record) => (
-          <div className="flex flex-col gap-1">
+          <div>
             <div
-              className="overflow-hidden"
               title={record.title}
               style={{
                 display: 'block',
@@ -264,7 +280,7 @@ function QuotaList() {
             >
               {record.title}
             </div>
-            <span
+            <div
               title={record.customer_name}
               style={{
                 display: 'block',
@@ -276,7 +292,7 @@ function QuotaList() {
               }}
             >
               {record.customer_name}
-            </span>
+            </div>
           </div>
         ),
       },
@@ -288,22 +304,23 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        minWidth: 90,
+        width: '6%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 90,
-            minWidth: 90,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             verticalAlign: 'center',
           },
         }),
-
         render: (_, record) => (
           <div
-            className="flex flex-col gap-1"
+            title={
+              record.transaction_type
+                ? t(`quotas.transaction_type.${record.transaction_type}`)
+                : undefined
+            }
             style={{
               display: 'block',
               width: '100%',
@@ -313,10 +330,8 @@ function QuotaList() {
               textAlign: 'center',
             }}
           >
-            <div className="overflow-hidden" title={record.transaction_type}>
-              {record.transaction_type &&
-                t(`quotas.transaction_type.${record.transaction_type}`)}
-            </div>
+            {record.transaction_type &&
+              t(`quotas.transaction_type.${record.transaction_type}`)}
           </div>
         ),
       },
@@ -329,12 +344,10 @@ function QuotaList() {
         ),
         dataIndex: 'creator',
         key: 'creator',
-        minWidth: 180,
+        width: '14%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 180,
-            minWidth: 180,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -392,12 +405,10 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
-        minWidth: 150,
+        width: '14%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 150,
-            minWidth: 150,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -405,12 +416,16 @@ function QuotaList() {
           },
         }),
         render: (_, record) => (
-          <div className="flex flex-col gap-2">
+          <div
+            className="flex flex-col gap-2"
+            style={{ minWidth: 0, width: '100%', overflow: 'hidden' }}
+          >
             <div
               title={record.department_in_charge}
               style={{
                 display: 'block',
                 width: '100%',
+                minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -424,6 +439,7 @@ function QuotaList() {
               style={{
                 display: 'block',
                 width: '100%',
+                minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -444,6 +460,7 @@ function QuotaList() {
         ),
         dataIndex: 'createdAt',
         key: 'createdAt',
+        width: '8%',
         render: (_, record) => (
           <div>
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
@@ -465,6 +482,7 @@ function QuotaList() {
         ),
         dataIndex: 'sentAt',
         key: 'sentAt',
+        width: '8%',
         render: (_, record) => {
           if (
             record.sent_to_customer_date ||
@@ -494,9 +512,10 @@ function QuotaList() {
       {
         title: t('quotas.table.actions'),
         key: 'action',
+        width: '14%',
         render: (_, record) => (
           <Flex vertical={true} gap={4}>
-            <Space>
+            <Space wrap size={4}>
               <ShowButton
                 size="small"
                 icon={null}
@@ -569,7 +588,7 @@ function QuotaList() {
               </Button>
             )} */}
 
-            <Space>
+            <Space wrap size={4}>
               {(record.status === QuotaStatus.Creating ||
                 record.status === QuotaStatus.Rejected ||
                 record.status === QuotaStatus.Cancelled) &&
@@ -1411,10 +1430,11 @@ function QuotaList() {
         </div>
 
         <CommonTable
-          rowKey={'id'}
+          rowKey="id"
           rowSelection={rowSelection}
           columns={columns}
           {...tableProps}
+          scroll={undefined}
           components={{
             header: {
               cell: ({ children, style, ...rest }: any) => {
