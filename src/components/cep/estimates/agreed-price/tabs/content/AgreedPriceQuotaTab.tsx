@@ -381,7 +381,9 @@ const AgreedPriceQuotaTab = () => {
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
               }}
-            >{formatNumberWithCommas(totalPrice)}</div>
+            >
+              {formatNumberWithCommas(totalPrice)}
+            </div>
           </div>
         ),
       },
