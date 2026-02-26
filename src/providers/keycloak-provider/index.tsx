@@ -30,7 +30,7 @@ const authProvider: AuthProvider = {
       const sessionData = await getSessionOnce()
       let idToken: string | undefined
       try {
-        const res = await fetch('/api/auth/logout-keycloak', {
+        const res = await fetch('/api/auth/get-id-token', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const authProvider: AuthProvider = {
           }
         }
       } catch (e) {
-        console.error('Call /api/auth/logout-keycloak failed:', e)
+        console.error('Call /api/auth/get-id-token failed:', e)
       }
 
       if (idToken) {
