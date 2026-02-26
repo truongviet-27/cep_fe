@@ -52,14 +52,15 @@
     "refresh": "refresh",
     "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？",
     "clone": "クローン",
-    "notAccessTitle": ""
+    "notAccessTitle": "",
+    "update": "更新"
   },
   "placeholders": {
     "partial_match": "部分一致",
     "select": "選択してください",
     "file_url": "ファイルのURLを入力",
     "please_choose_files": "ファイルを選択してください",
-    "input_please": "入力してください"
+    "input_please": "入力"
   },
   "notifications": {
     "success": "成功しました",
@@ -1133,7 +1134,7 @@
     "message_description": "掛率で自動設定後に「操作」から絶対値金額に修正可能です。見積書作成時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
     "price_groups": "単価ランク（商品別)",
     "product_price_by_rank": "単価ランク（商品別）",
-    "business_partner": "取引先",
+    "business_partner": "商品",
     "list": {
       "list": "単価グループ設定"
     },

@@ -69,8 +69,12 @@ export const useCustomerEdit = () => {
           ? values?.temp_company_type
           : values?.company_type
       let industry = values?.industry
-      if (!values?.industry && values?.temp_industry) {
+      if (values?.industry === -1 && values?.temp_industry) {
         industry = values?.temp_industry
+      } else if (values?.industry === -1) {
+        industry = null
+      } else {
+        industry = values?.industry ?? null
       }
 
       // Prepare contacts data for API

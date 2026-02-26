@@ -87,11 +87,6 @@ function QuotaList() {
 
   const { permission } = useUserStore.getState()
 
-  const department = Form.useWatch(
-    'department_in_charge',
-    Form.useFormInstance(),
-  )
-
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
@@ -117,10 +112,10 @@ function QuotaList() {
   }
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any) => {
+    (resource: string, values: any, method?: any) => {
       mutate({
         values,
-        method: 'put',
+        method: method ? method : 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
@@ -495,8 +490,13 @@ function QuotaList() {
         title: t('quotas.table.actions'),
         key: 'action',
         render: (_, record) => (
-          <Flex vertical={true} gap={4}>
-            <Space>
+          <Flex
+            vertical={true}
+            gap={4}
+            align="center"
+            style={{ width: 'fit-content', margin: '0 auto' }}
+          >
+            <Flex gap={4} justify="center" style={{ width: '100%' }}>
               <ShowButton
                 size="small"
                 icon={null}
@@ -554,27 +554,35 @@ function QuotaList() {
                   {t('quotas.actions.re_estimate')}
                 </Button>
               )}
-            </Space>
 
-            {/* {record.status === QuotaStatus.Completed && (
-              <Button
-                type="default"
-                size="small"
-                onClick={() => {
-                  show()
-                  setDataAgreedPrice(record)
-                }}
-              >
-                {t('quotas.actions.decide_move')}
-              </Button>
-            )} */}
+              {(record.status === QuotaStatus.Completed ||
+                record.status === QuotaStatus.Cancelled) &&
+                (permission?.is_module_admin || record.display) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    style={{ background: '#D77703', color: WHITE }}
+                    size={'small'}
+                    onClick={() =>
+                      handleChangeStatus('back-to-sent-customer', {
+                        quota_ids: [record.id],
+                      })
+                    }
+                  >
+                    {t('quotas.show.actions.move_to_send')}
+                  </Button>
+                )}
+            </Flex>
 
-            <Space>
+            <Flex gap={4} style={{ width: '100%' }}>
               {(record.status === QuotaStatus.Creating ||
                 record.status === QuotaStatus.Rejected ||
                 record.status === QuotaStatus.Cancelled) &&
                 (record.is_author || permission?.is_module_admin) && (
                   <DeleteButton
+                    successNotification={() => {
+                      return notificationFunction()
+                    }}
                     size="small"
                     icon={null}
                     recordItemId={record.id}
@@ -587,40 +595,42 @@ function QuotaList() {
                   </DeleteButton>
                 )}
 
-              <Link href={record?.pdf_path} target="_blank">
+              {record.status === QuotaStatus.SentToCustomer && (
+                <Button
+                  type="default"
+                  size="small"
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#8207BA',
+                  }}
+                  onClick={() =>
+                    handleChangeStatus(
+                      'resend-email-to-customer',
+                      {
+                        quota_ids: [record.id],
+                      },
+                      'post',
+                    )
+                  }
+                >
+                  {t('quotas.actions.resend_email_to_customer')}
+                </Button>
+              )}
+
+              <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
                 <Button
                   size="small"
                   type="default"
                   style={{
                     color: '#2784FF',
                     borderColor: '#2784FF',
+                    width: '100%',
                   }}
                 >
                   {t('quotas.downloadLabel')}
                 </Button>
               </Link>
-
-              {(record.status === QuotaStatus.Completed ||
-                record.status === QuotaStatus.Cancelled) &&
-                (permission?.is_module_admin || record.display) &&
-                !record?.has_agreed_price && (
-                  <Button
-                    type="default"
-                    style={{
-                      background: '#D77703',
-                      color: WHITE,
-                    }}
-                    size={'small'}
-                    onClick={() => {
-                      handleChangeStatus('back-to-sent-customer', {
-                        quota_ids: [record.id],
-                      })
-                    }}
-                  >
-                    {t('quotas.show.actions.move_to_send')}
-                  </Button>
-                )}
-            </Space>
+            </Flex>
           </Flex>
         ),
       },
@@ -669,14 +679,14 @@ function QuotaList() {
           value: values.title,
         },
         {
-          field: 'customer_name',
+          field: 'customer_id',
           operator: 'eq',
-          value: values.customer_name?.label?.trim(),
+          value: values.customer_name?.value,
         },
         {
-          field: 'creator_name',
+          field: 'creator_id',
           operator: 'eq',
-          value: values.creator_name?.label?.trim(),
+          value: values.creator_name?.value,
         },
         {
           field: 'tag_name',
@@ -684,14 +694,14 @@ function QuotaList() {
           value: values.tag_name,
         },
         {
-          field: 'approver_name',
+          field: 'approver_id',
           operator: 'eq',
-          value: values.approver_name?.label?.trim(),
+          value: values.approver_name?.value,
         },
         {
-          field: 'department_in_charge',
+          field: 'department_in_charge_id',
           operator: 'eq',
-          value: values.department_in_charge?.label,
+          value: values.department_in_charge?.value,
         },
         {
           field: 'search_date_type',
@@ -712,28 +722,22 @@ function QuotaList() {
             ? dayjs((values?.date ?? [])[1]).format('YYYY-MM-DD')
             : null,
         },
-      ]
-      if (values.transaction_type) {
-        filters.push({
-          field: 'transaction_type',
-          operator: 'eq',
-          value: values.transaction_type?.trim(),
-        })
-      }
-      if (values.product_name) {
-        filters.push({
-          field: 'product_name',
-          operator: 'eq',
-          value: values.product_name,
-        })
-      }
-      if (values.category_id) {
-        filters.push({
+        {
           field: 'category_id',
           operator: 'eq',
           value: values.category_id,
-        })
-      }
+        },
+        {
+          field: 'transaction_type',
+          operator: 'eq',
+          value: values.transaction_type?.trim(),
+        },
+        {
+          field: 'product_name',
+          operator: 'eq',
+          value: values.product_name,
+        },
+      ]
       return filters
     },
   })
@@ -936,6 +940,7 @@ function QuotaList() {
         return [{ key: 4, label: t('quotas.actions.send') }]
       } else if (status === QuotaStatus.SentToCustomer) {
         return [
+          { key: 8, label: t('quotas.actions.resend_email_to_customer') },
           { key: 5, label: t('quotas.actions.move_to_order') },
           { key: 6, label: t('quotas.actions.move_to_cancel') },
         ]
@@ -955,7 +960,7 @@ function QuotaList() {
   )
 
   const notificationFunction = useCallback(
-    (message: string): OpenNotificationParams | false | undefined => {
+    (message?: string): OpenNotificationParams | false | undefined => {
       refetch()
       refetchStats()
       setSelectedRowKeys([])
@@ -1044,6 +1049,17 @@ function QuotaList() {
           return notificationFunction(data?.data.message)
         },
       })
+    } else if (Number(info.key) === 8) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'post',
+        url: `${apiUrl}/quotas/resend-email-to-customer`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
     }
   }
 
@@ -1114,6 +1130,7 @@ function QuotaList() {
               <CoreAutocompleteAPI
                 name="creator_name"
                 pageSize={10}
+                meta={{ field: 'creator' }}
                 resource="employees"
                 label={<span>{boldText(t('quotas.filters.creator'))}</span>}
                 placeholder={t('placeholders.select')}
@@ -1126,6 +1143,7 @@ function QuotaList() {
               <CoreAutocompleteAPI
                 name="approver_name"
                 pageSize={10}
+                meta={{ field: 'approver' }}
                 resource="employees"
                 label={<span>{boldText(t('quotas.filters.approver'))}</span>}
                 placeholder={t('placeholders.select')}
@@ -1145,7 +1163,7 @@ function QuotaList() {
                 }
                 placeholder={t('placeholders.select')}
                 onChangeClear={(callback) => {
-                  if (callback) callback(department)
+                  if (callback) callback('')
                 }}
               />
             </Col>

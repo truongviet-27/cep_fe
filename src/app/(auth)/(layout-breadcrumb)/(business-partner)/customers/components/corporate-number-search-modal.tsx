@@ -3,6 +3,7 @@ import { useCustom, useTranslate } from '@refinedev/core'
 import {
   Button,
   Col,
+  Empty,
   Flex,
   Form,
   Input,
@@ -12,7 +13,7 @@ import {
   TableColumnsType,
   Tooltip,
 } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CommonTable from '@components/common/table'
 import { prefectureOptions } from '@utility/options'
 import boldText from '@utility/bold-text'
@@ -78,6 +79,18 @@ export const CorporateNumberSearchModal: React.FC<
     address: null,
   })
 
+  useEffect(() => {
+    if (visible) {
+      searchForm.resetFields()
+      setParams({
+        name: '',
+        type: '02',
+        history: '0',
+        address: null,
+      })
+    }
+  }, [visible])
+
   const { data, isFetching } = useCustom({
     url: `/api/corporate-number`,
     dataProviderName: 'corporationProvider',
@@ -94,6 +107,15 @@ export const CorporateNumberSearchModal: React.FC<
     queryOptions: {
       enabled: !!params.name || !!params.address,
     },
+    errorNotification: (err) => ({
+      message: t('notifications.error'),
+      description:
+        (err as { response?: { data?: { error?: string } }; message?: string })
+          ?.response?.data?.error ??
+        err?.message ??
+        t('notifications.error'),
+      type: 'error',
+    }),
   })
 
   const handleSelect = (record: ICorporateInfo) => {
@@ -247,15 +269,20 @@ export const CorporateNumberSearchModal: React.FC<
       <CommonTable
         loading={isFetching}
         dataSource={
-          !!params.name || !!params.address
-            ? data?.data?.corporations
-            : undefined
+          !params.name && !params.address
+            ? []
+            : isFetching
+              ? []
+              : (data?.data?.corporations ?? [])
         }
         columns={columns as any}
         rowKey="corporateNumber"
         pagination={false}
         scroll={{ y: 400 }}
         tableLayout="fixed"
+        locale={{
+          emptyText: <Empty description={t('table.noData')} />,
+        }}
       />
     </div>
   )

@@ -52,6 +52,8 @@ import { useCallback, useEffect, useState } from 'react'
 import BasicInfo from './components/basic-info'
 import Link from 'next/link'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
+import CreateFromTemplate from './components/popups/create-from-template'
+import CreateFromOldQuota from './components/popups/create-from-old-quota'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -68,6 +70,9 @@ function QuotaAction() {
 
   const [taxRoundingMethod, setTaxRoundingMethod] =
     useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
+
+  const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
+  const [isCreateFromOldQuota, setIsCreateFromOldQuota] = useState(false)
 
   const { actionType } = params as any
   const isClone = action === 'clone'
@@ -140,7 +145,7 @@ function QuotaAction() {
   let queryOptions: CrudFilter[] = []
 
   // if isupdate = true , get department of quota, if department is null => set default department , if department is not null => set department of user login
-  if (isUpdate) {
+  if (isUpdate && !isClone) {
     // if there is no department in permission and user is not admin, set default department filter
     if (!dataBasicInfo?.data.department) {
       queryOptions = [
@@ -160,6 +165,7 @@ function QuotaAction() {
       ]
     }
   } else if (permission?.department) {
+    // set department of user login
     queryOptions = [
       {
         field: 'id',
@@ -272,6 +278,7 @@ function QuotaAction() {
           quantity: 0,
           profit_margin: 0,
           is_add_total: false,
+          isSelfCreate: false,
           tax_rate: 0,
           unit: null,
           unit_name: '-',
@@ -300,7 +307,9 @@ function QuotaAction() {
           department_id: departmentData?.data.id,
           department_name: departmentData?.data.name,
           approve_routes: departmentData?.data.approve_routes || [],
-          approve_route_id: dataBasicInfo.data.approve_route?.id,
+          approve_route_id: departmentData?.data.approve_routes
+            ? departmentData?.data.approve_routes[0]?.id
+            : null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
@@ -350,8 +359,15 @@ function QuotaAction() {
           value: dataBasicInfo.data.customer_id,
           label: dataBasicInfo.data.customer_name,
         }
-        console.log('dataBasicInfo: ', dataBasicInfo)
 
+        let approve_routes = departmentData?.data.approve_routes || []
+        let approve_route_id = dataBasicInfo.data.approve_route?.id
+        if (isCloneNew) {
+          approve_routes = departmentData?.data.approve_routes || []
+          approve_route_id = departmentData?.data.approve_routes
+            ? departmentData?.data.approve_routes[0]?.id
+            : null
+        }
         form.setFieldsValue({
           ...basicData,
           code: isEdit ? dataBasicInfo.data.code : '',
@@ -360,8 +376,8 @@ function QuotaAction() {
           tax_rounding_method: data?.data?.tax_rounding_method,
           department_id: departmentData?.data.id,
           department_name: departmentData?.data.name,
-          approve_routes: departmentData?.data.approve_routes || [],
-          approve_route_id: dataBasicInfo.data.approve_route?.id,
+          approve_routes: approve_routes,
+          approve_route_id: approve_route_id,
           customer_term: dataBasicInfo.data.customer_term,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date)
@@ -440,6 +456,7 @@ function QuotaAction() {
           ...item,
           products: item.products.map((item2: any) => ({
             ...item2,
+            isSelfCreate: !item2.product_id,
             product: { value: item2.product_id, label: item2.name },
             package: { value: item2.package_id, label: item2.package_name },
             tax_rate: item2.tax_rate ?? 0,
@@ -452,6 +469,7 @@ function QuotaAction() {
               ...item,
               products: item.products.map((item2: any) => ({
                 ...item2,
+                isSelfCreate: !item2.product_id,
                 product: { value: item2.product_id, label: item2.name },
                 package: { value: item2.package_id, label: item2.package_name },
                 unit: item2.unit_name ?? '-',
@@ -503,6 +521,7 @@ function QuotaAction() {
                 product_id: null,
                 package: null,
                 package_id: null,
+                isSelfCreate: false,
                 name: '',
                 code: '',
                 package_name: '-',
@@ -645,24 +664,54 @@ function QuotaAction() {
       title={
         <div className="flex justify-between">
           {isUpdate ? t('quotas.edit') : t('quotas.create')}
-          <Button
-            color="primary"
-            variant="outlined"
-            onClick={async () => {
-              await form.validateFields()
-              setIsPdf(!isPdf)
-              handlePreviewPdf()
-            }}
-            disabled={
-              isFetching ||
-              isFetchingBasicInfo ||
-              isFetchingProduct ||
-              isFetchingHistory ||
-              quoteTemplateQuery.isFetching
-            }
-          >
-            {t('quotas.action.preview')}
-          </Button>
+          <Flex justify="end" gap={4}>
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={() => setIsCreateFromTemplate(true)}
+              disabled={
+                isFetching ||
+                isFetchingBasicInfo ||
+                isFetchingProduct ||
+                isFetchingHistory ||
+                quoteTemplateQuery.isFetching
+              }
+            >
+              {t('quota_templates.list.createFromTemplate')}
+            </Button>
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={() => setIsCreateFromOldQuota(true)}
+              disabled={
+                isFetching ||
+                isFetchingBasicInfo ||
+                isFetchingProduct ||
+                isFetchingHistory ||
+                quoteTemplateQuery.isFetching
+              }
+            >
+              {t('quota_templates.list.createFromOldQuota')}
+            </Button>
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={async () => {
+                await form.validateFields()
+                setIsPdf(!isPdf)
+                handlePreviewPdf()
+              }}
+              disabled={
+                isFetching ||
+                isFetchingBasicInfo ||
+                isFetchingProduct ||
+                isFetchingHistory ||
+                quoteTemplateQuery.isFetching
+              }
+            >
+              {t('quotas.action.preview')}
+            </Button>
+          </Flex>
         </div>
       }
     >
@@ -821,6 +870,20 @@ function QuotaAction() {
           </div>
         </Modal>
       }
+      {isCreateFromTemplate && (
+        <CreateFromTemplate
+          open={isCreateFromTemplate}
+          t={t}
+          onClose={() => setIsCreateFromTemplate(false)}
+        />
+      )}
+      {isCreateFromOldQuota && (
+        <CreateFromOldQuota
+          open={isCreateFromOldQuota}
+          t={t}
+          onClose={() => setIsCreateFromOldQuota(false)}
+        />
+      )}
     </PageContainer>
   )
 }

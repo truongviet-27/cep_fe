@@ -52,6 +52,7 @@ const DetailInfo: FC<Props> = (props) => {
           {
             index,
             index2,
+            isSelfCreate: !item2.product_id,
             ...item2,
           },
         ],

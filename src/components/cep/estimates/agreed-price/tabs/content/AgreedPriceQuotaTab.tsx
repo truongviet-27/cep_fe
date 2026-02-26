@@ -4,6 +4,7 @@ import StatusDashboard from '@components/cep/estimates/agreed-price/components/s
 import { AgreedPriceStatus } from '@components/cep/estimates/agreed-price/enum'
 import { getAgreedPriceStatusStyle } from '@components/cep/estimates/agreed-price/utils'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
+import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { DeleteButton, ShowButton, useSelect, useTable } from '@refinedev/antd'
 import {
@@ -263,11 +264,34 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'total_price',
         key: 'total_price',
         align: 'right',
+        minWidth: 180,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 180,
+            minWidth: 180,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
           <div>
-            {(record.customer as any)?.department_name && (
-              <div style={{ fontSize: '16px', color: '#666' }}>
-                {(record.customer as any)?.department_name}
+            {(record.creator as any)?.department_name && (
+              <div
+                style={{
+                  fontSize: '16px',
+                  color: '#666',
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center',
+                }}
+              >
+                {(record.creator as any)?.department_name}
               </div>
             )}
             <div>{formatNumberWithCommas(totalPrice)}</div>
@@ -770,7 +794,7 @@ const AgreedPriceQuotaTab = () => {
         <Form
           form={updateForm}
           layout="horizontal"
-          labelCol={{ span: 8 }}
+          labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
           labelAlign="left"
           colon={false}
@@ -917,23 +941,26 @@ const AgreedPriceQuotaTab = () => {
 
           <Divider style={{ margin: '24px 0' }} />
 
-          <Form.Item label="登録者:" style={{ marginBottom: 16 }}>
-            <span>
-              {selected?.creator?.name || '伊藤太郎'}{' '}
-              {selected?.created_at
-                ? dayjs(selected.created_at).format('YYYY/MM/DD HH:mm')
-                : '2025/08/04 12:30'}
-            </span>
-          </Form.Item>
-
-          <Form.Item label="更新者:" style={{ marginBottom: 16 }}>
-            <span>
-              {selected?.creator?.name || '伊藤太郎'}{' '}
-              {selected?.updated_at
-                ? dayjs(selected.updated_at).format('YYYY/MM/DD HH:mm')
-                : '2025/08/04 12:30'}
-            </span>
-          </Form.Item>
+          <ShowMoreInfo
+            descriptions={[
+              {
+                title: '登録者',
+                value: `${selected?.creator?.name || '伊藤太郎'} ${
+                  selected?.created_at
+                    ? dayjs(selected.created_at).format('YYYY/MM/DD HH:mm')
+                    : '2025/08/04 12:30'
+                }`,
+              },
+              {
+                title: '更新者',
+                value: `${selected?.creator?.name || '伊藤太郎'} ${
+                  selected?.updated_at
+                    ? dayjs(selected.updated_at).format('YYYY/MM/DD HH:mm')
+                    : '2025/08/04 12:30'
+                }`,
+              },
+            ]}
+          />
 
           <div
             style={{

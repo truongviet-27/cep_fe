@@ -21,6 +21,7 @@ function CoreAutoComplete({
   data,
   customer,
   productsData,
+  labelInValue = false,
   ...rest
 }: {
   resource: string
@@ -37,6 +38,7 @@ function CoreAutoComplete({
   data: any
   customer: any
   productsData: any
+  labelInValue?: boolean
 }) {
   const t = useTranslate()
 
@@ -88,12 +90,15 @@ function CoreAutoComplete({
           .toLowerCase()
           .includes(input.toLowerCase())
       }
+      labelInValue={labelInValue}
       onSearch={() => {}}
       onChange={(value) => {
         if (onChange) {
           onChange(value)
         }
-        const option = data?.packagings.find((item: any) => item?.id === value)
+        const option = data?.packagings.find(
+          (item: any) => item?.id === value.value,
+        )
 
         form.setFieldValue(
           [parent, index, 'products', index2, 'package_id'],

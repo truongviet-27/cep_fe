@@ -208,7 +208,7 @@ function OptionalInfo({ data }: { data: any }) {
           marginBottom: 20,
         }}
       >
-        {data?.[0]?.products[0]?.product_id ? (
+        {data?.[0]?.products && data?.[0]?.products.length > 0 ? (
           <CommonTable
             columns={columns}
             dataSource={dataSource}

@@ -62,7 +62,7 @@ function OptionalInfo({
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
-      tax_rate: getDefaultTaxRate(),
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
       is_add_total: true,
       unit: '-',
       unit_name: '-',
@@ -164,6 +164,7 @@ function OptionalInfo({
               {
                 index,
                 index2,
+                isSelfCreate: !item2.product_id,
                 ...item2,
               },
             ]),
@@ -234,28 +235,33 @@ function OptionalInfo({
                         },
                         {
                           validator: async () => {
-                            const products =
-                              form.getFieldValue([
-                                'optional_product',
-                                record.index,
-                                'products',
-                              ]) || []
-                            const currentCode = products[record.index2]?.code
+                            const allOptionalGroups =
+                              form.getFieldValue('optional_product') || []
+                            const currentProduct =
+                              allOptionalGroups[record.index]?.products?.[
+                                record.index2
+                              ]
+                            const currentCode = currentProduct?.code
+
                             if (!currentCode) return Promise.resolve()
-                            const isDuplicate = products.some(
-                              (item: any, idx: number) =>
-                                item.code === currentCode &&
-                                idx !== record.index2,
-                            )
-                            if (isDuplicate) {
-                              notification.error({
-                                message: t(
-                                  'quotas.action.detail_info.duplicate_product',
-                                ),
-                                key: `code-optional-product`,
-                                placement: 'topRight',
-                              })
-                              return Promise.reject()
+
+                            let count = 0
+
+                            for (const group of allOptionalGroups) {
+                              const products = group?.products || []
+                              for (const item of products) {
+                                if (item?.code === currentCode) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                                    key: `${currentCode}-code-optional-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
+                                }
+                              }
                             }
                             return Promise.resolve()
                           },
@@ -300,29 +306,36 @@ function OptionalInfo({
                         rules={[
                           {
                             validator: async () => {
-                              const products =
-                                form.getFieldValue([
-                                  'optional_product',
-                                  record.index,
-                                  'products',
-                                ]) || []
+                              const allOptionalGroups =
+                                form.getFieldValue('optional_product') || []
+                              const currentProduct =
+                                allOptionalGroups[record.index]?.products?.[
+                                  record.index2
+                                ]
                               const currentProductId =
-                                products[record.index2]?.product_id
+                                currentProduct?.product_id
+
                               if (!currentProductId) return Promise.resolve()
-                              const isDuplicate = products.some(
-                                (item: any, idx: number) =>
-                                  item.product_id === currentProductId &&
-                                  idx !== record.index2,
-                              )
-                              if (isDuplicate) {
-                                notification.error({
-                                  message: t(
-                                    'quotas.action.detail_info.duplicate_product',
-                                  ),
-                                  key: `name-optional-product`,
-                                  placement: 'topRight',
-                                })
-                                return Promise.reject()
+
+                              let count = 0
+
+                              for (const group of allOptionalGroups) {
+                                const products = group?.products || []
+                                for (const item of products) {
+                                  if (item?.product_id === currentProductId) {
+                                    count++
+                                  }
+                                  if (count > 1) {
+                                    notification.error({
+                                      message: t(
+                                        'quotas.action.detail_info.duplicate_product',
+                                      ),
+                                      key: `name-optional-product`,
+                                      placement: 'topRight',
+                                    })
+                                    return Promise.reject()
+                                  }
+                                }
                               }
                               return Promise.resolve()
                             },
@@ -342,14 +355,14 @@ function OptionalInfo({
                         disabled={!customerWatch}
                         defaultValue={{
                           value: form.getFieldValue([
-                            'main_product',
+                            'optional_product',
                             record.index,
                             'products',
                             record.index2,
                             'product',
                           ])?.value,
                           label: form.getFieldValue([
-                            'main_product',
+                            'optional_product',
                             record.index,
                             'products',
                             record.index2,
@@ -360,7 +373,7 @@ function OptionalInfo({
                           if (!valueOption) {
                             form.setFieldValue(
                               [
-                                'main_product',
+                                'optional_product',
                                 record.index,
                                 'products',
                                 record.index2,
@@ -519,30 +532,35 @@ function OptionalInfo({
                         },
                         {
                           validator: async () => {
-                            const products =
-                              form.getFieldValue([
-                                'optional_product',
-                                record.index,
-                                'products',
-                              ]) || []
-                            const currentName = products[record.index2]?.name
-                            console.log('products', products)
+                            const allOptionalGroups =
+                              form.getFieldValue('optional_product') || []
+                            const currentProduct =
+                              allOptionalGroups[record.index]?.products?.[
+                                record.index2
+                              ]
+                            const currentName = currentProduct?.name
+
                             if (!currentName) return Promise.resolve()
-                            const isDuplicate = products.some(
-                              (item: any, idx: number) =>
-                                item.name === currentName &&
-                                idx !== record.index2,
-                            )
-                            if (isDuplicate) {
-                              notification.error({
-                                message: t(
-                                  'quotas.action.detail_info.duplicate_product',
-                                ),
-                                key: `name-optional-product`,
-                                placement: 'topRight',
-                              })
-                              return Promise.reject()
+
+                            let count = 0
+
+                            for (const group of allOptionalGroups) {
+                              const products = group?.products || []
+                              for (const item of products) {
+                                if (item?.name === currentName) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                                    key: `${currentName}-name-optional-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
+                                }
+                              }
                             }
+
                             return Promise.resolve()
                           },
                         },
@@ -697,13 +715,7 @@ function OptionalInfo({
                         },
                       ]}
                     >
-                      <Input
-                        placeholder={t('placeholders.input_please')}
-                        style={{
-                          maxWidth: '200px',
-                          width: '100%',
-                        }}
-                      />
+                      <Input disabled={record.isSelfCreate} />
                     </Form.Item>
                   )
                 }
@@ -788,7 +800,25 @@ function OptionalInfo({
                       record.index2,
                       'selling_price',
                     ]}
-                    normalize={(val) => val ?? 0}
+                    rules={[
+                      {
+                        validator(_, value) {
+                          const name = form.getFieldValue([
+                            'optional_product',
+                            record.index,
+                            'products',
+                            record.index2,
+                            'name',
+                          ])
+
+                          if (name && !value) {
+                            return Promise.reject()
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
                   >
                     <InputNumber
                       min={0}
@@ -829,7 +859,6 @@ function OptionalInfo({
                   <Form.Item
                     className="ant-form-item-hidden-margin"
                     name={[record.index, 'products', record.index2, 'quantity']}
-                    normalize={(val) => val ?? 0}
                     rules={[
                       {
                         validator(_, value) {
@@ -1085,6 +1114,7 @@ function OptionalInfo({
                             product_id: null,
                             package_id: null,
                             package_name: '-',
+                            isSelfCreate: false,
                             name: '',
                             code: '',
                             quantity: 0,

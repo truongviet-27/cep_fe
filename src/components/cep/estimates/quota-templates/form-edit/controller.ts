@@ -121,6 +121,7 @@ export function useController() {
               {
                 product_id: null,
                 package_id: null,
+                isSelfCreate: false,
                 name: '',
                 code: '',
                 cost_price: 0,
@@ -140,6 +141,7 @@ export function useController() {
               {
                 product_id: null,
                 package_id: null,
+                isSelfCreate: false,
                 name: '',
                 code: '',
                 cost_price: 0,

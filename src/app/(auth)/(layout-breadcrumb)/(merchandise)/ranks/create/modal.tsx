@@ -72,8 +72,9 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
             <Form.Item
               required
               name="code"
+              initialValue=""
               rules={[validateRankRule(t)]}
-              style={{ maxWidth: '180px' }}
+              style={{ maxWidth: '200px' }}
             >
               <Input />
             </Form.Item>
@@ -86,6 +87,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           required
           label={boldText(t('ranks.fields.name'))}
           name="name"
+          initialValue=""
           rules={[validateRankRule(t)]}
           style={{ marginTop: -12 }}
         >

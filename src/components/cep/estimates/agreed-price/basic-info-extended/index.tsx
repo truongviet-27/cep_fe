@@ -336,14 +336,6 @@ function BasicInfoExtended({
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item label={boldText('タイトル')}>{data?.title}</Form.Item>
         </Col>
-      </Row>
-
-      <Row gutter={[100, 0]}>
-        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <Form.Item label={boldText('取引先')}>
-            {data?.customer_name}
-          </Form.Item>
-        </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item
             label={boldText(
@@ -390,6 +382,20 @@ function BasicInfoExtended({
         </Col>
       </Row>
 
+      <Row gutter={[100, 0]}>
+        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <Form.Item label={boldText('取引先')}>
+            {data?.customer_name}
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+          <Form.Item label={boldText('納入期日')}>
+            {data?.delivery_date &&
+              dayjs(data.delivery_date).format('YYYY/MM/DD')}
+          </Form.Item>
+        </Col>
+      </Row>
+
       <Row gutter={[100, 0]} wrap>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item name={'created_at'} label={boldText('見積日')}>
@@ -397,9 +403,8 @@ function BasicInfoExtended({
           </Form.Item>
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <Form.Item label={boldText('納入期日')}>
-            {data?.delivery_date &&
-              dayjs(data.delivery_date).format('YYYY/MM/DD')}
+          <Form.Item name={'payment_due_date'} label={boldText('支払期日')}>
+            {getPaymentDueDateLabel(data?.payment_due_date, t)}
           </Form.Item>
         </Col>
       </Row>
@@ -411,9 +416,15 @@ function BasicInfoExtended({
           </Form.Item>
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <Form.Item name={'payment_due_date'} label={boldText('支払期日')}>
-            {getPaymentDueDateLabel(data?.payment_due_date, t)}
-          </Form.Item>
+          <div className="flex items-center">
+            <Form.Item
+              name="department"
+              label={boldText('部門')}
+              style={{ marginBottom: 0, flex: 1 }}
+            >
+              {agreedPriceItem?.creator?.department_name || '---'}
+            </Form.Item>
+          </div>
         </Col>
       </Row>
 
@@ -441,17 +452,10 @@ function BasicInfoExtended({
             </Form.Item>
           </div>
         </Col>
-
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <div className="flex items-center">
-            <Form.Item
-              name="department"
-              label={boldText('部門')}
-              style={{ marginBottom: 0, flex: 1 }}
-            >
-              {agreedPriceItem?.creator?.department_name || '---'}
-            </Form.Item>
-          </div>
+          <Form.Item label={boldText('承認ルート')} style={{ marginBottom: 0 }}>
+            {data?.approve_route?.name || '---'}
+          </Form.Item>
         </Col>
       </Row>
     </Card>
