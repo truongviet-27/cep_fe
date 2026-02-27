@@ -434,11 +434,11 @@ export default function CustomerListPage() {
         width: 100,
         render: (_, record) => (
           <Space direction={'vertical'} className="min-w-[100px]">
-            <Text className={'!font-light !italic'}>
+            <Text>
               {record?.credit_rank_update_at &&
                 dayjs(record?.credit_rank_update_at).format(FORMAT_DATE_CROSS)}
             </Text>
-            <Text className={'!font-light !italic'}>
+            <Text>
               {record?.anti_social_rank_update_at &&
                 dayjs(record.anti_social_rank_update_at).format(
                   FORMAT_DATE_CROSS,
