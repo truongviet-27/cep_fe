@@ -1185,6 +1185,7 @@
     "search": {
       "estimate_number": "見積番号",
       "customer": "取引先",
+      "customer_search_placeholder": "選択してください",
       "category": "取引区分",
       "creator": "作成者",
       "department": "部門(支社/部/課)",
@@ -1215,7 +1216,7 @@
     },
     "category": {
       "merchandise": "物販",
-      "service": "役務サービス"
+      "service": "役務ｻｰﾋﾞｽ"
     },
     "action": {
       "search": "検索",

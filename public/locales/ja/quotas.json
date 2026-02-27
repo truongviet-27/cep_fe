@@ -147,7 +147,7 @@
     },
     "category": {
       "merchandise": "物販",
-      "service": "役務サービス"
+      "service": "役務ｻｰﾋﾞｽ"
     },
     "detail_info": "詳細情報",
     "optional_info": "オプション情報",
@@ -350,7 +350,7 @@
       },
       "categories": {
         "merchandise": "物販",
-        "service": "役務サービス"
+        "service": "役務ｻｰﾋﾞｽ"
       },
       "labels": {
         "until": "まで",

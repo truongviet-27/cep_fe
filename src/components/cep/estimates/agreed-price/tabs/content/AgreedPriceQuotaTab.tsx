@@ -58,6 +58,16 @@ const AgreedPriceQuotaTab = () => {
 
   const { permission } = useUserStore((state) => state)
 
+  const { selectProps: customerSelectProps } = useSelect({
+    resource: 'customers',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
+
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
@@ -300,7 +310,8 @@ const AgreedPriceQuotaTab = () => {
       {
         title: (
           <div>
-            <div>見積期限</div>
+            <div style={{ color: '#2784FF' }}>適用開始</div>
+            <div style={{ color: '#FF6918' }}>適用終了</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',
@@ -363,6 +374,7 @@ const AgreedPriceQuotaTab = () => {
                 backgroundColor: '#fff',
               }}
               icon={false}
+              autoInsertSpace={false}
             />
             <Button
               size="small"
@@ -372,21 +384,9 @@ const AgreedPriceQuotaTab = () => {
                 backgroundColor: '#1FDB51',
                 borderColor: '#1FDB51',
               }}
+              autoInsertSpace={false}
             >
               {t('agreed_prices.action.update')}
-            </Button>
-            <Button
-              size="small"
-              onClick={() => {
-                // TODO: Implement duplicate functionality
-              }}
-              style={{
-                color: '#fff',
-                backgroundColor: '#0161D3',
-                borderColor: '#0161D3',
-              }}
-            >
-              {t('agreed_prices.action.duplicate_quota')}
             </Button>
             <DeleteButton
               size="small"
@@ -403,6 +403,7 @@ const AgreedPriceQuotaTab = () => {
                 backgroundColor: '#E74C3C',
                 borderColor: '#E74C3C',
               }}
+              autoInsertSpace={false}
               icon={false}
             />
           </Space>
@@ -451,9 +452,14 @@ const AgreedPriceQuotaTab = () => {
             value: v.quota_code,
           },
           {
-            field: 'customer_name',
+            field: 'customer_id',
             operator: 'eq',
-            value: v.customer_name,
+            value:
+              typeof v.customer_id === 'object' &&
+              v.customer_id != null &&
+              'value' in v.customer_id
+                ? (v.customer_id as { value: number }).value
+                : v.customer_id,
           },
           {
             field: 'category',
@@ -563,7 +569,7 @@ const AgreedPriceQuotaTab = () => {
 
       <div className="my-4">
         <Row gutter={[24, 0]}>
-          <Col xs={12} md={6} lg={3} xxl={3}>
+          <Col xs={12} md={9} lg={5} xxl={4}>
             <Form.Item
               label={
                 <span className="font-bold">
@@ -571,9 +577,21 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'customer_name'}
+              name={'customer_id'}
             >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
+              <Select
+                {...customerSelectProps}
+                allowClear
+                showSearch
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue={true}
+                placeholder={t('agreed_prices.search.please_select')}
+              />
             </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={3} xxl={3}>
