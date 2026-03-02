@@ -33,10 +33,25 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'name',
       dataIndex: 'name',
       title: t('quota_templates.list.templateName'),
+      width: '20%',
+      onCell: () => ({
+        style: {
+          padding: '2px 2px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
+      }),
       render: (item, record) => (
         <Link
           href={`/quota-templates/show/${record.id}`}
           className="!underline"
+          style={{
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
         >
           {item}
         </Link>
@@ -46,7 +61,27 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'author',
       dataIndex: 'author',
       title: t('quota_templates.list.creator'),
-      render: (_, record) => <span>{record.author?.name ?? '-'}</span>,
+      width: '24%',
+      onCell: () => ({
+        style: {
+          padding: '2px 2px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
+      }),
+      render: (_, record) => (
+        <span
+          style={{
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {record.author?.name ?? '-'}
+        </span>
+      ),
     },
     {
       key: 'creationDate',
@@ -58,6 +93,10 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
           {t('quota_templates.list.updateDate')}
         </>
       ),
+      width: '10%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
       render(_, record) {
         return (
           <div>
@@ -80,19 +119,44 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'number_product',
       dataIndex: 'number_product',
       title: t('quota_templates.list.numberOfItems'),
+      width: '5%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
     },
     {
       key: 'total_price',
       dataIndex: 'total_price',
       title: t('quota_templates.list.bassPrice'),
+      width: '10%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
       render: (value) => Math.trunc(value).toLocaleString(),
     },
     {
       key: 'description',
       dataIndex: 'description',
       title: t('quota_templates.list.description'),
+      width: '21%',
+      onCell: () => ({
+        style: {
+          padding: '2px 2px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
+      }),
       render: (value) => (
-        <Text style={{ width: 200 }} ellipsis={{ tooltip: value }}>
+        <Text
+          style={{
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+          ellipsis={{ tooltip: value }}
+        >
           {value}
         </Text>
       ),
@@ -101,9 +165,12 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'operation',
       dataIndex: 'operation',
       title: t('quota_templates.list.operation'),
-      width: 200,
+      width: '12%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
       render: (_, record) => (
-        <Space size={8}>
+        <Space wrap size={4}>
           <ShowButton
             hideText
             size="small"
@@ -159,6 +226,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       <CommonTable
         {...tableProps}
         columns={columns}
+        scroll={undefined}
         pagination={{
           ...tableProps.pagination,
           showSizeChanger: true,

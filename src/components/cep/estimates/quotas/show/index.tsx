@@ -314,6 +314,7 @@ function QuotaDetail() {
                   </span>
                 ) : (
                   <Select
+                    style={{ minWidth: '150px' }}
                     value={selectedValue}
                     onChange={(val) => setSelectedValue(val)}
                     options={currentActions}

@@ -15,7 +15,7 @@ import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Input, Space, Switch, Typography } from 'antd'
+import { Button, Input, Modal, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isString } from 'lodash'
 import React, { useEffect, useMemo, useRef } from 'react'
@@ -41,7 +41,7 @@ export default function useProductUnits() {
   const t = useTranslate()
   const { resource } = useResource()
   const { hasFullAccessModule } = useUserStore.getState()
-  const [pageSize, setPageSize] = React.useState(10)
+  const [pageSize, setPageSize] = React.useState(20)
   const [totalPage, setTotalPage] = React.useState(0)
   const forceUpdate = useRef(false)
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_UNIT_EDIT)
@@ -140,8 +140,8 @@ export default function useProductUnits() {
 
   useEffect(() => {
     if (forceUpdate.current) {
-      setPageSize(10)
-      setPageSize2(10)
+      setPageSize(20)
+      setPageSize2(20)
     }
     const ds = (tableProps?.dataSource as UnitRow[]) ?? []
     const rowsToSet = ds.map((r, index) => ({
@@ -439,6 +439,33 @@ export default function useProductUnits() {
     },
   ]
 
+  const isDirty = useMemo(() => {
+    return watchedRows.some((r) => r._isNew || r._isEditing)
+  }, [watchedRows])
+
+  const handleTableChange = (
+    pagination: any,
+    filters: any,
+    sorter: any,
+    extra: any,
+  ) => {
+    if (isDirty) {
+      Modal.confirm({
+        title: t('tags.confirm_navigation'),
+        content: t('tags.unsaved_changes_warning'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        type: 'warning',
+        onOk: () => {
+          tableProps.onChange?.(pagination, filters, sorter, extra)
+        },
+        onCancel: () => {},
+      })
+    } else {
+      tableProps.onChange?.(pagination, filters, sorter, extra)
+    }
+  }
+
   return {
     t,
     breadcrumbItems,
@@ -448,6 +475,7 @@ export default function useProductUnits() {
     dataSource,
     tableProps: {
       ...tableProps,
+      onChange: handleTableChange,
       pagination: {
         ...tableProps?.pagination,
         // pageSize,
