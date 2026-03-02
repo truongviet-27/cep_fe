@@ -96,7 +96,7 @@
     "send": "送信する",
     "move_to_reject": "差戻する",
     "move_to_order": "受注に移動する",
-    "move_to_cancel": "失注へ移動",
+    "move_to_cancel": "失注に移動する",
     "move_to_send": "送信済へ移動",
     "resend_email_to_customer": "再送信",
     "decide_move": "継続移動",
