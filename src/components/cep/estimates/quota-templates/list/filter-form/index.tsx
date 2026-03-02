@@ -1,3 +1,4 @@
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CoreInput from '@components/common/core-input'
 import type { SearchQuotaTemplateType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
@@ -31,14 +32,19 @@ const QuotaTemplateFilterForm: FC<Props> = ({
           />
         </Col>
         <Col sm={12} md={6} lg={4}>
-          <CoreInput
+          <CoreAutocompleteAPI
             name="creator"
+            pageSize={10}
+            resource="employees"
             label={
               <span className="font-bold">
                 {t('quota_templates.list.creator')}
               </span>
             }
             placeholder={t('quota_templates.list.placeholderPartialMatch')}
+            onChangeClear={(callback) => {
+              if (callback) callback('')
+            }}
           />
         </Col>
         <Col sm={12} md={6} lg={6}>

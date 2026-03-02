@@ -1,6 +1,6 @@
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useForm } from '@refinedev/antd'
-import { useParsed } from '@refinedev/core'
+import { useGo, useParsed } from '@refinedev/core'
 import type { ProductDetail, StoreProductInput } from '@sdk/hey-api'
 
 export type ProductFormType = {
@@ -27,11 +27,19 @@ export type ProductFormType = {
 
 function useProductForm() {
   const { params } = useParsed()
+  const go = useGo()
 
   const methods = useForm<ProductFormType>({
     resource: 'products',
     id: params?.id,
-    redirect: 'show',
+    redirect: false,
+    onMutationSuccess: () => {
+      if (params?.id) {
+        go({ to: { resource: 'products', action: 'show', id: params.id } })
+      } else {
+        go({ to: { resource: 'products', action: 'list' } })
+      }
+    },
     queryOptions: {
       select: (response) => {
         const data = response.data as unknown as ProductDetail

@@ -3,6 +3,7 @@
 import StatusDashboard from '@components/cep/estimates/agreed-price/components/status-dashboard'
 import { AgreedPriceStatus } from '@components/cep/estimates/agreed-price/enum'
 import { getAgreedPriceStatusStyle } from '@components/cep/estimates/agreed-price/utils'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { DeleteButton, ShowButton, useSelect, useTable } from '@refinedev/antd'
@@ -130,7 +131,7 @@ const AgreedPriceQuotaTab = () => {
           values: valuesToSend,
           successNotification: () => ({
             message: t('notifications.success'),
-            description: t('notifications.editSuccess'),
+            description: t('notifications.success'),
             type: 'success',
           }),
         },
@@ -557,7 +558,9 @@ const AgreedPriceQuotaTab = () => {
           {
             field: 'creator_name',
             operator: 'eq',
-            value: v.creator_name,
+            value:
+              (v.creator_name as { label?: string })?.label?.trim() ??
+              undefined,
           },
           {
             field: 'department_id',
@@ -569,7 +572,8 @@ const AgreedPriceQuotaTab = () => {
           {
             field: 'tag_name',
             operator: 'eq',
-            value: v.tag_name,
+            value:
+              (v.tag_name as { label?: string })?.label?.trim() ?? undefined,
           },
           {
             field: 'expiration_date',
@@ -722,17 +726,20 @@ const AgreedPriceQuotaTab = () => {
             </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={3} xxl={3}>
-            <Form.Item
+            <CoreAutocompleteAPI
+              name="creator_name"
+              pageSize={10}
+              resource="employees"
               label={
                 <span className="font-bold">
                   {t('agreed_prices.search.creator')}
                 </span>
               }
-              layout="vertical"
-              name={'creator_name'}
-            >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
-            </Form.Item>
+              placeholder={t('agreed_prices.search.partial_match')}
+              onChangeClear={(callback) => {
+                if (callback) callback('')
+              }}
+            />
           </Col>
           <Col xs={12} md={6} lg={4} xxl={3}>
             <Form.Item
@@ -760,17 +767,20 @@ const AgreedPriceQuotaTab = () => {
             </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={3} xxl={3}>
-            <Form.Item
+            <CoreAutocompleteAPI
+              name="tag_name"
+              pageSize={10}
+              resource="tags"
               label={
                 <span className="font-bold">
                   {t('agreed_prices.search.tag_name')}
                 </span>
               }
-              layout="vertical"
-              name={'tag_name'}
-            >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
-            </Form.Item>
+              placeholder={t('agreed_prices.search.partial_match')}
+              onChangeClear={(callback) => {
+                if (callback) callback('')
+              }}
+            />
           </Col>
         </Row>
         <Row gutter={[24, 0]}>
