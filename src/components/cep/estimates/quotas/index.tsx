@@ -4,6 +4,7 @@ import { CommentOutlined, DownOutlined, RightOutlined } from '@ant-design/icons'
 import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
+  HIDE_CREATOR_APPROVER_2_STATUSES,
   QuotaStatus,
   TRANSACTION_TYPES,
 } from '@components/cep/estimates/quotas/enum'
@@ -37,6 +38,7 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
+import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { BLACK, PRIMARY, WHITE } from '@utility/color'
@@ -47,7 +49,6 @@ import {
   DatePicker,
   Dropdown,
   Empty,
-  Flex,
   Form,
   Input,
   Popconfirm,
@@ -84,7 +85,13 @@ function QuotaList() {
   const t = useTranslate()
   const { convertCurrency } = useCurrency()
   const apiUrl = useApiUrl()
-
+  const [useApproveRoute, setUseApproveRoute] = useState<boolean>(false)
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  useEffect(() => {
+    setUseApproveRoute(
+      !!parameterSettings?.get?.(ParameterResourceEnum.APPROVE_ROUTES),
+    )
+  }, [parameterSettings])
   const { permission } = useUserStore.getState()
 
   const go = useGo()
@@ -106,7 +113,24 @@ function QuotaList() {
     setSelectedRows(selectedRows)
 
     const status = handleOptions(selectedRows)
-    const options = statusButton(status, selectedRows?.[0]?.has_approval_route)
+
+    const hasValidApprovers = (item: any): boolean =>
+      item.is_manage_approve_routes === true &&
+      Array.isArray(item?.approvers) &&
+      item.approvers.length > 0
+
+    // tat ca cac record duoc select, deu co nguoi duyet
+    const allHaveApprovers = selectedRows.every(hasValidApprovers)
+
+    // tat ca cac record duoc select, deu khong co nguoi duyet
+    const noneHaveApprovers = selectedRows.every(
+      (item: any) => item.is_manage_approve_routes === false,
+    )
+
+    const hasMixedApprovers = !allHaveApprovers && !noneHaveApprovers
+
+    const options = statusButton(status, allHaveApprovers, hasMixedApprovers)
+
     setOptions(options)
     setSelectedRowKeys(newSelectedRowKeys)
   }
@@ -155,14 +179,36 @@ function QuotaList() {
         ),
         dataIndex: 'status',
         key: 'status',
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            minWidth: 0,
+            overflow: 'hidden',
+          },
+        }),
         render: (value, record) => {
           const result = getQuotaStatusStyle(value, t)
 
           return (
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div
+              className="flex flex-col items-center justify-center gap-1"
+              style={{
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
               <Tag
                 color={result.background}
-                style={{ color: result.color, marginRight: 0 }}
+                style={{
+                  color: result.color,
+                  marginRight: 0,
+                  maxWidth: '100%',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: 1.3,
+                }}
               >
                 {result.text}
               </Tag>
@@ -186,12 +232,10 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
-        minWidth: 110,
+        width: '8%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 110,
-            minWidth: 110,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -230,23 +274,19 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
-        minWidth: 200,
+        width: '20%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 200,
-            minWidth: 200,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             verticalAlign: 'center',
           },
         }),
-
         render: (_, record) => (
-          <div className="flex flex-col gap-1">
+          <div>
             <div
-              className="overflow-hidden"
               title={record.title}
               style={{
                 display: 'block',
@@ -259,7 +299,7 @@ function QuotaList() {
             >
               {record.title}
             </div>
-            <span
+            <div
               title={record.customer_name}
               style={{
                 display: 'block',
@@ -271,7 +311,7 @@ function QuotaList() {
               }}
             >
               {record.customer_name}
-            </span>
+            </div>
           </div>
         ),
       },
@@ -283,22 +323,23 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        minWidth: 90,
+        width: '6%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 90,
-            minWidth: 90,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             verticalAlign: 'center',
           },
         }),
-
         render: (_, record) => (
           <div
-            className="flex flex-col gap-1"
+            title={
+              record.transaction_type
+                ? t(`quotas.transaction_type.${record.transaction_type}`)
+                : undefined
+            }
             style={{
               display: 'block',
               width: '100%',
@@ -308,10 +349,8 @@ function QuotaList() {
               textAlign: 'center',
             }}
           >
-            <div className="overflow-hidden" title={record.transaction_type}>
-              {record.transaction_type &&
-                t(`quotas.transaction_type.${record.transaction_type}`)}
-            </div>
+            {record.transaction_type &&
+              t(`quotas.transaction_type.${record.transaction_type}`)}
           </div>
         ),
       },
@@ -324,59 +363,64 @@ function QuotaList() {
         ),
         dataIndex: 'creator',
         key: 'creator',
-        minWidth: 180,
+        width: '14%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 180,
-            minWidth: 180,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             verticalAlign: 'center',
           },
         }),
-        render: (_, record) => (
-          <div>
-            <div
-              title={record?.author?.name}
-              style={{
-                display: 'block',
-                width: '100%',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'center',
-              }}
-            >
-              {record?.author?.name}
+        render: (_, record) => {
+          const hideApprover = HIDE_CREATOR_APPROVER_2_STATUSES.includes(
+            record.status,
+          )
+          return (
+            <div>
+              <div
+                title={record?.author?.name}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center',
+                }}
+              >
+                {record?.author?.name}
+              </div>
+              {!hideApprover && (
+                <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
+                  {record.approvers?.map((item: any, index: number) => {
+                    const numSteps = item?.number_step ?? 1
+                    const isApproved = item.status === 'approved'
+                    const numberIcon = String.fromCharCode(9311 + numSteps)
+                    return (
+                      <span
+                        title={item.name}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          textAlign: 'center',
+                        }}
+                        key={index}
+                        className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
+                      >
+                        {numberIcon} {item.name}
+                      </span>
+                    )
+                  })}
+                </div>
+              )}
             </div>
-            <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
-              {record.approvers?.map((item: any, index: number) => {
-                const numSteps = item?.number_step ?? 1
-                const isApproved = item.status === 'approved'
-                const numberIcon = String.fromCharCode(9311 + numSteps)
-                return (
-                  <span
-                    title={item.name}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      textAlign: 'center',
-                    }}
-                    key={index}
-                    className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
-                  >
-                    {numberIcon} {item.name}
-                  </span>
-                )
-              })}
-            </div>
-          </div>
-        ),
+          )
+        },
       },
       {
         title: (
@@ -387,12 +431,10 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
-        minWidth: 150,
+        width: '14%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 150,
-            minWidth: 150,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -400,12 +442,16 @@ function QuotaList() {
           },
         }),
         render: (_, record) => (
-          <div className="flex flex-col gap-2">
+          <div
+            className="flex flex-col gap-2"
+            style={{ minWidth: 0, width: '100%', overflow: 'hidden' }}
+          >
             <div
               title={record.department_in_charge}
               style={{
                 display: 'block',
                 width: '100%',
+                minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -419,6 +465,7 @@ function QuotaList() {
               style={{
                 display: 'block',
                 width: '100%',
+                minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -439,6 +486,7 @@ function QuotaList() {
         ),
         dataIndex: 'createdAt',
         key: 'createdAt',
+        width: '8%',
         render: (_, record) => (
           <div>
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
@@ -460,6 +508,7 @@ function QuotaList() {
         ),
         dataIndex: 'sentAt',
         key: 'sentAt',
+        width: '8%',
         render: (_, record) => {
           if (
             record.sent_to_customer_date ||
@@ -489,15 +538,21 @@ function QuotaList() {
       {
         title: t('quotas.table.actions'),
         key: 'action',
+        width: '14%',
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render: (_, record) => (
-          <Flex
-            vertical={true}
-            gap={4}
-            align="center"
-            style={{ width: 'fit-content', margin: '0 auto' }}
+          <div
+            style={{
+              width: '100%',
+              minWidth: 0,
+              overflow: 'hidden',
+            }}
           >
-            <Flex gap={4} justify="center" style={{ width: '100%' }}>
+            <Space wrap size={4}>
               <ShowButton
+                autoInsertSpace={false}
                 size="small"
                 icon={null}
                 recordItemId={record.id}
@@ -513,6 +568,7 @@ function QuotaList() {
                 record.status === QuotaStatus.Rejected) &&
                 (permission?.is_module_admin || record.is_author) && (
                   <EditButton
+                    autoInsertSpace={false}
                     size="small"
                     icon={null}
                     recordItemId={record.id}
@@ -526,6 +582,7 @@ function QuotaList() {
                 )}
 
               <CloneButton
+                autoInsertSpace={false}
                 size="small"
                 icon={null}
                 recordItemId={record.id}
@@ -562,7 +619,7 @@ function QuotaList() {
                   <Button
                     type="default"
                     style={{ background: '#D77703', color: WHITE }}
-                    size={'small'}
+                    size="small"
                     onClick={() =>
                       handleChangeStatus('back-to-sent-customer', {
                         quota_ids: [record.id],
@@ -572,14 +629,13 @@ function QuotaList() {
                     {t('quotas.show.actions.move_to_send')}
                   </Button>
                 )}
-            </Flex>
 
-            <Flex gap={4} style={{ width: '100%' }}>
               {(record.status === QuotaStatus.Creating ||
                 record.status === QuotaStatus.Rejected ||
                 record.status === QuotaStatus.Cancelled) &&
                 (record.is_author || permission?.is_module_admin) && (
                   <DeleteButton
+                    autoInsertSpace={false}
                     successNotification={() => {
                       return notificationFunction()
                     }}
@@ -624,14 +680,13 @@ function QuotaList() {
                   style={{
                     color: '#2784FF',
                     borderColor: '#2784FF',
-                    width: '100%',
                   }}
                 >
                   {t('quotas.downloadLabel')}
                 </Button>
               </Link>
-            </Flex>
-          </Flex>
+            </Space>
+          </div>
         ),
       },
     ]
@@ -858,6 +913,7 @@ function QuotaList() {
   })
 
   const statusData = [
+    { title: t('quotas.status.all'), value: 0, key: null },
     { title: t('quotas.status.creating'), value: 0, key: QuotaStatus.Creating },
     {
       title: t('quotas.status.waiting_approval'),
@@ -865,6 +921,12 @@ function QuotaList() {
       color: '#faad14',
       key: QuotaStatus.WaitingApproval,
     }, // vàng
+    {
+      title: t('quotas.status.rejected'),
+      value: 0,
+      color: '#fa541c',
+      key: QuotaStatus.Rejected,
+    }, // cam
     {
       title: t('quotas.status.approved'),
       value: 0,
@@ -878,12 +940,6 @@ function QuotaList() {
       key: QuotaStatus.SentToCustomer,
     }, // xanh đậm
     {
-      title: t('quotas.status.rejected'),
-      value: 0,
-      color: '#fa541c',
-      key: QuotaStatus.Rejected,
-    }, // cam
-    {
       title: t('quotas.status.completed'),
       value: 0,
       color: '#52c41a',
@@ -895,7 +951,6 @@ function QuotaList() {
       color: '#ff4d4f',
       key: QuotaStatus.Cancelled,
     }, // đỏ
-    { title: t('quotas.status.all'), value: 0, key: null },
   ]
 
   const statusDashboard = useMemo(() => {
@@ -914,26 +969,33 @@ function QuotaList() {
     (
       status: QuotaStatus,
       hasApprovalRoutes: boolean,
+      hasMixedApprovers: boolean,
     ): { key: number; label: string | ReactNode }[] => {
-      if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
-        return [
-          {
-            key: 1,
-            label: t('quotas.actions.delete'),
-          },
-          ...(hasApprovalRoutes
-            ? [
-                {
-                  key: 2,
-                  label: t('quotas.actions.request_approval'),
-                },
-              ]
-            : []),
-        ]
+      if (status === QuotaStatus.Creating) {
+        const actions = [{ key: 1, label: t('quotas.actions.delete') }]
+
+        if (!hasMixedApprovers) {
+          if (hasApprovalRoutes) {
+            actions.push({
+              key: 2,
+              label: t('quotas.actions.request_approval'),
+            })
+          } else {
+            actions.push({
+              key: 4,
+              label: t('quotas.actions.send'),
+            })
+          }
+        }
+
+        return actions
       } else if (status === QuotaStatus.WaitingApproval) {
         return [
-          ...(hasApprovalRoutes
-            ? [{ key: 3, label: t('quotas.actions.approve') }]
+          ...(hasApprovalRoutes && !hasMixedApprovers
+            ? [
+                { key: 3, label: t('quotas.actions.approve') },
+                { key: 9, label: t('quotas.actions.move_to_reject') },
+              ]
             : []),
         ]
       } else if (status === QuotaStatus.Approved) {
@@ -949,9 +1011,7 @@ function QuotaList() {
       } else if (status === QuotaStatus.Cancelled) {
         return [
           { key: 1, label: t('quotas.actions.delete') },
-          ...(hasApprovalRoutes
-            ? [{ key: 7, label: t('quotas.actions.move_to_send') }]
-            : []),
+          ...[{ key: 7, label: t('quotas.actions.move_to_send') }],
         ]
       }
       return []
@@ -1060,6 +1120,19 @@ function QuotaList() {
           return notificationFunction(data?.data.message)
         },
       })
+    } else if (Number(info.key) === 9) {
+      mutate({
+        values: selectedRows.map((item: any) => ({
+          quota_id: item?.id,
+          status: 'rejected',
+          comment: '一括差戻',
+        })),
+        method: 'put',
+        url: `${apiUrl}/quotas/approval-steps`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
     }
   }
 
@@ -1082,6 +1155,7 @@ function QuotaList() {
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
         <StatusDashboard
+          useApproveRoute={useApproveRoute}
           statusData={statusDashboard}
           status={status}
           onChangeStatus={onChangeStatus}
@@ -1429,10 +1503,11 @@ function QuotaList() {
         </div>
 
         <CommonTable
-          rowKey={'id'}
+          rowKey="id"
           rowSelection={rowSelection}
           columns={columns}
           {...tableProps}
+          scroll={undefined}
           components={{
             header: {
               cell: ({ children, style, ...rest }: any) => {

@@ -36,6 +36,7 @@ import { PRIMARY } from '@utility/color'
 import {
   Breadcrumb,
   Button,
+  Checkbox,
   Col,
   Divider,
   Flex,
@@ -746,6 +747,7 @@ function QuotaAction() {
           <BasicInfo
             parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
+            isEdit={isEdit}
           />
           <DetailInfo
             taxRoundingMethod={taxRoundingMethod}
@@ -795,12 +797,19 @@ function QuotaAction() {
             />
           )}
 
-          <Flex
-            justify="space-between"
-            style={{
-              marginTop: 20,
-            }}
-          >
+          {(isCloneNew || !isEdit) && (
+            <Flex justify="flex-end" style={{ marginTop: 20 }}>
+              <Form.Item
+                name="is_create_quota_template"
+                valuePropName="checked"
+                style={{ margin: 0 }}
+              >
+                <Checkbox>{t('quotas.form.is_create_quota_template')}</Checkbox>
+              </Form.Item>
+            </Flex>
+          )}
+
+          <Flex justify="space-between">
             <Space>
               <> </>
             </Space>

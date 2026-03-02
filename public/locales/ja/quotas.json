@@ -18,6 +18,9 @@
   "detail": "見積詳細",
   "page_list": {},
   "create_quota": "見積作成",
+  "form": {
+    "is_create_quota_template": "テンプレート保存"
+  },
   "popups": {
     "createFromTemplate": {
       "title": "テンプレートから作成",
@@ -91,11 +94,12 @@
   "actions": {
     "bulk_processing": "一括処理",
     "delete": "削除",
-    "request_approval": "承認依頼",
-    "approve": "承認",
-    "send": "送信",
-    "move_to_order": "受注へ移動",
-    "move_to_cancel": "失注へ移動",
+    "request_approval": "承認待に移動する",
+    "approve": "承認する",
+    "send": "送信する",
+    "move_to_reject": "差戻する",
+    "move_to_order": "受注に移動する",
+    "move_to_cancel": "失注に移動する",
     "move_to_send": "送信済へ移動",
     "resend_email_to_customer": "再送信",
     "decide_move": "継続移動",
@@ -146,7 +150,7 @@
     },
     "category": {
       "merchandise": "物販",
-      "service": "役務サービス"
+      "service": "役務ｻｰﾋﾞｽ"
     },
     "detail_info": "詳細情報",
     "optional_info": "オプション情報",
@@ -223,7 +227,7 @@
       "approve": "承認",
       "send": "送信",
       "move_to_cancel": "失注へ移動",
-      "move_to_order": "受注へ移動",
+      "move_to_order": "受注に移動する",
       "move_to_send": "送信済へ移動"
     },
     "table": {
@@ -349,7 +353,7 @@
       },
       "categories": {
         "merchandise": "物販",
-        "service": "役務サービス"
+        "service": "役務ｻｰﾋﾞｽ"
       },
       "labels": {
         "until": "まで",

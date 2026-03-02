@@ -77,6 +77,10 @@ export default function Page() {
 
       useUserStore.getState().setParameterSettings(parameterSettingUpdated)
     },
+
+    onMutationError: () => {
+      form?.resetFields()
+    },
   })
 
   const handleOnFinish = (values: any) => {

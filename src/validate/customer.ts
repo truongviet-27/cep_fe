@@ -281,7 +281,19 @@ export const validateCustomerRule = (t: any) => {
       corporate_number: z.optional(
         z
           .string({ error: t('validation.customer.corporate_number.required') })
+          .max(50, {
+            error: t('validation.customer.corporate_number.max', { max: 50 }),
+          })
           .superRefine((val, ctx) => {
+            if (val == null || val === '') return
+            if (!/^\d*$/.test(val)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                validation: 'regex',
+                message: t('validation.customer.corporate_number.numeric_only'),
+              })
+              return
+            }
             if (val.length > 50) {
               ctx.addIssue({
                 code: z.ZodIssueCode.too_big,
@@ -293,7 +305,6 @@ export const validateCustomerRule = (t: any) => {
                   max: 50,
                 }),
               })
-              return
             }
           })
           .nullable(),
@@ -508,13 +519,15 @@ export const validateCustomerRule = (t: any) => {
         .nullable(),
       date_of_establishment: z.any().optional(),
 
-      department_in_charge_id: z
-        .int({
-          error: t('validation.customer.department_in_charge.required'),
-        })
-        .min(1, {
-          error: t('validation.customer.department_in_charge.required'),
-        }),
+      department_in_charge_id: z.optional(
+        z
+          .int({
+            error: t('validation.customer.department_in_charge.required'),
+          })
+          .min(1, {
+            error: t('validation.customer.department_in_charge.required'),
+          }),
+      ),
       person_in_charge_name: z.optional(
         z
           .string({

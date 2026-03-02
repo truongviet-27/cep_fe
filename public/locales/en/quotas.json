@@ -6,6 +6,9 @@
       }
     }
   },
+  "form": {
+    "is_create_quota_template": "Save as Template"
+  },
   "tags": {
     "create_new_tag": "Create tag"
   }

@@ -134,6 +134,7 @@ export default function Page() {
     {
       dataIndex: 'code',
       title: t('departments.fields.code'),
+      width: '8%',
       render: (value, record) => {
         return (
           <Link
@@ -150,11 +151,13 @@ export default function Page() {
       dataIndex: 'number_of_employee',
       title: t('departments.fields.number_of_employee'),
       align: 'right',
+      width: '4%',
     },
     {
       dataIndex: 'author',
       title: t('common.created_by'),
       align: 'left',
+      width: '19%',
       render: (value: any) => {
         return value?.name || '---'
       },
@@ -163,6 +166,7 @@ export default function Page() {
       dataIndex: 'editor',
       title: t('common.updated_by'),
       align: 'left',
+      width: '19%',
       render: (value: any) => {
         return value?.name || '---'
       },
@@ -170,21 +174,27 @@ export default function Page() {
     {
       dataIndex: 'created_at',
       title: t('departments.fields.created_at'),
+      width: '7%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
       dataIndex: 'updated_at',
       title: t('departments.fields.updated_at'),
+      width: '7%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
+      width: '8%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
       render: (_: any, record: BaseRecord) => {
         const isDefaultDepartment =
           (record as Department).name === DEPARTMENT_DEFAULT
         return (
-          <Space>
+          <Space wrap size={4}>
             <ShowButton hideText size="small" recordItemId={record.id} />
             <EditButton hideText size="small" recordItemId={record.id} />
             <DeleteButton

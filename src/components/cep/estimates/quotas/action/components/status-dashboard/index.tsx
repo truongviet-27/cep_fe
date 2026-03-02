@@ -6,6 +6,7 @@ const StatusDashboard = ({
   status,
   onChangeStatus,
   isLoading,
+  useApproveRoute,
 }: {
   statusData: {
     title: string
@@ -16,15 +17,22 @@ const StatusDashboard = ({
   }[]
   status: string | null
   onChangeStatus: (status: string | null) => void
+  useApproveRoute: boolean
   isLoading: boolean
 }) => {
   return (
     <div className="flex flex-wrap gap-4">
       {statusData.map((item) => {
+        const checkDisableCard =
+          !useApproveRoute &&
+          (item.key === QuotaStatus.WaitingApproval ||
+            item.key === QuotaStatus.Rejected)
+
         return (
           <Card
             key={item.key}
             style={{
+              cursor: checkDisableCard ? '' : 'pointer',
               width: '100%',
               display: 'flex',
               flex: 1,
@@ -33,10 +41,16 @@ const StatusDashboard = ({
                 status === item.key
                   ? '2px solid #1677ff '
                   : '1px solid #f0f0f0',
-              background: status === item.key ? '#E6F7FF' : '',
+              background: checkDisableCard
+                ? '#D4D4D4'
+                : status === item.key
+                  ? '#E6F7FF'
+                  : '',
             }}
             onClick={() => {
-              onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
+              if (!checkDisableCard) {
+                onChangeStatus(item.key === QuotaStatus.Total ? null : item.key)
+              }
             }}
             styles={{
               body: {
