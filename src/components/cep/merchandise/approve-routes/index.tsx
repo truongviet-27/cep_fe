@@ -149,6 +149,7 @@ function Approve() {
         key: 'status',
         dataIndex: 'status',
         title: t('approve_routes.table.status'),
+        width: '8%',
         render: (value) => {
           if (value === 'active')
             return <Tag color={GREEN}>{t('products.text.active')}</Tag>
@@ -159,11 +160,13 @@ function Approve() {
         key: 'total_steps',
         dataIndex: 'total_steps',
         title: t('approve_routes.table.totalSteps'),
+        width: '8%',
       },
       {
         key: 'author',
         dataIndex: 'author',
         title: t('approve_routes.table.creator'),
+        width: '21%',
         render(value) {
           return value?.name
         },
@@ -172,6 +175,7 @@ function Approve() {
         key: 'updated_at',
         dataIndex: 'updated_at',
         title: t('approve_routes.table.updatedAt'),
+        width: '9%',
         render(value) {
           return dayjs(value).format(FORMAT_DATE)
         },
@@ -180,9 +184,13 @@ function Approve() {
         key: 'action',
         dataIndex: 'action',
         title: t('approve_routes.table.action'),
+        width: '8%',
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render: (_: any, record: BaseRecord) => {
           return (
-            <Space>
+            <Space wrap size={4}>
               <ShowButton hideText size="small" recordItemId={record.id} />
               <EditButton hideText size="small" recordItemId={record.id} />
               <DeleteButton hideText size="small" recordItemId={record.id} />

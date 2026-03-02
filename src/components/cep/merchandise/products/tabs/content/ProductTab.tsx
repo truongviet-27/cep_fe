@@ -90,6 +90,7 @@ export default function ProductTab() {
         <CommonTable
           {...tableProps}
           columns={columns}
+          scroll={undefined}
           pagination={{
             ...tableProps.pagination,
             showSizeChanger: true,

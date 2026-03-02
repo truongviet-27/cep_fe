@@ -222,7 +222,7 @@ export const getActionPermissions = (
       break
 
     case QuotaStatus.SentToCustomer:
-      if (isAuthor || isApprover) {
+      if (isAuthor) {
         disable = false
       }
       break

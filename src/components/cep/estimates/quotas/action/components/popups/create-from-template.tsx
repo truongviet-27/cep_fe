@@ -83,6 +83,7 @@ function CreateFromTemplate({
             <Button
               type="primary"
               variant="filled"
+              autoInsertSpace={false}
               onClick={() => handleSelectTemplate(record.id)}
             >
               {t('buttons.select')}
@@ -121,7 +122,12 @@ function CreateFromTemplate({
                 marginBottom: 10,
               }}
             >
-              <Button type="primary" variant="filled" htmlType="submit">
+              <Button
+                autoInsertSpace={false}
+                type="primary"
+                variant="filled"
+                htmlType="submit"
+              >
                 {t('quota_templates.button.search')}
               </Button>
               <Button
