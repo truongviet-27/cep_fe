@@ -253,16 +253,14 @@ const AgreedPriceQuotaTab = () => {
       },
       {
         title: (
-          <div>
-            <div>{t('agreed_prices.table.department')}</div>
-            <div style={{ fontSize: '14px', color: '#1890FF' }}>
-              {t('agreed_prices.table.amount')}
-            </div>
+          <div className="flex flex-col">
+            <span>{t('agreed_prices.table.department')}</span>
+            <span>{t('agreed_prices.table.amount')}</span>
           </div>
         ),
         dataIndex: 'total_price',
         key: 'total_price',
-        align: 'right',
+        align: 'center',
         minWidth: 180,
         onCell: () => ({
           style: {
@@ -276,24 +274,33 @@ const AgreedPriceQuotaTab = () => {
           },
         }),
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
-          <div>
-            {(record.creator as any)?.department_name && (
-              <div
-                style={{
-                  fontSize: '16px',
-                  color: '#666',
-                  display: 'block',
-                  width: '100%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  textAlign: 'center',
-                }}
-              >
-                {(record.creator as any)?.department_name}
-              </div>
-            )}
-            <div>{formatNumberWithCommas(totalPrice)}</div>
+          <div className="flex flex-col gap-2">
+            <div
+              title={(record.creator as any)?.department_name}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {(record.creator as any)?.department_name}
+            </div>
+            <div
+              title={formatNumberWithCommas(totalPrice)}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {formatNumberWithCommas(totalPrice)}
+            </div>
           </div>
         ),
       },

@@ -83,6 +83,11 @@ function QuotaDetail() {
     method: 'get',
   })
 
+  const hasEmbeddedContact =
+    queryBasic?.data?.customer_contact_department !== undefined ||
+    queryBasic?.data?.customer_contact_name !== undefined ||
+    queryBasic?.data?.customer_contact_email !== undefined
+
   const { data: dataCustomerContact, isFetching: isFetchingCustomerContact } =
     useCustom({
       url: (queryBasic?.data?.customer_contact_id
@@ -90,9 +95,17 @@ function QuotaDetail() {
         : '') as string,
       method: 'get',
       queryOptions: {
-        enabled: !!queryBasic?.data?.customer_contact_id,
+        enabled: !!queryBasic?.data?.customer_contact_id && !hasEmbeddedContact,
       },
     })
+
+  const customerContactDisplay = hasEmbeddedContact
+    ? {
+        department_name: queryBasic?.data?.customer_contact_department ?? '---',
+        contact_person_name: queryBasic?.data?.customer_contact_name ?? '---',
+        email: queryBasic?.data?.customer_contact_email ?? '---',
+      }
+    : dataCustomerContact?.data?.data || dataCustomerContact?.data
 
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
@@ -425,9 +438,7 @@ function QuotaDetail() {
         >
           <BasicInfo
             data={queryBasic?.data}
-            customerContact={
-              dataCustomerContact?.data?.data || dataCustomerContact?.data
-            }
+            customerContact={customerContactDisplay}
           />
           <DetailInfo
             taxRoundingMethod={taxRoundingMethod}
