@@ -62,8 +62,8 @@ export default function CreateCustomerModal({
           {...formProps}
           onFinish={handleFinish}
           initialValues={initialValues}
-          labelCol={{ xs: 24, sm: 8, md: 6, lg: 5, xl: 4 }}
-          wrapperCol={{ xs: 24, sm: 16, md: 14 }}
+          labelCol={{ xs: 24, sm: 10, md: 10, lg: 5, xl: 5 }}
+          wrapperCol={{ xs: 24, sm: 14, md: 14 }}
           labelAlign="left"
           layout="horizontal"
           colon={false}

@@ -581,9 +581,7 @@ export default function CustomerListPage() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                <Text className={'!font-light !italic'}>
-                  {creditDate ?? '-'}
-                </Text>
+                <Text>{creditDate ?? '-'}</Text>
               </div>
               <div
                 title={antiDate ?? undefined}
@@ -593,7 +591,7 @@ export default function CustomerListPage() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                <Text className={'!font-light !italic'}>{antiDate ?? '-'}</Text>
+                <Text>{antiDate ?? '-'}</Text>
               </div>
             </Space>
           )
