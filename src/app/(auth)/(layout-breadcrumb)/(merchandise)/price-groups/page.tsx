@@ -234,6 +234,7 @@ function Page() {
             dataIndex={['packaging_code']}
             title={t('price-groups.fields.product_code')}
             align="left"
+            width="8%"
             render={(product_code, record) => (
               <Link
                 href={`/products/show/${record.product_id}`}
@@ -250,10 +251,12 @@ function Page() {
             dataIndex="product_name"
             title={t('price-groups.fields.product_name')}
             align="left"
+            width="10%"
           />
           <Table.Column
             dataIndex="packaging_name"
             title={t('price-groups.fields.packaging_name')}
+            width="10%"
           />
           <Table.Column
             dataIndex="selling_price"

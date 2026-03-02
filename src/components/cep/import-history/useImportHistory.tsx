@@ -102,11 +102,35 @@ function useImportHistory() {
         key: 'id',
         dataIndex: 'id',
         title: t('import_history.table.headers.taskCode'),
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (val: string) => (
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {val ?? '-'}
+          </div>
+        ),
       },
       {
         key: 'status',
         title: t('import_history.table.headers.status'),
         dataIndex: 'status',
+        width: '8%',
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render(value: string) {
           const status = statusMap[value]
           return <Tag color={status.color}>{status.text}</Tag>
@@ -116,19 +140,59 @@ function useImportHistory() {
         key: 'common_name',
         dataIndex: 'common_name',
         title: t('import_history.table.headers.type'),
+        width: '11%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render(value: string) {
           const commonName = commonNameMap[value]
-          return <Text>{commonName.text}</Text>
+          return (
+            <div
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {commonName?.text ?? value}
+            </div>
+          )
         },
       },
       {
         key: 'created_by',
         dataIndex: 'created_by',
         title: t('import_history.table.headers.creator'),
+        width: '27%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (val: string) => (
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {val ?? '-'}
+          </div>
+        ),
       },
       {
         key: 'completedAt',
         dataIndex: 'completedAt',
+        width: '11%',
         title: (
           <div className="flex flex-col">
             <Text
@@ -147,6 +211,9 @@ function useImportHistory() {
             </Text>
           </div>
         ),
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render: (_: any, record: any) => (
           <div className="flex flex-col">
             <Text>
@@ -166,6 +233,7 @@ function useImportHistory() {
         key: 'result',
         dataIndex: 'result',
         title: t('import_history.table.headers.result'),
+        width: '14%',
         children: [
           {
             title: (
@@ -175,6 +243,10 @@ function useImportHistory() {
             ),
             dataIndex: 'data_inserted',
             key: 'data_inserted',
+            width: '7%',
+            onCell: () => ({
+              style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+            }),
           },
           {
             title: (
@@ -184,6 +256,10 @@ function useImportHistory() {
             ),
             dataIndex: 'data_failed',
             key: 'data_failed',
+            width: '7%',
+            onCell: () => ({
+              style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+            }),
           },
         ],
       },
@@ -191,6 +267,10 @@ function useImportHistory() {
         key: 'dataCount',
         dataIndex: 'dataCount',
         title: t('import_history.table.headers.dataCount'),
+        width: '7%',
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render(_, record) {
           return (
             <Text>
@@ -205,6 +285,10 @@ function useImportHistory() {
         key: 'url_file_failed',
         dataIndex: 'url_file_failed',
         title: t('import_history.table.headers.errorResult'),
+        width: '14%',
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render(value, record) {
           if (record.status == 'PENDING') {
             return null

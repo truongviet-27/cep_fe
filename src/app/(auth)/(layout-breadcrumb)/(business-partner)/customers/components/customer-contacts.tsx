@@ -60,6 +60,7 @@ function CustomerContacts(
                 dataSource={fields}
                 rowKey="key"
                 pagination={false}
+                scroll={undefined}
                 columns={[
                   {
                     title: (
@@ -71,7 +72,7 @@ function CustomerContacts(
                     width: '18%',
                     render: (field) => (
                       <Form.Item name={[field.name, 'department_name']} noStyle>
-                        <Input />
+                        <Input style={{ width: '100%' }} />
                       </Form.Item>
                     ),
                   },
@@ -102,7 +103,7 @@ function CustomerContacts(
                         required
                         noStyle
                       >
-                        <Input />
+                        <Input style={{ width: '100%' }} />
                       </Form.Item>
                     ),
                   },
@@ -113,6 +114,7 @@ function CustomerContacts(
                       </span>
                     ),
                     key: 'email',
+                    width: '36%',
                     render: (field) => (
                       <Form.Item
                         name={[field.name, 'email']}
@@ -160,7 +162,7 @@ function CustomerContacts(
                         required
                         noStyle
                       >
-                        <Input type="email" />
+                        <Input type="email" style={{ width: '100%' }} />
                       </Form.Item>
                     ),
                   },
@@ -171,7 +173,7 @@ function CustomerContacts(
                       </span>
                     ),
                     key: 'created_at',
-                    width: '150px',
+                    width: '14%',
                     render: (field) => {
                       const createdAt = form.getFieldValue([
                         'receivers',
@@ -190,7 +192,7 @@ function CustomerContacts(
                       </span>
                     ),
                     key: 'actions',
-                    width: '100px',
+                    width: '14%',
                     align: 'center',
                     render: (field) => {
                       return (
