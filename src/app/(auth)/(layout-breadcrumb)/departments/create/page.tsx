@@ -196,8 +196,10 @@ export default function Page() {
                 <Button
                   type="link"
                   onClick={() => show(data?.data?.id)}
-                  className="text-blue-500"
-                  style={{ marginLeft: -16 }}
+                  style={{
+                    marginLeft: -16,
+                    color: PRIMARY,
+                  }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>

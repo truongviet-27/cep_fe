@@ -176,12 +176,12 @@ function QuotaDetail() {
         label: t('quotas.show.actions.resend_email_to_customer'),
       })
       actions.push({
-        value: 'cancel-quota',
-        label: t('quotas.show.actions.move_to_cancel'),
-      })
-      actions.push({
         value: 'mark-completed',
         label: t('quotas.show.actions.move_to_order'),
+      })
+      actions.push({
+        value: 'cancel-quota',
+        label: t('quotas.show.actions.move_to_cancel'),
       })
     }
 
@@ -324,6 +324,13 @@ function QuotaDetail() {
                   type="primary"
                   onClick={handleUpdateStatus}
                   autoInsertSpace={false}
+                  disabled={
+                    isFetching ||
+                    isFetchingProducts ||
+                    isFetchingHistory ||
+                    isFetchingCustomerContact ||
+                    !queryBasic?.data
+                  }
                 >
                   {t('quotas.action.update_status')}
                 </Button>

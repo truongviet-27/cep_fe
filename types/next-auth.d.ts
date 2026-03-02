@@ -9,6 +9,7 @@ declare module 'next-auth' {
     refreshToken?: string
     idToken?: string
     expiresAt?: number
+    provider?: string
     error?: string
     tenant?: {
       id: string
@@ -28,6 +29,7 @@ declare module 'next-auth/jwt' {
     idToken?: string
     expiresAt?: number
     error?: string
+    provider?: string
     name?: string
     given_name?: string
     family_name?: string
