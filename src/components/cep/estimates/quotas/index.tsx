@@ -530,6 +530,7 @@ function QuotaList() {
           >
             <Flex gap={4} justify="center" style={{ width: '100%' }}>
               <ShowButton
+                autoInsertSpace={false}
                 size="small"
                 icon={null}
                 recordItemId={record.id}
@@ -545,6 +546,7 @@ function QuotaList() {
                 record.status === QuotaStatus.Rejected) &&
                 (permission?.is_module_admin || record.is_author) && (
                   <EditButton
+                    autoInsertSpace={false}
                     size="small"
                     icon={null}
                     recordItemId={record.id}
@@ -558,6 +560,7 @@ function QuotaList() {
                 )}
 
               <CloneButton
+                autoInsertSpace={false}
                 size="small"
                 icon={null}
                 recordItemId={record.id}
@@ -612,6 +615,7 @@ function QuotaList() {
                 record.status === QuotaStatus.Cancelled) &&
                 (record.is_author || permission?.is_module_admin) && (
                   <DeleteButton
+                    autoInsertSpace={false}
                     successNotification={() => {
                       return notificationFunction()
                     }}
