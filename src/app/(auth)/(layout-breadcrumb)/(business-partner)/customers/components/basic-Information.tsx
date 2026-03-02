@@ -292,8 +292,8 @@ function BasicInformation(
           label={boldText(t('customers.fields.name'))}
           required
         >
-          <Row gutter={8} style={{ width: '100%' }}>
-            <Col>
+          <Row>
+            <Col style={{ width: 575 }}>
               <Form.Item name="name" rules={[rule]} required>
                 <Input style={{ maxWidth: 560 }} />
               </Form.Item>

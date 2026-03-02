@@ -158,10 +158,7 @@ function AddressContact(
             }
           />
         </Form.Item>
-        <Form.Item
-          label={boldText(t('customers.show.department_in_charge'))}
-          required
-        >
+        <Form.Item label={boldText(t('customers.show.department_in_charge'))}>
           <Row gutter={8} align={'middle'}>
             <Col>
               <CoreAutocompleteAPI
@@ -185,7 +182,7 @@ function AddressContact(
                   )
                   form.setFieldValue(
                     ['department_in_charge', 'name'],
-                    valueOption.name,
+                    valueOption?.name ?? null,
                   )
                 }}
                 overwriteOptionsOnSearch={true}
