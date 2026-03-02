@@ -54,18 +54,28 @@ function BasicInfoExtended({
   >(null)
   const [isUnlimited, setIsUnlimited] = useState(false)
 
+  const hasEmbeddedContact =
+    data?.customer_contact_department !== undefined ||
+    data?.customer_contact_name !== undefined ||
+    data?.customer_contact_email !== undefined
+
   const { data: customerContactData } = useCustom({
     url: data?.customer_contact_id
       ? `${apiUrl}/customer-contacts/${data.customer_contact_id}`
       : '',
     method: 'get',
     queryOptions: {
-      enabled: !!data?.customer_contact_id,
+      enabled: !!data?.customer_contact_id && !hasEmbeddedContact,
     },
   })
 
-  const customerContact =
-    customerContactData?.data?.data || customerContactData?.data
+  const customerContact = hasEmbeddedContact
+    ? {
+        department_name: data?.customer_contact_department ?? '---',
+        contact_person_name: data?.customer_contact_name ?? '---',
+        email: data?.customer_contact_email ?? '---',
+      }
+    : customerContactData?.data?.data || customerContactData?.data
 
   const handleEditPeriod = () => {
     const end = agrredPriceValidTo ? dayjs(agrredPriceValidTo) : null
