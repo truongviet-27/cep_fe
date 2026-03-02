@@ -18,6 +18,9 @@
   "detail": "見積詳細",
   "page_list": {},
   "create_quota": "見積作成",
+  "form": {
+    "is_create_quota_template": "テンプレート保存"
+  },
   "popups": {
     "createFromTemplate": {
       "title": "テンプレートから作成",
