@@ -338,6 +338,8 @@
     "search": {
       "estimate_number": "Estimate Number",
       "business_partner": "Business Partner",
+      "customer": "Customer",
+      "customer_search_placeholder": "Search by customer",
       "creator": "Creator",
       "department": "Department (Branch/Division/Section)",
       "tag_name": "Tag Name",

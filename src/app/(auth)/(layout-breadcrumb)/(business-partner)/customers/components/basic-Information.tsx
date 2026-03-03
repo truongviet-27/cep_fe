@@ -292,8 +292,8 @@ function BasicInformation(
           label={boldText(t('customers.fields.name'))}
           required
         >
-          <Row gutter={8} style={{ width: '100%' }}>
-            <Col>
+          <Row>
+            <Col style={{ width: 575 }}>
               <Form.Item name="name" rules={[rule]} required>
                 <Input style={{ maxWidth: 560 }} />
               </Form.Item>
@@ -328,8 +328,8 @@ function BasicInformation(
         </Form.Item>
 
         <Form.Item label={boldText(t('customers.fields.country'))}>
-          <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
-            <Col>
+          <Row align="top" gutter={8} wrap={false} style={{ width: '100%' }}>
+            <Col flex="none">
               <Form.Item name="country" rules={[rule]} initialValue="日本">
                 <Select
                   allowClear
@@ -345,20 +345,38 @@ function BasicInformation(
 
             {isJapan && (
               <>
-                <Col>
-                  <Form.Item>
-                    <Typography.Text>
-                      {t('customers.fields.corporate_number')}
-                    </Typography.Text>
-                  </Form.Item>
-                </Col>
-
-                <Col>
-                  <Form.Item name="corporate_number" rules={[rule]}>
+                <Col flex="none" style={{ minWidth: 0 }}>
+                  <Form.Item
+                    label={boldText(t('customers.fields.corporate_number'))}
+                    name="corporate_number"
+                    rules={[
+                      {
+                        validator: (_, value) => {
+                          if (value != null && value !== '') {
+                            if (!/^\d*$/.test(value)) {
+                              return Promise.reject(
+                                t(
+                                  'validation.customer.corporate_number.numeric_only',
+                                ),
+                              )
+                            }
+                            if (value.length > 50) {
+                              return Promise.reject(
+                                t('validation.customer.corporate_number.max', {
+                                  max: 50,
+                                }),
+                              )
+                            }
+                          }
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
                     <Input style={{ maxWidth: 300 }} />
                   </Form.Item>
                 </Col>
-                <Col>
+                <Col flex="none">
                   <Form.Item>
                     <Button
                       type={'primary'}

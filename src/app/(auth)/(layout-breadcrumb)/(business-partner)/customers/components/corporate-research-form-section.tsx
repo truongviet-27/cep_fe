@@ -85,6 +85,7 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'material_name',
+      width: '20%',
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'material_name']} noStyle>
           {record.material_name}
@@ -98,7 +99,7 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'judgement',
-      width: 150,
+      width: '12%',
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'judgement']} noStyle initialValue="A">
           {record.judgement == 'T' ? '△' : record.judgement}
@@ -112,6 +113,7 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'files',
+      width: '21%',
       render: (_: any, record: any) => {
         return (
           <>
@@ -127,7 +129,7 @@ export const CorporateResearchFormSection = (
         <span className={styles.tableTitle}>{t('common.updated_by')}</span>
       ),
       key: 'editor',
-      width: 120,
+      width: '15%',
       render: (_: any, record: any) =>
         record.editor?.name ?? record.author?.name,
     },
@@ -138,7 +140,7 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'updated_at',
-      width: 180,
+      width: '16%',
       render: (_: any, record: any) =>
         (record?.updated_at || record?.created_at) &&
         dayjs(record?.updated_at ?? record?.created_at ?? '').format(
@@ -148,10 +150,10 @@ export const CorporateResearchFormSection = (
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
       key: 'actions',
-      width: 120,
+      width: '16%',
       align: 'center' as const,
       render: (_: any, record: any, index: number) => (
-        <Space>
+        <Space wrap size={4}>
           <EditButton
             size="small"
             type="primary"
@@ -257,6 +259,7 @@ export const CorporateResearchFormSection = (
                   rowKey="key"
                   bordered
                   pagination={false}
+                  scroll={undefined}
                 />
               )
             }}

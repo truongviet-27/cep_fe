@@ -163,6 +163,7 @@ function Page() {
         <Table.Column
           dataIndex="code"
           title={t('employees.fields.code')}
+          width="8%"
           render={(value, record) => (
             <Link
               style={{ textDecoration: 'underline' }}
@@ -176,29 +177,37 @@ function Page() {
           dataIndex="name"
           title={t('employees.fields.name')}
           align={'left'}
+          width="15%"
         />
         <Table.Column
           dataIndex={['department']}
           title={t('employees.fields.department')}
           align={'left'}
+          width="50%"
           render={(value) => renderFieldNotSet(value?.name)}
         />
         <Table.Column
           dataIndex={['email']}
           title={t('employees.fields.email')}
+          width="13%"
           render={(value) => <EmailField value={value} />}
         />
         <Table.Column
           dataIndex={['role']}
           title={t('employees.fields.role')}
+          width="7%"
           render={(value) => renderFieldNotSet(value?.display_name)}
           align={'left'}
         />
         <Table.Column
           title={t('table.actions')}
           dataIndex="actions"
+          width="7%"
+          onCell={() => ({
+            style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+          })}
           render={(_, record: BaseRecord) => (
-            <Space>
+            <Space wrap size={4}>
               <ShowButton hideText size="small" recordItemId={record.id} />
               <EditButton hideText size="small" recordItemId={record.id} />
             </Space>

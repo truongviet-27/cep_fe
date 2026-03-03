@@ -3,6 +3,7 @@
 import StatusDashboard from '@components/cep/estimates/agreed-price/components/status-dashboard'
 import { AgreedPriceStatus } from '@components/cep/estimates/agreed-price/enum'
 import { getAgreedPriceStatusStyle } from '@components/cep/estimates/agreed-price/utils'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { DeleteButton, ShowButton, useSelect, useTable } from '@refinedev/antd'
@@ -58,6 +59,16 @@ const AgreedPriceQuotaTab = () => {
 
   const { permission } = useUserStore((state) => state)
 
+  const { selectProps: customerSelectProps } = useSelect({
+    resource: 'customers',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
+
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
     optionLabel: 'name',
@@ -67,19 +78,6 @@ const AgreedPriceQuotaTab = () => {
       pageSize: 100,
     },
   })
-
-  const getStatusTag = (status?: string) => {
-    const statusEnum = status as AgreedPriceStatus
-    const result = getAgreedPriceStatusStyle(statusEnum, t)
-    return (
-      <Tag
-        color={result.background}
-        style={{ color: result.color, marginRight: 0 }}
-      >
-        {result.text}
-      </Tag>
-    )
-  }
 
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [updateForm] = Form.useForm()
@@ -133,7 +131,7 @@ const AgreedPriceQuotaTab = () => {
           values: valuesToSend,
           successNotification: () => ({
             message: t('notifications.success'),
-            description: t('notifications.editSuccess'),
+            description: t('notifications.success'),
             type: 'success',
           }),
         },
@@ -198,22 +196,65 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.status'),
         dataIndex: 'status',
         key: 'status',
+        width: '7%',
+        onCell: () => ({
+          style: { padding: '2px 2px', minWidth: 0, overflow: 'hidden' },
+        }),
         render: (_: any, record: QuotaAgreedPrice) => {
           const mappedStatus = mapStatusFromApi(record.status)
-          return getStatusTag(mappedStatus)
+          return (
+            <div
+              style={{
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
+              <Tag
+                color={getAgreedPriceStatusStyle(mappedStatus, t).background}
+                style={{
+                  color: getAgreedPriceStatusStyle(mappedStatus, t).color,
+                  marginRight: 0,
+                  maxWidth: '100%',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: 1.3,
+                }}
+              >
+                {getAgreedPriceStatusStyle(mappedStatus, t).text}
+              </Tag>
+            </div>
+          )
         },
       },
       {
         title: t('agreed_prices.table.estimate_number'),
         dataIndex: 'quota_code',
         key: 'quota_code',
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (quotaCode: string, record: QuotaAgreedPrice) => (
           <Button
             type="link"
             onClick={() =>
               go({ to: `/agreed-prices/quota/${record.quota_id}` })
             }
-            style={{ textDecoration: 'underline' }}
+            style={{
+              textDecoration: 'underline',
+              padding: 0,
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
           >
             {quotaCode}
           </Button>
@@ -223,6 +264,15 @@ const AgreedPriceQuotaTab = () => {
         title: t('agreed_prices.table.category'),
         dataIndex: 'category',
         key: 'category',
+        width: '6%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (category: string) => {
           if (category === 'merchandise') {
             return t('agreed_prices.category.merchandise')
@@ -236,19 +286,56 @@ const AgreedPriceQuotaTab = () => {
       {
         title: t('agreed_prices.table.customer'),
         key: 'customer_name',
-        render: (_: unknown, record: QuotaAgreedPrice) =>
-          record.customer?.name ?? '-',
+        width: '12%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (_: unknown, record: QuotaAgreedPrice) => (
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {record.customer?.name ?? '-'}
+          </div>
+        ),
       },
       {
         title: t('agreed_prices.table.creator'),
         key: 'created_by_name',
-        render: (_: unknown, record: QuotaAgreedPrice) =>
-          record.creator?.name ?? '-',
+        width: '10%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (_: unknown, record: QuotaAgreedPrice) => (
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {record.creator?.name ?? '-'}
+          </div>
+        ),
       },
       {
         title: t('agreed_prices.table.product_count'),
         dataIndex: 'number_products',
         key: 'number_products',
+        width: '6%',
         align: 'right',
       },
       {
@@ -260,7 +347,7 @@ const AgreedPriceQuotaTab = () => {
         ),
         dataIndex: 'total_price',
         key: 'total_price',
-        align: 'center',
+        align: 'right',
         minWidth: 180,
         onCell: () => ({
           style: {
@@ -274,43 +361,36 @@ const AgreedPriceQuotaTab = () => {
           },
         }),
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
-          <div className="flex flex-col gap-2">
-            <div
-              title={(record.creator as any)?.department_name}
-              style={{
-                display: 'block',
-                width: '100%',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'center',
-              }}
-            >
-              {(record.creator as any)?.department_name}
-            </div>
-            <div
-              title={formatNumberWithCommas(totalPrice)}
-              style={{
-                display: 'block',
-                width: '100%',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'center',
-              }}
-            >
-              {formatNumberWithCommas(totalPrice)}
-            </div>
+          <div>
+            {(record.creator as any)?.department_name && (
+              <div
+                style={{
+                  fontSize: '16px',
+                  color: '#666',
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center',
+                }}
+              >
+                {(record.creator as any)?.department_name}
+              </div>
+            )}
+            <div>{formatNumberWithCommas(totalPrice)}</div>
           </div>
         ),
       },
       {
         title: (
           <div>
-            <div>見積期限</div>
+            <div style={{ color: '#2784FF' }}>適用開始</div>
+            <div style={{ color: '#FF6918' }}>適用終了</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',
+        width: '10%',
         render: (_, record: any) => {
           let calculatedStatus = ''
           const validToDate = record.valid_to
@@ -343,23 +423,19 @@ const AgreedPriceQuotaTab = () => {
           )
         },
       },
-      // {
-      //   title: t('agreed_prices.table.reference_count'),
-      //   dataIndex: 'number_references',
-      //   key: 'number_references',
-      //   align: 'right',
-      // },
       {
         title: '更新',
         dataIndex: 'number_updating',
         key: 'number_updating',
+        width: '5%',
         align: 'center',
       },
       {
         title: t('agreed_prices.table.operation'),
         key: 'operation',
+        width: '22%',
         render: (_: unknown, record: QuotaAgreedPrice) => (
-          <Space>
+          <Space wrap size={4}>
             <ShowButton
               size="small"
               recordItemId={(record as any).quota_id as number}
@@ -370,6 +446,7 @@ const AgreedPriceQuotaTab = () => {
                 backgroundColor: '#fff',
               }}
               icon={false}
+              autoInsertSpace={false}
             />
             <Button
               size="small"
@@ -379,21 +456,9 @@ const AgreedPriceQuotaTab = () => {
                 backgroundColor: '#1FDB51',
                 borderColor: '#1FDB51',
               }}
+              autoInsertSpace={false}
             >
               {t('agreed_prices.action.update')}
-            </Button>
-            <Button
-              size="small"
-              onClick={() => {
-                // TODO: Implement duplicate functionality
-              }}
-              style={{
-                color: '#fff',
-                backgroundColor: '#0161D3',
-                borderColor: '#0161D3',
-              }}
-            >
-              {t('agreed_prices.action.duplicate_quota')}
             </Button>
             <DeleteButton
               size="small"
@@ -410,6 +475,7 @@ const AgreedPriceQuotaTab = () => {
                 backgroundColor: '#E74C3C',
                 borderColor: '#E74C3C',
               }}
+              autoInsertSpace={false}
               icon={false}
             />
           </Space>
@@ -458,9 +524,14 @@ const AgreedPriceQuotaTab = () => {
             value: v.quota_code,
           },
           {
-            field: 'customer_name',
+            field: 'customer_id',
             operator: 'eq',
-            value: v.customer_name,
+            value:
+              typeof v.customer_id === 'object' &&
+              v.customer_id != null &&
+              'value' in v.customer_id
+                ? (v.customer_id as { value: number }).value
+                : v.customer_id,
           },
           {
             field: 'category',
@@ -470,7 +541,9 @@ const AgreedPriceQuotaTab = () => {
           {
             field: 'creator_name',
             operator: 'eq',
-            value: v.creator_name,
+            value:
+              (v.creator_name as { label?: string })?.label?.trim() ??
+              undefined,
           },
           {
             field: 'department_id',
@@ -482,7 +555,8 @@ const AgreedPriceQuotaTab = () => {
           {
             field: 'tag_name',
             operator: 'eq',
-            value: v.tag_name,
+            value:
+              (v.tag_name as { label?: string })?.label?.trim() ?? undefined,
           },
           {
             field: 'expiration_date',
@@ -570,7 +644,7 @@ const AgreedPriceQuotaTab = () => {
 
       <div className="my-4">
         <Row gutter={[24, 0]}>
-          <Col xs={12} md={6} lg={3} xxl={3}>
+          <Col xs={12} md={9} lg={5} xxl={4}>
             <Form.Item
               label={
                 <span className="font-bold">
@@ -578,9 +652,21 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'customer_name'}
+              name={'customer_id'}
             >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
+              <Select
+                {...customerSelectProps}
+                allowClear
+                showSearch
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue={true}
+                placeholder={t('agreed_prices.search.please_select')}
+              />
             </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={3} xxl={3}>
@@ -623,17 +709,20 @@ const AgreedPriceQuotaTab = () => {
             </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={3} xxl={3}>
-            <Form.Item
+            <CoreAutocompleteAPI
+              name="creator_name"
+              pageSize={10}
+              resource="employees"
               label={
                 <span className="font-bold">
                   {t('agreed_prices.search.creator')}
                 </span>
               }
-              layout="vertical"
-              name={'creator_name'}
-            >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
-            </Form.Item>
+              placeholder={t('agreed_prices.search.partial_match')}
+              onChangeClear={(callback) => {
+                if (callback) callback('')
+              }}
+            />
           </Col>
           <Col xs={12} md={6} lg={4} xxl={3}>
             <Form.Item
@@ -661,17 +750,20 @@ const AgreedPriceQuotaTab = () => {
             </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={3} xxl={3}>
-            <Form.Item
+            <CoreAutocompleteAPI
+              name="tag_name"
+              pageSize={10}
+              resource="tags"
               label={
                 <span className="font-bold">
                   {t('agreed_prices.search.tag_name')}
                 </span>
               }
-              layout="vertical"
-              name={'tag_name'}
-            >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
-            </Form.Item>
+              placeholder={t('agreed_prices.search.partial_match')}
+              onChangeClear={(callback) => {
+                if (callback) callback('')
+              }}
+            />
           </Col>
         </Row>
         <Row gutter={[24, 0]}>
@@ -758,8 +850,9 @@ const AgreedPriceQuotaTab = () => {
         return (
           <CommonTable<QuotaAgreedPrice>
             {...refinedTableProps}
-            rowKey={'id'}
+            rowKey="id"
             columns={columns}
+            scroll={undefined}
           />
         )
       })()}

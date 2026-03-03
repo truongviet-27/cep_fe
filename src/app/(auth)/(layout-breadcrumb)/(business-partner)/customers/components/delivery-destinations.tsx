@@ -86,6 +86,7 @@ function DeliveryDestinations(
                 dataSource={fields}
                 rowKey="key"
                 pagination={false}
+                scroll={undefined}
                 columns={[
                   {
                     title: (
@@ -94,7 +95,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'delivery_address_code',
-                    width: 200,
+                    width: '12%',
                     render: (field) => (
                       <Form.Item
                         name={[field.name, 'delivery_address_code']}
@@ -132,7 +133,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'post_code',
-                    width: 200,
+                    width: '12%',
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'post_code']}
@@ -150,6 +151,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'address',
+                    width: '28%',
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'address']}
@@ -168,7 +170,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'phone',
-                    width: 200,
+                    width: '14%',
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'phone']}
@@ -186,7 +188,7 @@ function DeliveryDestinations(
                       </span>
                     ),
                     key: 'actions',
-                    width: 200,
+                    width: '18%',
                     align: 'center',
                     render: (field, _, idx) => (
                       <Button

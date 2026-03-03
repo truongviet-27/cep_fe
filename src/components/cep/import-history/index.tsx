@@ -165,7 +165,7 @@ function ImportHistory() {
           </Col>
         </Row>
 
-        <CommonTable columns={columns} {...tableProps} />
+        <CommonTable columns={columns} {...tableProps} scroll={undefined} />
       </Form>
     </PageContainer>
   )

@@ -28,10 +28,35 @@ const authProvider: AuthProvider = {
 
     try {
       const sessionData = await getSessionOnce()
+      let idToken: string | undefined
+      try {
+        const res = await fetch('/api/auth/get-id-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            accessToken: sessionData?.accessToken,
+            refreshToken: sessionData?.refreshToken,
+            provider: sessionData?.provider,
+          }),
+        })
+        if (res.ok) {
+          const data = (await res.json()) as {
+            success: boolean
+            idToken?: string | null
+          }
+          if (data.success && data.idToken) {
+            idToken = data.idToken
+          }
+        }
+      } catch (e) {
+        console.error('Call /api/auth/get-id-token failed:', e)
+      }
 
-      if (sessionData?.idToken) {
+      if (idToken) {
         const keycloakUrl = process.env.NEXT_PUBLIC_ISSUER || ''
-        const endSessionEndpoint = `${keycloakUrl}/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}&id_token_hint=${sessionData.idToken}`
+        const endSessionEndpoint = `${keycloakUrl}/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}&id_token_hint=${idToken}`
 
         await signOut({ redirect: false })
         clearSessionData()

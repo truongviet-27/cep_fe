@@ -16,7 +16,7 @@ function Tags() {
   const [isCreating, setIsCreating] = useState(false)
   const creatingTagRef = useRef<string | null>(null) // Prevent duplicate creation
   const form = Form.useFormInstance()
-  const selectedTags: SelectedTag[] = form?.getFieldValue('tags') || []
+  const selectedTags: SelectedTag[] = Form.useWatch('tags', form) || []
 
   const { mutate: createTag } = useCreate({
     resource: 'tags',

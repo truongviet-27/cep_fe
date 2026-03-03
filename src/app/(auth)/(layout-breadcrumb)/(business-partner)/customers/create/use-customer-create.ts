@@ -12,14 +12,17 @@ import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import type { CrudFilter } from '@refinedev/core'
+import { useUserStore } from '@stores/useUserStore'
 
 export const useCustomerCreate = () => {
   const t = useTranslate()
   const apiUrl = useApiUrl()
   const go = useGo()
+
+  const { permission } = useUserStore.getState()
 
   const {
     formProps,
@@ -165,13 +168,25 @@ export const useCustomerCreate = () => {
     }
   }, [isAutomatic, form, refetchCodeGen])
 
-  const queryOptions: CrudFilter[] = [
-    {
-      field: 'name',
-      operator: 'eq',
-      value: DEPARTMENT_DEFAULT,
-    },
-  ]
+  const queryOptions: CrudFilter[] = useMemo(() => {
+    if (permission?.department) {
+      return [
+        {
+          field: 'id',
+          operator: 'eq',
+          value: permission.department.id,
+        },
+      ]
+    } else {
+      return [
+        {
+          field: 'name',
+          operator: 'eq',
+          value: DEPARTMENT_DEFAULT,
+        },
+      ]
+    }
+  }, [permission])
 
   const { data: departmentData } = useCustom({
     method: 'get',
