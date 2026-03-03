@@ -19,8 +19,17 @@ import TagForm from './tag'
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const { isUpdateMode, isLoading, methods, taxRoundingMethod } =
-    useController()
+  const {
+    isUpdateMode,
+    isLoading,
+    methods,
+    taxRoundingMethod,
+    handleSaveDraft,
+    handleApplyDraft,
+    isPendingDraft,
+    dataQuotaTemplateDraft,
+    isFetchingQuotaTemplateDraft,
+  } = useController()
 
   return (
     <PageContainer
@@ -106,6 +115,28 @@ const QuoteTemplateFormEditContainer: FC = () => {
               )}
             </Space>
             <Space className="items-end">
+              {!isUpdateMode &&
+                dataQuotaTemplateDraft?.data &&
+                Array.isArray(dataQuotaTemplateDraft.data) &&
+                dataQuotaTemplateDraft.data.length > 0 && (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleApplyDraft}
+                    disabled={isFetchingQuotaTemplateDraft}
+                  >
+                    {t('buttons.apply_draft')}
+                  </Button>
+                )}
+              {!isUpdateMode && (
+                <Button
+                  type="primary"
+                  onClick={handleSaveDraft}
+                  loading={isPendingDraft}
+                >
+                  {t('buttons.draft')}
+                </Button>
+              )}
               <Button {...methods.saveButtonProps} type="primary">
                 {isUpdateMode ? t('buttons.save') : t('buttons.create')}
               </Button>

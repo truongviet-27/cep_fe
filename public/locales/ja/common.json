@@ -53,7 +53,9 @@
     "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？",
     "clone": "クローン",
     "notAccessTitle": "",
-    "update": "更新"
+    "update": "更新",
+    "draft": "下書き",
+    "apply_draft": "下書きを適用"
   },
   "placeholders": {
     "partial_match": "部分一致",

@@ -1,7 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useForm } from '@refinedev/antd'
-import { useGo, useParsed } from '@refinedev/core'
-import type { ProductDetail, StoreProductInput } from '@sdk/hey-api'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useGo,
+  useParsed,
+  useTranslate,
+} from '@refinedev/core'
+import type {
+  DraftControllerIndexResponse,
+  ProductDetail,
+  StoreProductInput,
+} from '@sdk/hey-api'
+import { message } from 'antd'
 
 export type ProductFormType = {
   unit: string
@@ -28,6 +41,24 @@ export type ProductFormType = {
 function useProductForm() {
   const { params } = useParsed()
   const go = useGo()
+  const apiUrl = useApiUrl()
+  const t = useTranslate()
+
+  const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+
+  const { data: dataProductDraft, isFetching: isFetchingProductDraft } =
+    useCustom<DraftControllerIndexResponse>({
+      method: 'get',
+      url: `${apiUrl}/drafts`,
+      config: {
+        query: {
+          type: 'product',
+        },
+      },
+      queryOptions: {
+        enabled: !params?.id, // Only fetch draft when creating new product
+      },
+    })
 
   const methods = useForm<ProductFormType>({
     resource: 'products',
@@ -81,13 +112,74 @@ function useProductForm() {
     methods.onFinish(valuesConverted)
   }
 
+  const handleSaveDraft = () => {
+    const values: any = methods.form.getFieldsValue()
+
+    const packagings = (values?.packagings || []).map(
+      (packaging: ProductPackagingInputType) => {
+        return {
+          ...packaging,
+        }
+      },
+    )
+
+    const payload = {
+      ...values,
+      packagings,
+    }
+
+    mutateDraft(
+      {
+        url: `${apiUrl}/drafts`,
+        method: 'post',
+        values: {
+          type: 'product',
+          payload,
+        },
+      },
+      {
+        onSuccess() {
+          message.success(t('notifications.success'))
+          go({ to: { resource: 'products', action: 'list' } })
+        },
+        onError(error: any) {
+          message.error(
+            error?.response?.data?.message || t('notifications.error'),
+          )
+        },
+      },
+    )
+  }
+
+  const handleApplyDraft = () => {
+    if (
+      !dataProductDraft?.data ||
+      !Array.isArray(dataProductDraft.data) ||
+      dataProductDraft.data.length === 0
+    ) {
+      return
+    }
+
+    const draft: any = dataProductDraft.data[0]
+    const draftPayload = draft.payload || draft
+
+    methods.form.setFieldsValue({
+      ...draftPayload,
+    })
+
+    message.success(t('notifications.success'))
+  }
+
   return [
     {
       methods,
       isLoadingSubmit: methods.saveButtonProps.loading,
       isUpdateMode: !!params?.id,
+      isPendingDraft,
+      dataProductDraft,
+      isFetchingProductDraft,
     },
-    { handleOnSubmit },
+    { handleOnSubmit, handleSaveDraft, handleApplyDraft },
   ] as const
 }
 

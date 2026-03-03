@@ -108,6 +108,13 @@ import type {
   DepartmentControllerUpdateOrderData,
   DepartmentControllerUpdateOrderResponses,
   DepartmentControllerUpdateOrderErrors,
+  DepartmentControllerFindFirstData,
+  DepartmentControllerFindFirstResponses,
+  DepartmentControllerFindFirstErrors,
+  DraftControllerIndexData,
+  DraftControllerIndexResponses,
+  DraftControllerStoreData,
+  DraftControllerStoreResponses,
   EmployeeControllerIndexData,
   EmployeeControllerIndexResponses,
   EmployeeControllerIndexErrors,
@@ -305,6 +312,9 @@ import type {
   QuotaControllerMarkCompletedData,
   QuotaControllerMarkCompletedResponses,
   QuotaControllerMarkCompletedErrors,
+  QuotaControllerResendEmailToCustomerData,
+  QuotaControllerResendEmailToCustomerResponses,
+  QuotaControllerResendEmailToCustomerErrors,
   QuotaControllerCancelQuotaData,
   QuotaControllerCancelQuotaResponses,
   QuotaControllerSendToApproverData,
@@ -421,6 +431,9 @@ import {
   zDepartmentControllerShowData,
   zDepartmentControllerUpdateData,
   zDepartmentControllerUpdateOrderData,
+  zDepartmentControllerFindFirstData,
+  zDraftControllerIndexData,
+  zDraftControllerStoreData,
   zEmployeeControllerIndexData,
   zEmployeeControllerStoreData,
   zEmployeeControllerDestroyData,
@@ -488,6 +501,7 @@ import {
   zQuotaControllerApproveStepData,
   zQuotaControllerSendToCustomerData,
   zQuotaControllerMarkCompletedData,
+  zQuotaControllerResendEmailToCustomerData,
   zQuotaControllerCancelQuotaData,
   zQuotaControllerSendToApproverData,
   zQuotaControllerPreviewPdfData,
@@ -1192,6 +1206,10 @@ export const customerControllerUpdateStatus = <
     ],
     url: '/api/v1/customers/id}/status',
     ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 
@@ -1509,6 +1527,94 @@ export const departmentControllerUpdateOrder = <
       },
     ],
     url: '/api/v1/departments/ordering',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Find first department by dynamic filters
+ * Find first department matching dynamic search criteria
+ */
+export const departmentControllerFindFirst = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<DepartmentControllerFindFirstData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<
+    DepartmentControllerFindFirstResponses,
+    DepartmentControllerFindFirstErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDepartmentControllerFindFirstData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/departments/find-first',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * List drafts
+ * List drafts of current user, optionally filtered by type
+ */
+export const draftControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<DraftControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    DraftControllerIndexResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDraftControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/drafts',
+    ...options,
+  })
+}
+
+/**
+ * Upsert draft
+ * Create or update a draft for current user and tenant by type
+ */
+export const draftControllerStore = <ThrowOnError extends boolean = false>(
+  options: Options<DraftControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    DraftControllerStoreResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDraftControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/drafts',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3445,6 +3551,38 @@ export const quotaControllerMarkCompleted = <
       },
     ],
     url: '/api/v1/quotas/mark-completed',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * Resend quotas to customers
+ * Resend approved quotas to customers via email. This operation updates quota status and queues email sending jobs.
+ */
+export const quotaControllerResendEmailToCustomer = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerResendEmailToCustomerData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerResendEmailToCustomerResponses,
+    QuotaControllerResendEmailToCustomerErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerResendEmailToCustomerData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/resend-email-to-customer',
     ...options,
     headers: {
       'Content-Type': 'application/json',

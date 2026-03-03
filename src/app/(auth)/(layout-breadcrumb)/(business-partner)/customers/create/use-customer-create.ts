@@ -8,7 +8,10 @@ import {
   useModal,
   useTranslate,
 } from '@refinedev/core'
-import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
+import type {
+  CodeIssueSetting,
+  DraftControllerIndexResponse,
+} from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import { message } from 'antd'
@@ -23,6 +26,19 @@ export const useCustomerCreate = () => {
   const go = useGo()
 
   const { permission } = useUserStore.getState()
+
+  const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+
+  const { data: dataCustomerDraft, isFetching: isFetchingCustomerDraft } =
+    useCustom<DraftControllerIndexResponse>({
+      method: 'get',
+      url: `${apiUrl}/drafts`,
+      config: {
+        query: {
+          type: 'customer',
+        },
+      },
+    })
 
   const {
     formProps,
@@ -211,6 +227,95 @@ export const useCustomerCreate = () => {
     }
   }, [departmentData, form])
 
+  const handleSaveDraft = () => {
+    const values: any = form.getFieldsValue()
+
+    let company_type = values?.company_type
+    let industry = values?.industry
+    if (values?.company_type == 'other' && values?.temp_company_type) {
+      company_type = values?.temp_company_type
+    }
+    if (values?.industry === -1 && values?.temp_industry) {
+      industry = values?.temp_industry
+    } else if (values?.industry === -1) {
+      industry = null
+    } else {
+      industry = values?.industry ?? null
+    }
+
+    const receivers = values?.receivers || []
+    const contacts = receivers
+      .filter((receiver: any) => receiver.contact_person_name || receiver.email)
+      .map((receiver: any) => ({
+        contact_person_name: receiver.contact_person_name,
+        email: receiver.email,
+        department_name: receiver.department_name,
+      }))
+
+    const { receivers: _, ...customerData } = values
+
+    const payload = {
+      ...customerData,
+      contacts,
+      company_type,
+      industry,
+    }
+
+    mutateDraft(
+      {
+        url: `${apiUrl}/drafts`,
+        method: 'post',
+        values: {
+          type: 'customer',
+          payload,
+        },
+      },
+      {
+        onSuccess() {
+          message.success(t('notifications.success'))
+        },
+        onError(error: any) {
+          message.error(
+            error?.response?.data?.message || t('notifications.error'),
+          )
+        },
+      },
+    )
+  }
+
+  const handleApplyDraft = () => {
+    if (
+      !dataCustomerDraft?.data ||
+      (dataCustomerDraft.data as any[]).length === 0
+    ) {
+      return
+    }
+
+    const draft: any = (dataCustomerDraft.data as any[])[0]
+    const draftPayload = draft.payload || draft
+
+    const receivers = draftPayload.contacts?.map((contact: any) => ({
+      department_name: contact.department_name,
+      contact_person_name: contact.contact_person_name,
+      email: contact.email,
+    })) || [
+      {
+        department_name: null,
+        contact_person_name: null,
+        email: null,
+      },
+    ]
+
+    const { contacts, ...restPayload } = draftPayload
+
+    form.setFieldsValue({
+      ...restPayload,
+      receivers,
+    })
+
+    message.success(t('notifications.success'))
+  }
+
   const rule = validateCustomerRule(t)
 
   return {
@@ -228,5 +333,10 @@ export const useCustomerCreate = () => {
     modalFormCorporate,
     handleFinish,
     isAutomatic,
+    handleSaveDraft,
+    handleApplyDraft,
+    isPendingDraft,
+    dataCustomerDraft,
+    isFetchingCustomerDraft,
   }
 }
