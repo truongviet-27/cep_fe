@@ -748,6 +748,20 @@ function QuotaAction() {
             parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
             isEdit={isEdit}
+            embeddedContactFromQuota={
+              dataBasicInfo?.data?.customer_contact_department !== undefined ||
+              dataBasicInfo?.data?.customer_contact_name !== undefined ||
+              dataBasicInfo?.data?.customer_contact_email !== undefined
+                ? {
+                    department_name:
+                      dataBasicInfo?.data?.customer_contact_department ?? '',
+                    contact_person_name:
+                      dataBasicInfo?.data?.customer_contact_name ?? '',
+                    email: dataBasicInfo?.data?.customer_contact_email ?? '',
+                  }
+                : undefined
+            }
+            quotaCustomerContactId={dataBasicInfo?.data?.customer_contact_id}
           />
           <DetailInfo
             taxRoundingMethod={taxRoundingMethod}
