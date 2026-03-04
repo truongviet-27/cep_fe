@@ -1013,6 +1013,8 @@ function QuotaList() {
           { key: 1, label: t('quotas.actions.delete') },
           ...[{ key: 7, label: t('quotas.actions.move_to_send') }],
         ]
+      } else if (status === QuotaStatus.Rejected) {
+        return [{ key: 1, label: t('quotas.actions.delete') }]
       }
       return []
     },

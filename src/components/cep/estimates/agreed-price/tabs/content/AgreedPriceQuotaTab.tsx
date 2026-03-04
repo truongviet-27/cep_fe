@@ -340,17 +340,15 @@ const AgreedPriceQuotaTab = () => {
       },
       {
         title: (
-          <div>
-            <div>{t('agreed_prices.table.department')}</div>
-            <div style={{ fontSize: '14px', color: '#1890FF' }}>
-              {t('agreed_prices.table.amount')}
-            </div>
+          <div className="flex flex-col">
+            <span>{t('agreed_prices.table.department')}</span>
+            <span>{t('agreed_prices.table.amount')}</span>
           </div>
         ),
         dataIndex: 'total_price',
         key: 'total_price',
-        width: '14%',
         align: 'right',
+        minWidth: 180,
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -363,13 +361,7 @@ const AgreedPriceQuotaTab = () => {
           },
         }),
         render: (totalPrice: number, record: QuotaAgreedPrice) => (
-          <div
-            style={{
-              minWidth: 0,
-              width: '100%',
-              overflow: 'hidden',
-            }}
-          >
+          <div>
             {(record.creator as any)?.department_name && (
               <div
                 style={{
@@ -386,16 +378,7 @@ const AgreedPriceQuotaTab = () => {
                 {(record.creator as any)?.department_name}
               </div>
             )}
-            <div
-              title={formatNumberWithCommas(totalPrice)}
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {formatNumberWithCommas(totalPrice)}
-            </div>
+            <div>{formatNumberWithCommas(totalPrice)}</div>
           </div>
         ),
       },
