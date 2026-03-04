@@ -405,6 +405,34 @@ const BasicInfo = ({
           <Col xs={24} sm={16} md={5} lg={5} xl={5}>
             <Form.Item
               required
+              name={'type'}
+              className="hidden"
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_type'),
+              )}
+              labelCol={{ span: 3 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: 'normal',
+                    label: t('quotas.action.basic_info.types.normal'),
+                  },
+                  {
+                    value: 'channel_limited',
+                    label: t('quotas.action.basic_info.types.limited'),
+                  },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              required
               name={'customer_term'}
               label={boldText(
                 t('quotas.action.basic_info.fields.customer_term'),
