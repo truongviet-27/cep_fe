@@ -42,7 +42,9 @@
     "clear": "Clear",
     "csv_bulk_register": "CSV Bulk Register",
     "suspend": "Suspend",
-    "resume": "Resume"
+    "resume": "Resume",
+    "draft": "Draft",
+    "apply_draft": "Apply Draft"
   },
   "notifications": {
     "success": "Success",
@@ -50,7 +52,10 @@
     "deleteSuccess": "Delete Success",
     "deleteError": "Delete Success",
     "createSuccess": "Create Success",
-    "error": "Error"
+    "error": "Error",
+    "draftSaveSuccess": "Draft saved successfully.",
+    "draftSaveError": "Failed to save draft.",
+    "draftApplySuccess": "Draft applied to form successfully."
   },
   "menu": {
     "dashboard": "Dashboard",

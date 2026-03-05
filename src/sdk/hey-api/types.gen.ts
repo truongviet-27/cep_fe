@@ -6063,6 +6063,61 @@ export type DepartmentControllerUpdateOrderResponses = {
 export type DepartmentControllerUpdateOrderResponse =
   DepartmentControllerUpdateOrderResponses[keyof DepartmentControllerUpdateOrderResponses]
 
+export type DraftControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Draft type
+     */
+    type?: 'quota' | 'customer' | 'product' | 'quota_template'
+  }
+  url: '/api/v1/drafts'
+}
+
+export type DraftControllerIndexResponses = {
+  /**
+   * Drafts retrieved successfully
+   */
+  200: {
+    data?: Array<{
+      [key: string]: unknown
+    }>
+  }
+}
+
+export type DraftControllerIndexResponse =
+  DraftControllerIndexResponses[keyof DraftControllerIndexResponses]
+
+export type DraftControllerStoreData = {
+  body: {
+    type: 'quota' | 'customer' | 'product' | 'quota_template'
+    /**
+     * Draft payload data
+     */
+    payload: {
+      [key: string]: unknown
+    }
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/drafts'
+}
+
+export type DraftControllerStoreResponses = {
+  /**
+   * Draft created or updated successfully
+   */
+  201: {
+    data?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type DraftControllerStoreResponse =
+  DraftControllerStoreResponses[keyof DraftControllerStoreResponses]
+
 export type EmployeeControllerIndexData = {
   body?: never
   path?: never

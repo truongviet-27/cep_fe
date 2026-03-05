@@ -3328,6 +3328,40 @@ export const zDepartmentControllerUpdateOrderResponse = z.object({
   ),
   message: z.optional(z.string()),
 })
+export const zDraftControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      type: z.optional(
+        z.enum(['quota', 'customer', 'product', 'quota_template']),
+      ),
+    }),
+  ),
+})
+
+/**
+ * Drafts retrieved successfully
+ */
+export const zDraftControllerIndexResponse = z.object({
+  data: z.optional(z.array(z.object({}))),
+})
+
+export const zDraftControllerStoreData = z.object({
+  body: z.object({
+    type: z.enum(['quota', 'customer', 'product', 'quota_template']),
+    payload: z.object({}),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Draft created or updated successfully
+ */
+export const zDraftControllerStoreResponse = z.object({
+  data: z.optional(z.object({})),
+})
 
 export const zEmployeeControllerIndexData = z.object({
   body: z.optional(z.never()),
