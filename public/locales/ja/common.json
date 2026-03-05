@@ -126,6 +126,7 @@
       "address_contact": "住所・連絡先",
       "delivery_destinations": "納品先情報",
       "postal_code": "郵便番号",
+      "postal_code_placeholder": "郵便番号はハイフン付きで入力してください",
       "address": "住所",
       "building_name": "建物名",
       "phone": "電話番号",

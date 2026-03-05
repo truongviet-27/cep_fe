@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RightOutlined } from '@ant-design/icons'
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import {
+  QuotaStatus,
+  STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE,
+} from '@components/cep/estimates/quotas/enum'
 import BasicInfo from '@components/cep/estimates/quotas/show/components/basic-info'
 import DetailInfo from '@components/cep/estimates/quotas/show/components/detail-info'
 import History from '@components/cep/estimates/quotas/show/components/history'
@@ -30,11 +33,13 @@ import { PRIMARY, WHITE } from '@utility/color'
 import { Breadcrumb, Button, Divider, Form, Modal, Select, Spin } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
 function QuotaDetail() {
   const t = useTranslate()
-  const { permission } = useUserStore.getState()
+  const router = useRouter()
+  const { permission, parameterSettings } = useUserStore.getState()
   const [taxRoundingMethod, setTaxRoundingMethod] =
     useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
 
@@ -65,6 +70,17 @@ function QuotaDetail() {
       setTaxRoundingMethod(queryBasic.data.tax_rounding_method)
     }
   }, [queryBasic?.data])
+
+  useEffect(() => {
+    if (
+      queryBasic?.data?.status &&
+      STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(queryBasic.data.status) >
+        -1
+    ) {
+      // todo check nhung action cua man show/edit. Khi thoa man dieu kien nay, thi khong cho thuc hien action
+      router.replace('/404')
+    }
+  }, [parameterSettings, queryBasic])
   const {
     data: dataProducts,
     isFetching: isFetchingProducts,
@@ -83,6 +99,11 @@ function QuotaDetail() {
     method: 'get',
   })
 
+  const hasEmbeddedContact =
+    queryBasic?.data?.customer_contact_department !== undefined ||
+    queryBasic?.data?.customer_contact_name !== undefined ||
+    queryBasic?.data?.customer_contact_email !== undefined
+
   const { data: dataCustomerContact, isFetching: isFetchingCustomerContact } =
     useCustom({
       url: (queryBasic?.data?.customer_contact_id
@@ -90,9 +111,17 @@ function QuotaDetail() {
         : '') as string,
       method: 'get',
       queryOptions: {
-        enabled: !!queryBasic?.data?.customer_contact_id,
+        enabled: !!queryBasic?.data?.customer_contact_id && !hasEmbeddedContact,
       },
     })
+
+  const customerContactDisplay = hasEmbeddedContact
+    ? {
+        department_name: queryBasic?.data?.customer_contact_department ?? '---',
+        contact_person_name: queryBasic?.data?.customer_contact_name ?? '---',
+        email: queryBasic?.data?.customer_contact_email ?? '---',
+      }
+    : dataCustomerContact?.data?.data || dataCustomerContact?.data
 
   const notificationFunction = useCallback(
     (message: string): OpenNotificationParams | false | undefined => {
@@ -433,9 +462,7 @@ function QuotaDetail() {
         >
           <BasicInfo
             data={queryBasic?.data}
-            customerContact={
-              dataCustomerContact?.data?.data || dataCustomerContact?.data
-            }
+            customerContact={customerContactDisplay}
           />
           <DetailInfo
             taxRoundingMethod={taxRoundingMethod}

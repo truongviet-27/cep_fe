@@ -389,7 +389,15 @@ const OptionalInfo: FC = () => {
               title: '荷姿',
               dataIndex: 'package_id',
               key: 'package_id',
-              width: '10%',
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               align: 'left',
               render: (_, record) => {
                 if (record.isHeader) {
@@ -474,6 +482,10 @@ const OptionalInfo: FC = () => {
                           ]?.packagings ?? []
                         }
                         defaultValue={defaultValue}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
                       />
                     </Form.Item>
                   )
@@ -773,7 +785,7 @@ const OptionalInfo: FC = () => {
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
-              width: '5%',
+              width: '7%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -840,6 +852,13 @@ const OptionalInfo: FC = () => {
                             product_id: null,
                             package_id: null,
                             isSelfCreate: false,
+                            package_name: '-',
+                            unit: t(
+                              'quotas.action.detail_info.default_values.default_unit',
+                            ),
+                            unit_name: t(
+                              'quotas.action.detail_info.default_values.default_unit',
+                            ),
                             name: '',
                             code: '',
                             quantity: 0,

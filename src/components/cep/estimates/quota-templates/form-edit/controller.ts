@@ -24,6 +24,7 @@ import { message } from 'antd'
 import { useEffect, useState } from 'react'
 
 export function useController() {
+  const t = useTranslate()
   const { params } = useParsed()
   const isUpdateMode = !!params?.id
   const go = useGo()
@@ -65,6 +66,13 @@ export function useController() {
               {
                 product_id: null,
                 package_id: null,
+                package_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 name: '',
                 code: '',
                 cost_price: 0,
@@ -150,6 +158,13 @@ export function useController() {
                 product_id: null,
                 package_id: null,
                 isSelfCreate: false,
+                package_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 name: '',
                 code: '',
                 cost_price: 0,
@@ -170,6 +185,13 @@ export function useController() {
                 product_id: null,
                 package_id: null,
                 isSelfCreate: false,
+                package_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 name: '',
                 code: '',
                 cost_price: 0,

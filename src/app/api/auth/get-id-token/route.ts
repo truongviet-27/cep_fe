@@ -39,7 +39,7 @@ export async function POST(req: Request) {
           refreshToken,
           provider,
         } as JWT)
-
+        console.log('refreshed', refreshed)
         if (refreshed.idToken && !refreshed.error) {
           idToken = refreshed.idToken
         }

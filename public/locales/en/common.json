@@ -76,6 +76,9 @@
   },
   "customers": {
     "customers": "Customers",
+    "show": {
+      "postal_code_placeholder": "Please enter the postal code with hyphens"
+    },
     "fields": {
       "code": "Customer Code",
       "name": "Customer Name",

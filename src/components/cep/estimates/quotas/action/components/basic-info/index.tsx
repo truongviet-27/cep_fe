@@ -11,6 +11,7 @@ import {
   Form,
   Input,
   Modal,
+  notification,
   Radio,
   Row,
   Select,
@@ -26,6 +27,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import { IssueMethod } from '@components/cep/estimates/quotas/enum'
 import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
@@ -36,6 +38,8 @@ const BasicInfo = ({
   handleChangeProductPrincing,
   parameterSettings,
   isEdit,
+  embeddedContactFromQuota,
+  quotaCustomerContactId,
 }: {
   handleChangeProductPrincing: (
     productIds: number[],
@@ -43,6 +47,12 @@ const BasicInfo = ({
   ) => void
   parameterSettings: ParameterSettingType
   isEdit?: boolean
+  embeddedContactFromQuota?: {
+    department_name?: string
+    contact_person_name?: string
+    email?: string
+  }
+  quotaCustomerContactId?: number | null
 }) => {
   const t = useTranslate()
 
@@ -83,13 +93,18 @@ const BasicInfo = ({
     }
   }, [form.getFieldValue('approve_routes')])
 
+  const useEmbeddedContact =
+    !!embeddedContactFromQuota &&
+    selectedContactId != null &&
+    selectedContactId === quotaCustomerContactId
+
   const { data: customerContactData } = useCustom<CustomerContact>({
     url: selectedContactId
       ? `${apiUrl}/customer-contacts/${selectedContactId}`
       : '',
     method: 'get',
     queryOptions: {
-      enabled: !!selectedContactId,
+      enabled: !!selectedContactId && !useEmbeddedContact && !isEdit,
     },
   })
 
@@ -101,11 +116,25 @@ const BasicInfo = ({
 
   useEffect(() => {
     if (selectedContactId) {
-      // selectedContactId updated
+      if (useEmbeddedContact && embeddedContactFromQuota) {
+        setSelectedContact({
+          id: selectedContactId,
+          department_name: embeddedContactFromQuota.department_name ?? '',
+          contact_person_name:
+            embeddedContactFromQuota.contact_person_name ?? '',
+          email: embeddedContactFromQuota.email ?? '',
+        } as CustomerContact)
+      }
     } else {
       setSelectedContact(null)
     }
-  }, [selectedContactId])
+  }, [
+    selectedContactId,
+    useEmbeddedContact,
+    embeddedContactFromQuota?.department_name,
+    embeddedContactFromQuota?.contact_person_name,
+    embeddedContactFromQuota?.email,
+  ])
 
   const { selectProps: selectPropsCt, query } = useSelect({
     resource: 'customers',
@@ -210,11 +239,31 @@ const BasicInfo = ({
     }
   }, [codeIssueSetting?.data?.issue_method, form, refetchIssueSetting])
 
-  const handleOpenContactModal = () => {
+  const handleOpenContactModal = async () => {
     if (!selectedCustomerId) {
       return
     }
-    setContactModalOpen(true)
+    try {
+      const response = await axiosInstance.get(`${apiUrl}/customer-contacts`, {
+        params: { customer_id: selectedCustomerId },
+      })
+      const data = response?.data
+      if (data?.message && String(data.message).includes('deleted')) {
+        notification.error({
+          message: t('notifications.error'),
+          description: data.message,
+        })
+        return
+      }
+      setContactModalOpen(true)
+    } catch (err: any) {
+      const description =
+        err?.response?.data?.message || err?.message || t('notifications.error')
+      notification.error({
+        message: t('notifications.error'),
+        description,
+      })
+    }
   }
 
   const handleSelectContact = (contact: CustomerContact) => {
@@ -403,6 +452,34 @@ const BasicInfo = ({
         {/* Row 2: Customer Term, Estimate Category + Customer Contact */}
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={5} lg={5} xl={5}>
+            <Form.Item
+              required
+              name={'type'}
+              className="hidden"
+              label={boldText(
+                t('quotas.action.basic_info.fields.estimate_type'),
+              )}
+              labelCol={{ span: 3 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: 'normal',
+                    label: t('quotas.action.basic_info.types.normal'),
+                  },
+                  {
+                    value: 'channel_limited',
+                    label: t('quotas.action.basic_info.types.limited'),
+                  },
+                ]}
+              />
+            </Form.Item>
             <Form.Item
               required
               name={'customer_term'}
