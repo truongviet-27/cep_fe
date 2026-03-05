@@ -1,0 +1,237 @@
+'use client'
+
+import { RightOutlined } from '@ant-design/icons'
+import Breadcrumbs from '@components/layout/breadcrumbs'
+import { useList } from '@refinedev/core'
+import { useUserStore } from '@stores/useUserStore'
+import { PRIMARY } from '@utility/color'
+import { Button, Typography } from 'antd'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+
+import GuideContent from './components/guide-content'
+import SidebarMenu from './components/sidebar-menu'
+import { MENU_ITEMS } from './constants'
+import type { Manual } from './types'
+
+export default function InitialSetupGuidePage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const permission = useUserStore((s) => s.permission)
+  const setPermission = useUserStore((s) => s.setPermission)
+  const isFirstLogin = !!permission?.is_first_login
+  const selectedIdFromUrl = searchParams.get('step') ?? MENU_ITEMS[0].id
+
+  const { data: basicData, refetch: refetchBasic } = useList<Manual>({
+    resource: 'initial-setup-guide',
+    pagination: { mode: 'client' },
+    filters: [{ field: 'type', operator: 'eq', value: 'basic' }],
+  })
+  const { data: advancedData, refetch: refetchAdvanced } = useList<Manual>({
+    resource: 'initial-setup-guide',
+    pagination: { mode: 'client' },
+    filters: [{ field: 'type', operator: 'eq', value: 'advanced' }],
+  })
+
+  const basicManuals = basicData?.data ?? []
+  const advancedManuals = advancedData?.data ?? []
+
+  const progressByType = useMemo(() => {
+    const advancedByGroup = new Map<string, Manual[]>()
+    for (const m of advancedManuals) {
+      const key = m.group ?? ''
+      if (!advancedByGroup.has(key)) advancedByGroup.set(key, [])
+      advancedByGroup.get(key)!.push(m)
+    }
+    const advancedGroupCount = advancedByGroup.size
+    const advancedCompletedGroupCount = Array.from(
+      advancedByGroup.values(),
+    ).filter(
+      (items) =>
+        items.length > 0 && items.every((m) => m.status === 'complete'),
+    ).length
+
+    return {
+      basic: {
+        total: basicManuals.length,
+        completed: basicManuals.filter((m) => m.status === 'complete').length,
+      },
+      advanced: {
+        total: advancedGroupCount,
+        completed: advancedCompletedGroupCount,
+      },
+    }
+  }, [basicManuals, advancedManuals])
+
+  const refetchAllManuals = useCallback(() => {
+    refetchBasic()
+    refetchAdvanced()
+  }, [refetchBasic, refetchAdvanced])
+
+  const selectedItem = useMemo(
+    () => MENU_ITEMS.find((m) => m.id === selectedIdFromUrl) ?? MENU_ITEMS[0],
+    [selectedIdFromUrl],
+  )
+
+  const [selectedId, setSelectedId] = useState(selectedIdFromUrl)
+
+  useEffect(() => {
+    setSelectedId(selectedIdFromUrl)
+  }, [selectedIdFromUrl])
+
+  const handleSelect = useCallback(
+    (id: string) => {
+      setSelectedId(id)
+      router.replace(`/initial-setup-guide?step=${id}`, { scroll: false })
+    },
+    [router],
+  )
+
+  const currentIndex = MENU_ITEMS.findIndex((m) => m.id === selectedId)
+  const handleBack = useCallback(() => {
+    if (currentIndex <= 0) {
+      router.back()
+      return
+    }
+    const prev = MENU_ITEMS[currentIndex - 1]
+    if (prev) {
+      setSelectedId(prev.id)
+      router.replace(`/initial-setup-guide?step=${prev.id}`, { scroll: false })
+    }
+  }, [currentIndex, router])
+
+  const handleLater = useCallback(() => {
+    if (permission) {
+      setPermission({ ...permission, is_first_login: false })
+    }
+    router.replace('/quotas')
+  }, [permission, setPermission, router])
+
+  const breadcrumbItems = useMemo(
+    () => [
+      { title: <span style={{ color: '#8c8c8c' }}>初期設定</span> },
+      {
+        title: (
+          <span style={{ fontWeight: 'bold', color: PRIMARY }}>
+            {selectedItem.breadcrumbLabel}
+          </span>
+        ),
+      },
+    ],
+    [selectedItem.breadcrumbLabel],
+  )
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        minHeight: 0,
+        overflow: 'hidden',
+        background: 'transparent',
+      }}
+    >
+      <div
+        style={{
+          marginTop: 6,
+          marginBottom: 6,
+          paddingLeft: 18,
+          paddingRight: 18,
+        }}
+      >
+        <Breadcrumbs
+          items={breadcrumbItems}
+          separator={<RightOutlined style={{ fontSize: 10 }} />}
+        />
+      </div>
+
+      <div
+        role="main"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '16px 24px',
+          background: '#fff',
+          minHeight: 'calc(100vh - 168px)',
+          flex: 1,
+          width: '100%',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 24,
+            alignItems: 'stretch',
+            width: '100%',
+            flex: 1,
+            minHeight: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <SidebarMenu
+            selectedId={selectedId}
+            onSelect={handleSelect}
+            progressByType={progressByType}
+          />
+
+          <div
+            style={{
+              width: 1,
+              flexShrink: 0,
+              alignSelf: 'stretch',
+              minHeight: '100%',
+              background: 'rgba(0,0,0,0.06)',
+            }}
+          />
+
+          <div
+            style={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 16,
+                flexShrink: 0,
+              }}
+            >
+              <Typography.Title level={5} style={{ margin: 0 }}>
+                {selectedItem.title}
+              </Typography.Title>
+              <Button
+                type="default"
+                onClick={isFirstLogin ? handleLater : handleBack}
+                style={{
+                  background: '#fff',
+                  borderColor: PRIMARY,
+                  color: PRIMARY,
+                  fontWeight: 600,
+                }}
+              >
+                {isFirstLogin ? 'あとで設定' : '戻る'}
+              </Button>
+            </div>
+            <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+              <GuideContent
+                selectedItem={selectedItem}
+                onStatusUpdated={refetchAllManuals}
+                hideTitle
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

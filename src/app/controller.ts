@@ -171,6 +171,14 @@ export const useBootstrap = () => {
 
       setParameterSettings(dataConvert)
       setIsLoggedIn(true)
+      if (permission?.is_first_login) {
+        const isQuotasOrRoot =
+          pathname === '/' || pathname.startsWith('/quotas')
+        if (isQuotasOrRoot) {
+          router.replace('/initial-setup-guide')
+          return
+        }
+      }
     } catch (error) {
       console.error(error)
       if (isLoggedIn) {

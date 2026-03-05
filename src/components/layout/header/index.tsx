@@ -7,11 +7,20 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
-import { useLogout, useModal } from '@refinedev/core'
+import { useGo, useLogout, useModal } from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
 import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
-import { Avatar, Badge, Dropdown, Input, Layout, Modal, Space } from 'antd'
+import {
+  Avatar,
+  Badge,
+  Button,
+  Dropdown,
+  Input,
+  Layout,
+  Modal,
+  Space,
+} from 'antd'
 import { useKBar } from 'kbar'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
@@ -29,6 +38,7 @@ export default function AuthHeader({
   const t_menu = useTranslations('menu')
   const { query } = useKBar()
   const session = useSession()
+  const go = useGo()
   const modalProps = useModal()
   const { mutate: logout } = useLogout()
   const { permission } = useUserStore()
@@ -68,7 +78,18 @@ export default function AuthHeader({
         {children}
 
         {children ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-end gap-2">
+            <Button
+              type="default"
+              style={{
+                color: 'rgb(39, 132, 255)',
+                borderColor: 'rgb(39, 132, 255)',
+                backgroundColor: WHITE,
+              }}
+              onClick={() => go({ to: '/initial-setup-guide' })}
+            >
+              初期設定ガイド
+            </Button>
             <div className="text-right leading-tight">
               <Space
                 size={4}
