@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import GuideContent from './components/guide-content'
 import SidebarMenu from './components/sidebar-menu'
-import { MENU_ITEMS } from './constants'
+import { DISABLED_MENU_IDS, MENU_ITEMS, MENU_ITEMS_VISIBLE } from './constants'
 import type { Manual } from './types'
 
 export default function InitialSetupGuidePage() {
@@ -20,7 +20,10 @@ export default function InitialSetupGuidePage() {
   const permission = useUserStore((s) => s.permission)
   const setPermission = useUserStore((s) => s.setPermission)
   const isFirstLogin = !!permission?.is_first_login
-  const selectedIdFromUrl = searchParams.get('step') ?? MENU_ITEMS[0].id
+  const rawStepFromUrl = searchParams.get('step') ?? MENU_ITEMS[0].id
+  const selectedIdFromUrl = DISABLED_MENU_IDS.includes(rawStepFromUrl)
+    ? (MENU_ITEMS_VISIBLE[0]?.id ?? MENU_ITEMS[0].id)
+    : rawStepFromUrl
 
   const { data: basicData, refetch: refetchBasic } = useList<Manual>({
     resource: 'initial-setup-guide',
@@ -69,7 +72,10 @@ export default function InitialSetupGuidePage() {
   }, [refetchBasic, refetchAdvanced])
 
   const selectedItem = useMemo(
-    () => MENU_ITEMS.find((m) => m.id === selectedIdFromUrl) ?? MENU_ITEMS[0],
+    () =>
+      MENU_ITEMS.find((m) => m.id === selectedIdFromUrl) ??
+      MENU_ITEMS_VISIBLE[0] ??
+      MENU_ITEMS[0],
     [selectedIdFromUrl],
   )
 
@@ -79,6 +85,15 @@ export default function InitialSetupGuidePage() {
     setSelectedId(selectedIdFromUrl)
   }, [selectedIdFromUrl])
 
+  useEffect(() => {
+    if (DISABLED_MENU_IDS.includes(rawStepFromUrl)) {
+      const fallbackId = MENU_ITEMS_VISIBLE[0]?.id ?? MENU_ITEMS[0].id
+      router.replace(`/initial-setup-guide?step=${fallbackId}`, {
+        scroll: false,
+      })
+    }
+  }, [rawStepFromUrl, router])
+
   const handleSelect = useCallback(
     (id: string) => {
       setSelectedId(id)
@@ -87,13 +102,13 @@ export default function InitialSetupGuidePage() {
     [router],
   )
 
-  const currentIndex = MENU_ITEMS.findIndex((m) => m.id === selectedId)
+  const currentIndex = MENU_ITEMS_VISIBLE.findIndex((m) => m.id === selectedId)
   const handleBack = useCallback(() => {
     if (currentIndex <= 0) {
       router.back()
       return
     }
-    const prev = MENU_ITEMS[currentIndex - 1]
+    const prev = MENU_ITEMS_VISIBLE[currentIndex - 1]
     if (prev) {
       setSelectedId(prev.id)
       router.replace(`/initial-setup-guide?step=${prev.id}`, { scroll: false })

@@ -33,4 +33,11 @@ export const MENU_ITEMS = [
   },
 ] as const
 
+//disabled menu ids
+export const DISABLED_MENU_IDS: string[] = ['test-continuous']
+
+export const MENU_ITEMS_VISIBLE = MENU_ITEMS.filter(
+  (item) => !DISABLED_MENU_IDS.includes(item.id),
+)
+
 export type MenuItem = (typeof MENU_ITEMS)[number]

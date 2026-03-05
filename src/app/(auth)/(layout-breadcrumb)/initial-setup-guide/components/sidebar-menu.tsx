@@ -3,7 +3,7 @@
 import { Card, Flex, Progress, Space, Typography } from 'antd'
 
 import type { MenuItem } from '../constants'
-import { MENU_ITEMS } from '../constants'
+import { DISABLED_MENU_IDS, MENU_ITEMS } from '../constants'
 
 const { Text, Title } = Typography
 
@@ -27,7 +27,8 @@ export default function SidebarMenu({
     <div style={{ width: 280, flexShrink: 0 }}>
       <Space direction="vertical" size={12} style={{ width: '100%' }}>
         {MENU_ITEMS.map((item: MenuItem) => {
-          const isSelected = selectedId === item.id
+          const isDisabled = DISABLED_MENU_IDS.includes(item.id)
+          const isSelected = !isDisabled && selectedId === item.id
           const isDashed = item.type === 'dashed'
           const progress = progressByType[item.id]
           const showProgress =
@@ -46,9 +47,10 @@ export default function SidebarMenu({
               size="small"
               bordered
               style={{
-                cursor: 'pointer',
+                cursor: isDisabled ? 'not-allowed' : 'pointer',
                 borderStyle: isDashed ? 'dashed' : 'solid',
                 borderWidth: 2,
+                opacity: isDisabled ? 0.6 : 1,
                 ...(isSelected
                   ? {
                       background: 'rgb(0,123,255)',
@@ -59,12 +61,14 @@ export default function SidebarMenu({
               styles={{
                 body: { padding: 16 },
               }}
-              onClick={() => onSelect(item.id)}
+              onClick={() => !isDisabled && onSelect(item.id)}
               onKeyDown={(e) => {
+                if (isDisabled) return
                 if (e.key === 'Enter' || e.key === ' ') onSelect(item.id)
               }}
-              tabIndex={0}
+              tabIndex={isDisabled ? -1 : 0}
               role="button"
+              aria-disabled={isDisabled}
             >
               <Title
                 level={5}
