@@ -26,7 +26,10 @@ import {
   useTranslate,
 } from '@refinedev/core'
 import type { RoundingMethodEnumType } from '@sdk/hey-api'
-import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
+import {
+  ParameterResourceEnum,
+  RoundingMethodEnumType as RoundingMethodEnum,
+} from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
@@ -72,7 +75,10 @@ function QuotaDetail() {
   }, [queryBasic?.data])
 
   useEffect(() => {
+    // neu khong su dung luong duyet, va status cua quota nam trong array disable,
+    // thi phai chuyen ve page 404
     if (
+      !parameterSettings?.get?.(ParameterResourceEnum.APPROVE_ROUTES) &&
       queryBasic?.data?.status &&
       STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(queryBasic.data.status) >
         -1
