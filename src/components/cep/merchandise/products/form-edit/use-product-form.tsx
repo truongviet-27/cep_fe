@@ -65,11 +65,7 @@ function useProductForm() {
     id: params?.id,
     redirect: false,
     onMutationSuccess: () => {
-      if (params?.id) {
-        go({ to: { resource: 'products', action: 'show', id: params.id } })
-      } else {
-        go({ to: { resource: 'products', action: 'list' } })
-      }
+      go({ to: '/products' })
     },
     queryOptions: {
       select: (response) => {
