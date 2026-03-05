@@ -4,7 +4,13 @@ import type {
 } from '@interfaces/quota-templates'
 import { useForm } from '@refinedev/antd'
 import type { GetOneResponse } from '@refinedev/core'
-import { useApiUrl, useCustom, useGo, useParsed } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useGo,
+  useParsed,
+  useTranslate,
+} from '@refinedev/core'
 import type {
   QuotaFormSettingResponse,
   RoundingMethodEnumType,
@@ -14,6 +20,7 @@ import { useUserStore } from '@stores/useUserStore'
 import { useEffect, useState } from 'react'
 
 export function useController() {
+  const t = useTranslate()
   const { params } = useParsed()
   const isUpdateMode = !!params?.id
   const go = useGo()
@@ -35,6 +42,13 @@ export function useController() {
               {
                 product_id: null,
                 package_id: null,
+                package_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 name: '',
                 code: '',
                 cost_price: 0,
@@ -122,6 +136,13 @@ export function useController() {
                 product_id: null,
                 package_id: null,
                 isSelfCreate: false,
+                package_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 name: '',
                 code: '',
                 cost_price: 0,
@@ -142,6 +163,13 @@ export function useController() {
                 product_id: null,
                 package_id: null,
                 isSelfCreate: false,
+                package_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 name: '',
                 code: '',
                 cost_price: 0,
