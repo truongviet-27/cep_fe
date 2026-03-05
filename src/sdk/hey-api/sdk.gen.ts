@@ -108,6 +108,9 @@ import type {
   DepartmentControllerUpdateOrderData,
   DepartmentControllerUpdateOrderResponses,
   DepartmentControllerUpdateOrderErrors,
+  DepartmentControllerFindFirstData,
+  DepartmentControllerFindFirstResponses,
+  DepartmentControllerFindFirstErrors,
   EmployeeControllerIndexData,
   EmployeeControllerIndexResponses,
   EmployeeControllerIndexErrors,
@@ -305,6 +308,9 @@ import type {
   QuotaControllerMarkCompletedData,
   QuotaControllerMarkCompletedResponses,
   QuotaControllerMarkCompletedErrors,
+  QuotaControllerResendEmailToCustomerData,
+  QuotaControllerResendEmailToCustomerResponses,
+  QuotaControllerResendEmailToCustomerErrors,
   QuotaControllerCancelQuotaData,
   QuotaControllerCancelQuotaResponses,
   QuotaControllerSendToApproverData,
@@ -318,6 +324,9 @@ import type {
   QuotaControllerBackToSentToCustomerData,
   QuotaControllerBackToSentToCustomerResponses,
   QuotaControllerBackToSentToCustomerErrors,
+  QuotaControllerCheckParametersData,
+  QuotaControllerCheckParametersResponses,
+  QuotaControllerCheckParametersErrors,
   QuotaFormSettingControllerShowData,
   QuotaFormSettingControllerShowResponses,
   QuotaFormSettingControllerShowErrors,
@@ -421,6 +430,7 @@ import {
   zDepartmentControllerShowData,
   zDepartmentControllerUpdateData,
   zDepartmentControllerUpdateOrderData,
+  zDepartmentControllerFindFirstData,
   zEmployeeControllerIndexData,
   zEmployeeControllerStoreData,
   zEmployeeControllerDestroyData,
@@ -488,11 +498,13 @@ import {
   zQuotaControllerApproveStepData,
   zQuotaControllerSendToCustomerData,
   zQuotaControllerMarkCompletedData,
+  zQuotaControllerResendEmailToCustomerData,
   zQuotaControllerCancelQuotaData,
   zQuotaControllerSendToApproverData,
   zQuotaControllerPreviewPdfData,
   zQuotaControllerPreviewUpdatePdfData,
   zQuotaControllerBackToSentToCustomerData,
+  zQuotaControllerCheckParametersData,
   zQuotaFormSettingControllerShowData,
   zF44B13Bc4971Acac4481E0A6B882787Data,
   zA229A59B851Ad68435Ac0E91E98F32Data,
@@ -1192,6 +1204,10 @@ export const customerControllerUpdateStatus = <
     ],
     url: '/api/v1/customers/id}/status',
     ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 
@@ -1513,6 +1529,38 @@ export const departmentControllerUpdateOrder = <
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
+    },
+  })
+}
+
+/**
+ * Find first department by dynamic filters
+ * Find first department matching dynamic search criteria
+ */
+export const departmentControllerFindFirst = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<DepartmentControllerFindFirstData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<
+    DepartmentControllerFindFirstResponses,
+    DepartmentControllerFindFirstErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDepartmentControllerFindFirstData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/departments/find-first',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
     },
   })
 }
@@ -3454,6 +3502,38 @@ export const quotaControllerMarkCompleted = <
 }
 
 /**
+ * Resend quotas to customers
+ * Resend approved quotas to customers via email. This operation updates quota status and queues email sending jobs.
+ */
+export const quotaControllerResendEmailToCustomer = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<QuotaControllerResendEmailToCustomerData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    QuotaControllerResendEmailToCustomerResponses,
+    QuotaControllerResendEmailToCustomerErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerResendEmailToCustomerData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/resend-email-to-customer',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Cancel quotas from customer
  * Update multiple quotas status from sent_to_customer to cancelled
  */
@@ -3608,6 +3688,34 @@ export const quotaControllerBackToSentToCustomer = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Check parameter settings validation
+ * Validate parameter settings against current database values before creating or updating a quota. This endpoint checks if settings like approval routes have been changed by another user.
+ */
+export const quotaControllerCheckParameters = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<QuotaControllerCheckParametersData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    QuotaControllerCheckParametersResponses,
+    QuotaControllerCheckParametersErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zQuotaControllerCheckParametersData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/quotas/check-parameters',
+    ...options,
   })
 }
 
