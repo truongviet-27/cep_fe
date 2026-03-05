@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   QuotaTemplateFormType,
   QuoteTemplateDetailType,
@@ -7,16 +8,19 @@ import type { GetOneResponse } from '@refinedev/core'
 import {
   useApiUrl,
   useCustom,
+  useCustomMutation,
   useGo,
   useParsed,
   useTranslate,
 } from '@refinedev/core'
 import type {
+  DraftControllerIndexResponse,
   QuotaFormSettingResponse,
   RoundingMethodEnumType,
 } from '@sdk/hey-api'
 import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
+import { message } from 'antd'
 import { useEffect, useState } from 'react'
 
 export function useController() {
@@ -24,9 +28,28 @@ export function useController() {
   const { params } = useParsed()
   const isUpdateMode = !!params?.id
   const go = useGo()
+  const apiUrl = useApiUrl()
   const [taxRoundingMethod, setTaxRoundingMethod] =
     useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
   const permission = useUserStore((state) => state.permission)
+
+  const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+
+  const {
+    data: dataQuotaTemplateDraft,
+    isFetching: isFetchingQuotaTemplateDraft,
+  } = useCustom<DraftControllerIndexResponse>({
+    method: 'get',
+    url: `${apiUrl}/drafts`,
+    config: {
+      query: {
+        type: 'quota_template',
+      },
+    },
+    queryOptions: {
+      enabled: !isUpdateMode, // Only fetch draft when creating new
+    },
+  })
 
   const methods = useForm<QuotaTemplateFormType>({
     resource: 'quota-templates',
@@ -88,8 +111,6 @@ export function useController() {
       },
     },
   })
-
-  const apiUrl = useApiUrl()
 
   const { form, query } = methods
 
@@ -186,10 +207,65 @@ export function useController() {
     }
   }, [data])
 
+  const handleSaveDraft = () => {
+    const values: any = form.getFieldsValue()
+
+    const payload = {
+      ...values,
+      tags: values?.tags || [],
+    }
+
+    mutateDraft(
+      {
+        url: `${apiUrl}/drafts`,
+        method: 'put',
+        values: {
+          type: 'quota_template',
+          payload,
+        },
+      },
+      {
+        onSuccess() {
+          message.success(t('notifications.draftSaveSuccess'))
+          go({ to: '/quota-templates' })
+        },
+        onError(error: any) {
+          message.error(
+            error?.response?.data?.message || t('notifications.draftSaveError'),
+          )
+        },
+      },
+    )
+  }
+
+  const handleApplyDraft = () => {
+    if (
+      !dataQuotaTemplateDraft?.data ||
+      !Array.isArray(dataQuotaTemplateDraft.data) ||
+      dataQuotaTemplateDraft.data.length === 0
+    ) {
+      return
+    }
+
+    const draft: any = dataQuotaTemplateDraft.data[0]
+    const draftPayload = draft.payload || draft
+
+    form.setFieldsValue({
+      ...draftPayload,
+    })
+
+    message.success(t('notifications.draftApplySuccess'))
+  }
+
   return {
     taxRoundingMethod,
     isUpdateMode,
     methods,
     isLoading: isUpdateMode && (query?.isLoading || query?.isFetching),
+    handleSaveDraft,
+    handleApplyDraft,
+    isPendingDraft,
+    dataQuotaTemplateDraft,
+    isFetchingQuotaTemplateDraft,
   }
 }

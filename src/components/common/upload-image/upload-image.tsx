@@ -65,6 +65,12 @@ function UploadImage({
     }
   }, [fileValue])
 
+  useEffect(() => {
+    if (initialUrl) {
+      setDisplayPreview(initialUrl)
+    }
+  }, [initialUrl])
+
   const uploadToS3 = (file: File | any) => {
     setLoading(true)
     mutate(

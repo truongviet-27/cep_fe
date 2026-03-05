@@ -108,6 +108,10 @@ import type {
   DepartmentControllerUpdateOrderData,
   DepartmentControllerUpdateOrderResponses,
   DepartmentControllerUpdateOrderErrors,
+  DraftControllerIndexData,
+  DraftControllerIndexResponses,
+  DraftControllerStoreData,
+  DraftControllerStoreResponses,
   EmployeeControllerIndexData,
   EmployeeControllerIndexResponses,
   EmployeeControllerIndexErrors,
@@ -421,6 +425,8 @@ import {
   zDepartmentControllerShowData,
   zDepartmentControllerUpdateData,
   zDepartmentControllerUpdateOrderData,
+  zDraftControllerIndexData,
+  zDraftControllerStoreData,
   zEmployeeControllerIndexData,
   zEmployeeControllerStoreData,
   zEmployeeControllerDestroyData,
@@ -1509,6 +1515,62 @@ export const departmentControllerUpdateOrder = <
       },
     ],
     url: '/api/v1/departments/ordering',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
+ * List drafts
+ * List drafts of current user, optionally filtered by type
+ */
+export const draftControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<DraftControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    DraftControllerIndexResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDraftControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/drafts',
+    ...options,
+  })
+}
+
+/**
+ * Upsert draft
+ * Create or update a draft for current user and tenant by type
+ */
+export const draftControllerStore = <ThrowOnError extends boolean = false>(
+  options: Options<DraftControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    DraftControllerStoreResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDraftControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/drafts',
     ...options,
     headers: {
       'Content-Type': 'application/json',

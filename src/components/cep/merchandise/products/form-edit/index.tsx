@@ -32,8 +32,17 @@ const { Title } = Typography
 const ProductFormContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
-  const [{ methods, isLoadingSubmit, isUpdateMode }, { handleOnSubmit }] =
-    useProductForm()
+  const [
+    {
+      methods,
+      isLoadingSubmit,
+      isUpdateMode,
+      isPendingDraft,
+      dataProductDraft,
+      isFetchingProductDraft,
+    },
+    { handleOnSubmit, handleSaveDraft, handleApplyDraft },
+  ] = useProductForm()
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
@@ -168,6 +177,28 @@ const ProductFormContainer: React.FC = () => {
               >
                 {t('products.buttons.back')}
               </Button>
+              {!isUpdateMode &&
+                dataProductDraft?.data &&
+                Array.isArray(dataProductDraft.data) &&
+                dataProductDraft.data.length > 0 && (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleApplyDraft}
+                    disabled={isFetchingProductDraft}
+                  >
+                    {t('buttons.apply_draft')}
+                  </Button>
+                )}
+              {!isUpdateMode && (
+                <Button
+                  type="primary"
+                  onClick={handleSaveDraft}
+                  loading={isPendingDraft}
+                >
+                  {t('buttons.draft')}
+                </Button>
+              )}
               <Button
                 type="primary"
                 htmlType="submit"
