@@ -64,8 +64,8 @@ function OptionalInfo({
       profit_margin: 0,
       tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
       is_add_total: true,
-      unit: '-',
-      unit_name: '-',
+      unit: t('quotas.action.detail_info.default_values.default_unit'),
+      unit_name: t('quotas.action.detail_info.default_values.default_unit'),
     }
 
     const newProducts = [...products]
@@ -1123,8 +1123,12 @@ function OptionalInfo({
                             profit_margin: 0,
                             is_add_total: true,
                             tax_rate: 0,
-                            unit: '-',
-                            unit_name: '-',
+                            unit: t(
+                              'quotas.action.detail_info.default_values.default_unit',
+                            ),
+                            unit_name: t(
+                              'quotas.action.detail_info.default_values.default_unit',
+                            ),
                           },
                         ],
                       },

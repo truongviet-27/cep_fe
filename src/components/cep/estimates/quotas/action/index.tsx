@@ -281,8 +281,8 @@ function QuotaAction() {
           is_add_total: false,
           isSelfCreate: false,
           tax_rate: 0,
-          unit: null,
-          unit_name: '-',
+          unit: t('quotas.action.detail_info.default_values.default_unit'),
+          unit_name: t('quotas.action.detail_info.default_values.default_unit'),
         },
       ],
     },
@@ -324,8 +324,12 @@ function QuotaAction() {
               package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               isSelfCreate: !item2.product_id,
-              unit: item2.unit_name ?? '-',
-              unit_name: item2.unit_name ?? '-',
+              unit:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+              unit_name:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
             })),
           })),
           optional_product: dataProducts.data.optional_product?.length
@@ -340,8 +344,12 @@ function QuotaAction() {
                   },
                   tax_rate: item2.tax_rate ?? 0,
                   isSelfCreate: !item2.product_id,
-                  unit: item2.unit_name ?? '-',
-                  unit_name: item2.unit_name ?? '-',
+                  unit:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
+                  unit_name:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
                 })),
               }))
             : defaultOptionalProduct,
@@ -399,8 +407,12 @@ function QuotaAction() {
               package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               isSelfCreate: !item2.product_id,
-              unit: item2.unit_name ?? '-',
-              unit_name: item2.unit_name ?? '-',
+              unit:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+              unit_name:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
             })),
           })),
           optional_product: dataProducts.data.optional_product?.length
@@ -415,8 +427,12 @@ function QuotaAction() {
                   },
                   isSelfCreate: !item2.product_id,
                   tax_rate: item2.tax_rate ?? 0,
-                  unit: item2.unit_name ?? '-',
-                  unit_name: item2.unit_name ?? '-',
+                  unit:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
+                  unit_name:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
                 })),
               }))
             : defaultOptionalProduct,
@@ -461,8 +477,12 @@ function QuotaAction() {
             product: { value: item2.product_id, label: item2.name },
             package: { value: item2.package_id, label: item2.package_name },
             tax_rate: item2.tax_rate ?? 0,
-            unit: item2.unit_name ?? '-',
-            unit_name: item2.unit_name ?? '-',
+            unit:
+              item2.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item2.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
           })),
         })),
         optional_product: quoteTemplate?.optional_product?.length
@@ -473,8 +493,12 @@ function QuotaAction() {
                 isSelfCreate: !item2.product_id,
                 product: { value: item2.product_id, label: item2.name },
                 package: { value: item2.package_id, label: item2.package_name },
-                unit: item2.unit_name ?? '-',
-                unit_name: item2.unit_name ?? '-',
+                unit:
+                  item2.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
+                unit_name:
+                  item2.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
               })),
             }))
           : defaultOptionalProduct,
@@ -531,8 +555,12 @@ function QuotaAction() {
                 selling_price: 0,
                 profit_margin: 0,
                 is_add_total: true,
-                unit: null,
-                unit_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 tax_rate: 0,
               },
             ],
