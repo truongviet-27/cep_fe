@@ -3065,6 +3065,7 @@ export const zCustomerControllerIndexData = z.object({
       _page: z.optional(z.int()).default(1),
       _per_page: z.optional(z.int()).default(10),
       q: z.optional(z.string()),
+      full_name: z.optional(z.string().max(255)),
       country: z.optional(z.string()),
       department_in_charge_id: z.optional(z.int()),
       price_rank_id: z.optional(z.int()),
@@ -3370,6 +3371,41 @@ export const zDepartmentControllerFindFirstData = z.object({
  * Department found
  */
 export const zDepartmentControllerFindFirstResponse = zDepartment
+
+export const zDraftControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      type: z.optional(
+        z.enum(['quota', 'customer', 'product', 'quota_template']),
+      ),
+    }),
+  ),
+})
+
+/**
+ * Drafts retrieved successfully
+ */
+export const zDraftControllerIndexResponse = z.object({
+  data: z.optional(z.array(z.object({}))),
+})
+
+export const zDraftControllerStoreData = z.object({
+  body: z.object({
+    type: z.enum(['quota', 'customer', 'product', 'quota_template']),
+    payload: z.object({}),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Draft created or updated successfully
+ */
+export const zDraftControllerStoreResponse = z.object({
+  data: z.optional(z.object({})),
+})
 
 export const zEmployeeControllerIndexData = z.object({
   body: z.optional(z.never()),
@@ -4403,6 +4439,7 @@ export const zQuotaAgreedPriceControllerIndexData = z.object({
       _per_page: z.optional(z.int().gte(1).lte(100)).default(10),
       quota_code: z.optional(z.string().max(255)),
       'customer_id_in[]': z.optional(z.array(z.int().gte(1))),
+      customer_id: z.optional(z.int().gte(1)),
       customer_name: z.optional(z.string().max(255)),
       creator_name: z.optional(z.string().max(255)),
       'created_by_in[]': z.optional(z.array(z.int().gte(1))),
@@ -4487,6 +4524,7 @@ export const zQuotaAgreedPriceControllerGetCustomerListData = z.object({
     z.object({
       _page: z.optional(z.int().gte(1)).default(1),
       _per_page: z.optional(z.int().gte(1).lte(100)).default(10),
+      customer_id: z.optional(z.int().gte(1)),
       customer_name: z.optional(z.string().max(255)),
       department_id: z.optional(z.int().gte(1)),
       'department_id_in[]': z.optional(z.array(z.int().gte(1))),

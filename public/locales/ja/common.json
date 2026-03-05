@@ -55,7 +55,9 @@
     "notAccessTitle": "",
     "update": "更新",
     "yesContinue": "はい、続行",
-    "noCancel": "いいえ、キャンセル"
+    "noCancel": "いいえ、キャンセル",
+    "draft": "下書き",
+    "apply_draft": "下書きを適用"
   },
   "placeholders": {
     "partial_match": "部分一致",
@@ -76,7 +78,10 @@
     "uploadSuccess": "ファイルのアップロードに成功しました。",
     "uploadFail": "ファイルのアップロードに失敗しました。",
     "uploading": "資料をアップロード中です。アップロードが完了するまで、保存しないでください。",
-    "stopped": "停止した"
+    "stopped": "停止した",
+    "draftSaveSuccess": "下書きを保存しました。",
+    "draftSaveError": "下書きの保存に失敗しました。",
+    "draftApplySuccess": "下書きをフォームに反映しました。"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -123,6 +128,7 @@
       "address_contact": "住所・連絡先",
       "delivery_destinations": "納品先情報",
       "postal_code": "郵便番号",
+      "postal_code_placeholder": "郵便番号はハイフン付きで入力してください",
       "address": "住所",
       "building_name": "建物名",
       "phone": "電話番号",

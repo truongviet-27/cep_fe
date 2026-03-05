@@ -4,6 +4,7 @@ import type {
   QuotaTemplateMainProductType,
   QuotaTemplateProductType,
 } from '@interfaces/quota-templates'
+import { useTranslate } from '@refinedev/core'
 import {
   ConsumptionTaxEnum,
   type ProductListItem,
@@ -16,7 +17,7 @@ import { useEffect, useState } from 'react'
 
 export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
-
+  const t = useTranslate()
   const totalPriceWatch = Form.useWatch('total_price', form)
   const taxRateWatch = Form.useWatch('tax_rate', form) ?? 0
   const mainProducts = Form.useWatch(
@@ -40,6 +41,9 @@ export const useController = () => {
       ...products,
       {
         product_id: null,
+        package_name: '-',
+        unit: t('quotas.action.detail_info.default_values.default_unit'),
+        unit_name: t('quotas.action.detail_info.default_values.default_unit'),
         name: '',
         code: '',
         quantity: 1,

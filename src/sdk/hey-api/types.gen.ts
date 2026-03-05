@@ -5354,6 +5354,10 @@ export type CustomerControllerIndexData = {
      */
     q?: string
     /**
+     * Search by full name only
+     */
+    full_name?: string
+    /**
      * Filter by country
      */
     country?: string
@@ -6166,6 +6170,61 @@ export type DepartmentControllerFindFirstResponses = {
 
 export type DepartmentControllerFindFirstResponse =
   DepartmentControllerFindFirstResponses[keyof DepartmentControllerFindFirstResponses]
+
+export type DraftControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Draft type
+     */
+    type?: 'quota' | 'customer' | 'product' | 'quota_template'
+  }
+  url: '/api/v1/drafts'
+}
+
+export type DraftControllerIndexResponses = {
+  /**
+   * Drafts retrieved successfully
+   */
+  200: {
+    data?: Array<{
+      [key: string]: unknown
+    }>
+  }
+}
+
+export type DraftControllerIndexResponse =
+  DraftControllerIndexResponses[keyof DraftControllerIndexResponses]
+
+export type DraftControllerStoreData = {
+  body: {
+    type: 'quota' | 'customer' | 'product' | 'quota_template'
+    /**
+     * Draft payload data
+     */
+    payload: {
+      [key: string]: unknown
+    }
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/drafts'
+}
+
+export type DraftControllerStoreResponses = {
+  /**
+   * Draft created or updated successfully
+   */
+  201: {
+    data?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type DraftControllerStoreResponse =
+  DraftControllerStoreResponses[keyof DraftControllerStoreResponses]
 
 export type EmployeeControllerIndexData = {
   body?: never
@@ -8567,7 +8626,11 @@ export type QuotaAgreedPriceControllerIndexData = {
      */
     'customer_id_in[]'?: Array<number>
     /**
-     * Filter by customer name
+     * Filter by customer ID
+     */
+    customer_id?: number
+    /**
+     * Filter by customer name (search in name and customer code)
      */
     customer_name?: string
     /**
@@ -8785,7 +8848,11 @@ export type QuotaAgreedPriceControllerGetCustomerListData = {
      */
     _per_page?: number
     /**
-     * Filter by customer name
+     * Filter by customer ID
+     */
+    customer_id?: number
+    /**
+     * Filter by customer name (search in name and customer code)
      */
     customer_name?: string
     /**

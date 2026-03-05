@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useShow } from '@refinedev/core'
+import { useShow, useTranslate } from '@refinedev/core'
 import type { ProductDetail } from '@sdk/hey-api'
 import { Empty, Select, Spin } from 'antd'
 import { memo, useMemo, useState } from 'react'
@@ -9,10 +9,12 @@ interface Props {
   defaultOptions?: { id: number; name: string }[]
   defaultValue?: any
   onChange?: (value: number, option: any) => void
+  style?: React.CSSProperties
 }
 
 const PackageSelect: React.FC<Props> = (props) => {
-  const { productId, defaultOptions, defaultValue, onChange } = props
+  const t = useTranslate()
+  const { productId, defaultOptions, defaultValue, onChange, style } = props
   const [isTriggerGetProduct, setIsTriggerGetProduct] = useState<boolean>(false)
 
   const { query: productResponse } = useShow<ProductDetail>({
@@ -42,7 +44,7 @@ const PackageSelect: React.FC<Props> = (props) => {
       filterOption={true}
       optionFilterProp="label"
       options={productResponse.isFetching ? [] : options}
-      placeholder="-"
+      placeholder={t('placeholders.select')}
       disabled={!productId}
       loading={productResponse.isFetching}
       filterSort={(optionA, optionB) =>
@@ -56,6 +58,7 @@ const PackageSelect: React.FC<Props> = (props) => {
       notFoundContent={
         productResponse.isFetching ? <Spin size="small" /> : <Empty />
       }
+      style={style}
     />
   )
 }

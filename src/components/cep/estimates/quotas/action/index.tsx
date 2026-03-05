@@ -28,6 +28,7 @@ import {
 import type {
   RoundingMethodEnumType,
   QuotaFormSettingResponse,
+  DraftControllerIndexResponse,
 } from '@sdk/hey-api'
 import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -41,6 +42,7 @@ import {
   Divider,
   Flex,
   Form,
+  message,
   Modal,
   Row,
   Space,
@@ -113,6 +115,19 @@ function QuotaAction() {
       enabled: !params?.templateId,
     },
   })
+  const { data: dataQuotaDraft, isFetching: isFetchingQuotaDraft } =
+    useCustom<DraftControllerIndexResponse>({
+      method: 'get',
+      url: `${apiUrl}/drafts`,
+      config: {
+        query: {
+          type: 'quota',
+        },
+      },
+      queryOptions: {
+        enabled: action === 'create',
+      },
+    })
 
   const { data: dataBasicInfo, isFetching: isFetchingBasicInfo } = useCustom({
     url: `${apiUrl}/quotas/${id}`,
@@ -231,6 +246,7 @@ function QuotaAction() {
 
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
+  const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
 
   const { refetch: checkParameter, isFetching: isCheckingParameter } =
     useCustom({
@@ -302,8 +318,8 @@ function QuotaAction() {
           is_add_total: false,
           isSelfCreate: false,
           tax_rate: 0,
-          unit: null,
-          unit_name: '-',
+          unit: t('quotas.action.detail_info.default_values.default_unit'),
+          unit_name: t('quotas.action.detail_info.default_values.default_unit'),
         },
       ],
     },
@@ -345,8 +361,12 @@ function QuotaAction() {
               package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               isSelfCreate: !item2.product_id,
-              unit: item2.unit_name ?? '-',
-              unit_name: item2.unit_name ?? '-',
+              unit:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+              unit_name:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
             })),
           })),
           optional_product: dataProducts.data.optional_product?.length
@@ -361,8 +381,12 @@ function QuotaAction() {
                   },
                   tax_rate: item2.tax_rate ?? 0,
                   isSelfCreate: !item2.product_id,
-                  unit: item2.unit_name ?? '-',
-                  unit_name: item2.unit_name ?? '-',
+                  unit:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
+                  unit_name:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
                 })),
               }))
             : defaultOptionalProduct,
@@ -420,8 +444,12 @@ function QuotaAction() {
               package: { value: item2.package_id, label: item2.package_name },
               tax_rate: item2.tax_rate ?? 0,
               isSelfCreate: !item2.product_id,
-              unit: item2.unit_name ?? '-',
-              unit_name: item2.unit_name ?? '-',
+              unit:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+              unit_name:
+                item2.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
             })),
           })),
           optional_product: dataProducts.data.optional_product?.length
@@ -436,8 +464,12 @@ function QuotaAction() {
                   },
                   isSelfCreate: !item2.product_id,
                   tax_rate: item2.tax_rate ?? 0,
-                  unit: item2.unit_name ?? '-',
-                  unit_name: item2.unit_name ?? '-',
+                  unit:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
+                  unit_name:
+                    item2.unit_name ??
+                    t('quotas.action.detail_info.default_values.default_unit'),
                 })),
               }))
             : defaultOptionalProduct,
@@ -482,8 +514,12 @@ function QuotaAction() {
             product: { value: item2.product_id, label: item2.name },
             package: { value: item2.package_id, label: item2.package_name },
             tax_rate: item2.tax_rate ?? 0,
-            unit: item2.unit_name ?? '-',
-            unit_name: item2.unit_name ?? '-',
+            unit:
+              item2.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item2.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
           })),
         })),
         optional_product: quoteTemplate?.optional_product?.length
@@ -494,8 +530,12 @@ function QuotaAction() {
                 isSelfCreate: !item2.product_id,
                 product: { value: item2.product_id, label: item2.name },
                 package: { value: item2.package_id, label: item2.package_name },
-                unit: item2.unit_name ?? '-',
-                unit_name: item2.unit_name ?? '-',
+                unit:
+                  item2.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
+                unit_name:
+                  item2.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
               })),
             }))
           : defaultOptionalProduct,
@@ -552,8 +592,12 @@ function QuotaAction() {
                 selling_price: 0,
                 profit_margin: 0,
                 is_add_total: true,
-                unit: null,
-                unit_name: '-',
+                unit: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
+                unit_name: t(
+                  'quotas.action.detail_info.default_values.default_unit',
+                ),
                 tax_rate: 0,
               },
             ],
@@ -642,6 +686,7 @@ function QuotaAction() {
         },
         {
           onSuccess() {
+            message.success(t('notifications.success'))
             go({
               to: `/quotas`,
             })
@@ -685,6 +730,125 @@ function QuotaAction() {
         console.error('Parameter check network error:', error)
         // Có thể hiển thị modal hoặc message thông báo lỗi
       })
+  }
+
+  const handleSaveDraft = () => {
+    const values: any = form.getFieldsValue()
+
+    const payload = {
+      ...values,
+      type: values.type || 'normal',
+      category: values.category || 'merchandise',
+      customer_id: values.customer?.value,
+      customer_name: values.customer?.label,
+      customer_contact_id: values.customer_contact_id,
+      delivery_date: values.delivery_date
+        ? dayjs(values.delivery_date).utc(true).startOf('day').toISOString()
+        : null,
+      issue_date: values.issue_date
+        ? dayjs(values.issue_date).utc(true).startOf('day').toISOString()
+        : null,
+      status: QuotaStatus.Creating,
+      tags:
+        values?.tags?.map((item: any) => ({
+          id: item.value,
+          name: item.label,
+        })) || [],
+      tax_rate: values.tax_rate ?? 0,
+      tax_rate_group: values.tax_rate_group || [],
+      source_id: isCloneVersion ? Number(id) : null,
+    }
+
+    mutateDraft(
+      {
+        url: `${apiUrl}/drafts`,
+        method: 'put',
+        values: {
+          type: 'quota',
+          payload,
+        },
+      },
+      {
+        onSuccess() {
+          message.success(t('notifications.draftSaveSuccess'))
+          go({
+            to: `/quotas`,
+          })
+        },
+        onError(error: any) {
+          message.error(
+            error?.response?.data?.message || t('notifications.draftSaveError'),
+          )
+        },
+      },
+    )
+  }
+
+  const handleApplyDraft = () => {
+    if (!dataQuotaDraft?.data || (dataQuotaDraft.data as any[]).length === 0) {
+      return
+    }
+
+    const draft: any = (dataQuotaDraft.data as any[])[0]
+    const draftPayload = draft.payload || draft
+
+    form.setFieldsValue({
+      ...draftPayload,
+      customer: draftPayload.customer_id
+        ? {
+            value: draftPayload.customer_id,
+            label: draftPayload.customer_name,
+          }
+        : null,
+      delivery_date: draftPayload.delivery_date
+        ? dayjs(draftPayload.delivery_date)
+        : null,
+      issue_date: draftPayload.issue_date
+        ? dayjs(draftPayload.issue_date)
+        : null,
+      tags:
+        draftPayload.tags?.map((item: any) => ({
+          value: item.id,
+          label: item.name,
+        })) || [],
+      main_product: draftPayload.main_product?.map((item: any) => ({
+        ...item,
+        products: item.products?.map((item2: any) => ({
+          ...item2,
+          product: item2.product_id
+            ? { value: item2.product_id, label: item2.name }
+            : item2.product,
+          package: item2.package_id
+            ? { value: item2.package_id, label: item2.package_name }
+            : item2.package,
+          tax_rate: item2.tax_rate ?? 0,
+          isSelfCreate: !item2.product_id,
+          unit: item2.unit_name ?? '-',
+          unit_name: item2.unit_name ?? '-',
+        })),
+      })),
+      optional_product:
+        draftPayload.optional_product?.length > 0
+          ? draftPayload.optional_product.map((item: any) => ({
+              ...item,
+              products: item.products?.map((item2: any) => ({
+                ...item2,
+                product: item2.product_id
+                  ? { value: item2.product_id, label: item2.name }
+                  : item2.product,
+                package: item2.package_id
+                  ? { value: item2.package_id, label: item2.package_name }
+                  : item2.package,
+                tax_rate: item2.tax_rate ?? 0,
+                isSelfCreate: !item2.product_id,
+                unit: item2.unit_name ?? '-',
+                unit_name: item2.unit_name ?? '-',
+              })),
+            }))
+          : defaultOptionalProduct,
+    })
+
+    message.success(t('notifications.draftApplySuccess'))
   }
 
   const [productPrincing, setProductPrincing] = useState<number[]>()
@@ -809,6 +973,20 @@ function QuotaAction() {
             parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
             isEdit={isEdit}
+            embeddedContactFromQuota={
+              dataBasicInfo?.data?.customer_contact_department !== undefined ||
+              dataBasicInfo?.data?.customer_contact_name !== undefined ||
+              dataBasicInfo?.data?.customer_contact_email !== undefined
+                ? {
+                    department_name:
+                      dataBasicInfo?.data?.customer_contact_department ?? '',
+                    contact_person_name:
+                      dataBasicInfo?.data?.customer_contact_name ?? '',
+                    email: dataBasicInfo?.data?.customer_contact_email ?? '',
+                  }
+                : undefined
+            }
+            quotaCustomerContactId={dataBasicInfo?.data?.customer_contact_id}
           />
           <DetailInfo
             taxRoundingMethod={taxRoundingMethod}
@@ -886,6 +1064,36 @@ function QuotaAction() {
               >
                 {t('buttons.back')}
               </Button>
+              {action === 'create' &&
+                dataQuotaDraft?.data &&
+                (dataQuotaDraft.data as any[]).length > 0 && (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleApplyDraft}
+                    disabled={
+                      isFetching ||
+                      isFetchingBasicInfo ||
+                      isFetchingProduct ||
+                      isFetchingHistory ||
+                      quoteTemplateQuery.isFetching ||
+                      isFetchingQuotaDraft
+                    }
+                  >
+                    {t('buttons.apply_draft')}
+                  </Button>
+                )}
+              {action === 'create' && (
+                <Button
+                  type="primary"
+                  loading={isPendingDraft}
+                  onClick={handleSaveDraft}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.draft')}
+                </Button>
+              )}
+
               <Button
                 {...saveButtonProps}
                 type="primary"

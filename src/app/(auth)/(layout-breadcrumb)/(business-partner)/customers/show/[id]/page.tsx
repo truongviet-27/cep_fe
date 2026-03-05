@@ -60,6 +60,7 @@ export default function CustomerShowPage() {
     config: {
       query: {
         customer_id: id,
+        include_trashed: 1,
       },
     },
     queryOptions: {

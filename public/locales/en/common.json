@@ -44,7 +44,9 @@
     "suspend": "Suspend",
     "resume": "Resume",
     "yesContinue": "Yes, Continue",
-    "noCancel": "No, Cancel"
+    "noCancel": "No, Cancel",
+    "draft": "Draft",
+    "apply_draft": "Apply Draft"
   },
   "notifications": {
     "success": "Success",
@@ -52,7 +54,10 @@
     "deleteSuccess": "Delete Success",
     "deleteError": "Delete Success",
     "createSuccess": "Create Success",
-    "error": "Error"
+    "error": "Error",
+    "draftSaveSuccess": "Draft saved successfully.",
+    "draftSaveError": "Failed to save draft.",
+    "draftApplySuccess": "Draft applied to form successfully."
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -73,6 +78,9 @@
   },
   "customers": {
     "customers": "Customers",
+    "show": {
+      "postal_code_placeholder": "Please enter the postal code with hyphens"
+    },
     "fields": {
       "code": "Customer Code",
       "name": "Customer Name",

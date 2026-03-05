@@ -62,7 +62,10 @@ function AddressContact(
           name="post_code"
           rules={[rule]}
         >
-          <Input style={{ maxWidth: 560 }} />
+          <Input
+            style={{ maxWidth: 560 }}
+            placeholder={t('customers.show.postal_code_placeholder')}
+          />
         </Form.Item>
         <Form.Item
           required

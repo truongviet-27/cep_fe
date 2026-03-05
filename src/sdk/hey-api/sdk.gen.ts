@@ -111,6 +111,10 @@ import type {
   DepartmentControllerFindFirstData,
   DepartmentControllerFindFirstResponses,
   DepartmentControllerFindFirstErrors,
+  DraftControllerIndexData,
+  DraftControllerIndexResponses,
+  DraftControllerStoreData,
+  DraftControllerStoreResponses,
   EmployeeControllerIndexData,
   EmployeeControllerIndexResponses,
   EmployeeControllerIndexErrors,
@@ -431,6 +435,8 @@ import {
   zDepartmentControllerUpdateData,
   zDepartmentControllerUpdateOrderData,
   zDepartmentControllerFindFirstData,
+  zDraftControllerIndexData,
+  zDraftControllerStoreData,
   zEmployeeControllerIndexData,
   zEmployeeControllerStoreData,
   zEmployeeControllerDestroyData,
@@ -1561,6 +1567,62 @@ export const departmentControllerFindFirst = <
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
+    },
+  })
+}
+
+/**
+ * List drafts of current user
+ * List drafts created by current user (filtered by tenant_id and created_by), optionally filtered by type
+ */
+export const draftControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<DraftControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    DraftControllerIndexResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDraftControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/drafts',
+    ...options,
+  })
+}
+
+/**
+ * Upsert draft for current user
+ * Create or update a draft for current user (tenant_id + type + created_by). Each user can only have one draft per type within their tenant.
+ */
+export const draftControllerStore = <ThrowOnError extends boolean = false>(
+  options: Options<DraftControllerStoreData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    DraftControllerStoreResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zDraftControllerStoreData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/drafts',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
     },
   })
 }
