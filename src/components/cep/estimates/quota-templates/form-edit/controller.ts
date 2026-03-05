@@ -28,7 +28,6 @@ export function useController() {
   const { params } = useParsed()
   const isUpdateMode = !!params?.id
   const go = useGo()
-  const t = useTranslate()
   const apiUrl = useApiUrl()
   const [taxRoundingMethod, setTaxRoundingMethod] =
     useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
