@@ -3,7 +3,6 @@
 import StatusDashboard from '@components/cep/estimates/agreed-price/components/status-dashboard'
 import { AgreedPriceStatus } from '@components/cep/estimates/agreed-price/enum'
 import { getAgreedPriceStatusStyle } from '@components/cep/estimates/agreed-price/utils'
-import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { DeleteButton, ShowButton, useSelect, useTable } from '@refinedev/antd'
@@ -61,6 +60,24 @@ const AgreedPriceQuotaTab = () => {
 
   const { selectProps: customerSelectProps } = useSelect({
     resource: 'customers',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
+  const { selectProps: creatorSelectProps } = useSelect({
+    resource: 'employees',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
+  const { selectProps: tagSelectProps } = useSelect({
+    resource: 'tags',
     optionLabel: 'name',
     optionValue: 'id',
     pagination: {
@@ -539,11 +556,14 @@ const AgreedPriceQuotaTab = () => {
             value: v.category,
           },
           {
-            field: 'creator_name',
+            field: 'created_by',
             operator: 'eq',
             value:
-              (v.creator_name as { label?: string })?.label?.trim() ??
-              undefined,
+              typeof v.created_by === 'object' &&
+              v.created_by != null &&
+              'value' in v.created_by
+                ? (v.created_by as { value: number }).value
+                : v.created_by,
           },
           {
             field: 'department_id',
@@ -553,10 +573,14 @@ const AgreedPriceQuotaTab = () => {
               : undefined,
           },
           {
-            field: 'tag_name',
+            field: 'tag_id',
             operator: 'eq',
             value:
-              (v.tag_name as { label?: string })?.label?.trim() ?? undefined,
+              typeof v.tag_id === 'object' &&
+              v.tag_id != null &&
+              'value' in v.tag_id
+                ? (v.tag_id as { value: number }).value
+                : v.tag_id,
           },
           {
             field: 'expiration_date',
@@ -708,21 +732,30 @@ const AgreedPriceQuotaTab = () => {
               <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6} lg={3} xxl={3}>
-            <CoreAutocompleteAPI
-              name="creator_name"
-              pageSize={10}
-              resource="employees"
+          <Col xs={12} md={6} lg={4} xxl={3}>
+            <Form.Item
               label={
                 <span className="font-bold">
                   {t('agreed_prices.search.creator')}
                 </span>
               }
-              placeholder={t('agreed_prices.search.partial_match')}
-              onChangeClear={(callback) => {
-                if (callback) callback('')
-              }}
-            />
+              layout="vertical"
+              name={'created_by'}
+            >
+              <Select
+                {...creatorSelectProps}
+                allowClear
+                showSearch
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue={true}
+                placeholder={t('agreed_prices.search.please_select')}
+              />
+            </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={4} xxl={3}>
             <Form.Item
@@ -749,21 +782,30 @@ const AgreedPriceQuotaTab = () => {
               />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6} lg={3} xxl={3}>
-            <CoreAutocompleteAPI
-              name="tag_name"
-              pageSize={10}
-              resource="tags"
+          <Col xs={12} md={6} lg={4} xxl={3}>
+            <Form.Item
               label={
                 <span className="font-bold">
                   {t('agreed_prices.search.tag_name')}
                 </span>
               }
-              placeholder={t('agreed_prices.search.partial_match')}
-              onChangeClear={(callback) => {
-                if (callback) callback('')
-              }}
-            />
+              layout="vertical"
+              name={'tag_id'}
+            >
+              <Select
+                {...tagSelectProps}
+                allowClear
+                showSearch
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue={true}
+                placeholder={t('agreed_prices.search.please_select')}
+              />
+            </Form.Item>
           </Col>
         </Row>
         <Row gutter={[24, 0]}>

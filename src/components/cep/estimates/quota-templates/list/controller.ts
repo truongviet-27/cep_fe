@@ -33,9 +33,14 @@ export const useController = () => {
           value: params.name_lk ?? null,
         },
         {
-          field: 'creator',
+          field: 'created_by',
           operator: 'eq',
-          value: (params.creator as { label?: string })?.label?.trim() ?? null,
+          value:
+            typeof params?.created_by === 'object' &&
+            params?.created_by != null &&
+            'value' in params?.created_by
+              ? (params?.created_by as { value: number }).value
+              : params?.created_by,
         },
         {
           field: 'start_date',
