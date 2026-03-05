@@ -4,10 +4,12 @@ import type {
   QuotaTemplateMainProductType,
   QuotaTemplateProductType,
 } from '@interfaces/quota-templates'
+import { useTranslate } from '@refinedev/core'
 import type { ProductListItem } from '@sdk/hey-api'
 import { Form } from 'antd'
 
 export const useController = () => {
+  const t = useTranslate()
   const form = Form.useFormInstance<QuotaTemplateFormType>()
   const optionalProducts = Form.useWatch(
     'optional_product',
@@ -23,6 +25,9 @@ export const useController = () => {
       ...products,
       {
         product_id: null,
+        package_name: '-',
+        unit: t('quotas.action.detail_info.default_values.default_unit'),
+        unit_name: t('quotas.action.detail_info.default_values.default_unit'),
         name: '',
         code: '',
         quantity: 1,
