@@ -1,4 +1,7 @@
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
+import {
+  QuotaStatus,
+  STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE,
+} from '@components/cep/estimates/quotas/enum'
 import { Card, Spin } from 'antd'
 
 const StatusDashboard = ({
@@ -25,8 +28,8 @@ const StatusDashboard = ({
       {statusData.map((item) => {
         const checkDisableCard =
           !useApproveRoute &&
-          (item.key === QuotaStatus.WaitingApproval ||
-            item.key === QuotaStatus.Rejected)
+          item.key &&
+          STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(item.key) > -1
 
         return (
           <Card
