@@ -197,7 +197,7 @@ export function useController() {
     mutateDraft(
       {
         url: `${apiUrl}/drafts`,
-        method: 'post',
+        method: 'put',
         values: {
           type: 'quota_template',
           payload,
@@ -205,12 +205,12 @@ export function useController() {
       },
       {
         onSuccess() {
-          message.success(t('notifications.success'))
+          message.success(t('notifications.draftSaveSuccess'))
           go({ to: '/quota-templates' })
         },
         onError(error: any) {
           message.error(
-            error?.response?.data?.message || t('notifications.error'),
+            error?.response?.data?.message || t('notifications.draftSaveError'),
           )
         },
       },
@@ -233,7 +233,7 @@ export function useController() {
       ...draftPayload,
     })
 
-    message.success(t('notifications.success'))
+    message.success(t('notifications.draftApplySuccess'))
   }
 
   return {

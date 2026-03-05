@@ -52,7 +52,10 @@
     "deleteSuccess": "Delete Success",
     "deleteError": "Delete Success",
     "createSuccess": "Create Success",
-    "error": "Error"
+    "error": "Error",
+    "draftSaveSuccess": "Draft saved successfully.",
+    "draftSaveError": "Failed to save draft.",
+    "draftApplySuccess": "Draft applied to form successfully."
   },
   "menu": {
     "dashboard": "Dashboard",

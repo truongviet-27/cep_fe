@@ -1556,7 +1556,7 @@ export const draftControllerIndex = <ThrowOnError extends boolean = false>(
 export const draftControllerStore = <ThrowOnError extends boolean = false>(
   options: Options<DraftControllerStoreData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).post<
+  return (options.client ?? _heyApiClient).put<
     DraftControllerStoreResponses,
     unknown,
     ThrowOnError

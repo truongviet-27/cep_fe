@@ -264,7 +264,7 @@ export const useCustomerCreate = () => {
     mutateDraft(
       {
         url: `${apiUrl}/drafts`,
-        method: 'post',
+        method: 'put',
         values: {
           type: 'customer',
           payload,
@@ -272,11 +272,14 @@ export const useCustomerCreate = () => {
       },
       {
         onSuccess() {
-          message.success(t('notifications.success'))
+          message.success(t('notifications.draftSaveSuccess'))
+          go({
+            to: `/customers`,
+          })
         },
         onError(error: any) {
           message.error(
-            error?.response?.data?.message || t('notifications.error'),
+            error?.response?.data?.message || t('notifications.draftSaveError'),
           )
         },
       },
@@ -313,7 +316,7 @@ export const useCustomerCreate = () => {
       receivers,
     })
 
-    message.success(t('notifications.success'))
+    message.success(t('notifications.draftApplySuccess'))
   }
 
   const rule = validateCustomerRule(t)

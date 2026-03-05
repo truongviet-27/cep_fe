@@ -131,7 +131,7 @@ function useProductForm() {
     mutateDraft(
       {
         url: `${apiUrl}/drafts`,
-        method: 'post',
+        method: 'put',
         values: {
           type: 'product',
           payload,
@@ -139,12 +139,12 @@ function useProductForm() {
       },
       {
         onSuccess() {
-          message.success(t('notifications.success'))
+          message.success(t('notifications.draftSaveSuccess'))
           go({ to: { resource: 'products', action: 'list' } })
         },
         onError(error: any) {
           message.error(
-            error?.response?.data?.message || t('notifications.error'),
+            error?.response?.data?.message || t('notifications.draftSaveError'),
           )
         },
       },
@@ -167,7 +167,7 @@ function useProductForm() {
       ...draftPayload,
     })
 
-    message.success(t('notifications.success'))
+    message.success(t('notifications.draftApplySuccess'))
   }
 
   return [

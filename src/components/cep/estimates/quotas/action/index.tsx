@@ -677,7 +677,7 @@ function QuotaAction() {
     mutateDraft(
       {
         url: `${apiUrl}/drafts`,
-        method: 'post',
+        method: 'put',
         values: {
           type: 'quota',
           payload,
@@ -685,10 +685,15 @@ function QuotaAction() {
       },
       {
         onSuccess() {
-          message.success(t('notifications.success'))
+          message.success(t('notifications.draftSaveSuccess'))
           go({
             to: `/quotas`,
           })
+        },
+        onError(error: any) {
+          message.error(
+            error?.response?.data?.message || t('notifications.draftSaveError'),
+          )
         },
       },
     )
@@ -757,6 +762,8 @@ function QuotaAction() {
             }))
           : defaultOptionalProduct,
     })
+
+    message.success(t('notifications.draftApplySuccess'))
   }
 
   const [productPrincing, setProductPrincing] = useState<number[]>()
