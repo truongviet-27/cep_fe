@@ -232,6 +232,27 @@ function QuotaAction() {
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
 
+  const { refetch: checkParameter, isFetching: isCheckingParameter } =
+    useCustom({
+      method: 'get',
+      url: `${apiUrl}/quotas/check-parameters`, // Thay đổi URL theo API của bạn
+      queryOptions: {
+        enabled: false, // Không tự động gọi API
+        retry: false, // Tắt retry để tránh retry 3 lần
+      },
+      config: {
+        filters: [
+          {
+            field: 'is_manage_approve_routes',
+            operator: 'eq',
+            value: parameterSettings?.get('approve-routes') ? true : false,
+          },
+        ],
+      },
+      successNotification: false, // Tắt success notification
+      errorNotification: false, // Tắt error notification/toast
+    })
+
   const handlePreviewPdf = () => {
     const delivery_date = form.getFieldValue('delivery_date')
       ? form.getFieldValue('delivery_date').format('YYYY/MM/DD HH:mm')
@@ -545,7 +566,7 @@ function QuotaAction() {
     }
   }, [departmentData, data, quoteTemplateQuery?.data?.data])
 
-  const onFinish = (values: any) => {
+  const performCreateOrEdit = (values: any) => {
     if (isUpdate && isEdit) {
       mutation.mutate(
         {
@@ -630,6 +651,42 @@ function QuotaAction() {
     }
   }
 
+  const onFinish = (values: any) => {
+    // Gọi API check parameter trước khi create/edit
+    checkParameter()
+      .then((response: any) => {
+        // Kiểm tra status code và data của response
+        if (response?.status === 'success' && !response?.data?.message) {
+          performCreateOrEdit(values)
+        } else {
+          Modal.confirm({
+            title: t('quotas.parameterCheck.settingChangedWarning'),
+            content: (
+              <div style={{ whiteSpace: 'pre-line' }}>
+                {response?.error?.message ||
+                  t('quotas.parameterCheck.confirmContinue')}
+              </div>
+            ),
+            okText: t('buttons.yesContinue'),
+            cancelText: t('buttons.noCancel'),
+            onOk() {
+              // User chọn Yes - tiếp tục create/edit
+              performCreateOrEdit(values)
+            },
+            onCancel() {
+              // User chọn No - không làm gì cả
+              console.log('User cancelled the operation')
+            },
+          })
+        }
+      })
+      .catch((error) => {
+        // Xử lý khi có lỗi network hoặc lỗi khác
+        console.error('Parameter check network error:', error)
+        // Có thể hiển thị modal hoặc message thông báo lỗi
+      })
+  }
+
   const [productPrincing, setProductPrincing] = useState<number[]>()
   const [productPrincingOptional, setProductPrincingptional] =
     useState<number[]>()
@@ -675,7 +732,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quota_templates.list.createFromTemplate')}
@@ -689,7 +747,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quota_templates.list.createFromOldQuota')}
@@ -707,7 +766,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quotas.action.preview')}
@@ -722,7 +782,8 @@ function QuotaAction() {
           isFetchingBasicInfo ||
           isFetchingProduct ||
           isFetchingHistory ||
-          quoteTemplateQuery.isFetching
+          quoteTemplateQuery.isFetching ||
+          isCheckingParameter
         }
       >
         <Form
@@ -829,6 +890,7 @@ function QuotaAction() {
                 {...saveButtonProps}
                 type="primary"
                 autoInsertSpace={false}
+                loading={saveButtonProps.loading || isCheckingParameter}
               >
                 {action === 'edit' ? t('buttons.save') : t('buttons.create')}
               </Button>

@@ -42,7 +42,9 @@
     "clear": "Clear",
     "csv_bulk_register": "CSV Bulk Register",
     "suspend": "Suspend",
-    "resume": "Resume"
+    "resume": "Resume",
+    "yesContinue": "Yes, Continue",
+    "noCancel": "No, Cancel"
   },
   "notifications": {
     "success": "Success",

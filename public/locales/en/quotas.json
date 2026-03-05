@@ -11,5 +11,10 @@
   },
   "tags": {
     "create_new_tag": "Create tag"
+  },
+  "parameterCheck": {
+    "failed": "Parameter Check Failed",
+    "settingChangedWarning": "Setting Changed Warning",
+    "confirmContinue": "Parameter check failed. Do you want to continue?"
   }
 }
