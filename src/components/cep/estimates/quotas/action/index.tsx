@@ -57,6 +57,7 @@ import Link from 'next/link'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import CreateFromTemplate from './components/popups/create-from-template'
 import CreateFromOldQuota from './components/popups/create-from-old-quota'
+import { refreshUserData } from '@utility/refresh-user-data'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -89,7 +90,29 @@ function QuotaAction() {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const { permission, parameterSettings } = useUserStore.getState()
+  // Use reactive store selector instead of getState() to auto-update on changes
+  const permission = useUserStore((state) => state.permission)
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+
+  // Refresh permissions and parameter settings when window regains focus
+  // This handles the multi-tab scenario where settings are updated in another tab
+  // Wrapped in useCallback to prevent re-creating on every render
+  const handleRefreshUserData = useCallback(async () => {
+    try {
+      console.log('Refreshing user data on focus...')
+      await refreshUserData()
+    } catch (error) {
+      console.error('Failed to refresh user data', error)
+    }
+  }, [])
+
+  // Refresh on component mount to handle React router navigation (list → create)
+  // This runs ONCE when component mounts, not on every render
+  // because handleRefreshUserData is memoized with useCallback([])
+  useEffect(() => {
+    console.log('Component mounted, refreshing user data...')
+    handleRefreshUserData()
+  }, [handleRefreshUserData])
 
   const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -199,7 +222,11 @@ function QuotaAction() {
     ]
   }
 
-  const { data: departmentData } = useCustom({
+  const {
+    data: departmentData,
+    refetch: refetchDepartmentData,
+    isFetching: isFetchingDepartment,
+  } = useCustom({
     method: 'get',
     url: `${apiUrl}/departments/find-first`,
     queryOptions: {
@@ -228,6 +255,39 @@ function QuotaAction() {
       }
     }
   }, [data?.data, isClone, isEdit, dataBasicInfo])
+
+  // Refetch department data when approve-routes parameter setting changes
+  useEffect(() => {
+    const isApproveRoutesEnabled = parameterSettings?.get('approve-routes')
+
+    if (isApproveRoutesEnabled !== undefined && departmentData?.data) {
+      refetchDepartmentData().then(({ data: latestDepartmentData }) => {
+        const approveRoutes = latestDepartmentData?.data?.approve_routes || []
+
+        if (isApproveRoutesEnabled) {
+          // Enable: set approve_routes options and first route as default
+          form.setFieldsValue({
+            approve_routes: approveRoutes,
+            approve_route_id: approveRoutes[0]?.id || null,
+            approve_route_name: approveRoutes[0]?.name || null,
+          })
+        } else {
+          // Disable: clear approve_routes options and value
+          form.setFieldsValue({
+            approve_routes: [],
+            approve_route_id: '',
+            approve_route_name: '',
+          })
+        }
+      })
+    }
+  }, [
+    parameterSettings?.get('approve-routes'),
+    departmentData?.data,
+    refetchDepartmentData,
+    form,
+  ])
+  console.log('departmentData: ', form.getFieldsValue())
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -247,6 +307,27 @@ function QuotaAction() {
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+
+  const { refetch: checkParameter, isFetching: isCheckingParameter } =
+    useCustom({
+      method: 'get',
+      url: `${apiUrl}/quotas/check-parameters`, // Thay đổi URL theo API của bạn
+      queryOptions: {
+        enabled: false, // Không tự động gọi API
+        retry: false, // Tắt retry để tránh retry 3 lần
+      },
+      config: {
+        filters: [
+          {
+            field: 'is_manage_approve_routes',
+            operator: 'eq',
+            value: parameterSettings?.get('approve-routes') ? true : false,
+          },
+        ],
+      },
+      successNotification: false, // Tắt success notification
+      errorNotification: false, // Tắt error notification/toast
+    })
 
   const handlePreviewPdf = () => {
     const delivery_date = form.getFieldValue('delivery_date')
@@ -589,7 +670,7 @@ function QuotaAction() {
     }
   }, [departmentData, data, quoteTemplateQuery?.data?.data])
 
-  const onFinish = (values: any) => {
+  const performCreateOrEdit = (values: any) => {
     if (isUpdate && isEdit) {
       mutation.mutate(
         {
@@ -673,6 +754,42 @@ function QuotaAction() {
         },
       )
     }
+  }
+
+  const onFinish = (values: any) => {
+    // Gọi API check parameter trước khi create/edit
+    checkParameter()
+      .then((response: any) => {
+        // Kiểm tra status code và data của response
+        if (response?.status === 'success' && !response?.data?.message) {
+          performCreateOrEdit(values)
+        } else {
+          Modal.confirm({
+            title: t('quotas.parameterCheck.settingChangedWarning'),
+            content: (
+              <div style={{ whiteSpace: 'pre-line' }}>
+                {response?.error?.message ||
+                  t('quotas.parameterCheck.confirmContinue')}
+              </div>
+            ),
+            okText: t('buttons.yesContinue'),
+            cancelText: t('buttons.noCancel'),
+            onOk() {
+              // User chọn Yes - tiếp tục create/edit
+              performCreateOrEdit(values)
+            },
+            onCancel() {
+              // User chọn No - không làm gì cả
+              console.log('User cancelled the operation')
+            },
+          })
+        }
+      })
+      .catch((error) => {
+        // Xử lý khi có lỗi network hoặc lỗi khác
+        console.error('Parameter check network error:', error)
+        // Có thể hiển thị modal hoặc message thông báo lỗi
+      })
   }
 
   const handleSaveDraft = () => {
@@ -839,7 +956,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quota_templates.list.createFromTemplate')}
@@ -853,7 +971,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quota_templates.list.createFromOldQuota')}
@@ -871,7 +990,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quotas.action.preview')}
@@ -886,7 +1006,9 @@ function QuotaAction() {
           isFetchingBasicInfo ||
           isFetchingProduct ||
           isFetchingHistory ||
-          quoteTemplateQuery.isFetching
+          isFetchingDepartment ||
+          quoteTemplateQuery.isFetching ||
+          isCheckingParameter
         }
       >
         <Form
@@ -1037,6 +1159,7 @@ function QuotaAction() {
                 {...saveButtonProps}
                 type="primary"
                 autoInsertSpace={false}
+                loading={saveButtonProps.loading || isCheckingParameter}
               >
                 {action === 'edit' ? t('buttons.save') : t('buttons.create')}
               </Button>
