@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslate } from '@refinedev/core'
 import { Flex, Typography } from 'antd'
 import type { CSSProperties, ReactNode } from 'react'
 
@@ -66,7 +67,12 @@ function StepRow({
         </div>
         <Text
           type="secondary"
-          style={{ fontSize: 12, lineHeight: 1.6, display: 'block' }}
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            display: 'block',
+            whiteSpace: 'pre-line',
+          }}
         >
           {desc}
         </Text>
@@ -88,28 +94,39 @@ function Badge({
   return <span style={style}>{children}</span>
 }
 
+const BASE = 'initial-setup-guide.test_individual'
+
 export default function TestIndividualContent() {
+  const t = useTranslate()
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
       <div style={stepCardStyle}>
         <StepRow
-          title="ステップ１：見積書の作成"
-          desc="見積作成の新規作成とテンプレート作成から見積書を作成します。※承認ルート設定がある場合は、承認ルートを選択します。"
-          badges={<Badge style={BADGES.gray}>作成中</Badge>}
+          title={t(`${BASE}.step1_title`)}
+          desc={t(`${BASE}.step1_desc`)}
+          badges={
+            <Badge style={BADGES.gray}>{t(`${BASE}.badge_creating`)}</Badge>
+          }
         />
         <div style={subStepStyle}>
           <StepRow
-            title="ステップ１-１：見積書の承認・差戻"
-            desc="承認待ステータスにある見積を承認・差戻します。※差戻の場合は、差戻の理由の記載が必須となります。"
-            badges={<Badge style={BADGES.yellow}>承認待</Badge>}
+            title={t(`${BASE}.step1_1_title`)}
+            desc={t(`${BASE}.step1_1_desc`)}
+            badges={
+              <Badge style={BADGES.yellow}>
+                {t(`${BASE}.badge_waiting_approval`)}
+              </Badge>
+            }
             titleSize={14}
           />
         </div>
         <div style={subStepStyle}>
           <StepRow
-            title="ステップ１-２：見積書の差戻対応"
-            desc="差戻理由を確認して、見積を訂正し再度承認申請します。"
-            badges={<Badge style={BADGES.red}>差戻</Badge>}
+            title={t(`${BASE}.step1_2_title`)}
+            desc={t(`${BASE}.step1_2_desc`)}
+            badges={
+              <Badge style={BADGES.red}>{t(`${BASE}.badge_rejected`)}</Badge>
+            }
             titleSize={14}
           />
         </div>
@@ -117,12 +134,12 @@ export default function TestIndividualContent() {
 
       <div style={stepCardStyle}>
         <StepRow
-          title="ステップ２：見積書の送信"
-          desc="作成（または承認）した見積書を顧客へ送付します。※作成者および管理者のみ送信可能です。"
+          title={t(`${BASE}.step2_title`)}
+          desc={t(`${BASE}.step2_desc`)}
           badges={
             <>
-              <Badge style={BADGES.gray}>作成中</Badge>
-              <Badge style={BADGES.blue}>承認済</Badge>
+              <Badge style={BADGES.gray}>{t(`${BASE}.badge_creating`)}</Badge>
+              <Badge style={BADGES.blue}>{t(`${BASE}.badge_approved`)}</Badge>
             </>
           }
         />
@@ -130,39 +147,41 @@ export default function TestIndividualContent() {
 
       <div style={stepCardStyle}>
         <StepRow
-          title="ステップ３：見積の再見積"
+          title={t(`${BASE}.step3_title`)}
           desc={
             <>
-              顧客からの再見積依頼に対し、再見積ボタンから再見積作成を行います。
+              {t(`${BASE}.step3_desc_line1`)}
               <br />
-              ※再見積を作成した際は、元の見積書に追加されて再見積書が作成され、作成中のに移動します。
+              {t(`${BASE}.step3_desc_line2`)}
               <br />
-              ※再見積書が作成された同時に元の見積書のステータスが再見積に移動します。
+              {t(`${BASE}.step3_desc_line3`)}
             </>
           }
-          badges={<Badge style={BADGES.blue}>送信済</Badge>}
+          badges={<Badge style={BADGES.blue}>{t(`${BASE}.badge_sent`)}</Badge>}
         />
       </div>
 
       <div style={stepCardStyle}>
         <StepRow
-          title="ステップ４：見積の受注・失注の管理"
-          desc="送信済の見積に対し、受注・失注の判定を下します。"
-          badges={<Badge style={BADGES.blue}>送信済</Badge>}
+          title={t(`${BASE}.step4_title`)}
+          desc={t(`${BASE}.step4_desc`)}
+          badges={<Badge style={BADGES.blue}>{t(`${BASE}.badge_sent`)}</Badge>}
         />
       </div>
 
       <div style={stepCardStyle}>
         <StepRow
-          title="ステップ５：継続見積の管理（契約区分：継続の場合）"
+          title={t(`${BASE}.step5_title`)}
           desc={
             <>
-              契約区分が「継続」で受注した見積は、継続見積一覧にコピーされ、見積適用期間の管理が可能となります。
+              {t(`${BASE}.step5_desc_line1`)}
               <br />
-              ※デフォルト設定は無期限となっているので、適用期限管理がしたい場合は変更します。
+              {t(`${BASE}.step5_desc_line2`)}
             </>
           }
-          badges={<Badge style={BADGES.green}>受注</Badge>}
+          badges={
+            <Badge style={BADGES.green}>{t(`${BASE}.badge_order`)}</Badge>
+          }
         />
       </div>
     </div>

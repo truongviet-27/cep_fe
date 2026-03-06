@@ -25,6 +25,70 @@
   "confirm": {
     "delete_confirm": "削除してもよろしいですか？"
   },
+  "initial_setup_guide": {
+    "advanced_note": "高度な機能を設定いただけます。各種設定から必要な設定をご利用ください。",
+    "approval_route_setting": "承認ルート設定",
+    "price_rank_setting": "単価ランク設定",
+    "user_role": "ユーザー権限",
+    "breadcrumb_root": "初期設定",
+    "button_later": "あとで設定",
+    "target_menu_label": "対象作業メニュー：見積一覧",
+    "loading": "読み込み中...",
+    "status_pending": "未設定",
+    "status_complete": "完了",
+    "progress_status": "進捗状況",
+    "label_estimate_management": "見積管理",
+    "label_account_management": "アカウント管理",
+    "step_prefix": "ステップ",
+    "screen_link": "画面へ",
+    "menu": {
+      "basic": {
+        "title": "初期設定",
+        "subtitle": "システムの基本設定",
+        "breadcrumb_label": "初期設定"
+      },
+      "advanced": {
+        "title": "高度な設定",
+        "subtitle": "詳細な機能設定",
+        "breadcrumb_label": "高度な設定"
+      },
+      "test_individual": {
+        "title": "テスト運用（個別）",
+        "subtitle": "システム動作の手順",
+        "breadcrumb_label": "テスト運用（個別）"
+      },
+      "test_continuous": {
+        "title": "テスト運用（継続）",
+        "subtitle": "システム動作の手順",
+        "breadcrumb_label": "テスト運用（継続）"
+      }
+    },
+    "test_individual": {
+      "step1_title": "ステップ１：見積書の作成",
+      "step1_desc": "見積作成の新規作成とテンプレート作成から見積書を作成します。※承認ルート設定がある場合は、承認ルートを選択します。",
+      "step1_1_title": "ステップ１-１：見積書の承認・差戻",
+      "step1_1_desc": "承認待ステータスにある見積を承認・差戻します。\n※差戻の場合は、差戻の理由の記載が必須となります。",
+      "step1_2_title": "ステップ１-２：見積書の差戻対応",
+      "step1_2_desc": "差戻理由を確認して、見積を訂正し再度承認申請します。",
+      "step2_title": "ステップ２：見積書の送信",
+      "step2_desc": "作成（または承認）した見積書を顧客へ送付します。\n※作成者および管理者のみ送信可能です。",
+      "step3_title": "ステップ３：見積の再見積",
+      "step3_desc_line1": "顧客からの再見積依頼に対し、再見積ボタンから再見積作成を行います。",
+      "step3_desc_line2": "※再見積を作成した際は、元の見積書に追加されて再見積書が作成され、作成中のに移動します。",
+      "step3_desc_line3": "※再見積書が作成された同時に元の見積書のステータスが再見積に移動します。",
+      "step4_title": "ステップ４：見積の受注・失注の管理",
+      "step4_desc": "送信済の見積に対し、受注・失注の判定を下します。",
+      "step5_title": "ステップ５：継続見積の管理（契約区分：継続の場合）",
+      "step5_desc_line1": "契約区分が「継続」で受注した見積は、継続見積一覧にコピーされ、見積適用期間の管理が可能となります。",
+      "step5_desc_line2": "※デフォルト設定は無期限となっているので、適用期限管理がしたい場合は変更します。",
+      "badge_creating": "作成中",
+      "badge_waiting_approval": "承認待",
+      "badge_rejected": "差戻",
+      "badge_approved": "承認済",
+      "badge_sent": "送信済",
+      "badge_order": "受注"
+    }
+  },
   "buttons": {
     "cancel": "キャンセル",
     "save_settings": "設定を保存",

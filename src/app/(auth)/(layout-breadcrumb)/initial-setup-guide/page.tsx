@@ -2,7 +2,7 @@
 
 import { RightOutlined } from '@ant-design/icons'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { useList } from '@refinedev/core'
+import { useList, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import { PRIMARY } from '@utility/color'
 import { Button, Typography } from 'antd'
@@ -15,6 +15,7 @@ import { DISABLED_MENU_IDS, MENU_ITEMS, MENU_ITEMS_VISIBLE } from './constants'
 import type { Manual } from './types'
 
 export default function InitialSetupGuidePage() {
+  const t = useTranslate()
   const router = useRouter()
   const searchParams = useSearchParams()
   const permission = useUserStore((s) => s.permission)
@@ -124,16 +125,22 @@ export default function InitialSetupGuidePage() {
 
   const breadcrumbItems = useMemo(
     () => [
-      { title: <span style={{ color: '#8c8c8c' }}>初期設定</span> },
+      {
+        title: (
+          <span style={{ color: '#8c8c8c' }}>
+            {t('initial-setup-guide.breadcrumb_root')}
+          </span>
+        ),
+      },
       {
         title: (
           <span style={{ fontWeight: 'bold', color: PRIMARY }}>
-            {selectedItem.breadcrumbLabel}
+            {t(`initial-setup-guide.menu.${selectedItem.id}.breadcrumb_label`)}
           </span>
         ),
       },
     ],
-    [selectedItem.breadcrumbLabel],
+    [selectedItem.id, t],
   )
 
   return (
@@ -222,7 +229,7 @@ export default function InitialSetupGuidePage() {
               }}
             >
               <Typography.Title level={5} style={{ margin: 0 }}>
-                {selectedItem.title}
+                {t(`initial-setup-guide.menu.${selectedItem.id}.title`)}
               </Typography.Title>
               <Button
                 type="default"
@@ -234,7 +241,9 @@ export default function InitialSetupGuidePage() {
                   fontWeight: 600,
                 }}
               >
-                {isFirstLogin ? 'あとで設定' : '戻る'}
+                {isFirstLogin
+                  ? t('initial-setup-guide.button_later')
+                  : t('buttons.back')}
               </Button>
             </div>
             <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>

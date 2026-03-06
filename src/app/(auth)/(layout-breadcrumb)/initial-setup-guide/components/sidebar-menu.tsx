@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslate } from '@refinedev/core'
 import { Card, Flex, Progress, Space, Typography } from 'antd'
 
 import type { MenuItem } from '../constants'
@@ -23,6 +24,8 @@ export default function SidebarMenu({
   onSelect,
   progressByType = {},
 }: SidebarMenuProps) {
+  const t = useTranslate()
+  const menuIdKey = (id: string) => id.replace(/-/g, '_')
   return (
     <div style={{ width: 280, flexShrink: 0 }}>
       <Space direction="vertical" size={12} style={{ width: '100%' }}>
@@ -79,7 +82,7 @@ export default function SidebarMenu({
                   color: isSelected ? '#fff' : undefined,
                 }}
               >
-                {item.title}
+                {t(`initial-setup-guide.menu.${menuIdKey(item.id)}.title`)}
               </Title>
               <Text
                 type="secondary"
@@ -88,7 +91,7 @@ export default function SidebarMenu({
                   color: isSelected ? 'rgba(255,255,255,0.85)' : undefined,
                 }}
               >
-                {item.subtitle}
+                {t(`initial-setup-guide.menu.${menuIdKey(item.id)}.subtitle`)}
               </Text>
               {showProgress && (
                 <div style={{ marginTop: 12 }}>
@@ -100,7 +103,7 @@ export default function SidebarMenu({
                       color: isSelected ? 'rgba(255,255,255,0.85)' : undefined,
                     }}
                   >
-                    進捗状況
+                    {t('initial-setup-guide.progress_status')}
                   </Text>
                   <Flex align="center" gap={8}>
                     <div style={{ flex: 1, minWidth: 0 }}>

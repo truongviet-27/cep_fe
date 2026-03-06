@@ -1,14 +1,9 @@
 'use client'
 
 import { ExportOutlined } from '@ant-design/icons'
+import { useTranslate } from '@refinedev/core'
 import { Button, Dropdown } from 'antd'
 import type { ReactNode } from 'react'
-
-const STATUS_OPTIONS: Array<{ value: 'pending' | 'complete'; label: string }> =
-  [
-    { value: 'pending', label: '未設定' },
-    { value: 'complete', label: '完了' },
-  ]
 
 export interface GuideStepCardProps {
   icon: ReactNode
@@ -70,6 +65,12 @@ export default function GuideStepCard({
   leftColumnBg,
   showLeftIcon = true,
 }: GuideStepCardProps) {
+  const t = useTranslate()
+  const statusOptions: Array<{ value: 'pending' | 'complete'; label: string }> =
+    [
+      { value: 'pending', label: t('initial-setup-guide.status_pending') },
+      { value: 'complete', label: t('initial-setup-guide.status_complete') },
+    ]
   const leftStyle = LEFT_BG_STYLES[leftBg]
   const grayedOut = isComplete
   const rightBg = grayedOut
@@ -249,8 +250,9 @@ export default function GuideStepCard({
         </div>
         <Dropdown
           menu={{
-            items: STATUS_OPTIONS.filter((opt) => opt.value !== status).map(
-              (opt) => ({
+            items: statusOptions
+              .filter((opt) => opt.value !== status)
+              .map((opt) => ({
                 key: opt.value,
                 label: opt.label,
                 onClick: () => {
@@ -258,8 +260,7 @@ export default function GuideStepCard({
                     onStatusChange(manualId, opt.value)
                   }
                 },
-              }),
-            ),
+              })),
           }}
           trigger={['click']}
           disabled={!canChangeStatus || updating}
@@ -276,7 +277,9 @@ export default function GuideStepCard({
               color: '#fff',
             }}
           >
-            {status === 'complete' ? '完了' : '未設定'}{' '}
+            {status === 'complete'
+              ? t('initial-setup-guide.status_complete')
+              : t('initial-setup-guide.status_pending')}{' '}
             <span style={{ fontSize: 8, marginLeft: 2 }}>▼</span>
           </Button>
         </Dropdown>

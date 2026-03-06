@@ -1,7 +1,7 @@
 'use client'
 
 import { AuditOutlined, UsergroupAddOutlined } from '@ant-design/icons'
-import { useList, useUpdate } from '@refinedev/core'
+import { useList, useTranslate, useUpdate } from '@refinedev/core'
 import { Card, Typography } from 'antd'
 import { useCallback, useState } from 'react'
 
@@ -11,15 +11,6 @@ import GuideStepCard from './guide-step-card'
 import TestIndividualContent from './test-individual-content'
 
 const { Text, Title } = Typography
-
-const ADVANCED_NOTE =
-  '高度な機能を設定いただけます。各種設定から必要な設定をご利用ください。'
-
-const ADVANCED_GROUP_LABELS: Record<string, string> = {
-  approval_route_setting: '承認ルート設定',
-  price_rank_setting: '単価ランク設定',
-  user_role: 'ユーザー権限',
-}
 
 const ADVANCED_GROUP_ORDER = [
   'approval_route_setting',
@@ -37,9 +28,10 @@ function getIconBgForManual(manual: Manual): string {
   return '#08979c'
 }
 
-function getLabelForManual(manual: Manual): string {
-  if (manual.category === 'system') return '見積管理'
-  return 'アカウント管理'
+function getLabelForManual(manual: Manual, t: (key: string) => string): string {
+  if (manual.category === 'system')
+    return t('initial-setup-guide.label_estimate_management')
+  return t('initial-setup-guide.label_account_management')
 }
 
 function getLeftColumnBgForManual(manual: Manual): string {
@@ -51,7 +43,7 @@ function getNotesFromManual(
   manual: Manual,
 ): Array<{ text: string; italic?: boolean; danger?: boolean }> | undefined {
   const items: Array<{ text: string; italic?: boolean; danger?: boolean }> = []
-  if (manual.note) items.push({ text: manual.note, italic: true })
+  if (manual.note) items.push({ text: manual.note })
   if (manual.note_warning)
     items.push({ text: manual.note_warning, danger: true })
   return items.length > 0 ? items : undefined
@@ -68,6 +60,7 @@ export default function GuideContent({
   onStatusUpdated,
   hideTitle = false,
 }: GuideContentProps) {
+  const t = useTranslate()
   const [updatingId, setUpdatingId] = useState<number | null>(null)
 
   const typeFilter =
@@ -114,7 +107,7 @@ export default function GuideContent({
     })
     return groupKeys.map((groupKey) => ({
       groupKey,
-      groupName: ADVANCED_GROUP_LABELS[groupKey] ?? groupKey,
+      groupName: t(`initial-setup-guide.${groupKey}`) || groupKey,
       items: map.get(groupKey) ?? [],
     }))
   })()
@@ -173,7 +166,7 @@ export default function GuideContent({
             flexShrink: 0,
           }}
         >
-          {ADVANCED_NOTE}
+          {t('initial-setup-guide.advanced_note')}
         </Text>
       )}
 
@@ -262,10 +255,10 @@ export default function GuideContent({
                         icon={getIconForManual(manual)}
                         iconBg={getIconBgForManual(manual)}
                         leftColumnBg={getLeftColumnBgForManual(manual)}
-                        label={getLabelForManual(manual)}
+                        label={getLabelForManual(manual, t)}
                         title={
                           manual.step != null
-                            ? `ステップ${manual.step}：${manual.name}`
+                            ? `${t('initial-setup-guide.step_prefix')}${manual.step}：${manual.name}`
                             : manual.name
                         }
                         description={manual.description.replace(/\\n/g, '\n')}
@@ -275,7 +268,7 @@ export default function GuideContent({
                           manual.breadcrumb
                             ? undefined
                             : manual.link
-                              ? '画面へ'
+                              ? t('initial-setup-guide.screen_link')
                               : undefined
                         }
                         breadcrumb={manual.breadcrumb ?? undefined}
@@ -307,10 +300,10 @@ export default function GuideContent({
                     icon={getIconForManual(manual)}
                     iconBg={getIconBgForManual(manual)}
                     leftColumnBg={getLeftColumnBgForManual(manual)}
-                    label={getLabelForManual(manual)}
+                    label={getLabelForManual(manual, t)}
                     title={
                       manual.step != null
-                        ? `ステップ${manual.step}：${manual.name}`
+                        ? `${t('initial-setup-guide.step_prefix')}${manual.step}：${manual.name}`
                         : manual.name
                     }
                     description={manual.description.replace(/\\n/g, '\n')}
@@ -320,7 +313,7 @@ export default function GuideContent({
                       manual.breadcrumb
                         ? undefined
                         : manual.link
-                          ? '画面へ'
+                          ? t('initial-setup-guide.screen_link')
                           : undefined
                     }
                     breadcrumb={manual.breadcrumb ?? undefined}
