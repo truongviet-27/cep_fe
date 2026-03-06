@@ -57,6 +57,7 @@ import Link from 'next/link'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import CreateFromTemplate from './components/popups/create-from-template'
 import CreateFromOldQuota from './components/popups/create-from-old-quota'
+import { refreshUserData } from '@utility/refresh-user-data'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -89,7 +90,29 @@ function QuotaAction() {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const { permission, parameterSettings } = useUserStore.getState()
+  // Use reactive store selector instead of getState() to auto-update on changes
+  const permission = useUserStore((state) => state.permission)
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+
+  // Refresh permissions and parameter settings when window regains focus
+  // This handles the multi-tab scenario where settings are updated in another tab
+  // Wrapped in useCallback to prevent re-creating on every render
+  const handleRefreshUserData = useCallback(async () => {
+    try {
+      console.log('Refreshing user data on focus...')
+      await refreshUserData()
+    } catch (error) {
+      console.error('Failed to refresh user data', error)
+    }
+  }, [])
+
+  // Refresh on component mount to handle React router navigation (list → create)
+  // This runs ONCE when component mounts, not on every render
+  // because handleRefreshUserData is memoized with useCallback([])
+  useEffect(() => {
+    console.log('Component mounted, refreshing user data...')
+    handleRefreshUserData()
+  }, [handleRefreshUserData])
 
   const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -199,7 +222,11 @@ function QuotaAction() {
     ]
   }
 
-  const { data: departmentData } = useCustom({
+  const {
+    data: departmentData,
+    refetch: refetchDepartmentData,
+    isFetching: isFetchingDepartment,
+  } = useCustom({
     method: 'get',
     url: `${apiUrl}/departments/find-first`,
     queryOptions: {
@@ -228,6 +255,39 @@ function QuotaAction() {
       }
     }
   }, [data?.data, isClone, isEdit, dataBasicInfo])
+
+  // Refetch department data when approve-routes parameter setting changes
+  useEffect(() => {
+    const isApproveRoutesEnabled = parameterSettings?.get('approve-routes')
+
+    if (isApproveRoutesEnabled !== undefined && departmentData?.data) {
+      refetchDepartmentData().then(({ data: latestDepartmentData }) => {
+        const approveRoutes = latestDepartmentData?.data?.approve_routes || []
+
+        if (isApproveRoutesEnabled) {
+          // Enable: set approve_routes options and first route as default
+          form.setFieldsValue({
+            approve_routes: approveRoutes,
+            approve_route_id: approveRoutes[0]?.id || null,
+            approve_route_name: approveRoutes[0]?.name || null,
+          })
+        } else {
+          // Disable: clear approve_routes options and value
+          form.setFieldsValue({
+            approve_routes: [],
+            approve_route_id: '',
+            approve_route_name: '',
+          })
+        }
+      })
+    }
+  }, [
+    parameterSettings?.get('approve-routes'),
+    departmentData?.data,
+    refetchDepartmentData,
+    form,
+  ])
+  console.log('departmentData: ', form.getFieldsValue())
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -946,6 +1006,7 @@ function QuotaAction() {
           isFetchingBasicInfo ||
           isFetchingProduct ||
           isFetchingHistory ||
+          isFetchingDepartment ||
           quoteTemplateQuery.isFetching ||
           isCheckingParameter
         }
