@@ -524,11 +524,7 @@ export default function CustomerListPage() {
             }}
           >
             <Text strong>{record?.credit_rank}</Text>
-            <Text strong>
-              {record?.anti_social_rank === 'T'
-                ? '△'
-                : record?.anti_social_rank}
-            </Text>
+            <Text strong>{record?.anti_social_rank}</Text>
           </Space>
         ),
       },
