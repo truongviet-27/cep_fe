@@ -43,6 +43,8 @@
     "csv_bulk_register": "CSV Bulk Register",
     "suspend": "Suspend",
     "resume": "Resume",
+    "yesContinue": "Yes, Continue",
+    "noCancel": "No, Cancel",
     "draft": "Draft",
     "apply_draft": "Apply Draft"
   },

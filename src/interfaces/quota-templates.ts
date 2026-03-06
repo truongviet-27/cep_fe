@@ -78,7 +78,7 @@ export type QuotaTemplateListItemType = {
 
 export type SearchQuotaTemplateType = {
   name_lk?: string
-  creator?: string
+  created_by?: number
   start_to_end_date?: [Dayjs, Dayjs]
   start_date?: string
   end_date?: string

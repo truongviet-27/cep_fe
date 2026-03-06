@@ -46,13 +46,7 @@ function useProductComboForm() {
     redirect: false,
     mutationMode: 'pessimistic',
     onMutationSuccess: () => {
-      if (params?.id) {
-        go({
-          to: { resource: 'product-combos', action: 'show', id: params.id },
-        })
-      } else {
-        go({ to: '/products?tab=combo' })
-      }
+      go({ to: '/products?tab=combo' })
     },
     queryOptions: {
       select: (response) => {
