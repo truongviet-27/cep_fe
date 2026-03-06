@@ -919,11 +919,7 @@ const BasicInfo = ({
                           : ''
                       }
                     >
-                      <Input
-                        disabled={!parameterSettings.get('approve-routes')}
-                        readOnly
-                        style={{ width: '100%' }}
-                      />
+                      <Input disabled readOnly style={{ width: '100%' }} />
                     </Form.Item>
                   </>
                 )
