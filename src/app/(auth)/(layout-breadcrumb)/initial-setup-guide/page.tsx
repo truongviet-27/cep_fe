@@ -105,7 +105,7 @@ export default function InitialSetupGuidePage() {
   const currentIndex = MENU_ITEMS_VISIBLE.findIndex((m) => m.id === selectedId)
   const handleBack = useCallback(() => {
     if (currentIndex <= 0) {
-      router.back()
+      router.replace('/quotas')
       return
     }
     const prev = MENU_ITEMS_VISIBLE[currentIndex - 1]
