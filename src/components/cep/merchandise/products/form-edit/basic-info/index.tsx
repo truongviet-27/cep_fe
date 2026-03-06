@@ -21,6 +21,7 @@ import { Empty, type FormInstance } from 'antd/lib'
 import { type MutableRefObject } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
+import { ProductUnitModal } from '../modal/product-unit'
 import type { ProductFormType } from '../use-product-form'
 import { useBasicInfoController } from './controller'
 
@@ -44,6 +45,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       codeIssueSetting,
       productUnitOptions,
       isFetchingProductUnits,
+      modalFormProductUnit,
+      orderNumberProductUnits,
     },
     {
       handleAutoNumber,
@@ -59,6 +62,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
     close: onCloseCategoryModal,
     open: isOpenCategoryModal,
   } = modalFormCategory
+  const {
+    show: onOpenProductUnitModal,
+    close: onCloseProductUnitModal,
+    open: isOpenProductUnitModal,
+  } = modalFormProductUnit
 
   return (
     <div className="grid grid-cols-5 px-2">
@@ -236,6 +244,19 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               />
             </Form.Item>
           </Col>
+          <Col>
+            <Button
+              color="primary"
+              variant="outlined"
+              size="small"
+              onClick={() => onOpenProductUnitModal()}
+              style={{
+                margin: '4px 0 0 40px',
+              }}
+            >
+              {t('products.newRegistration')}
+            </Button>
+          </Col>
         </Row>
         <Row className="mb-4 flex">
           <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
@@ -400,6 +421,20 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           footer={null}
         >
           <ProductCategoryModal modalProps={modalFormCategory} />
+        </Modal>
+        <Modal
+          open={isOpenProductUnitModal}
+          onCancel={onCloseProductUnitModal}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
+          width={'25vw'}
+          title={t('products.newRegistration')}
+          footer={null}
+        >
+          <ProductUnitModal
+            modalProps={modalFormProductUnit}
+            order={orderNumberProductUnits}
+          />
         </Modal>
       </div>
       <div className="col-span-1">
