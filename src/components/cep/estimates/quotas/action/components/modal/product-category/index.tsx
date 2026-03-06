@@ -30,7 +30,9 @@ export const ProductCategoryModal = ({
   const rankIdWatch = form.getFieldValue('rank_id')
   const mainProductWatch = Form.useWatch(name, form)
 
-  const isDirtyProduct = (mainProductWatch ?? [])[0]?.products[0]?.product_id
+  const isDirtyProduct = (mainProductWatch ?? [])[1]?.product_id
+
+  console.log('djasdkasldkasd', isDirtyProduct)
 
   const { open } = useNotification()
 
@@ -44,86 +46,48 @@ export const ProductCategoryModal = ({
 
   const handleCreateCategory = () => {
     if (data?.data?.products?.length > 0) {
-      form.setFieldValue(
-        name,
-        isDirtyProduct
-          ? [
-              ...mainProductWatch,
-              {
-                group_name: data?.data.products[0]?.category?.name,
-                products: data?.data.products?.map((item: any) => ({
-                  product: {
-                    value: item.id,
-                    label: item.name,
-                  },
-                  package: {
-                    value:
-                      item?.packagings.length > 0
-                        ? item?.packagings[0]?.id
-                        : null,
-                    label:
-                      item?.packagings.length > 0
-                        ? item?.packagings[0]?.name
-                        : null,
-                  },
-                  package_id: item?.packagings[0]?.id,
-                  package_name: item?.packagings[0]?.name,
-                  product_id: item.id,
-                  name: item?.name,
-                  code: item?.code,
-                  unit: item?.unit?.name,
-                  unit_name: item?.unit?.name,
-                  cost_price: item?.cost_price,
-                  quantity: 1,
-                  selling_price:
-                    item?.packagings[0]?.rank_prices != null &&
-                    item?.packagings[0]?.rank_prices !== 0
-                      ? item?.packagings[0]?.rank_prices
-                      : item?.packagings[0]?.selling_price,
-                  tax_rate: item?.tax_rate,
-                  profit_margin: 0,
-                  is_add_total: true,
-                })),
-              },
-            ]
-          : [
-              {
-                group_name: data?.data.products[0]?.category?.name,
-                products: data?.data.products?.map((item: any) => ({
-                  product: {
-                    value: item.id,
-                    label: item.name,
-                  },
-                  package: {
-                    value:
-                      item?.packagings.length > 0
-                        ? item?.packagings[0]?.id
-                        : null,
-                    label:
-                      item?.packagings.length > 0
-                        ? item?.packagings[0]?.name
-                        : null,
-                  },
-                  product_id: item.id,
-                  package_name: item?.packagings[0]?.name,
-                  name: item?.name,
-                  code: item?.code,
-                  unit: item?.unit?.name,
-                  unit_name: item?.unit?.name,
-                  cost_price: item?.cost_price,
-                  quantity: 1,
-                  tax_rate: item?.tax_rate,
-                  selling_price:
-                    item?.packagings[0]?.rank_prices != null &&
-                    item?.packagings[0]?.rank_prices !== 0
-                      ? item?.packagings[0]?.rank_prices
-                      : item?.packagings[0]?.selling_price,
-                  profit_margin: 0,
-                  is_add_total: true,
-                })),
-              },
-            ],
-      )
+      const headerItem = {
+        kind: 'group',
+        isHeader: true,
+        name: data?.data.products[0]?.category?.name,
+        title: data?.data.products[0]?.category?.name,
+      }
+
+      const productItems = data?.data.products?.map((item: any) => ({
+        kind: 'product',
+        product: { value: item.id, label: item.name },
+        package: {
+          value: item?.packagings?.[0]?.id || null,
+          label: item?.packagings?.[0]?.name || null,
+        },
+        product_id: item.id,
+        package_id: item?.packagings?.[0]?.id,
+        package_name: item?.packagings?.[0]?.name,
+        name: item?.name,
+        code: item?.code,
+        unit: item?.unit?.name,
+        unit_name: item?.unit?.name,
+        cost_price: item?.cost_price,
+        quantity: 1,
+        selling_price:
+          item?.packagings?.[0]?.rank_prices != null &&
+          item?.packagings?.[0]?.rank_prices !== 0
+            ? item?.packagings?.[0]?.rank_prices
+            : item?.packagings?.[0]?.selling_price,
+        tax_rate: item?.tax_rate,
+        profit_margin: 0,
+        is_add_total: true,
+      }))
+
+      const currentProducts = isDirtyProduct
+        ? form.getFieldValue(name) || []
+        : []
+
+      form.setFieldValue(name, [
+        ...currentProducts,
+        headerItem,
+        ...productItems,
+      ])
 
       handleChangeProductPrincing(
         data?.data.products?.map((item: any) => item.id),
