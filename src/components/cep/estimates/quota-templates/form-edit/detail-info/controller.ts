@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react'
 
 export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
-
   const totalPriceWatch = Form.useWatch('total_price', form)
   const taxRateWatch = Form.useWatch('tax_rate', form) ?? 0
   const mainProducts = Form.useWatch('main_product', form)

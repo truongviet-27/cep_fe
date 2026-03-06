@@ -61,6 +61,14 @@ export const zCorporateNumberErrorResponse = z.object({
 })
 
 /**
+ * Update Customer Status Request
+ * Request payload for updating customer status
+ */
+export const zUpdateCustomerStatusRequest = z.object({
+  status: z.enum(['new', 'prospecting', 'contracted', 'lost', 'suspended']),
+})
+
+/**
  * Approve route list item resource
  */
 export const zApproveRouteListResource = z.object({
@@ -403,7 +411,7 @@ export const zCompanyResearchInformation = z.object({
   id: z.optional(z.union([z.int(), z.null()])),
   material_name: z.optional(z.string()),
   judgement: z.optional(
-    z.enum(['A', 'B', 'C', 'D', 'E', 'O', 'T', 'X', '未定']),
+    z.enum(['A', 'B', 'C', 'D', 'E', 'F', 'O', 'X', '未定', '-']),
   ),
   created_at: z.optional(z.iso.datetime()),
   updated_at: z.optional(z.iso.datetime()),
@@ -437,7 +445,7 @@ export const zCompanyResearchInformationFileUpdateRequest = z.object({
  */
 export const zCompanyResearchInformationStoreRequest = z.object({
   material_name: z.string().max(50),
-  judgement: z.enum(['A', 'B', 'C', 'D', 'E', 'O', 'T', 'X', '未定']),
+  judgement: z.enum(['A', 'B', 'C', 'D', 'E', 'F', 'O', 'X', '未定', '-']),
   files: z.optional(z.array(zCompanyResearchInformationFileStoreRequest)),
 })
 
@@ -448,7 +456,7 @@ export const zCompanyResearchInformationStoreRequest = z.object({
 export const zCompanyResearchInformationUpdateRequest = z.object({
   id: z.optional(z.union([z.int(), z.null()])),
   material_name: z.string().max(50),
-  judgement: z.enum(['A', 'B', 'C', 'D', 'E', 'O', 'T', 'X', '未定']),
+  judgement: z.enum(['A', 'B', 'C', 'D', 'E', 'F', 'O', 'X', '未定', '-']),
   files: z.optional(z.array(zCompanyResearchInformationFileUpdateRequest)),
 })
 
@@ -1574,12 +1582,14 @@ export const zQuotaAgreedPrice = z.object({
   status: z.optional(z.string()),
   quota_id: z.optional(z.int()),
   quota_code: z.optional(z.string()),
+  category: z.optional(z.enum(['merchandise', 'service'])),
   number_products: z.optional(z.int()),
   total_price: z.optional(z.number()),
   customer_id: z.optional(z.int()),
   number_updating: z.optional(z.int()),
   valid_from: z.optional(z.union([z.iso.datetime(), z.null()])),
   valid_to: z.optional(z.union([z.iso.datetime(), z.null()])),
+  is_unlimited: z.optional(z.boolean()),
   created_by: z.optional(z.union([z.int(), z.null()])),
   updated_by: z.optional(z.union([z.int(), z.null()])),
   created_at: z.optional(z.iso.datetime()),
@@ -1737,6 +1747,7 @@ export const zQuotaResource = z.object({
       'cancelled',
     ]),
   ),
+  customer_term: z.optional(z.enum(['long_term', 'short_term'])),
   delivery_date: z.optional(z.iso.datetime()),
   delivery_method: z.optional(z.string()),
   payment_due_date: z.optional(z.string()),
@@ -1745,6 +1756,20 @@ export const zQuotaResource = z.object({
   consumption_tax: z.optional(z.string()),
   pdf_path: z.optional(z.string()),
   tax_rate: z.optional(z.int()),
+  department: z.optional(
+    z.array(
+      z.object({
+        id: z.optional(z.int()),
+        name: z.optional(z.string()),
+      }),
+    ),
+  ),
+  approve_route: z.optional(
+    z.object({
+      id: z.optional(z.int()),
+      name: z.optional(z.string()),
+    }),
+  ),
   tax_rate_group: z.optional(
     z.array(
       z.object({
@@ -1846,6 +1871,7 @@ export const zQuotaStoreRequest = z.object({
   total_price_tax_included: z.optional(z.number().gte(0)),
   tags: z.optional(z.array(zQuotaTagRequest)),
   main_product: z.optional(z.array(zQuotaProductGroupRequest)),
+  is_create_quota_template: z.optional(z.boolean()),
   optional_product: z.optional(z.array(zQuotaProductGroupRequest)),
 })
 
@@ -1917,6 +1943,7 @@ export const zSimpleQuota = z.object({
   title: z.optional(z.string()),
   customer_name: z.optional(z.string()),
   customer_contact_id: z.optional(z.int()),
+  customer_term: z.optional(z.string()),
   total_price: z.optional(z.string()),
   created_at: z.optional(z.iso.datetime()),
   expiration_date: z.optional(z.iso.date()),
@@ -1925,6 +1952,7 @@ export const zSimpleQuota = z.object({
   customer_cancelled_date: z.optional(z.iso.date()),
   pdf_path: z.optional(z.string()),
   display: z.optional(z.boolean()),
+  is_manage_approve_routes: z.optional(z.boolean()),
   is_author: z.optional(z.boolean()),
   has_approval_route: z.optional(z.boolean()),
   has_agreed_price: z.optional(z.boolean()),
@@ -2301,6 +2329,7 @@ export const zQuotaTemplateDetailResponse = z.object({
       consumption_tax: z.optional(
         z.enum(['exclusive', 'inclusive', 'external']),
       ),
+      customer_term: z.optional(z.enum(['long_term', 'short_term'])),
       tax_rate: z.optional(z.int()),
       tax_rate_group: z.optional(
         z.array(
@@ -2445,6 +2474,7 @@ export const zQuotaTemplateStoreRequest = z.object({
   payment_due_date: z.optional(zPaymentDueDateEnum),
   expiration_date: z.optional(zExpirationDateEnum),
   consumption_tax: z.optional(zConsumptionTaxEnum),
+  customer_term: z.optional(z.enum(['long_term', 'short_term'])),
   tax_rate: z.optional(z.int().gte(0).lte(100)),
   tax_rate_group: z.optional(
     z.array(
@@ -2477,6 +2507,7 @@ export const zQuotaTemplateUpdateRequest = z.object({
   payment_due_date: z.optional(zPaymentDueDateEnum),
   expiration_date: z.optional(zExpirationDateEnum),
   consumption_tax: z.optional(zConsumptionTaxEnum),
+  customer_term: z.optional(z.enum(['long_term', 'short_term'])),
   tax_rate: z.optional(z.int().gte(0).lte(100)),
   tax_rate_group: z.optional(
     z.array(
@@ -3034,6 +3065,7 @@ export const zCustomerControllerIndexData = z.object({
       _page: z.optional(z.int()).default(1),
       _per_page: z.optional(z.int()).default(10),
       q: z.optional(z.string()),
+      full_name: z.optional(z.string().max(255)),
       country: z.optional(z.string()),
       department_in_charge_id: z.optional(z.int()),
       price_rank_id: z.optional(z.int()),
@@ -3119,7 +3151,7 @@ export const zCustomerControllerUpdateResponse = z.object({
 })
 
 export const zCustomerControllerUpdateStatusData = z.object({
-  body: z.optional(z.never()),
+  body: zUpdateCustomerStatusRequest,
   path: z.object({
     id: z.int(),
   }),
@@ -3327,6 +3359,52 @@ export const zDepartmentControllerUpdateOrderResponse = z.object({
     ),
   ),
   message: z.optional(z.string()),
+})
+
+export const zDepartmentControllerFindFirstData = z.object({
+  body: z.optional(z.object({})),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Department found
+ */
+export const zDepartmentControllerFindFirstResponse = zDepartment
+
+export const zDraftControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      type: z.optional(
+        z.enum(['quota', 'customer', 'product', 'quota_template']),
+      ),
+    }),
+  ),
+})
+
+/**
+ * Drafts retrieved successfully
+ */
+export const zDraftControllerIndexResponse = z.object({
+  data: z.optional(z.array(z.object({}))),
+})
+
+export const zDraftControllerStoreData = z.object({
+  body: z.object({
+    type: z.enum(['quota', 'customer', 'product', 'quota_template']),
+    payload: z.object({}),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Draft created or updated successfully
+ */
+export const zDraftControllerStoreResponse = z.object({
+  data: z.optional(z.object({})),
 })
 
 export const zEmployeeControllerIndexData = z.object({
@@ -4361,6 +4439,7 @@ export const zQuotaAgreedPriceControllerIndexData = z.object({
       _per_page: z.optional(z.int().gte(1).lte(100)).default(10),
       quota_code: z.optional(z.string().max(255)),
       'customer_id_in[]': z.optional(z.array(z.int().gte(1))),
+      customer_id: z.optional(z.int().gte(1)),
       customer_name: z.optional(z.string().max(255)),
       creator_name: z.optional(z.string().max(255)),
       'created_by_in[]': z.optional(z.array(z.int().gte(1))),
@@ -4373,6 +4452,7 @@ export const zQuotaAgreedPriceControllerIndexData = z.object({
       status: z.optional(
         z.enum(['all', 'active', 'expired', 'about_to_expire']),
       ),
+      category: z.optional(z.enum(['merchandise', 'service'])),
       expiration_date_gte: z.optional(z.iso.date()),
       expiration_date_lte: z.optional(z.iso.date()),
     }),
@@ -4390,6 +4470,7 @@ export const zQuotaAgreedPriceControllerStoreData = z.object({
     quota_id: z.int(),
     valid_from: z.optional(z.union([z.iso.datetime(), z.null()])),
     valid_to: z.optional(z.union([z.iso.datetime(), z.null()])),
+    is_unlimited: z.optional(z.union([z.boolean(), z.null()])),
   }),
   path: z.optional(z.never()),
   query: z.optional(z.never()),
@@ -4443,6 +4524,7 @@ export const zQuotaAgreedPriceControllerGetCustomerListData = z.object({
     z.object({
       _page: z.optional(z.int().gte(1)).default(1),
       _per_page: z.optional(z.int().gte(1).lte(100)).default(10),
+      customer_id: z.optional(z.int().gte(1)),
       customer_name: z.optional(z.string().max(255)),
       department_id: z.optional(z.int().gte(1)),
       'department_id_in[]': z.optional(z.array(z.int().gte(1))),
@@ -4476,6 +4558,7 @@ export const zQuotaAgreedPriceControllerUpdateExpirationDateData = z.object({
   body: z.object({
     valid_from: z.optional(z.iso.date()),
     valid_to: z.optional(z.iso.date()),
+    is_unlimited: z.optional(z.union([z.boolean(), z.null()])),
   }),
   path: z.object({
     id: z.int().gte(1),
@@ -4787,6 +4870,44 @@ export const zQuotaControllerMarkCompletedResponse = z.object({
   ),
 })
 
+export const zQuotaControllerResendEmailToCustomerData = z.object({
+  body: z.object({
+    quota_ids: z.optional(z.array(z.int())),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Quotas processing initiated successfully
+ */
+export const zQuotaControllerResendEmailToCustomerResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      results: z.optional(
+        z.array(
+          z.object({
+            quota_id: z.optional(z.int()),
+            status: z.optional(z.string()),
+            message: z.optional(z.string()),
+          }),
+        ),
+      ),
+      errors: z.optional(
+        z.array(
+          z.object({
+            quota_id: z.optional(z.int()),
+            status: z.optional(z.string()),
+            message: z.optional(z.string()),
+          }),
+        ),
+      ),
+    }),
+  ),
+})
+
 export const zQuotaControllerCancelQuotaData = z.object({
   body: z.object({
     quota_ids: z.array(z.int().gte(1)),
@@ -4893,6 +5014,30 @@ export const zQuotaControllerBackToSentToCustomerResponse = z.object({
       failed: z.optional(z.int()),
       results: z.optional(z.array(z.object({}))),
       errors: z.optional(z.array(z.object({}))),
+    }),
+  ),
+})
+
+export const zQuotaControllerCheckParametersData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      is_manage_approve_routes: z.optional(z.enum(['true', 'false', '1', '0'])),
+    }),
+  ),
+})
+
+/**
+ * Parameters validation successful
+ */
+export const zQuotaControllerCheckParametersResponse = z.object({
+  success: z.optional(z.boolean()),
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.object({
+      validated_parameters: z.optional(z.array(z.string())),
+      total_validated: z.optional(z.int()),
     }),
   ),
 })

@@ -421,8 +421,16 @@ function DetailInfo({
               title: '荷姿',
               dataIndex: 'package_id',
               key: 'package_id',
-              width: '10%',
+              width: '8%',
               align: 'left',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -488,6 +496,10 @@ function DetailInfo({
                           mainProducts?.[record.index]?.packagings ?? []
                         }
                         defaultValue={defaultValue}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
                       />
                     </Form.Item>
                   )
@@ -719,7 +731,7 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
-              width: '5%',
+              width: '7%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }

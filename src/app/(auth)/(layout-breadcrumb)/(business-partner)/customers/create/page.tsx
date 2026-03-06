@@ -30,6 +30,11 @@ export default function CustomerCreatePage() {
     modalFormCorporate,
     handleFinish,
     form,
+    handleSaveDraft,
+    handleApplyDraft,
+    isPendingDraft,
+    dataCustomerDraft,
+    isFetchingCustomerDraft,
   } = hookProps
 
   const { close: closeModal, open: modalOpen } = modalFormProps
@@ -56,9 +61,31 @@ export default function CustomerCreatePage() {
     <Create
       isLoading={isLoading}
       rightFooterButtons={
-        <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
-          {t('buttons.create')}
-        </Button>
+        <Space>
+          {dataCustomerDraft?.data &&
+            Array.isArray(dataCustomerDraft.data) &&
+            dataCustomerDraft.data.length > 0 && (
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={handleApplyDraft}
+                disabled={isLoading || isFetchingCustomerDraft}
+              >
+                {t('buttons.apply_draft')}
+              </Button>
+            )}
+          <Button
+            type="primary"
+            onClick={handleSaveDraft}
+            loading={isPendingDraft}
+            autoInsertSpace={false}
+          >
+            {t('buttons.draft')}
+          </Button>
+          <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
+            {t('buttons.create')}
+          </Button>
+        </Space>
       }
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />

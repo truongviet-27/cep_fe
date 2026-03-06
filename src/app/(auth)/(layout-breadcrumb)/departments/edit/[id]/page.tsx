@@ -26,7 +26,10 @@ export default function EmployeeEdit() {
 
   const { formProps, saveButtonProps, queryResult, form } = useForm<Department>(
     {
-      redirect: 'show',
+      redirect: false,
+      onMutationSuccess: () => {
+        go({ to: '/departments' })
+      },
     },
   )
   const employeeData = queryResult?.data?.data
@@ -125,7 +128,6 @@ export default function EmployeeEdit() {
               },
             ]}
           />
-
           <div className="mt-4 flex w-full justify-start pb-4">
             <DeleteButton
               icon={null}

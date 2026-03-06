@@ -692,7 +692,7 @@ function QuotaList() {
     ]
   }, [t])
 
-  const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
+  const [status, setStatus] = useState<string | null>(null)
   const currentRule = status ? STATUS_DATE_RULES[status] : undefined
   const {
     tableProps,
@@ -802,8 +802,7 @@ function QuotaList() {
   useEffect(() => {
     if (!form) return
     const currentStatus =
-      filters?.find((filter: any) => filter?.field === 'status')?.value ||
-      QuotaStatus.Creating
+      filters?.find((filter: any) => filter?.field === 'status')?.value || null
 
     setStatus(currentStatus)
     const rule = STATUS_DATE_RULES[currentStatus]
@@ -1013,6 +1012,8 @@ function QuotaList() {
           { key: 1, label: t('quotas.actions.delete') },
           ...[{ key: 7, label: t('quotas.actions.move_to_send') }],
         ]
+      } else if (status === QuotaStatus.Rejected) {
+        return [{ key: 1, label: t('quotas.actions.delete') }]
       }
       return []
     },

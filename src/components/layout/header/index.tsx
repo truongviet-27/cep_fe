@@ -76,7 +76,7 @@ export default function AuthHeader({
                 onClick={isAdmin ? () => modalProps.show() : undefined}
               >
                 <div className="text-[22px] font-semibold text-[#74232A]">
-                  {tenantName ?? '株式会社ピオネロ'}
+                  {tenantName ?? ''}
                 </div>
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}
               </Space>
@@ -91,7 +91,7 @@ export default function AuthHeader({
                       {session?.data?.user?.name ?? ''}
                     </span>
                     <span className="text-[12px] text-gray-400">
-                      {permission?.role?.display_name ?? 'テナント管理者'}
+                      {permission?.role?.display_name ?? ''}
                     </span>
                   </div>
                   <div className="flex items-center">

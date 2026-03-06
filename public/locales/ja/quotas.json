@@ -1,6 +1,11 @@
 {
   "quotas": "見積一覧",
   "confirmed_quota": "継続見積",
+  "parameterCheck": {
+    "failed": "パラメータチェックに失敗しました",
+    "settingChangedWarning": "設定変更警告",
+    "confirmContinue": "パラメータチェックに失敗しました。続行しますか？"
+  },
   "transaction_type": {
     "short_term_service": "個別・役務ｻｰﾋﾞｽ",
     "short_term_merchandise": "個別・物販",
@@ -100,7 +105,7 @@
     "move_to_reject": "差戻する",
     "move_to_order": "受注に移動する",
     "move_to_cancel": "失注に移動する",
-    "move_to_send": "送信済へ移動",
+    "move_to_send": "送信済に戻る",
     "resend_email_to_customer": "再送信",
     "decide_move": "継続移動",
     "re_estimate": "再見積",
@@ -228,7 +233,7 @@
       "send": "送信",
       "move_to_cancel": "失注へ移動",
       "move_to_order": "受注に移動する",
-      "move_to_send": "送信済へ移動"
+      "move_to_send": "送信済に戻る"
     },
     "table": {
       "step": "ステップ",

@@ -23,8 +23,23 @@ async function refreshAccessToken(token: JWT) {
       }),
     })
 
+    console.log(
+      'body',
+      new URLSearchParams({
+        client_id:
+          token.provider === 'TokenLogin'
+            ? process.env.NEXT_PUBLIC_CLIENT_ID_TENANT_ADMIN!
+            : process.env.NEXT_PUBLIC_CLIENT_ID!,
+        client_secret:
+          token.provider === 'TokenLogin'
+            ? process.env.NEXT_PUBLIC_CLIENT_SECRET_TENANT_ADMIN!
+            : process.env.NEXT_PUBLIC_CLIENT_SECRET!,
+        grant_type: 'refresh_token',
+        refresh_token: token.refreshToken!,
+      }),
+    )
     const refreshedTokens = await res.json()
-
+    console.log('refreshedTokens', refreshedTokens)
     if (!res.ok) throw refreshedTokens
 
     return {

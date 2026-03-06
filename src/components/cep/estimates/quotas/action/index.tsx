@@ -28,6 +28,7 @@ import {
 import type {
   RoundingMethodEnumType,
   QuotaFormSettingResponse,
+  DraftControllerIndexResponse,
 } from '@sdk/hey-api'
 import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -41,6 +42,7 @@ import {
   Divider,
   Flex,
   Form,
+  message,
   Modal,
   Row,
   Space,
@@ -55,6 +57,7 @@ import Link from 'next/link'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import CreateFromTemplate from './components/popups/create-from-template'
 import CreateFromOldQuota from './components/popups/create-from-old-quota'
+import { refreshUserData } from '@utility/refresh-user-data'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -87,7 +90,29 @@ function QuotaAction() {
   const go = useGo()
   const apiUrl = useApiUrl()
 
-  const { permission, parameterSettings } = useUserStore.getState()
+  // Use reactive store selector instead of getState() to auto-update on changes
+  const permission = useUserStore((state) => state.permission)
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+
+  // Refresh permissions and parameter settings when window regains focus
+  // This handles the multi-tab scenario where settings are updated in another tab
+  // Wrapped in useCallback to prevent re-creating on every render
+  const handleRefreshUserData = useCallback(async () => {
+    try {
+      console.log('Refreshing user data on focus...')
+      await refreshUserData()
+    } catch (error) {
+      console.error('Failed to refresh user data', error)
+    }
+  }, [])
+
+  // Refresh on component mount to handle React router navigation (list → create)
+  // This runs ONCE when component mounts, not on every render
+  // because handleRefreshUserData is memoized with useCallback([])
+  useEffect(() => {
+    console.log('Component mounted, refreshing user data...')
+    handleRefreshUserData()
+  }, [handleRefreshUserData])
 
   const { query: quoteTemplateQuery } = useShow<QuoteTemplateDetailType>({
     resource: 'quota-templates',
@@ -113,6 +138,19 @@ function QuotaAction() {
       enabled: !params?.templateId,
     },
   })
+  const { data: dataQuotaDraft, isFetching: isFetchingQuotaDraft } =
+    useCustom<DraftControllerIndexResponse>({
+      method: 'get',
+      url: `${apiUrl}/drafts`,
+      config: {
+        query: {
+          type: 'quota',
+        },
+      },
+      queryOptions: {
+        enabled: action === 'create',
+      },
+    })
 
   const { data: dataBasicInfo, isFetching: isFetchingBasicInfo } = useCustom({
     url: `${apiUrl}/quotas/${id}`,
@@ -184,7 +222,11 @@ function QuotaAction() {
     ]
   }
 
-  const { data: departmentData } = useCustom({
+  const {
+    data: departmentData,
+    refetch: refetchDepartmentData,
+    isFetching: isFetchingDepartment,
+  } = useCustom({
     method: 'get',
     url: `${apiUrl}/departments/find-first`,
     queryOptions: {
@@ -213,6 +255,39 @@ function QuotaAction() {
       }
     }
   }, [data?.data, isClone, isEdit, dataBasicInfo])
+
+  // Refetch department data when approve-routes parameter setting changes
+  useEffect(() => {
+    const isApproveRoutesEnabled = parameterSettings?.get('approve-routes')
+
+    if (isApproveRoutesEnabled !== undefined && departmentData?.data) {
+      refetchDepartmentData().then(({ data: latestDepartmentData }) => {
+        const approveRoutes = latestDepartmentData?.data?.approve_routes || []
+
+        if (isApproveRoutesEnabled) {
+          // Enable: set approve_routes options and first route as default
+          form.setFieldsValue({
+            approve_routes: approveRoutes,
+            approve_route_id: approveRoutes[0]?.id || null,
+            approve_route_name: approveRoutes[0]?.name || null,
+          })
+        } else {
+          // Disable: clear approve_routes options and value
+          form.setFieldsValue({
+            approve_routes: [],
+            approve_route_id: '',
+            approve_route_name: '',
+          })
+        }
+      })
+    }
+  }, [
+    parameterSettings?.get('approve-routes'),
+    departmentData?.data,
+    refetchDepartmentData,
+    form,
+  ])
+  console.log('departmentData: ', form.getFieldsValue())
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -231,6 +306,28 @@ function QuotaAction() {
 
   const { mutate: mutatePreviewPdf, isPending: isPendingPreviewPdf } =
     useCustomMutation()
+  const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+
+  const { refetch: checkParameter, isFetching: isCheckingParameter } =
+    useCustom({
+      method: 'get',
+      url: `${apiUrl}/quotas/check-parameters`, // Thay đổi URL theo API của bạn
+      queryOptions: {
+        enabled: false, // Không tự động gọi API
+        retry: false, // Tắt retry để tránh retry 3 lần
+      },
+      config: {
+        filters: [
+          {
+            field: 'is_manage_approve_routes',
+            operator: 'eq',
+            value: parameterSettings?.get('approve-routes') ? true : false,
+          },
+        ],
+      },
+      successNotification: false, // Tắt success notification
+      errorNotification: false, // Tắt error notification/toast
+    })
 
   const handlePreviewPdf = () => {
     const delivery_date = form.getFieldValue('delivery_date')
@@ -338,8 +435,12 @@ function QuotaAction() {
             package: { value: item.package_id, label: item.package_name },
             tax_rate: item.tax_rate ?? 0,
             isSelfCreate: !item.product_id,
-            unit: item.unit_name ?? '-',
-            unit_name: item.unit_name ?? '-',
+            unit:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
           })),
           optional_product: dataProducts.data.optional_product?.length
             ? dataProducts.data.optional_product.map((item: any) => ({
@@ -351,8 +452,12 @@ function QuotaAction() {
                 },
                 tax_rate: item.tax_rate ?? 0,
                 isSelfCreate: !item.product_id && item.prodcut_name,
-                unit: item.unit_name ?? '-',
-                unit_name: item.unit_name ?? '-',
+                unit:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
+                unit_name:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
               }))
             : defaultOptionalProduct,
           ...dataHistory?.data?.data,
@@ -407,8 +512,12 @@ function QuotaAction() {
             package: { value: item.package_id, label: item.package_name },
             tax_rate: item.tax_rate ?? 0,
             isSelfCreate: !item.product_id,
-            unit: item.unit_name ?? '-',
-            unit_name: item.unit_name ?? '-',
+            unit:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
           })),
           optional_product: dataProducts.data.optional_product?.length
             ? dataProducts.data.optional_product.map((item: any) => ({
@@ -420,8 +529,12 @@ function QuotaAction() {
                 },
                 tax_rate: item.tax_rate ?? 0,
                 isSelfCreate: !item.product_id && item.prodcut_name,
-                unit: item.unit_name ?? '-',
-                unit_name: item.unit_name ?? '-',
+                unit:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
+                unit_name:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
               }))
             : defaultOptionalProduct,
           ...dataHistory?.data?.data,
@@ -463,8 +576,12 @@ function QuotaAction() {
           package: { value: item.package_id, label: item.package_name },
           tax_rate: item.tax_rate ?? 0,
           isSelfCreate: !item.product_id,
-          unit: item.unit_name ?? '-',
-          unit_name: item.unit_name ?? '-',
+          unit:
+            item.unit_name ??
+            t('quotas.action.detail_info.default_values.default_unit'),
+          unit_name:
+            item.unit_name ??
+            t('quotas.action.detail_info.default_values.default_unit'),
         })),
         optional_product: quoteTemplate?.optional_product?.length
           ? quoteTemplate.optional_product.map((item: any) => ({
@@ -476,8 +593,12 @@ function QuotaAction() {
               },
               tax_rate: item.tax_rate ?? 0,
               isSelfCreate: !item.product_id && item.prodcut_name,
-              unit: item.unit_name ?? '-',
-              unit_name: item.unit_name ?? '-',
+              unit:
+                item.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+              unit_name:
+                item.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
             }))
           : defaultOptionalProduct,
         tags: (quoteTemplate?.tags ?? []).map(({ id, name }) => ({
@@ -549,8 +670,10 @@ function QuotaAction() {
             selling_price: 0,
             profit_margin: 0,
             is_add_total: true,
-            unit: null,
-            unit_name: '-',
+            unit: t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name: t(
+              'quotas.action.detail_info.default_values.default_unit',
+            ),
             tax_rate: 0,
             kind: 'product',
           },
@@ -560,7 +683,7 @@ function QuotaAction() {
     }
   }, [departmentData, data, quoteTemplateQuery?.data?.data])
 
-  const onFinish = (values: any) => {
+  const performCreateOrEdit = (values: any) => {
     if (isUpdate && isEdit) {
       mutation.mutate(
         {
@@ -595,9 +718,9 @@ function QuotaAction() {
           id: params?.id,
         },
         {
-          onSuccess(data) {
+          onSuccess() {
             go({
-              to: `/quotas/show/${data.data.id}`,
+              to: `/quotas`,
             })
           },
         },
@@ -636,6 +759,7 @@ function QuotaAction() {
         },
         {
           onSuccess() {
+            message.success(t('notifications.success'))
             go({
               to: `/quotas`,
             })
@@ -643,6 +767,161 @@ function QuotaAction() {
         },
       )
     }
+  }
+
+  const onFinish = (values: any) => {
+    // Gọi API check parameter trước khi create/edit
+    checkParameter()
+      .then((response: any) => {
+        // Kiểm tra status code và data của response
+        if (response?.status === 'success' && !response?.data?.message) {
+          performCreateOrEdit(values)
+        } else {
+          Modal.confirm({
+            title: t('quotas.parameterCheck.settingChangedWarning'),
+            content: (
+              <div style={{ whiteSpace: 'pre-line' }}>
+                {response?.error?.message ||
+                  t('quotas.parameterCheck.confirmContinue')}
+              </div>
+            ),
+            okText: t('buttons.yesContinue'),
+            cancelText: t('buttons.noCancel'),
+            onOk() {
+              // User chọn Yes - tiếp tục create/edit
+              performCreateOrEdit(values)
+            },
+            onCancel() {
+              // User chọn No - không làm gì cả
+              console.log('User cancelled the operation')
+            },
+          })
+        }
+      })
+      .catch((error) => {
+        // Xử lý khi có lỗi network hoặc lỗi khác
+        console.error('Parameter check network error:', error)
+        // Có thể hiển thị modal hoặc message thông báo lỗi
+      })
+  }
+
+  const handleSaveDraft = () => {
+    const values: any = form.getFieldsValue()
+
+    const payload = {
+      ...values,
+      type: values.type || 'normal',
+      category: values.category || 'merchandise',
+      customer_id: values.customer?.value,
+      customer_name: values.customer?.label,
+      customer_contact_id: values.customer_contact_id,
+      delivery_date: values.delivery_date
+        ? dayjs(values.delivery_date).utc(true).startOf('day').toISOString()
+        : null,
+      issue_date: values.issue_date
+        ? dayjs(values.issue_date).utc(true).startOf('day').toISOString()
+        : null,
+      status: QuotaStatus.Creating,
+      tags:
+        values?.tags?.map((item: any) => ({
+          id: item.value,
+          name: item.label,
+        })) || [],
+      tax_rate: values.tax_rate ?? 0,
+      tax_rate_group: values.tax_rate_group || [],
+      source_id: isCloneVersion ? Number(id) : null,
+    }
+
+    mutateDraft(
+      {
+        url: `${apiUrl}/drafts`,
+        method: 'put',
+        values: {
+          type: 'quota',
+          payload,
+        },
+      },
+      {
+        onSuccess() {
+          message.success(t('notifications.draftSaveSuccess'))
+          go({
+            to: `/quotas`,
+          })
+        },
+        onError(error: any) {
+          message.error(
+            error?.response?.data?.message || t('notifications.draftSaveError'),
+          )
+        },
+      },
+    )
+  }
+
+  const handleApplyDraft = () => {
+    if (!dataQuotaDraft?.data || (dataQuotaDraft.data as any[]).length === 0) {
+      return
+    }
+
+    const draft: any = (dataQuotaDraft.data as any[])[0]
+    const draftPayload = draft.payload || draft
+
+    form.setFieldsValue({
+      ...draftPayload,
+      customer: draftPayload.customer_id
+        ? {
+            value: draftPayload.customer_id,
+            label: draftPayload.customer_name,
+          }
+        : null,
+      delivery_date: draftPayload.delivery_date
+        ? dayjs(draftPayload.delivery_date)
+        : null,
+      issue_date: draftPayload.issue_date
+        ? dayjs(draftPayload.issue_date)
+        : null,
+      tags:
+        draftPayload.tags?.map((item: any) => ({
+          value: item.id,
+          label: item.name,
+        })) || [],
+      main_product: draftPayload.main_product?.map((item: any) => ({
+        ...item,
+        products: item.products?.map((item2: any) => ({
+          ...item2,
+          product: item2.product_id
+            ? { value: item2.product_id, label: item2.name }
+            : item2.product,
+          package: item2.package_id
+            ? { value: item2.package_id, label: item2.package_name }
+            : item2.package,
+          tax_rate: item2.tax_rate ?? 0,
+          isSelfCreate: !item2.product_id,
+          unit: item2.unit_name ?? '-',
+          unit_name: item2.unit_name ?? '-',
+        })),
+      })),
+      optional_product:
+        draftPayload.optional_product?.length > 0
+          ? draftPayload.optional_product.map((item: any) => ({
+              ...item,
+              products: item.products?.map((item2: any) => ({
+                ...item2,
+                product: item2.product_id
+                  ? { value: item2.product_id, label: item2.name }
+                  : item2.product,
+                package: item2.package_id
+                  ? { value: item2.package_id, label: item2.package_name }
+                  : item2.package,
+                tax_rate: item2.tax_rate ?? 0,
+                isSelfCreate: !item2.product_id,
+                unit: item2.unit_name ?? '-',
+                unit_name: item2.unit_name ?? '-',
+              })),
+            }))
+          : defaultOptionalProduct,
+    })
+
+    message.success(t('notifications.draftApplySuccess'))
   }
 
   const [productPrincing, setProductPrincing] = useState<number[]>()
@@ -690,7 +969,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quota_templates.list.createFromTemplate')}
@@ -704,7 +984,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quota_templates.list.createFromOldQuota')}
@@ -722,7 +1003,8 @@ function QuotaAction() {
                 isFetchingBasicInfo ||
                 isFetchingProduct ||
                 isFetchingHistory ||
-                quoteTemplateQuery.isFetching
+                quoteTemplateQuery.isFetching ||
+                isCheckingParameter
               }
             >
               {t('quotas.action.preview')}
@@ -737,7 +1019,9 @@ function QuotaAction() {
           isFetchingBasicInfo ||
           isFetchingProduct ||
           isFetchingHistory ||
-          quoteTemplateQuery.isFetching
+          isFetchingDepartment ||
+          quoteTemplateQuery.isFetching ||
+          isCheckingParameter
         }
       >
         <Form
@@ -763,6 +1047,20 @@ function QuotaAction() {
             parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
             isEdit={isEdit}
+            embeddedContactFromQuota={
+              dataBasicInfo?.data?.customer_contact_department !== undefined ||
+              dataBasicInfo?.data?.customer_contact_name !== undefined ||
+              dataBasicInfo?.data?.customer_contact_email !== undefined
+                ? {
+                    department_name:
+                      dataBasicInfo?.data?.customer_contact_department ?? '',
+                    contact_person_name:
+                      dataBasicInfo?.data?.customer_contact_name ?? '',
+                    email: dataBasicInfo?.data?.customer_contact_email ?? '',
+                  }
+                : undefined
+            }
+            quotaCustomerContactId={dataBasicInfo?.data?.customer_contact_id}
           />
           <DetailInfo
             taxRoundingMethod={taxRoundingMethod}
@@ -840,10 +1138,41 @@ function QuotaAction() {
               >
                 {t('buttons.back')}
               </Button>
+              {action === 'create' &&
+                dataQuotaDraft?.data &&
+                (dataQuotaDraft.data as any[]).length > 0 && (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleApplyDraft}
+                    disabled={
+                      isFetching ||
+                      isFetchingBasicInfo ||
+                      isFetchingProduct ||
+                      isFetchingHistory ||
+                      quoteTemplateQuery.isFetching ||
+                      isFetchingQuotaDraft
+                    }
+                  >
+                    {t('buttons.apply_draft')}
+                  </Button>
+                )}
+              {action === 'create' && (
+                <Button
+                  type="primary"
+                  loading={isPendingDraft}
+                  onClick={handleSaveDraft}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.draft')}
+                </Button>
+              )}
+
               <Button
                 {...saveButtonProps}
                 type="primary"
                 autoInsertSpace={false}
+                loading={saveButtonProps.loading || isCheckingParameter}
               >
                 {action === 'edit' ? t('buttons.save') : t('buttons.create')}
               </Button>
