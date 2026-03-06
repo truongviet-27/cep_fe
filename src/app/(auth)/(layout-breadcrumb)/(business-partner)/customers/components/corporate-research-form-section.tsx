@@ -102,7 +102,7 @@ export const CorporateResearchFormSection = (
       width: '12%',
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'judgement']} noStyle initialValue="A">
-          {record.judgement == 'T' ? '△' : record.judgement}
+          {record.judgement}
         </Form.Item>
       ),
     },
@@ -332,7 +332,7 @@ export const CorporateResearchFormSection = (
                   placeholder={t('placeholders.select')}
                   options={options()}
                   onSelect={(value) => {
-                    const val = value == '△' ? 'T' : value
+                    const val = value
                     setCurrentType({ ...currentType, judgement: val })
                   }}
                 />
