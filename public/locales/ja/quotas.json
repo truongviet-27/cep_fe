@@ -1,6 +1,11 @@
 {
   "quotas": "見積一覧",
   "confirmed_quota": "継続見積",
+  "parameterCheck": {
+    "failed": "パラメータチェックに失敗しました",
+    "settingChangedWarning": "設定変更警告",
+    "confirmContinue": "パラメータチェックに失敗しました。続行しますか？"
+  },
   "transaction_type": {
     "short_term_service": "個別・役務ｻｰﾋﾞｽ",
     "short_term_merchandise": "個別・物販",

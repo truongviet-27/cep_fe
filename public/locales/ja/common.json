@@ -54,6 +54,8 @@
     "clone": "クローン",
     "notAccessTitle": "",
     "update": "更新",
+    "yesContinue": "はい、続行",
+    "noCancel": "いいえ、キャンセル",
     "draft": "下書き",
     "apply_draft": "下書きを適用"
   },
