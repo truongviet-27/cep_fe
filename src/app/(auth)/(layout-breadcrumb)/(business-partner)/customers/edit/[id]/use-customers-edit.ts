@@ -166,17 +166,6 @@ export const useCustomerEdit = () => {
           form.setFields(fieldErrors)
         }
       }, 100)
-
-      // Don't refetch contacts on error - preserve user's input so they can fix it
-      // Only show error message if there are no field-specific errors
-      // If field errors exist, they will be displayed at the field level
-      if (fieldErrors.length === 0) {
-        const errorMessage =
-          error?.response?.data?.message ||
-          error?.message ||
-          t('notifications.updateError')
-        message.error(errorMessage)
-      }
     }
   }
 
