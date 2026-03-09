@@ -7,10 +7,8 @@ import { Button, Col, Form, Row } from 'antd'
 import Link from 'next/link'
 
 export default function AssortmentTab() {
-  const [
-    { columns, tableProps, searchFormProps, isFullAccess },
-    { t, setFilters },
-  ] = useCombo()
+  const [{ columns, tableProps, searchFormProps }, { t, setFilters }] =
+    useCombo()
 
   return (
     <Form {...searchFormProps}>
@@ -75,16 +73,6 @@ export default function AssortmentTab() {
               >
                 {t('products.list.actions.createNewButton')}
               </CreateButton>
-            </Link>
-            <Link href={'product-combos/csv'}>
-              <Button
-                className="!px-0 !text-[#721C24] underline"
-                type="link"
-                icon={null}
-                disabled={!isFullAccess}
-              >
-                {t('products.list.actions.csvBulkUploadLink')}
-              </Button>
             </Link>
           </div>
         </div>
