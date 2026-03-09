@@ -234,6 +234,7 @@ function QuotaAction() {
     },
     config: {
       filters: queryOptions,
+      query: { only_enabled_approve_routes: '1' },
     },
   })
 
@@ -265,14 +266,16 @@ function QuotaAction() {
         const approveRoutes = latestDepartmentData?.data?.approve_routes || []
 
         if (isApproveRoutesEnabled) {
-          // Enable: set approve_routes options and first route as default
           form.setFieldsValue({
             approve_routes: approveRoutes,
-            approve_route_id: approveRoutes[0]?.id || null,
-            approve_route_name: approveRoutes[0]?.name || null,
+            ...(isUpdate
+              ? {}
+              : {
+                  approve_route_id: approveRoutes[0]?.id || null,
+                  approve_route_name: approveRoutes[0]?.name || null,
+                }),
           })
         } else {
-          // Disable: clear approve_routes options and value
           form.setFieldsValue({
             approve_routes: [],
             approve_route_id: '',
@@ -286,8 +289,8 @@ function QuotaAction() {
     departmentData?.data,
     refetchDepartmentData,
     form,
+    isUpdate,
   ])
-  console.log('departmentData: ', form.getFieldsValue())
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -388,6 +391,8 @@ function QuotaAction() {
   useEffect(() => {
     if (isCloneVersion) {
       if (dataBasicInfo?.data && dataProducts?.data && dataHistory?.data) {
+        // 承認ルート: options from department, selected from quota API (dataBasicInfo)
+        const approveRoutes = departmentData?.data.approve_routes || []
         form.setFieldsValue({
           ...dataBasicInfo.data,
           code: `${dataBasicInfo.data.code}-${(dataHistory.data?.clone_history?.length ?? 0) + 1}`,
@@ -404,10 +409,15 @@ function QuotaAction() {
             : null,
           department_id: departmentData?.data.id,
           department_name: departmentData?.data.name,
-          approve_routes: departmentData?.data.approve_routes || [],
-          approve_route_id: departmentData?.data.approve_routes
-            ? departmentData?.data.approve_routes[0]?.id
-            : null,
+          approve_routes: approveRoutes,
+          approve_route_id:
+            dataBasicInfo.data.approve_route?.id ??
+            approveRoutes[0]?.id ??
+            null,
+          approve_route_name:
+            dataBasicInfo.data.approve_route?.name ??
+            approveRoutes[0]?.name ??
+            null,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
@@ -468,11 +478,13 @@ function QuotaAction() {
 
         let approve_routes = departmentData?.data.approve_routes || []
         let approve_route_id = dataBasicInfo.data.approve_route?.id
+        let approve_route_name = dataBasicInfo.data.approve_route?.name
         if (isCloneNew) {
           approve_routes = departmentData?.data.approve_routes || []
           approve_route_id = departmentData?.data.approve_routes
             ? departmentData?.data.approve_routes[0]?.id
             : null
+          approve_route_name = departmentData?.data.approve_routes?.[0]?.name
         }
         form.setFieldsValue({
           ...basicData,
@@ -484,6 +496,7 @@ function QuotaAction() {
           department_name: departmentData?.data.name,
           approve_routes: approve_routes,
           approve_route_id: approve_route_id,
+          approve_route_name: approve_route_name,
           customer_term: dataBasicInfo.data.customer_term,
           delivery_date: dataBasicInfo.data.delivery_date
             ? dayjs(dataBasicInfo.data.delivery_date)
