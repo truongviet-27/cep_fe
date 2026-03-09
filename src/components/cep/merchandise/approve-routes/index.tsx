@@ -6,7 +6,6 @@ import {
   CreateButton,
   DeleteButton,
   EditButton,
-  RefreshButton,
   ShowButton,
   useSelect,
   useTable,
@@ -191,9 +190,45 @@ function Approve() {
         render: (_: any, record: BaseRecord) => {
           return (
             <Space wrap size={4}>
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <ShowButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
+              <EditButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
+              <DeleteButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </DeleteButton>
             </Space>
           )
         },
@@ -287,16 +322,15 @@ function Approve() {
               <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
-              <RefreshButton
-                size="middle"
-                icon={null}
+              <Button
+                type="default"
                 onClick={() => {
                   searchFormProps.form?.resetFields()
                   setFilters([], 'replace')
                 }}
               >
                 {t('buttons.clear')}
-              </RefreshButton>
+              </Button>
             </Space>
 
             <Space className="mt-[3px] ml-2">
@@ -309,6 +343,7 @@ function Approve() {
                   })
                 }}
                 icon={null}
+                autoInsertSpace={false}
               >
                 {t('buttons.registration')}
               </CreateButton>

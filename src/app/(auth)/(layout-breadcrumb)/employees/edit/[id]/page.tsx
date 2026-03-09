@@ -139,7 +139,12 @@ export default function EmployeeEdit() {
       }
       rightFooterButtons={
         <Space size={2} className={'flex justify-end'}>
-          <Button {...saveButtonProps} type="primary" loading={formLoading}>
+          <Button
+            {...saveButtonProps}
+            type="primary"
+            loading={formLoading}
+            autoInsertSpace={false}
+          >
             {t('permission_settings.buttons.save')}
           </Button>
         </Space>

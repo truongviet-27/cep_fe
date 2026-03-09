@@ -242,6 +242,7 @@ function TenantSetting() {
             size="large"
             {...saveButtonProps}
             loading={isPending}
+            autoInsertSpace={false}
           >
             {t('buttons.save')}
           </Button>
@@ -279,6 +280,7 @@ function TenantSetting() {
             size="large"
             loading={isPending}
             onClick={handleConfirmSave}
+            autoInsertSpace={false}
           >
             保存する
           </Button>,

@@ -190,19 +190,32 @@ export default function CustomerContact() {
                       </span>
                     ),
                     key: 'actions',
-                    width: '5%',
+                    width: 80,
+                    minWidth: 80,
                     align: 'center',
+                    onCell: () => ({
+                      style: { padding: '8px', textAlign: 'center' },
+                    }),
                     render: (field: any) => {
+                      const canRemove = fields.length > 1
                       return (
                         <Button
-                          danger
-                          icon={<DeleteOutlined />}
-                          disabled={fields.length === 1}
-                          onClick={() => {
-                            // Remove from form - API will handle soft delete automatically
-                            remove(field.name)
-                          }}
-                        />
+                          size="small"
+                          icon={canRemove ? <DeleteOutlined /> : undefined}
+                          disabled={!canRemove}
+                          onClick={() => remove(field.name)}
+                          style={
+                            canRemove
+                              ? {
+                                  color: '#fff',
+                                  background: '#E74C3C',
+                                  borderColor: '#E74C3C',
+                                }
+                              : undefined
+                          }
+                        >
+                          {t('buttons.delete')}
+                        </Button>
                       )
                     },
                   },
