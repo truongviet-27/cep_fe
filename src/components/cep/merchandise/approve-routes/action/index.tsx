@@ -4,6 +4,7 @@ import {
   CloseOutlined,
   QuestionCircleFilled,
   RightOutlined,
+  WarningOutlined,
 } from '@ant-design/icons'
 import { Action } from '@components/common/action'
 import CoreAutoComplete from '@components/common/auto-complete'
@@ -494,6 +495,13 @@ function ApproveAction() {
                               return (
                                 <div className="flex flex-col">
                                   {fields2.map((item2, index2) => {
+                                    const _isDeleted = form.getFieldValue([
+                                      'steps',
+                                      item.name,
+                                      'employees',
+                                      item2.name,
+                                      'is_deleted',
+                                    ])
                                     return (
                                       <Space
                                         key={item2.key}
@@ -557,7 +565,13 @@ function ApproveAction() {
                                               />
                                             </Form.Item>
                                           </Col>
-                                          <Col xs={10} md={8}>
+                                          <Col
+                                            xs={10}
+                                            md={8}
+                                            style={{
+                                              display: 'flex',
+                                            }}
+                                          >
                                             <Form.Item
                                               label={boldText(
                                                 t(
@@ -575,6 +589,7 @@ function ApproveAction() {
                                                   ),
                                                 },
                                               ]}
+                                              className={'relative'}
                                             >
                                               <CoreAutoComplete
                                                 nameFilter="department_id"
@@ -589,8 +604,17 @@ function ApproveAction() {
                                                 style={{ width: 200 }}
                                               />
                                             </Form.Item>
+                                            {_isDeleted && (
+                                              <WarningOutlined
+                                                style={{
+                                                  color: '#AC3C00',
+                                                  position: 'absolute',
+                                                  right: 30,
+                                                  top: '58%',
+                                                }}
+                                              />
+                                            )}
                                           </Col>
-
                                           {fields2.length > 1 && (
                                             <Col
                                               className="mt-10"
