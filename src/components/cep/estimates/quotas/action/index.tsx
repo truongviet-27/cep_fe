@@ -287,7 +287,7 @@ function QuotaAction() {
     refetchDepartmentData,
     form,
   ])
-  console.log('departmentData: ', form.getFieldsValue())
+
   const { data: dataProducts, isFetching: isFetchingProduct } = useCustom({
     url: `${apiUrl}/quotas/${id}/products`,
     method: 'get',
@@ -854,6 +854,8 @@ function QuotaAction() {
 
     form.setFieldsValue({
       ...draftPayload,
+      payment_due_date: draftPayload?.payment_due_date,
+      expiration_date: draftPayload?.expiration_date,
       customer: draftPayload.customer_id
         ? {
             value: draftPayload.customer_id,

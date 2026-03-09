@@ -252,6 +252,8 @@ export function useController() {
 
     form.setFieldsValue({
       ...draftPayload,
+      payment_due_date: draftPayload?.payment_due_date,
+      expiration_date: draftPayload?.expiration_date,
     })
 
     message.success(t('notifications.draftApplySuccess'))
