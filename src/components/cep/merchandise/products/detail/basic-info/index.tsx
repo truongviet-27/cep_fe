@@ -99,7 +99,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                   <div className="w-[150px] text-left font-bold">
                     {t('products.fields.remarks')}
                   </div>
-                  <div></div>
+                  <div>{product?.note ?? ''}</div>
                 </Row>
               </div>
               <div className="col-span-1">
