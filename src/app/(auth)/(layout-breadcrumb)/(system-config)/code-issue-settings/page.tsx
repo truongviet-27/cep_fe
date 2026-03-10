@@ -1,13 +1,13 @@
 /* eslint-disable */
 'use client'
 
-import { EditOutlined, RightOutlined } from '@ant-design/icons'
+import { RightOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
-import { BaseRecord, useResource } from '@refinedev/core'
+import { BaseRecord, useResource, useTranslate } from '@refinedev/core'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -19,6 +19,7 @@ import type { SegmentedValue } from 'rc-segmented'
 
 export default function Page() {
   const t = useTranslations()
+  const tRefine = useTranslate()
   const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   const { tableProps } = useTable({
@@ -156,12 +157,18 @@ export default function Page() {
           width="5%"
           render={(_, record: BaseRecord) => (
             <Button
-              size={'small'}
+              size="small"
+              icon={null}
               onClick={() => {
                 show(record.id)
               }}
-              icon={<EditOutlined />}
-            />
+              style={{
+                color: '#FFFFFF',
+                background: '#1FDB51',
+              }}
+            >
+              {tRefine('buttons.edit')}
+            </Button>
           )}
         />
       </CommonTable>

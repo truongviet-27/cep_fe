@@ -1,4 +1,3 @@
-import { ReconciliationOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import type { QuotaTemplateListItemType } from '@interfaces/quota-templates'
 import {
@@ -9,8 +8,7 @@ import {
 } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
-import { PRIMARY } from '@utility/color'
-import { Button, Flex, Space, Tooltip, Typography } from 'antd'
+import { Button, Flex, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableProps } from 'antd/lib'
 import dayjs from 'dayjs'
@@ -172,43 +170,63 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       render: (_, record) => (
         <Space wrap size={4}>
           <ShowButton
-            hideText
+            autoInsertSpace={false}
             size="small"
+            icon={null}
             recordItemId={record.id}
             resource="quota-templates"
-          />
+            style={{
+              color: '#2784FF',
+              borderColor: '#2784FF',
+            }}
+          >
+            {t('buttons.show')}
+          </ShowButton>
           {(permission?.is_module_admin ||
             permission?.user?.id === record.author?.id) && (
             <EditButton
-              hideText
+              autoInsertSpace={false}
               size="small"
+              icon={null}
               recordItemId={record.id}
               resource="quota-templates"
-            />
-          )}
-          <Tooltip
-            title={t('quota_templates.list.createFromTemplate')}
-            color={PRIMARY}
-          >
-            <Button
-              size="small"
-              icon={<ReconciliationOutlined />}
-              style={{ color: PRIMARY, borderColor: PRIMARY }}
-              onClick={() => {
-                go({
-                  to: '/quotas/create?templateId=' + record.id,
-                })
+              style={{
+                color: '#FFFFFF',
+                background: '#1FDB51',
               }}
-            />
-          </Tooltip>
+            >
+              {t('buttons.edit')}
+            </EditButton>
+          )}
+          <Button
+            type="default"
+            size="small"
+            icon={null}
+            style={{
+              color: '#FFFFFF',
+              background: '#0161D3',
+            }}
+            onClick={() => {
+              go({ to: '/quotas/create?templateId=' + record.id })
+            }}
+          >
+            {t('quota_templates.list.createFromTemplate')}
+          </Button>
           {(permission?.is_module_admin ||
             permission?.user?.id === record.author?.id) && (
             <DeleteButton
-              hideText
+              autoInsertSpace={false}
               size="small"
+              icon={null}
               recordItemId={record.id}
               resource="quota-templates"
-            />
+              style={{
+                color: '#FFFFFF',
+                background: '#E74C3C',
+              }}
+            >
+              {t('buttons.delete')}
+            </DeleteButton>
           )}
         </Space>
       ),
@@ -218,7 +236,12 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
   return (
     <>
       <Flex justify="end">
-        <CreateButton icon={null} resource="quota-templates">
+        <CreateButton
+          icon={null}
+          resource="quota-templates"
+          type="primary"
+          autoInsertSpace={false}
+        >
           {t('quota_templates.button.create')}
         </CreateButton>
       </Flex>

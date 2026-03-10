@@ -204,6 +204,7 @@ const ProductFormContainer: React.FC = () => {
                 htmlType="submit"
                 loading={isLoadingSubmit}
                 disabled={!isAllowedSaveButton}
+                autoInsertSpace={false}
               >
                 {isUpdateMode
                   ? t('products.buttons.save')

@@ -124,8 +124,8 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
 
       <Space className={'flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
-        <Button {...saveButtonProps} type="primary">
-          保存
+        <Button {...saveButtonProps} type="primary" autoInsertSpace={false}>
+          {t('buttons.save')}
         </Button>
       </Space>
     </Edit>

@@ -93,10 +93,10 @@ export default function Page() {
                   htmlType={'submit'}
                   autoInsertSpace={false}
                 >
-                  検索
+                  {t('buttons.search')}
                 </Button>
                 <Button size="middle" type="default" onClick={handleClear}>
-                  クリア
+                  {t('buttons.clear')}
                 </Button>
               </Space>
             </div>
@@ -118,7 +118,7 @@ export default function Page() {
               onClick={addRootCategory}
               icon={null}
             >
-              新規登録
+              {t('buttons.create_new')}
             </CreateButton>
             <Button
               disabled={!isFullAccess}

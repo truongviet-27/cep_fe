@@ -78,12 +78,11 @@ function ProductContainer() {
                 {t('buttons.search')}
               </Button>
               <Button
+                type="default"
                 onClick={() => {
                   searchFormProps.form?.resetFields?.()
                   setFilters([], 'replace')
                 }}
-                color="primary"
-                variant="outlined"
               >
                 {t('products.list.searchArea.clearButton')}
               </Button>

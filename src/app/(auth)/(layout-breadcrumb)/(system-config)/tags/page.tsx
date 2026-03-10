@@ -64,7 +64,7 @@ export default function Page() {
                   size="middle"
                   autoInsertSpace={false}
                 >
-                  検索
+                  {t('buttons.search')}
                 </Button>
                 <Button
                   size="middle"
@@ -74,7 +74,7 @@ export default function Page() {
                     setFilters([], 'replace')
                   }}
                 >
-                  クリア
+                  {t('buttons.clear')}
                 </Button>
               </Space>
               <Space>
@@ -83,6 +83,7 @@ export default function Page() {
                   onClick={onSaveAll}
                   loading={savingAll}
                   disabled={!edited || savingAll}
+                  autoInsertSpace={false}
                 >
                   {t('buttons.save_all', { defaultValue: '並び順を保存' })}
                 </Button>
@@ -91,8 +92,9 @@ export default function Page() {
                   size="middle"
                   onClick={addNew}
                   disabled={lastRowEdited}
+                  autoInsertSpace={false}
                 >
-                  新規登録
+                  {t('buttons.create_new')}
                 </Button>
               </Space>
             </Space>

@@ -406,31 +406,49 @@ export default function useProductUnits() {
               <>
                 <Button
                   type="primary"
-                  size="middle"
+                  size="small"
                   loading={saving}
                   onClick={() => saveRow(index)}
+                  autoInsertSpace={false}
                 >
-                  保存
+                  {t('buttons.save')}
                 </Button>
-                <Button size="middle" onClick={() => cancelEdit(index)}>
-                  キャンセル
+                <Button
+                  size="small"
+                  onClick={() => cancelEdit(index)}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.cancel')}
                 </Button>
               </>
             ) : (
               <>
                 <EditButton
-                  size="middle"
+                  autoInsertSpace={false}
+                  size="small"
+                  icon={null}
+                  resource="product-units"
                   onClick={() => startEdit(index)}
-                  hideText
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#1FDB51',
+                  }}
+                >
+                  {t('buttons.edit')}
+                </EditButton>
                 <DeleteButton
-                  hideText
-                  size="middle"
+                  autoInsertSpace={false}
+                  size="small"
+                  icon={null}
+                  resource="product-units"
                   recordItemId={dataSource[index]?.id}
-                  // onClick={() =>
-                  //   !dataSource[index]?.id && handleDeleteRow(index)
-                  // }
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#E74C3C',
+                  }}
+                >
+                  {t('buttons.delete')}
+                </DeleteButton>
               </>
             )}
           </Space>

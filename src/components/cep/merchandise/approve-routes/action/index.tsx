@@ -746,7 +746,11 @@ function ApproveAction() {
                 {t('buttons.back')}
               </Button>
 
-              <Button {...saveButtonProps} type="primary">
+              <Button
+                {...saveButtonProps}
+                type="primary"
+                autoInsertSpace={false}
+              >
                 {isUpdate ? t('buttons.save') : t('buttons.create')}
               </Button>
             </Space>
