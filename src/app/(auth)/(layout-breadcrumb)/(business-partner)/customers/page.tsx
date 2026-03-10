@@ -299,15 +299,12 @@ export default function CustomerListPage() {
           },
         }),
         render: (val: string) => (
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
+          <Text
+            ellipsis={{ tooltip: val ?? '' }}
+            style={{ display: 'block', width: '100%' }}
           >
             {val}
-          </div>
+          </Text>
         ),
       },
       {

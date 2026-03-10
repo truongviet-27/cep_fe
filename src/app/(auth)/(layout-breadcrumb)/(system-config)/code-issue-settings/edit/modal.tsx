@@ -4,7 +4,6 @@ import { useTranslate } from '@refinedev/core'
 import { segmentOptions } from '@utility/options'
 import {
   Button,
-  Checkbox,
   Divider,
   Flex,
   Form,
@@ -111,7 +110,6 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
         >
           {record?.name}
         </Form.Item>
-
         <Form.Item
           label={boldText(t('code_issue_settings.fields.issue_method'))}
           name="issue_method"
@@ -126,7 +124,6 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
             </Radio>
           </Radio.Group>
         </Form.Item>
-
         <Form.Item
           label={
             <Flex>
@@ -140,19 +137,20 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
         >
           <Input placeholder="例: PD" disabled={isManual} />
         </Form.Item>
-
         <Form.Item
-          label={<HashDashIcon />}
-          valuePropName="checked"
+          label={boldText(t('code_issue_settings.fields.hash'))}
           name="hash_dash"
-        >
-          <Checkbox disabled={isManual}>
+          extra={
             <Typography.Text>
               {t('code_issue_settings.fields.hash_dash_hint')}
             </Typography.Text>
-          </Checkbox>
+          }
+        >
+          <Radio.Group disabled={isManual}>
+            <Radio value={true}>{t('code_issue_settings.fields.yes')}</Radio>
+            <Radio value={false}>{t('code_issue_settings.fields.no')}</Radio>
+          </Radio.Group>
         </Form.Item>
-
         <Form.Item
           label={boldText(t('code_issue_settings.fields.segment'))}
           name="segment"
@@ -164,7 +162,6 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
             disabled={isManual}
           />
         </Form.Item>
-
         <Form.Item
           label={boldText(t('code_issue_settings.fields.serial_length'))}
           name="serial_length"
@@ -183,23 +180,19 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
             })}
           </Select>
         </Form.Item>
-
         <Form.Item
           label={boldText(t('code_issue_settings.fields.total'))}
           name="current_serial_number"
         >
           {record?.current_serial_number}
         </Form.Item>
-
         <Form.Item
           label={boldText(t('code_issue_settings.fields.preview_code'))}
           name="preview_code"
         >
           <Tag>{previewCode}</Tag>
         </Form.Item>
-
         <Divider />
-
         <ShowMoreInfo
           descriptions={[
             {
@@ -229,6 +222,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
             refetchParent?.()
           }}
           type="primary"
+          autoInsertSpace={false}
         >
           {t('permission_settings.buttons.save')}
         </Button>

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { RightOutlined } from '@ant-design/icons'
+import { RightOutlined, WarningOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton, EditButton, useForm } from '@refinedev/antd'
@@ -42,6 +42,7 @@ type Form = {
       name: string
       department_id: number | null
       department: string
+      is_deleted: boolean
     }[]
   }[]
 }
@@ -238,6 +239,13 @@ function ApproveDetail() {
                           return (
                             <div className="mt-4 ml-6 flex flex-col gap-4">
                               {fields2.map((item2) => {
+                                const _isDeleted = form.getFieldValue([
+                                  'steps',
+                                  item.name,
+                                  'employees',
+                                  item2.name,
+                                  'is_deleted',
+                                ])
                                 return (
                                   <Row key={item2.key}>
                                     <Col xs={24} md={4}>
@@ -249,6 +257,11 @@ function ApproveDetail() {
                                     </Col>
                                     <Col xs={24} md={20}>
                                       <Space>
+                                        {_isDeleted && (
+                                          <WarningOutlined
+                                            style={{ color: '#AC3C00' }}
+                                          />
+                                        )}
                                         {form.getFieldValue([
                                           'steps',
                                           item.name,

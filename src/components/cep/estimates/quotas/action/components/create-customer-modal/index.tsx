@@ -51,7 +51,12 @@ export default function CreateCustomerModal({
         title={false}
         isLoading={isLoading}
         rightFooterButtons={
-          <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
+          <Button
+            {...saveButtonProps}
+            type="primary"
+            htmlType={'submit'}
+            autoInsertSpace={false}
+          >
             {t('buttons.create')}
           </Button>
         }

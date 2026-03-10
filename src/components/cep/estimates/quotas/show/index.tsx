@@ -180,11 +180,7 @@ function QuotaDetail() {
       })
     }
 
-    if (
-      hasRoute &&
-      status === QuotaStatus.WaitingApproval &&
-      (isAdmin || data?.display)
-    ) {
+    if (hasRoute && status === QuotaStatus.WaitingApproval && data?.display) {
       actions.push({
         value: 'approve',
         label: t('quotas.show.actions.approve'),

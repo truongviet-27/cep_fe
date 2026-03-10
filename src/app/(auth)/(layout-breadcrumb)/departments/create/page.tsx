@@ -140,6 +140,7 @@ export default function Page() {
             htmlType="submit"
             loading={isLoading}
             onClick={() => form.submit()}
+            autoInsertSpace={false}
           >
             {t('buttons.create')}
           </Button>

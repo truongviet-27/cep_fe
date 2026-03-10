@@ -281,12 +281,51 @@ function useProduct() {
         dataIndex: 'action',
         key: 'action',
         width: '8%',
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render(_: unknown, record: ProductListItem) {
           return (
             <Space wrap size={4}>
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <ShowButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="products"
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
+              <EditButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="products"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
+              <DeleteButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="products"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </DeleteButton>
             </Space>
           )
         },

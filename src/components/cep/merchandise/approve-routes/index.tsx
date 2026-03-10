@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RightOutlined } from '@ant-design/icons'
+import { RightOutlined, WarningOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import {
   CreateButton,
   DeleteButton,
   EditButton,
-  RefreshButton,
   ShowButton,
   useSelect,
   useTable,
@@ -122,8 +121,15 @@ function Approve() {
             whiteSpace: 'nowrap',
           },
         }),
-        render: (value) => {
-          return <span title={value}>{value}</span>
+        render: (value, record) => {
+          return (
+            <span title={value}>
+              {record.hasDeletedApproval && (
+                <WarningOutlined style={{ color: '#AC3C00' }} />
+              )}{' '}
+              {value}
+            </span>
+          )
         },
       },
       {
@@ -191,9 +197,45 @@ function Approve() {
         render: (_: any, record: BaseRecord) => {
           return (
             <Space wrap size={4}>
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <ShowButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
+              <EditButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
+              <DeleteButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </DeleteButton>
             </Space>
           )
         },
@@ -287,16 +329,15 @@ function Approve() {
               <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
-              <RefreshButton
-                size="middle"
-                icon={null}
+              <Button
+                type="default"
                 onClick={() => {
                   searchFormProps.form?.resetFields()
                   setFilters([], 'replace')
                 }}
               >
                 {t('buttons.clear')}
-              </RefreshButton>
+              </Button>
             </Space>
 
             <Space className="mt-[3px] ml-2">
@@ -309,6 +350,7 @@ function Approve() {
                   })
                 }}
                 icon={null}
+                autoInsertSpace={false}
               >
                 {t('buttons.registration')}
               </CreateButton>

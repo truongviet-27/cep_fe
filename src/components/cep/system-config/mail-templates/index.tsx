@@ -149,6 +149,7 @@ function MailTemplate() {
                   type="primary"
                   onClick={onSubmit}
                   loading={isLoadingSubmit}
+                  autoInsertSpace={false}
                 >
                   {t('buttons.save')}
                 </Button>
@@ -162,6 +163,7 @@ function MailTemplate() {
                 setIsEdit(true)
               }}
               icon={null}
+              autoInsertSpace={false}
             >
               {t('mail_templates.buttons.edit')}
             </EditButton>

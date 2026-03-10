@@ -1,14 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { getDefaultTaxRate } from '@components/cep/estimates/quotas/utils'
-import type {
-  QuotaTemplateFormType,
-  QuotaTemplateMainProductType,
-  QuotaTemplateProductType,
-} from '@interfaces/quota-templates'
-import { useTranslate } from '@refinedev/core'
+import type { QuotaTemplateFormType } from '@interfaces/quota-templates'
 import {
   ConsumptionTaxEnum,
   type ProductListItem,
-  type QuotaTemplateProductGroupRequest,
   type QuotaTemplateProductItemRequest,
 } from '@sdk/hey-api'
 import { calculateTax } from '@shared/tax/tax.utils'
@@ -17,13 +13,9 @@ import { useEffect, useState } from 'react'
 
 export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
-  const t = useTranslate()
   const totalPriceWatch = Form.useWatch('total_price', form)
   const taxRateWatch = Form.useWatch('tax_rate', form) ?? 0
-  const mainProducts = Form.useWatch(
-    'main_product',
-    form,
-  ) as QuotaTemplateMainProductType[]
+  const mainProducts = Form.useWatch('main_product', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
 
@@ -32,42 +24,29 @@ export const useController = () => {
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
 
-  const handleAddProduct = (groupIndex: number, isSelfCreate = false) => {
-    const values = mainProducts || []
-    const products = (values[groupIndex].products ||
-      []) as QuotaTemplateProductType[]
-
-    values[groupIndex].products = [
-      ...products,
-      {
-        product_id: null,
-        package_name: '-',
-        unit: t('quotas.action.detail_info.default_values.default_unit'),
-        unit_name: t('quotas.action.detail_info.default_values.default_unit'),
-        name: '',
-        code: '',
-        quantity: 1,
-        cost_price: 0,
-        isSelfCreate: isSelfCreate,
-        selling_price: 0,
-        profit_margin: 0,
-        tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
-        is_add_total: true,
-      } as unknown as QuotaTemplateProductType,
-    ]
-
+  const handleAddProduct = (index: number, isSelfCreate = false) => {
+    const values = [...(form.getFieldValue('main_product') || [])]
+    const newProduct = {
+      product_id: null,
+      name: '',
+      code: '',
+      quantity: 1,
+      cost_price: 0,
+      isSelfCreate: isSelfCreate,
+      selling_price: 0,
+      profit_margin: 0,
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
+      is_add_total: true,
+      kind: 'product',
+    }
+    values.splice(index + 1, 0, newProduct)
     form?.setFieldsValue({ main_product: values })
   }
 
-  const handleRemoveProduct = (groupIndex: number, productIndex: number) => {
+  const handleRemoveProduct = (index: number) => {
     const values = form.getFieldValue('main_product') || []
-    const products = values[groupIndex].products || []
-
-    values[groupIndex].products = products.filter(
-      (_: unknown, idx: number) => idx !== productIndex,
-    )
-
-    form?.setFieldsValue({ main_product: values })
+    const newValues = values.filter((_: unknown, idx: number) => idx !== index)
+    form?.setFieldsValue({ main_product: newValues })
   }
 
   const calculateSummary = () => {
@@ -80,7 +59,7 @@ export const useController = () => {
       {}
 
     // Calculate per-product totals and group by tax_rate
-    ;(mainProducts ?? []).forEach((group: QuotaTemplateProductGroupRequest) => {
+    ;(mainProducts ?? []).forEach((group: any) => {
       ;(group.products ?? []).forEach(
         (product: QuotaTemplateProductItemRequest) => {
           if (!product.is_add_total) return
@@ -140,52 +119,29 @@ export const useController = () => {
   const onChangeProductName = (
     value: ProductListItem & {
       tax_rate: number
+      packagings: any[]
     },
     index: number,
-    index2: number,
   ) => {
+    form.setFieldValue(['main_product', index, 'product_id'], value?.id)
+    form.setFieldValue(['main_product', index, 'name'], value?.name)
+    form.setFieldValue(['main_product', index, 'packagings'], value?.packagings)
     form.setFieldValue(
-      ['main_product', index, 'products', index2, 'product_id'],
-      value?.id,
+      ['main_product', index, 'package_id'],
+      value?.packagings?.[0]?.id,
     )
+    form.setFieldValue(['main_product', index, 'code'], value?.code)
+    form.setFieldValue(['main_product', index, 'unit'], value?.unit)
+    form.setFieldValue(['main_product', index, 'cost_price'], value?.cost_price)
     form.setFieldValue(
-      ['main_product', index, 'products', index2, 'package_id'],
-      null,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'name'],
-      value?.name,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'code'],
-      value?.code,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'unit'],
-      value?.unit,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'cost_price'],
-      value?.cost_price,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'selling_price'],
+      ['main_product', index, 'selling_price'],
       value?.sale_price,
     )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'tax_rate'],
-      value?.tax_rate,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'quantity'],
-      1,
-    )
+    form.setFieldValue(['main_product', index, 'tax_rate'], value?.tax_rate)
+    form.setFieldValue(['main_product', index, 'quantity'], 1)
 
     if (!value) {
-      form.setFieldValue(
-        ['main_product', index, 'products', index, 'quantity'],
-        0,
-      )
+      form.setFieldValue(['main_product', index, 'quantity'], 1)
     }
   }
 

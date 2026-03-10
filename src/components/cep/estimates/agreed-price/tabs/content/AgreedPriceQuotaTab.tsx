@@ -30,6 +30,8 @@ import {
   Select,
   Space,
   Tag,
+  Tooltip,
+  Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { Dayjs } from 'dayjs'
@@ -258,23 +260,34 @@ const AgreedPriceQuotaTab = () => {
           },
         }),
         render: (quotaCode: string, record: QuotaAgreedPrice) => (
-          <Button
-            type="link"
-            onClick={() =>
-              go({ to: `/agreed-prices/quota/${record.quota_id}` })
-            }
-            style={{
-              textDecoration: 'underline',
-              padding: 0,
-              display: 'block',
-              width: '100%',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {quotaCode}
-          </Button>
+          <Tooltip title={quotaCode ?? ''}>
+            <span
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Button
+                type="link"
+                onClick={() =>
+                  go({ to: `/agreed-prices/quota/${record.quota_id}` })
+                }
+                style={{
+                  textDecoration: 'underline',
+                  padding: 0,
+                  display: 'block',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {quotaCode}
+              </Button>
+            </span>
+          </Tooltip>
         ),
       },
       {
@@ -312,17 +325,17 @@ const AgreedPriceQuotaTab = () => {
             whiteSpace: 'nowrap',
           },
         }),
-        render: (_: unknown, record: QuotaAgreedPrice) => (
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {record.customer?.name ?? '-'}
-          </div>
-        ),
+        render: (_: unknown, record: QuotaAgreedPrice) => {
+          const name = record.customer?.name ?? '-'
+          return (
+            <Typography.Text
+              ellipsis={{ tooltip: name }}
+              style={{ display: 'block', width: '100%' }}
+            >
+              {name}
+            </Typography.Text>
+          )
+        },
       },
       {
         title: t('agreed_prices.table.creator'),
@@ -336,17 +349,17 @@ const AgreedPriceQuotaTab = () => {
             whiteSpace: 'nowrap',
           },
         }),
-        render: (_: unknown, record: QuotaAgreedPrice) => (
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {record.creator?.name ?? '-'}
-          </div>
-        ),
+        render: (_: unknown, record: QuotaAgreedPrice) => {
+          const name = record.creator?.name ?? '-'
+          return (
+            <Typography.Text
+              ellipsis={{ tooltip: name }}
+              style={{ display: 'block', width: '100%' }}
+            >
+              {name}
+            </Typography.Text>
+          )
+        },
       },
       {
         title: t('agreed_prices.table.product_count'),
@@ -357,10 +370,21 @@ const AgreedPriceQuotaTab = () => {
       },
       {
         title: (
-          <div className="flex flex-col">
-            <span>{t('agreed_prices.table.department')}</span>
-            <span>{t('agreed_prices.table.amount')}</span>
-          </div>
+          <Tooltip
+            title={`${t('agreed_prices.table.department')} / ${t('agreed_prices.table.amount')}`}
+          >
+            <div
+              className="flex flex-col"
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span>{t('agreed_prices.table.department')}</span>
+              <span>{t('agreed_prices.table.amount')}</span>
+            </div>
+          </Tooltip>
         ),
         dataIndex: 'total_price',
         key: 'total_price',
@@ -377,27 +401,34 @@ const AgreedPriceQuotaTab = () => {
             verticalAlign: 'center',
           },
         }),
-        render: (totalPrice: number, record: QuotaAgreedPrice) => (
-          <div>
-            {(record.creator as any)?.department_name && (
-              <div
-                style={{
-                  fontSize: '16px',
-                  color: '#666',
-                  display: 'block',
-                  width: '100%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  textAlign: 'center',
-                }}
+        render: (totalPrice: number, record: QuotaAgreedPrice) => {
+          const deptName = (record.creator as any)?.department_name
+          const amountStr = formatNumberWithCommas(totalPrice)
+          return (
+            <div>
+              {deptName && (
+                <Typography.Text
+                  ellipsis={{ tooltip: deptName }}
+                  style={{
+                    fontSize: '16px',
+                    color: '#666',
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'center',
+                  }}
+                >
+                  {deptName}
+                </Typography.Text>
+              )}
+              <Typography.Text
+                ellipsis={{ tooltip: amountStr }}
+                style={{ display: 'block', width: '100%', textAlign: 'right' }}
               >
-                {(record.creator as any)?.department_name}
-              </div>
-            )}
-            <div>{formatNumberWithCommas(totalPrice)}</div>
-          </div>
-        ),
+                {amountStr}
+              </Typography.Text>
+            </div>
+          )
+        },
       },
       {
         title: (

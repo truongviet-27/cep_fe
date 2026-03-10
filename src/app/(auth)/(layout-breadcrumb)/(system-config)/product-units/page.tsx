@@ -79,6 +79,7 @@ export default function Page() {
                   onClick={onSaveAll}
                   loading={savingAll}
                   disabled={savingAll || !isFullAccess}
+                  autoInsertSpace={false}
                 >
                   {t('buttons.save_all', { defaultValue: '並び順を保存' })}
                 </Button>
