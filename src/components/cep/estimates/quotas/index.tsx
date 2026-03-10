@@ -4,7 +4,6 @@ import { CommentOutlined, DownOutlined, RightOutlined } from '@ant-design/icons'
 import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
-  HIDE_CREATOR_APPROVER_2_STATUSES,
   QuotaStatus,
   TRANSACTION_TYPES,
 } from '@components/cep/estimates/quotas/enum'
@@ -374,9 +373,6 @@ function QuotaList() {
           },
         }),
         render: (_, record) => {
-          const hideApprover = HIDE_CREATOR_APPROVER_2_STATUSES.includes(
-            record.status,
-          )
           return (
             <div>
               <div
@@ -392,32 +388,30 @@ function QuotaList() {
               >
                 {record?.author?.name}
               </div>
-              {!hideApprover && (
-                <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
-                  {record.approvers?.map((item: any, index: number) => {
-                    const numSteps = item?.number_step ?? 1
-                    const isApproved = item.status === 'approved'
-                    const numberIcon = String.fromCharCode(9311 + numSteps)
-                    return (
-                      <span
-                        title={item.name}
-                        style={{
-                          display: 'block',
-                          width: '100%',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          textAlign: 'center',
-                        }}
-                        key={index}
-                        className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
-                      >
-                        {numberIcon} {item.name}
-                      </span>
-                    )
-                  })}
-                </div>
-              )}
+              <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
+                {record.approvers?.map((item: any, index: number) => {
+                  const numSteps = item?.number_step ?? 1
+                  const isApproved = item.status === 'approved'
+                  const numberIcon = String.fromCharCode(9311 + numSteps)
+                  return (
+                    <span
+                      title={item.name}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        textAlign: 'center',
+                      }}
+                      key={index}
+                      className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
+                    >
+                      {numberIcon} {item.name}
+                    </span>
+                  )
+                })}
+              </div>
             </div>
           )
         },
