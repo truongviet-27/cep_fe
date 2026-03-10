@@ -429,7 +429,6 @@ function ApproveAction() {
                               />
                             </Col>
                           </Row>
-
                           <Row>
                             <Col
                               xs={24}
@@ -489,7 +488,6 @@ function ApproveAction() {
                               </Form.Item>
                             </Col>
                           </Row>
-
                           <Form.List name={[item.name, 'employees']}>
                             {(fields2, { add, remove }) => {
                               return (
@@ -600,6 +598,12 @@ function ApproveAction() {
                                                   item2.name,
                                                   'department_id',
                                                 ]}
+                                                watchPath={[
+                                                  'steps',
+                                                  item.name,
+                                                  'employees',
+                                                ]}
+                                                currentIndex={index2}
                                                 resource="employees"
                                                 style={{ width: 200 }}
                                               />
@@ -686,7 +690,6 @@ function ApproveAction() {
               )
             }}
           </Form.List>
-
           <Divider />
           {isUpdate && (
             <ShowMoreInfo
@@ -712,7 +715,6 @@ function ApproveAction() {
               ]}
             />
           )}
-
           <Flex
             justify="space-between"
             style={{

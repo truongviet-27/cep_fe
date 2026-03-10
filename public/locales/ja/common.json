@@ -654,7 +654,10 @@
       "created_by": "登録者",
       "updated_by": "更新者",
       "created_at": "登録日",
-      "updated_at": "更新日"
+      "updated_at": "更新日",
+      "hash": "ハイフン",
+      "yes": "あり",
+      "no": "なし"
     }
   },
   "product_categories": {

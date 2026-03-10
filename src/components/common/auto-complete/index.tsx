@@ -4,7 +4,7 @@ import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import { Form, Select } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 function CoreAutoComplete({
   nameFilter,
@@ -15,6 +15,9 @@ function CoreAutoComplete({
   labelPath = 'name',
   valuePath = 'id',
   params,
+  excludeIds = [],
+  watchPath,
+  currentIndex,
   ...rest
 }: {
   nameFilter: string
@@ -25,21 +28,50 @@ function CoreAutoComplete({
   labelPath?: any
   valuePath?: any
   params?: any
+  excludeIds?: (number | string)[]
+  watchPath?: any
+  currentIndex?: number
 }) {
   const t = useTranslate()
 
   const form = useFormInstance()
 
   const filter = Form.useWatch(filterPath, form)
+  const watchedValue = Form.useWatch(watchPath, form)
   const [options, setOptions] = useState<{ value: string; label: string }[]>([])
+
+  // Serialize watchedValue to string for stable comparison
+  const watchedValueString = useMemo(() => {
+    if (watchedValue && Array.isArray(watchedValue)) {
+      return JSON.stringify(watchedValue.map((emp: any) => emp?.employee_id))
+    }
+    return ''
+  }, [watchedValue])
+
+  // Memoize the selected employee IDs to prevent infinite loop
+  const selectedEmployeeIds = useMemo(() => {
+    if (watchPath && watchedValue && Array.isArray(watchedValue)) {
+      return watchedValue
+        .map((emp: any, idx: number) =>
+          idx !== currentIndex ? emp?.employee_id : null,
+        )
+        .filter((id: any) => id !== null && id !== undefined)
+    }
+    return excludeIds
+  }, [watchPath, watchedValueString, currentIndex, excludeIds])
+
+  const baseFilters = filter
+    ? [{ field: nameFilter, operator: 'eq', value: filter }]
+    : []
+
+  const additionalFilters = params?.filters || []
+  const allFilters = [...baseFilters, ...additionalFilters]
 
   const { selectProps, query } = useSelect({
     resource: resource,
     optionValue: valuePath,
     optionLabel: labelPath,
-    filters: filter
-      ? [{ field: nameFilter, operator: 'eq', value: filter }]
-      : [],
+    filters: allFilters,
     queryOptions: {
       enabled: !!filterPath && !!filter,
     },
@@ -47,14 +79,20 @@ function CoreAutoComplete({
 
   useEffect(() => {
     if (query.data?.data) {
-      const result = query.data.data.map((item) => ({
+      let result = query.data.data.map((item) => ({
         label: item.name,
         value: item.id,
       })) as any
 
+      if (selectedEmployeeIds.length > 0) {
+        result = result.filter(
+          (opt: any) => !selectedEmployeeIds.includes(opt.value),
+        )
+      }
+
       setOptions(result)
     }
-  }, [query.data?.data])
+  }, [query.data?.data, JSON.stringify(selectedEmployeeIds)])
 
   return (
     <Select
