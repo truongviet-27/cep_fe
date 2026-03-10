@@ -4,11 +4,7 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
-import type {
-  QuotaTemplateProductGroupResponse,
-  QuotaTemplateProductResponse,
-  RoundingMethodEnumType,
-} from '@sdk/hey-api'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
 import { calculateTax } from '@shared/tax/tax.utils'
 import { PRIMARY } from '@utility/color'
 import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
@@ -35,30 +31,28 @@ const DetailInfo: FC<Props> = (props) => {
   const { detail, taxRoundingMethod } = props
   const t = useTranslate()
 
-  const dataSource = (detail?.main_product ?? []).flatMap(
-    (item: QuotaTemplateProductGroupResponse, index: number) => [
-      ...(item.group_name
-        ? [
-            {
-              index,
-              key: `header-${index}`,
-              isHeader: true,
-              title: item.group_name,
-            },
-          ]
-        : []),
-      ...(item.products ?? []).flatMap(
-        (item2: QuotaTemplateProductResponse, index2: number) => [
-          {
-            index,
-            index2,
-            isSelfCreate: !item2.product_id,
-            ...item2,
-          },
-        ],
-      ),
-    ],
-  )
+  const dataSource: any[] = (detail?.main_product ?? [])
+    .filter((item: any) => {
+      if (item.kind === 'group') {
+        return !!item.name && item.name.trim() !== ''
+      }
+      return true
+    })
+    .sort((a: any, b: any) => {
+      const orderA = a.display_order ?? 0
+      const orderB = b.display_order ?? 0
+      return orderA - orderB
+    })
+    .map((item: any) => {
+      if (item.kind === 'group') {
+        return {
+          isHeader: true,
+          title: item.name,
+          ...item,
+        }
+      }
+      return { ...item }
+    })
 
   const calculateGroupedTotal = (data: Record<string, any>) => {
     const totalByTaxRate = data.reduce(

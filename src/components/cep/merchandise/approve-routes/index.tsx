@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RightOutlined } from '@ant-design/icons'
+import { RightOutlined, WarningOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import {
@@ -122,8 +122,15 @@ function Approve() {
             whiteSpace: 'nowrap',
           },
         }),
-        render: (value) => {
-          return <span title={value}>{value}</span>
+        render: (value, record) => {
+          return (
+            <span title={value}>
+              {record.hasDeletedApproval && (
+                <WarningOutlined style={{ color: '#AC3C00' }} />
+              )}{' '}
+              {value}
+            </span>
+          )
         },
       },
       {

@@ -25,6 +25,70 @@
   "confirm": {
     "delete_confirm": "Are you sure you want to delete this item?"
   },
+  "initial_setup_guide": {
+    "advanced_note": "You can configure advanced features. Please use the settings you need from various settings.",
+    "approval_route_setting": "Approval Route Settings",
+    "price_rank_setting": "Unit Price Rank Settings",
+    "user_role": "User Permissions",
+    "breadcrumb_root": "Initial Setup",
+    "button_later": "Set up later",
+    "target_menu_label": "Target menu: Estimate list",
+    "loading": "Loading...",
+    "status_pending": "Not set",
+    "status_complete": "Complete",
+    "progress_status": "Progress",
+    "label_estimate_management": "Estimate management",
+    "label_account_management": "Account management",
+    "step_prefix": "Step",
+    "screen_link": "To screen",
+    "menu": {
+      "basic": {
+        "title": "Initial setup",
+        "subtitle": "Basic system settings",
+        "breadcrumb_label": "Initial setup"
+      },
+      "advanced": {
+        "title": "Advanced settings",
+        "subtitle": "Detailed feature settings",
+        "breadcrumb_label": "Advanced settings"
+      },
+      "test_individual": {
+        "title": "Test operation (Individual)",
+        "subtitle": "System operation procedures",
+        "breadcrumb_label": "Test operation (Individual)"
+      },
+      "test_continuous": {
+        "title": "Test operation (Continuous)",
+        "subtitle": "System operation procedures",
+        "breadcrumb_label": "Test operation (Continuous)"
+      }
+    },
+    "test_individual": {
+      "step1_title": "Step 1: Create estimate",
+      "step1_desc": "Create an estimate from new creation and template creation. If approval route is set, select the approval route.",
+      "step1_1_title": "Step 1-1: Approve / reject estimate",
+      "step1_1_desc": "Approve or reject estimates in pending approval status.\nRejection reason is required when rejecting.",
+      "step1_2_title": "Step 1-2: Handle rejection",
+      "step1_2_desc": "Check the rejection reason, correct the estimate and submit for approval again.",
+      "step2_title": "Step 2: Send estimate",
+      "step2_desc": "Send the created (or approved) estimate to the customer.\nOnly creators and administrators can send.",
+      "step3_title": "Step 3: Re-estimate",
+      "step3_desc_line1": "Create a re-estimate from the re-estimate button for customer re-estimate requests.",
+      "step3_desc_line2": "When creating a re-estimate, it is added to the original estimate and a re-estimate is created and moved to creating.",
+      "step3_desc_line3": "When the re-estimate is created, the original estimate status moves to re-estimate.",
+      "step4_title": "Step 4: Order / lost order management",
+      "step4_desc": "Determine order or lost order for sent estimates.",
+      "step5_title": "Step 5: Continuous estimate management (when contract type is continuous)",
+      "step5_desc_line1": "Estimates ordered with \"Continuous\" contract type are copied to the continuous estimate list and applicable period can be managed.",
+      "step5_desc_line2": "Default is unlimited; change if you want to manage the applicable period.",
+      "badge_creating": "Creating",
+      "badge_waiting_approval": "Waiting approval",
+      "badge_rejected": "Rejected",
+      "badge_approved": "Approved",
+      "badge_sent": "Sent",
+      "badge_order": "Order"
+    }
+  },
   "buttons": {
     "cancel": "Cancel",
     "save_settings": "Save Settings",
@@ -161,7 +225,10 @@
       "created_by": "Created By",
       "updated_by": "Updated By",
       "created_at": "Created At",
-      "updated_at": "Updated At"
+      "updated_at": "Updated At",
+      "hash": "Hash",
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "product_categories": {
@@ -194,6 +261,7 @@
     "purpose": "Purpose of change",
     "quick_start": "1. Quick Start Settings",
     "advanced": "2. Advanced Settings (for Pro)",
+    "advanced_settings": "Advanced Settings",
     "enterprise": "3. Enterprise Settings",
     "advanced_content": "Content for advanced settings",
     "enterprise_content": "Content for enterprise settings",

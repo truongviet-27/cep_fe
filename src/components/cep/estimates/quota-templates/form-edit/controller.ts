@@ -60,28 +60,22 @@ export function useController() {
         const tags = (detail?.tags ?? []) as unknown as { id: number }[]
         const defaultOptionalProduct = [
           {
-            group_name: '',
-            products: [
-              {
-                product_id: null,
-                package_id: null,
-                package_name: '-',
-                unit: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                unit_name: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                name: '',
-                code: '',
-                cost_price: 0,
-                selling_price: 0,
-                quantity: 0,
-                tax_rate: 0,
-                profit_margin: 0,
-                is_add_total: false,
-              },
-            ],
+            name: '',
+            kind: 'group',
+            quantity: 1,
+          },
+          {
+            product_id: null,
+            package_id: null,
+            name: '',
+            code: '',
+            cost_price: 0,
+            selling_price: 0,
+            quantity: 0,
+            tax_rate: 0,
+            profit_margin: 0,
+            is_add_total: true,
+            kind: 'product',
           },
         ]
 
@@ -151,56 +145,44 @@ export function useController() {
         total_price_tax_included: 0,
         main_product: [
           {
-            group_name: '',
-            products: [
-              {
-                product_id: null,
-                package_id: null,
-                isSelfCreate: false,
-                package_name: '-',
-                unit: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                unit_name: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                name: '',
-                code: '',
-                cost_price: 0,
-                quantity: 0,
-                tax_rate: 0,
-                selling_price: 0,
-                profit_margin: 0,
-                is_add_total: true,
-              },
-            ],
+            name: '',
+            kind: 'group',
+            quantity: 1,
+          },
+          {
+            product_id: null,
+            package_id: null,
+            isSelfCreate: false,
+            name: '',
+            code: '',
+            cost_price: 0,
+            quantity: 0,
+            tax_rate: 0,
+            selling_price: 0,
+            profit_margin: 0,
+            is_add_total: true,
+            kind: 'product',
           },
         ],
         optional_product: [
           {
-            group_name: '',
-            products: [
-              {
-                product_id: null,
-                package_id: null,
-                isSelfCreate: false,
-                package_name: '-',
-                unit: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                unit_name: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                name: '',
-                code: '',
-                cost_price: 0,
-                selling_price: 0,
-                quantity: 0,
-                tax_rate: 0,
-                profit_margin: 0,
-                is_add_total: false,
-              },
-            ],
+            name: '',
+            kind: 'group',
+            quantity: 1,
+          },
+          {
+            product_id: null,
+            package_id: null,
+            isSelfCreate: false,
+            name: '',
+            code: '',
+            cost_price: 0,
+            selling_price: 0,
+            quantity: 0,
+            tax_rate: 0,
+            profit_margin: 0,
+            is_add_total: true,
+            kind: 'product',
           },
         ],
       })

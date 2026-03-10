@@ -70,63 +70,51 @@ function DetailInfo({
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
 
-  const calculateSummary = (main_product_groups: any[], tax_rate: number) => {
+  const calculateSummary = (main_product: any[]) => {
+    // Bỏ tham số tax_rate thừa nếu không dùng
     let costTotal = 0
     let sellTotal = 0
     let hasNullCost = false
-
-    // Group products by tax rate for separate calculation
     const taxGroups: { [key: string]: { selling: number; taxRate: number } } =
       {}
 
-    // Calculate per-product totals and group by tax_rate
-    ;(main_product_groups ?? []).forEach((group: any) => {
-      ;(group.products ?? []).forEach((product: any) => {
-        if (!product.is_add_total) return
+    ;(main_product ?? []).forEach((product: any) => {
+      if (product.isHeader || !product.is_add_total) return
 
-        const qty = product.quantity || 0
-        const selling = (product.selling_price || 0) * qty
-        const cost = (product.cost_price || 0) * qty
+      const qty = Number(product.quantity) || 0
+      const selling = (Number(product.selling_price) || 0) * qty
+      const cost =
+        (product.cost_price === null ? 0 : Number(product.cost_price)) * qty
 
-        if (product.cost_price === null) hasNullCost = true
+      if (product.cost_price === null) hasNullCost = true
 
-        costTotal += cost
-        sellTotal += selling
+      costTotal += cost
+      sellTotal += selling
 
-        // Use product's individual tax rate, fallback to 0 if not set
-        const productTaxRate = product.tax_rate ?? 0
-        const taxRateKey = productTaxRate.toString()
+      const productTaxRate = product.tax_rate ?? 0
+      const taxRateKey = productTaxRate.toString()
 
-        // Group products by tax rate
-        if (!taxGroups[taxRateKey]) {
-          taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
-        }
-        taxGroups[taxRateKey].selling += selling
-      })
+      if (!taxGroups[taxRateKey]) {
+        taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
+      }
+      taxGroups[taxRateKey].selling += selling
     })
 
-    // Calculate tax for each tax rate group with rounding
     let taxTotal = 0
     Object.values(taxGroups).forEach((group) => {
       const rawTax = (group.selling * group.taxRate) / 100
-      const roundedTax = calculateTax(rawTax, taxRoundingMethod)
-      taxTotal += roundedTax
+      taxTotal += calculateTax(rawTax, taxRoundingMethod)
     })
 
-    let sellTotalWithTax = 0
-    if (consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL) {
-      // For inclusive tax, selling total already includes tax
-      sellTotalWithTax = sellTotal
-    } else {
-      // For internal tax, add tax to selling total
-      sellTotalWithTax = sellTotal + taxTotal
-    }
+    const sellTotalWithTax =
+      consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL
+        ? sellTotal + taxTotal
+        : sellTotal
 
-    const profitRate = Number(
-      (sellTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0).toFixed(
-        2,
-      ),
-    )
+    const profitRate =
+      sellTotal > 0
+        ? Number((((sellTotal - costTotal) / sellTotal) * 100).toFixed(2))
+        : 0
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
@@ -142,19 +130,11 @@ function DetailInfo({
   }, [costTotal, profitRate, taxTotal, sellTotalWithTax])
 
   useEffect(() => {
-    calculateSummary(
-      form.getFieldValue('main_product'),
-      form.getFieldValue('tax_rate'),
-    )
+    calculateSummary(form.getFieldValue('main_product'))
   }, [taxRateWatch, mainProductWatch, consumptionTaxWatch])
 
-  const handleAddProduct = (
-    groupIndex: number,
-    productIndex: number,
-    isSelfCreate = false,
-  ) => {
-    const values = form?.getFieldValue('main_product') || []
-    const products = values[groupIndex].products || []
+  const handleAddProduct = (productIndex: number, isSelfCreate = false) => {
+    const currentList = form?.getFieldValue('main_product') || []
 
     const newProduct = {
       product: null,
@@ -173,24 +153,21 @@ function DetailInfo({
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
       unit_name: t('quotas.action.detail_info.default_values.default_unit'),
+      kind: 'product',
     }
 
-    const newProducts = [...products]
-    newProducts.splice(productIndex, 0, newProduct)
+    // 3. Tạo mảng mới và chèn vào ngay sau vị trí hiện tại (productIndex + 1)
+    const newList = [...currentList]
+    newList.splice(productIndex + 1, 0, newProduct)
 
-    values[groupIndex].products = newProducts
-    form.setFieldsValue({ main_product: values })
+    // 4. Cập nhật lại Form
+    form.setFieldsValue({ main_product: newList })
   }
 
-  const handleRemoveProduct = (groupIndex: number, productIndex: number) => {
-    const values = form.getFieldValue('main_product') || []
-    const products = values[groupIndex].products || []
-
-    values[groupIndex].products = products.filter(
-      (_: any, idx: number) => idx !== productIndex,
-    )
-
-    form.setFieldsValue({ main_product: values })
+  const handleRemoveProduct = (index: number) => {
+    const currentList = form.getFieldValue('main_product') || []
+    const newList = currentList.filter((_: any, idx: number) => idx !== index)
+    form.setFieldsValue({ main_product: newList })
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -199,24 +176,38 @@ function DetailInfo({
     setIsModalOpen(false)
   }
 
-  const dataSource: any[] = (form?.getFieldValue('main_product') ?? []).flatMap(
-    (item: any, index: number) => [
-      {
-        index,
-        key: `header-${index}`,
-        isHeader: true,
-        title: item.group_name,
-      },
-      ...(item.products ?? []).flatMap((item2: any, index2: number) => [
-        {
+  const dataSource: any[] = (form?.getFieldValue('main_product') ?? []).map(
+    (item: any, index: number) => {
+      if (item.kind === 'group') {
+        return {
+          ...item,
           index,
-          index2,
-          isSelfCreate: !item2.product_id,
-          ...item2,
-        },
-      ]),
-    ],
+          key: `header-main-${index}`,
+          isHeader: true,
+          title: item.name,
+        }
+      }
+      return {
+        index,
+        isSelfCreate: !item.product_id,
+        ...item,
+      }
+    },
   )
+
+  useEffect(() => {
+    if (mainProductWatch && Array.isArray(mainProductWatch)) {
+      const updatedList = mainProductWatch.map((item: any, index: number) => {
+        if (item.display_order !== index + 1) {
+          return { ...item, display_order: index + 1 }
+        }
+        return item
+      })
+      if (JSON.stringify(updatedList) !== JSON.stringify(mainProductWatch)) {
+        form.setFieldsValue({ main_product: updatedList })
+      }
+    }
+  }, [mainProductWatch, form])
 
   const calculateGroupedTotal = (data: any) => {
     const totalByTaxRate = data.reduce((acc: any, item: any) => {
@@ -259,10 +250,6 @@ function DetailInfo({
 
   const [productPrincingState, setProductPrincingState] = useState<number[]>([])
 
-  const productIds = (Form.useWatch(['main_product'], form) ?? []).flatMap(
-    (item: any) => item.products.map((p: any) => p.product_id),
-  )
-
   const customer = Form.useWatch(['customer'], form)
 
   useEffect(() => {
@@ -270,14 +257,6 @@ function DetailInfo({
       setProductPrincingState(productPrincing)
     }
   }, [productPrincing])
-
-  const watchedProductIds = useMemo(() => {
-    return (mainProductWatch ?? [])
-      .flatMap((item: any) =>
-        (item.products ?? []).map((p: any) => p.product_id),
-      )
-      .filter(Boolean)
-  }, [mainProductWatch])
 
   const { data } = useCustom<any>({
     url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
@@ -356,11 +335,14 @@ function DetailInfo({
               }),
               ellipsis: true,
               render: (_, record) => {
+                ;<Form.Item name={[record.index, 'display_order']} hidden>
+                  <InputNumber />
+                </Form.Item>
                 if (record.isHeader) {
                   return {
                     children: (
                       <Form.Item
-                        name={[record.index, 'group_name']}
+                        name={[record.index, 'name']}
                         className="ant-form-item-hidden-margin"
                         rules={[
                           {
@@ -390,14 +372,12 @@ function DetailInfo({
                     return form.getFieldValue([
                       'main_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'code',
                     ])
                   }
                   return (
                     <Form.Item
-                      name={[record.index, 'products', record.index2, 'code']}
+                      name={[record.index, 'code']}
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
@@ -418,30 +398,25 @@ function DetailInfo({
                         },
                         {
                           validator: async () => {
-                            const allGroups =
+                            const allProducts =
                               form.getFieldValue('main_product') || []
-
-                            const currentProduct =
-                              allGroups[record.index]?.products?.[record.index2]
-                            const currentCode = currentProduct?.code
-
+                            const currentCode = allProducts[record.index]?.code
                             if (!currentCode) return Promise.resolve()
-
                             let count = 0
-                            for (const group of allGroups) {
-                              const products = group?.products || []
-                              for (const item of products) {
-                                if (item?.code === currentCode) {
-                                  count++
-                                }
-                                if (count > 1) {
-                                  notification.error({
-                                    message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
-                                    key: `${currentCode}-code-main-product`,
-                                    placement: 'topRight',
-                                  })
-                                  return Promise.reject()
-                                }
+                            for (const item of allProducts) {
+                              if (
+                                item?.kind !== 'group' &&
+                                item?.code === currentCode
+                              ) {
+                                count++
+                              }
+                              if (count > 1) {
+                                notification.error({
+                                  message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                                  key: `${currentCode}-code-main-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
                               }
                             }
                             return Promise.resolve()
@@ -476,12 +451,7 @@ function DetailInfo({
                   if (!record.isSelfCreate) {
                     return (
                       <CoreAutocompleteAPI
-                        name={[
-                          record.index,
-                          'products',
-                          record.index2,
-                          'product',
-                        ]}
+                        name={[record.index, 'product']}
                         rules={[
                           {
                             required: true,
@@ -489,38 +459,31 @@ function DetailInfo({
                           },
                           {
                             validator: async () => {
-                              const allGroups =
+                              const allProducts =
                                 form.getFieldValue('main_product') || []
-                              const currentProduct =
-                                allGroups[record.index]?.products?.[
-                                  record.index2
-                                ]
-
-                              if (!currentProduct?.product_id)
-                                return Promise.resolve()
-
+                              const currentProductId =
+                                allProducts[record.index]?.product_id
+                              if (!currentProductId) return Promise.resolve()
                               let count = 0
-                              for (const group of allGroups) {
-                                const products = group?.products || []
-                                for (const item of products) {
-                                  if (
-                                    item?.product_id ===
-                                    currentProduct?.product_id
-                                  ) {
-                                    count++
-                                  }
-                                  if (count > 1) {
-                                    notification.error({
-                                      message: t(
-                                        'quotas.action.detail_info.duplicate_product',
-                                      ),
-                                      key: `name-main-product`,
-                                      placement: 'topRight',
-                                    })
-                                    return Promise.reject()
-                                  }
+                              for (const item of allProducts) {
+                                if (
+                                  item?.kind !== 'group' &&
+                                  item?.product_id === currentProductId
+                                ) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: t(
+                                      'quotas.action.detail_info.duplicate_product',
+                                    ),
+                                    key: `name-main-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
                                 }
                               }
+                              return Promise.resolve()
                             },
                           },
                         ]}
@@ -534,38 +497,22 @@ function DetailInfo({
                           value: form.getFieldValue([
                             'main_product',
                             record.index,
-                            'products',
-                            record.index2,
                             'product',
                           ])?.value,
                           label: form.getFieldValue([
                             'main_product',
                             record.index,
-                            'products',
-                            record.index2,
                             'name',
                           ]),
                         }}
                         onChangeValue={(valueOption) => {
                           if (!valueOption) {
                             form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'package',
-                              ],
+                              ['main_product', record.index, 'package'],
                               null,
                             )
                             form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'quantity',
-                              ],
+                              ['main_product', record.index, 'quantity'],
                               0,
                             )
                           }
@@ -581,13 +528,7 @@ function DetailInfo({
                           // Cập nhật field product với tên mới từ API khi select
                           if (valueOption) {
                             form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'product',
-                              ],
+                              ['main_product', record.index, 'product'],
                               {
                                 value: valueOption.id,
                                 label: valueOption.name, // Luôn lấy tên mới từ API
@@ -595,116 +536,50 @@ function DetailInfo({
                             )
                           }
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'product_id',
-                            ],
+                            ['main_product', record.index, 'product_id'],
                             valueOption?.id,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'name',
-                            ],
+                            ['main_product', record.index, 'name'],
                             valueOption?.name,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'code',
-                            ],
+                            ['main_product', record.index, 'code'],
                             valueOption?.code,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'package_id',
-                            ],
+                            ['main_product', record.index, 'package_id'],
                             (valueOption?.packagings ?? [])[0]?.id,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'package',
-                            ],
+                            ['main_product', record.index, 'package'],
                             {
                               value: (valueOption?.packagings ?? [])[0]?.id,
                               label: '-',
                             },
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'unit',
-                            ],
+                            ['main_product', record.index, 'unit'],
                             valueOption?.unit,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'unit_name',
-                            ],
+                            ['main_product', record.index, 'unit_name'],
                             valueOption?.unit,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'cost_price',
-                            ],
+                            ['main_product', record.index, 'cost_price'],
                             valueOption?.cost_price,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'selling_price',
-                            ],
-                            null,
+                            ['main_product', record.index, 'selling_price'],
+                            valueOption?.sale_price,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'quantity',
-                            ],
-                            1,
+                            ['main_product', record.index, 'quantity'],
+                            0,
                           )
                           form.setFieldValue(
-                            [
-                              'main_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'tax_rate',
-                            ],
+                            ['main_product', record.index, 'tax_rate'],
                             valueOption?.tax_rate,
                           )
                         }}
@@ -713,7 +588,7 @@ function DetailInfo({
                   }
                   return (
                     <Form.Item
-                      name={[record.index, 'products', record.index2, 'name']}
+                      name={[record.index, 'name']}
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
@@ -730,29 +605,25 @@ function DetailInfo({
                         },
                         {
                           validator: async () => {
-                            const allGroups =
+                            const allProducts =
                               form.getFieldValue('main_product') || []
-                            const currentProduct =
-                              allGroups[record.index]?.products?.[record.index2]
-                            const currentName = currentProduct?.name
-
+                            const currentName = allProducts[record.index]?.name
                             if (!currentName) return Promise.resolve()
-
                             let count = 0
-                            for (const group of allGroups) {
-                              const products = group?.products || []
-                              for (const item of products) {
-                                if (item?.name === currentName) {
-                                  count++
-                                }
-                                if (count > 1) {
-                                  notification.error({
-                                    message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
-                                    key: `${currentName}-name-main-product`,
-                                    placement: 'topRight',
-                                  })
-                                  return Promise.reject()
-                                }
+                            for (const item of allProducts) {
+                              if (
+                                item?.kind !== 'group' &&
+                                item?.name === currentName
+                              ) {
+                                count++
+                              }
+                              if (count > 1) {
+                                notification.error({
+                                  message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                                  key: `${currentName}-name-main-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
                               }
                             }
                             return Promise.resolve()
@@ -789,8 +660,6 @@ function DetailInfo({
                       form.getFieldValue([
                         'main_product',
                         record.index,
-                        'products',
-                        record.index2,
                         'unit',
                       ]) ?? '-'
                     )
@@ -798,7 +667,7 @@ function DetailInfo({
 
                   return (
                     <Form.Item
-                      name={[record.index, 'products', record.index2, 'unit']}
+                      name={[record.index, 'unit']}
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
@@ -846,35 +715,23 @@ function DetailInfo({
                         (item: any) => item.id === record?.product_id,
                       )
                     } else {
-                      product = mainProduct
-                        ?.flatMap((group: any) => group.products || [])
-                        .find(
-                          (item: any) => item.product_id === record?.product_id,
-                        )
+                      product = mainProduct?.find(
+                        (item: any) => item.product_id === record?.product_id,
+                      )
                     }
 
                     const productInit =
-                      mainProduct &&
-                      mainProduct[record?.index ?? 0]?.products[
-                        record?.index2 ?? 0
-                      ]?.product
+                      mainProduct && mainProduct[record?.index ?? 0]?.product
 
                     return (
                       <Form.Item
                         className="ant-form-item-hidden-margin"
-                        name={[
-                          record.index,
-                          'products',
-                          record.index2,
-                          'package',
-                        ]}
+                        name={[record.index, 'package']}
                       >
                         <AutoComplete
                           filterPath1={[
                             'main_product',
                             record.index,
-                            'products',
-                            record.index2,
                             'product',
                           ]}
                           labelInValue={true}
@@ -882,7 +739,6 @@ function DetailInfo({
                           customer={customer}
                           data={product}
                           index={record.index}
-                          index2={record.index2}
                           filterPath2={['customer']}
                           resource={`products`}
                           parent="main_product"
@@ -893,27 +749,8 @@ function DetailInfo({
 
                   return (
                     <Form.Item
-                      name={[
-                        record.index,
-                        'products',
-                        record.index2,
-                        'package_name',
-                      ]}
+                      name={[record.index, 'package_name']}
                       className="ant-form-item-hidden-margin"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          whitespace: true,
-                          message: '',
-                        },
-                        {
-                          max: 255,
-                          message: '',
-                        },
-                      ]}
                     >
                       <Input disabled={record.isSelfCreate} />
                     </Form.Item>
@@ -942,8 +779,6 @@ function DetailInfo({
                     const cost_price = form.getFieldValue([
                       'main_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'cost_price',
                     ])
                     if (cost_price === undefined || cost_price === null)
@@ -953,12 +788,7 @@ function DetailInfo({
 
                   return (
                     <Form.Item
-                      name={[
-                        record.index,
-                        'products',
-                        record.index2,
-                        'cost_price',
-                      ]}
+                      name={[record.index, 'cost_price']}
                       className="ant-form-item-hidden-margin"
                     >
                       <InputNumber
@@ -1000,12 +830,7 @@ function DetailInfo({
                 return (
                   <Form.Item
                     className="ant-form-item-hidden-margin"
-                    name={[
-                      record.index,
-                      'products',
-                      record.index2,
-                      'selling_price',
-                    ]}
+                    name={[record.index, 'selling_price']}
                     rules={[
                       {
                         required: true,
@@ -1054,7 +879,7 @@ function DetailInfo({
                 return (
                   <Form.Item
                     className="ant-form-item-hidden-margin"
-                    name={[record.index, 'products', record.index2, 'quantity']}
+                    name={[record.index, 'quantity']}
                     rules={[
                       {
                         required: true,
@@ -1105,19 +930,11 @@ function DetailInfo({
                   form.getFieldValue([
                     'main_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'cost_price',
                   ]) === null
                 ) {
                   form.setFieldValue(
-                    [
-                      'main_product',
-                      record.index,
-                      'products',
-                      record.index2,
-                      'profit_margin',
-                    ],
+                    ['main_product', record.index, 'profit_margin'],
                     0,
                   )
                   return '0%'
@@ -1126,15 +943,11 @@ function DetailInfo({
                   form.getFieldValue([
                     'main_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'cost_price',
                   ]) *
                     form.getFieldValue([
                       'main_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'quantity',
                     ]) || 0
 
@@ -1142,26 +955,16 @@ function DetailInfo({
                   form.getFieldValue([
                     'main_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'selling_price',
                   ]) *
                     form.getFieldValue([
                       'main_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'quantity',
                     ]) || 0
 
                 form.setFieldValue(
-                  [
-                    'main_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'profit_margin',
-                  ],
+                  ['main_product', record.index, 'profit_margin'],
                   Number(
                     selling > 0
                       ? (((selling - cost) / selling) * 100).toFixed(2)
@@ -1193,8 +996,6 @@ function DetailInfo({
                   form.getFieldValue([
                     'main_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'quantity',
                   ]) || 0
 
@@ -1202,8 +1003,6 @@ function DetailInfo({
                   form.getFieldValue([
                     'main_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'selling_price',
                   ]) || 0
                 return Number(quantity * selling).toLocaleString()
@@ -1231,8 +1030,6 @@ function DetailInfo({
                     form.getFieldValue([
                       'main_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'tax_rate',
                     ]) || 0
                   return `${Number(taxRate).toLocaleString()}%`
@@ -1240,7 +1037,7 @@ function DetailInfo({
 
                 return (
                   <Form.Item
-                    name={[record.index, 'products', record.index2, 'tax_rate']}
+                    name={[record.index, 'tax_rate']}
                     className="ant-form-item-hidden-margin"
                     rules={[
                       {
@@ -1273,12 +1070,7 @@ function DetailInfo({
                 }
                 return (
                   <Form.Item
-                    name={[
-                      record.index,
-                      'products',
-                      record.index2,
-                      'is_add_total',
-                    ]}
+                    name={[record.index, 'is_add_total']}
                     valuePropName="checked"
                     className="ant-form-item-hidden-margin"
                   >
@@ -1290,15 +1082,10 @@ function DetailInfo({
                       defaultChecked={form.getFieldValue([
                         'main_product',
                         record.index,
-                        'products',
-                        record.index2,
                         'is_add_total',
                       ])}
                       onChange={() => {
-                        calculateSummary(
-                          form.getFieldValue('main_product'),
-                          form.getFieldValue('tax_rate'),
-                        )
+                        calculateSummary(form.getFieldValue('main_product'))
                       }}
                     />
                   </Form.Item>
@@ -1317,76 +1104,93 @@ function DetailInfo({
                 },
               }),
               ellipsis: true,
-              render: (_, record) => {
+              render: (_, record, index) => {
                 const isHeader = record.isHeader
+                const isFirstRow = index === 0
 
-                const lengthOriginalProduct =
-                  form.getFieldValue('main_product').length > 1
-                const lengthProduct =
-                  form.getFieldValue(['main_product', record.index, 'products'])
-                    .length > 1
-
-                const actionList: ActionType[] = isHeader
-                  ? lengthOriginalProduct
-                    ? ['append', 'remove']
-                    : ['append']
-                  : lengthProduct
-                    ? ['onAppendFromMasterOrCreateNewAction', 'remove']
-                    : ['onAppendFromMasterOrCreateNewAction']
+                const actionList: ActionType[] = []
+                if (isHeader) {
+                  actionList.push('append')
+                  actionList.push('remove')
+                } else {
+                  actionList.push('onAppendFromMasterOrCreateNewAction')
+                  if (
+                    dataSource?.[index - 1]?.kind === 'product' ||
+                    dataSource?.[index + 1]?.kind === 'product'
+                  ) {
+                    actionList.push('remove')
+                  }
+                }
 
                 const handleAppend = () => {
+                  const nextHeaderIndex = dataSource.findIndex(
+                    (item: any, i: number) =>
+                      i > index && item.kind === 'group',
+                  )
+                  const insertAt =
+                    nextHeaderIndex === -1 ? dataSource.length : nextHeaderIndex
                   if (isHeader) {
                     add(
                       {
-                        group_name: '',
-                        products: [
-                          {
-                            product: null,
-                            package: null,
-                            product_id: null,
-                            package_id: null,
-                            isSelfCreate: false,
-                            package_name: '-',
-                            name: '',
-                            code: '',
-                            quantity: 0,
-                            cost_price: 0,
-                            selling_price: 0,
-                            profit_margin: 0,
-                            tax_rate: 0,
-                            is_add_total: true,
-                            unit: t(
-                              'quotas.action.detail_info.default_values.default_unit',
-                            ),
-                            unit_name: t(
-                              'quotas.action.detail_info.default_values.default_unit',
-                            ),
-                          },
-                        ],
+                        name: '',
+                        kind: 'group',
+                        isHeader: true,
+                        quantity: 1,
                       },
-                      record.index + 1,
+                      insertAt,
+                    )
+                    add(
+                      {
+                        product: null,
+                        isSelfCreate: false,
+                        package: null,
+                        product_id: null,
+                        package_id: null,
+                        package_name: '-',
+                        name: '',
+                        code: '',
+                        quantity: 0,
+                        cost_price: 0,
+                        selling_price: 0,
+                        profit_margin: 0,
+                        tax_rate: 0,
+                        is_add_total: true,
+                        unit: t(
+                          'quotas.action.detail_info.default_values.default_unit',
+                        ),
+                        unit_name: t(
+                          'quotas.action.detail_info.default_values.default_unit',
+                        ),
+                        kind: 'product',
+                      },
+                      insertAt + 1,
                     )
                   } else {
-                    handleAddProduct(record.index, record.index2 + 1)
+                    handleAddProduct(index)
                   }
                 }
 
                 const onAppendFromMasterOrCreateNewAction = (
                   type: CreateProductType,
                 ) => {
-                  const _isSelfCreate = type === 'create_new'
-                  handleAddProduct(
-                    record.index,
-                    record.index2 + 1,
-                    _isSelfCreate,
-                  )
+                  handleAddProduct(index, type === 'create_new')
                 }
 
                 const handleRemove = () => {
-                  if (isHeader) {
-                    remove(record.index)
+                  if (isFirstRow && isHeader) {
+                    const newData = [...dataSource]
+                    newData[0] = {
+                      ...newData[0],
+                      name: '',
+                      title: '',
+                    }
+                    form.setFieldValue('main_product', newData)
                   } else {
-                    handleRemoveProduct(record.index, record.index2)
+                    if (isHeader) {
+                      remove(index)
+                    } else {
+                      handleRemoveProduct(index)
+                    }
                   }
                 }
 
@@ -1435,20 +1239,13 @@ function DetailInfo({
                 summary={() => {
                   const total = (
                     form.getFieldValue('main_product') ?? []
-                  ).reduce((accGroup: number, group: any) => {
-                    const groupTotal = (group.products ?? []).reduce(
-                      (accProd: number, prod: any) => {
-                        if (prod.is_add_total) {
-                          return (
-                            accProd +
-                            (prod.selling_price || 0) * (prod.quantity || 0)
-                          )
-                        }
-                        return accProd
-                      },
-                      0,
-                    )
-                    return accGroup + groupTotal
+                  ).reduce((acc: number, prod: any) => {
+                    if (prod.is_add_total) {
+                      return (
+                        acc + (prod.selling_price || 0) * (prod.quantity || 0)
+                      )
+                    }
+                    return acc
                   }, 0)
                   return (
                     <Table.Summary.Row

@@ -1,6 +1,4 @@
 import type {
-  QuotaTemplateProductGroupRequest,
-  QuotaTemplateProductGroupResponse,
   QuotaTemplateProductItemRequest,
   QuotaTemplateStoreRequest,
 } from '@sdk/hey-api'
@@ -12,11 +10,8 @@ export type QuotaTemplateFormType = QuotaTemplateStoreRequest & {
   total_profit_margin: number
   total_tax: number
   consumption_tax_amount: number
-  main_product?: QuotaTemplateMainProductType[]
-  optional_product?: QuotaTemplateMainProductType[]
-}
-export type QuotaTemplateMainProductType = QuotaTemplateProductGroupRequest & {
-  products: QuotaTemplateProductType[]
+  main_product?: QuotaTemplateProductType[]
+  optional_product?: QuotaTemplateProductType[]
 }
 
 export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
@@ -130,8 +125,8 @@ export type QuoteTemplateDetailType = {
     id?: number
     name?: string
   }>
-  main_product?: Array<QuotaTemplateProductGroupResponse>
-  optional_product?: Array<QuotaTemplateProductGroupResponse>
+  main_product?: Array<QuotaTemplateProductType>
+  optional_product?: Array<QuotaTemplateProductType>
   created_at?: string
   updated_at?: string
   author?: {

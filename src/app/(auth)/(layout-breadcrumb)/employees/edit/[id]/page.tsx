@@ -26,19 +26,16 @@ import {
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import { isArray } from 'lodash'
-import { useSession } from 'next-auth/react'
 import React, { useMemo } from 'react'
 import { SelectPagination } from '@components/common/select-pagination'
 import Link from 'next/link'
 
-const { Text, Title } = Typography
+const { Text } = Typography
 
 export default function EmployeeEdit() {
   const t = useTranslate()
   const go = useGo()
   const apiUrl = useApiUrl()
-  const session = useSession()
-  const userEmail = session.data?.user?.email
   const { permission } = useUserStore.getState()
 
   const EXCLUDED_ROLES = ['module_admin', 'super_admin']
@@ -53,7 +50,6 @@ export default function EmployeeEdit() {
 
   const codeRules: Rule[] = useMemo(
     () => [
-      { required: true, message: '社員コードは必須です。' },
       {
         pattern: /^[A-Z0-9-]+$/,
         message:
@@ -160,7 +156,7 @@ export default function EmployeeEdit() {
         colon={false}
         autoComplete="off"
       >
-        <Form.Item label={boldText(t('employees.fields.code'))} required>
+        <Form.Item label={boldText(t('employees.fields.code'))}>
           <Row align="middle" gutter={[8, 8]} style={{ marginTop: -10 }}>
             <Col flex="none">
               <Form.Item
