@@ -885,39 +885,35 @@ function QuotaAction() {
         })) || [],
       main_product: draftPayload.main_product?.map((item: any) => ({
         ...item,
-        products: item.products?.map((item2: any) => ({
-          ...item2,
-          product: item2.product_id
-            ? { value: item2.product_id, label: item2.name }
-            : item2.product,
-          package: item2.package_id
-            ? { value: item2.package_id, label: item2.package_name }
-            : item2.package,
-          tax_rate: item2.tax_rate ?? 0,
-          isSelfCreate: !item2.product_id,
-          unit: item2.unit_name ?? '-',
-          unit_name: item2.unit_name ?? '-',
-        })),
+        product: { value: item.product_id, label: item.name },
+        package: { value: item.package_id, label: item.package_name },
+        tax_rate: item.tax_rate ?? 0,
+        isSelfCreate: !item.product_id,
+        unit:
+          item.unit_name ??
+          t('quotas.action.detail_info.default_values.default_unit'),
+        unit_name:
+          item.unit_name ??
+          t('quotas.action.detail_info.default_values.default_unit'),
       })),
-      optional_product:
-        draftPayload.optional_product?.length > 0
-          ? draftPayload.optional_product.map((item: any) => ({
-              ...item,
-              products: item.products?.map((item2: any) => ({
-                ...item2,
-                product: item2.product_id
-                  ? { value: item2.product_id, label: item2.name }
-                  : item2.product,
-                package: item2.package_id
-                  ? { value: item2.package_id, label: item2.package_name }
-                  : item2.package,
-                tax_rate: item2.tax_rate ?? 0,
-                isSelfCreate: !item2.product_id,
-                unit: item2.unit_name ?? '-',
-                unit_name: item2.unit_name ?? '-',
-              })),
-            }))
-          : defaultOptionalProduct,
+      optional_product: draftPayload.optional_product?.length
+        ? draftPayload.optional_product.map((item: any) => ({
+            ...item,
+            product: { value: item.product_id, label: item.name },
+            package: {
+              value: item.package_id,
+              label: item.package_name,
+            },
+            tax_rate: item.tax_rate ?? 0,
+            isSelfCreate: !item.product_id && item.prodcut_name,
+            unit:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+          }))
+        : defaultOptionalProduct,
     })
 
     message.success(t('notifications.draftApplySuccess'))
