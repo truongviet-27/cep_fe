@@ -99,6 +99,24 @@ function Page() {
             editIds.includes(item.packaging_id) && onEditRow(item.packaging_id)
           })
         },
+        onError: (error: any) => {
+          const errData = error?.response?.data
+          const apiErrors = errData?.errors
+          if (apiErrors && typeof apiErrors === 'object') {
+            const fieldErrors = Object.entries(apiErrors).map(
+              ([key]: [string, unknown]) => {
+                const path = key
+                  .split('.')
+                  .map((p) => (/\d+/.test(p) ? parseInt(p, 10) : p))
+                return {
+                  name: path,
+                  errors: [''],
+                }
+              },
+            )
+            form.setFields(fieldErrors)
+          }
+        },
       },
     )
   }

@@ -539,8 +539,9 @@ function QuotaList() {
         title: t('quotas.table.actions'),
         key: 'action',
         width: '14%',
+        align: 'left',
         onCell: () => ({
-          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+          style: { padding: '4px 8px', overflow: 'hidden', minWidth: 0 },
         }),
         render: (_, record) => (
           <div
@@ -548,6 +549,8 @@ function QuotaList() {
               width: '100%',
               minWidth: 0,
               overflow: 'hidden',
+              display: 'flex',
+              justifyContent: 'flex-start',
             }}
           >
             <Space wrap size={4}>

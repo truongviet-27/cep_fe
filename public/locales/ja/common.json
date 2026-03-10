@@ -1229,7 +1229,10 @@
       "percentage": "掛率",
       "list_price": "定価"
     },
-    "rank_prices_title": "ランク"
+    "rank_prices_title": "ランク",
+    "validation": {
+      "rank_price_lte_selling": "ランク価格は販売価格以下で入力してください。"
+    }
   },
 
   "agreed_prices/customer": {
