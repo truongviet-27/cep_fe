@@ -48,6 +48,8 @@ function useProductCategories() {
   const [level, setLevel] = useState<number | null>(null)
   const [category, setCategory] = useState<string | null>(null)
 
+  const originalTreeRef = React.useRef<CatNode[]>([])
+
   const [form] = Form.useForm()
   const [formFields] = Form.useForm()
 
@@ -75,6 +77,37 @@ function useProductCategories() {
     )
   }
 
+  const checkIfDirty = (
+    currentEditing?: Record<string, { name: string; original: string }>,
+    currentTree?: CatNode[],
+  ) => {
+    const editingToCheck =
+      currentEditing !== undefined ? currentEditing : editing
+    const treeToCheck = currentTree !== undefined ? currentTree : tree
+
+    // check if there is any node being edited
+    if (Object.keys(editingToCheck).length > 0) {
+      setDirty(true)
+      return
+    }
+
+    // check if there is any new node (_isNew)
+    const hasNewNodes = (nodes: CatNode[]): boolean => {
+      return nodes.some(
+        (n) => n._isNew || (n.children && hasNewNodes(n.children as CatNode[])),
+      )
+    }
+    if (hasNewNodes(treeToCheck)) {
+      setDirty(true)
+      return
+    }
+
+    // compare the tree structure with the original
+    const treeChanged =
+      JSON.stringify(treeToCheck) !== JSON.stringify(originalTreeRef.current)
+    setDirty(treeChanged)
+  }
+
   const handleUpdateAll = (
     values: SavePayloadNode[],
     onSuccess?: () => void,
@@ -97,6 +130,10 @@ function useProductCategories() {
       {
         onSuccess: () => {
           onSuccess?.()
+          // after successful save, update originalTreeRef
+          setTimeout(() => {
+            originalTreeRef.current = tree
+          }, 100)
         },
       },
     )
@@ -113,25 +150,25 @@ function useProductCategories() {
     const parentLevel = parent?.level ?? 0
 
     const tmpId = `tmp-${crypto.randomUUID()}`
-    setTree((prev) =>
-      updateNode(prev, parentId, (p) => ({
-        ...p,
-        open: true,
-        children: [
-          {
-            id: tmpId,
-            name: '',
-            level: parentLevel + 1,
-            parent_id: parentId,
-            open: false,
-            _isNew: true,
-            children: [],
-          } as CatNode,
-          ...((p.children as CatNode[] | undefined) ?? []),
-        ],
-      })),
-    )
-    setEditing((prev) => ({ ...prev, [tmpId]: { name: '', original: '' } }))
+    const newTree = updateNode(tree, parentId, (p) => ({
+      ...p,
+      open: true,
+      children: [
+        {
+          id: tmpId,
+          name: '',
+          level: parentLevel + 1,
+          parent_id: parentId,
+          open: false,
+          _isNew: true,
+          children: [],
+        } as CatNode,
+        ...((p.children as CatNode[] | undefined) ?? []),
+      ],
+    }))
+    setTree(newTree)
+    const newEditing = { ...editing, [tmpId]: { name: '', original: '' } }
+    setEditing(newEditing)
     setDirty(true)
   }
 
@@ -152,7 +189,7 @@ function useProductCategories() {
 
   const addRootCategory = () => {
     const tmpId = `${TEMP_PREFIX}${crypto.randomUUID()}`
-    setTree((prev) => [
+    const newTree = [
       {
         id: tmpId,
         name: '',
@@ -162,15 +199,18 @@ function useProductCategories() {
         _isNew: true,
         children: [],
       } as CatNode,
-      ...prev,
-    ])
-    setEditing((prev) => ({ ...prev, [tmpId]: { name: '', original: '' } }))
+      ...tree,
+    ]
+    setTree(newTree)
+    const newEditing = { ...editing, [tmpId]: { name: '', original: '' } }
+    setEditing(newEditing)
     setDirty(true)
   }
 
   const del = (id: string | number) => {
-    setTree((prev) => removeNodeUsingId(prev, id))
-    setDirty(true)
+    const newTree = removeNodeUsingId(tree, id)
+    setTree(newTree)
+    setTimeout(() => checkIfDirty(editing, newTree), 0)
   }
 
   const removeTmpNodes = (nodes: CatNode[]): CatNode[] => {
@@ -186,15 +226,14 @@ function useProductCategories() {
 
   const save = () => {
     const patched = mergeEditingIntoTree(tree, editing, formFields)
-    console.log('patched', { tree, editing, formFields, patched })
 
     formFields
       .validateFields()
       .then(() => {
         handleUpdateAll(toSaveTree(patched), () => {
-          // Sau khi API thành công, refetch data từ server để xóa tmp
+          // after API successful, refetch data from server to delete tmp
           tableQueryResult?.refetch().then(() => {
-            // Data mới đã được load, tmp đã bị xóa
+            // new data has been loaded, tmp has been deleted
           })
         })
       })
@@ -206,10 +245,11 @@ function useProductCategories() {
   const startEdit = (id: string | number) => {
     const node = findNode(tree, id)
     if (!node) return
-    setEditing((prev) => ({
-      ...prev,
+    const newEditing = {
+      ...editing,
       [id]: { name: node.name, original: node.name },
-    }))
+    }
+    setEditing(newEditing)
     formFields.setFieldValue(node.id, node.name)
     setDirty(true)
   }
@@ -219,12 +259,12 @@ function useProductCategories() {
       prev[id] ? { ...prev, [id]: { ...prev[id], name } } : prev,
     )
 
-  const cancelEdit = (id: string | number) =>
-    setEditing((prev) => {
-      const next = { ...prev }
-      delete next[id]
-      return next
-    })
+  const cancelEdit = (id: string | number) => {
+    const next = { ...editing }
+    delete next[id]
+    setEditing(next)
+    setTimeout(() => checkIfDirty(next, tree), 0)
+  }
 
   const saveEdit = (id: string | number) => {
     const node = findNode(tree, id)
@@ -249,18 +289,19 @@ function useProductCategories() {
         },
         {
           onSuccess: ({ data }) => {
-            setTree((prev) =>
-              updateNode(prev, id, (n: CatNode) => ({
-                ...n,
-                _isNew: false,
-                ...data,
-              })),
-            )
-            setEditing((prev) => {
-              const next = { ...prev }
-              delete next[id]
-              return next
-            })
+            const updatedTree = updateNode(tree, id, (n: CatNode) => ({
+              ...n,
+              _isNew: false,
+              ...data,
+            }))
+            setTree(updatedTree)
+            const next = { ...editing }
+            delete next[id]
+            setEditing(next)
+            setTimeout(() => {
+              originalTreeRef.current = updatedTree
+              checkIfDirty(next, updatedTree)
+            }, 0)
           },
         },
       )
@@ -269,17 +310,13 @@ function useProductCategories() {
         { id, values: { name } },
         {
           onSuccess: () => {
-            // setTree((prev) =>
-            //   updateNode(prev, id, (n: CatNode) => ({
-            //     ...n,
-            //     ...data,
-            //   })),
-            // )
-            setEditing((prev) => {
-              const next = { ...prev }
-              delete next[id]
-              return next
-            })
+            const next = { ...editing }
+            delete next[id]
+            setEditing(next)
+            setTimeout(() => {
+              originalTreeRef.current = tree
+              checkIfDirty(next, tree)
+            }, 0)
           },
         },
       )
@@ -305,7 +342,10 @@ function useProductCategories() {
   // load initial data
   useEffect(() => {
     if (tableProps?.dataSource) {
-      setTree(tableProps.dataSource as CatNode[])
+      const data = tableProps.dataSource as CatNode[]
+      setTree(data)
+      originalTreeRef.current = data
+      setDirty(false)
     }
   }, [tableProps?.dataSource])
 
@@ -361,7 +401,7 @@ function useProductCategories() {
     const afterInsert = insertNode(next, targetParentId, insertAt, dragNode)
 
     setTree(afterInsert)
-    setDirty(true)
+    setTimeout(() => checkIfDirty(editing, afterInsert), 0)
   }
 
   const toTreeData = React.useCallback(
