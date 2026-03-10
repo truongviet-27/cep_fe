@@ -77,6 +77,7 @@ function TenantSetting() {
 
     const customValues: QuotaFormSettingResponse = {
       ...pendingFormValues,
+      consumption_tax: 'exclusive',
       id: form.getFieldValue('id'),
       company_logo_image:
         form.getFieldValue('company_logo_image_file_key') ??
