@@ -17,11 +17,6 @@ export enum TaxRoundingMethod {
   RoundNearest = 'round_nearest',
 }
 
-export const HIDE_CREATOR_APPROVER_2_STATUSES = [
-  QuotaStatus.SentToCustomer,
-  QuotaStatus.Completed,
-  QuotaStatus.Cancelled,
-]
 export const STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE: string[] = [
   QuotaStatus.Rejected,
   QuotaStatus.WaitingApproval,
