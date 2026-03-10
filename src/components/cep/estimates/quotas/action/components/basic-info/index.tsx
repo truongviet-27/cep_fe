@@ -791,7 +791,7 @@ const BasicInfo = ({
               )}
               labelCol={{ span: 3 }}
             >
-              <Input readOnly style={{ width: '100%' }} />
+              <Input disabled readOnly style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>
