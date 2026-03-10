@@ -55,7 +55,7 @@ function useProductCategories() {
   const resource = String(rs?.name)
 
   const t = useTranslations()
-  const { tableProps } = useTable<ITree>()
+  const { tableProps, tableQueryResult } = useTable<ITree>()
   const { mutate: createRow, isLoading: isCreating } = useCreate({
     resource,
     invalidates: [],
@@ -75,21 +75,31 @@ function useProductCategories() {
     )
   }
 
-  const handleUpdateAll = (values: SavePayloadNode[]) => {
-    updateAll({
-      url: `${apiUrl}/${resource}/update-tree`,
-      method: 'post',
-      values,
-      successNotification: (res: any) => {
-        setEditing({})
-        setDirty(false)
-        return {
-          message: t('notifications.success'),
-          description: t('notifications.success'),
-          type: 'success',
-        }
+  const handleUpdateAll = (
+    values: SavePayloadNode[],
+    onSuccess?: () => void,
+  ) => {
+    updateAll(
+      {
+        url: `${apiUrl}/${resource}/update-tree`,
+        method: 'post',
+        values,
+        successNotification: (res: any) => {
+          setEditing({})
+          setDirty(false)
+          return {
+            message: t('notifications.success'),
+            description: t('notifications.success'),
+            type: 'success',
+          }
+        },
       },
-    })
+      {
+        onSuccess: () => {
+          onSuccess?.()
+        },
+      },
+    )
   }
   const { mutate: updateRow, isLoading: isUpdating } = useUpdate({
     resource,
@@ -163,14 +173,30 @@ function useProductCategories() {
     setDirty(true)
   }
 
+  const removeTmpNodes = (nodes: CatNode[]): CatNode[] => {
+    return nodes
+      .filter((node) => !String(node.id).startsWith(TEMP_PREFIX))
+      .map((node) => ({
+        ...node,
+        children: node.children
+          ? (removeTmpNodes(node.children as CatNode[]) as any)
+          : node.children,
+      }))
+  }
+
   const save = () => {
     const patched = mergeEditingIntoTree(tree, editing, formFields)
+    console.log('patched', { tree, editing, formFields, patched })
 
     formFields
       .validateFields()
       .then(() => {
-        handleUpdateAll(toSaveTree(patched))
-        setTree(patched)
+        handleUpdateAll(toSaveTree(patched), () => {
+          // Sau khi API thành công, refetch data từ server để xóa tmp
+          tableQueryResult?.refetch().then(() => {
+            // Data mới đã được load, tmp đã bị xóa
+          })
+        })
       })
       .catch(() => {
         message.warning(t('product_categories.validate.name_required'))
