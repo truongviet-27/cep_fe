@@ -422,14 +422,11 @@ const BasicInfo = ({
                         form.setFieldsValue({ customer_contact_id: null })
                         handleChangeProductPrincing(
                           (form.getFieldValue(['main_product']) ?? []).flatMap(
-                            (item: any) =>
-                              item.products.map((p: any) => p.product_id),
+                            (item: any) => item.product_id,
                           ),
                           (
                             form.getFieldValue(['optional_product']) ?? []
-                          ).flatMap((item: any) =>
-                            item.products.map((p: any) => p.product_id),
-                          ),
+                          ).flatMap((item: any) => item.product_id),
                         )
                       }}
                     />

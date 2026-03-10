@@ -335,6 +335,7 @@ function QuotaAction() {
       : null
     const customValues = {
       ...form.getFieldsValue(),
+      type: form.getFieldValue('type'),
       delivery_date: delivery_date,
       tags: form.getFieldValue('tags').map((item: any) => ({
         id: item?.value,
@@ -362,26 +363,41 @@ function QuotaAction() {
 
   const defaultOptionalProduct = [
     {
-      group_name: '',
-      products: [
-        {
-          product: null,
-          product_id: null,
-          package_id: null,
-          name: '',
-          code: '',
-          package_name: '-',
-          cost_price: 0,
-          selling_price: 0,
-          quantity: 0,
-          profit_margin: 0,
-          is_add_total: false,
-          isSelfCreate: false,
-          tax_rate: 0,
-          unit: t('quotas.action.detail_info.default_values.default_unit'),
-          unit_name: t('quotas.action.detail_info.default_values.default_unit'),
-        },
-      ],
+      product: null,
+      product_id: null,
+      package: null,
+      package_id: null,
+      isSelfCreate: false,
+      name: '',
+      code: '',
+      package_name: '-',
+      cost_price: 0,
+      quantity: 1,
+      selling_price: 0,
+      profit_margin: 0,
+      is_add_total: true,
+      unit: null,
+      unit_name: '-',
+      tax_rate: 0,
+      kind: 'group',
+    },
+    {
+      product: null,
+      product_id: null,
+      package_id: null,
+      name: '',
+      code: '',
+      package_name: '-',
+      cost_price: 0,
+      selling_price: 0,
+      quantity: 0,
+      profit_margin: 0,
+      is_add_total: false,
+      isSelfCreate: false,
+      tax_rate: 0,
+      unit: null,
+      unit_name: '-',
+      kind: 'product',
     },
   ]
 
@@ -415,39 +431,33 @@ function QuotaAction() {
             })) || [],
           main_product: dataProducts.data.main_product.map((item: any) => ({
             ...item,
-            products: item.products.map((item2: any) => ({
-              ...item2,
-              product: { value: item2.product_id, label: item2.name },
-              package: { value: item2.package_id, label: item2.package_name },
-              tax_rate: item2.tax_rate ?? 0,
-              isSelfCreate: !item2.product_id,
-              unit:
-                item2.unit_name ??
-                t('quotas.action.detail_info.default_values.default_unit'),
-              unit_name:
-                item2.unit_name ??
-                t('quotas.action.detail_info.default_values.default_unit'),
-            })),
+            product: { value: item.product_id, label: item.name },
+            package: { value: item.package_id, label: item.package_name },
+            tax_rate: item.tax_rate ?? 0,
+            isSelfCreate: !item.product_id,
+            unit:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
           })),
           optional_product: dataProducts.data.optional_product?.length
             ? dataProducts.data.optional_product.map((item: any) => ({
                 ...item,
-                products: item.products.map((item2: any) => ({
-                  ...item2,
-                  product: { value: item2.product_id, label: item2.name },
-                  package: {
-                    value: item2.package_id,
-                    label: item2.package_name,
-                  },
-                  tax_rate: item2.tax_rate ?? 0,
-                  isSelfCreate: !item2.product_id,
-                  unit:
-                    item2.unit_name ??
-                    t('quotas.action.detail_info.default_values.default_unit'),
-                  unit_name:
-                    item2.unit_name ??
-                    t('quotas.action.detail_info.default_values.default_unit'),
-                })),
+                product: { value: item.product_id, label: item.name },
+                package: {
+                  value: item.package_id,
+                  label: item.package_name,
+                },
+                tax_rate: item.tax_rate ?? 0,
+                isSelfCreate: !item.product_id && item.prodcut_name,
+                unit:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
+                unit_name:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
               }))
             : defaultOptionalProduct,
           ...dataHistory?.data?.data,
@@ -498,39 +508,33 @@ function QuotaAction() {
             })) || [],
           main_product: dataProducts.data.main_product.map((item: any) => ({
             ...item,
-            products: item.products.map((item2: any) => ({
-              ...item2,
-              product: { value: item2.product_id, label: item2.name },
-              package: { value: item2.package_id, label: item2.package_name },
-              tax_rate: item2.tax_rate ?? 0,
-              isSelfCreate: !item2.product_id,
-              unit:
-                item2.unit_name ??
-                t('quotas.action.detail_info.default_values.default_unit'),
-              unit_name:
-                item2.unit_name ??
-                t('quotas.action.detail_info.default_values.default_unit'),
-            })),
+            product: { value: item.product_id, label: item.name },
+            package: { value: item.package_id, label: item.package_name },
+            tax_rate: item.tax_rate ?? 0,
+            isSelfCreate: !item.product_id,
+            unit:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
           })),
           optional_product: dataProducts.data.optional_product?.length
             ? dataProducts.data.optional_product.map((item: any) => ({
                 ...item,
-                products: item.products.map((item2: any) => ({
-                  ...item2,
-                  product: { value: item2.product_id, label: item2.name },
-                  package: {
-                    value: item2.package_id,
-                    label: item2.package_name,
-                  },
-                  isSelfCreate: !item2.product_id,
-                  tax_rate: item2.tax_rate ?? 0,
-                  unit:
-                    item2.unit_name ??
-                    t('quotas.action.detail_info.default_values.default_unit'),
-                  unit_name:
-                    item2.unit_name ??
-                    t('quotas.action.detail_info.default_values.default_unit'),
-                })),
+                product: { value: item.product_id, label: item.name },
+                package: {
+                  value: item.package_id,
+                  label: item.package_name,
+                },
+                tax_rate: item.tax_rate ?? 0,
+                isSelfCreate: !item.product_id && item.prodcut_name,
+                unit:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
+                unit_name:
+                  item.unit_name ??
+                  t('quotas.action.detail_info.default_values.default_unit'),
               }))
             : defaultOptionalProduct,
           ...dataHistory?.data?.data,
@@ -568,35 +572,33 @@ function QuotaAction() {
           : null,
         main_product: quoteTemplate?.main_product?.map((item: any) => ({
           ...item,
-          products: item.products.map((item2: any) => ({
-            ...item2,
-            isSelfCreate: !item2.product_id,
-            product: { value: item2.product_id, label: item2.name },
-            package: { value: item2.package_id, label: item2.package_name },
-            tax_rate: item2.tax_rate ?? 0,
-            unit:
-              item2.unit_name ??
-              t('quotas.action.detail_info.default_values.default_unit'),
-            unit_name:
-              item2.unit_name ??
-              t('quotas.action.detail_info.default_values.default_unit'),
-          })),
+          product: { value: item.product_id, label: item.name },
+          package: { value: item.package_id, label: item.package_name },
+          tax_rate: item.tax_rate ?? 0,
+          isSelfCreate: !item.product_id,
+          unit:
+            item.unit_name ??
+            t('quotas.action.detail_info.default_values.default_unit'),
+          unit_name:
+            item.unit_name ??
+            t('quotas.action.detail_info.default_values.default_unit'),
         })),
         optional_product: quoteTemplate?.optional_product?.length
           ? quoteTemplate.optional_product.map((item: any) => ({
               ...item,
-              products: item.products.map((item2: any) => ({
-                ...item2,
-                isSelfCreate: !item2.product_id,
-                product: { value: item2.product_id, label: item2.name },
-                package: { value: item2.package_id, label: item2.package_name },
-                unit:
-                  item2.unit_name ??
-                  t('quotas.action.detail_info.default_values.default_unit'),
-                unit_name:
-                  item2.unit_name ??
-                  t('quotas.action.detail_info.default_values.default_unit'),
-              })),
+              product: { value: item.product_id, label: item.name },
+              package: {
+                value: item.package_id,
+                label: item.package_name,
+              },
+              tax_rate: item.tax_rate ?? 0,
+              isSelfCreate: !item.product_id && item.prodcut_name,
+              unit:
+                item.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+              unit_name:
+                item.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
             }))
           : defaultOptionalProduct,
         tags: (quoteTemplate?.tags ?? []).map(({ id, name }) => ({
@@ -636,37 +638,48 @@ function QuotaAction() {
           : null,
         main_product: [
           {
-            group_name: '',
-            products: [
-              {
-                product: null,
-                product_id: null,
-                package: null,
-                package_id: null,
-                isSelfCreate: false,
-                name: '',
-                code: '',
-                package_name: '-',
-                cost_price: 0,
-                quantity: 0,
-                selling_price: 0,
-                profit_margin: 0,
-                is_add_total: true,
-                unit: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                unit_name: t(
-                  'quotas.action.detail_info.default_values.default_unit',
-                ),
-                tax_rate: 0,
-              },
-            ],
+            product: null,
+            product_id: null,
+            package: null,
+            package_id: null,
+            isSelfCreate: false,
+            name: '',
+            code: '',
+            package_name: '-',
+            cost_price: 0,
+            quantity: 1,
+            selling_price: 0,
+            profit_margin: 0,
+            is_add_total: true,
+            unit: null,
+            unit_name: '-',
+            tax_rate: 0,
+            kind: 'group',
+          },
+          {
+            product: null,
+            product_id: null,
+            package: null,
+            package_id: null,
+            isSelfCreate: false,
+            name: '',
+            code: '',
+            package_name: '-',
+            cost_price: 0,
+            quantity: 0,
+            selling_price: 0,
+            profit_margin: 0,
+            is_add_total: true,
+            unit: t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name: t(
+              'quotas.action.detail_info.default_values.default_unit',
+            ),
+            tax_rate: 0,
+            kind: 'product',
           },
         ],
         optional_product: defaultOptionalProduct,
       })
-
-      console.log('form value: ', form.getFieldsValue())
     }
   }, [departmentData, data, quoteTemplateQuery?.data?.data])
 
