@@ -10,7 +10,6 @@ import {
   DateField,
   DeleteButton,
   EditButton,
-  RefreshButton,
   ShowButton,
   useTable,
 } from '@refinedev/antd'
@@ -195,14 +194,46 @@ export default function Page() {
           (record as Department).name === DEPARTMENT_DEFAULT
         return (
           <Space wrap size={4}>
-            <ShowButton hideText size="small" recordItemId={record.id} />
-            <EditButton hideText size="small" recordItemId={record.id} />
-            <DeleteButton
-              hideText
+            <ShowButton
+              autoInsertSpace={false}
               size="small"
+              icon={null}
               recordItemId={record.id}
+              resource="departments"
+              style={{
+                color: '#2784FF',
+                borderColor: '#2784FF',
+              }}
+            >
+              {t('buttons.show')}
+            </ShowButton>
+            <EditButton
+              autoInsertSpace={false}
+              size="small"
+              icon={null}
+              recordItemId={record.id}
+              resource="departments"
+              style={{
+                color: '#FFFFFF',
+                background: '#1FDB51',
+              }}
+            >
+              {t('buttons.edit')}
+            </EditButton>
+            <DeleteButton
+              autoInsertSpace={false}
+              size="small"
+              icon={null}
+              recordItemId={record.id}
+              resource="departments"
               disabled={isDefaultDepartment}
-            />
+              style={{
+                color: '#FFFFFF',
+                background: '#E74C3C',
+              }}
+            >
+              {t('buttons.delete')}
+            </DeleteButton>
           </Space>
         )
       },
@@ -263,22 +294,26 @@ export default function Page() {
               <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
-              <RefreshButton
-                size="middle"
-                icon={null}
+              <Button
+                type="default"
                 onClick={() => {
                   searchFormProps.form?.resetFields()
                   setFilters([], 'replace')
                 }}
               >
                 {t('buttons.clear')}
-              </RefreshButton>
+              </Button>
             </Space>
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
             <div className="flex flex-col items-end">
-              <CreateButton icon={null} disabled={!isEditPermission}>
+              <CreateButton
+                icon={null}
+                type="primary"
+                autoInsertSpace={false}
+                disabled={!isEditPermission}
+              >
                 {t('buttons.create_new')}
               </CreateButton>
               <Button

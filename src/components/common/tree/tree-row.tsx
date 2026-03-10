@@ -1,10 +1,4 @@
-import {
-  CloseOutlined,
-  DownOutlined,
-  PlusOutlined,
-  SaveOutlined,
-} from '@ant-design/icons'
-import { CommonButton } from '@components/common/common-button'
+import { DownOutlined } from '@ant-design/icons'
 import type { CatNode } from '@interfaces/tree'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
@@ -136,39 +130,64 @@ const TreeRow: React.FC<TreeRowProps> = ({
           <>
             <Button
               type="default"
-              size="middle"
+              size="small"
               loading={saving}
               onClick={() => onSave(cat.id)}
-              icon={<SaveOutlined />}
+              icon={null}
               disabled={!localName}
-            />
+              style={{
+                color: '#FFFFFF',
+                background: '#1FDB51',
+              }}
+            >
+              {t('buttons.save')}
+            </Button>
             <Button
-              size="middle"
+              size="small"
               onClick={() => (isNew ? onDelete() : onCancel(cat.id))}
-              icon={<CloseOutlined />}
-            />
+              icon={null}
+            >
+              {t('buttons.cancel')}
+            </Button>
           </>
         ) : (
           <EditButton
-            hideText
-            size="middle"
+            autoInsertSpace={false}
+            size="small"
+            icon={null}
+            resource="product-categories"
             onClick={() => onStartEdit(cat.id)}
             disabled={hasChildEditing || !isFullAccess}
-          />
+            style={{
+              color: '#FFFFFF',
+              background: '#1FDB51',
+            }}
+          >
+            {t('buttons.edit')}
+          </EditButton>
         )}
         <CreateButton
-          hideText
-          size="middle"
+          autoInsertSpace={false}
+          size="small"
           onClick={() => onAddChild(cat.id)}
-          icon={<PlusOutlined />}
-          style={{ visibility: canAddChild ? 'initial' : 'hidden' }}
-          type={'default'}
+          icon={null}
+          style={{
+            visibility: canAddChild ? 'initial' : 'hidden',
+            color: '#2784FF',
+            borderColor: '#2784FF',
+          }}
+          type="default"
           disabled={isNew || isEditing || !isFullAccess}
-        />
+        >
+          {t('buttons.create_new')}
+        </CreateButton>
 
         {!cat?._isNew ? (
           <DeleteButton
-            hideText
+            autoInsertSpace={false}
+            size="small"
+            icon={null}
+            resource="product-categories"
             recordItemId={cat.id}
             confirmTitle={
               hasChildren ? t('buttons.confirm_delete_parent') : undefined
@@ -176,9 +195,25 @@ const TreeRow: React.FC<TreeRowProps> = ({
             invalidates={[]}
             onSuccess={onDelete}
             disabled={hasChildEditing || !isFullAccess}
-          />
+            style={{
+              color: '#FFFFFF',
+              background: '#E74C3C',
+            }}
+          >
+            {t('buttons.delete')}
+          </DeleteButton>
         ) : (
-          <CommonButton hideText onClick={onDelete} type="delete" />
+          <Button
+            size="small"
+            icon={null}
+            onClick={onDelete}
+            style={{
+              color: '#FFFFFF',
+              background: '#E74C3C',
+            }}
+          >
+            {t('buttons.delete')}
+          </Button>
         )}
 
         <button

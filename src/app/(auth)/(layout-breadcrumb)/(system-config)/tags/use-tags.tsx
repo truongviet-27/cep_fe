@@ -431,28 +431,49 @@ function useTags() {
                   size="middle"
                   loading={saving}
                   onClick={() => saveRow(index)}
+                  autoInsertSpace={false}
                 >
-                  保存
+                  {t('buttons.save')}
                 </Button>
-                <Button size="middle" onClick={() => cancelEdit(index)}>
-                  キャンセル
+                <Button
+                  size="middle"
+                  onClick={() => cancelEdit(index)}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.cancel')}
                 </Button>
               </>
             ) : (
               <>
                 <EditButton
-                  hideText
+                  autoInsertSpace={false}
                   size="small"
+                  icon={null}
+                  resource="tags"
                   onClick={() => startEdit(index)}
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#1FDB51',
+                  }}
+                >
+                  {t('buttons.edit')}
+                </EditButton>
                 <DeleteButton
+                  autoInsertSpace={false}
                   size="small"
-                  hideText
+                  icon={null}
+                  resource="tags"
                   recordItemId={dataSource[index]?.id}
                   onClick={() =>
                     !dataSource[index]?.id && handleDeleteRow(index)
                   }
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#E74C3C',
+                  }}
+                >
+                  {t('buttons.delete')}
+                </DeleteButton>
               </>
             )}
           </Space>

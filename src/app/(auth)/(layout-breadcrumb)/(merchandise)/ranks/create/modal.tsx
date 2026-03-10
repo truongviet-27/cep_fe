@@ -48,7 +48,12 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           >
             {t('buttons.cancel')}
           </Button>
-          <CreateButton {...saveButtonProps} type="primary" icon={null}>
+          <CreateButton
+            {...saveButtonProps}
+            type="primary"
+            icon={null}
+            autoInsertSpace={false}
+          >
             {t('buttons.create')}
           </CreateButton>
         </Space>

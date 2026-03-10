@@ -145,7 +145,9 @@ function Page() {
                 >
                   {t('buttons.search')}
                 </Button>
-                <Button onClick={handleClear}>{t('buttons.clear')}</Button>
+                <Button type="default" onClick={handleClear}>
+                  {t('buttons.clear')}
+                </Button>
               </Space>
             </Form.Item>
           </Col>
@@ -208,8 +210,32 @@ function Page() {
           })}
           render={(_, record: BaseRecord) => (
             <Space wrap size={4}>
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
+              <ShowButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="employees"
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
+              <EditButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="employees"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
             </Space>
           )}
         />

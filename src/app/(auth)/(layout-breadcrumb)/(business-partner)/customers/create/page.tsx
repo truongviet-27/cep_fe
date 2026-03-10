@@ -82,7 +82,12 @@ export default function CustomerCreatePage() {
           >
             {t('buttons.draft')}
           </Button>
-          <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
+          <Button
+            {...saveButtonProps}
+            type="primary"
+            htmlType={'submit'}
+            autoInsertSpace={false}
+          >
             {t('buttons.create')}
           </Button>
         </Space>

@@ -1,7 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useForm } from '@refinedev/antd'
-import { useGo, useParsed } from '@refinedev/core'
-import type { ProductDetail, StoreProductInput } from '@sdk/hey-api'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useGo,
+  useParsed,
+  useTranslate,
+} from '@refinedev/core'
+import type {
+  DraftControllerIndexResponse,
+  ProductDetail,
+  StoreProductInput,
+} from '@sdk/hey-api'
+import { message } from 'antd'
 
 export type ProductComboFormType = {
   unit: string
@@ -39,6 +52,26 @@ export type ProductComboFormType = {
 function useProductComboForm() {
   const { params } = useParsed()
   const go = useGo()
+  const apiUrl = useApiUrl()
+  const t = useTranslate()
+
+  const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+
+  const {
+    data: dataProductComboDraft,
+    isFetching: isFetchingProductComboDraft,
+  } = useCustom<DraftControllerIndexResponse>({
+    method: 'get',
+    url: `${apiUrl}/drafts`,
+    config: {
+      query: {
+        type: 'product_combo',
+      },
+    },
+    queryOptions: {
+      enabled: !params?.id, // Only fetch draft when creating new product combo
+    },
+  })
 
   const methods = useForm<ProductComboFormType>({
     resource: 'product-combos',
@@ -89,13 +122,74 @@ function useProductComboForm() {
     methods.onFinish(valuesConverted)
   }
 
+  const handleSaveDraft = () => {
+    const values: any = methods.form.getFieldsValue()
+
+    const packagings = (values?.packagings || []).map(
+      (packaging: ProductPackagingInputType) => {
+        return {
+          ...packaging,
+        }
+      },
+    )
+
+    const payload = {
+      ...values,
+      packagings,
+    }
+
+    mutateDraft(
+      {
+        url: `${apiUrl}/drafts`,
+        method: 'put',
+        values: {
+          type: 'product_combo',
+          payload,
+        },
+      },
+      {
+        onSuccess() {
+          message.success(t('notifications.draftSaveSuccess'))
+          go({ to: '/products?tab=combo' })
+        },
+        onError(error: any) {
+          message.error(
+            error?.response?.data?.message || t('notifications.draftSaveError'),
+          )
+        },
+      },
+    )
+  }
+
+  const handleApplyDraft = () => {
+    if (
+      !dataProductComboDraft?.data ||
+      !Array.isArray(dataProductComboDraft.data) ||
+      dataProductComboDraft.data.length === 0
+    ) {
+      return
+    }
+
+    const draft: any = dataProductComboDraft.data[0]
+    const draftPayload = draft.payload || draft
+
+    methods.form.setFieldsValue({
+      ...draftPayload,
+    })
+
+    message.success(t('notifications.draftApplySuccess'))
+  }
+
   return [
     {
       methods,
       isLoadingSubmit: methods.saveButtonProps.loading,
       isUpdateMode: !!params?.id,
+      isPendingDraft,
+      dataProductComboDraft,
+      isFetchingProductComboDraft,
     },
-    { handleOnSubmit },
+    { handleOnSubmit, handleSaveDraft, handleApplyDraft },
   ] as const
 }
 

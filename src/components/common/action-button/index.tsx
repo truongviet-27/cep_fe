@@ -34,6 +34,7 @@ export default function ActionButtons({
         type="primary"
         size="middle"
         className="px-8"
+        autoInsertSpace={false}
       >
         {saveText}
       </Button>
