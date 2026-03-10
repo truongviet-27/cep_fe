@@ -201,8 +201,8 @@ export const getActionPermissions = (
   let disable = true
 
   if (is_module_admin) {
-    // khong cho phep admin duyet (nhung neu no la author thi van cho duyet)
-    return status === QuotaStatus.WaitingApproval && !isAuthor
+    // khong cho phep admin duyet (nhung neu no la nguoi duyet thi van cho duyet)
+    return status === QuotaStatus.WaitingApproval && !isApprover
   }
 
   switch (status) {
