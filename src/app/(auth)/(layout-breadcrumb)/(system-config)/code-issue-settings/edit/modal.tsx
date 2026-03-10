@@ -222,6 +222,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
             refetchParent?.()
           }}
           type="primary"
+          autoInsertSpace={false}
         >
           {t('permission_settings.buttons.save')}
         </Button>

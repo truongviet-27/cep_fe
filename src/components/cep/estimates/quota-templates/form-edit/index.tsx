@@ -137,7 +137,11 @@ const QuoteTemplateFormEditContainer: FC = () => {
                   {t('buttons.draft')}
                 </Button>
               )}
-              <Button {...methods.saveButtonProps} type="primary">
+              <Button
+                {...methods.saveButtonProps}
+                type="primary"
+                autoInsertSpace={false}
+              >
                 {isUpdateMode ? t('buttons.save') : t('buttons.create')}
               </Button>
               <Button

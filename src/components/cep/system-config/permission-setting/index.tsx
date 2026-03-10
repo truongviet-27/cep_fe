@@ -29,7 +29,12 @@ function PermissionSetting() {
         <Button type="default" onClick={handleCancel}>
           {t('permission_settings.buttons.cancel')}
         </Button>
-        <Button type="primary" onClick={handleSave} loading={isPending}>
+        <Button
+          type="primary"
+          onClick={handleSave}
+          loading={isPending}
+          autoInsertSpace={false}
+        >
           {t('permission_settings.buttons.save')}
         </Button>
       </div>

@@ -77,6 +77,7 @@ function TenantSetting() {
 
     const customValues: QuotaFormSettingResponse = {
       ...pendingFormValues,
+      consumption_tax: 'exclusive',
       id: form.getFieldValue('id'),
       company_logo_image:
         form.getFieldValue('company_logo_image_file_key') ??
@@ -242,6 +243,7 @@ function TenantSetting() {
             size="large"
             {...saveButtonProps}
             loading={isPending}
+            autoInsertSpace={false}
           >
             {t('buttons.save')}
           </Button>
@@ -279,6 +281,7 @@ function TenantSetting() {
             size="large"
             loading={isPending}
             onClick={handleConfirmSave}
+            autoInsertSpace={false}
           >
             保存する
           </Button>,

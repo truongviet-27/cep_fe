@@ -91,12 +91,7 @@ const QuotaTemplateFilterForm: FC<Props> = ({
             <Button type="primary" htmlType="submit" autoInsertSpace={false}>
               {t('quota_templates.button.search')}
             </Button>
-            <Button
-              color="primary"
-              variant="outlined"
-              htmlType="reset"
-              onClick={clearFilters}
-            >
+            <Button type="default" htmlType="reset" onClick={clearFilters}>
               {t('quota_templates.button.clear')}
             </Button>
           </Space>

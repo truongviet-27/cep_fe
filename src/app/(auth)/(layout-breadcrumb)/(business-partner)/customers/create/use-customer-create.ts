@@ -313,6 +313,8 @@ export const useCustomerCreate = () => {
 
     form.setFieldsValue({
       ...restPayload,
+      country: draftPayload?.country,
+      department_in_charge_id: draftPayload?.department_in_charge_id,
       receivers,
     })
 
