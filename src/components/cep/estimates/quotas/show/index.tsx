@@ -13,8 +13,8 @@ import Reason from '@components/cep/estimates/quotas/show/components/reason'
 import Tags from '@components/cep/estimates/quotas/show/components/tags'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
+import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { DeleteButton, useForm } from '@refinedev/antd'
 import {
   type OpenNotificationParams,
@@ -50,8 +50,7 @@ function QuotaDetail() {
 
   const [isPdf, setIsPdf] = useState(false)
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
-
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
   const { id } = useParsed()
   const apiUrl = useApiUrl()
 
@@ -530,7 +529,7 @@ function QuotaDetail() {
             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
               <Viewer
                 fileUrl={queryBasic?.data.pdf_path}
-                plugins={[defaultLayoutPluginInstance]}
+                plugins={[pdfViewerLayoutPlugin]}
               />
             </Worker>
           }

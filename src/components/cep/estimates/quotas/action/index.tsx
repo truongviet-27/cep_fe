@@ -11,8 +11,8 @@ import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
+import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { DeleteButton, useForm } from '@refinedev/antd'
 import type { CrudFilter } from '@refinedev/core'
 import {
@@ -86,7 +86,7 @@ function QuotaAction() {
 
   const isUpdate = !!id
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
   const go = useGo()
   const apiUrl = useApiUrl()
 
@@ -1200,7 +1200,7 @@ function QuotaAction() {
                 <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                   <Viewer
                     fileUrl={`data:application/pdf;base64,${previewPdf}`}
-                    plugins={[defaultLayoutPluginInstance]}
+                    plugins={[pdfViewerLayoutPlugin]}
                   />
                 </Worker>
               )}
