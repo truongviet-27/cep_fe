@@ -759,7 +759,6 @@ function QuotaAction() {
         },
         {
           onSuccess() {
-            message.success(t('notifications.success'))
             go({
               to: `/quotas`,
             })
