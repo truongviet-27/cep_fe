@@ -129,16 +129,6 @@ export const useCustomerCreate = () => {
       if (fieldErrors.length > 0) {
         form.setFields(fieldErrors)
       }
-
-      // Only show error message if there are no field-specific errors
-      // If field errors exist, they will be displayed at the field level
-      if (fieldErrors.length === 0) {
-        const errorMessage =
-          error?.response?.data?.message ||
-          error?.message ||
-          t('notifications.createError')
-        message.error(errorMessage)
-      }
     }
   }
 
