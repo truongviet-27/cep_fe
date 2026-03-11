@@ -132,7 +132,11 @@ export default function Page() {
   const columns: ColumnsType<RowVM> = [
     {
       dataIndex: 'code',
-      title: t('departments.fields.code'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.code')}
+        </div>
+      ),
       width: '8%',
       render: (value, record) => {
         return (
@@ -145,16 +149,30 @@ export default function Page() {
         )
       },
     },
-    { dataIndex: 'name', title: t('departments.fields.name'), align: 'left' },
+    {
+      dataIndex: 'name',
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.name')}
+        </div>
+      ),
+      align: 'left',
+    },
     {
       dataIndex: 'number_of_employee',
-      title: t('departments.fields.number_of_employee'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.number_of_employee')}
+        </div>
+      ),
       align: 'right',
       width: '4%',
     },
     {
       dataIndex: 'author',
-      title: t('common.created_by'),
+      title: (
+        <div style={{ textAlign: 'center' }}>{t('common.created_by')}</div>
+      ),
       align: 'left',
       width: '19%',
       render: (value: any) => {
@@ -163,7 +181,9 @@ export default function Page() {
     },
     {
       dataIndex: 'editor',
-      title: t('common.updated_by'),
+      title: (
+        <div style={{ textAlign: 'center' }}>{t('common.updated_by')}</div>
+      ),
       align: 'left',
       width: '19%',
       render: (value: any) => {
@@ -172,18 +192,26 @@ export default function Page() {
     },
     {
       dataIndex: 'created_at',
-      title: t('departments.fields.created_at'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.created_at')}
+        </div>
+      ),
       width: '7%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
       dataIndex: 'updated_at',
-      title: t('departments.fields.updated_at'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.updated_at')}
+        </div>
+      ),
       width: '7%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
-      title: t('table.actions'),
+      title: <div style={{ textAlign: 'center' }}>{t('table.actions')}</div>,
       dataIndex: 'actions',
       width: '8%',
       onCell: () => ({
