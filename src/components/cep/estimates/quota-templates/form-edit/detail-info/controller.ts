@@ -2,11 +2,7 @@
 
 import { getDefaultTaxRate } from '@components/cep/estimates/quotas/utils'
 import type { QuotaTemplateFormType } from '@interfaces/quota-templates'
-import {
-  ConsumptionTaxEnum,
-  type ProductListItem,
-  type QuotaTemplateProductItemRequest,
-} from '@sdk/hey-api'
+import { type ProductListItem } from '@sdk/hey-api'
 import { calculateTax } from '@shared/tax/tax.utils'
 import { Form } from 'antd'
 import { useEffect, useState } from 'react'
@@ -14,6 +10,10 @@ import { useEffect, useState } from 'react'
 export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
   const totalPriceWatch = Form.useWatch('total_price', form)
+  const totalPriceTaxIncludedWatch = Form.useWatch(
+    'total_price_tax_included',
+    form,
+  )
   const taxRateWatch = Form.useWatch('tax_rate', form) ?? 0
   const mainProducts = Form.useWatch('main_product', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
@@ -59,31 +59,28 @@ export const useController = () => {
       {}
 
     // Calculate per-product totals and group by tax_rate
-    ;(mainProducts ?? []).forEach((group: any) => {
-      ;(group.products ?? []).forEach(
-        (product: QuotaTemplateProductItemRequest) => {
-          if (!product.is_add_total) return
+    ;(mainProducts ?? []).forEach((product: any) => {
+      if (!product.is_add_total) return
 
-          const qty = product.quantity || 0
-          const selling = (product.selling_price || 0) * qty
-          const cost = (product.cost_price || 0) * qty
+      const qty = product.quantity || 0
+      const selling = (product.selling_price || 0) * qty
+      const cost = (product.cost_price || 0) * qty
 
-          if (product.cost_price === null) _checkNull = true
+      if (product.cost_price === null && product.kind != 'group')
+        _checkNull = true
 
-          costTotal += cost
-          sellTotal += selling
+      costTotal += cost
+      sellTotal += selling
 
-          // Use product's individual tax rate, fallback to global tax_rate if not set
-          const productTaxRate = product.tax_rate ?? taxRateWatch ?? 0
-          const taxRateKey = productTaxRate.toString()
+      // Use product's individual tax rate, fallback to global tax_rate if not set
+      const productTaxRate = product.tax_rate ?? taxRateWatch ?? 0
+      const taxRateKey = productTaxRate.toString()
 
-          // Group products by tax rate
-          if (!taxGroups[taxRateKey]) {
-            taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
-          }
-          taxGroups[taxRateKey].selling += selling
-        },
-      )
+      // Group products by tax rate
+      if (!taxGroups[taxRateKey]) {
+        taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
+      }
+      taxGroups[taxRateKey].selling += selling
     })
 
     // Calculate tax for each tax rate group with rounding
@@ -95,13 +92,7 @@ export const useController = () => {
     })
 
     let sellTotalWithTax = 0
-    if (consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL) {
-      // For external tax, selling total already includes tax
-      sellTotalWithTax = sellTotal
-    } else {
-      // For internal tax, add tax to selling total
-      sellTotalWithTax = sellTotal + taxTotal
-    }
+    sellTotalWithTax = sellTotal + taxTotal
 
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
@@ -112,7 +103,7 @@ export const useController = () => {
     setSellTotalWithTax(sellTotalWithTax)
     form.setFieldValue('total_price', sellTotal)
     form.setFieldValue('consumption_tax_amount', taxTotal)
-    form.setFieldValue('total_profit_margin', profitRate)
+    form.setFieldValue('total_profit_margin', _checkNull ? 0 : profitRate)
     form.setFieldValue('total_price_tax_included', sellTotalWithTax)
   }
 
@@ -162,5 +153,6 @@ export const useController = () => {
     handleRemoveProduct,
     onChangeProductName,
     consumptionTaxWatch,
+    totalPriceTaxIncludedWatch,
   }
 }
