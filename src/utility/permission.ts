@@ -5,14 +5,14 @@ export const PermissionResourceFullAdminOnly = new Set([
   'parameter-settings',
   'permission-settings',
   'tenant-settings',
-  'tags',
+  // 'tags',
 ])
 
 export const PermissionRouteFullAdminOnly = new Set([
   '/parameter-settings', // ST00
   '/permission-settings', // ST01
   '/tenant-settings', // ST06
-  '/tags', // ST05
+  // '/tags', // ST05
 ])
 
 export const PARAMETER_SETTINGS = new Set(Object.values(ParameterResourceEnum))
