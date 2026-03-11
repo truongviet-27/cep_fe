@@ -166,7 +166,6 @@ function AddressContact(
             <Col>
               <CoreAutocompleteAPI
                 name={'department_in_charge_id'}
-                rules={[rule]}
                 labelInValue={false}
                 resource="departments"
                 placeholder={t(
