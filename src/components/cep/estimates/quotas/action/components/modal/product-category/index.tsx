@@ -32,8 +32,6 @@ export const ProductCategoryModal = ({
 
   const isDirtyProduct = (mainProductWatch ?? [])[1]?.product_id
 
-  console.log('djasdkasldkasd', isDirtyProduct)
-
   const { open } = useNotification()
 
   const { data, isFetching } = useCustom({
@@ -51,6 +49,7 @@ export const ProductCategoryModal = ({
         isHeader: true,
         name: data?.data.products[0]?.category?.name,
         title: data?.data.products[0]?.category?.name,
+        quantity: 1,
       }
 
       const productItems = data?.data.products?.map((item: any) => ({

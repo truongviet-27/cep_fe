@@ -722,6 +722,8 @@ const OptionalInfo: FC = () => {
               render: (_, record, index) => {
                 const isHeader = record.isHeader
                 const isFirstRow = index === 0
+                const optionalProduct =
+                  form.getFieldValue('optional_product') || []
 
                 const actionList: ActionType[] = []
                 if (isHeader) {
@@ -730,20 +732,22 @@ const OptionalInfo: FC = () => {
                 } else {
                   actionList.push('onAppendFromMasterOrCreateNewAction')
                   if (
-                    dataSource?.[index - 1]?.kind === 'product' ||
-                    dataSource?.[index + 1]?.kind === 'product'
+                    optionalProduct?.[index - 1]?.kind === 'product' ||
+                    optionalProduct?.[index + 1]?.kind === 'product'
                   ) {
                     actionList.push('remove')
                   }
                 }
 
                 const handleAppend = () => {
-                  const nextHeaderIndex = dataSource.findIndex(
+                  const nextHeaderIndex = optionalProduct.findIndex(
                     (item: any, i: number) =>
                       i > index && item.kind === 'group',
                   )
                   const insertAt =
-                    nextHeaderIndex === -1 ? dataSource.length : nextHeaderIndex
+                    nextHeaderIndex === -1
+                      ? optionalProduct.length
+                      : nextHeaderIndex
                   if (isHeader) {
                     add(
                       {
@@ -784,7 +788,7 @@ const OptionalInfo: FC = () => {
 
                 const handleRemove = () => {
                   if (isFirstRow && isHeader) {
-                    const newData = [...dataSource]
+                    const newData = [...optionalProduct]
                     newData[0] = {
                       ...newData[0],
                       name: '',

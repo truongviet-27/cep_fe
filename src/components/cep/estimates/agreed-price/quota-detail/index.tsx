@@ -9,8 +9,8 @@ import Reason from '@components/cep/estimates/quotas/show/components/reason'
 import Tags from '@components/cep/estimates/quotas/show/components/tags'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
+import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { DeleteButton, useForm } from '@refinedev/antd'
 import {
   type OpenNotificationParams,
@@ -47,8 +47,7 @@ function AgreedPriceQuotaDetail() {
 
   const [isPdf, setIsPdf] = useState(false)
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
-
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
   const { id } = useParsed()
   const apiUrl = useApiUrl()
   const go = useGo()
@@ -549,10 +548,7 @@ function AgreedPriceQuotaDetail() {
           <Spin spinning={isPendingPreviewPdf}>
             {!isPendingPreviewPdf && (
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                <Viewer
-                  fileUrl={pdfUrl}
-                  plugins={[defaultLayoutPluginInstance]}
-                />
+                <Viewer fileUrl={pdfUrl} plugins={[pdfViewerLayoutPlugin]} />
               </Worker>
             )}
           </Spin>

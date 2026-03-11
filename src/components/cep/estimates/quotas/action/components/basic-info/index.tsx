@@ -228,7 +228,8 @@ const BasicInfo = ({
   useEffect(() => {
     if (
       codeIssueSetting?.data?.issue_method === 'automatic' &&
-      !form.getFieldValue('code')
+      !form.getFieldValue('code') &&
+      !isCloneVersion
     ) {
       refetchIssueSetting().then(({ data: latestData }) => {
         const code = latestData?.data?.preview_code
@@ -279,6 +280,9 @@ const BasicInfo = ({
   }
 
   const { show, close, open } = modalFormProps
+
+  console.log('dhasjdashdajsdad', form.getFieldValue('code'))
+
   return (
     <Card
       title={boldText(t('quotas.action.basic_info.title'), PRIMARY, 16)}
@@ -791,7 +795,7 @@ const BasicInfo = ({
               )}
               labelCol={{ span: 3 }}
             >
-              <Input readOnly style={{ width: '100%' }} />
+              <Input disabled readOnly style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>

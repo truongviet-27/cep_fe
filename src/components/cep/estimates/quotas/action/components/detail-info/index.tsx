@@ -106,10 +106,7 @@ function DetailInfo({
       taxTotal += calculateTax(rawTax, taxRoundingMethod)
     })
 
-    const sellTotalWithTax =
-      consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL
-        ? sellTotal + taxTotal
-        : sellTotal
+    const sellTotalWithTax = sellTotal + taxTotal
 
     const profitRate =
       sellTotal > 0
@@ -576,7 +573,7 @@ function DetailInfo({
                           )
                           form.setFieldValue(
                             ['main_product', record.index, 'quantity'],
-                            0,
+                            1,
                           )
                           form.setFieldValue(
                             ['main_product', record.index, 'tax_rate'],
@@ -1107,6 +1104,7 @@ function DetailInfo({
               render: (_, record, index) => {
                 const isHeader = record.isHeader
                 const isFirstRow = index === 0
+                const mainProduct = form.getFieldValue('main_product') || []
 
                 const actionList: ActionType[] = []
                 if (isHeader) {
@@ -1115,20 +1113,22 @@ function DetailInfo({
                 } else {
                   actionList.push('onAppendFromMasterOrCreateNewAction')
                   if (
-                    dataSource?.[index - 1]?.kind === 'product' ||
-                    dataSource?.[index + 1]?.kind === 'product'
+                    mainProduct?.[index - 1]?.kind === 'product' ||
+                    mainProduct?.[index + 1]?.kind === 'product'
                   ) {
                     actionList.push('remove')
                   }
                 }
 
                 const handleAppend = () => {
-                  const nextHeaderIndex = dataSource.findIndex(
+                  const nextHeaderIndex = mainProduct.findIndex(
                     (item: any, i: number) =>
                       i > index && item.kind === 'group',
                   )
                   const insertAt =
-                    nextHeaderIndex === -1 ? dataSource.length : nextHeaderIndex
+                    nextHeaderIndex === -1
+                      ? mainProduct.length
+                      : nextHeaderIndex
                   if (isHeader) {
                     add(
                       {
@@ -1178,7 +1178,7 @@ function DetailInfo({
 
                 const handleRemove = () => {
                   if (isFirstRow && isHeader) {
-                    const newData = [...dataSource]
+                    const newData = [...mainProduct]
                     newData[0] = {
                       ...newData[0],
                       name: '',

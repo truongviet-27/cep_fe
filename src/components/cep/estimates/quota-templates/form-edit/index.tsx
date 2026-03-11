@@ -102,19 +102,20 @@ const QuoteTemplateFormEditContainer: FC = () => {
             }}
           >
             <Space>
-              {isUpdateMode && (
-                <DeleteButton
-                  icon={null}
-                  size={'small'}
-                  onSuccess={() => {
-                    go({
-                      to: '/quota-templates',
-                    })
-                  }}
-                />
-              )}
+              <> </>
             </Space>
             <Space className="items-end">
+              <Button
+                type="default"
+                onClick={() => {
+                  go({
+                    to: '/quota-templates',
+                  })
+                }}
+                autoInsertSpace={false}
+              >
+                {t('buttons.back')}
+              </Button>
               {!isUpdateMode &&
                 dataQuotaTemplateDraft?.data &&
                 Array.isArray(dataQuotaTemplateDraft.data) &&
@@ -133,6 +134,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
                   type="primary"
                   onClick={handleSaveDraft}
                   loading={isPendingDraft}
+                  autoInsertSpace={false}
                 >
                   {t('buttons.draft')}
                 </Button>
@@ -144,17 +146,17 @@ const QuoteTemplateFormEditContainer: FC = () => {
               >
                 {isUpdateMode ? t('buttons.save') : t('buttons.create')}
               </Button>
-              <Button
-                color="primary"
-                variant="outlined"
-                onClick={() => {
-                  go({
-                    to: '/quota-templates',
-                  })
-                }}
-              >
-                {t('buttons.back')}
-              </Button>
+              {isUpdateMode && (
+                <DeleteButton
+                  icon={null}
+                  onSuccess={() => {
+                    go({
+                      to: '/quota-templates',
+                    })
+                  }}
+                  autoInsertSpace={false}
+                />
+              )}
             </Space>
           </Flex>
         </Form>

@@ -11,8 +11,8 @@ import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
+import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { DeleteButton, useForm } from '@refinedev/antd'
 import type { CrudFilter } from '@refinedev/core'
 import {
@@ -86,7 +86,7 @@ function QuotaAction() {
 
   const isUpdate = !!id
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
   const go = useGo()
   const apiUrl = useApiUrl()
 
@@ -759,7 +759,6 @@ function QuotaAction() {
         },
         {
           onSuccess() {
-            message.success(t('notifications.success'))
             go({
               to: `/quotas`,
             })
@@ -888,39 +887,35 @@ function QuotaAction() {
         })) || [],
       main_product: draftPayload.main_product?.map((item: any) => ({
         ...item,
-        products: item.products?.map((item2: any) => ({
-          ...item2,
-          product: item2.product_id
-            ? { value: item2.product_id, label: item2.name }
-            : item2.product,
-          package: item2.package_id
-            ? { value: item2.package_id, label: item2.package_name }
-            : item2.package,
-          tax_rate: item2.tax_rate ?? 0,
-          isSelfCreate: !item2.product_id,
-          unit: item2.unit_name ?? '-',
-          unit_name: item2.unit_name ?? '-',
-        })),
+        product: { value: item.product_id, label: item.name },
+        package: { value: item.package_id, label: item.package_name },
+        tax_rate: item.tax_rate ?? 0,
+        isSelfCreate: !item.product_id,
+        unit:
+          item.unit_name ??
+          t('quotas.action.detail_info.default_values.default_unit'),
+        unit_name:
+          item.unit_name ??
+          t('quotas.action.detail_info.default_values.default_unit'),
       })),
-      optional_product:
-        draftPayload.optional_product?.length > 0
-          ? draftPayload.optional_product.map((item: any) => ({
-              ...item,
-              products: item.products?.map((item2: any) => ({
-                ...item2,
-                product: item2.product_id
-                  ? { value: item2.product_id, label: item2.name }
-                  : item2.product,
-                package: item2.package_id
-                  ? { value: item2.package_id, label: item2.package_name }
-                  : item2.package,
-                tax_rate: item2.tax_rate ?? 0,
-                isSelfCreate: !item2.product_id,
-                unit: item2.unit_name ?? '-',
-                unit_name: item2.unit_name ?? '-',
-              })),
-            }))
-          : defaultOptionalProduct,
+      optional_product: draftPayload.optional_product?.length
+        ? draftPayload.optional_product.map((item: any) => ({
+            ...item,
+            product: { value: item.product_id, label: item.name },
+            package: {
+              value: item.package_id,
+              label: item.package_name,
+            },
+            tax_rate: item.tax_rate ?? 0,
+            isSelfCreate: !item.product_id && item.prodcut_name,
+            unit:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+            unit_name:
+              item.unit_name ??
+              t('quotas.action.detail_info.default_values.default_unit'),
+          }))
+        : defaultOptionalProduct,
     })
 
     message.success(t('notifications.draftApplySuccess'))
@@ -1215,7 +1210,7 @@ function QuotaAction() {
                 <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                   <Viewer
                     fileUrl={`data:application/pdf;base64,${previewPdf}`}
-                    plugins={[defaultLayoutPluginInstance]}
+                    plugins={[pdfViewerLayoutPlugin]}
                   />
                 </Worker>
               )}

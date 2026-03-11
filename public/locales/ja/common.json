@@ -132,18 +132,18 @@
     "input_please": "入力"
   },
   "notifications": {
-    "success": "成功しました",
-    "editSuccess": "更新が成功しました",
-    "deleteSuccess": "削除しました",
-    "deleteError": "削除に失敗しました",
-    "createSuccess": "登録しました",
-    "error": "エラー",
-    "editError": "編集エラー",
-    "createError": "作成エラー",
+    "success": "成功しました。",
+    "editSuccess": "更新が成功しました。",
+    "deleteSuccess": "削除しました。",
+    "deleteError": "削除に失敗しました。",
+    "createSuccess": "登録しました。",
+    "error": "エラー。",
+    "editError": "編集エラー。",
+    "createError": "作成エラー。",
     "uploadSuccess": "ファイルのアップロードに成功しました。",
     "uploadFail": "ファイルのアップロードに失敗しました。",
     "uploading": "資料をアップロード中です。アップロードが完了するまで、保存しないでください。",
-    "stopped": "停止した",
+    "stopped": "停止した。",
     "draftSaveSuccess": "下書きを保存しました。",
     "draftSaveError": "下書きの保存に失敗しました。",
     "draftApplySuccess": "下書きをフォームに反映しました。"
@@ -1229,7 +1229,10 @@
       "percentage": "掛率",
       "list_price": "定価"
     },
-    "rank_prices_title": "ランク"
+    "rank_prices_title": "ランク",
+    "validation": {
+      "rank_price_lte_selling": "ランク価格は販売価格以下で入力してください。"
+    }
   },
 
   "agreed_prices/customer": {

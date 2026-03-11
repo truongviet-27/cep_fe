@@ -394,7 +394,7 @@
     },
     "customer_contact_modal": {
       "title": "見積送付先選択",
-      "department_name": "部署名",
+      "department_name": "部門",
       "contact_person_name": "氏名",
       "email": "メールアドレス",
       "created_at": "登録日",

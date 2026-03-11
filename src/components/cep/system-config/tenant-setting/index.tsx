@@ -7,8 +7,8 @@ import Left from '@components/cep/system-config/tenant-setting/components/Left'
 import Right from '@components/cep/system-config/tenant-setting/components/Right'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { useForm } from '@refinedev/antd'
 import {
   useApiUrl,
@@ -52,8 +52,7 @@ function TenantSetting() {
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
   const [pendingFormValues, setPendingFormValues] = useState<any>(null)
   const apiUrl = useApiUrl()
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
 
   const { mutate, isPending } = useUpdate({
     resource: `quota-form-settings`,
@@ -331,7 +330,7 @@ function TenantSetting() {
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                 <Viewer
                   fileUrl={`data:application/pdf;base64,${previewPdf}`}
-                  plugins={[defaultLayoutPluginInstance]}
+                  plugins={[pdfViewerLayoutPlugin]}
                 />
               </Worker>
             )}
