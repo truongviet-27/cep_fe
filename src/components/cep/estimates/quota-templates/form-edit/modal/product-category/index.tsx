@@ -35,6 +35,7 @@ export const ProductCategoryModal: React.FC<Props> = (props) => {
         isHeader: true,
         name: data?.data.products[0]?.category?.name,
         title: data?.data.products[0]?.category?.name,
+        quantity: 1,
       }
 
       const productItems = data?.data.products?.map((item: any) => ({
