@@ -44,7 +44,7 @@ export default function EmployeeEdit() {
 
   const { formProps, saveButtonProps, queryResult, form, formLoading } =
     useForm<Employee>({
-      redirect: 'show',
+      redirect: 'list',
     })
   const employeeData = queryResult?.data?.data
 

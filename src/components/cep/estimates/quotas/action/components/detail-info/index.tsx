@@ -576,7 +576,7 @@ function DetailInfo({
                           )
                           form.setFieldValue(
                             ['main_product', record.index, 'quantity'],
-                            0,
+                            1,
                           )
                           form.setFieldValue(
                             ['main_product', record.index, 'tax_rate'],

@@ -18,7 +18,7 @@ import { PRIMARY } from '@utility/color'
 import { Button, Input, Modal, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isString } from 'lodash'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { TagRow } from '@app/(auth)/(layout-breadcrumb)/(system-config)/tags/use-tags'
 
@@ -86,6 +86,34 @@ export default function useProductUnits() {
 
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
 
+  const [edited, setEdited] = useState<boolean>(false)
+
+  const checkIfEdited = () => {
+    const currentRows = getValues('rows') || []
+
+    // check if there is any row being edited or new
+    const hasEditingOrNew = currentRows.some((r) => r._isNew || r._isEditing)
+    if (hasEditingOrNew) {
+      setEdited(true)
+      return
+    }
+
+    // check if the order has changed (compared to the original data from server)
+    const originalIds = originalOrderRef.current
+      .map((r) => r.id)
+      .filter(Boolean)
+    const currentIds = currentRows.map((r) => r.id).filter(Boolean)
+
+    // if the length is different or the order is different
+    if (originalIds.length !== currentIds.length) {
+      setEdited(true)
+      return
+    }
+
+    const orderChanged = originalIds.some((id, idx) => id !== currentIds[idx])
+    setEdited(orderChanged)
+  }
+
   const handleUpdateOrdering = (values: UnitRow[]) => {
     updateAll({
       url: `${apiUrl}/${resource?.name}/upsert`,
@@ -101,6 +129,8 @@ export default function useProductUnits() {
             __index: String(index),
           })),
         })
+        originalOrderRef.current = values
+        setEdited(false)
 
         return {
           message: t('notifications.success'),
@@ -131,6 +161,7 @@ export default function useProductUnits() {
   }
 
   const originalRef = useRef<Record<string, UnitRow>>({})
+  const originalOrderRef = useRef<UnitRow[]>([])
   const preserveNewRowsRef = useRef<
     Array<{ row: UnitRow; originalIndex: number }>
   >([])
@@ -170,6 +201,8 @@ export default function useProductUnits() {
     }
 
     reset({ rows: rowsToSet })
+    originalOrderRef.current = rowsToSet
+    setEdited(false)
   }, [tableProps?.dataSource, current])
 
   const breadcrumbItems = [
@@ -197,6 +230,7 @@ export default function useProductUnits() {
       _isNew: true,
       _isEditing: true,
     })
+    setEdited(true)
   }
 
   const startEdit = (index: number) => {
@@ -204,6 +238,7 @@ export default function useProductUnits() {
     const stableKey = keyOf(current, index)
     originalRef.current[stableKey] = { ...current }
     update(index, { ...current, _isEditing: true })
+    setEdited(true)
   }
 
   const cancelEdit = (index: number) => {
@@ -211,6 +246,7 @@ export default function useProductUnits() {
     if (row?._isNew) {
       remove(index)
       setPageSize((total) => total - 1)
+      checkIfEdited()
       return
     }
     const stableKey = keyOf(row, index)
@@ -227,6 +263,7 @@ export default function useProductUnits() {
       update(index, { ...row, _isEditing: false })
     }
     delete originalRef.current[stableKey]
+    checkIfEdited()
   }
 
   const { mutate: createRow } = useCreate({
@@ -265,6 +302,11 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            setTimeout(() => {
+              const updatedRows = getValues('rows')
+              originalOrderRef.current = updatedRows
+              checkIfEdited()
+            }, 0)
           },
         },
       )
@@ -287,6 +329,11 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            setTimeout(() => {
+              const updatedRows = getValues('rows')
+              originalOrderRef.current = updatedRows
+              checkIfEdited()
+            }, 0)
           },
         },
       )
@@ -329,6 +376,7 @@ export default function useProductUnits() {
     const to = findIndexById(overId)
     if (from !== -1 && to !== -1 && from !== to) {
       move(from, to)
+      setTimeout(() => checkIfEdited(), 0)
     }
   }
 
@@ -511,5 +559,6 @@ export default function useProductUnits() {
     getRowIdForDnd,
     onDragEnd,
     setFilters,
+    edited,
   }
 }

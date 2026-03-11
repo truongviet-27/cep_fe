@@ -27,6 +27,7 @@ export default function Page() {
     getRowIdForDnd,
     onDragEnd,
     setFilters,
+    edited,
   } = useProductUnits()
 
   return (
@@ -78,7 +79,7 @@ export default function Page() {
                   type="primary"
                   onClick={onSaveAll}
                   loading={savingAll}
-                  disabled={savingAll || !isFullAccess}
+                  disabled={savingAll || !isFullAccess || !edited}
                   autoInsertSpace={false}
                 >
                   {t('buttons.save_all', { defaultValue: '並び順を保存' })}
