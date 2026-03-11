@@ -290,29 +290,27 @@ function useImportHistory() {
           style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
         }),
         render(value, record) {
-          if (record.status == 'PENDING') {
+          if (record.status === 'PENDING' || record.status === 'PROCESSING') {
+            return <Text>{t('import_history.text.status.PROCESSING')}</Text>
+          }
+          if (record.status === 'COMPLETED') {
             return null
           }
-
-          return record.status === 'COMPLETED' ? null : !value ||
-            record.status === 'FAILED' ? (
-            <Text
-              style={{
-                color: RED,
-              }}
-            >
-              {t('import_history.text.error')}
-            </Text>
-          ) : (
-            <Button
-              color="primary"
-              variant="outlined"
-              onClick={() => {
-                window.open(value, '_blank')
-              }}
-            >
-              ダウンロード
-            </Button>
+          if (value) {
+            return (
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={() => {
+                  window.open(value, '_blank')
+                }}
+              >
+                ダウンロード
+              </Button>
+            )
+          }
+          return (
+            <Text style={{ color: RED }}>{t('import_history.text.error')}</Text>
           )
         },
       },
