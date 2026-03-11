@@ -61,9 +61,6 @@ export const useBootstrap = () => {
   // check if session name has been updated
   const hasUpdatedSessionRef = useRef(false)
 
-  console.log('refresh token: ', refreshToken)
-  console.log('token: ', token)
-
   const validateToken = async () => {
     try {
       console.log('pathname: ', pathname)
