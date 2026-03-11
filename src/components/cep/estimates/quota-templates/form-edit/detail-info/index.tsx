@@ -798,7 +798,7 @@ function DetailInfo({
               width: '10%',
               render: (_, record, index) => {
                 const isHeader = record.isHeader
-                const dataSource = form.getFieldValue('main_product') || []
+                const mainProduct = form.getFieldValue('main_product') || []
                 const isFirstRow = index === 0
 
                 const actionList: ActionType[] = []
@@ -808,20 +808,22 @@ function DetailInfo({
                 } else {
                   actionList.push('onAppendFromMasterOrCreateNewAction')
                   if (
-                    dataSource?.[index - 1]?.kind === 'product' ||
-                    dataSource?.[index + 1]?.kind === 'product'
+                    mainProduct?.[index - 1]?.kind === 'product' ||
+                    mainProduct?.[index + 1]?.kind === 'product'
                   ) {
                     actionList.push('remove')
                   }
                 }
 
                 const handleAppend = () => {
-                  const nextHeaderIndex = dataSource.findIndex(
+                  const nextHeaderIndex = mainProduct.findIndex(
                     (item: any, i: number) =>
                       i > index && item.kind === 'group',
                   )
                   const insertAt =
-                    nextHeaderIndex === -1 ? dataSource.length : nextHeaderIndex
+                    nextHeaderIndex === -1
+                      ? mainProduct.length
+                      : nextHeaderIndex
                   if (isHeader) {
                     add(
                       {
@@ -862,7 +864,7 @@ function DetailInfo({
 
                 const handleRemove = () => {
                   if (isFirstRow && isHeader) {
-                    const newData = [...dataSource]
+                    const newData = [...mainProduct]
                     newData[0] = {
                       ...newData[0],
                       name: '',
