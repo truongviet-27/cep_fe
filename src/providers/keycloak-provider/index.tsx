@@ -28,7 +28,6 @@ const authProvider: AuthProvider = {
 
     try {
       const sessionData = await getSessionOnce()
-      console.log('sessionData', sessionData)
       let idToken: string | undefined
       try {
         const res = await fetch('/api/auth/get-id-token', {
@@ -47,7 +46,6 @@ const authProvider: AuthProvider = {
             success: boolean
             idToken?: string | null
           }
-          console.log('data', data)
           if (data.success && data.idToken) {
             idToken = data.idToken
           }
@@ -59,13 +57,11 @@ const authProvider: AuthProvider = {
       if (idToken) {
         const keycloakUrl = process.env.NEXT_PUBLIC_ISSUER || ''
         const endSessionEndpoint = `${keycloakUrl}/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}&id_token_hint=${idToken}`
-        console.log('endSessionEndpoint', endSessionEndpoint)
         await signOut({ redirect: false })
         clearSessionData()
 
         window.location.href = endSessionEndpoint
       } else {
-        console.log('No idToken, signing out')
         await signOut({ redirect: true, callbackUrl: '/login' })
         clearSessionData()
       }
