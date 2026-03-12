@@ -296,17 +296,19 @@ export const useCustomerCreate = () => {
     const draft: any = (dataCustomerDraft.data as any[])[0]
     const draftPayload = draft.payload || draft
 
-    const receivers = draftPayload.contacts?.map((contact: any) => ({
-      department_name: contact.department_name,
-      contact_person_name: contact.contact_person_name,
-      email: contact.email,
-    })) || [
-      {
-        department_name: null,
-        contact_person_name: null,
-        email: null,
-      },
-    ]
+    const receivers = draftPayload.contacts?.length
+      ? draftPayload.contacts?.map((contact: any) => ({
+          department_name: contact.department_name,
+          contact_person_name: contact.contact_person_name,
+          email: contact.email,
+        }))
+      : [
+          {
+            department_name: null,
+            contact_person_name: null,
+            email: null,
+          },
+        ]
 
     const { contacts, ...restPayload } = draftPayload
 
