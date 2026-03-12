@@ -97,6 +97,11 @@ export const useBasicInfoController = (
     )
   }, [productUnits])
 
+  const orderNumberProductUnits = useMemo(() => {
+    if (!productUnits?.data) return 1
+    return (productUnits?.data[0]?.order ?? 0) + 1
+  }, [productUnits?.data])
+
   const handleChooseCategory = useCallback(
     (
       level: number,
@@ -211,6 +216,13 @@ export const useBasicInfoController = (
     },
   })
 
+  const modalFormProductUnit = useModalForm({
+    action: 'create',
+    resource: 'product-units',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+  })
+
   useEffect(() => {
     handleBasicInfoChange()
   }, [codeWatch, unitWatch, barcodeWatch])
@@ -223,6 +235,8 @@ export const useBasicInfoController = (
       modalFormProps,
       codeIssueSetting,
       productUnitOptions,
+      modalFormProductUnit,
+      orderNumberProductUnits,
     },
     {
       handleAutoNumber,
