@@ -6,6 +6,7 @@ import {
   useCustomMutation,
   useGo,
   useModal,
+  useNotification,
   useTranslate,
 } from '@refinedev/core'
 import type {
@@ -13,8 +14,6 @@ import type {
   DraftControllerIndexResponse,
 } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
-import { message } from 'antd'
 import { useEffect, useMemo } from 'react'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import type { CrudFilter } from '@refinedev/core'
@@ -24,7 +23,7 @@ export const useCustomerCreate = () => {
   const t = useTranslate()
   const apiUrl = useApiUrl()
   const go = useGo()
-
+  const { open: openNotification } = useNotification()
   const { permission } = useUserStore.getState()
 
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
@@ -262,15 +261,25 @@ export const useCustomerCreate = () => {
       },
       {
         onSuccess() {
-          message.success(t('notifications.draftSaveSuccess'))
+          openNotification?.({
+            message: t('notifications.draftSaveSuccess'),
+            description: t('notifications.draftSaveSuccess'),
+            type: 'success',
+          })
           go({
             to: `/customers`,
           })
         },
         onError(error: any) {
-          message.error(
-            error?.response?.data?.message || t('notifications.draftSaveError'),
-          )
+          openNotification?.({
+            message:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            description:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            type: 'error',
+          })
         },
       },
     )
@@ -308,7 +317,11 @@ export const useCustomerCreate = () => {
       receivers,
     })
 
-    message.success(t('notifications.draftApplySuccess'))
+    openNotification?.({
+      description: t('notifications.draftApplySuccess'),
+      message: t('notifications.draftApplySuccess'),
+      type: 'success',
+    })
   }
 
   const rule = validateCustomerRule(t)
