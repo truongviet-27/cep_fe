@@ -6,6 +6,7 @@ import {
   useCustom,
   useCustomMutation,
   useGo,
+  useNotification,
   useParsed,
   useTranslate,
 } from '@refinedev/core'
@@ -14,7 +15,6 @@ import type {
   ProductDetail,
   StoreProductInput,
 } from '@sdk/hey-api'
-import { message } from 'antd'
 
 export type ProductFormType = {
   unit: string
@@ -43,7 +43,7 @@ function useProductForm() {
   const go = useGo()
   const apiUrl = useApiUrl()
   const t = useTranslate()
-
+  const { open: openNotification } = useNotification()
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
 
   const { data: dataProductDraft, isFetching: isFetchingProductDraft } =
@@ -135,13 +135,23 @@ function useProductForm() {
       },
       {
         onSuccess() {
-          message.success(t('notifications.draftSaveSuccess'))
+          openNotification?.({
+            message: t('notifications.draftSaveSuccess'),
+            description: t('notifications.draftSaveSuccess'),
+            type: 'success',
+          })
           go({ to: { resource: 'products', action: 'list' } })
         },
         onError(error: any) {
-          message.error(
-            error?.response?.data?.message || t('notifications.draftSaveError'),
-          )
+          openNotification?.({
+            message:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            description:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            type: 'error',
+          })
         },
       },
     )
@@ -163,7 +173,11 @@ function useProductForm() {
       ...draftPayload,
     })
 
-    message.success(t('notifications.draftApplySuccess'))
+    openNotification?.({
+      message: t('notifications.draftApplySuccess'),
+      description: t('notifications.draftApplySuccess'),
+      type: 'success',
+    })
   }
 
   return [

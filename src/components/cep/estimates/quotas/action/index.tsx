@@ -20,6 +20,7 @@ import {
   useCustom,
   useCustomMutation,
   useGo,
+  useNotification,
   useParsed,
   useResource,
   useShow,
@@ -42,7 +43,6 @@ import {
   Divider,
   Flex,
   Form,
-  message,
   Modal,
   Row,
   Space,
@@ -77,6 +77,7 @@ function QuotaAction() {
 
   const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
   const [isCreateFromOldQuota, setIsCreateFromOldQuota] = useState(false)
+  const { open: openNotification } = useNotification()
 
   const { actionType } = params as any
   const isClone = action === 'clone'
@@ -842,15 +843,25 @@ function QuotaAction() {
       },
       {
         onSuccess() {
-          message.success(t('notifications.draftSaveSuccess'))
+          openNotification?.({
+            message: t('notifications.draftSaveSuccess'),
+            description: t('notifications.draftSaveSuccess'),
+            type: 'success',
+          })
           go({
             to: `/quotas`,
           })
         },
         onError(error: any) {
-          message.error(
-            error?.response?.data?.message || t('notifications.draftSaveError'),
-          )
+          openNotification?.({
+            message:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            description:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            type: 'error',
+          })
         },
       },
     )
@@ -918,7 +929,11 @@ function QuotaAction() {
         : defaultOptionalProduct,
     })
 
-    message.success(t('notifications.draftApplySuccess'))
+    openNotification?.({
+      description: t('notifications.draftApplySuccess'),
+      message: t('notifications.draftApplySuccess'),
+      type: 'success',
+    })
   }
 
   const [productPrincing, setProductPrincing] = useState<number[]>()
