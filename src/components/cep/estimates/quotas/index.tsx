@@ -163,8 +163,12 @@ function QuotaList() {
       const isAgreedPriceDisabled =
         record.status === QuotaStatus.Completed &&
         record.has_agreed_price === true
+      const isRowDisabled =
+        !useApproveRoute &&
+        STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(record.status) > -1
       return {
-        disabled: isPermissionDisabled || isAgreedPriceDisabled,
+        disabled:
+          isPermissionDisabled || isAgreedPriceDisabled || isRowDisabled,
       }
     },
   }
@@ -1192,6 +1196,7 @@ function QuotaList() {
           separator={<RightOutlined />}
         />
       }
+      loading={isPending}
     >
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
@@ -1548,6 +1553,7 @@ function QuotaList() {
           rowSelection={rowSelection}
           onRow={(record) => {
             const isRowDisabled =
+              !useApproveRoute &&
               STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(record.status) > -1
             return {
               style: isRowDisabled
