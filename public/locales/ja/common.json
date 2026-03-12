@@ -133,6 +133,8 @@
   },
   "notifications": {
     "success": "成功しました。",
+    "proceedRecords": "{recordAsString} 件のレコードを処理しました。",
+    "notProceedRecords": "{recordAsString} 件のレコードの処理に失敗しました。",
     "editSuccess": "更新が成功しました。",
     "deleteSuccess": "削除しました。",
     "deleteError": "削除に失敗しました。",
