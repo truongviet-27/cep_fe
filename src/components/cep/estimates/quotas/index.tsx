@@ -5,6 +5,7 @@ import CreateFromTemplate from '@components/cep/estimates/quotas/action/componen
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
   QuotaStatus,
+  STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE,
   TRANSACTION_TYPES,
 } from '@components/cep/estimates/quotas/enum'
 import {
@@ -1503,6 +1504,19 @@ function QuotaList() {
         <CommonTable
           rowKey="id"
           rowSelection={rowSelection}
+          onRow={(record) => {
+            const isRowDisabled =
+              STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(record.status) > -1
+            return {
+              style: isRowDisabled
+                ? {
+                    pointerEvents: 'none',
+                    opacity: 0.5,
+                    cursor: 'not-allowed',
+                  }
+                : {},
+            }
+          }}
           columns={columns}
           {...tableProps}
           scroll={undefined}
