@@ -8,29 +8,47 @@ import type {
 import React, { useRef } from 'react'
 
 /**
- * Default layout plugin with toolbar that hides:
- * - Zoom in/out, zoom dropdown (CurrentScale), and % selector (Zoom)
- * - Download
- * - Print
+ * Default layout plugin with:
+ * - Toolbar: only Zoom, Download, Print (all other buttons hidden).
+ * - Sidebar: hidden (no thumbnails, bookmarks, attachments).
  */
 export function usePdfViewerLayoutPlugin() {
   const pluginRef = useRef<ReturnType<typeof defaultLayoutPlugin> | null>(null)
 
+  const empty = () => <></>
   const transform: TransformToolbarSlot = (slot: ToolbarSlot) => ({
     ...slot,
-    Zoom: () => <></>,
-    ZoomIn: () => <></>,
-    ZoomOut: () => <></>,
-    ZoomInMenuItem: () => <></>,
-    ZoomOutMenuItem: () => <></>,
-    CurrentScale: () => <></>,
-    Download: () => <></>,
-    DownloadMenuItem: () => <></>,
-    Print: () => <></>,
-    PrintMenuItem: () => <></>,
+    CurrentPageInput: empty,
+    CurrentPageLabel: empty,
+    NumberOfPages: empty,
+    GoToFirstPage: empty,
+    GoToFirstPageMenuItem: empty,
+    GoToLastPage: empty,
+    GoToLastPageMenuItem: empty,
+    GoToNextPage: empty,
+    GoToNextPageMenuItem: empty,
+    GoToPreviousPage: empty,
+    GoToPreviousPageMenuItem: empty,
+    Open: empty,
+    OpenMenuItem: empty,
+    EnterFullScreen: empty,
+    EnterFullScreenMenuItem: empty,
+    Rotate: empty,
+    RotateBackwardMenuItem: empty,
+    RotateForwardMenuItem: empty,
+    ShowProperties: empty,
+    ShowPropertiesMenuItem: empty,
+    SwitchTheme: empty,
+    SwitchThemeMenuItem: empty,
+    SwitchScrollMode: empty,
+    SwitchScrollModeMenuItem: empty,
+    SwitchSelectionMode: empty,
+    SwitchSelectionModeMenuItem: empty,
+    ShowSearchPopover: empty,
   })
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
+    sidebarTabs: () => [],
     renderToolbar: (Toolbar: (props: ToolbarProps) => React.ReactElement) => (
       <Toolbar>
         {(slot) =>

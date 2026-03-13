@@ -26,7 +26,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
@@ -52,6 +52,16 @@ function DetailInfo({
   } = useController()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [categoryModalKey, setCategoryModalKey] = useState(0)
+
+  useEffect(() => {
+    if (isModalOpen) {
+      form?.setFieldsValue({
+        category_id: null,
+        parent: undefined,
+      } as Parameters<NonNullable<typeof form>['setFieldsValue']>[0])
+    }
+  }, [isModalOpen, form])
 
   const t = useTranslate()
 
@@ -153,7 +163,6 @@ function DetailInfo({
                   return form.getFieldValue([
                     'main_product',
                     record.index,
-
                     'code',
                   ])
                 }
@@ -197,10 +206,8 @@ function DetailInfo({
                           )
                           if (isDuplicate) {
                             notification.error({
-                              message: t(
-                                'quotas.action.detail_info.duplicate_product',
-                              ),
-                              key: `code-main-product`,
+                              message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                              key: `${currentCode}-code-main-product`,
                               placement: 'topRight',
                             })
                             return Promise.reject()
@@ -338,10 +345,8 @@ function DetailInfo({
                           )
                           if (isDuplicate) {
                             notification.error({
-                              message: t(
-                                'quotas.action.detail_info.duplicate_product',
-                              ),
-                              key: `name-main-product`,
+                              message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                              key: `${currentName}-name-main-product`,
                               placement: 'topRight',
                             })
                             return Promise.reject()
@@ -903,7 +908,13 @@ function DetailInfo({
                   marginBottom: 10,
                 }}
               >
-                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setCategoryModalKey((k) => k + 1)
+                    setIsModalOpen(true)
+                  }}
+                >
                   カテゴリから入力
                 </Button>
               </Flex>
@@ -1071,6 +1082,7 @@ function DetailInfo({
         footer={null}
       >
         <ProductCategoryModal
+          key={categoryModalKey}
           name="main_product"
           close={() => setIsModalOpen(false)}
         />

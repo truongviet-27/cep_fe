@@ -20,6 +20,7 @@ export interface GuideStepCardProps {
   onStatusChange?: (manualId: number, status: 'complete' | 'pending') => void
   updating?: boolean
   isComplete?: boolean
+  disableStatusChange?: boolean
   iconBg?: string
   leftColumnBg?: string
   showLeftIcon?: boolean
@@ -61,6 +62,7 @@ export default function GuideStepCard({
   onStatusChange,
   updating = false,
   isComplete = false,
+  disableStatusChange = false,
   iconBg,
   leftColumnBg,
   showLeftIcon = true,
@@ -78,7 +80,11 @@ export default function GuideStepCard({
     : status === 'complete'
       ? '#fafafa'
       : undefined
-  const canChangeStatus = manualId != null && onStatusChange && !updating
+  const canChangeStatus =
+    !disableStatusChange &&
+    manualId != null &&
+    onStatusChange != null &&
+    !updating
   const iconBoxBg = grayedOut ? undefined : iconBg
   const iconBoxGrayedOut = grayedOut
   const leftBgColor = grayedOut
@@ -192,12 +198,11 @@ export default function GuideStepCard({
                 fontSize: 10,
                 marginTop: 4,
                 fontStyle: note.italic ? 'italic' : undefined,
-                fontWeight: 700,
                 color: grayedOut
                   ? '#b0b0b0'
                   : note.danger
                     ? '#ff4d4f'
-                    : '#8c8c8c',
+                    : 'rgb(89, 89, 89)',
               }}
             >
               {note.text}
@@ -214,6 +219,7 @@ export default function GuideStepCard({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 4,
+                  textDecoration: 'underline',
                 }}
               >
                 <ExportOutlined /> {breadcrumb}
@@ -242,6 +248,7 @@ export default function GuideStepCard({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 4,
+                textDecoration: 'underline',
               }}
             >
               <ExportOutlined /> {linkText}
