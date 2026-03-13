@@ -91,7 +91,11 @@ function BasicInformation(
       )}
     >
       <Panel header={boldText(t('customers.show.basic_info'))} key="1">
-        <Form.Item label={boldText(t('customers.fields.code'))} required>
+        <Form.Item
+          label={boldText(t('customers.fields.code'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+          required
+        >
           <Row align="middle" gutter={8}>
             <Col>
               <Form.Item rules={[rule]} name="customer_code" required noStyle>
@@ -122,7 +126,11 @@ function BasicInformation(
             </Col>
           </Row>
         </Form.Item>
-        <Form.Item label={boldText(t('customers.fields.status'))} required>
+        <Form.Item
+          label={boldText(t('customers.fields.status'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+          required
+        >
           <Row align="middle" gutter={8}>
             <Col flex="none">
               <Form.Item
@@ -167,6 +175,7 @@ function BasicInformation(
         <Form.Item
           label={boldText(t('customers.fields.company_classification'))}
           required
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
             <Col>
@@ -291,6 +300,7 @@ function BasicInformation(
           style={{ marginTop: -10 }}
           label={boldText(t('customers.fields.name'))}
           required
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Row>
             <Col style={{ width: 575 }}>
@@ -323,11 +333,15 @@ function BasicInformation(
           label={boldText(t('customers.fields.name_kana'))}
           name="customer_name_by_kana"
           rules={[rule]}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
 
-        <Form.Item label={boldText(t('customers.fields.country'))}>
+        <Form.Item
+          label={boldText(t('customers.fields.country'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+        >
           <Row align="top" gutter={8} wrap={false} style={{ width: '100%' }}>
             <Col flex="none">
               <Form.Item name="country" rules={[rule]} initialValue="日本">
@@ -395,6 +409,7 @@ function BasicInformation(
           required
           hidden={!allowRankResource}
           style={{ marginTop: -10 }}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Row align="middle" gutter={12}>
             <Col flex="none" style={{ width: 570 }}>

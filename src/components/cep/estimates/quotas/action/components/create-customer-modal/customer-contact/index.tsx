@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line simple-import-sort/imports */
 
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
 import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/styles.module.css'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
@@ -201,7 +201,6 @@ export default function CustomerContact() {
                       return (
                         <Button
                           size="small"
-                          icon={canRemove ? <DeleteOutlined /> : undefined}
                           disabled={!canRemove}
                           onClick={() => remove(field.name)}
                           style={
