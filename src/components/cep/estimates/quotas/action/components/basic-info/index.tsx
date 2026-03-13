@@ -685,7 +685,8 @@ const BasicInfo = ({
             >
               <DatePicker
                 style={{ width: '100%' }}
-                placeholder={'YYYY/MM/DD'}
+                placeholder={FORMAT_DATE_CROSS}
+                format={FORMAT_DATE_CROSS}
                 minDate={Form.useWatch('issue_date', form)}
               />
             </Form.Item>

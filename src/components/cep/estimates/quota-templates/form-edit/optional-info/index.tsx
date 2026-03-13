@@ -138,10 +138,8 @@ const OptionalInfo: FC = () => {
                           )
                           if (isDuplicate) {
                             notification.error({
-                              message: t(
-                                'quotas.action.detail_info.duplicate_product',
-                              ),
-                              key: `code-optional-product`,
+                              message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                              key: `${currentCode}-code-optional-product`,
                               placement: 'topRight',
                             })
                             return Promise.reject()
@@ -278,10 +276,8 @@ const OptionalInfo: FC = () => {
                           )
                           if (isDuplicate) {
                             notification.error({
-                              message: t(
-                                'quotas.action.detail_info.duplicate_product',
-                              ),
-                              key: `name-optional-product`,
+                              message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                              key: `${currentName}-name-optional-product`,
                               placement: 'topRight',
                             })
                             return Promise.reject()
