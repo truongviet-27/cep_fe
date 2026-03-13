@@ -15,8 +15,9 @@ import { type I18nProvider, Refine } from '@refinedev/core'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import routerProvider from '@refinedev/nextjs-router'
 import { resource } from '@utility/resources'
-import { SessionProvider } from 'next-auth/react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useBootstrap } from './controller'
 import { notification } from 'antd'
@@ -30,7 +31,7 @@ export const RefineContext = (
   props: React.PropsWithChildren<RefineContextProps>,
 ) => {
   return (
-    <SessionProvider>
+    <SessionProvider refetchOnWindowFocus={true}>
       <App {...props} />
     </SessionProvider>
   )
@@ -39,6 +40,24 @@ export const RefineContext = (
 const App = (props: React.PropsWithChildren) => {
   const t = useTranslations()
   const { isLoadingPage } = useBootstrap()
+  const router = useRouter()
+  const { data: _, status } = useSession()
+  const wasAuthenticatedRef = React.useRef(false)
+
+  // Track authentication state
+  React.useEffect(() => {
+    if (status === 'authenticated') {
+      wasAuthenticatedRef.current = true
+    }
+  }, [status])
+
+  // Handle token revoked: authenticated → unauthenticated
+  React.useEffect(() => {
+    if (status === 'unauthenticated' && wasAuthenticatedRef.current) {
+      console.warn('[Auth] Token revoked, redirecting to /auth-revoked')
+      router.push('/auth-revoked')
+    }
+  }, [status, router])
 
   if (isLoadingPage) {
     return <LoadingPage />

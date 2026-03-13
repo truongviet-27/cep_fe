@@ -31,8 +31,7 @@ export default function TokenRevokedPage() {
         // Redirect to login
         router.push('/login')
       } catch (error) {
-        console.error('Error clearing session:', error)
-        // Force redirect anyway
+        console.error('[Auth-Revoked] Error clearing session:', error)
         router.push('/login')
       }
     }
