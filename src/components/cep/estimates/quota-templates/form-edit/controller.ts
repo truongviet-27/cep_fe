@@ -10,6 +10,7 @@ import {
   useCustom,
   useCustomMutation,
   useGo,
+  useNotification,
   useParsed,
   useTranslate,
 } from '@refinedev/core'
@@ -20,7 +21,6 @@ import type {
 } from '@sdk/hey-api'
 import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-import { message } from 'antd'
 import { useEffect, useState } from 'react'
 
 export function useController() {
@@ -32,7 +32,7 @@ export function useController() {
   const [taxRoundingMethod, setTaxRoundingMethod] =
     useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
   const permission = useUserStore((state) => state.permission)
-
+  const { open: openNotification } = useNotification()
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
 
   const {
@@ -208,13 +208,23 @@ export function useController() {
       },
       {
         onSuccess() {
-          message.success(t('notifications.draftSaveSuccess'))
+          openNotification?.({
+            message: t('notifications.draftSaveSuccess'),
+            description: t('notifications.draftSaveSuccess'),
+            type: 'success',
+          })
           go({ to: '/quota-templates' })
         },
         onError(error: any) {
-          message.error(
-            error?.response?.data?.message || t('notifications.draftSaveError'),
-          )
+          openNotification?.({
+            message:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            description:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            type: 'error',
+          })
         },
       },
     )
@@ -237,8 +247,11 @@ export function useController() {
       payment_due_date: draftPayload?.payment_due_date,
       expiration_date: draftPayload?.expiration_date,
     })
-
-    message.success(t('notifications.draftApplySuccess'))
+    openNotification?.({
+      message: t('notifications.draftApplySuccess'),
+      description: t('notifications.draftApplySuccess'),
+      type: 'success',
+    })
   }
 
   return {

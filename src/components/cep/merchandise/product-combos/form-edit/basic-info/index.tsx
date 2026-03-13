@@ -1,5 +1,6 @@
 import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import { ProductUnitModal } from '@components/cep/merchandise/products/form-edit/modal/product-unit'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
 import UploadImage from '@components/common/upload-image/upload-image'
@@ -45,6 +46,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       codeIssueSetting,
       productUnitOptions,
       isFetchingProductUnits,
+      modalFormProductUnit,
+      orderNumberProductUnits,
     },
     {
       handleAutoNumber,
@@ -60,6 +63,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
     close: onCloseCategoryModal,
     open: isOpenCategoryModal,
   } = modalFormCategory
+  const {
+    show: onOpenProductUnitModal,
+    close: onCloseProductUnitModal,
+    open: isOpenProductUnitModal,
+  } = modalFormProductUnit
 
   return (
     <div className="grid grid-cols-5 px-2">
@@ -237,6 +245,19 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               />
             </Form.Item>
           </Col>
+          <Col>
+            <Button
+              color="primary"
+              variant="outlined"
+              size="small"
+              onClick={() => onOpenProductUnitModal()}
+              style={{
+                margin: '4px 0 0 40px',
+              }}
+            >
+              {t('products.newRegistration')}
+            </Button>
+          </Col>
         </Row>
         <Row className="mb-4 flex">
           <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
@@ -400,6 +421,20 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           footer={null}
         >
           <ProductCategoryModal modalProps={modalFormCategory} />
+        </Modal>
+        <Modal
+          open={isOpenProductUnitModal}
+          onCancel={onCloseProductUnitModal}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
+          width={'25vw'}
+          title={t('product_combos.newRegistration')}
+          footer={null}
+        >
+          <ProductUnitModal
+            modalProps={modalFormProductUnit}
+            order={orderNumberProductUnits}
+          />
         </Modal>
       </div>
       <div className="col-span-1">

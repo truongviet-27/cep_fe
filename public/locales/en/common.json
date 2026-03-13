@@ -115,6 +115,8 @@
   },
   "notifications": {
     "success": "Success",
+    "proceedRecords": "Processed {recordAsString} records.",
+    "notProceedRecords": "Failed {recordAsString} records.",
     "editSuccess": "Edit Success",
     "deleteSuccess": "Delete Success",
     "deleteError": "Delete Success",

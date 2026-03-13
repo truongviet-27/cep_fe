@@ -5,6 +5,7 @@ import CreateFromTemplate from '@components/cep/estimates/quotas/action/componen
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
   QuotaStatus,
+  STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE,
   TRANSACTION_TYPES,
 } from '@components/cep/estimates/quotas/enum'
 import {
@@ -50,6 +51,7 @@ import {
   Empty,
   Form,
   Input,
+  notification,
   Popconfirm,
   Row,
   Select,
@@ -161,8 +163,12 @@ function QuotaList() {
       const isAgreedPriceDisabled =
         record.status === QuotaStatus.Completed &&
         record.has_agreed_price === true
+      const isRowDisabled =
+        !useApproveRoute &&
+        STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(record.status) > -1
       return {
-        disabled: isPermissionDisabled || isAgreedPriceDisabled,
+        disabled:
+          isPermissionDisabled || isAgreedPriceDisabled || isRowDisabled,
       }
     },
   }
@@ -648,27 +654,28 @@ function QuotaList() {
                   </DeleteButton>
                 )}
 
-              {record.status === QuotaStatus.SentToCustomer && (
-                <Button
-                  type="default"
-                  size="small"
-                  style={{
-                    color: '#FFFFFF',
-                    background: '#8207BA',
-                  }}
-                  onClick={() =>
-                    handleChangeStatus(
-                      'resend-email-to-customer',
-                      {
-                        quota_ids: [record.id],
-                      },
-                      'post',
-                    )
-                  }
-                >
-                  {t('quotas.actions.resend_email_to_customer')}
-                </Button>
-              )}
+              {(record.is_author || permission?.is_module_admin) &&
+                record.status === QuotaStatus.SentToCustomer && (
+                  <Button
+                    type="default"
+                    size="small"
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#8207BA',
+                    }}
+                    onClick={() =>
+                      handleChangeStatus(
+                        'resend-email-to-customer',
+                        {
+                          quota_ids: [record.id],
+                        },
+                        'post',
+                      )
+                    }
+                  >
+                    {t('quotas.actions.resend_email_to_customer')}
+                  </Button>
+                )}
 
               <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
                 <Button
@@ -1059,7 +1066,48 @@ function QuotaList() {
         method: 'put',
         url: `${apiUrl}/quotas/approval-steps`,
         successNotification: (data) => {
-          return notificationFunction(data?.data.message)
+          const idToCodeMap = new Map(
+            selectedRows.map((item: any) => [item.id, item.code]),
+          )
+          const successCodes =
+            data?.data?.results
+              ?.map((id: number) => idToCodeMap.get(id))
+              .filter(Boolean) ?? []
+
+          const errorCodes =
+            data?.data?.errors
+              ?.map((id: number) => idToCodeMap.get(id))
+              .filter(Boolean) ?? []
+
+          const formatCodes = (codes: string[], limit = 10) => {
+            if (codes.length <= limit) return codes.join(', ')
+            return `${codes.length}`
+          }
+
+          if (errorCodes.length) {
+            notification.open({
+              message: t('notifications.notProceedRecords', {
+                recordAsString: formatCodes(errorCodes),
+              }),
+              type: 'error',
+            })
+          }
+
+          if (successCodes.length) {
+            return notificationFunction(
+              t('notifications.proceedRecords', {
+                recordAsString: formatCodes(successCodes),
+              }),
+            )
+          }
+          return false
+        },
+        errorNotification: (data) => {
+          notification.open({
+            message: data?.message,
+            type: 'error',
+          })
+          return false
         },
       })
     } else if (Number(info.key) === 4) {
@@ -1149,6 +1197,7 @@ function QuotaList() {
           separator={<RightOutlined />}
         />
       }
+      loading={isPending}
     >
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
@@ -1503,6 +1552,20 @@ function QuotaList() {
         <CommonTable
           rowKey="id"
           rowSelection={rowSelection}
+          onRow={(record) => {
+            const isRowDisabled =
+              !useApproveRoute &&
+              STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(record.status) > -1
+            return {
+              style: isRowDisabled
+                ? {
+                    pointerEvents: 'none',
+                    opacity: 0.5,
+                    cursor: 'not-allowed',
+                  }
+                : {},
+            }
+          }}
           columns={columns}
           {...tableProps}
           scroll={undefined}
