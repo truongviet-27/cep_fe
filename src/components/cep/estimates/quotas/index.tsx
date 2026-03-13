@@ -654,27 +654,28 @@ function QuotaList() {
                   </DeleteButton>
                 )}
 
-              {record.status === QuotaStatus.SentToCustomer && (
-                <Button
-                  type="default"
-                  size="small"
-                  style={{
-                    color: '#FFFFFF',
-                    background: '#8207BA',
-                  }}
-                  onClick={() =>
-                    handleChangeStatus(
-                      'resend-email-to-customer',
-                      {
-                        quota_ids: [record.id],
-                      },
-                      'post',
-                    )
-                  }
-                >
-                  {t('quotas.actions.resend_email_to_customer')}
-                </Button>
-              )}
+              {(record.is_author || permission?.is_module_admin) &&
+                record.status === QuotaStatus.SentToCustomer && (
+                  <Button
+                    type="default"
+                    size="small"
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#8207BA',
+                    }}
+                    onClick={() =>
+                      handleChangeStatus(
+                        'resend-email-to-customer',
+                        {
+                          quota_ids: [record.id],
+                        },
+                        'post',
+                      )
+                    }
+                  >
+                    {t('quotas.actions.resend_email_to_customer')}
+                  </Button>
+                )}
 
               <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
                 <Button
