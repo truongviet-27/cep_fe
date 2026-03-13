@@ -212,10 +212,15 @@ const AgreedPriceQuotaTab = () => {
   const columns: ColumnsType<QuotaAgreedPrice> = useMemo(
     () => [
       {
-        title: t('agreed_prices.table.status'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.status')}
+          </div>
+        ),
         dataIndex: 'status',
         key: 'status',
         width: '7%',
+        align: 'center',
         onCell: () => ({
           style: { padding: '2px 2px', minWidth: 0, overflow: 'hidden' },
         }),
@@ -247,10 +252,15 @@ const AgreedPriceQuotaTab = () => {
         },
       },
       {
-        title: t('agreed_prices.table.estimate_number'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.estimate_number')}
+          </div>
+        ),
         dataIndex: 'quota_code',
         key: 'quota_code',
         width: '8%',
+        align: 'center',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -291,10 +301,15 @@ const AgreedPriceQuotaTab = () => {
         ),
       },
       {
-        title: t('agreed_prices.table.category'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.category')}
+          </div>
+        ),
         dataIndex: 'category',
         key: 'category',
         width: '6%',
+        align: 'center',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -314,9 +329,14 @@ const AgreedPriceQuotaTab = () => {
         },
       },
       {
-        title: t('agreed_prices.table.customer'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.customer')}
+          </div>
+        ),
         key: 'customer_name',
         width: '12%',
+        align: 'center',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -338,9 +358,14 @@ const AgreedPriceQuotaTab = () => {
         },
       },
       {
-        title: t('agreed_prices.table.creator'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.creator')}
+          </div>
+        ),
         key: 'created_by_name',
         width: '10%',
+        align: 'center',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -362,33 +387,39 @@ const AgreedPriceQuotaTab = () => {
         },
       },
       {
-        title: t('agreed_prices.table.product_count'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.product_count')}
+          </div>
+        ),
         dataIndex: 'number_products',
         key: 'number_products',
         width: '6%',
-        align: 'right',
+        align: 'center',
       },
       {
         title: (
-          <Tooltip
-            title={`${t('agreed_prices.table.department')} / ${t('agreed_prices.table.amount')}`}
-          >
-            <div
-              className="flex flex-col"
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
+          <div style={{ textAlign: 'center' }}>
+            <Tooltip
+              title={`${t('agreed_prices.table.department')} / ${t('agreed_prices.table.amount')}`}
             >
-              <span>{t('agreed_prices.table.department')}</span>
-              <span>{t('agreed_prices.table.amount')}</span>
-            </div>
-          </Tooltip>
+              <div
+                className="flex flex-col"
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span>{t('agreed_prices.table.department')}</span>
+                <span>{t('agreed_prices.table.amount')}</span>
+              </div>
+            </Tooltip>
+          </div>
         ),
         dataIndex: 'total_price',
         key: 'total_price',
-        align: 'right',
+        align: 'center',
         minWidth: 180,
         onCell: () => ({
           style: {
@@ -405,7 +436,7 @@ const AgreedPriceQuotaTab = () => {
           const deptName = (record.creator as any)?.department_name
           const amountStr = formatNumberWithCommas(totalPrice)
           return (
-            <div>
+            <div style={{ textAlign: 'center' }}>
               {deptName && (
                 <Typography.Text
                   ellipsis={{ tooltip: deptName }}
@@ -422,7 +453,11 @@ const AgreedPriceQuotaTab = () => {
               )}
               <Typography.Text
                 ellipsis={{ tooltip: amountStr }}
-                style={{ display: 'block', width: '100%', textAlign: 'right' }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'center',
+                }}
               >
                 {amountStr}
               </Typography.Text>
@@ -432,13 +467,14 @@ const AgreedPriceQuotaTab = () => {
       },
       {
         title: (
-          <div>
+          <div style={{ textAlign: 'center' }}>
             <div style={{ color: '#2784FF' }}>適用開始</div>
             <div style={{ color: '#FF6918' }}>適用終了</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',
         width: '10%',
+        align: 'center',
         render: (_, record: any) => {
           let calculatedStatus = ''
           const validToDate = record.valid_to
@@ -450,7 +486,7 @@ const AgreedPriceQuotaTab = () => {
             t,
           )
           return (
-            <div>
+            <div style={{ textAlign: 'center' }}>
               {!record?.is_unlimited ? (
                 <>
                   <div>
@@ -472,16 +508,21 @@ const AgreedPriceQuotaTab = () => {
         },
       },
       {
-        title: '更新',
+        title: <div style={{ textAlign: 'center' }}>更新</div>,
         dataIndex: 'number_updating',
         key: 'number_updating',
         width: '5%',
         align: 'center',
       },
       {
-        title: t('agreed_prices.table.operation'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.operation')}
+          </div>
+        ),
         key: 'operation',
         width: '22%',
+        align: 'center',
         render: (_: unknown, record: QuotaAgreedPrice) => (
           <Space wrap size={4}>
             <ShowButton
