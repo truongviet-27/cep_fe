@@ -61,6 +61,7 @@ function AddressContact(
           label={boldText(t('customers.show.postal_code'))}
           name="post_code"
           rules={[rule]}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Input
             style={{ maxWidth: 560 }}
@@ -68,6 +69,7 @@ function AddressContact(
           />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           required
           label={boldText(t('customers.show.address'))}
           name="address"
@@ -76,6 +78,7 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.building_name'))}
           name="building"
           rules={[rule]}
@@ -83,6 +86,7 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.phone'))}
           name="phone"
           rules={[rule]}
@@ -90,6 +94,7 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.fax'))}
           name="fax"
           rules={[rule]}
@@ -98,6 +103,7 @@ function AddressContact(
         </Form.Item>
 
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.delivery.email'))}
           name="mail"
           rules={[rule]}
@@ -105,7 +111,10 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
 
-        <Form.Item label={boldText(t('customers.show.industry'))}>
+        <Form.Item
+          label={boldText(t('customers.show.industry'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+        >
           <Row align="middle" gutter={8}>
             <Col>
               <Form.Item name="industry" rules={[rule]}>
@@ -134,6 +143,7 @@ function AddressContact(
 
         <Form.Item
           className={'!-mt-3'}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.listing_classification'))}
           name="listing_classification"
           rules={[rule]}
@@ -146,6 +156,7 @@ function AddressContact(
           />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.date_of_establishment'))}
           name="date_of_establishment"
           rules={[rule]}
@@ -161,7 +172,10 @@ function AddressContact(
             }
           />
         </Form.Item>
-        <Form.Item label={boldText(t('customers.show.department_in_charge'))}>
+        <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+          label={boldText(t('customers.show.department_in_charge'))}
+        >
           <Row gutter={8} align={'middle'}>
             <Col>
               <CoreAutocompleteAPI
