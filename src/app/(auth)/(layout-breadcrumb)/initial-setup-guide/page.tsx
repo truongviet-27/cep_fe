@@ -4,6 +4,7 @@ import { RightOutlined } from '@ant-design/icons'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { useList, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
+import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Typography } from 'antd'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -126,17 +127,12 @@ export default function InitialSetupGuidePage() {
   const breadcrumbItems = useMemo(
     () => [
       {
-        title: (
-          <span style={{ color: '#8c8c8c' }}>
-            {t('initial-setup-guide.breadcrumb_root')}
-          </span>
-        ),
+        title: boldText(t('initial-setup-guide.breadcrumb_root')),
       },
       {
-        title: (
-          <span style={{ fontWeight: 'bold', color: PRIMARY }}>
-            {t(`initial-setup-guide.menu.${selectedItem.id}.breadcrumb_label`)}
-          </span>
+        title: boldText(
+          t(`initial-setup-guide.menu.${selectedItem.id}.breadcrumb_label`),
+          PRIMARY,
         ),
       },
     ],
@@ -162,10 +158,7 @@ export default function InitialSetupGuidePage() {
           paddingRight: 18,
         }}
       >
-        <Breadcrumbs
-          items={breadcrumbItems}
-          separator={<RightOutlined style={{ fontSize: 10 }} />}
-        />
+        <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       </div>
 
       <div

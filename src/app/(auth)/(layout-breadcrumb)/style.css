@@ -216,6 +216,10 @@
     border-color: #ff4d4f !important;
   }
 
+  .initial-setup-guide-progress-with-border .ant-progress-inner {
+    border: 1px solid #fff;
+    border-radius: 3px;
+  }
   /* Status card hover effect */
   .status-card-hover:hover {
     background: #e6f7ff !important;
