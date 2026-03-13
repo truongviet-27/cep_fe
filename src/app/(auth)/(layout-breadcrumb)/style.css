@@ -215,4 +215,9 @@
   .ant-picker-status-error {
     border-color: #ff4d4f !important;
   }
+
+  .initial-setup-guide-progress-with-border .ant-progress-inner {
+    border: 1px solid #fff;
+    border-radius: 3px;
+  }
 }

@@ -106,15 +106,16 @@ export default function SidebarMenu({
                     {t('initial-setup-guide.progress_status')}
                   </Text>
                   <Flex align="center" gap={8}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{ flex: 1, minWidth: 0 }}
+                      className="initial-setup-guide-progress-with-border"
+                    >
                       <Progress
                         percent={percent}
                         size="small"
                         showInfo={false}
-                        strokeColor={isSelected ? '#fff' : undefined}
-                        trailColor={
-                          isSelected ? 'rgba(255,255,255,0.3)' : undefined
-                        }
+                        strokeColor="#007bff"
+                        trailColor="#f0f0f0"
                       />
                     </div>
                     {countText != null && (

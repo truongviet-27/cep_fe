@@ -199,7 +199,7 @@ export default function GuideContent({
       ) : (
         <Card
           size="small"
-          bordered
+          bordered={selectedItem.id !== 'basic'}
           style={{
             flex: 1,
             minHeight: 0,
@@ -323,6 +323,7 @@ export default function GuideContent({
                     onStatusChange={handleStatusChange}
                     updating={updatingId === manual.id}
                     isComplete={isComplete}
+                    disableStatusChange={manual.step === 1}
                   />
                 )
               })}
