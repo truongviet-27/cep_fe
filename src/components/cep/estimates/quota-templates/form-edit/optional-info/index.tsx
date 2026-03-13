@@ -40,7 +40,10 @@ const OptionalInfo: FC = () => {
 
   useEffect(() => {
     if (isModalOpen) {
-      form?.setFieldsValue({ category_id: null, parent: undefined })
+      form?.setFieldsValue({
+        category_id: null,
+        parent: undefined,
+      } as Parameters<NonNullable<typeof form>['setFieldsValue']>[0])
     }
   }, [isModalOpen, form])
 
