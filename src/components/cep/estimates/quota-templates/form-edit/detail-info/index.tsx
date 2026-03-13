@@ -163,7 +163,6 @@ function DetailInfo({
                   return form.getFieldValue([
                     'main_product',
                     record.index,
-
                     'code',
                   ])
                 }
@@ -207,10 +206,8 @@ function DetailInfo({
                           )
                           if (isDuplicate) {
                             notification.error({
-                              message: t(
-                                'quotas.action.detail_info.duplicate_product',
-                              ),
-                              key: `code-main-product`,
+                              message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                              key: `${currentCode}-code-main-product`,
                               placement: 'topRight',
                             })
                             return Promise.reject()
@@ -348,10 +345,8 @@ function DetailInfo({
                           )
                           if (isDuplicate) {
                             notification.error({
-                              message: t(
-                                'quotas.action.detail_info.duplicate_product',
-                              ),
-                              key: `name-main-product`,
+                              message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                              key: `${currentName}-name-main-product`,
                               placement: 'topRight',
                             })
                             return Promise.reject()
