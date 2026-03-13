@@ -198,20 +198,6 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
               {t('buttons.edit')}
             </EditButton>
           )}
-          <Button
-            type="default"
-            size="small"
-            icon={null}
-            style={{
-              color: '#FFFFFF',
-              background: '#0161D3',
-            }}
-            onClick={() => {
-              go({ to: '/quotas/create?templateId=' + record.id })
-            }}
-          >
-            {t('quota_templates.list.createFromTemplate')}
-          </Button>
           {(permission?.is_module_admin ||
             permission?.user?.id === record.author?.id) && (
             <DeleteButton
@@ -228,6 +214,20 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
               {t('buttons.delete')}
             </DeleteButton>
           )}
+          <Button
+            type="default"
+            size="small"
+            icon={null}
+            style={{
+              color: '#2784FF',
+              borderColor: '#2784FF',
+            }}
+            onClick={() => {
+              go({ to: '/quotas/create?templateId=' + record.id })
+            }}
+          >
+            {t('quota_templates.list.createFromTemplate')}
+          </Button>
         </Space>
       ),
     },
