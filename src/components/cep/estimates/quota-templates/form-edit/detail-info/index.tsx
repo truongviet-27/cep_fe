@@ -26,7 +26,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
@@ -52,6 +52,16 @@ function DetailInfo({
   } = useController()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [categoryModalKey, setCategoryModalKey] = useState(0)
+
+  useEffect(() => {
+    if (isModalOpen) {
+      form?.setFieldsValue({
+        category_id: null,
+        parent: undefined,
+      } as Parameters<NonNullable<typeof form>['setFieldsValue']>[0])
+    }
+  }, [isModalOpen, form])
 
   const t = useTranslate()
 
@@ -903,7 +913,13 @@ function DetailInfo({
                   marginBottom: 10,
                 }}
               >
-                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setCategoryModalKey((k) => k + 1)
+                    setIsModalOpen(true)
+                  }}
+                >
                   カテゴリから入力
                 </Button>
               </Flex>
@@ -1071,6 +1087,7 @@ function DetailInfo({
         footer={null}
       >
         <ProductCategoryModal
+          key={categoryModalKey}
           name="main_product"
           close={() => setIsModalOpen(false)}
         />

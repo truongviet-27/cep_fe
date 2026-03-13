@@ -279,7 +279,7 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
-        width: '20%',
+        width: '16%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -328,7 +328,7 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        width: '6%',
+        width: '10%',
         onCell: () => ({
           style: {
             padding: '2px 2px',

@@ -18,7 +18,7 @@ import {
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { type FC, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
@@ -36,6 +36,13 @@ const OptionalInfo: FC = () => {
     onChangeProductName,
   } = useController()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [categoryModalKey, setCategoryModalKey] = useState(0)
+
+  useEffect(() => {
+    if (isModalOpen) {
+      form?.setFieldsValue({ category_id: null, parent: undefined })
+    }
+  }, [isModalOpen, form])
 
   return (
     <div style={{ marginTop: 8 }}>
@@ -827,7 +834,13 @@ const OptionalInfo: FC = () => {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setCategoryModalKey((k) => k + 1)
+                    setIsModalOpen(true)
+                  }}
+                >
                   カテゴリから入力
                 </Button>
               </Flex>
@@ -853,6 +866,7 @@ const OptionalInfo: FC = () => {
         footer={null}
       >
         <ProductCategoryModal
+          key={categoryModalKey}
           name="optional_product"
           close={() => setIsModalOpen(false)}
         />
