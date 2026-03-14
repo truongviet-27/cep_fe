@@ -229,7 +229,8 @@ const BasicInfo = ({
     if (
       codeIssueSetting?.data?.issue_method === 'automatic' &&
       !form.getFieldValue('code') &&
-      !isCloneVersion
+      !isCloneVersion &&
+      !isEdit
     ) {
       refetchIssueSetting().then(({ data: latestData }) => {
         const code = latestData?.data?.preview_code
@@ -238,7 +239,7 @@ const BasicInfo = ({
         }
       })
     }
-  }, [codeIssueSetting?.data?.issue_method, form, refetchIssueSetting])
+  }, [codeIssueSetting?.data?.issue_method, form, refetchIssueSetting, isEdit])
 
   const handleOpenContactModal = async () => {
     if (!selectedCustomerId) {
