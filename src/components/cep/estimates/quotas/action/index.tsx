@@ -487,7 +487,11 @@ function QuotaAction() {
         }
         form.setFieldsValue({
           ...basicData,
-          code: isEdit ? dataBasicInfo.data.code : '',
+          code: isEdit
+            ? dataBasicInfo.data.code
+            : isCloneNew
+              ? form.getFieldValue('code') || ''
+              : '',
           customer: customerField,
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
           tax_rounding_method: data?.data?.tax_rounding_method,
