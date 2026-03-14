@@ -169,7 +169,7 @@ export const useBootstrap = () => {
       setParameterSettings(dataConvert)
       setIsLoggedIn(true)
       if (permission?.is_first_login) {
-        router.push('/initial-setup-guide')
+        router.replace('/initial-setup-guide')
         return
       }
     } catch (error) {
