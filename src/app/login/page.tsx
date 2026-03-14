@@ -9,14 +9,17 @@ export default function LoginPage() {
   const { mutate: login } = useLogin()
   const go = useGo()
   const isLoggedIn = useUserStore((state) => state.isLoggedIn)
+  const permission = useUserStore((state) => state.permission)
 
   useLayoutEffect(() => {
     if (isLoggedIn) {
-      go({ to: '/quotas' })
+      go({
+        to: permission?.is_first_login ? '/initial-setup-guide' : '/quotas',
+      })
     } else {
       login({})
     }
-  }, [login])
+  }, [login, permission?.is_first_login])
 
   return <LoadingPage />
 }
