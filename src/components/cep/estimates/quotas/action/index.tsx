@@ -13,7 +13,7 @@ import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { DeleteButton, useForm } from '@refinedev/antd'
+import { useForm } from '@refinedev/antd'
 import type { CrudFilter } from '@refinedev/core'
 import {
   useApiUrl,
@@ -1189,17 +1189,6 @@ function QuotaAction() {
               >
                 {action === 'edit' ? t('buttons.save') : t('buttons.create')}
               </Button>
-              {isEdit && (
-                <DeleteButton
-                  icon={null}
-                  onSuccess={() => {
-                    go({
-                      to: '/quotas',
-                    })
-                  }}
-                  autoInsertSpace={false}
-                />
-              )}
             </Space>
           </Flex>
         </Form>
