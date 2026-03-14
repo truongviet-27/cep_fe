@@ -109,7 +109,9 @@ export default function AuthHeader({
                 <div className="flex cursor-pointer items-start justify-end gap-1">
                   <div className="flex flex-col gap-[2px]">
                     <span className="max-w-[180px] truncate text-[12px] font-medium text-gray-900">
-                      {session?.data?.user?.name ?? ''}
+                      {permission?.user?.name ??
+                        session?.data?.user?.name ??
+                        ''}
                     </span>
                     <span className="text-[12px] text-gray-400">
                       {permission?.role?.display_name ?? ''}
