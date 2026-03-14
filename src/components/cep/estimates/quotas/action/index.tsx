@@ -563,9 +563,9 @@ function QuotaAction() {
         tax_rate: quoteTemplate?.tax_rate,
         note: quoteTemplate?.note,
         tax_rounding_method: data?.data?.tax_rounding_method,
-        department_id: departmentData?.data.id,
-        department_name: departmentData?.data.department_name,
         customer_term: quoteTemplate?.customer_term,
+        department_id: departmentData?.data?.id,
+        department_name: departmentData?.data?.name,
         approve_routes: parameterSettings?.get('approve-routes')
           ? departmentData?.data.approve_routes || []
           : [],
