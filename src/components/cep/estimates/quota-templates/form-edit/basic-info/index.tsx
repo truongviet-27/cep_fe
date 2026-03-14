@@ -47,7 +47,8 @@ const BasicInfo = () => {
                 {t('quota_templates.form.label.quote_number')}
               </label>
             }
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             required={true}
             layout="horizontal"
             disabled
@@ -58,12 +59,20 @@ const BasicInfo = () => {
             name="description"
             label={t('quota_templates.form.label.description')}
             layout="horizontal"
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
           />
         </Col>
       </Row>
       <Row gutter={[100, 0]}>
-        <Col xs={24} sm={16} md={5} lg={5} xl={5}>
+        <Col
+          xs={24}
+          sm={16}
+          md={5}
+          lg={5}
+          xl={5}
+          style={{ paddingRight: '5px' }}
+        >
           {/* Row 2: 見積タイプ (非表示) + 取引条件 + カテゴリ + 見積日(cột phải) */}
           <Form.Item
             className="hidden"
@@ -94,7 +103,8 @@ const BasicInfo = () => {
           </Form.Item>
           <Form.Item
             required
-            labelCol={{ span: 10 }}
+            labelCol={{ span: 11 }}
+            wrapperCol={{ span: 16 }}
             name={'customer_term'}
             label={boldText(t('quotas.action.basic_info.fields.customer_term'))}
             rules={[
@@ -124,13 +134,14 @@ const BasicInfo = () => {
           md={5}
           lg={5}
           xl={5}
-          style={{ paddingLeft: '10px' }}
+          style={{ paddingRight: '5px' }}
         >
           <Form.Item
             label={boldText(t('quota_templates.form.label.quote_transaction'))}
             colon={false}
             required
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             name="category"
             rules={[
               {
@@ -161,7 +172,8 @@ const BasicInfo = () => {
                 {t('quota_templates.form.label.quote_date')}
               </span>,
             )}
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             colon={false}
           >
             <DatePicker placeholder="YYYY/MM/DD" className="!w-full" disabled />
@@ -177,7 +189,8 @@ const BasicInfo = () => {
             label={t('quota_templates.form.label.template_name')}
             required={true}
             layout="horizontal"
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             rules={[
               {
                 required: true,
@@ -191,7 +204,8 @@ const BasicInfo = () => {
             name="delivery_method"
             label={t('quota_templates.form.label.delivery_method')}
             layout="horizontal"
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
           />
         </Col>
       </Row>
@@ -205,7 +219,8 @@ const BasicInfo = () => {
                 {t('quota_templates.form.label.customer')}
               </span>,
             )}
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             colon={false}
           >
             <Select disabled />
@@ -216,7 +231,8 @@ const BasicInfo = () => {
           <Form.Item
             name="payment_due_date"
             label={boldText(t('quota_templates.form.label.payment_due_date'))}
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             colon={false}
           >
             <Select
@@ -237,7 +253,8 @@ const BasicInfo = () => {
                 {t('quota_templates.form.label.delivery_date')}
               </span>,
             )}
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             colon={false}
           >
             <DatePicker placeholder="YYYY/MM/DD" className="!w-full" disabled />
@@ -246,7 +263,8 @@ const BasicInfo = () => {
         <Col xs={24} sm={16} md={10} xl={10} xxl={10}>
           <Form.Item
             label={boldText(t('quota_templates.form.label.validity_period'))}
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             colon={false}
           >
             <Flex>
