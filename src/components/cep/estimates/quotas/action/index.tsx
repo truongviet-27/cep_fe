@@ -487,7 +487,11 @@ function QuotaAction() {
         }
         form.setFieldsValue({
           ...basicData,
-          code: isEdit ? dataBasicInfo.data.code : '',
+          code: isEdit
+            ? dataBasicInfo.data.code
+            : isCloneNew
+              ? form.getFieldValue('code') || ''
+              : '',
           customer: customerField,
           customer_contact_id: dataBasicInfo.data.customer_contact_id,
           tax_rounding_method: data?.data?.tax_rounding_method,
@@ -563,9 +567,9 @@ function QuotaAction() {
         tax_rate: quoteTemplate?.tax_rate,
         note: quoteTemplate?.note,
         tax_rounding_method: data?.data?.tax_rounding_method,
-        department_id: departmentData?.data.id,
-        department_name: departmentData?.data.department_name,
         customer_term: quoteTemplate?.customer_term,
+        department_id: departmentData?.data?.id,
+        department_name: departmentData?.data?.name,
         approve_routes: parameterSettings?.get('approve-routes')
           ? departmentData?.data.approve_routes || []
           : [],
