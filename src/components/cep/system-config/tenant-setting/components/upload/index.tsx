@@ -32,7 +32,7 @@ function UploadSetting({
 }: {
   name: string
   fileListProp: UploadFile[] | null
-  initialUrl: string
+  initialUrl: string | null
   aspect?: number
 }) {
   const form = Form.useFormInstance()
@@ -171,10 +171,15 @@ function UploadSetting({
   }
 
   useEffect(() => {
+    const currentFieldValue = form.getFieldValue(name)
+
+    if (currentFieldValue instanceof File) {
+      return
+    }
+
     if (fileListProp && fileListProp.length > 0) {
       setFileList(fileListProp)
-    } else if (initialUrl && fileList.length === 0) {
-      // Chỉ set initialUrl nếu chưa có file nào được upload
+    } else if (initialUrl && typeof initialUrl === 'string') {
       setFileList([
         {
           uid: '-1',
@@ -183,8 +188,10 @@ function UploadSetting({
           url: initialUrl,
         },
       ])
+    } else {
+      setFileList([])
     }
-  }, [fileListProp, initialUrl]) // Thêm initialUrl vào dependency
+  }, [fileListProp, initialUrl, form, name])
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
