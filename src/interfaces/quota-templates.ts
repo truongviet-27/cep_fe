@@ -1,12 +1,14 @@
 import type {
   QuotaTemplateProductItemRequest,
   QuotaTemplateStoreRequest,
+  RoundingMethodEnumType,
 } from '@sdk/hey-api'
 import type { Dayjs } from 'dayjs'
 
 export type QuotaTemplateFormType = QuotaTemplateStoreRequest & {
   total_cost: number
   total_price_tax_included: number
+  tax_rounding_method: RoundingMethodEnumType
   total_profit_margin: number
   total_tax: number
   consumption_tax_amount: number
@@ -109,6 +111,7 @@ export type QuoteTemplateDetailType = {
   number_product?: number
   total_price: number
   total_price_tax_included: number
+  tax_rounding_method: RoundingMethodEnumType
   total_profit_margin: number
   tax_rate_group?: Array<{
     /**

@@ -201,6 +201,7 @@ export const useCustomerCreate = () => {
     },
     config: {
       filters: queryOptions,
+      query: { only_enabled_approve_routes: '1' },
     },
   })
 

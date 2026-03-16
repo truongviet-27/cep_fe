@@ -33,6 +33,11 @@
       "number_product": "商品数: {number_product}点",
       "place_holder": "テンプレート名で検索..."
     },
+    "confirmTaxRoundingMethod": {
+      "title": "税金の端数の設定が変更されました。適用しますか。",
+      "cancelText": "適用しない",
+      "okText": "適用する"
+    },
     "createFromOldQuota": {
       "quota_code": "見積番号",
       "number_product": "商品数",

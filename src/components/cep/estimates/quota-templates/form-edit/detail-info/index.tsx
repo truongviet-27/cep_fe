@@ -6,7 +6,6 @@ import { Action } from '@components/common/action'
 import ProductSelect from '@components/common/product-select'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
-import type { RoundingMethodEnumType } from '@sdk/hey-api'
 import { calculateTax } from '@shared/tax/tax.utils'
 import { PRIMARY } from '@utility/color'
 import {
@@ -26,6 +25,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
+import type { FC } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
@@ -34,11 +34,7 @@ import { useController } from './controller'
 
 const { Title, Text } = Typography
 
-function DetailInfo({
-  taxRoundingMethod,
-}: {
-  taxRoundingMethod: RoundingMethodEnumType
-}) {
+const DetailInfo: FC = () => {
   const {
     form,
     mainProducts,
@@ -53,6 +49,7 @@ function DetailInfo({
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [categoryModalKey, setCategoryModalKey] = useState(0)
+  const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
 
   useEffect(() => {
     if (isModalOpen) {
@@ -107,7 +104,7 @@ function DetailInfo({
     return Object.entries(totalByTaxRate).map(
       ([taxRateKey, group]: [string, any]) => {
         const rawTax = (group.sellingTotal * group.taxRate) / 100
-        const roundedTax = calculateTax(rawTax, taxRoundingMethod)
+        const roundedTax = calculateTax(rawTax, taxRoundingMethodWatch)
         return {
           taxRate: parseFloat(taxRateKey),
           total: roundedTax.toString(),
@@ -120,7 +117,7 @@ function DetailInfo({
     const taxRate = calculateGroupedTotal(dataSource)
     form.setFieldValue('tax_rate_group', taxRate)
     return taxRate
-  }, [dataSource, taxRoundingMethod])
+  }, [dataSource, taxRoundingMethodWatch])
 
   return (
     <div style={{ marginBottom: 32 }}>

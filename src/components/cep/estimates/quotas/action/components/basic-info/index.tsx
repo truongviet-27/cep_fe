@@ -282,10 +282,9 @@ const BasicInfo = ({
 
   const { show, close, open } = modalFormProps
 
-  console.log('dhasjdashdajsdad', form.getFieldValue('code'))
-
   return (
     <Card
+      className="quotas-basic-info-card"
       title={boldText(t('quotas.action.basic_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',

@@ -225,7 +225,7 @@ function TenantSetting() {
               } as QuotaFormSettingResponse)
             }}
           >
-            {'キャンセル'}
+            {t('buttons.clear')}
           </Button>
           <Button
             type="default"
