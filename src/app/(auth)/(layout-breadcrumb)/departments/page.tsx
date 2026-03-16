@@ -229,9 +229,10 @@ export default function Page() {
               recordItemId={record.id}
               resource="departments"
               style={{
-                color: '#2784FF',
-                borderColor: '#2784FF',
+                color: isDefaultDepartment ? '#999999' : '#2784FF',
+                borderColor: isDefaultDepartment ? '#d9d9d9' : '#2784FF',
               }}
+              disabled={isDefaultDepartment}
             >
               {t('buttons.show')}
             </ShowButton>
@@ -241,9 +242,11 @@ export default function Page() {
               icon={null}
               recordItemId={record.id}
               resource="departments"
+              disabled={isDefaultDepartment}
               style={{
-                color: '#FFFFFF',
-                background: '#1FDB51',
+                color: isDefaultDepartment ? '#999999' : '#FFFFFF',
+                background: isDefaultDepartment ? '#d9d9d9' : '#1FDB51',
+                borderColor: isDefaultDepartment ? '#d9d9d9' : '#1FDB51',
               }}
             >
               {t('buttons.edit')}
@@ -256,8 +259,9 @@ export default function Page() {
               resource="departments"
               disabled={isDefaultDepartment}
               style={{
-                color: '#FFFFFF',
-                background: '#E74C3C',
+                color: isDefaultDepartment ? '#999999' : '#FFFFFF',
+                background: isDefaultDepartment ? '#d9d9d9' : '#E74C3C',
+                borderColor: isDefaultDepartment ? '#d9d9d9' : '#E74C3C',
               }}
             >
               {t('buttons.delete')}
