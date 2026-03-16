@@ -286,6 +286,7 @@ const BasicInfo = ({
 
   return (
     <Card
+      className="quotas-basic-info-card"
       title={boldText(t('quotas.action.basic_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
