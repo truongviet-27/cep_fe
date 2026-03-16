@@ -45,12 +45,10 @@ const { Text } = Typography
 
 function DetailInfo({
   productPrincing,
-  taxRoundingMethod,
   // handleChangeProductPrincing,
   mainProduct,
 }: {
   productPrincing?: number[]
-  taxRoundingMethod: RoundingMethodEnumType
   // handleChangeProductPrincing: (productIds: number[]) => void
   mainProduct: any
 }) {
@@ -63,7 +61,7 @@ function DetailInfo({
   const taxRateWatch = Form.useWatch('tax_rate', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
   const customerWatch = Form.useWatch('customer', form)
-  const costPriceWatch = Form.useWatch('cost_price', form)
+  const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
@@ -103,7 +101,7 @@ function DetailInfo({
     let taxTotal = 0
     Object.values(taxGroups).forEach((group) => {
       const rawTax = (group.selling * group.taxRate) / 100
-      taxTotal += calculateTax(rawTax, taxRoundingMethod)
+      taxTotal += calculateTax(rawTax, taxRoundingMethodWatch)
     })
 
     const sellTotalWithTax = sellTotal + taxTotal
@@ -112,7 +110,6 @@ function DetailInfo({
       sellTotal > 0
         ? Number((((sellTotal - costTotal) / sellTotal) * 100).toFixed(2))
         : 0
-
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
     setProfitRate(hasNullCost ? 0 : profitRate)
@@ -228,7 +225,7 @@ function DetailInfo({
     return Object.entries(totalByTaxRate).map(
       ([taxRateKey, group]: [string, any]) => {
         const rawTax = (group.sellingTotal * group.taxRate) / 100
-        const roundedTax = calculateTax(rawTax, taxRoundingMethod)
+        const roundedTax = calculateTax(rawTax, taxRoundingMethodWatch)
         return {
           taxRate: parseFloat(taxRateKey),
           total: roundedTax.toString(),
@@ -241,7 +238,7 @@ function DetailInfo({
     const taxRate = calculateGroupedTotal(dataSource)
     form.setFieldValue('tax_rate_group', taxRate)
     return taxRate
-  }, [dataSource, taxRoundingMethod])
+  }, [dataSource, taxRoundingMethodWatch])
 
   const apiUrl = useApiUrl()
 

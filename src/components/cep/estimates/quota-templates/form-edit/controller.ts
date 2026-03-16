@@ -114,11 +114,14 @@ export function useController() {
   })
 
   useEffect(() => {
-    // quota template, thi lay setting lam tron thue tu tenant
-    if (data?.data) {
+    // neu update thi lay setting cua template
+    if (isUpdateMode && form) {
+      // neu khong thi lay setting cua tenant setting
+      setTaxRoundingMethod(form.getFieldValue('tax_rounding_method'))
+    } else if (data?.data) {
       setTaxRoundingMethod(data.data.tax_rounding_method)
     }
-  }, [data?.data])
+  }, [data?.data, isUpdateMode, form])
   useEffect(() => {
     if (!isUpdateMode && data?.data) {
       form.setFieldsValue({
@@ -135,7 +138,7 @@ export function useController() {
         consumption_tax: data?.data.consumption_tax ?? '0',
         customer_term: 'short_term',
         tax_rate: data?.data.tax_rate,
-        tax_rounding_method: data.data?.tax_rounding_method,
+        tax_rounding_method: taxRoundingMethod,
         tax_rate_group: {},
         note: null,
         tags: [],
@@ -187,7 +190,7 @@ export function useController() {
         ],
       })
     }
-  }, [data])
+  }, [data, taxRoundingMethod])
 
   const handleSaveDraft = () => {
     const values: any = form.getFieldsValue()
@@ -241,7 +244,6 @@ export function useController() {
 
     const draft: any = dataQuotaTemplateDraft.data[0]
     const draftPayload = draft.payload || draft
-
     form.setFieldsValue({
       ...draftPayload,
       payment_due_date: draftPayload?.payment_due_date,
@@ -255,7 +257,6 @@ export function useController() {
   }
 
   return {
-    taxRoundingMethod,
     isUpdateMode,
     methods,
     isLoading: isUpdateMode && (query?.isLoading || query?.isFetching),
