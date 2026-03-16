@@ -119,7 +119,7 @@ export default function Page() {
         />
         <Table.Column
           dataIndex={['hash_dash']}
-          title={<b>_</b>}
+          title={t('code_issue_settings.fields.hash')}
           width="5%"
           render={(value) => value && <BooleanField value={!!value} />}
         />
