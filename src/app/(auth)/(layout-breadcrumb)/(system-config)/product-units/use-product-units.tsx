@@ -15,10 +15,10 @@ import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Input, Space, Switch, Typography } from 'antd'
+import { Button, Input, Modal, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isString } from 'lodash'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { TagRow } from '@app/(auth)/(layout-breadcrumb)/(system-config)/tags/use-tags'
 
@@ -41,7 +41,7 @@ export default function useProductUnits() {
   const t = useTranslate()
   const { resource } = useResource()
   const { hasFullAccessModule } = useUserStore.getState()
-  const [pageSize, setPageSize] = React.useState(10)
+  const [pageSize, setPageSize] = React.useState(20)
   const [totalPage, setTotalPage] = React.useState(0)
   const forceUpdate = useRef(false)
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_UNIT_EDIT)
@@ -54,6 +54,7 @@ export default function useProductUnits() {
     pageCount,
     tableQuery,
   } = useTable<UnitRow>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => {
       if (values.name_lk) {
@@ -85,6 +86,34 @@ export default function useProductUnits() {
 
   const { mutate: updateAll, isLoading: savingAll } = useCustomMutation()
 
+  const [edited, setEdited] = useState<boolean>(false)
+
+  const checkIfEdited = () => {
+    const currentRows = getValues('rows') || []
+
+    // check if there is any row being edited or new
+    const hasEditingOrNew = currentRows.some((r) => r._isNew || r._isEditing)
+    if (hasEditingOrNew) {
+      setEdited(true)
+      return
+    }
+
+    // check if the order has changed (compared to the original data from server)
+    const originalIds = originalOrderRef.current
+      .map((r) => r.id)
+      .filter(Boolean)
+    const currentIds = currentRows.map((r) => r.id).filter(Boolean)
+
+    // if the length is different or the order is different
+    if (originalIds.length !== currentIds.length) {
+      setEdited(true)
+      return
+    }
+
+    const orderChanged = originalIds.some((id, idx) => id !== currentIds[idx])
+    setEdited(orderChanged)
+  }
+
   const handleUpdateOrdering = (values: UnitRow[]) => {
     updateAll({
       url: `${apiUrl}/${resource?.name}/upsert`,
@@ -100,6 +129,8 @@ export default function useProductUnits() {
             __index: String(index),
           })),
         })
+        originalOrderRef.current = values
+        setEdited(false)
 
         return {
           message: t('notifications.success'),
@@ -130,6 +161,7 @@ export default function useProductUnits() {
   }
 
   const originalRef = useRef<Record<string, UnitRow>>({})
+  const originalOrderRef = useRef<UnitRow[]>([])
   const preserveNewRowsRef = useRef<
     Array<{ row: UnitRow; originalIndex: number }>
   >([])
@@ -139,8 +171,8 @@ export default function useProductUnits() {
 
   useEffect(() => {
     if (forceUpdate.current) {
-      setPageSize(10)
-      setPageSize2(10)
+      setPageSize(20)
+      setPageSize2(20)
     }
     const ds = (tableProps?.dataSource as UnitRow[]) ?? []
     const rowsToSet = ds.map((r, index) => ({
@@ -169,6 +201,8 @@ export default function useProductUnits() {
     }
 
     reset({ rows: rowsToSet })
+    originalOrderRef.current = rowsToSet
+    setEdited(false)
   }, [tableProps?.dataSource, current])
 
   const breadcrumbItems = [
@@ -196,6 +230,7 @@ export default function useProductUnits() {
       _isNew: true,
       _isEditing: true,
     })
+    setEdited(true)
   }
 
   const startEdit = (index: number) => {
@@ -203,6 +238,7 @@ export default function useProductUnits() {
     const stableKey = keyOf(current, index)
     originalRef.current[stableKey] = { ...current }
     update(index, { ...current, _isEditing: true })
+    setEdited(true)
   }
 
   const cancelEdit = (index: number) => {
@@ -210,6 +246,7 @@ export default function useProductUnits() {
     if (row?._isNew) {
       remove(index)
       setPageSize((total) => total - 1)
+      checkIfEdited()
       return
     }
     const stableKey = keyOf(row, index)
@@ -226,6 +263,7 @@ export default function useProductUnits() {
       update(index, { ...row, _isEditing: false })
     }
     delete originalRef.current[stableKey]
+    checkIfEdited()
   }
 
   const { mutate: createRow } = useCreate({
@@ -264,6 +302,11 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            setTimeout(() => {
+              const updatedRows = getValues('rows')
+              originalOrderRef.current = updatedRows
+              checkIfEdited()
+            }, 0)
           },
         },
       )
@@ -286,6 +329,11 @@ export default function useProductUnits() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            setTimeout(() => {
+              const updatedRows = getValues('rows')
+              originalOrderRef.current = updatedRows
+              checkIfEdited()
+            }, 0)
           },
         },
       )
@@ -328,6 +376,7 @@ export default function useProductUnits() {
     const to = findIndexById(overId)
     if (from !== -1 && to !== -1 && from !== to) {
       move(from, to)
+      setTimeout(() => checkIfEdited(), 0)
     }
   }
 
@@ -405,31 +454,49 @@ export default function useProductUnits() {
               <>
                 <Button
                   type="primary"
-                  size="middle"
+                  size="small"
                   loading={saving}
                   onClick={() => saveRow(index)}
+                  autoInsertSpace={false}
                 >
-                  保存
+                  {t('buttons.save')}
                 </Button>
-                <Button size="middle" onClick={() => cancelEdit(index)}>
-                  キャンセル
+                <Button
+                  size="small"
+                  onClick={() => cancelEdit(index)}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.cancel')}
                 </Button>
               </>
             ) : (
               <>
                 <EditButton
-                  size="middle"
+                  autoInsertSpace={false}
+                  size="small"
+                  icon={null}
+                  resource="product-units"
                   onClick={() => startEdit(index)}
-                  hideText
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#1FDB51',
+                  }}
+                >
+                  {t('buttons.edit')}
+                </EditButton>
                 <DeleteButton
-                  hideText
-                  size="middle"
+                  autoInsertSpace={false}
+                  size="small"
+                  icon={null}
+                  resource="product-units"
                   recordItemId={dataSource[index]?.id}
-                  // onClick={() =>
-                  //   !dataSource[index]?.id && handleDeleteRow(index)
-                  // }
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#E74C3C',
+                  }}
+                >
+                  {t('buttons.delete')}
+                </DeleteButton>
               </>
             )}
           </Space>
@@ -437,6 +504,33 @@ export default function useProductUnits() {
       },
     },
   ]
+
+  const isDirty = useMemo(() => {
+    return watchedRows.some((r) => r._isNew || r._isEditing)
+  }, [watchedRows])
+
+  const handleTableChange = (
+    pagination: any,
+    filters: any,
+    sorter: any,
+    extra: any,
+  ) => {
+    if (isDirty) {
+      Modal.confirm({
+        title: t('tags.confirm_navigation'),
+        content: t('tags.unsaved_changes_warning'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        type: 'warning',
+        onOk: () => {
+          tableProps.onChange?.(pagination, filters, sorter, extra)
+        },
+        onCancel: () => {},
+      })
+    } else {
+      tableProps.onChange?.(pagination, filters, sorter, extra)
+    }
+  }
 
   return {
     t,
@@ -447,6 +541,7 @@ export default function useProductUnits() {
     dataSource,
     tableProps: {
       ...tableProps,
+      onChange: handleTableChange,
       pagination: {
         ...tableProps?.pagination,
         // pageSize,
@@ -464,5 +559,6 @@ export default function useProductUnits() {
     getRowIdForDnd,
     onDragEnd,
     setFilters,
+    edited,
   }
 }

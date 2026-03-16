@@ -32,19 +32,6 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     },
   },
   {
-    name: 'approve-routes',
-    list: '/approve-routes',
-    show: '/approve-routes/show/:id',
-    create: '/approve-routes/create',
-    edit: '/approve-routes/edit/:id',
-    meta: {
-      parent: 'estimates',
-      canDelete: true,
-      canCreate: true,
-      canEdit: true,
-    },
-  },
-  {
     name: 'quota-templates',
     list: '/quota-templates',
     show: '/quota-templates/show/:id',
@@ -77,31 +64,10 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     },
   },
   {
-    name: 'ranks',
-    list: '/ranks',
-    show: '/ranks/show:id',
-    create: '/ranks/create',
-    edit: '/ranks/edit:id',
-    meta: {
-      parent: 'business_partner',
-      canDelete: true,
-      canCreate: true,
-    },
-  },
-  {
-    name: 'price-groups',
-    list: '/price-groups',
-    meta: {
-      parent: 'business_partner',
-      canDelete: true,
-      canCreate: true,
-    },
-  },
-  {
     name: 'agreed-prices/customer',
     list: '/agreed-prices/customer',
     meta: {
-      parent: 'business_partner',
+      // parent: 'business_partner',
       // canDelete: true,
       // canCreate: true,
       // canEdit: true,
@@ -137,18 +103,6 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     isNotMenu: true,
   },
   {
-    name: 'product-units',
-    list: '/product-units',
-    show: '/product-units/:id',
-    create: '/product-units/:id',
-    edit: '/product-units/:id',
-    meta: {
-      parent: 'merchandise',
-      canDelete: true,
-      canCreate: true,
-    },
-  },
-  {
     name: 'product-categories',
     list: '/product-categories',
     show: '/product-categories/:id',
@@ -161,12 +115,37 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     },
   },
   {
+    name: 'ranks',
+    list: '/ranks',
+    show: '/ranks/show:id',
+    create: '/ranks/create',
+    edit: '/ranks/edit:id',
+    meta: {
+      parent: 'merchandise',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
+    name: 'price-groups',
+    list: '/price-groups',
+    meta: {
+      parent: 'merchandise',
+      canDelete: true,
+      canCreate: true,
+    },
+  },
+  {
+    name: 'user-management',
+  },
+  {
     name: 'departments',
     list: '/departments',
     show: '/departments/show/:id',
     create: '/departments/create',
     edit: '/departments/edit/:id',
     meta: {
+      parent: 'user-management',
       canDelete: true,
       canCreate: true,
       canEdit: true,
@@ -179,6 +158,7 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     create: '/employees/create',
     show: '/employees/show/:id',
     meta: {
+      parent: 'user-management',
       canDelete: true,
       canCreate: true,
       canEdit: true,
@@ -215,6 +195,19 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     },
   },
   {
+    name: 'approve-routes',
+    list: '/approve-routes',
+    show: '/approve-routes/show/:id',
+    create: '/approve-routes/create',
+    edit: '/approve-routes/edit/:id',
+    meta: {
+      parent: 'system-config',
+      canDelete: true,
+      canCreate: true,
+      canEdit: true,
+    },
+  },
+  {
     name: 'tags',
     list: '/tags',
     show: '/tags/:id',
@@ -238,6 +231,18 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     list: '/mail-templates',
     meta: {
       parent: 'system-config',
+    },
+  },
+  {
+    name: 'product-units',
+    list: '/product-units',
+    show: '/product-units/:id',
+    create: '/product-units/:id',
+    edit: '/product-units/:id',
+    meta: {
+      parent: 'system-config',
+      canDelete: true,
+      canCreate: true,
     },
   },
 ]

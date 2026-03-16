@@ -12,6 +12,7 @@ type SelectPropsForm<
   name: any
   resource: string
   label?: React.ReactNode
+  meta?: Record<string, any>
   optionLabel?: any
   optionValue?: any
   labelPathDisplay?: string[]
@@ -67,6 +68,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     resource,
     optionLabel,
     optionValue,
+    meta: props.meta,
     pagination: {
       mode: 'server',
       current,

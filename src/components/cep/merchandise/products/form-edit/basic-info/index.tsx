@@ -3,9 +3,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import CoreInput from '@components/common/core-input'
 import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
 import UploadImage from '@components/common/upload-image/upload-image'
-import type { GetListResponse } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
-import type { Rank } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -23,6 +21,7 @@ import { Empty, type FormInstance } from 'antd/lib'
 import { type MutableRefObject } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
+import { ProductUnitModal } from '../modal/product-unit'
 import type { ProductFormType } from '../use-product-form'
 import { useBasicInfoController } from './controller'
 
@@ -32,14 +31,11 @@ interface BasicInfoProps {
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >
   isAllowedSaveButton: boolean
-
-  ranks?: GetListResponse<Rank>
   setIsAllowedSaveButton: (value: boolean) => void
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
-  const { form, addRef, isAllowedSaveButton, ranks, setIsAllowedSaveButton } =
-    props
+  const { form, addRef, isAllowedSaveButton, setIsAllowedSaveButton } = props
   const t = useTranslate()
   const [
     {
@@ -49,6 +45,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       codeIssueSetting,
       productUnitOptions,
       isFetchingProductUnits,
+      modalFormProductUnit,
+      orderNumberProductUnits,
     },
     {
       handleAutoNumber,
@@ -56,7 +54,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       handleSearchProductUnit,
       handleAppendPackaging,
     },
-  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton, ranks)
+  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton)
 
   const { show, close, open } = modalFormProps
   const {
@@ -64,6 +62,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
     close: onCloseCategoryModal,
     open: isOpenCategoryModal,
   } = modalFormCategory
+  const {
+    show: onOpenProductUnitModal,
+    close: onCloseProductUnitModal,
+    open: isOpenProductUnitModal,
+  } = modalFormProductUnit
 
   return (
     <div className="grid grid-cols-5 px-2">
@@ -241,50 +244,43 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               />
             </Form.Item>
           </Col>
+          <Col>
+            <Button
+              color="primary"
+              variant="outlined"
+              size="small"
+              onClick={() => onOpenProductUnitModal()}
+              style={{
+                margin: '4px 0 0 40px',
+              }}
+            >
+              {t('products.newRegistration')}
+            </Button>
+          </Col>
         </Row>
         <Row className="mb-4 flex">
           <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
-            <CoreInput
-              initialValue={0}
-              name="tax_rate"
-              label={t('products.fields.taxRate')}
+            <Form.Item
+              label={boldText(t('products.fields.taxRate'))}
               required={true}
-              layout="horizontal"
-              type="number"
-              icon={'%'}
-              defaultValue={0}
+              name="tax_rate"
               rules={[
                 {
                   required: true,
                   message: '消費税率は必須です。',
                 },
-                {
-                  validator: (_, value) => {
-                    if (value === undefined || value === null) {
-                      return Promise.resolve()
-                    }
-
-                    if (value < 0) {
-                      return Promise.reject(
-                        '消費税率は0以上で入力してください。',
-                      )
-                    }
-
-                    if (value > 100) {
-                      return Promise.reject(
-                        '消費税率は100以下で入力してください。',
-                      )
-                    }
-
-                    return Promise.resolve()
-                  },
-                },
               ]}
-              style={{
-                width: '80px',
-                padding: '5px 10px',
-              }}
-            />
+              initialValue={10}
+            >
+              <Select
+                style={{ width: '80px' }}
+                options={[
+                  { label: '10%', value: 10 },
+                  { label: '8%', value: 8 },
+                  { label: '0%', value: 0 },
+                ]}
+              />
+            </Form.Item>
           </Col>
         </Row>
         <Row className="mb-4">
@@ -425,6 +421,20 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           footer={null}
         >
           <ProductCategoryModal modalProps={modalFormCategory} />
+        </Modal>
+        <Modal
+          open={isOpenProductUnitModal}
+          onCancel={onCloseProductUnitModal}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
+          width={'25vw'}
+          title={t('products.newRegistration')}
+          footer={null}
+        >
+          <ProductUnitModal
+            modalProps={modalFormProductUnit}
+            order={orderNumberProductUnits}
+          />
         </Modal>
       </div>
       <div className="col-span-1">

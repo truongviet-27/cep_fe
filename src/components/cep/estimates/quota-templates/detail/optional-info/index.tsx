@@ -2,10 +2,7 @@
 import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
-import type {
-  QuotaTemplateProductGroupResponse,
-  QuotaTemplateProductResponse,
-} from '@sdk/hey-api'
+import type { QuotaTemplateProductGroupResponse } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
 import { Flex, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -29,29 +26,26 @@ const OptionalInfo: FC<Props> = (props) => {
   const { optionalProducts } = props
   const t = useTranslate()
 
-  const dataSource = (optionalProducts ?? []).flatMap(
-    (item: QuotaTemplateProductGroupResponse, index: number) => [
-      ...(item.group_name
-        ? [
-            {
-              index,
-              key: `header-${index}`,
-              isHeader: true,
-              title: item.group_name,
-            },
-          ]
-        : []),
-      ...(item.products ?? []).flatMap(
-        (item2: QuotaTemplateProductResponse, index2: number) => [
-          {
-            index,
-            index2,
-            ...item2,
-          },
-        ],
-      ),
-    ],
-  )
+  const dataSource: any[] = (optionalProducts ?? [])
+    .filter((item: any) => {
+      if (item.kind === 'group') {
+        return !!item.name && item.name.trim() !== ''
+      }
+      return true
+    })
+    .sort((a: any, b: any) => {
+      return (a.display_order ?? 0) - (b.display_order ?? 0)
+    })
+    .map((item: any) => {
+      if (item.kind === 'group') {
+        return {
+          isHeader: true,
+          title: item.name,
+          ...item,
+        }
+      }
+      return { ...item }
+    })
 
   const columns: ColumnsType = [
     {
@@ -227,7 +221,7 @@ const OptionalInfo: FC<Props> = (props) => {
         {t('quota_templates.form.titleOptionalInfo')}
       </Title>
       <Flex vertical>
-        {optionalProducts?.[0]?.products?.[0]?.product_id ? (
+        {optionalProducts?.length != 0 ? (
           <CommonTable
             columns={columns}
             dataSource={dataSource}

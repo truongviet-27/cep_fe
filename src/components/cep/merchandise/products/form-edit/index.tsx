@@ -4,8 +4,6 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
-import { ParameterResourceEnum } from '@sdk/hey-api'
-import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -26,7 +24,6 @@ import { useRef, useState } from 'react'
 
 import BasicInfo from './basic-info'
 import PackagingUnitPrice from './packaging-unit-price'
-import PriceGroup from './price-group'
 import type { ProductFormType } from './use-product-form'
 import useProductForm from './use-product-form'
 
@@ -36,14 +33,32 @@ const ProductFormContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
   const [
-    { ranks, methods, isLoadingSubmit, isUpdateMode },
-    { handleOnSubmit },
+    {
+      methods,
+      isLoadingSubmit,
+      isUpdateMode,
+      isPendingDraft,
+      dataProductDraft,
+      isFetchingProductDraft,
+    },
+    { handleOnSubmit, handleSaveDraft, handleApplyDraft },
   ] = useProductForm()
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
   const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const [showEditPackaging, setShowEditPackaging] = useState<boolean>(false)
+
+  const currentPackagings = form.getFieldValue('packagings') || []
+  const newPackaging = {
+    code: form.getFieldValue('code') ? `${form.getFieldValue('code')}-1` : '1',
+    name: '',
+    quantity_in_package: 1,
+    unit_id: form.getFieldValue('unit_id'),
+    selling_price: form.getFieldValue('selling_price'),
+    is_standard_price: true,
+    is_rate_based: true,
+  }
 
   return (
     <PageContainer
@@ -102,7 +117,6 @@ const ProductFormContainer: React.FC = () => {
                     addRef={addRef}
                     isAllowedSaveButton={isAllowedSaveButton}
                     setIsAllowedSaveButton={setIsAllowedSaveButton}
-                    ranks={ranks}
                   />
                 ),
               },
@@ -116,68 +130,6 @@ const ProductFormContainer: React.FC = () => {
               />
             )}
           />
-
-          <Collapse
-            style={{
-              marginTop: '20px',
-            }}
-            items={[
-              {
-                key: 1,
-                label: (
-                  <span className="font-bold">
-                    {t('products.sections.packagingPrice')}
-                  </span>
-                ),
-                children: (
-                  <PackagingUnitPrice
-                    form={form as unknown as FormInstance<ProductFormType>}
-                    addRef={addRef}
-                    ranks={ranks}
-                  />
-                ),
-              },
-            ]}
-            expandIconPosition="end"
-            defaultActiveKey={[1]}
-            expandIcon={({ isActive }) => (
-              <DownOutlined
-                style={{ transition: '0.3s' }}
-                rotate={isActive ? 180 : 0}
-              />
-            )}
-          />
-          {parameterSettings.get(ParameterResourceEnum.RANKS) && (
-            <Collapse
-              style={{
-                marginTop: '20px',
-              }}
-              items={[
-                {
-                  key: 1,
-                  label: (
-                    <span className="font-bold">
-                      {t('products.unitPriceGroup.tableTitle')}
-                    </span>
-                  ),
-                  children: (
-                    <PriceGroup
-                      form={form as unknown as FormInstance<ProductFormType>}
-                      ranks={ranks}
-                    />
-                  ),
-                },
-              ]}
-              expandIconPosition="end"
-              defaultActiveKey={[1]}
-              expandIcon={({ isActive }) => (
-                <DownOutlined
-                  style={{ transition: '0.3s' }}
-                  rotate={isActive ? 180 : 0}
-                />
-              )}
-            />
-          )}
 
           {isUpdateMode && (
             <>
@@ -225,18 +177,92 @@ const ProductFormContainer: React.FC = () => {
               >
                 {t('products.buttons.back')}
               </Button>
+              {!isUpdateMode &&
+                dataProductDraft?.data &&
+                Array.isArray(dataProductDraft.data) &&
+                dataProductDraft.data.length > 0 && (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleApplyDraft}
+                    disabled={isFetchingProductDraft}
+                  >
+                    {t('buttons.apply_draft')}
+                  </Button>
+                )}
+              {!isUpdateMode && (
+                <Button
+                  type="primary"
+                  onClick={handleSaveDraft}
+                  loading={isPendingDraft}
+                >
+                  {t('buttons.draft')}
+                </Button>
+              )}
               <Button
                 type="primary"
                 htmlType="submit"
                 loading={isLoadingSubmit}
                 disabled={!isAllowedSaveButton}
+                autoInsertSpace={false}
               >
                 {isUpdateMode
                   ? t('products.buttons.save')
                   : t('products.buttons.register')}
               </Button>
+              <Button
+                disabled={
+                  !isAllowedSaveButton ||
+                  showEditPackaging ||
+                  (form.getFieldValue('packagings')?.length ?? 0) >= 2
+                }
+                onClick={() => {
+                  setShowEditPackaging(true)
+                  form.setFieldsValue({
+                    packagings: [...currentPackagings, newPackaging],
+                  })
+                }}
+                color="primary"
+                variant="outlined"
+              >
+                {t('products.buttons.addPackage')}
+              </Button>
             </Space>
           </Flex>
+          <Collapse
+            style={{
+              marginTop: '20px',
+              display:
+                showEditPackaging ||
+                (form.getFieldValue('packagings')?.length ?? 0) >= 2
+                  ? 'block'
+                  : 'none',
+            }}
+            items={[
+              {
+                key: 1,
+                label: (
+                  <span className="font-bold">
+                    {t('products.sections.packagingPrice')}
+                  </span>
+                ),
+                children: (
+                  <PackagingUnitPrice
+                    form={form as unknown as FormInstance<ProductFormType>}
+                    addRef={addRef}
+                  />
+                ),
+              },
+            ]}
+            expandIconPosition="end"
+            defaultActiveKey={[1]}
+            expandIcon={({ isActive }) => (
+              <DownOutlined
+                style={{ transition: '0.3s' }}
+                rotate={isActive ? 180 : 0}
+              />
+            )}
+          />
         </Form>
       </Spin>
     </PageContainer>

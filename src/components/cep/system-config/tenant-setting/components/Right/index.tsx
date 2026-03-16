@@ -2,7 +2,9 @@
 'use client'
 import UploadSetting from '@components/cep/system-config/tenant-setting/components/upload'
 import { useTranslate } from '@refinedev/core'
-import { Checkbox, Col, Form, Radio, Select, Space, Typography } from 'antd'
+import { ParameterResourceEnum } from '@sdk/hey-api'
+import { useUserStore } from '@stores/useUserStore'
+import { Checkbox, Col, Form, Radio, Typography } from 'antd'
 import Image from 'next/image'
 
 const { Text } = Typography
@@ -11,6 +13,10 @@ const { Group } = Radio
 function Right() {
   const t = useTranslate()
   const form = Form.useFormInstance()
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+
+  const hasApproveRoutePermission =
+    parameterSettings?.get?.(ParameterResourceEnum.APPROVE_ROUTES) ?? false
 
   const watchCompanyLogoImage = Form.useWatch('company_logo_image', form)
   const watchCompanySealImage = Form.useWatch('company_seal_image', form)
@@ -40,6 +46,7 @@ function Right() {
                   name={'company_logo_image'}
                   fileListProp={null}
                   initialUrl={form.getFieldValue('company_logo_image')}
+                  aspect={16 / 9}
                 />
               </Form.Item>
             </div>
@@ -101,58 +108,65 @@ function Right() {
               <div className="relative my-4 min-h-[200px] rounded-lg border border-solid border-[#ccc] p-4">
                 {watchCompanyLogoImage && (
                   <div className="mb-4 ml-[60%]">
-                    <Image
-                      src={
-                        watchCompanyLogoImage instanceof File
-                          ? URL.createObjectURL(watchCompanyLogoImage)
-                          : watchCompanyLogoImage
-                      }
-                      alt="preview"
-                      width={80}
-                      height={80}
-                      style={{
-                        marginRight: 40,
-                        borderRadius: 8,
-                        width: 80,
-                        height: 80,
-                        objectFit: 'fill',
-                      }}
-                    />
+                    <div className="relative h-[80px] w-[142px]">
+                      <Image
+                        src={
+                          watchCompanyLogoImage instanceof File
+                            ? URL.createObjectURL(watchCompanyLogoImage)
+                            : watchCompanyLogoImage
+                        }
+                        alt="company logo preview"
+                        fill
+                        unoptimized
+                        style={{
+                          borderRadius: 8,
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </div>
                   </div>
                 )}
 
-                {watchCompanySealImage && (
-                  <div className="absolute top-2/5 right-5">
-                    <Image
-                      src={
-                        watchCompanySealImage instanceof File
-                          ? URL.createObjectURL(watchCompanySealImage)
-                          : watchCompanySealImage
-                      }
-                      alt="preview"
-                      width={80}
-                      height={80}
-                      style={{
-                        borderRadius: 8,
-                        width: 80,
-                        height: 80,
-                        objectFit: 'fill',
-                      }}
-                    />
+                <div className="relative flex items-start justify-between">
+                  <div className="ml-[60%] flex flex-1 flex-col space-y-1">
+                    {watchCompanyName && (
+                      <Text strong className="text-base">
+                        {watchCompanyName}
+                      </Text>
+                    )}
+                    {watchAddress && (
+                      <Text className="text-sm">{watchAddress}</Text>
+                    )}
+                    {watchPhone && (
+                      <Text className="text-sm">{watchPhone}</Text>
+                    )}
                   </div>
-                )}
 
-                <div className="mt-10 mr-[100px] ml-[60%] flex flex-col">
-                  <Space>{watchCompanyName}</Space>
-                  <Space>{watchAddress}</Space>
-                  <Space>{watchPhone}</Space>
+                  {watchCompanySealImage && (
+                    <div className="relative ml-4 h-[80px] w-[80px] flex-shrink-0">
+                      <Image
+                        src={
+                          watchCompanySealImage instanceof File
+                            ? URL.createObjectURL(watchCompanySealImage)
+                            : watchCompanySealImage
+                        }
+                        alt="company seal preview"
+                        fill
+                        unoptimized
+                        style={{
+                          borderRadius: 8,
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </Form.Item>
           </div>
         </div>
 
-        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
+        <div className="flex h-[80px] border-solid border-[#D0D0D0]">
           <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pl-4 text-left">
             <Text strong>{t('tenant_settings.digitalStamp.label')}</Text>
           </div>
@@ -170,6 +184,7 @@ function Right() {
                     {
                       value: true,
                       label: t('tenant_settings.digitalStamp.withStamp'),
+                      disabled: !hasApproveRoutePermission,
                     },
                     {
                       value: false,
@@ -182,35 +197,7 @@ function Right() {
           </div>
         </div>
 
-        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
-          <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pl-4 text-left">
-            <Text strong>{t('tenant_settings.consumptionTax.label')}</Text>
-          </div>
-          <div className="flex flex-1 items-center px-4">
-            <Form.Item
-              name="consumption_tax"
-              style={{
-                margin: 0,
-              }}
-            >
-              <Group
-                defaultValue={'exclusive'}
-                options={[
-                  {
-                    value: 'exclusive',
-                    label: t('tenant_settings.consumptionTax.taxExclusive'),
-                  },
-                  {
-                    value: 'external',
-                    label: t('tenant_settings.consumptionTax.taxExempt'),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </div>
-        </div>
-
-        <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
+        {/* <div className="flex h-[80px] border-b-[1px] border-solid border-[#D0D0D0]">
           <div className="min-w-[160px] content-center border-r-[1px] border-solid border-[#D0D0D0] pr-10 pl-4 text-left">
             <Text strong>{t('tenant_settings.taxRounding.label')}</Text>
           </div>
@@ -272,7 +259,7 @@ function Right() {
               />
             </Form.Item>
           </div>
-        </div>
+        </div> */}
       </div>
     </Col>
   )

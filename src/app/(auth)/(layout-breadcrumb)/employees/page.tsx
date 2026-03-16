@@ -28,7 +28,9 @@ function Page() {
     )
   }
 
-  const { tableProps, searchFormProps, setFilters, setCurrent } = useTable()
+  const { tableProps, searchFormProps, setFilters, setCurrent } = useTable({
+    pagination: { pageSize: 20 },
+  })
 
   const breadcrumbItems = [
     {
@@ -143,7 +145,9 @@ function Page() {
                 >
                   {t('buttons.search')}
                 </Button>
-                <Button onClick={handleClear}>{t('buttons.clear')}</Button>
+                <Button type="default" onClick={handleClear}>
+                  {t('buttons.clear')}
+                </Button>
               </Space>
             </Form.Item>
           </Col>
@@ -161,6 +165,7 @@ function Page() {
         <Table.Column
           dataIndex="code"
           title={t('employees.fields.code')}
+          width="8%"
           render={(value, record) => (
             <Link
               style={{ textDecoration: 'underline' }}
@@ -174,31 +179,63 @@ function Page() {
           dataIndex="name"
           title={t('employees.fields.name')}
           align={'left'}
+          width="15%"
         />
         <Table.Column
           dataIndex={['department']}
           title={t('employees.fields.department')}
           align={'left'}
+          width="50%"
           render={(value) => renderFieldNotSet(value?.name)}
         />
         <Table.Column
           dataIndex={['email']}
           title={t('employees.fields.email')}
+          width="13%"
           render={(value) => <EmailField value={value} />}
         />
         <Table.Column
           dataIndex={['role']}
           title={t('employees.fields.role')}
+          width="7%"
           render={(value) => renderFieldNotSet(value?.display_name)}
           align={'left'}
         />
         <Table.Column
           title={t('table.actions')}
           dataIndex="actions"
+          width="7%"
+          onCell={() => ({
+            style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+          })}
           render={(_, record: BaseRecord) => (
-            <Space>
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
+            <Space wrap size={4}>
+              <ShowButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="employees"
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
+              <EditButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="employees"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
             </Space>
           )}
         />

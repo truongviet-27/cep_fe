@@ -1,13 +1,13 @@
 /* eslint-disable */
 'use client'
 
-import { EditOutlined, RightOutlined } from '@ant-design/icons'
+import { RightOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import { BooleanField, useModalForm, useTable } from '@refinedev/antd'
-import { BaseRecord, useResource } from '@refinedev/core'
+import { BaseRecord, useResource, useTranslate } from '@refinedev/core'
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -19,9 +19,11 @@ import type { SegmentedValue } from 'rc-segmented'
 
 export default function Page() {
   const t = useTranslations()
+  const tRefine = useTranslate()
   const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   const { tableProps } = useTable({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     queryOptions: {
       select: (data) => {
@@ -81,6 +83,7 @@ export default function Page() {
       <CommonTable
         {...tableProps}
         rowKey="id"
+        scroll={undefined}
         onRow={(record) => ({
           className: getRowClassName(record),
         })}
@@ -89,11 +92,13 @@ export default function Page() {
           dataIndex="name"
           title={t('code_issue_settings.fields.name')}
           align={'left'}
+          width="13%"
         />
 
         <Table.Column
           dataIndex="issue_method"
           title={t('code_issue_settings.fields.issue_method')}
+          width="8%"
           render={(value: 'manual' | 'automatic') => {
             const colorMap: Record<'manual' | 'automatic', string> = {
               automatic: DARK_RED,
@@ -110,15 +115,18 @@ export default function Page() {
           dataIndex="prefix"
           title={t('code_issue_settings.fields.prefix')}
           align={'left'}
+          width="7%"
         />
         <Table.Column
           dataIndex={['hash_dash']}
-          title={<b>_</b>}
+          title={t('code_issue_settings.fields.hash')}
+          width="5%"
           render={(value) => value && <BooleanField value={!!value} />}
         />
         <Table.Column
           dataIndex="segment"
           title={t('code_issue_settings.fields.segment')}
+          width="20%"
           render={(value: SegmentedValue) =>
             segmentLabelByValue[value] ?? String(value)
           }
@@ -128,14 +136,17 @@ export default function Page() {
           dataIndex="serial_length"
           title={t('code_issue_settings.fields.serial_length')}
           align={'right'}
+          width="7%"
         />
         <Table.Column
           dataIndex="current_serial_number"
           title={t('code_issue_settings.fields.total')}
           align={'right'}
+          width="6%"
         />
         <Table.Column
           dataIndex="preview_code"
+          width="13%"
           render={(value: SegmentedValue) => <Tag>{value}</Tag>}
           title={t('code_issue_settings.fields.preview_code')}
         />
@@ -143,14 +154,21 @@ export default function Page() {
           align={'center'}
           title={t('table.actions')}
           dataIndex="actions"
+          width="5%"
           render={(_, record: BaseRecord) => (
             <Button
-              size={'small'}
+              size="small"
+              icon={null}
               onClick={() => {
                 show(record.id)
               }}
-              icon={<EditOutlined />}
-            />
+              style={{
+                color: '#FFFFFF',
+                background: '#1FDB51',
+              }}
+            >
+              {tRefine('buttons.edit')}
+            </Button>
           )}
         />
       </CommonTable>

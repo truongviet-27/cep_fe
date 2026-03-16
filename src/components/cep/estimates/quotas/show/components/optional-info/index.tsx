@@ -18,14 +18,26 @@ function OptionalInfo({ data }: { data: any }) {
   }
 
   const t = useTranslate()
-  const dataSource: any[] = (data ?? []).flatMap((item: any) => [
-    ...(item.group_name ? [{ isHeader: true, title: item.group_name }] : []),
-    ...(item.products ?? []).flatMap((item2: any) => [
-      {
-        ...item2,
-      },
-    ]),
-  ])
+  const dataSource: any[] = (data ?? [])
+    .filter((item: any) => {
+      if (item.kind === 'group') {
+        return !!item.name && item.name.trim() !== ''
+      }
+      return true
+    })
+    .sort((a: any, b: any) => {
+      return (a.display_order ?? 0) - (b.display_order ?? 0)
+    })
+    .map((item: any) => {
+      if (item.kind === 'group') {
+        return {
+          isHeader: true,
+          title: item.name,
+          ...item,
+        }
+      }
+      return { ...item }
+    })
   const columns: ColumnsType = [
     {
       title: t('quotas.action.optional_info.title'),
@@ -208,7 +220,7 @@ function OptionalInfo({ data }: { data: any }) {
           marginBottom: 20,
         }}
       >
-        {data?.[0]?.products[0]?.product_id ? (
+        {data?.length != 0 ? (
           <CommonTable
             columns={columns}
             dataSource={dataSource}

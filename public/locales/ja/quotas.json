@@ -1,12 +1,52 @@
 {
   "quotas": "見積一覧",
-  "confirmed_quota": "確定見積",
-  "confirmed_quota_detail": "確定見積詳細",
+  "confirmed_quota": "継続見積",
+  "parameterCheck": {
+    "failed": "パラメータチェックに失敗しました",
+    "settingChangedWarning": "設定変更警告",
+    "confirmContinue": "パラメータチェックに失敗しました。続行しますか？"
+  },
+  "transaction_type": {
+    "short_term_service": "個別・役務ｻｰﾋﾞｽ",
+    "short_term_merchandise": "個別・物販",
+    "long_term_service": "継続・役務ｻｰﾋﾞｽ",
+    "long_term_merchandise": "継続・物販"
+  },
+  "confirmed_quota_detail": "継続見積詳細",
   "list": "見積一覧",
+  "goDetailLabel": "詳細",
+  "goEditLabel": "編集",
+  "downloadLabel": "ダウンロード",
+  "goDetailCLoneLabel": "複製",
   "create": "見積新規作成",
   "edit": "見積編集",
   "detail": "見積詳細",
   "page_list": {},
+  "create_quota": "見積作成",
+  "form": {
+    "is_create_quota_template": "テンプレート保存"
+  },
+  "popups": {
+    "createFromTemplate": {
+      "title": "テンプレートから作成",
+      "created_at": "作成日：{dateFormatted}",
+      "number_product": "商品数: {number_product}点",
+      "place_holder": "テンプレート名で検索..."
+    },
+    "confirmTaxRoundingMethod": {
+      "title": "税金の端数の設定が変更されました。適用しますか。",
+      "cancelText": "適用しない",
+      "okText": "適用する"
+    },
+    "createFromOldQuota": {
+      "quota_code": "見積番号",
+      "number_product": "商品数",
+      "title": "過去見積から作成",
+      "created_at": "作成日",
+      "place_holder": "部分一致",
+      "total_price": "金額"
+    }
+  },
   "page_detail": {},
   "page_action": {},
   "table": {
@@ -14,6 +54,7 @@
     "status_comment_2": "コメント",
     "estimate_number": "見積番号",
     "title_customer_1": "タイトル",
+    "transaction_type": "取引種別",
     "title_customer_2": "取引先",
     "creator_approver_1": "作成者",
     "creator_approver_2": "承認者",
@@ -30,6 +71,7 @@
   },
   "filters": {
     "estimate_number": "見積番号",
+    "transaction_type": "取引種別",
     "customer": "取引先",
     "title": "タイトル",
     "creator": "作成者",
@@ -37,6 +79,8 @@
     "department": "部門（支社/部/課）",
     "tag_name": "タグ名",
     "date": "日付",
+    "productName": "商品名",
+    "categoryLabel": "カテゴリ",
     "partial_match": "部分一致",
     "please_select": "選択してください"
   },
@@ -60,16 +104,19 @@
   "actions": {
     "bulk_processing": "一括処理",
     "delete": "削除",
-    "request_approval": "承認依頼",
-    "approve": "承認",
-    "send": "送信",
-    "move_to_order": "受注へ移動",
-    "move_to_cancel": "失注へ移動",
-    "move_to_send": "送信済へ移動",
-    "decide_move": "確定移動",
+    "request_approval": "承認待に移動する",
+    "approve": "承認する",
+    "send": "送信する",
+    "move_to_reject": "差戻する",
+    "move_to_order": "受注に移動する",
+    "move_to_cancel": "失注に移動する",
+    "move_to_send": "送信済に戻る",
+    "resend_email_to_customer": "再送信",
+    "decide_move": "継続移動",
     "re_estimate": "再見積",
     "template_list": "見積テンプレート一覧",
-    "new_create": "新規作成"
+    "new_create": "新規作成",
+    "create_from_template": "テンプレートから作成"
   },
   "modal": {
     "move_to_decided_estimate": "決定見積へ移動",
@@ -89,7 +136,7 @@
     "basic_info": "基本情報",
     "estimate_number": "見積番号",
     "estimate_type": "見積種類",
-    "estimate_category": "見積区分",
+    "estimate_category": "取引種類",
     "title": "タイトル",
     "customer": "取引先",
     "estimate_date": "見積日",
@@ -99,13 +146,21 @@
     "expiration_date": "有効期限",
     "consumption_tax": "消費税",
     "tax_rate": "消費税率",
+    "department_name": "部門",
+    "approve_route": "承認ルート",
+    "status": "ステータス",
     "type": {
       "normal": "通常",
       "limited": "販路限定"
     },
+    "customer_term": "契約区分",
+    "customer_terms": {
+      "long_term": "継続",
+      "short_term": "個別"
+    },
     "category": {
       "merchandise": "物販",
-      "service": "役務"
+      "service": "役務ｻｰﾋﾞｽ"
     },
     "detail_info": "詳細情報",
     "optional_info": "オプション情報",
@@ -116,13 +171,14 @@
     "creation_history": "作成履歴",
     "rejection_reason": "差戻の理由",
     "actions": {
-      "request_approval": "承認依頼",
-      "reject": "差戻",
-      "approve": "承認",
-      "send": "送信",
-      "move_to_cancel": "失注へ移動",
-      "move_to_order": "送信済へ移動",
-      "move_to_send": "送信済へ移動"
+      "request_approval": "承認待に移動する",
+      "reject": "差戻する",
+      "approve": "承認する",
+      "send": "送信する",
+      "move_to_cancel": "失注に移動する",
+      "move_to_order": "受注に移動する",
+      "resend_email_to_customer": "再送信",
+      "move_to_send": "送信済に戻る"
     },
     "table": {
       "step": "ステップ",
@@ -154,7 +210,7 @@
     "preview": "プレビュー",
     "preview_pdf": "Preview PDF",
     "estimate_number": "見積番号",
-    "estimate_type": "見積区分",
+    "estimate_type": "取引区分",
     "title": "タイトル",
     "customer": "取引先",
     "estimate_date": "見積日",
@@ -163,6 +219,7 @@
     "payment_due_date": "支払期日",
     "expiration_date": "有効期限",
     "consumption_tax": "消費税",
+    "update_status": "更新",
     "tax_rate": "消費税率",
     "type": {
       "normal": "通常",
@@ -180,8 +237,8 @@
       "approve": "承認",
       "send": "送信",
       "move_to_cancel": "失注へ移動",
-      "move_to_order": "受注へ移動",
-      "move_to_send": "送信済へ移動"
+      "move_to_order": "受注に移動する",
+      "move_to_send": "送信済に戻る"
     },
     "table": {
       "step": "ステップ",
@@ -209,7 +266,7 @@
     },
     "fields": {
       "code": "見積番号",
-      "type": "見積区分",
+      "type": "取引区分",
       "title": "タイトル",
       "customer": "取引先",
       "created_at": "見積日",
@@ -250,8 +307,11 @@
         "row_edit": "行編集",
         "tax_rate": "消費税率"
       },
+      "duplicate_product": "商品が重複しています。",
+      "duplicate_product_code": "という商品コードは複数です。",
+      "duplicate_product_name": "という商品・サービス名は複数です。",
       "placeholders": {
-        "product_list_name": "商品リスト名入力",
+        "product_list_name": "タイトル入力",
         "product_search": "商品名・サービス名で検索"
       },
       "summary": {
@@ -280,7 +340,7 @@
       "fields": {
         "estimate_number": "見積番号",
         "estimate_type": "見積種類",
-        "estimate_category": "見積区分",
+        "estimate_category": "取引区分",
         "title": "タイトル",
         "customer": "取引先",
         "estimate_date": "見積日",
@@ -288,19 +348,29 @@
         "delivery_method": "納品方法",
         "payment_due_date": "支払期日",
         "expiration_date": "有効期限",
-        "consumption_tax": "消費税"
+        "consumption_tax": "消費税",
+        "department_name": "部門",
+        "approve_route": "承認ルート",
+        "customer_term": "契約区分"
       },
       "types": {
         "normal": "通常",
         "limited": "販路限定"
       },
+      "customer_term": {
+        "long_term": "継続",
+        "short_term": "個別"
+      },
       "categories": {
         "merchandise": "物販",
-        "service": "役務"
+        "service": "役務ｻｰﾋﾞｽ"
       },
       "labels": {
         "until": "まで",
         "default_tax_rate": "デフォルト"
+      },
+      "warnings": {
+        "no_approve_routes": "利用可能な承認ルートがありません"
       }
     },
     "optional_info": {
@@ -318,7 +388,7 @@
         "row_edit": "行編集"
       },
       "placeholders": {
-        "optional_list_name": "オプションリスト名入力"
+        "optional_list_name": "タイトル入力"
       }
     },
     "modal": {
@@ -329,13 +399,17 @@
     },
     "customer_contact_modal": {
       "title": "見積送付先選択",
-      "department_name": "部署名",
+      "department_name": "部門",
       "contact_person_name": "氏名",
       "email": "メールアドレス",
       "created_at": "登録日",
       "select_button": "見積送付先を選択",
       "selected_contact_label": "見積送付先"
-    }
+    },
+    "create_customer_button": "取引先新規登録"
+  },
+  "tags": {
+    "create_new_tag": "タグを作成"
   },
   "validation": {
     "basic_info": {

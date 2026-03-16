@@ -77,11 +77,16 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
           rules={[{ required: true }]}
         >
           <Select disabled={isManual}>
-            {[...Array(10)].map((_, i) => (
-              <Select.Option key={i + 1} value={i + 1}>
-                {i + 1}
-              </Select.Option>
-            ))}
+            {[...Array(10)].map((_, i) => {
+              const value = i + 1
+              // Skip value 1 (when i === 0)
+              if (i != 0)
+                return (
+                  <Select.Option key={value} value={value}>
+                    {value}
+                  </Select.Option>
+                )
+            })}
           </Select>
         </Form.Item>
 
@@ -119,8 +124,8 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
 
       <Space className={'flex w-full justify-end'}>
         <Button onClick={close}>{t('buttons.cancel')}</Button>
-        <Button {...saveButtonProps} type="primary">
-          保存
+        <Button {...saveButtonProps} type="primary" autoInsertSpace={false}>
+          {t('buttons.save')}
         </Button>
       </Space>
     </Edit>

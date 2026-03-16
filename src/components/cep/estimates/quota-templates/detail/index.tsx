@@ -13,6 +13,9 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
+import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
+import { useEffect, useState } from 'react'
 import BasicInfo from './basic-info'
 import DetailInfo from './detail-info'
 import NoteForm from './note'
@@ -23,6 +26,8 @@ const QuoteTemplateDetailContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
   const { id } = useParams<{ id: string }>()
+  const [taxRoundingMethod, setTaxRoundingMethod] =
+    useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
 
   const { permission } = useUserStore()
 
@@ -33,6 +38,12 @@ const QuoteTemplateDetailContainer: FC = () => {
       enabled: !!id,
     },
   })
+
+  useEffect(() => {
+    if (query.data?.data) {
+      setTaxRoundingMethod(query.data?.data.tax_rounding_method)
+    }
+  }, [query.data?.data])
 
   const quoteTemplateDetail = query.data?.data
 
@@ -93,7 +104,10 @@ const QuoteTemplateDetailContainer: FC = () => {
           }}
         >
           <BasicInfo detail={quoteTemplateDetail} />
-          <DetailInfo detail={quoteTemplateDetail} />
+          <DetailInfo
+            detail={quoteTemplateDetail}
+            taxRoundingMethod={taxRoundingMethod}
+          />
           <OptionalInfo
             optionalProducts={quoteTemplateDetail?.optional_product ?? []}
           />

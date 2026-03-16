@@ -24,7 +24,7 @@ function Note({ note }: { note: string }) {
           padding: '0 10px',
         }}
       >
-        {note}
+        <div style={{ whiteSpace: 'pre-line' }}>{note}</div>
       </Form.Item>
     </Card>
   )

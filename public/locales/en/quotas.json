@@ -1,0 +1,20 @@
+{
+  "action": {
+    "basic_info": {
+      "warnings": {
+        "no_approve_routes": "No approve routes available"
+      }
+    }
+  },
+  "form": {
+    "is_create_quota_template": "Save as Template"
+  },
+  "tags": {
+    "create_new_tag": "Create tag"
+  },
+  "parameterCheck": {
+    "failed": "Parameter Check Failed",
+    "settingChangedWarning": "Setting Changed Warning",
+    "confirmContinue": "Parameter check failed. Do you want to continue?"
+  }
+}

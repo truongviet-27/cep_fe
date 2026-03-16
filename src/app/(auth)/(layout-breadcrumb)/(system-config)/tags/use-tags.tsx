@@ -37,7 +37,7 @@ function useTags() {
   const t = useTranslate()
   const { resource } = useResource()
   const apiUrl = useApiUrl()
-  const [pageSize, setPageSize] = React.useState(10)
+  const [pageSize, setPageSize] = React.useState(20)
   const [lastRowEdited, setLastRowEdited] = React.useState<boolean>(false)
   const [totalPage, setTotalPage] = React.useState(0)
   const forceUpdate = useRef(false)
@@ -51,6 +51,7 @@ function useTags() {
     pageCount,
     tableQueryResult: { isLoading, isFetching },
   } = useTable<TagRow>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => [
       {
@@ -87,17 +88,25 @@ function useTags() {
   }, [watchedRows, pageSize])
 
   const originalRef = useRef<Record<string, TagRow>>({})
+  const originalOrderRef = useRef<TagRow[]>([])
 
   const keyOf = (row: TagRow, idx: number): string =>
     row.id?.toString() ?? row._key ?? `tmp-${idx}`
 
   useLayoutEffect(() => {
     if (forceUpdate.current) {
-      setPageSize(10)
-      setPageSize2(10)
+      setPageSize(20)
+      setPageSize2(20)
     }
     const ds = (tableProps?.dataSource as TagRow[]) ?? []
-    replace(ds.map((r) => ({ _isNew: false, _isEditing: false, ...r })))
+    const normalizedData = ds.map((r) => ({
+      _isNew: false,
+      _isEditing: false,
+      ...r,
+    }))
+    replace(normalizedData)
+    originalOrderRef.current = normalizedData
+    setEdited(false)
   }, [tableProps?.dataSource, current])
 
   const breadcrumbItems = [
@@ -150,6 +159,7 @@ function useTags() {
       if (rowToRestore) {
         append(rowToRestore)
       }
+      checkIfEdited()
       return
     }
     const stableKey = keyOf(row, index)
@@ -161,6 +171,7 @@ function useTags() {
       update(index, { ...row, _isEditing: false })
     }
     delete originalRef.current[stableKey]
+    checkIfEdited()
   }
 
   const { mutate: createRow } = useCreate({
@@ -175,6 +186,32 @@ function useTags() {
 
   const [edited, setEdited] = useState<boolean>(false)
 
+  const checkIfEdited = () => {
+    const currentRows = getValues('rows') || []
+
+    // check if there is any row being edited or new
+    const hasEditingOrNew = currentRows.some((r) => r._isNew || r._isEditing)
+    if (hasEditingOrNew) {
+      setEdited(true)
+      return
+    }
+
+    // check if the order has changed (compared to the original data from server)
+    const originalIds = originalOrderRef.current
+      .map((r) => r.id)
+      .filter(Boolean)
+    const currentIds = currentRows.map((r) => r.id).filter(Boolean)
+
+    // if the length is different or the order is different
+    if (originalIds.length !== currentIds.length) {
+      setEdited(true)
+      return
+    }
+
+    const orderChanged = originalIds.some((id, idx) => id !== currentIds[idx])
+    setEdited(orderChanged)
+  }
+
   const handleUpdateOrdering = (values: TagRow[]) => {
     updateAll({
       url: `${apiUrl}/${resource?.name}/upsert`,
@@ -182,6 +219,7 @@ function useTags() {
       values,
       successNotification: (data) => {
         setValue('rows', values as any)
+        originalOrderRef.current = values
         setEdited(false)
         return {
           message: t('notifications.success'),
@@ -236,6 +274,11 @@ function useTags() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            setTimeout(() => {
+              const updatedRows = getValues('rows')
+              originalOrderRef.current = updatedRows
+              checkIfEdited()
+            }, 0)
           },
         },
       )
@@ -253,6 +296,11 @@ function useTags() {
             })
             const stableKey = keyOf(row, index)
             delete originalRef.current[stableKey]
+            setTimeout(() => {
+              const updatedRows = getValues('rows')
+              originalOrderRef.current = updatedRows
+              checkIfEdited()
+            }, 0)
           },
         },
       )
@@ -272,7 +320,6 @@ function useTags() {
   }
 
   const dataSource: RowVM[] = useMemo(() => {
-    console.log(watchedRows)
     return (watchedRows as TagRow[])
       .map((r, i) => ({ ...r, __index: String(i) }))
       .filter((r) => r.id || r.order)
@@ -286,10 +333,10 @@ function useTags() {
 
     const total = (tableProps.pagination as any)?.total || 0
     const currentSize =
-      pageSize || (tableProps.pagination as any)?.pageSize || 10
+      pageSize || (tableProps.pagination as any)?.pageSize || 20
 
     // 2. Tính toán trang cuối cùng thực tế
-    // Ví dụ: Total = 41, size = 10 -> Last page = 5
+    // Ví dụ: Total = 41, size = 20 -> Last page = 5
     const lastPage = Math.ceil(total / currentSize)
 
     // 3. Chỉ nhảy trang nếu:
@@ -326,8 +373,8 @@ function useTags() {
     const to = findIndexById(overId)
     if (from !== -1 && to !== -1 && from !== to) {
       move(from, to)
+      setTimeout(() => checkIfEdited(), 0)
     }
-    setEdited(true)
   }
 
   const columns: ColumnsType<RowVM> = [
@@ -384,28 +431,49 @@ function useTags() {
                   size="middle"
                   loading={saving}
                   onClick={() => saveRow(index)}
+                  autoInsertSpace={false}
                 >
-                  保存
+                  {t('buttons.save')}
                 </Button>
-                <Button size="middle" onClick={() => cancelEdit(index)}>
-                  キャンセル
+                <Button
+                  size="middle"
+                  onClick={() => cancelEdit(index)}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.cancel')}
                 </Button>
               </>
             ) : (
               <>
                 <EditButton
-                  hideText
+                  autoInsertSpace={false}
                   size="small"
+                  icon={null}
+                  resource="tags"
                   onClick={() => startEdit(index)}
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#1FDB51',
+                  }}
+                >
+                  {t('buttons.edit')}
+                </EditButton>
                 <DeleteButton
+                  autoInsertSpace={false}
                   size="small"
-                  hideText
+                  icon={null}
+                  resource="tags"
                   recordItemId={dataSource[index]?.id}
                   onClick={() =>
                     !dataSource[index]?.id && handleDeleteRow(index)
                   }
-                />
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#E74C3C',
+                  }}
+                >
+                  {t('buttons.delete')}
+                </DeleteButton>
               </>
             )}
           </Space>

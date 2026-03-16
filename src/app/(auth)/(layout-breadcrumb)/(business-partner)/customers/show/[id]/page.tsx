@@ -60,6 +60,7 @@ export default function CustomerShowPage() {
     config: {
       query: {
         customer_id: id,
+        include_trashed: 1,
       },
     },
     queryOptions: {
@@ -130,7 +131,7 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'delivery_address_name',
       key: 'delivery_address_name',
-      render: (text: string) => (text == 'T' ? '△' : text),
+      render: (text: string) => text,
       width: '20%',
       align: 'left',
     },
@@ -142,7 +143,7 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'post_code',
       key: 'post_code',
-      render: (text: string) => (text == 'T' ? '△' : text),
+      render: (text: string) => text,
       width: 200,
     },
     {
@@ -153,7 +154,7 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'address',
       key: 'address',
-      render: (text: string) => (text == 'T' ? '△' : text),
+      render: (text: string) => text,
       align: 'left',
     },
     {
@@ -164,7 +165,7 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'phone',
       key: 'phone',
-      render: (text: string) => (text == 'T' ? '△' : text),
+      render: (text: string) => text,
       width: 200,
     },
   ]
@@ -188,7 +189,7 @@ export default function CustomerShowPage() {
       dataIndex: 'judgement',
       key: 'judgement',
       width: 150,
-      render: (text: string) => (text == 'T' ? '△' : text),
+      render: (text: string) => text,
     },
     {
       title: (
@@ -281,7 +282,8 @@ export default function CustomerShowPage() {
             type="primary"
             disabled={
               params?.disable ||
-              !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT)
+              !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT) ||
+              !!(record as any)?.deleted_at
             }
             onClick={() =>
               data?.data.id &&
@@ -378,9 +380,7 @@ export default function CustomerShowPage() {
                 {record?.fax}
               </DetailItem>
               <DetailItem label={t('customers.fields.anti_social_rank')}>
-                {record?.company_research_information?.[1]?.judgement == 'T'
-                  ? '△'
-                  : record?.company_research_information?.[1]?.judgement}
+                {record?.company_research_information?.[1]?.judgement}
               </DetailItem>
             </>
           ),

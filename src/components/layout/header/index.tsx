@@ -7,11 +7,20 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import TenantSwitchingModal from '@components/layout/header/tenant-switching-modal'
-import { useLogout, useModal } from '@refinedev/core'
+import { useGo, useLogout, useModal } from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
 import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
-import { Avatar, Badge, Dropdown, Input, Layout, Modal, Space } from 'antd'
+import {
+  Avatar,
+  Badge,
+  Button,
+  Dropdown,
+  Input,
+  Layout,
+  Modal,
+  Space,
+} from 'antd'
 import { useKBar } from 'kbar'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
@@ -29,6 +38,7 @@ export default function AuthHeader({
   const t_menu = useTranslations('menu')
   const { query } = useKBar()
   const session = useSession()
+  const go = useGo()
   const modalProps = useModal()
   const { mutate: logout } = useLogout()
   const { permission } = useUserStore()
@@ -68,7 +78,18 @@ export default function AuthHeader({
         {children}
 
         {children ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-end gap-2">
+            <Button
+              type="default"
+              style={{
+                color: 'rgb(39, 132, 255)',
+                borderColor: 'rgb(39, 132, 255)',
+                backgroundColor: WHITE,
+              }}
+              onClick={() => go({ to: '/initial-setup-guide' })}
+            >
+              初期設定ガイド
+            </Button>
             <div className="text-right leading-tight">
               <Space
                 size={4}
@@ -76,7 +97,7 @@ export default function AuthHeader({
                 onClick={isAdmin ? () => modalProps.show() : undefined}
               >
                 <div className="text-[22px] font-semibold text-[#74232A]">
-                  {tenantName ?? '株式会社ピオネロ'}
+                  {tenantName ?? ''}
                 </div>
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}
               </Space>
@@ -88,10 +109,12 @@ export default function AuthHeader({
                 <div className="flex cursor-pointer items-start justify-end gap-1">
                   <div className="flex flex-col gap-[2px]">
                     <span className="max-w-[180px] truncate text-[12px] font-medium text-gray-900">
-                      {session?.data?.user?.name ?? ''}
+                      {permission?.user?.name ??
+                        session?.data?.user?.name ??
+                        ''}
                     </span>
                     <span className="text-[12px] text-gray-400">
-                      {permission?.role?.display_name ?? 'テナント管理者'}
+                      {permission?.role?.display_name ?? ''}
                     </span>
                   </div>
                   <div className="flex items-center">

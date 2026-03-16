@@ -31,7 +31,7 @@ import {
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { CSV_LINK, PRIMARY } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE, FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   antiSocialCheckOptions,
   countryOptions,
@@ -80,7 +80,7 @@ interface ICustomer {
 
 export default function CustomerListPage() {
   const statusKeys = ['new', 'prospecting', 'contracted', 'lost', 'suspended']
-  const [status, setStatus] = useState<string | null>('new')
+  const [status, setStatus] = useState<string | null>(null)
   const t = useTranslate()
   const go = useGo()
   const apiUrl = useApiUrl()
@@ -126,6 +126,7 @@ export default function CustomerListPage() {
     tableQueryResult,
   } = useTable<ICustomer>({
     syncWithLocation: true,
+    pagination: { pageSize: 20 },
     filters: {
       initial: [
         {
@@ -250,10 +251,18 @@ export default function CustomerListPage() {
   const columns: TableColumnsType<SimpleCustomer> = useMemo(
     () => [
       {
-        title: t('customers.fields.code'),
+        title: t('customers.tables.header.code'),
         dataIndex: 'customer_code',
         key: 'customer_code',
-        width: 130,
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (text, record) => (
           <Link
             href={
@@ -265,7 +274,10 @@ export default function CustomerListPage() {
             style={{
               textDecoration: 'underline',
               whiteSpace: 'nowrap',
-              display: 'inline-block',
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             {text}
@@ -277,59 +289,93 @@ export default function CustomerListPage() {
         dataIndex: 'name',
         key: 'name',
         align: 'left',
-        width: '20%',
-        ellipsis: true,
+        width: '14%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (val: string) => (
+          <Text
+            ellipsis={{ tooltip: val ?? '' }}
+            style={{ display: 'block', width: '100%' }}
+          >
+            {val}
+          </Text>
+        ),
       },
       {
         title: t('customers.fields.status'),
         dataIndex: 'status',
         key: 'status',
-        ellipsis: true,
+        width: '12%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          },
+        }),
         render: (status, record) => (
-          <Select
-            value={status}
-            style={{ width: '110px' }}
-            disabled={!isFullAccess || updatingId === record.id}
-            loading={updatingId === record.id}
-            onChange={async (value) => {
-              setUpdatingId(record.id ?? null)
-              try {
-                await updateStatusMutation({
-                  url: `${apiUrl}/customers/${record.id}/status`,
-                  method: 'patch',
-                  values: { status: value },
-                })
-                await refetchCount()
-                await tableQueryResult.refetch()
-                notification.open?.({
-                  type: 'success',
-                  message: t('customers.message.status_updated_successfully'),
-                })
-              } catch (error) {
-              } finally {
-                setUpdatingId(null)
-              }
+          <div
+            style={{
+              minWidth: 0,
+              maxWidth: '100%',
+              overflow: 'hidden',
             }}
-            options={statusKeys.map((key) => {
-              const style = CustomerStatusStyle(key, t)
-              return {
-                value: key,
-                label: (
-                  <Tag
-                    color={style.background}
-                    style={{
-                      color: style.color,
-                      width: '55px',
-                      textAlign: 'center',
-                      fontSize: '14px',
-                    }}
-                  >
-                    {style.text}
-                  </Tag>
-                ),
-              }
-            })}
-          />
+          >
+            <Select
+              value={status}
+              style={{ width: '100%', maxWidth: '100%' }}
+              disabled={!isFullAccess || updatingId === record.id}
+              loading={updatingId === record.id}
+              onChange={async (value) => {
+                setUpdatingId(record.id ?? null)
+                try {
+                  await updateStatusMutation({
+                    url: `${apiUrl}/customers/${record.id}/status`,
+                    method: 'patch',
+                    values: { status: value },
+                  })
+                  await refetchCount()
+                  await tableQueryResult.refetch()
+                  notification.open?.({
+                    type: 'success',
+                    message: '',
+                    description: t(
+                      'customers.message.status_updated_successfully',
+                    ),
+                  })
+                } catch (error) {
+                } finally {
+                  setUpdatingId(null)
+                }
+              }}
+              options={statusKeys.map((key) => {
+                const style = CustomerStatusStyle(key, t)
+                return {
+                  value: key,
+                  label: (
+                    <Tag
+                      color={style.background}
+                      style={{
+                        color: style.color,
+                        width: '70px',
+                        textAlign: 'center',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {style.text}
+                    </Tag>
+                  ),
+                }
+              })}
+            />
+          </div>
         ),
       },
       {
@@ -337,30 +383,75 @@ export default function CustomerListPage() {
         dataIndex: 'country',
         key: 'country',
         align: 'left',
-        width: 100,
+        width: '6%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (country) =>
-          country && <div className="min-w-[100px]">{country}</div>,
+          country ? (
+            <div
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {country}
+            </div>
+          ) : null,
       },
       {
         title: t('customers.fields.department'),
         dataIndex: 'department_in_charge',
         key: 'person_in_charge_department',
         align: 'left',
-        ellipsis: true,
+        width: '12%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (department) => {
           if (!department) return null
           return (
-            <Space
-              size={4}
-              style={{ width: '100%', justifyContent: 'space-between' }}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
             >
-              {department.name}
+              <div
+                title={department.name}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {department.name}
+              </div>
               {department.deleted_at && (
                 <Tooltip title={t('departments.is_deleted')} color="red">
-                  <ExclamationCircleOutlined style={{ color: 'red' }} />
+                  <ExclamationCircleOutlined
+                    style={{ color: 'red', flexShrink: 0 }}
+                  />
                 </Tooltip>
               )}
-            </Space>
+            </div>
           )
         },
       },
@@ -368,7 +459,15 @@ export default function CustomerListPage() {
         title: t('customers.fields.unit_price_rank_code'),
         dataIndex: 'rank',
         key: 'rank',
-        width: 80,
+        width: '5%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (rank) =>
           rank?.code ? (
             <Link
@@ -393,21 +492,36 @@ export default function CustomerListPage() {
               style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
-              i18n={'code_issue_settings.fields.updated_at'}
-              style={{ fontSize: 12 }}
+              i18n={'customers.fields.anti_social_check_date'}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
           </div>
         ),
         dataIndex: 'credit_rank',
         key: 'credit_rank',
-        width: 110,
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (_, record) => (
-          <Space direction={'vertical'} className="min-w-[100px]">
+          <Space
+            direction="vertical"
+            size={0}
+            style={{
+              minWidth: 0,
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Text strong>{record?.credit_rank}</Text>
-            <Text className={'!font-light !italic'}>
-              {record?.credit_rank_update_at &&
-                dayjs(record?.credit_rank_update_at).format(FORMAT_DATE)}
-            </Text>
+            <Text strong>{record?.anti_social_rank}</Text>
           </Space>
         ),
       },
@@ -415,38 +529,89 @@ export default function CustomerListPage() {
         title: (
           <div>
             <AutoHeading
-              i18n={'customers.fields.anti_social_check_date'}
+              i18n={'code_issue_settings.fields.updated_at'}
               style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
             <AutoHeading
               i18n={'code_issue_settings.fields.updated_at'}
-              style={{ fontSize: 12 }}
+              style={{ fontSize: '14px', fontWeight: 'bold' }}
             />
           </div>
         ),
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
-        width: 100,
-        render: (_, record) => (
-          <Space direction={'vertical'} className="min-w-[100px]">
-            <Text strong>
-              {record?.anti_social_rank === 'T'
-                ? '△'
-                : record?.anti_social_rank}
-            </Text>
-            <Text className={'!font-light !italic'}>
-              {record?.anti_social_rank_update_at &&
-                dayjs(record.anti_social_rank_update_at).format(FORMAT_DATE)}
-            </Text>
-          </Space>
-        ),
+        width: '10%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (_, record) => {
+          const creditDate =
+            record?.credit_rank_update_at &&
+            dayjs(record?.credit_rank_update_at).format(FORMAT_DATE_CROSS)
+          const antiDate =
+            record?.anti_social_rank_update_at &&
+            dayjs(record.anti_social_rank_update_at).format(FORMAT_DATE_CROSS)
+          return (
+            <Space
+              direction="vertical"
+              size={0}
+              style={{
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                title={creditDate ?? undefined}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Text>{creditDate ?? '-'}</Text>
+              </div>
+              <div
+                title={antiDate ?? undefined}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Text>{antiDate ?? '-'}</Text>
+              </div>
+            </Space>
+          )
+        },
       },
       {
         title: t('customers.fields.total_revenue'),
         dataIndex: 'total_revenue',
         key: 'total_revenue',
+        width: '6%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (_, record) => (
-          <div className="min-w-[120px] text-[14px] font-semibold">
+          <div
+            className="text-[14px] font-semibold"
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {Number((record as any)?.total_revenue).toLocaleString()}
           </div>
         ),
@@ -455,35 +620,26 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        width: 100,
+        width: '6%',
         render: (text) =>
-          text && (
-            <div className="min-w-[100px]">
-              {dayjs(text).format(FORMAT_DATE)}
-            </div>
-          ),
+          text && <div>{dayjs(text).format(FORMAT_DATE_CROSS)}</div>,
       },
       {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
-        align: 'left',
-        width: 100,
+        width: '6%',
         render: (text) =>
-          text && (
-            <div className="min-w-[100px]">
-              {dayjs(text).format(FORMAT_DATE)}
-            </div>
-          ),
+          text && <div>{dayjs(text).format(FORMAT_DATE_CROSS)}</div>,
       },
       {
         title: t('customers.fields.actions'),
         key: 'actions',
         align: 'center',
         dataIndex: 'actions',
-        width: 130,
+        width: '7%',
         render: (_, record) => (
-          <Space>
+          <Space wrap size={4}>
             {!record.deleted_at && (
               <EditButton
                 icon={null}
@@ -493,50 +649,6 @@ export default function CustomerListPage() {
               >
                 {t('buttons.edit')}
               </EditButton>
-            )}
-            {record.deleted_at ? (
-              <Button
-                size="small"
-                type="primary"
-                loading={isLoading}
-                disabled={!isFullAccess}
-                onClick={() => {
-                  mutate({
-                    resource: 'customers',
-                    id: record.id,
-                    values: {},
-                    meta: { action: 'restore' },
-                  })
-                }}
-              >
-                {t('buttons.resume')}
-              </Button>
-            ) : (
-              <DeleteButton
-                icon={null}
-                danger
-                confirmOkText={t('buttons.suspend')}
-                recordItemId={record.id}
-                size={'small'}
-                type={'primary'}
-                className={isFullAccess ? '' : '!bg-gray-100'}
-                disabled={!isFullAccess}
-                successNotification={false}
-                onSuccess={() => {
-                  if (notification && notification.open) {
-                    notification.open({
-                      type: 'success',
-                      message: t('customers.suspend_success_title'),
-                      description: t('customers.suspend_success_desc', {
-                        code: record.customer_code,
-                      }),
-                      key: `delete-${record.id}`,
-                    })
-                  }
-                }}
-              >
-                {t('buttons.suspend')}
-              </DeleteButton>
             )}
           </Space>
         ),
@@ -586,12 +698,12 @@ export default function CustomerListPage() {
     })
 
     return [
-      ...stats,
       {
         title: t('agreed_prices.summary.all'),
         value: c?.total ?? 0,
         key: null as string | null,
       },
+      ...stats,
     ]
   }, [count, t])
 
@@ -721,6 +833,7 @@ export default function CustomerListPage() {
             <Form.Item
               label={boldText(t('customers.filters.date_range'))}
               name="search_date_type"
+              initialValue={searchDateTypeOptions[0]?.value}
             >
               <Select
                 allowClear
@@ -733,7 +846,8 @@ export default function CustomerListPage() {
             <Form.Item label={<></>} name="date_range">
               <RangePicker
                 className="w-full"
-                placeholder={[FORMAT_DATE, FORMAT_DATE]}
+                placeholder={[FORMAT_DATE_CROSS, FORMAT_DATE_CROSS]}
+                format={FORMAT_DATE_CROSS}
               />
             </Form.Item>
           </Col>
@@ -788,13 +902,13 @@ export default function CustomerListPage() {
       </Modal>
 
       <CommonTable
-        tableLayout="fixed"
         onRow={(record) => ({
           className: getRowClassName(record),
         })}
         {...tableProps}
         rowKey="id"
         columns={columns as any}
+        scroll={undefined}
       />
     </List>
   )

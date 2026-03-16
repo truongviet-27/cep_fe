@@ -3,9 +3,11 @@ import { useResource, useTranslate, useUserFriendlyName } from '@refinedev/core'
 import type { ListProps } from '@refinedev/antd'
 import { PageHeader } from '@refinedev/antd'
 import AutoHeading from '@components/common/auto-heading'
+import { Spin } from 'antd'
 
 type CustomProps = {
   isAutoHeading?: boolean
+  loading?: boolean
   footer?: React.ReactNode
   i18nHeading?: string
 }
@@ -24,6 +26,7 @@ export const List: React.FC<ListProps & CustomProps> = ({
   resource: resourceFromProps,
   wrapperProps,
   contentProps,
+  loading = false,
   isAutoHeading = true,
   footer,
   i18nHeading,
@@ -124,6 +127,15 @@ export const List: React.FC<ListProps & CustomProps> = ({
             {/*  </Button>*/}
           </div>
         </div>
+        <Spin
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          spinning={loading}
+          size="default"
+        ></Spin>
       </PageHeader>
     </div>
   )

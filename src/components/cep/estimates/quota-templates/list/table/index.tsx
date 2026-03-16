@@ -1,4 +1,3 @@
-import { ReconciliationOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import type { QuotaTemplateListItemType } from '@interfaces/quota-templates'
 import {
@@ -9,8 +8,7 @@ import {
 } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
-import { PRIMARY } from '@utility/color'
-import { Button, Flex, Space, Tooltip, Typography } from 'antd'
+import { Button, Flex, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableProps } from 'antd/lib'
 import dayjs from 'dayjs'
@@ -33,10 +31,25 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'name',
       dataIndex: 'name',
       title: t('quota_templates.list.templateName'),
+      width: '20%',
+      onCell: () => ({
+        style: {
+          padding: '2px 2px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
+      }),
       render: (item, record) => (
         <Link
           href={`/quota-templates/show/${record.id}`}
           className="!underline"
+          style={{
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
         >
           {item}
         </Link>
@@ -46,7 +59,27 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'author',
       dataIndex: 'author',
       title: t('quota_templates.list.creator'),
-      render: (_, record) => <span>{record.author?.name ?? '-'}</span>,
+      width: '24%',
+      onCell: () => ({
+        style: {
+          padding: '2px 2px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
+      }),
+      render: (_, record) => (
+        <span
+          style={{
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {record.author?.name ?? '-'}
+        </span>
+      ),
     },
     {
       key: 'creationDate',
@@ -58,6 +91,10 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
           {t('quota_templates.list.updateDate')}
         </>
       ),
+      width: '10%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
       render(_, record) {
         return (
           <div>
@@ -80,19 +117,44 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'number_product',
       dataIndex: 'number_product',
       title: t('quota_templates.list.numberOfItems'),
+      width: '5%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
     },
     {
       key: 'total_price',
       dataIndex: 'total_price',
       title: t('quota_templates.list.bassPrice'),
+      width: '10%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
       render: (value) => Math.trunc(value).toLocaleString(),
     },
     {
       key: 'description',
       dataIndex: 'description',
       title: t('quota_templates.list.description'),
+      width: '21%',
+      onCell: () => ({
+        style: {
+          padding: '2px 2px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
+      }),
       render: (value) => (
-        <Text style={{ width: 200 }} ellipsis={{ tooltip: value }}>
+        <Text
+          style={{
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+          ellipsis={{ tooltip: value }}
+        >
           {value}
         </Text>
       ),
@@ -101,48 +163,71 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       key: 'operation',
       dataIndex: 'operation',
       title: t('quota_templates.list.operation'),
-      width: 200,
+      width: '12%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
       render: (_, record) => (
-        <Space size={8}>
+        <Space wrap size={4}>
           <ShowButton
-            hideText
+            autoInsertSpace={false}
             size="small"
+            icon={null}
             recordItemId={record.id}
             resource="quota-templates"
-          />
+            style={{
+              color: '#2784FF',
+              borderColor: '#2784FF',
+            }}
+          >
+            {t('buttons.show')}
+          </ShowButton>
           {(permission?.is_module_admin ||
             permission?.user?.id === record.author?.id) && (
             <EditButton
-              hideText
+              autoInsertSpace={false}
               size="small"
+              icon={null}
               recordItemId={record.id}
               resource="quota-templates"
-            />
-          )}
-          <Tooltip
-            title={t('quota_templates.list.createFromTemplate')}
-            color={PRIMARY}
-          >
-            <Button
-              size="small"
-              icon={<ReconciliationOutlined />}
-              style={{ color: PRIMARY, borderColor: PRIMARY }}
-              onClick={() => {
-                go({
-                  to: '/quotas/create?templateId=' + record.id,
-                })
+              style={{
+                color: '#FFFFFF',
+                background: '#1FDB51',
               }}
-            />
-          </Tooltip>
+            >
+              {t('buttons.edit')}
+            </EditButton>
+          )}
           {(permission?.is_module_admin ||
             permission?.user?.id === record.author?.id) && (
             <DeleteButton
-              hideText
+              autoInsertSpace={false}
               size="small"
+              icon={null}
               recordItemId={record.id}
               resource="quota-templates"
-            />
+              style={{
+                color: '#FFFFFF',
+                background: '#E74C3C',
+              }}
+            >
+              {t('buttons.delete')}
+            </DeleteButton>
           )}
+          <Button
+            type="default"
+            size="small"
+            icon={null}
+            style={{
+              color: '#2784FF',
+              borderColor: '#2784FF',
+            }}
+            onClick={() => {
+              go({ to: '/quotas/create?templateId=' + record.id })
+            }}
+          >
+            {t('quota_templates.list.createFromTemplate')}
+          </Button>
         </Space>
       ),
     },
@@ -151,7 +236,12 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
   return (
     <>
       <Flex justify="end">
-        <CreateButton icon={null} resource="quota-templates">
+        <CreateButton
+          icon={null}
+          resource="quota-templates"
+          type="primary"
+          autoInsertSpace={false}
+        >
           {t('quota_templates.button.create')}
         </CreateButton>
       </Flex>
@@ -159,6 +249,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       <CommonTable
         {...tableProps}
         columns={columns}
+        scroll={undefined}
         pagination={{
           ...tableProps.pagination,
           showSizeChanger: true,

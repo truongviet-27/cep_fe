@@ -1,22 +1,19 @@
 import type {
-  QuotaTemplateProductGroupRequest,
-  QuotaTemplateProductGroupResponse,
   QuotaTemplateProductItemRequest,
   QuotaTemplateStoreRequest,
+  RoundingMethodEnumType,
 } from '@sdk/hey-api'
 import type { Dayjs } from 'dayjs'
 
 export type QuotaTemplateFormType = QuotaTemplateStoreRequest & {
   total_cost: number
   total_price_tax_included: number
+  tax_rounding_method: RoundingMethodEnumType
   total_profit_margin: number
   total_tax: number
   consumption_tax_amount: number
-  main_product?: QuotaTemplateMainProductType[]
-  optional_product?: QuotaTemplateMainProductType[]
-}
-export type QuotaTemplateMainProductType = QuotaTemplateProductGroupRequest & {
-  products: QuotaTemplateProductType[]
+  main_product?: QuotaTemplateProductType[]
+  optional_product?: QuotaTemplateProductType[]
 }
 
 export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
@@ -78,7 +75,7 @@ export type QuotaTemplateListItemType = {
 
 export type SearchQuotaTemplateType = {
   name_lk?: string
-  creator?: string
+  created_by?: number
   start_to_end_date?: [Dayjs, Dayjs]
   start_date?: string
   end_date?: string
@@ -92,6 +89,7 @@ export type QuoteTemplateDetailType = {
   type?: 'normal' | 'channel_limited'
   category?: 'merchandise' | 'service'
   delivery_method?: string
+  customer_term?: 'short_term' | 'long_term'
   payment_due_date?:
     | 'monthly_25'
     | 'monthly_10'
@@ -113,6 +111,7 @@ export type QuoteTemplateDetailType = {
   number_product?: number
   total_price: number
   total_price_tax_included: number
+  tax_rounding_method: RoundingMethodEnumType
   total_profit_margin: number
   tax_rate_group?: Array<{
     /**
@@ -129,8 +128,8 @@ export type QuoteTemplateDetailType = {
     id?: number
     name?: string
   }>
-  main_product?: Array<QuotaTemplateProductGroupResponse>
-  optional_product?: Array<QuotaTemplateProductGroupResponse>
+  main_product?: Array<QuotaTemplateProductType>
+  optional_product?: Array<QuotaTemplateProductType>
   created_at?: string
   updated_at?: string
   author?: {

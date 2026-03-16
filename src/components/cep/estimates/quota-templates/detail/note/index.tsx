@@ -19,7 +19,9 @@ const NoteForm: React.FC<Props> = ({ note }) => {
       >
         {t('quota_templates.form.titleSpecificationsAndConditions')}
       </Title>
-      <div className="p-4">{note}</div>
+      <div style={{ whiteSpace: 'pre-line' }} className="p-4">
+        {note}
+      </div>
     </>
   )
 }

@@ -1,35 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  CommentOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  DownloadOutlined,
-  DownOutlined,
-  EditOutlined,
-  EyeOutlined,
-  RightOutlined,
-} from '@ant-design/icons'
+// done
+import { CommentOutlined, DownOutlined, RightOutlined } from '@ant-design/icons'
+import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
-import { QuotaStatus } from '@components/cep/estimates/quotas/enum'
-import ModalAgreePrice from '@components/cep/estimates/quotas/modal'
+import {
+  QuotaStatus,
+  STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE,
+  TRANSACTION_TYPES,
+} from '@components/cep/estimates/quotas/enum'
 import {
   getActionPermissions,
   getExpiryDate,
   getQuotaStatusStyle,
+  STATUS_DATE_RULES,
 } from '@components/cep/estimates/quotas/utils'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
+import CoreInput from '@components/common/core-input'
+import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import useCurrency from '@hook/use-currency'
 import {
   CloneButton,
   DeleteButton,
   EditButton,
   ShowButton,
-  useModal,
   useTable,
 } from '@refinedev/antd'
 import {
+  type CrudFilter,
+  type CrudFilters,
   type OpenNotificationParams,
   useApiUrl,
   useCustom,
@@ -37,10 +38,11 @@ import {
   useGo,
   useTranslate,
 } from '@refinedev/core'
+import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { BLACK, PRIMARY, WHITE } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   Button,
   Col,
@@ -49,7 +51,7 @@ import {
   Empty,
   Form,
   Input,
-  Modal,
+  notification,
   Popconfirm,
   Row,
   Select,
@@ -62,6 +64,7 @@ import { type TableRowSelection } from 'antd/es/table/interface'
 import { type ItemType } from 'antd/lib/menu/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { type MenuInfo } from 'rc-menu/lib/interface'
 import React, {
   type ReactNode,
@@ -74,23 +77,34 @@ import React, {
 const { RangePicker } = DatePicker
 
 function QuotaList() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const urlPage = Number(searchParams.get('current')) || 1
+  const urlPageSize = Number(searchParams.get('pageSize')) || 20
   const t = useTranslate()
-
+  const { convertCurrency } = useCurrency()
   const apiUrl = useApiUrl()
-
+  const [useApproveRoute, setUseApproveRoute] = useState<boolean>(false)
+  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  useEffect(() => {
+    setUseApproveRoute(
+      !!parameterSettings?.get?.(ParameterResourceEnum.APPROVE_ROUTES),
+    )
+  }, [parameterSettings])
   const { permission } = useUserStore.getState()
-
-  const department = Form.useWatch(
-    'department_in_charge',
-    Form.useFormInstance(),
-  )
 
   const go = useGo()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [options, setOptions] = useState<ItemType[]>([])
   const [selectedRows, setSelectedRows] = useState<any>()
-
+  const rightOptions: ItemType[] = [
+    { key: 1, label: t('quotas.actions.new_create') },
+    { key: 2, label: t('quotas.actions.create_from_template') },
+  ]
+  const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
   const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
 
   const onSelectChange = (
@@ -100,16 +114,33 @@ function QuotaList() {
     setSelectedRows(selectedRows)
 
     const status = handleOptions(selectedRows)
-    const options = statusButton(status, selectedRows?.[0]?.has_approval_route)
+
+    const hasValidApprovers = (item: any): boolean =>
+      item.is_manage_approve_routes === true &&
+      Array.isArray(item?.approvers) &&
+      item.approvers.length > 0
+
+    // tat ca cac record duoc select, deu co nguoi duyet
+    const allHaveApprovers = selectedRows.every(hasValidApprovers)
+
+    // tat ca cac record duoc select, deu khong co nguoi duyet
+    const noneHaveApprovers = selectedRows.every(
+      (item: any) => item.is_manage_approve_routes === false,
+    )
+
+    const hasMixedApprovers = !allHaveApprovers && !noneHaveApprovers
+
+    const options = statusButton(status, allHaveApprovers, hasMixedApprovers)
+
     setOptions(options)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any) => {
+    (resource: string, values: any, method?: any) => {
       mutate({
         values,
-        method: 'put',
+        method: method ? method : 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
           return notificationFunction(data?.data.message)
@@ -132,13 +163,15 @@ function QuotaList() {
       const isAgreedPriceDisabled =
         record.status === QuotaStatus.Completed &&
         record.has_agreed_price === true
+      const isRowDisabled =
+        !useApproveRoute &&
+        STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(record.status) > -1
       return {
-        disabled: isPermissionDisabled || isAgreedPriceDisabled,
+        disabled:
+          isPermissionDisabled || isAgreedPriceDisabled || isRowDisabled,
       }
     },
   }
-
-  const { modalProps, close, show } = useModal()
 
   const columns: ColumnsType<any> = useMemo(() => {
     return [
@@ -151,14 +184,36 @@ function QuotaList() {
         ),
         dataIndex: 'status',
         key: 'status',
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            minWidth: 0,
+            overflow: 'hidden',
+          },
+        }),
         render: (value, record) => {
           const result = getQuotaStatusStyle(value, t)
 
           return (
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div
+              className="flex flex-col items-center justify-center gap-1"
+              style={{
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
               <Tag
                 color={result.background}
-                style={{ color: result.color, marginRight: 0 }}
+                style={{
+                  color: result.color,
+                  marginRight: 0,
+                  maxWidth: '100%',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: 1.3,
+                }}
               >
                 {result.text}
               </Tag>
@@ -182,9 +237,27 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
+        width: '8%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (value, record) => (
           <Button
             type="link"
+            style={{
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
             className="underline"
             title={value}
             onClick={() => {
@@ -206,21 +279,83 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
+        width: '16%',
         onCell: () => ({
           style: {
-            maxWidth: 150,
+            padding: '2px 2px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            verticalAlign: 'center',
           },
         }),
-
         render: (_, record) => (
-          <div className="flex flex-col gap-1">
-            <div className="overflow-hidden" title={record.title}>
+          <div>
+            <div
+              title={record.title}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
               {record.title}
             </div>
-            <span>{record.customer_name}</span>
+            <div
+              title={record.customer_name}
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {record.customer_name}
+            </div>
+          </div>
+        ),
+      },
+      {
+        title: (
+          <div className="flex flex-col">
+            <span>{t('quotas.table.transaction_type')}</span>
+          </div>
+        ),
+        dataIndex: 'transaction_type',
+        key: 'transaction_type',
+        width: '10%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
+        render: (_, record) => (
+          <div
+            title={
+              record.transaction_type
+                ? t(`quotas.transaction_type.${record.transaction_type}`)
+                : undefined
+            }
+            style={{
+              display: 'block',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
+          >
+            {record.transaction_type &&
+              t(`quotas.transaction_type.${record.transaction_type}`)}
           </div>
         ),
       },
@@ -233,25 +368,59 @@ function QuotaList() {
         ),
         dataIndex: 'creator',
         key: 'creator',
-        render: (_, record) => (
-          <div>
-            <div>{record?.author?.name}</div>
-            <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
-              {record.approvers?.map((item: any, index: number) => {
-                const isApproved = item.status === 'approved'
-                const numberIcon = String.fromCharCode(9312 + index)
-                return (
-                  <span
-                    key={index}
-                    className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
-                  >
-                    {numberIcon} {item.name}
-                  </span>
-                )
-              })}
+        width: '14%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
+        render: (_, record) => {
+          return (
+            <div>
+              <div
+                title={record?.author?.name}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center',
+                }}
+              >
+                {record?.author?.name}
+              </div>
+              <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
+                {record.approvers?.map((item: any, index: number) => {
+                  const numSteps = item?.number_step ?? 1
+                  const isApproved = item.status === 'approved'
+                  const numberIcon = String.fromCharCode(9311 + numSteps)
+                  return (
+                    <span
+                      title={item.name}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        textAlign: 'center',
+                      }}
+                      key={index}
+                      className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
+                    >
+                      {numberIcon} {item.name}
+                    </span>
+                  )
+                })}
+              </div>
             </div>
-          </div>
-        ),
+          )
+        },
       },
       {
         title: (
@@ -262,10 +431,49 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
+        width: '14%',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
         render: (_, record) => (
-          <div className="flex flex-col gap-2">
-            <div>{record.department_in_charge}</div>
-            <div>{Number(record?.total_price || 0).toLocaleString()}</div>
+          <div
+            className="flex flex-col gap-2"
+            style={{ minWidth: 0, width: '100%', overflow: 'hidden' }}
+          >
+            <div
+              title={record.department_in_charge}
+              style={{
+                display: 'block',
+                width: '100%',
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {record.department_in_charge}
+            </div>
+            <div
+              title={Number(record?.total_price || 0).toLocaleString()}
+              style={{
+                display: 'block',
+                width: '100%',
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {Number(record?.total_price || 0).toLocaleString()}
+            </div>
           </div>
         ),
       },
@@ -278,6 +486,7 @@ function QuotaList() {
         ),
         dataIndex: 'createdAt',
         key: 'createdAt',
+        width: '8%',
         render: (_, record) => (
           <div>
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
@@ -299,6 +508,7 @@ function QuotaList() {
         ),
         dataIndex: 'sentAt',
         key: 'sentAt',
+        width: '8%',
         render: (_, record) => {
           if (
             record.sent_to_customer_date ||
@@ -328,118 +538,166 @@ function QuotaList() {
       {
         title: t('quotas.table.actions'),
         key: 'action',
+        width: '14%',
+        align: 'left',
+        onCell: () => ({
+          style: { padding: '4px 8px', overflow: 'hidden', minWidth: 0 },
+        }),
         render: (_, record) => (
-          <Space>
-            <ShowButton
-              hideText
-              size="small"
-              icon={<EyeOutlined />}
-              recordItemId={record.id}
-            />
-            {(record.status === QuotaStatus.Creating ||
-              record.status === QuotaStatus.Rejected) &&
-              (permission?.is_module_admin || record.is_author) && (
-                <EditButton
-                  hideText
-                  size="small"
-                  icon={<EditOutlined />}
-                  recordItemId={record.id}
-                />
-              )}
-
-            <CloneButton
-              hideText
-              size="small"
-              icon={<CopyOutlined />}
-              recordItemId={record.id}
-            />
-
-            {/* {record.status === QuotaStatus.Completed && (
-              <Button
-                type="default"
+          <div
+            style={{
+              width: '100%',
+              minWidth: 0,
+              overflow: 'hidden',
+              display: 'flex',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <Space wrap size={4}>
+              <ShowButton
+                autoInsertSpace={false}
                 size="small"
-                onClick={() => {
-                  show()
-                  setDataAgreedPrice(record)
+                icon={null}
+                recordItemId={record.id}
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
                 }}
               >
-                {t('quotas.actions.decide_move')}
-              </Button>
-            )} */}
+                {t('quotas.goDetailLabel')}
+              </ShowButton>
 
-            <Link href={record?.pdf_path} target="_blank">
-              <Button size="small" icon={<DownloadOutlined />} />
-            </Link>
+              {(record.status === QuotaStatus.Creating ||
+                record.status === QuotaStatus.Rejected) &&
+                (permission?.is_module_admin || record.is_author) && (
+                  <EditButton
+                    autoInsertSpace={false}
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#1FDB51',
+                    }}
+                  >
+                    {t('quotas.goEditLabel')}
+                  </EditButton>
+                )}
 
-            {(record.status === QuotaStatus.Creating ||
-              record.status === QuotaStatus.Rejected ||
-              record.status === QuotaStatus.Cancelled) &&
-              (record.is_author || permission?.is_module_admin) && (
-                <DeleteButton
-                  hideText
-                  size="small"
-                  icon={<DeleteOutlined />}
-                  recordItemId={record.id}
-                />
-              )}
-
-            {record.status === QuotaStatus.SentToCustomer && (
-              <Button
-                type="default"
+              <CloneButton
+                autoInsertSpace={false}
                 size="small"
-                onClick={() => {
-                  go({
-                    to: `quotas/clone/${record.id}?actionType=VERSION`,
-                  })
+                icon={null}
+                recordItemId={record.id}
+                style={{
+                  color: '#FFFFFF',
+                  background: '#0161D3',
                 }}
               >
-                {t('quotas.actions.re_estimate')}
-              </Button>
-            )}
+                {t('quotas.goDetailCLoneLabel')}
+              </CloneButton>
 
-            {record.status === QuotaStatus.Completed &&
-              (permission?.is_module_admin || record.is_author) &&
-              !record?.has_agreed_price && (
+              {record.status === QuotaStatus.SentToCustomer && (
                 <Button
                   type="default"
                   size="small"
-                  onClick={() => {
-                    show()
-                    setDataAgreedPrice(record)
-                  }}
-                >
-                  {t('quotas.actions.decide_move')}
-                </Button>
-              )}
-
-            {(record.status === QuotaStatus.Completed ||
-              record.status === QuotaStatus.Cancelled) &&
-              (permission?.is_module_admin || record.display) &&
-              !record?.has_agreed_price && (
-                <Button
-                  type="default"
                   style={{
-                    background: '#721C24',
-                    color: WHITE,
+                    color: '#FFFFFF',
+                    background: '#C5AF08',
                   }}
-                  size={'small'}
                   onClick={() => {
-                    handleChangeStatus('back-to-sent-customer', {
-                      quota_ids: [record.id],
+                    go({
+                      to: `quotas/clone/${record.id}?actionType=VERSION`,
                     })
                   }}
                 >
-                  {t('quotas.show.actions.move_to_send')}
+                  {t('quotas.actions.re_estimate')}
                 </Button>
               )}
-          </Space>
+
+              {(record.status === QuotaStatus.Completed ||
+                record.status === QuotaStatus.Cancelled) &&
+                (permission?.is_module_admin || record.display) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    style={{ background: '#D77703', color: WHITE }}
+                    size="small"
+                    onClick={() =>
+                      handleChangeStatus('back-to-sent-customer', {
+                        quota_ids: [record.id],
+                      })
+                    }
+                  >
+                    {t('quotas.show.actions.move_to_send')}
+                  </Button>
+                )}
+
+              {(record.status === QuotaStatus.Creating ||
+                record.status === QuotaStatus.Rejected ||
+                record.status === QuotaStatus.Cancelled) &&
+                (record.is_author || permission?.is_module_admin) && (
+                  <DeleteButton
+                    autoInsertSpace={false}
+                    successNotification={() => {
+                      return notificationFunction()
+                    }}
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#E74C3C',
+                    }}
+                  >
+                    {t('quotas.actions.delete')}
+                  </DeleteButton>
+                )}
+
+              {(record.is_author || permission?.is_module_admin) &&
+                record.status === QuotaStatus.SentToCustomer && (
+                  <Button
+                    type="default"
+                    size="small"
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#8207BA',
+                    }}
+                    onClick={() =>
+                      handleChangeStatus(
+                        'resend-email-to-customer',
+                        {
+                          quota_ids: [record.id],
+                        },
+                        'post',
+                      )
+                    }
+                  >
+                    {t('quotas.actions.resend_email_to_customer')}
+                  </Button>
+                )}
+
+              <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
+                <Button
+                  size="small"
+                  type="default"
+                  style={{
+                    color: '#2784FF',
+                    borderColor: '#2784FF',
+                  }}
+                >
+                  {t('quotas.downloadLabel')}
+                </Button>
+              </Link>
+            </Space>
+          </div>
         ),
       },
     ]
   }, [t])
 
-  const [status, setStatus] = useState<string | null>(QuotaStatus.Creating)
-
+  const [status, setStatus] = useState<string | null>(null)
+  const currentRule = status ? STATUS_DATE_RULES[status] : undefined
   const {
     tableProps,
     searchFormProps,
@@ -448,6 +706,11 @@ function QuotaList() {
     tableQuery: { refetch },
     filters,
   } = useTable({
+    syncWithLocation: false,
+    pagination: {
+      current: urlPage,
+      pageSize: urlPageSize,
+    },
     filters: {
       initial: [
         {
@@ -458,7 +721,7 @@ function QuotaList() {
       ],
     },
     onSearch(values: any) {
-      return [
+      const filters: CrudFilters = [
         {
           field: 'status',
           operator: 'eq',
@@ -475,14 +738,14 @@ function QuotaList() {
           value: values.title,
         },
         {
-          field: 'customer_name',
+          field: 'customer_id',
           operator: 'eq',
-          value: values.customer_name,
+          value: values.customer_name?.value,
         },
         {
-          field: 'creator_name',
+          field: 'creator_id',
           operator: 'eq',
-          value: values.creator_name,
+          value: values.creator_name?.value,
         },
         {
           field: 'tag_name',
@@ -490,14 +753,14 @@ function QuotaList() {
           value: values.tag_name,
         },
         {
-          field: 'approver_name',
+          field: 'approver_id',
           operator: 'eq',
-          value: values.approver_name,
+          value: values.approver_name?.value,
         },
         {
-          field: 'department_in_charge',
+          field: 'department_in_charge_id',
           operator: 'eq',
-          value: values.department_in_charge?.label,
+          value: values.department_in_charge?.value,
         },
         {
           field: 'search_date_type',
@@ -518,30 +781,113 @@ function QuotaList() {
             ? dayjs((values?.date ?? [])[1]).format('YYYY-MM-DD')
             : null,
         },
+        {
+          field: 'category_id',
+          operator: 'eq',
+          value: values.category_id,
+        },
+        {
+          field: 'transaction_type',
+          operator: 'eq',
+          value: values.transaction_type?.trim(),
+        },
+        {
+          field: 'product_name',
+          operator: 'eq',
+          value: values.product_name,
+        },
       ]
+      return filters
     },
   })
 
+  const form = searchFormProps.form
+
   useEffect(() => {
-    setStatus(
-      filters?.find((filter: any) => filter?.field === 'status')?.value ||
-        QuotaStatus.Creating,
-    )
-  }, [])
+    if (!form) return
+    const currentStatus =
+      filters?.find((filter: any) => filter?.field === 'status')?.value || null
+
+    setStatus(currentStatus)
+    const rule = STATUS_DATE_RULES[currentStatus]
+    form.setFieldsValue({
+      search_date_type: rule?.dateType ?? 'created_at',
+      date: rule?.getRange ? rule.getRange() : null,
+    })
+  }, [form])
+
+  useEffect(() => {
+    const pagination = tableProps.pagination
+    if (!pagination || typeof pagination !== 'object') return
+    const current = pagination.current ?? 1
+    const pageSize = pagination.pageSize ?? 20
+
+    const urlCurrent = Number(searchParams.get('current')) || 1
+    const urlPageSize = Number(searchParams.get('pageSize')) || 20
+    if (current === urlCurrent && pageSize === urlPageSize) return
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('current', String(current))
+    params.set('pageSize', String(pageSize))
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [tableProps.pagination, pathname, router])
 
   const onChangeStatus = useCallback(
     (status: string | null) => {
       setStatus(status)
-      setFilters([
-        {
-          field: 'status',
-          operator: 'eq',
-          value: status,
-        },
-      ])
+      const rule = status ? STATUS_DATE_RULES[status] : undefined
+      const range = rule?.getRange ? rule.getRange() : null
+      form?.setFieldsValue({
+        search_date_type: rule?.dateType ?? 'created_at',
+        date: range,
+      })
+
+      setFilters((prev) => {
+        const filtered = prev?.filter((item: CrudFilter) => {
+          if (!('field' in item)) return true
+          return (
+            item.field !== 'start_date' &&
+            item.field !== 'end_date' &&
+            item.field !== 'search_date_type' &&
+            item.field !== 'status'
+          )
+        })
+
+        const newFilters: CrudFilters = [
+          ...filtered,
+          {
+            field: 'status',
+            operator: 'eq',
+            value: status,
+          },
+        ]
+
+        if (range) {
+          newFilters.push(
+            {
+              field: 'search_date_type',
+              operator: 'eq',
+              value: rule?.dateType ?? 'created_at',
+            },
+            {
+              field: 'start_date',
+              operator: 'eq',
+              value: dayjs(range[0]).format('YYYY-MM-DD'),
+            },
+            {
+              field: 'end_date',
+              operator: 'eq',
+              value: dayjs(range[1]).format('YYYY-MM-DD'),
+            },
+          )
+        }
+
+        return newFilters
+      })
+
       setCurrent(1)
     },
-    [status, setFilters, setCurrent],
+    [form, status, setFilters, setCurrent],
   )
 
   const handleOptions = (data: any[]) => {
@@ -570,6 +916,7 @@ function QuotaList() {
   })
 
   const statusData = [
+    { title: t('quotas.status.all'), value: 0, key: null },
     { title: t('quotas.status.creating'), value: 0, key: QuotaStatus.Creating },
     {
       title: t('quotas.status.waiting_approval'),
@@ -577,6 +924,12 @@ function QuotaList() {
       color: '#faad14',
       key: QuotaStatus.WaitingApproval,
     }, // vàng
+    {
+      title: t('quotas.status.rejected'),
+      value: 0,
+      color: '#fa541c',
+      key: QuotaStatus.Rejected,
+    }, // cam
     {
       title: t('quotas.status.approved'),
       value: 0,
@@ -590,12 +943,6 @@ function QuotaList() {
       key: QuotaStatus.SentToCustomer,
     }, // xanh đậm
     {
-      title: t('quotas.status.rejected'),
-      value: 0,
-      color: '#fa541c',
-      key: QuotaStatus.Rejected,
-    }, // cam
-    {
       title: t('quotas.status.completed'),
       value: 0,
       color: '#52c41a',
@@ -607,12 +954,16 @@ function QuotaList() {
       color: '#ff4d4f',
       key: QuotaStatus.Cancelled,
     }, // đỏ
-    { title: t('quotas.status.all'), value: 0, key: null },
   ]
 
   const statusDashboard = useMemo(() => {
     return statusData.map((item) => ({
       ...item,
+      total_amount: convertCurrency(
+        data?.data['total_amount_' + item.key],
+        true,
+        false,
+      ),
       value: !item.key ? data?.data?.total : data?.data[item.key],
     }))
   }, [data, t])
@@ -621,32 +972,40 @@ function QuotaList() {
     (
       status: QuotaStatus,
       hasApprovalRoutes: boolean,
+      hasMixedApprovers: boolean,
     ): { key: number; label: string | ReactNode }[] => {
-      if (status === QuotaStatus.Creating || status === QuotaStatus.Rejected) {
-        return [
-          {
-            key: 1,
-            label: t('quotas.actions.delete'),
-          },
-          ...(hasApprovalRoutes
-            ? [
-                {
-                  key: 2,
-                  label: t('quotas.actions.request_approval'),
-                },
-              ]
-            : []),
-        ]
+      if (status === QuotaStatus.Creating) {
+        const actions = [{ key: 1, label: t('quotas.actions.delete') }]
+
+        if (!hasMixedApprovers) {
+          if (hasApprovalRoutes) {
+            actions.push({
+              key: 2,
+              label: t('quotas.actions.request_approval'),
+            })
+          } else {
+            actions.push({
+              key: 4,
+              label: t('quotas.actions.send'),
+            })
+          }
+        }
+
+        return actions
       } else if (status === QuotaStatus.WaitingApproval) {
         return [
-          ...(hasApprovalRoutes
-            ? [{ key: 3, label: t('quotas.actions.approve') }]
+          ...(hasApprovalRoutes && !hasMixedApprovers
+            ? [
+                { key: 3, label: t('quotas.actions.approve') },
+                { key: 9, label: t('quotas.actions.move_to_reject') },
+              ]
             : []),
         ]
       } else if (status === QuotaStatus.Approved) {
         return [{ key: 4, label: t('quotas.actions.send') }]
       } else if (status === QuotaStatus.SentToCustomer) {
         return [
+          { key: 8, label: t('quotas.actions.resend_email_to_customer') },
           { key: 5, label: t('quotas.actions.move_to_order') },
           { key: 6, label: t('quotas.actions.move_to_cancel') },
         ]
@@ -655,10 +1014,10 @@ function QuotaList() {
       } else if (status === QuotaStatus.Cancelled) {
         return [
           { key: 1, label: t('quotas.actions.delete') },
-          ...(hasApprovalRoutes
-            ? [{ key: 7, label: t('quotas.actions.move_to_send') }]
-            : []),
+          ...[{ key: 7, label: t('quotas.actions.move_to_send') }],
         ]
+      } else if (status === QuotaStatus.Rejected) {
+        return [{ key: 1, label: t('quotas.actions.delete') }]
       }
       return []
     },
@@ -666,7 +1025,7 @@ function QuotaList() {
   )
 
   const notificationFunction = useCallback(
-    (message: string): OpenNotificationParams | false | undefined => {
+    (message?: string): OpenNotificationParams | false | undefined => {
       refetch()
       refetchStats()
       setSelectedRowKeys([])
@@ -707,7 +1066,48 @@ function QuotaList() {
         method: 'put',
         url: `${apiUrl}/quotas/approval-steps`,
         successNotification: (data) => {
-          return notificationFunction(data?.data.message)
+          const idToCodeMap = new Map(
+            selectedRows.map((item: any) => [item.id, item.code]),
+          )
+          const successCodes =
+            data?.data?.results
+              ?.map((id: number) => idToCodeMap.get(id))
+              .filter(Boolean) ?? []
+
+          const errorCodes =
+            data?.data?.errors
+              ?.map((id: number) => idToCodeMap.get(id))
+              .filter(Boolean) ?? []
+
+          const formatCodes = (codes: string[], limit = 10) => {
+            if (codes.length <= limit) return codes.join(', ')
+            return `${codes.length}`
+          }
+
+          if (errorCodes.length) {
+            notification.open({
+              message: t('notifications.notProceedRecords', {
+                recordAsString: formatCodes(errorCodes),
+              }),
+              type: 'error',
+            })
+          }
+
+          if (successCodes.length) {
+            return notificationFunction(
+              t('notifications.proceedRecords', {
+                recordAsString: formatCodes(successCodes),
+              }),
+            )
+          }
+          return false
+        },
+        errorNotification: (data) => {
+          notification.open({
+            message: data?.message,
+            type: 'error',
+          })
+          return false
         },
       })
     } else if (Number(info.key) === 4) {
@@ -755,10 +1155,32 @@ function QuotaList() {
           return notificationFunction(data?.data.message)
         },
       })
+    } else if (Number(info.key) === 8) {
+      mutate({
+        values: {
+          quota_ids: selectedRows?.map((item: any) => item?.id),
+        },
+        method: 'post',
+        url: `${apiUrl}/quotas/resend-email-to-customer`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
+    } else if (Number(info.key) === 9) {
+      mutate({
+        values: selectedRows.map((item: any) => ({
+          quota_id: item?.id,
+          status: 'rejected',
+          comment: '一括差戻',
+        })),
+        method: 'put',
+        url: `${apiUrl}/quotas/approval-steps`,
+        successNotification: (data) => {
+          return notificationFunction(data?.data.message)
+        },
+      })
     }
   }
-
-  const [dataAgreedPrice, setDataAgreedPrice] = useState()
 
   return (
     <List
@@ -775,10 +1197,12 @@ function QuotaList() {
           separator={<RightOutlined />}
         />
       }
+      loading={isPending}
     >
       <Form {...searchFormProps}>
         <Form.Item name={'status'} hidden />
         <StatusDashboard
+          useApproveRoute={useApproveRoute}
           statusData={statusDashboard}
           status={status}
           onChangeStatus={onChangeStatus}
@@ -800,17 +1224,17 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.customer')}
-                  </span>
-                }
-                layout="vertical"
-                name={'customer_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="customer_name"
+                pageSize={10}
+                optionLabel={'name'}
+                resource="customers"
+                label={<span>{boldText(t('quotas.filters.customer'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
@@ -824,30 +1248,30 @@ function QuotaList() {
               </Form.Item>
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.creator')}
-                  </span>
-                }
-                layout="vertical"
-                name={'creator_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="creator_name"
+                pageSize={10}
+                meta={{ field: 'creator' }}
+                resource="employees"
+                label={<span>{boldText(t('quotas.filters.creator'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={3} xxl={3}>
-              <Form.Item
-                label={
-                  <span className="font-bold">
-                    {t('quotas.filters.approver')}
-                  </span>
-                }
-                layout="vertical"
-                name={'approver_name'}
-              >
-                <Input placeholder={t('quotas.filters.partial_match')} />
-              </Form.Item>
+              <CoreAutocompleteAPI
+                name="approver_name"
+                pageSize={10}
+                meta={{ field: 'approver' }}
+                resource="employees"
+                label={<span>{boldText(t('quotas.filters.approver'))}</span>}
+                placeholder={t('placeholders.select')}
+                onChangeClear={(callback) => {
+                  if (callback) callback('')
+                }}
+              />
             </Col>
             <Col xs={12} md={6} lg={4} xxl={3}>
               <CoreAutocompleteAPI
@@ -860,7 +1284,7 @@ function QuotaList() {
                 }
                 placeholder={t('placeholders.select')}
                 onChangeClear={(callback) => {
-                  if (callback) callback(department)
+                  if (callback) callback('')
                 }}
               />
             </Col>
@@ -879,7 +1303,7 @@ function QuotaList() {
             </Col>
           </Row>
           <Row gutter={[24, 0]}>
-            <Col xs={12} md={6} lg={4}>
+            <Col xs={12} md={6} lg={3} xxl={3}>
               <Form.Item
                 label={
                   <span className="font-bold">{t('quotas.filters.date')}</span>
@@ -888,6 +1312,7 @@ function QuotaList() {
                 name={'search_date_type'}
               >
                 <Select
+                  disabled={!!currentRule?.getRange}
                   options={[
                     {
                       value: 'created_at',
@@ -924,10 +1349,64 @@ function QuotaList() {
                 <RangePicker
                   allowClear
                   className="w-full"
-                  placeholder={[FORMAT_DATE, FORMAT_DATE]}
+                  placeholder={[FORMAT_DATE_CROSS, FORMAT_DATE_CROSS]}
+                  format={FORMAT_DATE_CROSS}
                   disabled={
                     !Form.useWatch('search_date_type', searchFormProps.form)
                   }
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={12} md={6} lg={3} xxl={3}>
+              <Form.Item
+                label={
+                  <span>{boldText(t('quotas.filters.transaction_type'))}</span>
+                }
+                layout="vertical"
+                name={'transaction_type'}
+              >
+                <Select
+                  allowClear={true}
+                  placeholder={t('placeholders.select')}
+                  options={[
+                    ...TRANSACTION_TYPES.map((type) => ({
+                      ...type,
+                      label: t(type.labelKey),
+                    })),
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={12} md={6} lg={3} xxl={3}>
+              <CoreInput
+                name="product_name"
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.productName')}
+                  </span>
+                }
+                placeholder={t('quotas.filters.partial_match')}
+              />
+            </Col>
+            <Col xs={12} md={6} lg={3} xxl={3}>
+              <Form.Item
+                label={
+                  <span className="font-bold">
+                    {t('quotas.filters.categoryLabel')}
+                  </span>
+                }
+                layout="vertical"
+                name="category_id"
+              >
+                <ProductCategoryDropdown
+                  placeholder={t('placeholders.select')}
+                  onSelect={(_, __, ___, categoryId) => {
+                    searchFormProps.form?.setFieldValue(
+                      'category_id',
+                      categoryId,
+                    )
+                  }}
+                  suffixIcon={<DownOutlined />}
                 />
               </Form.Item>
             </Col>
@@ -942,10 +1421,10 @@ function QuotaList() {
                   {t('buttons.search')}
                 </Button>
                 <Button
-                  htmlType="reset"
                   type="default"
                   onClick={() => {
                     setFilters([], 'replace')
+                    form?.resetFields()
                     onChangeStatus(status)
                   }}
                 >
@@ -1045,55 +1524,81 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="flex justify-end gap-2">
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  onClick={() => {
-                    go({
-                      to: 'quota-templates',
-                    })
+              <div className="flex justify-end">
+                <Dropdown
+                  menu={{
+                    items: rightOptions,
+                    onClick: ({ key }) => {
+                      if (key == '1') {
+                        go({ to: 'quotas/create' })
+                      } else if (key == '2') {
+                        setIsCreateFromTemplate(true)
+                      }
+                    },
                   }}
                 >
-                  {t('quotas.actions.template_list')}
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    go({
-                      to: 'quotas/create',
-                    })
-                  }}
-                >
-                  {t('quotas.actions.new_create')}
-                </Button>
+                  <Button type="primary">
+                    <Space>
+                      {t('quotas.create_quota')}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
               </div>
             </Col>
           </Row>
         </div>
 
         <CommonTable
-          rowKey={'id'}
+          rowKey="id"
           rowSelection={rowSelection}
+          onRow={(record) => {
+            const isRowDisabled =
+              !useApproveRoute &&
+              STATUS_DISABLED_WHEN_OFF_APPROVE_ROUTE.indexOf(record.status) > -1
+            return {
+              style: isRowDisabled
+                ? {
+                    pointerEvents: 'none',
+                    opacity: 0.5,
+                    cursor: 'not-allowed',
+                  }
+                : {},
+            }
+          }}
           columns={columns}
           {...tableProps}
+          scroll={undefined}
+          components={{
+            header: {
+              cell: ({ children, style, ...rest }: any) => {
+                return (
+                  <th
+                    style={{
+                      ...style,
+                      border: 'none',
+                      padding: '4px 2px',
+                      color: PRIMARY,
+                      textAlign: 'center',
+                      backgroundColor: '#F0F9FF',
+                    }}
+                    {...rest}
+                  >
+                    {children}
+                  </th>
+                )
+              },
+            },
+          }}
         />
       </Form>
-      <Modal
-        {...modalProps}
-        footer={false}
-        title={boldText(
-          t('quotas.modal.move_to_decided_estimate'),
-          PRIMARY,
-          16,
-        )}
-      >
-        <ModalAgreePrice
-          data={dataAgreedPrice}
-          close={close}
-          onSuccess={notificationFunction}
+      {isCreateFromTemplate && (
+        <CreateFromTemplate
+          open={isCreateFromTemplate}
+          t={t}
+          onClose={() => setIsCreateFromTemplate(false)}
         />
-      </Modal>
+      )}
     </List>
   )
 }

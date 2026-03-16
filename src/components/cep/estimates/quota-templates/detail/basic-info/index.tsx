@@ -2,11 +2,7 @@ import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { DISABLE_LABEL, PRIMARY } from '@utility/color'
-import {
-  CONSUMPTION_TAX,
-  EXPIRATION_DATE,
-  PAYMENT_DUE_DATE,
-} from '@utility/constant'
+import { EXPIRATION_DATE, PAYMENT_DUE_DATE } from '@utility/constant'
 import { Col, Flex, Form, Row, Typography } from 'antd'
 
 const { Title } = Typography
@@ -36,14 +32,14 @@ const BasicInfo: React.FC<Props> = (props) => {
       <Row>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item
-            label={boldText(t('quota_templates.form.label.quote_type'))}
+            label={boldText(t('quotas.action.basic_info.fields.customer_term'))}
           >
-            {detail.type === 'normal' ? '通常' : '販路限定'}
+            {detail.customer_term === 'short_term' ? '個別' : '継続'}
           </Form.Item>
         </Col>
         <Col xs={24} sm={16} md={10} lg={10} xl={10}>
           <Form.Item
-            label={boldText(t('quota_templates.form.label.quote_category'))}
+            label={boldText(t('quota_templates.form.label.quote_transaction'))}
           >
             {detail.category === 'merchandise' ? '物販' : '役務'}
           </Form.Item>
@@ -114,19 +110,6 @@ const BasicInfo: React.FC<Props> = (props) => {
             label={boldText(t('quota_templates.form.label.validity_period'))}
           >
             {EXPIRATION_DATE?.[detail.expiration_date ?? '']?.label}
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-          <Form.Item
-            label={boldText(t('quota_templates.form.label.consumption_tax'))}
-          >
-            <Flex gap={30}>
-              <Form.Item>
-                {CONSUMPTION_TAX?.[detail.consumption_tax ?? '']?.label}
-              </Form.Item>
-            </Flex>
           </Form.Item>
         </Col>
       </Row>

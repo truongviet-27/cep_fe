@@ -36,6 +36,7 @@ export default function Page() {
   const t = useTranslate()
   const [isShow, setIsShow] = useState(false)
   const { tableProps, searchFormProps, setFilters } = useTable<Rank>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     sorters: {
       initial: [
@@ -58,6 +59,7 @@ export default function Page() {
     {
       dataIndex: 'code',
       title: t('ranks.table.code'),
+      width: '14%',
       render: (_, record) => (
         <Button
           type={'link'}
@@ -71,45 +73,74 @@ export default function Page() {
         </Button>
       ),
     },
-    { dataIndex: 'name', title: t('ranks.table.name'), align: 'left' },
+    {
+      dataIndex: 'note',
+      width: '30%',
+      title: t('ranks.table.note'),
+      align: 'left',
+    },
     {
       dataIndex: 'rank_group',
       title: t('ranks.table.unit_price'),
+      width: '19%',
       render: (_, record) => (
         <Link href={'/price-groups'} className="!h-4 !underline">
           {record.code + ' ランク別単価'}
         </Link>
       ),
     },
-    { dataIndex: 'rate', title: t('ranks.fields.rate'), align: 'right' },
+    {
+      dataIndex: 'rate',
+      width: '9%',
+      title: t('ranks.fields.rate'),
+      align: 'right',
+    },
     {
       dataIndex: 'number_of_customers',
+      width: '9%',
       title: t('ranks.fields.number_of_customers'),
       align: 'right',
     },
     {
       title: t('table.actions'),
       dataIndex: 'actions',
+      width: '19%',
       render: (_: any, record: BaseRecord) => (
         <Space>
           <ShowButton
-            hideText
+            icon={false}
             size="small"
             onClick={() => {
               setIsShow(true)
               editModalShow(record.id)
             }}
-          />
+            autoInsertSpace={false}
+          >
+            <span>{t('buttons.show')}</span>
+          </ShowButton>
+
           <EditButton
-            hideText
+            icon={false}
             size="small"
+            type="primary"
             onClick={() => {
               setIsShow(false)
               editModalShow(record.id)
             }}
             recordItemId={record.id}
-          />
-          <DeleteButton hideText size="small" recordItemId={record.id} />
+            autoInsertSpace={false}
+          >
+            {t('buttons.edit')}
+          </EditButton>
+
+          <DeleteButton
+            icon={false}
+            size="small"
+            recordItemId={record.id}
+            autoInsertSpace={false}
+          >
+            {t('buttons.delete')}
+          </DeleteButton>
         </Space>
       ),
     },
@@ -117,7 +148,7 @@ export default function Page() {
 
   const breadcrumbItems = [
     {
-      title: boldText(t('business_partner.business_partner')),
+      title: boldText(t('products.breadcrumb.home')),
     },
     {
       title: boldText(t('ranks.list.list'), PRIMARY),

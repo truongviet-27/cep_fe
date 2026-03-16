@@ -14,6 +14,7 @@ export const useController = () => {
     HttpError,
     SearchQuotaTemplateType
   >({
+    pagination: { pageSize: 20 },
     resource: 'quota-templates',
     filters: {},
     onSearch: (params) => {
@@ -32,9 +33,14 @@ export const useController = () => {
           value: params.name_lk ?? null,
         },
         {
-          field: 'creator',
+          field: 'created_by',
           operator: 'eq',
-          value: params.creator ?? null,
+          value:
+            typeof params?.created_by === 'object' &&
+            params?.created_by != null &&
+            'value' in params?.created_by
+              ? (params?.created_by as { value: number }).value
+              : params?.created_by,
         },
         {
           field: 'start_date',

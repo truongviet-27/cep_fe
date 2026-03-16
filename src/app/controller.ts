@@ -61,9 +61,6 @@ export const useBootstrap = () => {
   // check if session name has been updated
   const hasUpdatedSessionRef = useRef(false)
 
-  console.log('refresh token: ', refreshToken)
-  console.log('token: ', token)
-
   const validateToken = async () => {
     try {
       console.log('pathname: ', pathname)
@@ -171,6 +168,10 @@ export const useBootstrap = () => {
 
       setParameterSettings(dataConvert)
       setIsLoggedIn(true)
+      if (permission?.is_first_login) {
+        router.replace('/initial-setup-guide')
+        return
+      }
     } catch (error) {
       console.error(error)
       if (isLoggedIn) {

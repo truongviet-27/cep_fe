@@ -5,7 +5,11 @@ import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE } from '@utility/instances'
-import { fieldDistinctionOptions, industryOptions } from '@utility/options'
+import {
+  fieldDistinctionOptions,
+  INDUSTRY_OTHER_VALUE,
+  industryOptions,
+} from '@utility/options'
 import { Col, Collapse, DatePicker, Form, Input, Row, Select } from 'antd'
 import dayjs from 'dayjs'
 
@@ -21,13 +25,21 @@ function AddressContact(
   const industry = Form.useWatch('industry', form)
   const temp_industry = Form.useWatch('temp_industry', form)
 
-  const isOtherSelected = !industryOptions.some(
-    ({ value }) => value == industry && industry !== null,
-  )
+  const isOtherSelected =
+    industry === INDUSTRY_OTHER_VALUE ||
+    (industry != null &&
+      industry !== '' &&
+      !industryOptions.some(({ value }) => value === industry))
 
-  if (isOtherSelected && !temp_industry) {
+  if (
+    industry != null &&
+    industry !== '' &&
+    industry !== INDUSTRY_OTHER_VALUE &&
+    !industryOptions.some(({ value }) => value === industry) &&
+    !temp_industry
+  ) {
     form.setFieldValue('temp_industry', industry)
-    form.setFieldValue('industry', null)
+    form.setFieldValue('industry', INDUSTRY_OTHER_VALUE)
   }
   Form.useWatch('department_in_charge_id')
 
@@ -49,10 +61,15 @@ function AddressContact(
           label={boldText(t('customers.show.postal_code'))}
           name="post_code"
           rules={[rule]}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
-          <Input style={{ maxWidth: 560 }} />
+          <Input
+            style={{ maxWidth: 560 }}
+            placeholder={t('customers.show.postal_code_placeholder')}
+          />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           required
           label={boldText(t('customers.show.address'))}
           name="address"
@@ -61,6 +78,7 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.building_name'))}
           name="building"
           rules={[rule]}
@@ -68,7 +86,7 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
-          required
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.phone'))}
           name="phone"
           rules={[rule]}
@@ -76,6 +94,7 @@ function AddressContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.fax'))}
           name="fax"
           rules={[rule]}
@@ -84,15 +103,18 @@ function AddressContact(
         </Form.Item>
 
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.delivery.email'))}
           name="mail"
           rules={[rule]}
-          required
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
 
-        <Form.Item label={boldText(t('customers.show.industry'))}>
+        <Form.Item
+          label={boldText(t('customers.show.industry'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+        >
           <Row align="middle" gutter={8}>
             <Col>
               <Form.Item name="industry" rules={[rule]}>
@@ -121,6 +143,7 @@ function AddressContact(
 
         <Form.Item
           className={'!-mt-3'}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.listing_classification'))}
           name="listing_classification"
           rules={[rule]}
@@ -133,6 +156,7 @@ function AddressContact(
           />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.date_of_establishment'))}
           name="date_of_establishment"
           rules={[rule]}
@@ -149,14 +173,13 @@ function AddressContact(
           />
         </Form.Item>
         <Form.Item
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           label={boldText(t('customers.show.department_in_charge'))}
-          required
         >
           <Row gutter={8} align={'middle'}>
             <Col>
               <CoreAutocompleteAPI
                 name={'department_in_charge_id'}
-                rules={[rule]}
                 labelInValue={false}
                 resource="departments"
                 placeholder={t(
@@ -175,7 +198,7 @@ function AddressContact(
                   )
                   form.setFieldValue(
                     ['department_in_charge', 'name'],
-                    valueOption.name,
+                    valueOption?.name ?? null,
                   )
                 }}
                 overwriteOptionsOnSearch={true}

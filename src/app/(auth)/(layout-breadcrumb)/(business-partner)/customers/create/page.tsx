@@ -14,7 +14,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Button, Form, Modal, Space } from 'antd'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useCustomerCreate } from './use-customer-create'
 
@@ -30,11 +30,21 @@ export default function CustomerCreatePage() {
     modalFormCorporate,
     handleFinish,
     form,
+    handleSaveDraft,
+    handleApplyDraft,
+    isPendingDraft,
+    dataCustomerDraft,
+    isFetchingCustomerDraft,
   } = hookProps
 
   const { close: closeModal, open: modalOpen } = modalFormProps
 
   const { close, visible } = modalFormCorporate
+
+  const [corporateSearchKey, setCorporateSearchKey] = useState(0)
+  useEffect(() => {
+    if (visible) setCorporateSearchKey((k) => k + 1)
+  }, [visible])
 
   const breadcrumbItems = [
     {
@@ -51,9 +61,36 @@ export default function CustomerCreatePage() {
     <Create
       isLoading={isLoading}
       rightFooterButtons={
-        <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
-          {t('buttons.create')}
-        </Button>
+        <Space>
+          {dataCustomerDraft?.data &&
+            Array.isArray(dataCustomerDraft.data) &&
+            dataCustomerDraft.data.length > 0 && (
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={handleApplyDraft}
+                disabled={isLoading || isFetchingCustomerDraft}
+              >
+                {t('buttons.apply_draft')}
+              </Button>
+            )}
+          <Button
+            type="primary"
+            onClick={handleSaveDraft}
+            loading={isPendingDraft}
+            autoInsertSpace={false}
+          >
+            {t('buttons.draft')}
+          </Button>
+          <Button
+            {...saveButtonProps}
+            type="primary"
+            htmlType={'submit'}
+            autoInsertSpace={false}
+          >
+            {t('buttons.create')}
+          </Button>
+        </Space>
       }
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
@@ -116,9 +153,11 @@ export default function CustomerCreatePage() {
         open={visible}
         onCancel={close}
         width={800}
+        maskClosable={false}
         footer={<Button onClick={close}>{t('buttons.cancel')}</Button>}
       >
         <CorporateNumberSearchModal
+          key={corporateSearchKey}
           modalProps={modalFormCorporate}
           onSelect={(record) =>
             form.setFieldValue('corporate_number', record.corporateNumber)

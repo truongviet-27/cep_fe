@@ -7,8 +7,8 @@ import Left from '@components/cep/system-config/tenant-setting/components/Left'
 import Right from '@components/cep/system-config/tenant-setting/components/Right'
 import { Create } from '@components/crud/create'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import { useForm } from '@refinedev/antd'
 import {
   useApiUrl,
@@ -52,8 +52,7 @@ function TenantSetting() {
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
   const [pendingFormValues, setPendingFormValues] = useState<any>(null)
   const apiUrl = useApiUrl()
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
 
   const { mutate, isPending } = useUpdate({
     resource: `quota-form-settings`,
@@ -77,6 +76,7 @@ function TenantSetting() {
 
     const customValues: QuotaFormSettingResponse = {
       ...pendingFormValues,
+      consumption_tax: 'exclusive',
       id: form.getFieldValue('id'),
       company_logo_image:
         form.getFieldValue('company_logo_image_file_key') ??
@@ -123,7 +123,7 @@ function TenantSetting() {
     const logoImageMatch = logoImageValue?.match(/imports.*?\.(jpg|jpeg|png)/i)
     const sealImageMatch = sealImageValue?.match(/imports.*?\.(jpg|jpeg|png)/i)
 
-    const customValues: QuotaFormSettingResponse = {
+    const customValues = {
       ...form.getFieldsValue(),
       id: form.getFieldValue('id'),
       company_logo_image:
@@ -225,7 +225,7 @@ function TenantSetting() {
               } as QuotaFormSettingResponse)
             }}
           >
-            {'キャンセル'}
+            {t('buttons.clear')}
           </Button>
           <Button
             type="default"
@@ -242,6 +242,7 @@ function TenantSetting() {
             size="large"
             {...saveButtonProps}
             loading={isPending}
+            autoInsertSpace={false}
           >
             {t('buttons.save')}
           </Button>
@@ -279,6 +280,7 @@ function TenantSetting() {
             size="large"
             loading={isPending}
             onClick={handleConfirmSave}
+            autoInsertSpace={false}
           >
             保存する
           </Button>,
@@ -328,7 +330,7 @@ function TenantSetting() {
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                 <Viewer
                   fileUrl={`data:application/pdf;base64,${previewPdf}`}
-                  plugins={[defaultLayoutPluginInstance]}
+                  plugins={[pdfViewerLayoutPlugin]}
                 />
               </Worker>
             )}

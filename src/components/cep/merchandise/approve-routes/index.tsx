@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RightOutlined } from '@ant-design/icons'
+import { RightOutlined, WarningOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import {
   CreateButton,
   DeleteButton,
   EditButton,
-  RefreshButton,
   ShowButton,
   useSelect,
   useTable,
@@ -35,6 +34,7 @@ function Approve() {
   const t = useTranslate()
 
   const { tableProps, searchFormProps, setFilters } = useTable({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => {
       setFilters([], 'replace')
@@ -121,8 +121,15 @@ function Approve() {
             whiteSpace: 'nowrap',
           },
         }),
-        render: (value) => {
-          return <span title={value}>{value}</span>
+        render: (value, record) => {
+          return (
+            <span title={value}>
+              {record.hasDeletedApproval && (
+                <WarningOutlined style={{ color: '#AC3C00' }} />
+              )}{' '}
+              {value}
+            </span>
+          )
         },
       },
       {
@@ -148,6 +155,7 @@ function Approve() {
         key: 'status',
         dataIndex: 'status',
         title: t('approve_routes.table.status'),
+        width: '8%',
         render: (value) => {
           if (value === 'active')
             return <Tag color={GREEN}>{t('products.text.active')}</Tag>
@@ -158,11 +166,13 @@ function Approve() {
         key: 'total_steps',
         dataIndex: 'total_steps',
         title: t('approve_routes.table.totalSteps'),
+        width: '8%',
       },
       {
         key: 'author',
         dataIndex: 'author',
         title: t('approve_routes.table.creator'),
+        width: '21%',
         render(value) {
           return value?.name
         },
@@ -171,6 +181,7 @@ function Approve() {
         key: 'updated_at',
         dataIndex: 'updated_at',
         title: t('approve_routes.table.updatedAt'),
+        width: '9%',
         render(value) {
           return dayjs(value).format(FORMAT_DATE)
         },
@@ -179,12 +190,52 @@ function Approve() {
         key: 'action',
         dataIndex: 'action',
         title: t('approve_routes.table.action'),
+        width: '8%',
+        onCell: () => ({
+          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+        }),
         render: (_: any, record: BaseRecord) => {
           return (
-            <Space>
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+            <Space wrap size={4}>
+              <ShowButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
+              <EditButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
+              <DeleteButton
+                autoInsertSpace={false}
+                size="small"
+                icon={null}
+                recordItemId={record.id}
+                resource="approve-routes"
+                style={{
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </DeleteButton>
             </Space>
           )
         },
@@ -278,16 +329,15 @@ function Approve() {
               <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
-              <RefreshButton
-                size="middle"
-                icon={null}
+              <Button
+                type="default"
                 onClick={() => {
                   searchFormProps.form?.resetFields()
                   setFilters([], 'replace')
                 }}
               >
                 {t('buttons.clear')}
-              </RefreshButton>
+              </Button>
             </Space>
 
             <Space className="mt-[3px] ml-2">
@@ -300,6 +350,7 @@ function Approve() {
                   })
                 }}
                 icon={null}
+                autoInsertSpace={false}
               >
                 {t('buttons.registration')}
               </CreateButton>

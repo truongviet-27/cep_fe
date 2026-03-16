@@ -48,7 +48,12 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           >
             {t('buttons.cancel')}
           </Button>
-          <CreateButton {...saveButtonProps} type="primary" icon={null}>
+          <CreateButton
+            {...saveButtonProps}
+            type="primary"
+            icon={null}
+            autoInsertSpace={false}
+          >
             {t('buttons.create')}
           </CreateButton>
         </Space>
@@ -72,8 +77,9 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
             <Form.Item
               required
               name="code"
+              initialValue=""
               rules={[validateRankRule(t)]}
-              style={{ maxWidth: '180px' }}
+              style={{ maxWidth: '200px' }}
             >
               <Input />
             </Form.Item>
@@ -86,6 +92,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           required
           label={boldText(t('ranks.fields.name'))}
           name="name"
+          initialValue=""
           rules={[validateRankRule(t)]}
           style={{ marginTop: -12 }}
         >
@@ -98,7 +105,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
           name="rate"
           rules={[validateRankRule(t)]}
         >
-          <InputNumber style={{ width: '50%' }} />
+          <InputNumber style={{ width: '50%' }} min={0} max={100} />
         </Form.Item>
 
         <Form.Item

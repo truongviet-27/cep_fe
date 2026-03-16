@@ -182,6 +182,17 @@ export type CorporateNumberErrorResponse = {
 }
 
 /**
+ * Update Customer Status Request
+ * Request payload for updating customer status
+ */
+export type UpdateCustomerStatusRequest = {
+  /**
+   * Customer status
+   */
+  status: 'new' | 'prospecting' | 'contracted' | 'lost' | 'suspended'
+}
+
+/**
  * Approve route collection with pagination
  */
 export type ApproveRouteCollection = {
@@ -642,7 +653,7 @@ export type CompanyResearchInformation = {
   /**
    * Judgement of the research material
    */
-  judgement?: 'A' | 'B' | 'C' | 'D' | 'E' | 'O' | 'T' | 'X' | '未定'
+  judgement?: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'O' | 'X' | '未定' | '-'
   /**
    * Creation timestamp
    */
@@ -707,7 +718,7 @@ export type CompanyResearchInformationFileUpdateRequest = {
  */
 export type CompanyResearchInformationStoreRequest = {
   material_name: string
-  judgement: 'A' | 'B' | 'C' | 'D' | 'E' | 'O' | 'T' | 'X' | '未定'
+  judgement: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'O' | 'X' | '未定' | '-'
   /**
    * Associated files
    */
@@ -721,7 +732,7 @@ export type CompanyResearchInformationStoreRequest = {
 export type CompanyResearchInformationUpdateRequest = {
   id?: number | null
   material_name: string
-  judgement: 'A' | 'B' | 'C' | 'D' | 'E' | 'O' | 'T' | 'X' | '未定'
+  judgement: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'O' | 'X' | '未定' | '-'
   /**
    * Associated files
    */
@@ -1889,7 +1900,10 @@ export type PriceGroupItem = {
   unit?: string
   selling_price?: number
   is_active?: boolean
-  is_rate_based?: boolean
+  /**
+   * Pricing method used for this packaging
+   */
+  pricing_method?: 'rate' | 'absolute' | 'fixed'
   rank_prices?: Array<{
     rank_id?: number
     rank_code?: string
@@ -1943,7 +1957,10 @@ export type PriceGroupListResponse = {
  */
 export type PriceGroupUpdateItem = {
   packaging_id: number
-  is_rate_based?: boolean | null
+  /**
+   * Pricing method used for this packaging
+   */
+  pricing_method?: 'rate' | 'absolute' | 'fixed'
   rank_prices?: Array<PackagingRankPriceInput> | null
 }
 
@@ -2000,7 +2017,10 @@ export type ProductCustomerPricingPackaging = {
   standard_price?: number
   selling_price?: number
   is_active?: boolean
-  is_rate_based?: boolean
+  /**
+   * Pricing method used for this packaging
+   */
+  pricing_method?: 'rate' | 'absolute' | 'fixed'
   is_standard_price?: boolean
   is_default_packaging?: boolean
   /**
@@ -2067,10 +2087,8 @@ export type ProductPackaging = {
   unit?: string
   standard_price?: number
   selling_price?: number
-  is_rate_based?: boolean
   is_standard_price?: boolean
   is_default_packaging?: boolean
-  rank_prices?: Array<PackagingRankPrice>
 }
 
 /**
@@ -2106,17 +2124,9 @@ export type ProductPackagingInput = {
    */
   is_standard_price: boolean
   /**
-   * If true rank prices are generated from rank rate * selling_price
-   */
-  is_rate_based: boolean
-  /**
    * Manual selling price (ignored if is_standard_price = true)
    */
   selling_price?: number | null
-  /**
-   * Manual rank prices list when not rate based
-   */
-  rank_prices?: Array<PackagingRankPriceInput> | null
 }
 
 /**
@@ -2397,6 +2407,10 @@ export type QuotaAgreedPrice = {
   quota_id?: number
   quota_code?: string
   /**
+   * Category of the quota (merchandise or service)
+   */
+  category?: 'merchandise' | 'service'
+  /**
    * Number of products in the quota
    */
   number_products?: number
@@ -2417,6 +2431,10 @@ export type QuotaAgreedPrice = {
    * End time of the agreed price
    */
   valid_to?: string | null
+  /**
+   * Whether the agreed price is unlimited (true) or has expiration (false)
+   */
+  is_unlimited?: boolean
   created_by?: number | null
   updated_by?: number | null
   created_at?: string
@@ -2664,6 +2682,7 @@ export type QuotaResource = {
    * Quota ID
    */
   id?: number
+  tax_rounding_method: RoundingMethodEnumType
   /**
    * Unique quota code
    */
@@ -2708,6 +2727,10 @@ export type QuotaResource = {
     | 'completed'
     | 'cancelled'
   /**
+   * Customer term
+   */
+  customer_term?: 'long_term' | 'short_term'
+  /**
    * Delivery date
    */
   delivery_date?: string
@@ -2739,6 +2762,32 @@ export type QuotaResource = {
    * Tax rate percentage
    */
   tax_rate?: number
+  /**
+   * Array of grouped tax rates with amounts
+   */
+  department?: Array<{
+    /**
+     * Department ID
+     */
+    id?: number
+    /**
+     * Department name
+     */
+    name?: string
+  }>
+  /**
+   * Approve route information
+   */
+  approve_route?: {
+    /**
+     * Approve route ID
+     */
+    id?: number
+    /**
+     * Approve route name
+     */
+    name?: string
+  }
   /**
    * Array of grouped tax rates with amounts
    */
@@ -2931,6 +2980,10 @@ export type QuotaStoreRequest = {
    */
   main_product?: Array<QuotaProductGroupRequest>
   /**
+   * Whether this quota should be saved as a template for future use
+   */
+  is_create_quota_template?: boolean
+  /**
    * Array of optional product groups
    */
   optional_product?: Array<QuotaProductGroupRequest>
@@ -3081,6 +3134,7 @@ export type SimpleQuota = {
   title?: string
   customer_name?: string
   customer_contact_id?: number
+  customer_term?: string
   /**
    * Formatted total price
    */
@@ -3092,6 +3146,7 @@ export type SimpleQuota = {
   customer_cancelled_date?: string
   pdf_path?: string
   display?: boolean
+  is_manage_approve_routes?: boolean
   is_author?: boolean
   has_approval_route?: boolean
   has_agreed_price?: boolean
@@ -3271,10 +3326,7 @@ export type QuotaFormSettingResponse = {
    * Formatted tax rate with percentage sign
    */
   formatted_tax_rate?: string
-  /**
-   * Tax calculation rounding method
-   */
-  tax_rounding_method?: 'round_down' | 'round_up' | 'round_nearest'
+  tax_rounding_method: RoundingMethodEnumType
   /**
    * Sale price rounding method
    */
@@ -3676,6 +3728,7 @@ export type QuotaTemplateDetailResponse = {
       | 'months_6'
       | 'years_1'
     consumption_tax?: 'exclusive' | 'inclusive' | 'external'
+    customer_term?: 'long_term' | 'short_term'
     tax_rate?: number
     /**
      * Array of grouped tax rates with amounts
@@ -3969,6 +4022,10 @@ export type QuotaTemplateStoreRequest = {
   expiration_date?: ExpirationDateEnum
   consumption_tax?: ConsumptionTaxEnum
   /**
+   * Customer term type
+   */
+  customer_term?: 'long_term' | 'short_term'
+  /**
    * Tax rate percentage
    */
   tax_rate?: number
@@ -4044,6 +4101,10 @@ export type QuotaTemplateUpdateRequest = {
   payment_due_date?: PaymentDueDateEnum
   expiration_date?: ExpirationDateEnum
   consumption_tax?: ConsumptionTaxEnum
+  /**
+   * Customer term type
+   */
+  customer_term?: 'long_term' | 'short_term'
   /**
    * Tax rate percentage
    */
@@ -4216,6 +4277,21 @@ export type Role = {
    */
   display_name?: string | null
 }
+
+/**
+ * Tax rounding methods
+ */
+export const RoundingMethodEnumType = {
+  ROUND_DOWN: 'round_down',
+  ROUND_UP: 'round_up',
+  ROUND_NEAREST: 'round_nearest',
+} as const
+
+/**
+ * Tax rounding methods
+ */
+export type RoundingMethodEnumType =
+  (typeof RoundingMethodEnumType)[keyof typeof RoundingMethodEnumType]
 
 /**
  * Rank price item for a packaging
@@ -5278,6 +5354,10 @@ export type CustomerControllerIndexData = {
      */
     q?: string
     /**
+     * Search by full name only
+     */
+    full_name?: string
+    /**
      * Filter by country
      */
     country?: string
@@ -5491,6 +5571,103 @@ export type CustomerControllerUpdateResponses = {
 
 export type CustomerControllerUpdateResponse =
   CustomerControllerUpdateResponses[keyof CustomerControllerUpdateResponses]
+
+export type CustomerControllerUpdateStatusData = {
+  body: UpdateCustomerStatusRequest
+  path: {
+    /**
+     * The unique identifier of the customer
+     */
+    id: number
+  }
+  query?: never
+  url: '/api/v1/customers/id}/status'
+}
+
+export type CustomerControllerUpdateStatusErrors = {
+  /**
+   * Customer not found
+   */
+  404: {
+    message?: string
+  }
+  /**
+   * Validation error
+   */
+  422: {
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type CustomerControllerUpdateStatusError =
+  CustomerControllerUpdateStatusErrors[keyof CustomerControllerUpdateStatusErrors]
+
+export type CustomerControllerUpdateStatusResponses = {
+  /**
+   * Customer status updated successfully
+   */
+  200: {
+    message?: string
+    data?: Customer
+  }
+}
+
+export type CustomerControllerUpdateStatusResponse =
+  CustomerControllerUpdateStatusResponses[keyof CustomerControllerUpdateStatusResponses]
+
+export type CustomerControllerCountData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/customers/count'
+}
+
+export type CustomerControllerCountErrors = {
+  /**
+   * Validation error
+   */
+  422: {
+    success?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: {
+    success?: boolean
+    message?: string
+  }
+}
+
+export type CustomerControllerCountError =
+  CustomerControllerCountErrors[keyof CustomerControllerCountErrors]
+
+export type CustomerControllerCountResponses = {
+  /**
+   * Customer counts retrieved successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      total?: number
+      status_counts?: Array<{
+        status?: string
+        label?: string
+        count?: number
+      }>
+    }
+  }
+}
+
+export type CustomerControllerCountResponse =
+  CustomerControllerCountResponses[keyof CustomerControllerCountResponses]
 
 export type CustomerControllerRestoreData = {
   body?: never
@@ -5953,6 +6130,101 @@ export type DepartmentControllerUpdateOrderResponses = {
 
 export type DepartmentControllerUpdateOrderResponse =
   DepartmentControllerUpdateOrderResponses[keyof DepartmentControllerUpdateOrderResponses]
+
+export type DepartmentControllerFindFirstData = {
+  /**
+   * Search filters - can include any department field
+   */
+  body?: {
+    [key: string]: unknown
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/departments/find-first'
+}
+
+export type DepartmentControllerFindFirstErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * No department found matching criteria
+   */
+  404: NotFoundResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type DepartmentControllerFindFirstError =
+  DepartmentControllerFindFirstErrors[keyof DepartmentControllerFindFirstErrors]
+
+export type DepartmentControllerFindFirstResponses = {
+  /**
+   * Department found
+   */
+  200: Department
+}
+
+export type DepartmentControllerFindFirstResponse =
+  DepartmentControllerFindFirstResponses[keyof DepartmentControllerFindFirstResponses]
+
+export type DraftControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Draft type
+     */
+    type?: 'quota' | 'customer' | 'product' | 'quota_template'
+  }
+  url: '/api/v1/drafts'
+}
+
+export type DraftControllerIndexResponses = {
+  /**
+   * Drafts retrieved successfully
+   */
+  200: {
+    data?: Array<{
+      [key: string]: unknown
+    }>
+  }
+}
+
+export type DraftControllerIndexResponse =
+  DraftControllerIndexResponses[keyof DraftControllerIndexResponses]
+
+export type DraftControllerStoreData = {
+  body: {
+    type: 'quota' | 'customer' | 'product' | 'quota_template'
+    /**
+     * Draft payload data
+     */
+    payload: {
+      [key: string]: unknown
+    }
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/drafts'
+}
+
+export type DraftControllerStoreResponses = {
+  /**
+   * Draft created or updated successfully
+   */
+  201: {
+    data?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type DraftControllerStoreResponse =
+  DraftControllerStoreResponses[keyof DraftControllerStoreResponses]
 
 export type EmployeeControllerIndexData = {
   body?: never
@@ -7728,7 +8000,10 @@ export type ProductCategoryControllerGetProductsResponses = {
           standard_price?: number | null
           selling_price?: number | null
           is_active?: boolean
-          is_rate_based?: boolean
+          /**
+           * Pricing method used for this packaging
+           */
+          pricing_method?: 'rate' | 'absolute' | 'fixed'
           is_standard_price?: boolean
           rank_prices?: Array<{
             rank_id?: number
@@ -8351,7 +8626,11 @@ export type QuotaAgreedPriceControllerIndexData = {
      */
     'customer_id_in[]'?: Array<number>
     /**
-     * Filter by customer name
+     * Filter by customer ID
+     */
+    customer_id?: number
+    /**
+     * Filter by customer name (search in name and customer code)
      */
     customer_name?: string
     /**
@@ -8390,6 +8669,10 @@ export type QuotaAgreedPriceControllerIndexData = {
      * Filter by status
      */
     status?: 'all' | 'active' | 'expired' | 'about_to_expire'
+    /**
+     * Filter by quota category (merchandise or service)
+     */
+    category?: 'merchandise' | 'service'
     /**
      * Filter by expiration date start (Y/m/d format)
      */
@@ -8449,6 +8732,10 @@ export type QuotaAgreedPriceControllerStoreData = {
      * End date of the agreed price (Y/m/d format)
      */
     valid_to?: string | null
+    /**
+     * Whether the agreed price is unlimited (true) or has expiration (false). Defaults to true if not provided.
+     */
+    is_unlimited?: boolean | null
   }
   path?: never
   query?: never
@@ -8561,7 +8848,11 @@ export type QuotaAgreedPriceControllerGetCustomerListData = {
      */
     _per_page?: number
     /**
-     * Filter by customer name
+     * Filter by customer ID
+     */
+    customer_id?: number
+    /**
+     * Filter by customer name (search in name and customer code)
      */
     customer_name?: string
     /**
@@ -8672,6 +8963,10 @@ export type QuotaAgreedPriceControllerUpdateExpirationDateData = {
      * New expiration date (Y/m/d format)
      */
     valid_to?: string
+    /**
+     * Whether the agreed price is unlimited (true) or has expiration (false)
+     */
+    is_unlimited?: boolean | null
   }
   path: {
     /**
@@ -9290,6 +9585,54 @@ export type QuotaControllerMarkCompletedResponses = {
 export type QuotaControllerMarkCompletedResponse =
   QuotaControllerMarkCompletedResponses[keyof QuotaControllerMarkCompletedResponses]
 
+export type QuotaControllerResendEmailToCustomerData = {
+  body: {
+    /**
+     * Array of quota IDs to send to customers
+     */
+    quota_ids?: Array<number>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/quotas/resend-email-to-customer'
+}
+
+export type QuotaControllerResendEmailToCustomerErrors = {
+  /**
+   * Validation failed
+   */
+  422: unknown
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type QuotaControllerResendEmailToCustomerResponses = {
+  /**
+   * Quotas processing initiated successfully
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      results?: Array<{
+        quota_id?: number
+        status?: string
+        message?: string
+      }>
+      errors?: Array<{
+        quota_id?: number
+        status?: string
+        message?: string
+      }>
+    }
+  }
+}
+
+export type QuotaControllerResendEmailToCustomerResponse =
+  QuotaControllerResendEmailToCustomerResponses[keyof QuotaControllerResendEmailToCustomerResponses]
+
 export type QuotaControllerCancelQuotaData = {
   body: {
     /**
@@ -9505,6 +9848,61 @@ export type QuotaControllerBackToSentToCustomerResponses = {
 
 export type QuotaControllerBackToSentToCustomerResponse =
   QuotaControllerBackToSentToCustomerResponses[keyof QuotaControllerBackToSentToCustomerResponses]
+
+export type QuotaControllerCheckParametersData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Whether approval routes management is enabled
+     */
+    is_manage_approve_routes?: 'true' | 'false' | '1' | '0'
+  }
+  url: '/api/v1/quotas/check-parameters'
+}
+
+export type QuotaControllerCheckParametersErrors = {
+  /**
+   * Parameter validation failed - settings have been changed
+   */
+  422: {
+    success?: boolean
+    message?: string
+    errors?: {
+      parameter_errors?: Array<{
+        parameter?: string
+        message?: string
+        current_value?: string | null
+        expected_value?: string
+      }>
+      total_errors?: number
+    }
+  }
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type QuotaControllerCheckParametersError =
+  QuotaControllerCheckParametersErrors[keyof QuotaControllerCheckParametersErrors]
+
+export type QuotaControllerCheckParametersResponses = {
+  /**
+   * Parameters validation successful
+   */
+  200: {
+    success?: boolean
+    message?: string
+    data?: {
+      validated_parameters?: Array<string>
+      total_validated?: number
+    }
+  }
+}
+
+export type QuotaControllerCheckParametersResponse =
+  QuotaControllerCheckParametersResponses[keyof QuotaControllerCheckParametersResponses]
 
 export type QuotaFormSettingControllerShowData = {
   body?: never

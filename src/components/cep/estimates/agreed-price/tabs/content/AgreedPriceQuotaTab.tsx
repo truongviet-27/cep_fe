@@ -3,6 +3,7 @@
 import StatusDashboard from '@components/cep/estimates/agreed-price/components/status-dashboard'
 import { AgreedPriceStatus } from '@components/cep/estimates/agreed-price/enum'
 import { getAgreedPriceStatusStyle } from '@components/cep/estimates/agreed-price/utils'
+import ShowMoreInfo from '@components/common/show-more-info'
 import CommonTable from '@components/common/table'
 import { DeleteButton, ShowButton, useSelect, useTable } from '@refinedev/antd'
 import {
@@ -18,6 +19,7 @@ import { useUserStore } from '@stores/useUserStore'
 import type { TableProps } from 'antd'
 import {
   Button,
+  Checkbox,
   Col,
   DatePicker,
   Divider,
@@ -28,6 +30,8 @@ import {
   Select,
   Space,
   Tag,
+  Tooltip,
+  Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { Dayjs } from 'dayjs'
@@ -52,9 +56,37 @@ const AgreedPriceQuotaTab = () => {
     return formatted.replace(/\.00$/, '')
   }
 
-  const [status, setStatus] = useState<string | null>(AgreedPriceStatus.Active)
+  const [status, setStatus] = useState<string | null>(null)
 
   const { permission } = useUserStore((state) => state)
+
+  const { selectProps: customerSelectProps } = useSelect({
+    resource: 'customers',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
+  const { selectProps: creatorSelectProps } = useSelect({
+    resource: 'employees',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
+  const { selectProps: tagSelectProps } = useSelect({
+    resource: 'tags',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
 
   const { selectProps: departmentSelectProps } = useSelect({
     resource: 'departments',
@@ -66,22 +98,10 @@ const AgreedPriceQuotaTab = () => {
     },
   })
 
-  const getStatusTag = (status?: string) => {
-    const statusEnum = status as AgreedPriceStatus
-    const result = getAgreedPriceStatusStyle(statusEnum, t)
-    return (
-      <Tag
-        color={result.background}
-        style={{ color: result.color, marginRight: 0 }}
-      >
-        {result.text}
-      </Tag>
-    )
-  }
-
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [updateForm] = Form.useForm()
   const [selected, setSelected] = useState<QuotaAgreedPrice | null>(null)
+  const [isUnlimitedModal, setIsUnlimitedModal] = useState(false)
   const { mutate: mutateUpdate, isPending: updating } = useCustomMutation()
 
   const openUpdate = (record: QuotaAgreedPrice) => {
@@ -92,7 +112,9 @@ const AgreedPriceQuotaTab = () => {
     const end = (record as any).valid_to
       ? dayjs((record as any).valid_to).add(0, 'day')
       : dayjs().add(1, 'day')
+    const isUnlimited = (record as any).is_unlimited ?? false
     updateForm.setFieldsValue({ start_date: start, end_date: end })
+    setIsUnlimitedModal(isUnlimited)
     setIsUpdateOpen(true)
   }
 
@@ -102,19 +124,33 @@ const AgreedPriceQuotaTab = () => {
   const handleUpdateSubmit = () => {
     updateForm.validateFields().then((values) => {
       if (!selected?.id) return
-      const validFrom = (values.start_date as Dayjs).format('YYYY/MM/DD')
-      const validTo = (values.end_date as Dayjs).format('YYYY/MM/DD')
+
+      const valuesToSend: any = {
+        is_unlimited: isUnlimitedModal,
+      }
+
+      if (isUnlimitedModal) {
+        valuesToSend.valid_from = values.start_date
+          ? (values.start_date as Dayjs).format('YYYY/MM/DD')
+          : null
+        valuesToSend.valid_to = values.end_date
+          ? (values.end_date as Dayjs).format('YYYY/MM/DD')
+          : null
+      } else {
+        valuesToSend.valid_from = (values.start_date as Dayjs).format(
+          'YYYY/MM/DD',
+        )
+        valuesToSend.valid_to = (values.end_date as Dayjs).format('YYYY/MM/DD')
+      }
+
       mutateUpdate(
         {
           method: 'put',
           url: `${apiUrl}/quota/agreed-prices/${selected.id}/expiration-date`,
-          values: {
-            valid_from: validFrom,
-            valid_to: validTo,
-          },
+          values: valuesToSend,
           successNotification: () => ({
             message: t('notifications.success'),
-            description: t('notifications.editSuccess'),
+            description: t('notifications.success'),
             type: 'success',
           }),
         },
@@ -122,6 +158,7 @@ const AgreedPriceQuotaTab = () => {
           onSuccess: () => {
             setIsUpdateOpen(false)
             setSelected(null)
+            setIsUnlimitedModal(false)
             refetchCount?.()
             tableQuery?.refetch?.()
           },
@@ -145,85 +182,299 @@ const AgreedPriceQuotaTab = () => {
     return calculatedStatus
   }
 
+  const mapStatusFromApi = (status?: string): AgreedPriceStatus => {
+    if (!status) return AgreedPriceStatus.Active
+
+    // Map Japanese status values to enum
+    if (status === '有効') {
+      return AgreedPriceStatus.Active
+    }
+    if (status === '無効' || status === '期限切れ') {
+      return AgreedPriceStatus.Expired
+    }
+    if (status === '期限間近') {
+      return AgreedPriceStatus.NearingExpiration
+    }
+
+    // If status is already in enum format, use it directly
+    if (
+      status === 'active' ||
+      status === 'expired' ||
+      status === 'about_to_expire'
+    ) {
+      return status as AgreedPriceStatus
+    }
+
+    // Default to active
+    return AgreedPriceStatus.Active
+  }
+
   const columns: ColumnsType<QuotaAgreedPrice> = useMemo(
     () => [
       {
-        title: t('agreed_prices.table.status'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.status')}
+          </div>
+        ),
         dataIndex: 'status',
         key: 'status',
+        width: '7%',
+        align: 'center',
+        onCell: () => ({
+          style: { padding: '2px 2px', minWidth: 0, overflow: 'hidden' },
+        }),
         render: (_: any, record: QuotaAgreedPrice) => {
-          let calculatedStatus = ''
-          const validToDate = record.valid_to
-          if (validToDate) {
-            calculatedStatus = calculatedStatusFromExpiredDate(validToDate)
-          }
-          return getStatusTag(calculatedStatus)
+          const mappedStatus = mapStatusFromApi(record.status)
+          return (
+            <div
+              style={{
+                minWidth: 0,
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
+              <Tag
+                color={getAgreedPriceStatusStyle(mappedStatus, t).background}
+                style={{
+                  color: getAgreedPriceStatusStyle(mappedStatus, t).color,
+                  marginRight: 0,
+                  maxWidth: '100%',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: 1.3,
+                }}
+              >
+                {getAgreedPriceStatusStyle(mappedStatus, t).text}
+              </Tag>
+            </div>
+          )
         },
       },
       {
-        title: t('agreed_prices.table.estimate_number'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.estimate_number')}
+          </div>
+        ),
         dataIndex: 'quota_code',
         key: 'quota_code',
+        width: '8%',
+        align: 'center',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
         render: (quotaCode: string, record: QuotaAgreedPrice) => (
-          <Button
-            type="link"
-            onClick={() =>
-              go({ to: `/agreed-prices/quota/${record.quota_id}` })
-            }
-            style={{ textDecoration: 'underline' }}
-          >
-            {quotaCode}
-          </Button>
+          <Tooltip title={quotaCode ?? ''}>
+            <span
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Button
+                type="link"
+                onClick={() =>
+                  go({ to: `/agreed-prices/quota/${record.quota_id}` })
+                }
+                style={{
+                  textDecoration: 'underline',
+                  padding: 0,
+                  display: 'block',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {quotaCode}
+              </Button>
+            </span>
+          </Tooltip>
         ),
       },
       {
-        title: t('agreed_prices.table.customer'),
-        key: 'customer_name',
-        render: (_: unknown, record: QuotaAgreedPrice) =>
-          record.customer?.name ?? '-',
-      },
-      {
-        title: t('agreed_prices.table.creator'),
-        key: 'created_by_name',
-        render: (_: unknown, record: QuotaAgreedPrice) =>
-          record.creator?.name ?? '-',
-      },
-      {
-        title: t('agreed_prices.table.product_count'),
-        dataIndex: 'number_products',
-        key: 'number_products',
-        align: 'right',
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.category')}
+          </div>
+        ),
+        dataIndex: 'category',
+        key: 'category',
+        width: '6%',
+        align: 'center',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (category: string) => {
+          if (category === 'merchandise') {
+            return t('agreed_prices.category.merchandise')
+          }
+          if (category === 'service') {
+            return t('agreed_prices.category.service')
+          }
+          return '-'
+        },
       },
       {
         title: (
-          <div>
-            <div>{t('agreed_prices.table.department')}</div>
-            <div style={{ fontSize: '14px', color: '#1890FF' }}>
-              {t('agreed_prices.table.amount')}
-            </div>
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.customer')}
+          </div>
+        ),
+        key: 'customer_name',
+        width: '12%',
+        align: 'center',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (_: unknown, record: QuotaAgreedPrice) => {
+          const name = record.customer?.name ?? '-'
+          return (
+            <Typography.Text
+              ellipsis={{ tooltip: name }}
+              style={{ display: 'block', width: '100%' }}
+            >
+              {name}
+            </Typography.Text>
+          )
+        },
+      },
+      {
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.creator')}
+          </div>
+        ),
+        key: 'created_by_name',
+        width: '10%',
+        align: 'center',
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
+        render: (_: unknown, record: QuotaAgreedPrice) => {
+          const name = record.creator?.name ?? '-'
+          return (
+            <Typography.Text
+              ellipsis={{ tooltip: name }}
+              style={{ display: 'block', width: '100%' }}
+            >
+              {name}
+            </Typography.Text>
+          )
+        },
+      },
+      {
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.product_count')}
+          </div>
+        ),
+        dataIndex: 'number_products',
+        key: 'number_products',
+        width: '6%',
+        align: 'center',
+      },
+      {
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            <Tooltip
+              title={`${t('agreed_prices.table.department')} / ${t('agreed_prices.table.amount')}`}
+            >
+              <div
+                className="flex flex-col"
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span>{t('agreed_prices.table.department')}</span>
+                <span>{t('agreed_prices.table.amount')}</span>
+              </div>
+            </Tooltip>
           </div>
         ),
         dataIndex: 'total_price',
         key: 'total_price',
-        align: 'right',
-        render: (totalPrice: number, record: QuotaAgreedPrice) => (
-          <div>
-            {(record.customer as any)?.department_name && (
-              <div style={{ fontSize: '16px', color: '#666' }}>
-                {(record.customer as any)?.department_name}
-              </div>
-            )}
-            <div>{formatNumberWithCommas(totalPrice)}</div>
-          </div>
-        ),
+        align: 'center',
+        minWidth: 180,
+        onCell: () => ({
+          style: {
+            padding: '2px 2px',
+            maxWidth: 180,
+            minWidth: 180,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'center',
+          },
+        }),
+        render: (totalPrice: number, record: QuotaAgreedPrice) => {
+          const deptName = (record.creator as any)?.department_name
+          const amountStr = formatNumberWithCommas(totalPrice)
+          return (
+            <div style={{ textAlign: 'center' }}>
+              {deptName && (
+                <Typography.Text
+                  ellipsis={{ tooltip: deptName }}
+                  style={{
+                    fontSize: '16px',
+                    color: '#666',
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'center',
+                  }}
+                >
+                  {deptName}
+                </Typography.Text>
+              )}
+              <Typography.Text
+                ellipsis={{ tooltip: amountStr }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'center',
+                }}
+              >
+                {amountStr}
+              </Typography.Text>
+            </div>
+          )
+        },
       },
       {
         title: (
-          <div>
-            <div>見積期限</div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ color: '#2784FF' }}>適用開始</div>
+            <div style={{ color: '#FF6918' }}>適用終了</div>
           </div>
         ),
         key: 'estimateDateApplicationEnd',
+        width: '10%',
+        align: 'center',
         render: (_, record: any) => {
           let calculatedStatus = ''
           const validToDate = record.valid_to
@@ -235,46 +486,70 @@ const AgreedPriceQuotaTab = () => {
             t,
           )
           return (
-            <div>
-              <div>
-                {(record as any).valid_from
-                  ? dayjs((record as any).valid_from).format('YYYY/MM/DD')
-                  : '---'}
-              </div>
-              <div style={{ color: style.color }}>
-                {(record as any).valid_to
-                  ? dayjs((record as any).valid_to).format('YYYY/MM/DD')
-                  : '---'}
-              </div>
+            <div style={{ textAlign: 'center' }}>
+              {!record?.is_unlimited ? (
+                <>
+                  <div>
+                    {(record as any).valid_from
+                      ? dayjs((record as any).valid_from).format('YYYY/MM/DD')
+                      : '---'}
+                  </div>
+                  <div style={{ color: style.color }}>
+                    {(record as any).valid_to
+                      ? dayjs((record as any).valid_to).format('YYYY/MM/DD')
+                      : '---'}
+                  </div>
+                </>
+              ) : (
+                <span style={{ color: '#1FDB51' }}>無制限</span>
+              )}
             </div>
           )
         },
       },
       {
-        title: t('agreed_prices.table.reference_count'),
-        dataIndex: 'number_references',
-        key: 'number_references',
-        align: 'right',
-      },
-      {
-        title: '更新',
+        title: <div style={{ textAlign: 'center' }}>更新</div>,
         dataIndex: 'number_updating',
         key: 'number_updating',
+        width: '5%',
         align: 'center',
       },
       {
-        title: t('agreed_prices.table.operation'),
+        title: (
+          <div style={{ textAlign: 'center' }}>
+            {t('agreed_prices.table.operation')}
+          </div>
+        ),
         key: 'operation',
-        render: (_, record) => (
-          <Space>
+        width: '22%',
+        align: 'center',
+        render: (_: unknown, record: QuotaAgreedPrice) => (
+          <Space wrap size={4}>
             <ShowButton
-              hideText
               size="small"
               recordItemId={(record as any).quota_id as number}
               resource="agreed-prices"
+              style={{
+                color: '#2784FF',
+                borderColor: '#2784FF',
+                backgroundColor: '#fff',
+              }}
+              icon={false}
+              autoInsertSpace={false}
             />
+            <Button
+              size="small"
+              onClick={() => openUpdate(record)}
+              style={{
+                color: '#fff',
+                backgroundColor: '#1FDB51',
+                borderColor: '#1FDB51',
+              }}
+              autoInsertSpace={false}
+            >
+              {t('agreed_prices.action.update')}
+            </Button>
             <DeleteButton
-              hideText
               size="small"
               recordItemId={record.id as number}
               resource="quota/agreed-prices"
@@ -284,14 +559,14 @@ const AgreedPriceQuotaTab = () => {
                 !permission?.is_module_admin &&
                 permission?.user?.id !== record.creator?.id
               }
+              style={{
+                color: '#fff',
+                backgroundColor: '#E74C3C',
+                borderColor: '#E74C3C',
+              }}
+              autoInsertSpace={false}
+              icon={false}
             />
-            <Button
-              size="small"
-              type="default"
-              onClick={() => openUpdate(record)}
-            >
-              {t('agreed_prices.action.update')}
-            </Button>
           </Space>
         ),
       },
@@ -306,6 +581,7 @@ const AgreedPriceQuotaTab = () => {
 
   const { tableProps, searchFormProps, setFilters, tableQuery, setCurrent } =
     useTable<QuotaAgreedPrice, HttpError, any>({
+      pagination: { pageSize: 20 },
       resource: 'quota/agreed-prices',
       syncWithLocation: true,
       filters: {
@@ -337,14 +613,29 @@ const AgreedPriceQuotaTab = () => {
             value: v.quota_code,
           },
           {
-            field: 'customer_name',
+            field: 'customer_id',
             operator: 'eq',
-            value: v.customer_name,
+            value:
+              typeof v.customer_id === 'object' &&
+              v.customer_id != null &&
+              'value' in v.customer_id
+                ? (v.customer_id as { value: number }).value
+                : v.customer_id,
           },
           {
-            field: 'creator_name',
+            field: 'category',
             operator: 'eq',
-            value: v.creator_name,
+            value: v.category,
+          },
+          {
+            field: 'created_by',
+            operator: 'eq',
+            value:
+              typeof v.created_by === 'object' &&
+              v.created_by != null &&
+              'value' in v.created_by
+                ? (v.created_by as { value: number }).value
+                : v.created_by,
           },
           {
             field: 'department_id',
@@ -354,9 +645,14 @@ const AgreedPriceQuotaTab = () => {
               : undefined,
           },
           {
-            field: 'tag_name',
+            field: 'tag_id',
             operator: 'eq',
-            value: v.tag_name,
+            value:
+              typeof v.tag_id === 'object' &&
+              v.tag_id != null &&
+              'value' in v.tag_id
+                ? (v.tag_id as { value: number }).value
+                : v.tag_id,
           },
           {
             field: 'expiration_date',
@@ -379,6 +675,11 @@ const AgreedPriceQuotaTab = () => {
 
     return [
       {
+        title: t('agreed_prices.summary.all'),
+        value: c?.total ?? 0,
+        key: null as string | null,
+      },
+      {
         title: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).text,
         value: get('active'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Active, t).color,
@@ -397,11 +698,6 @@ const AgreedPriceQuotaTab = () => {
         value: get('expired'),
         color: getAgreedPriceStatusStyle(AgreedPriceStatus.Expired, t).color,
         key: 'expired',
-      },
-      {
-        title: t('agreed_prices.summary.all'),
-        value: c?.total ?? 0,
-        key: null as string | null,
       },
     ]
   }, [count, t])
@@ -444,6 +740,57 @@ const AgreedPriceQuotaTab = () => {
 
       <div className="my-4">
         <Row gutter={[24, 0]}>
+          <Col xs={12} md={9} lg={5} xxl={4}>
+            <Form.Item
+              label={
+                <span className="font-bold">
+                  {t('agreed_prices.search.customer')}
+                </span>
+              }
+              layout="vertical"
+              name={'customer_id'}
+            >
+              <Select
+                {...customerSelectProps}
+                allowClear
+                showSearch
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue={true}
+                placeholder={t('agreed_prices.search.please_select')}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6} lg={3} xxl={3}>
+            <Form.Item
+              label={
+                <span className="font-bold">
+                  {t('agreed_prices.search.category')}
+                </span>
+              }
+              layout="vertical"
+              name={'category'}
+            >
+              <Select
+                allowClear
+                placeholder={t('agreed_prices.search.please_select')}
+                options={[
+                  {
+                    label: t('agreed_prices.category.merchandise'),
+                    value: 'merchandise',
+                  },
+                  {
+                    label: t('agreed_prices.category.service'),
+                    value: 'service',
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
           <Col xs={12} md={6} lg={3} xxl={3}>
             <Form.Item
               label={
@@ -457,20 +804,7 @@ const AgreedPriceQuotaTab = () => {
               <Input placeholder={t('agreed_prices.search.partial_match')} />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6} lg={3} xxl={3}>
-            <Form.Item
-              label={
-                <span className="font-bold">
-                  {t('agreed_prices.search.customer')}
-                </span>
-              }
-              layout="vertical"
-              name={'customer_name'}
-            >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6} lg={3} xxl={3}>
+          <Col xs={12} md={6} lg={4} xxl={3}>
             <Form.Item
               label={
                 <span className="font-bold">
@@ -478,9 +812,21 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'creator_name'}
+              name={'created_by'}
             >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
+              <Select
+                {...creatorSelectProps}
+                allowClear
+                showSearch
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue={true}
+                placeholder={t('agreed_prices.search.please_select')}
+              />
             </Form.Item>
           </Col>
           <Col xs={12} md={6} lg={4} xxl={3}>
@@ -508,7 +854,7 @@ const AgreedPriceQuotaTab = () => {
               />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6} lg={3} xxl={3}>
+          <Col xs={12} md={6} lg={4} xxl={3}>
             <Form.Item
               label={
                 <span className="font-bold">
@@ -516,9 +862,21 @@ const AgreedPriceQuotaTab = () => {
                 </span>
               }
               layout="vertical"
-              name={'tag_name'}
+              name={'tag_id'}
             >
-              <Input placeholder={t('agreed_prices.search.partial_match')} />
+              <Select
+                {...tagSelectProps}
+                allowClear
+                showSearch
+                onSearch={() => {}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue={true}
+                placeholder={t('agreed_prices.search.please_select')}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -567,8 +925,7 @@ const AgreedPriceQuotaTab = () => {
             </div>
           </Col>
         </Row>
-
-        <Row gutter={[24, 24]}>
+        {/* <Row gutter={[24, 24]}>
           <Col xs={24}>
             <div className="mt-7 flex justify-end gap-2">
               <Button
@@ -598,7 +955,7 @@ const AgreedPriceQuotaTab = () => {
               </Button>
             </div>
           </Col>
-        </Row>
+        </Row> */}
       </div>
 
       {(() => {
@@ -607,8 +964,9 @@ const AgreedPriceQuotaTab = () => {
         return (
           <CommonTable<QuotaAgreedPrice>
             {...refinedTableProps}
-            rowKey={'id'}
+            rowKey="id"
             columns={columns}
+            scroll={undefined}
           />
         )
       })()}
@@ -618,11 +976,14 @@ const AgreedPriceQuotaTab = () => {
           <div
             style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}
           >
-            {t('agreed_prices.modal.update_title') || '確定見積更新'}
+            {t('agreed_prices.modal.update_title') || '継続見積更新'}
           </div>
         }
         open={isUpdateOpen}
-        onCancel={() => setIsUpdateOpen(false)}
+        onCancel={() => {
+          setIsUpdateOpen(false)
+          setIsUnlimitedModal(false)
+        }}
         footer={null}
         destroyOnClose
         style={{ top: 20 }}
@@ -631,7 +992,7 @@ const AgreedPriceQuotaTab = () => {
         <Form
           form={updateForm}
           layout="horizontal"
-          labelCol={{ span: 8 }}
+          labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
           labelAlign="left"
           colon={false}
@@ -687,7 +1048,7 @@ const AgreedPriceQuotaTab = () => {
                 name="start_date"
                 rules={[
                   {
-                    required: true,
+                    required: !isUnlimitedModal,
                     message: t('validation.date.start_date.required'),
                   },
                 ]}
@@ -698,6 +1059,7 @@ const AgreedPriceQuotaTab = () => {
                   placeholder="YYYY/MM/DD"
                   format="YYYY/MM/DD"
                   inputReadOnly
+                  disabled={isUnlimitedModal}
                   disabledDate={(current) =>
                     current && current < dayjs().startOf('day')
                   }
@@ -721,11 +1083,14 @@ const AgreedPriceQuotaTab = () => {
             name="end_date"
             rules={[
               {
-                required: true,
+                required: !isUnlimitedModal,
                 message: t('validation.date.end_date.required'),
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
+                  if (isUnlimitedModal) {
+                    return Promise.resolve()
+                  }
                   const start = getFieldValue('start_date')
                   if (!value || !start) {
                     return Promise.resolve()
@@ -748,6 +1113,7 @@ const AgreedPriceQuotaTab = () => {
               placeholder="YYYY/MM/DD"
               format="YYYY/MM/DD"
               inputReadOnly
+              disabled={isUnlimitedModal}
               disabledDate={(current) => {
                 if (!current) return false
                 const today = dayjs().startOf('day')
@@ -760,25 +1126,39 @@ const AgreedPriceQuotaTab = () => {
             />
           </Form.Item>
 
+          <Form.Item label=" " style={{ marginBottom: 16 }}>
+            <Checkbox
+              checked={isUnlimitedModal}
+              onChange={(e) => {
+                setIsUnlimitedModal(e.target.checked)
+              }}
+            >
+              無制限
+            </Checkbox>
+          </Form.Item>
+
           <Divider style={{ margin: '24px 0' }} />
 
-          <Form.Item label="登録者:" style={{ marginBottom: 16 }}>
-            <span>
-              {selected?.creator?.name || '伊藤太郎'}{' '}
-              {selected?.created_at
-                ? dayjs(selected.created_at).format('YYYY/MM/DD HH:mm')
-                : '2025/08/04 12:30'}
-            </span>
-          </Form.Item>
-
-          <Form.Item label="更新者:" style={{ marginBottom: 16 }}>
-            <span>
-              {selected?.creator?.name || '伊藤太郎'}{' '}
-              {selected?.updated_at
-                ? dayjs(selected.updated_at).format('YYYY/MM/DD HH:mm')
-                : '2025/08/04 12:30'}
-            </span>
-          </Form.Item>
+          <ShowMoreInfo
+            descriptions={[
+              {
+                title: '登録者',
+                value: `${selected?.creator?.name || '伊藤太郎'} ${
+                  selected?.created_at
+                    ? dayjs(selected.created_at).format('YYYY/MM/DD HH:mm')
+                    : '2025/08/04 12:30'
+                }`,
+              },
+              {
+                title: '更新者',
+                value: `${selected?.creator?.name || '伊藤太郎'} ${
+                  selected?.updated_at
+                    ? dayjs(selected.updated_at).format('YYYY/MM/DD HH:mm')
+                    : '2025/08/04 12:30'
+                }`,
+              },
+            ]}
+          />
 
           <div
             style={{

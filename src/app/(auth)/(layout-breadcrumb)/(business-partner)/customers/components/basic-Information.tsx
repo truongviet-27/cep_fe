@@ -91,7 +91,11 @@ function BasicInformation(
       )}
     >
       <Panel header={boldText(t('customers.show.basic_info'))} key="1">
-        <Form.Item label={boldText(t('customers.fields.code'))} required>
+        <Form.Item
+          label={boldText(t('customers.fields.code'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+          required
+        >
           <Row align="middle" gutter={8}>
             <Col>
               <Form.Item rules={[rule]} name="customer_code" required noStyle>
@@ -122,7 +126,11 @@ function BasicInformation(
             </Col>
           </Row>
         </Form.Item>
-        <Form.Item label={boldText(t('customers.fields.status'))} required>
+        <Form.Item
+          label={boldText(t('customers.fields.status'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+          required
+        >
           <Row align="middle" gutter={8}>
             <Col flex="none">
               <Form.Item
@@ -167,6 +175,7 @@ function BasicInformation(
         <Form.Item
           label={boldText(t('customers.fields.company_classification'))}
           required
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
             <Col>
@@ -176,7 +185,13 @@ function BasicInformation(
                 initialValue="company"
                 required
               >
-                <Radio.Group>
+                <Radio.Group
+                  onChange={(e) => {
+                    if (e.target.value === 'company') {
+                      form.setFieldValue('company_name_display_format', 'after')
+                    }
+                  }}
+                >
                   <Radio value="company">
                     {t('customers.enums.corporation')}
                   </Radio>
@@ -285,9 +300,10 @@ function BasicInformation(
           style={{ marginTop: -10 }}
           label={boldText(t('customers.fields.name'))}
           required
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
-          <Row gutter={8} style={{ width: '100%' }}>
-            <Col>
+          <Row>
+            <Col style={{ width: 575 }}>
               <Form.Item name="name" rules={[rule]} required>
                 <Input style={{ maxWidth: 560 }} />
               </Form.Item>
@@ -304,7 +320,7 @@ function BasicInformation(
                   <Form.Item>
                     {form.getFieldValue('company_name_display_format') ===
                       'after'}
-                    <Typography.Text>{parts.join(' ')}</Typography.Text>
+                    <Typography.Text>{parts.join('')}</Typography.Text>
                   </Form.Item>
                 </Space>
               </Col>
@@ -317,13 +333,17 @@ function BasicInformation(
           label={boldText(t('customers.fields.name_kana'))}
           name="customer_name_by_kana"
           rules={[rule]}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
 
-        <Form.Item label={boldText(t('customers.fields.country'))}>
-          <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
-            <Col>
+        <Form.Item
+          label={boldText(t('customers.fields.country'))}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
+        >
+          <Row align="top" gutter={8} wrap={false} style={{ width: '100%' }}>
+            <Col flex="none">
               <Form.Item name="country" rules={[rule]} initialValue="日本">
                 <Select
                   allowClear
@@ -339,20 +359,38 @@ function BasicInformation(
 
             {isJapan && (
               <>
-                <Col>
-                  <Form.Item>
-                    <Typography.Text>
-                      {t('customers.fields.corporate_number')}
-                    </Typography.Text>
-                  </Form.Item>
-                </Col>
-
-                <Col>
-                  <Form.Item name="corporate_number" rules={[rule]}>
+                <Col flex="none" style={{ minWidth: 0 }}>
+                  <Form.Item
+                    label={boldText(t('customers.fields.corporate_number'))}
+                    name="corporate_number"
+                    rules={[
+                      {
+                        validator: (_, value) => {
+                          if (value != null && value !== '') {
+                            if (!/^\d*$/.test(value)) {
+                              return Promise.reject(
+                                t(
+                                  'validation.customer.corporate_number.numeric_only',
+                                ),
+                              )
+                            }
+                            if (value.length > 50) {
+                              return Promise.reject(
+                                t('validation.customer.corporate_number.max', {
+                                  max: 50,
+                                }),
+                              )
+                            }
+                          }
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
                     <Input style={{ maxWidth: 300 }} />
                   </Form.Item>
                 </Col>
-                <Col>
+                <Col flex="none">
                   <Form.Item>
                     <Button
                       type={'primary'}
@@ -371,6 +409,7 @@ function BasicInformation(
           required
           hidden={!allowRankResource}
           style={{ marginTop: -10 }}
+          labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Row align="middle" gutter={12}>
             <Col flex="none" style={{ width: 570 }}>

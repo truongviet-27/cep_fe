@@ -1,14 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
-import { Action, type ActionType } from '@components/common/action'
+import {
+  DEFAULT_TAX_RATES,
+  getDefaultTaxRate,
+} from '@components/cep/estimates/quotas/utils'
+import {
+  Action,
+  type ActionType,
+  type CreateProductType,
+} from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
-import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Button, Card, Flex, Form, Input, InputNumber, Modal } from 'antd'
+import {
+  Button,
+  Card,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+  Select,
+} from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -23,17 +40,15 @@ function OptionalInfo({
   const form = Form.useFormInstance()
 
   const customerWatch = Form.useWatch('customer', form)
+  const optionalProductWatch = Form.useWatch('optional_product', form)
+  const [productList, setProductList] = useState<any[]>([])
 
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
-  const isProductManager =
-    parameterSettings?.get && parameterSettings?.get('products')
-
-  const handleAddProduct = (groupIndex: number, productIndex: number) => {
-    const values = form?.getFieldValue('optional_product') || []
-    const products = values[groupIndex].products || []
+  const handleAddProduct = (productIndex: number, isSelfCreate = false) => {
+    const currentList = form?.getFieldValue('optional_product') || []
 
     const newProduct = {
       product: null,
+      isSelfCreate: isSelfCreate,
       package: null,
       product_id: null,
       package_id: null,
@@ -44,29 +59,25 @@ function OptionalInfo({
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
-      tax_rate: 0,
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
       is_add_total: true,
-      unit: '-',
-      unit_name: '-',
+      unit: t('quotas.action.detail_info.default_values.default_unit'),
+      unit_name: t('quotas.action.detail_info.default_values.default_unit'),
+      kind: 'product',
     }
 
-    const newProducts = [...products]
-    newProducts.splice(productIndex, 0, newProduct)
+    // 3. Tạo mảng mới và chèn vào ngay sau vị trí hiện tại (productIndex + 1)
+    const newList = [...currentList]
+    newList.splice(productIndex + 1, 0, newProduct)
 
-    values[groupIndex].products = newProducts
-
-    form.setFieldsValue({ optional_product: values })
+    // 4. Cập nhật lại Form
+    form.setFieldsValue({ optional_product: newList })
   }
 
-  const handleRemoveProduct = (groupIndex: number, productIndex: number) => {
-    const values = form?.getFieldValue('optional_product') || []
-    const products = values[groupIndex].products || []
-
-    values[groupIndex].products = products.filter(
-      (_: any, idx: number) => idx !== productIndex,
-    )
-
-    form.setFieldsValue({ optional_product: values })
+  const handleRemoveProduct = (index: number) => {
+    const currentList = form.getFieldValue('optional_product') || []
+    const newList = currentList.filter((_: any, idx: number) => idx !== index)
+    form.setFieldsValue({ optional_product: newList })
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -110,6 +121,18 @@ function OptionalInfo({
     },
   })
 
+  useEffect(() => {
+    if (data?.data && Array.isArray(data.data)) {
+      setProductList((prev) => {
+        const productMap = new Map(prev.map((item) => [item.id, item]))
+        data.data.forEach((newItem: any) => {
+          productMap.set(newItem.id, newItem)
+        })
+        return Array.from(productMap.values())
+      })
+    }
+  }, [data])
+
   const handleChangeProductPrincingOptional = useCallback(
     (productIds: number[], isSimple?: boolean) => {
       setProductPrincingState((prev) => [
@@ -117,6 +140,43 @@ function OptionalInfo({
       ])
     },
     [],
+  )
+
+  useEffect(() => {
+    if (optionalProductWatch && Array.isArray(optionalProductWatch)) {
+      const updatedList = optionalProductWatch.map(
+        (item: any, index: number) => {
+          if (item.display_order !== index + 1) {
+            return { ...item, display_order: index + 1 }
+          }
+          return item
+        },
+      )
+      if (
+        JSON.stringify(updatedList) !== JSON.stringify(optionalProductWatch)
+      ) {
+        form.setFieldsValue({ optional_product: updatedList })
+      }
+    }
+  }, [optionalProductWatch, form])
+
+  const dataSource: any[] = (form?.getFieldValue('optional_product') ?? []).map(
+    (item: any, index: number) => {
+      if (item.kind === 'group') {
+        return {
+          ...item,
+          index,
+          key: `header-optional-${index}`,
+          isHeader: true,
+          title: item.name,
+        }
+      }
+      return {
+        index,
+        isSelfCreate: !item.product_id,
+        ...item,
+      }
+    },
   )
 
   return (
@@ -133,38 +193,31 @@ function OptionalInfo({
     >
       <Form.List name={'optional_product'}>
         {(_, { add, remove }) => {
-          const dataSource: any[] = (
-            form.getFieldValue('optional_product') ?? []
-          ).flatMap((item: any, index: number) => [
-            {
-              index,
-              key: `header-${index}`,
-              isHeader: true,
-              title: item.group_name,
-            },
-            ...(item.products ?? []).flatMap((item2: any, index2: number) => [
-              {
-                index,
-                index2,
-                ...item2,
-              },
-            ]),
-          ])
-
           const columns: ColumnsType = [
             {
               title: t('quotas.action.optional_info.table.product_code'),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
-              width: 200,
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
+                ;<Form.Item name={[record.index, 'display_order']} hidden>
+                  <InputNumber />
+                </Form.Item>
                 if (record.isHeader) {
                   return {
                     children: (
                       <Form.Item
                         className="ant-form-item-hidden-margin"
-                        name={[record.index, 'group_name']}
+                        name={[record.index, 'name']}
                         style={{
                           marginBottom: 0,
                         }}
@@ -173,28 +226,23 @@ function OptionalInfo({
                           placeholder={t(
                             'quotas.action.optional_info.placeholders.optional_list_name',
                           )}
-                          style={{
-                            width: 400,
-                          }}
                         />
                       </Form.Item>
                     ),
                     props: { colSpan: columns.length - 1 },
                   }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return form.getFieldValue([
                       'optional_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'code',
                     ])
                   }
 
                   return (
                     <Form.Item
-                      name={[record.index, 'products', record.index2, 'code']}
+                      name={[record.index, 'code']}
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
@@ -209,12 +257,41 @@ function OptionalInfo({
                           pattern: /^[A-Z0-9-]+$/,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const allProducts =
+                              form.getFieldValue('optional_product') || []
+                            const currentCode = allProducts[record.index]?.code
+                            if (!currentCode) return Promise.resolve()
+                            let count = 0
+                            for (const item of allProducts) {
+                              if (
+                                item?.kind !== 'group' &&
+                                item?.code === currentCode
+                              ) {
+                                count++
+                              }
+                              if (count > 1) {
+                                notification.error({
+                                  message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                                  key: `${currentCode}-code-optional-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
+                              }
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
-                      style={{
-                        width: 300,
-                      }}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input
+                        placeholder={t('placeholders.input_please')}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -227,20 +304,54 @@ function OptionalInfo({
               dataIndex: 'name',
               key: 'name',
               align: 'left',
-              width: 200,
+              width: '15%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return (
                       <CoreAutocompleteAPI
-                        name={[
-                          record.index,
-                          'products',
-                          record.index2,
-                          'product',
+                        rules={[
+                          {
+                            validator: async () => {
+                              const allProducts =
+                                form.getFieldValue('optional_product') || []
+                              const currentProductId =
+                                allProducts[record.index]?.product_id
+                              if (!currentProductId) return Promise.resolve()
+                              let count = 0
+                              for (const item of allProducts) {
+                                if (
+                                  item?.kind !== 'group' &&
+                                  item?.product_id === currentProductId
+                                ) {
+                                  count++
+                                }
+                                if (count > 1) {
+                                  notification.error({
+                                    message: t(
+                                      'quotas.action.detail_info.duplicate_product',
+                                    ),
+                                    key: `name-optional-product`,
+                                    placement: 'topRight',
+                                  })
+                                  return Promise.reject()
+                                }
+                              }
+                              return Promise.resolve()
+                            },
+                          },
                         ]}
+                        name={[record.index, 'product']}
                         labelInValue={true}
                         resource="products/list-all"
                         placeholder={t(
@@ -249,65 +360,39 @@ function OptionalInfo({
                         disabled={!customerWatch}
                         defaultValue={{
                           value: form.getFieldValue([
-                            'main_product',
+                            'optional_product',
                             record.index,
-                            'products',
-                            record.index2,
+
                             'product',
                           ])?.value,
                           label: form.getFieldValue([
-                            'main_product',
+                            'optional_product',
                             record.index,
-                            'products',
-                            record.index2,
+
                             'name',
                           ]),
                         }}
                         onChangeValue={(valueOption) => {
                           if (!valueOption) {
                             form.setFieldValue(
-                              [
-                                'main_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'package',
-                              ],
+                              ['optional_product', record.index, 'package'],
                               null,
                             )
                             form.setFieldValue(
-                              [
-                                'optional_product',
-                                record.index,
-                                'products',
-                                record.index2,
-                                'quantity',
-                              ],
+                              ['optional_product', record.index, 'quantity'],
                               0,
                             )
                           }
 
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'package',
-                            ],
+                            ['optional_product', record.index, 'package'],
                             {
                               value: (valueOption?.packagings ?? [])[0]?.id,
                               label: '-',
                             },
                           )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'package_name',
-                            ],
+                            ['optional_product', record.index, 'package_name'],
                             '-',
                           )
                           if (valueOption) {
@@ -317,93 +402,39 @@ function OptionalInfo({
                           }
 
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'product_id',
-                            ],
+                            ['optional_product', record.index, 'product_id'],
                             valueOption?.id,
                           )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'name',
-                            ],
+                            ['optional_product', record.index, 'name'],
                             valueOption?.name,
                           )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'code',
-                            ],
+                            ['optional_product', record.index, 'code'],
                             valueOption?.code,
                           )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'unit',
-                            ],
+                            ['optional_product', record.index, 'unit'],
                             valueOption?.unit,
                           )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'unit_name',
-                            ],
+                            ['optional_product', record.index, 'unit_name'],
                             valueOption?.unit,
                           )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'cost_price',
-                            ],
+                            ['optional_product', record.index, 'cost_price'],
                             valueOption?.cost_price,
                           )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'selling_price',
-                            ],
+                            ['optional_product', record.index, 'selling_price'],
                             valueOption?.sale_price,
                           )
-                          // form.setFieldValue(
-                          //   [
-                          //     'optional_product',
-                          //     record.index,
-                          //     'products',
-                          //     record.index2,
-                          //     'tax_rate',
-                          //   ],
-                          //   valueOption?.tax_rate,
-                          // )
                           form.setFieldValue(
-                            [
-                              'optional_product',
-                              record.index,
-                              'products',
-                              record.index2,
-                              'quantity',
-                            ],
+                            ['optional_product', record.index, 'tax_rate'],
+                            valueOption?.tax_rate,
+                          )
+                          form.setFieldValue(
+                            ['optional_product', record.index, 'quantity'],
                             1,
                           )
                         }}
@@ -413,7 +444,7 @@ function OptionalInfo({
 
                   return (
                     <Form.Item
-                      name={[record.index, 'products', record.index2, 'name']}
+                      name={[record.index, 'name']}
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
@@ -424,12 +455,41 @@ function OptionalInfo({
                           max: 255,
                           message: '',
                         },
+                        {
+                          validator: async () => {
+                            const allProducts =
+                              form.getFieldValue('optional_product') || []
+                            const currentName = allProducts[record.index]?.name
+                            if (!currentName) return Promise.resolve()
+                            let count = 0
+                            for (const item of allProducts) {
+                              if (
+                                item?.kind !== 'group' &&
+                                item?.name === currentName
+                              ) {
+                                count++
+                              }
+                              if (count > 1) {
+                                notification.error({
+                                  message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                                  key: `${currentName}-name-optional-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
+                              }
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
-                      style={{
-                        width: 300,
-                      }}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input
+                        placeholder={t('placeholders.input_please')}
+                        style={{
+                          maxWidth: '500px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -440,25 +500,32 @@ function OptionalInfo({
               dataIndex: 'unit',
               key: 'unit',
               align: 'center',
-              width: 200,
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     return (
                       form.getFieldValue([
                         'optional_product',
                         record.index,
-                        'products',
-                        record.index2,
+
                         'unit',
                       ]) ?? '-'
                     )
                   }
                   return (
                     <Form.Item
-                      name={[record.index, 'products', record.index2, 'unit']}
+                      name={[record.index, 'unit']}
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
@@ -470,11 +537,14 @@ function OptionalInfo({
                           message: '',
                         },
                       ]}
-                      style={{
-                        width: '100%',
-                      }}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input
+                        placeholder={t('placeholders.input_please')}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -484,60 +554,64 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.package'),
               dataIndex: 'package',
               key: 'package',
-              width: 200,
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               align: 'left',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
-                    const product = (data?.data ?? []).find(
-                      (item: any) => item.id === record?.product_id,
-                    )
+                  if (!record.isSelfCreate) {
+                    let product = null
+                    if (productList.length > 0) {
+                      product = productList.find(
+                        (item: any) => item.id === record?.product_id,
+                      )
+                    } else {
+                      product = optionalProduct?.find(
+                        (item: any) => item.product_id === record?.product_id,
+                      )
+                    }
                     const productInit =
-                      optionalProduct &&
-                      optionalProduct[record.index]?.products[record.index2]
-                        ?.product
+                      optionalProduct && optionalProduct[record.index]?.product
 
                     return (
                       <Form.Item
                         className="ant-form-item-hidden-margin"
-                        name={[
-                          record.index,
-                          'products',
-                          record.index2,
-                          'package',
-                        ]}
+                        name={[record.index, 'package']}
                       >
                         <AutoComplete
                           filterPath1={[
                             'optional_product',
                             record.index,
-                            'products',
-                            record.index2,
                             'product',
                           ]}
+                          labelInValue={true}
                           productsData={productInit}
                           customer={customer}
                           data={product}
                           parent="optional_product"
                           index={record.index}
-                          index2={record.index2}
                           filterPath2={['customer']}
                           resource={`products`}
-                          style={{ width: 200 }}
+                          style={{
+                            maxWidth: '200px',
+                            width: '100%',
+                          }}
                         />
                       </Form.Item>
                     )
                   }
                   return (
                     <Form.Item
-                      name={[
-                        record.index,
-                        'products',
-                        record.index2,
-                        'package_name',
-                      ]}
+                      name={[record.index, 'package_name']}
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
@@ -550,7 +624,7 @@ function OptionalInfo({
                         },
                       ]}
                     >
-                      <Input placeholder={t('placeholders.input_please')} />
+                      <Input disabled={record.isSelfCreate} />
                     </Form.Item>
                   )
                 }
@@ -560,16 +634,23 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.cost_price'),
               dataIndex: 'cost_price',
               key: 'cost_price',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 } else {
-                  if (isProductManager) {
+                  if (!record.isSelfCreate) {
                     const cost_price = form.getFieldValue([
                       'optional_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'cost_price',
                     ])
                     if (cost_price === undefined || cost_price === null)
@@ -578,15 +659,18 @@ function OptionalInfo({
                   }
                   return (
                     <Form.Item
-                      name={[
-                        record.index,
-                        'products',
-                        record.index2,
-                        'cost_price',
-                      ]}
+                      name={[record.index, 'cost_price']}
                       className="ant-form-item-hidden-margin"
                     >
-                      <InputNumber min={0} precision={0} controls={false} />
+                      <InputNumber
+                        min={0}
+                        precision={0}
+                        controls={false}
+                        style={{
+                          maxWidth: '100px',
+                          width: '100%',
+                        }}
+                      />
                     </Form.Item>
                   )
                 }
@@ -596,6 +680,15 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.selling_price'),
               dataIndex: 'selling_price',
               key: 'selling_price',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -603,49 +696,14 @@ function OptionalInfo({
                 return (
                   <Form.Item
                     className="ant-form-item-hidden-margin"
-                    name={[
-                      record.index,
-                      'products',
-                      record.index2,
-                      'selling_price',
-                    ]}
-                    normalize={(val) => val ?? 0}
-                  >
-                    <InputNumber
-                      min={0}
-                      precision={0}
-                      controls={false}
-                      onChange={() => {
-                        setProductPrincingState((prev) =>
-                          prev.filter((item) => item !== record?.product_id),
-                        )
-                      }}
-                    />
-                  </Form.Item>
-                )
-              },
-            },
-            {
-              title: t('quotas.action.optional_info.table.quantity'),
-              dataIndex: 'quantity',
-              key: 'quantity',
-              render: (_, record) => {
-                if (record.isHeader) {
-                  return { props: { colSpan: 0 } }
-                }
-                return (
-                  <Form.Item
-                    className="ant-form-item-hidden-margin"
-                    name={[record.index, 'products', record.index2, 'quantity']}
-                    normalize={(val) => val ?? 0}
+                    name={[record.index, 'selling_price']}
                     rules={[
                       {
                         validator(_, value) {
                           const name = form.getFieldValue([
                             'optional_product',
                             record.index,
-                            'products',
-                            record.index2,
+
                             'name',
                           ])
 
@@ -667,6 +725,68 @@ function OptionalInfo({
                           prev.filter((item) => item !== record?.product_id),
                         )
                       }}
+                      style={{
+                        maxWidth: '100px',
+                        width: '100%',
+                      }}
+                    />
+                  </Form.Item>
+                )
+              },
+            },
+            {
+              title: t('quotas.action.optional_info.table.quantity'),
+              dataIndex: 'quantity',
+              key: 'quantity',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                return (
+                  <Form.Item
+                    className="ant-form-item-hidden-margin"
+                    name={[record.index, 'quantity']}
+                    rules={[
+                      {
+                        validator(_, value) {
+                          const name = form.getFieldValue([
+                            'optional_product',
+                            record.index,
+
+                            'name',
+                          ])
+
+                          if (name && !value) {
+                            return Promise.reject()
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      precision={0}
+                      controls={false}
+                      onChange={() => {
+                        setProductPrincingState((prev) =>
+                          prev.filter((item) => item !== record?.product_id),
+                        )
+                      }}
+                      style={{
+                        maxWidth: '100px',
+                        width: '100%',
+                      }}
                     />
                   </Form.Item>
                 )
@@ -676,6 +796,15 @@ function OptionalInfo({
               title: t('quotas.action.optional_info.table.profit_margin'),
               dataIndex: 'profit_margin',
               key: 'profit_margin',
+              width: '6%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -684,19 +813,11 @@ function OptionalInfo({
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'cost_price',
                   ]) === null
                 ) {
                   form.setFieldValue(
-                    [
-                      'optional_product',
-                      record.index,
-                      'products',
-                      record.index2,
-                      'profit_margin',
-                    ],
+                    ['optional_product', record.index, 'profit_margin'],
                     0,
                   )
                   return '0%'
@@ -705,15 +826,11 @@ function OptionalInfo({
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'cost_price',
                   ]) *
                     form.getFieldValue([
                       'optional_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'quantity',
                     ]) || 0
 
@@ -721,26 +838,16 @@ function OptionalInfo({
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'selling_price',
                   ]) *
                     form.getFieldValue([
                       'optional_product',
                       record.index,
-                      'products',
-                      record.index2,
                       'quantity',
                     ]) || 0
 
                 form.setFieldValue(
-                  [
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'profit_margin',
-                  ],
+                  ['optional_product', record.index, 'profit_margin'],
                   selling > 0
                     ? (((selling - cost) / selling) * 100).toFixed(2)
                     : 0,
@@ -750,52 +857,18 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.detail_info.table.tax_rate'),
-              dataIndex: 'tax_rate',
-              key: 'tax_rate',
-              render: (_, record) => {
-                if (record.isHeader) {
-                  return { props: { colSpan: 0 } }
-                }
-                if (isProductManager) {
-                  const taxRate =
-                    form.getFieldValue([
-                      'main_product',
-                      record.index,
-                      'products',
-                      record.index2,
-                      'tax_rate',
-                    ]) || 0
-                  return `${taxRate}%`
-                }
-
-                return (
-                  <Form.Item
-                    name={[record.index, 'products', record.index2, 'tax_rate']}
-                    className="ant-form-item-hidden-margin"
-                    rules={[
-                      {
-                        required: true,
-                        message: '',
-                      },
-                    ]}
-                  >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      precision={0}
-                      style={{ width: 100 }}
-                      addonAfter="%"
-                      controls={false}
-                    />
-                  </Form.Item>
-                )
-              },
-            },
-            {
               title: t('quotas.action.optional_info.table.selling_amount'),
               dataIndex: 'sellingAmount',
               key: 'sellingAmount',
+              width: '10%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -804,8 +877,6 @@ function OptionalInfo({
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'quantity',
                   ]) || 0
 
@@ -813,80 +884,172 @@ function OptionalInfo({
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'selling_price',
                   ]) || 0
                 return Number(quantity * selling).toLocaleString()
               },
             },
-
+            {
+              title: t('quotas.action.detail_info.table.tax_rate'),
+              dataIndex: 'tax_rate',
+              key: 'tax_rate',
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
+              render: (_, record) => {
+                if (record.isHeader) {
+                  return { props: { colSpan: 0 } }
+                }
+                if (!record.isSelfCreate) {
+                  const taxRate =
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'tax_rate',
+                    ]) || 0
+                  return `${taxRate}%`
+                }
+                return (
+                  <Form.Item
+                    name={[record.index, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <Select
+                      options={DEFAULT_TAX_RATES}
+                      style={{
+                        maxWidth: '200px',
+                        width: '100%',
+                      }}
+                    />
+                  </Form.Item>
+                )
+              },
+            },
             {
               title: t('quotas.action.optional_info.table.row_edit'),
               key: 'action',
-              render: (_, record) => {
+              width: '7%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
+              render: (_, record, index) => {
                 const isHeader = record.isHeader
+                const isFirstRow = index === 0
+                const optionalProduct =
+                  form.getFieldValue('optional_product') || []
 
-                const lengthOriginalProduct =
-                  form.getFieldValue('optional_product').length > 1
-                const lengthProduct =
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                  ]).length > 1
-
-                const actionList: ActionType[] = isHeader
-                  ? lengthOriginalProduct
-                    ? ['append', 'remove']
-                    : ['append']
-                  : lengthProduct
-                    ? ['append', 'remove']
-                    : ['append']
-
-                const handleAppend = () => {
-                  if (isHeader) {
-                    add(
-                      {
-                        group_name: '',
-                        products: [
-                          {
-                            product: null,
-                            package: null,
-                            product_id: null,
-                            package_id: null,
-                            package_name: '-',
-                            name: '',
-                            code: '',
-                            quantity: 0,
-                            cost_price: 0,
-                            selling_price: 0,
-                            profit_margin: 0,
-                            is_add_total: true,
-                            tax_rate: 0,
-                            unit: '-',
-                            unit_name: '-',
-                          },
-                        ],
-                      },
-                      record.index + 1,
-                    )
-                  } else {
-                    handleAddProduct(record.index, record.index2 + 1)
+                // Xác định danh sách hành động
+                const actionList: ActionType[] = []
+                if (isHeader) {
+                  actionList.push('append')
+                  actionList.push('remove')
+                } else {
+                  actionList.push('onAppendFromMasterOrCreateNewAction')
+                  if (
+                    optionalProduct?.[index - 1]?.kind === 'product' ||
+                    optionalProduct?.[index + 1]?.kind === 'product'
+                  ) {
+                    actionList.push('remove')
                   }
                 }
 
-                const handleRemove = () => {
+                const handleAppend = () => {
+                  const nextHeaderIndex = optionalProduct.findIndex(
+                    (item: any, i: number) =>
+                      i > index && item.kind === 'group',
+                  )
+                  const insertAt =
+                    nextHeaderIndex === -1
+                      ? optionalProduct.length
+                      : nextHeaderIndex
                   if (isHeader) {
-                    remove(record.index)
+                    add(
+                      {
+                        name: '',
+                        kind: 'group',
+                        isHeader: true,
+                        quantity: 1,
+                      },
+                      insertAt,
+                    )
+                    add(
+                      {
+                        product: null,
+                        isSelfCreate: false,
+                        package: null,
+                        product_id: null,
+                        package_id: null,
+                        package_name: '-',
+                        name: '',
+                        code: '',
+                        quantity: 0,
+                        cost_price: 0,
+                        selling_price: 0,
+                        profit_margin: 0,
+                        tax_rate: 0,
+                        is_add_total: true,
+                        unit: t(
+                          'quotas.action.detail_info.default_values.default_unit',
+                        ),
+                        unit_name: t(
+                          'quotas.action.detail_info.default_values.default_unit',
+                        ),
+                        kind: 'product',
+                      },
+                      insertAt + 1,
+                    )
                   } else {
-                    handleRemoveProduct(record.index, record.index2)
+                    handleAddProduct(index)
+                  }
+                }
+
+                const onAppendFromMasterOrCreateNewAction = (
+                  type: CreateProductType,
+                ) => {
+                  handleAddProduct(index, type === 'create_new')
+                }
+
+                const handleRemove = () => {
+                  if (isFirstRow && isHeader) {
+                    const newData = [...optionalProduct]
+                    newData[0] = {
+                      ...newData[0],
+                      name: '',
+                      title: '',
+                    }
+                    form.setFieldValue('optional_product', newData)
+                  } else {
+                    if (isHeader) {
+                      remove(index)
+                    } else {
+                      handleRemoveProduct(index)
+                    }
                   }
                 }
 
                 return (
                   <Action
                     actionList={actionList}
+                    onAppendFromMasterOrCreateNewAction={
+                      onAppendFromMasterOrCreateNewAction
+                    }
                     onAppendAction={handleAppend}
                     onRemoveAction={handleRemove}
                   />
@@ -915,6 +1078,8 @@ function OptionalInfo({
                 </Button>
               </Flex>
               <CommonTable
+                scroll={{ x: 800 }}
+                tableLayout="fixed"
                 columns={columns}
                 dataSource={dataSource}
                 rowClassName={(record) =>

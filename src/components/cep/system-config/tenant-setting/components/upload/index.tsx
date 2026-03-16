@@ -1,13 +1,15 @@
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable import/newline-after-import */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import UploadImage from '@/assets/svg/upload.svg'
-import { useApiUrl, useCustomMutation } from '@refinedev/core'
+import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
 import { Form, Image, message, Typography, Upload } from 'antd'
 import type { RcFile } from 'antd/es/upload'
 import axios from 'axios'
 import ImageNext from 'next/image'
 import { useEffect, useState } from 'react'
+import ImageCropModal from './image-crop-modal'
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
 const { Text } = Typography
@@ -26,15 +28,25 @@ function UploadSetting({
   name,
   fileListProp,
   initialUrl,
+  aspect = 1, // Default is square (1:1)
 }: {
   name: string
   fileListProp: UploadFile[] | null
-  initialUrl: string
+  initialUrl: string | null
+  aspect?: number
 }) {
   const form = Form.useFormInstance()
 
+  const t = useTranslate()
+
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
+  const [cropModalOpen, setCropModalOpen] = useState(false)
+  const [imageToCrop, setImageToCrop] = useState<string>('')
+  const [currentFileName, setCurrentFileName] = useState<string>('')
+  const [currentFileType, setCurrentFileType] = useState<string>('')
+  const [isUploading, setIsUploading] = useState(false)
+  const [cropAspect] = useState(aspect) // Store aspect ratio
 
   const [fileList, setFileList] = useState<UploadFile[]>([])
 
@@ -44,26 +56,65 @@ function UploadSetting({
   const beforeUpload = (file: FileType) => {
     const isLt5M = file.size < MAX_FILE_SIZE
     if (!isLt5M) {
-      message.error('画像サイズは5MB以下にしてください。')
+      message.error(t('images.notifications.size_limit'))
+      return Upload.LIST_IGNORE
     }
-    return false
+    return true
+  }
+
+  const customRequest = ({ file, onSuccess }: any) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const imageUrl = e.target?.result as string
+      setImageToCrop(imageUrl)
+      setCurrentFileName((file as File).name)
+      setCurrentFileType((file as File).type)
+      setCropModalOpen(true)
+    }
+    reader.onerror = (error) => {
+      console.error('FileReader error:', error)
+      message.error(t('images.notifications.upload_failed'))
+    }
+    reader.readAsDataURL(file as File)
+
+    setTimeout(() => {
+      onSuccess?.('ok')
+    }, 0)
   }
 
   const handleChange = ({
     file,
-    fileList,
+    fileList: newFileList,
   }: {
     file: UploadFile
     fileList: UploadFile[]
   }) => {
-    if (fileList.length > 0) {
+    if (file.status === 'removed' || newFileList.length === 0) {
+      form.setFieldValue(name, null)
+      form.setFieldValue(`${name}_file_key`, null)
+      form.setFieldValue(`${name}_name`, null)
+      setFileList([])
+    }
+  }
+
+  const handleCropConfirm = async (croppedImageBlob: Blob) => {
+    try {
+      setIsUploading(true)
+
+      // Create File from Blob
+      const croppedFile = new File([croppedImageBlob], currentFileName, {
+        type: currentFileType,
+        lastModified: Date.now(),
+      })
+
+      // Upload cropped image
       mutate(
         {
           method: 'post',
           url: `${apiUrl}/OTHER/presigned-url`,
           values: {
-            file_name: file?.name,
-            content_type: file?.type,
+            file_name: currentFileName,
+            content_type: currentFileType,
             prefix: 'imports',
             expiration_minutes: 60,
           },
@@ -71,36 +122,64 @@ function UploadSetting({
         {
           onSuccess: (data) => {
             axios
-              .put(data.data.presigned_url, file, {
+              .put(data.data.presigned_url, croppedFile, {
                 headers: {
                   'Content-Type': data.data.content_type,
                 },
               })
               .then(() => {
-                form.setFieldValue(name, file)
+                form.setFieldValue(name, croppedFile)
                 form.setFieldValue(`${name}_file_key`, data.data.file_key)
-                form.setFieldValue(`${name}_name`, file?.name)
+                form.setFieldValue(`${name}_name`, currentFileName)
 
-                setFileList(fileList)
+                // Update file list with cropped image
+                setFileList([
+                  {
+                    uid: '-1',
+                    name: currentFileName,
+                    status: 'done',
+                    url: URL.createObjectURL(croppedFile),
+                  },
+                ])
+
+                setCropModalOpen(false)
+                setIsUploading(false)
+                message.success(t('images.notifications.upload_success'))
               })
               .catch((error) => {
                 console.log(error)
+                setIsUploading(false)
+                message.error(t('images.notifications.upload_failed'))
               })
+          },
+          onError: () => {
+            setIsUploading(false)
+            message.error(t('images.notifications.upload_failed'))
           },
         },
       )
-    } else {
-      form.setFieldValue(name, null)
-      form.setFieldValue(`${name}_file_key`, null)
-      setFileList([])
+    } catch (error) {
+      console.error('Upload error:', error)
+      setIsUploading(false)
+      message.error(t('images.notifications.upload_failed'))
     }
   }
 
+  const handleCropCancel = () => {
+    setCropModalOpen(false)
+    setImageToCrop('')
+  }
+
   useEffect(() => {
+    const currentFieldValue = form.getFieldValue(name)
+
+    if (currentFieldValue instanceof File) {
+      return
+    }
+
     if (fileListProp && fileListProp.length > 0) {
       setFileList(fileListProp)
-    } else if (initialUrl && fileList.length === 0) {
-      // Chỉ set initialUrl nếu chưa có file nào được upload
+    } else if (initialUrl && typeof initialUrl === 'string') {
       setFileList([
         {
           uid: '-1',
@@ -109,8 +188,10 @@ function UploadSetting({
           url: initialUrl,
         },
       ])
+    } else {
+      setFileList([])
     }
-  }, [fileListProp, initialUrl]) // Thêm initialUrl vào dependency
+  }, [fileListProp, initialUrl, form, name])
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -129,6 +210,7 @@ function UploadSetting({
         listType="picture-card"
         maxCount={1}
         beforeUpload={beforeUpload}
+        customRequest={customRequest}
         fileList={fileList}
         onChange={handleChange}
         style={{
@@ -136,6 +218,9 @@ function UploadSetting({
         }}
         onRemove={() => {
           form.setFieldValue(`${name}_name`, null)
+          form.setFieldValue(name, null)
+          form.setFieldValue(`${name}_file_key`, null)
+          setFileList([])
         }}
         multiple={false}
       >
@@ -158,6 +243,18 @@ function UploadSetting({
           }}
           src={previewImage}
           alt="Preview image"
+        />
+      )}
+
+      {imageToCrop && (
+        <ImageCropModal
+          visible={cropModalOpen}
+          imageUrl={imageToCrop}
+          fileType={currentFileType}
+          isUploading={isUploading}
+          aspect={cropAspect}
+          onCancel={handleCropCancel}
+          onConfirm={handleCropConfirm}
         />
       )}
     </div>

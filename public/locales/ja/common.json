@@ -25,11 +25,76 @@
   "confirm": {
     "delete_confirm": "削除してもよろしいですか？"
   },
+  "initial_setup_guide": {
+    "advanced_note": "高度な機能を設定いただけます。各種設定から必要な設定をご利用ください。",
+    "approval_route_setting": "承認ルート設定",
+    "price_rank_setting": "単価ランク設定",
+    "user_role": "ユーザー権限",
+    "breadcrumb_root": "初期設定",
+    "button_later": "あとで設定",
+    "target_menu_label": "対象作業メニュー：見積一覧",
+    "loading": "読み込み中...",
+    "status_pending": "未設定",
+    "status_complete": "完了",
+    "progress_status": "進捗状況",
+    "label_estimate_management": "見積管理",
+    "label_account_management": "アカウント管理",
+    "step_prefix": "ステップ",
+    "screen_link": "画面へ",
+    "menu": {
+      "basic": {
+        "title": "初期設定",
+        "subtitle": "システムの基本設定",
+        "breadcrumb_label": "初期設定"
+      },
+      "advanced": {
+        "title": "高度な設定",
+        "subtitle": "詳細な機能設定",
+        "breadcrumb_label": "高度な設定"
+      },
+      "test_individual": {
+        "title": "テスト運用（個別）",
+        "subtitle": "システム動作の手順",
+        "breadcrumb_label": "テスト運用（個別）"
+      },
+      "test_continuous": {
+        "title": "テスト運用（継続）",
+        "subtitle": "システム動作の手順",
+        "breadcrumb_label": "テスト運用（継続）"
+      }
+    },
+    "test_individual": {
+      "step1_title": "ステップ１：見積書の作成",
+      "step1_desc": "見積作成の新規作成とテンプレート作成から見積書を作成します。※承認ルート設定がある場合は、承認ルートを選択します。",
+      "step1_1_title": "ステップ１-１：見積書の承認・差戻",
+      "step1_1_desc": "承認待ステータスにある見積を承認・差戻します。\n※差戻の場合は、差戻の理由の記載が必須となります。",
+      "step1_2_title": "ステップ１-２：見積書の差戻対応",
+      "step1_2_desc": "差戻理由を確認して、見積を訂正し再度承認申請します。",
+      "step2_title": "ステップ２：見積書の送信",
+      "step2_desc": "作成（または承認）した見積書を顧客へ送付します。\n※作成者および管理者のみ送信可能です。",
+      "step3_title": "ステップ３：見積の再見積",
+      "step3_desc_line1": "顧客からの再見積依頼に対し、再見積ボタンから再見積作成を行います。",
+      "step3_desc_line2": "※再見積を作成した際は、元の見積書に追加されて再見積書が作成され、作成中のに移動します。",
+      "step3_desc_line3": "※再見積書が作成された同時に元の見積書のステータスが再見積に移動します。",
+      "step4_title": "ステップ４：見積の受注・失注の管理",
+      "step4_desc": "送信済の見積に対し、受注・失注の判定を下します。",
+      "step5_title": "ステップ５：継続見積の管理（契約区分：継続の場合）",
+      "step5_desc_line1": "契約区分が「継続」で受注した見積は、継続見積一覧にコピーされ、見積適用期間の管理が可能となります。",
+      "step5_desc_line2": "※デフォルト設定は無期限となっているので、適用期限管理がしたい場合は変更します。",
+      "badge_creating": "作成中",
+      "badge_waiting_approval": "承認待",
+      "badge_rejected": "差戻",
+      "badge_approved": "承認済",
+      "badge_sent": "送信済",
+      "badge_order": "受注"
+    }
+  },
   "buttons": {
     "cancel": "キャンセル",
     "save_settings": "設定を保存",
     "create": "登録",
     "back": "戻る",
+    "show": "詳細",
     "edit": "編集",
     "delete": "削除",
     "select": "選択",
@@ -48,32 +113,42 @@
     "add_delivery_destination": "追加",
     "copy_contact_info": "取引先情報をコピーする",
     "select_file": "ファイル",
-    "show": "show",
+    "show": "詳細",
     "refresh": "refresh",
     "confirm_delete_parent": "削除する場合、商品の紐づけが切れます。削除してもよろしいですか？",
     "clone": "クローン",
-    "notAccessTitle": ""
+    "notAccessTitle": "",
+    "update": "更新",
+    "yesContinue": "はい、続行",
+    "noCancel": "いいえ、キャンセル",
+    "draft": "下書き",
+    "apply_draft": "下書きを適用"
   },
   "placeholders": {
     "partial_match": "部分一致",
     "select": "選択してください",
     "file_url": "ファイルのURLを入力",
     "please_choose_files": "ファイルを選択してください",
-    "input_please": "入力してください"
+    "input_please": "入力"
   },
   "notifications": {
-    "success": "成功しました",
-    "editSuccess": "更新が成功しました",
-    "deleteSuccess": "削除しました",
-    "deleteError": "削除に失敗しました",
-    "createSuccess": "登録しました",
-    "error": "エラー",
-    "editError": "編集エラー",
-    "createError": "作成エラー",
+    "success": "成功しました。",
+    "proceedRecords": "{recordAsString} 件のレコードを処理しました。",
+    "notProceedRecords": "{recordAsString} 件のレコードの処理に失敗しました。",
+    "editSuccess": "更新が成功しました。",
+    "deleteSuccess": "削除しました。",
+    "deleteError": "削除に失敗しました。",
+    "createSuccess": "登録しました。",
+    "error": "エラー。",
+    "editError": "編集エラー。",
+    "createError": "作成エラー。",
     "uploadSuccess": "ファイルのアップロードに成功しました。",
     "uploadFail": "ファイルのアップロードに失敗しました。",
     "uploading": "資料をアップロード中です。アップロードが完了するまで、保存しないでください。",
-    "stopped": "停止した"
+    "stopped": "停止した。",
+    "draftSaveSuccess": "下書きを保存しました。",
+    "draftSaveError": "下書きの保存に失敗しました。",
+    "draftApplySuccess": "下書きをフォームに反映しました。"
   },
   "menu": {
     "dashboard": "ダッシュボード",
@@ -97,9 +172,9 @@
     "business_partner": "取引先"
   },
   "customers": {
-    "customers": "取引先一覧",
+    "customers": "取引一覧",
     "list": {
-      "list": "取引先一覧"
+      "list": "取引一覧"
     },
     "create": {
       "create": "取引先登録",
@@ -120,6 +195,7 @@
       "address_contact": "住所・連絡先",
       "delivery_destinations": "納品先情報",
       "postal_code": "郵便番号",
+      "postal_code_placeholder": "郵便番号はハイフン付きで入力してください",
       "address": "住所",
       "building_name": "建物名",
       "phone": "電話番号",
@@ -165,6 +241,11 @@
       "manual_input_placeholder": "会社種別を手入力",
       "status": "ステータス",
       "total_revenue": "年間取引額 (円)"
+    },
+    "tables": {
+      "header": {
+        "code": "コード"
+      }
     },
     "delivery": {
       "code": "納品先コード",
@@ -262,7 +343,7 @@
       "codeHint": "コード体系の定義はこちら"
     },
     "validation": {
-      "codeFormat": "(A-Z, 0-9, .-)"
+      "codeFormat": "(A-Z, 0-9, -)"
     },
     "text": {
       "active": "有効",
@@ -374,15 +455,15 @@
     }
   },
   "ranks": {
-    "ranks": "単価ランク",
+    "ranks": "単価ランクマスタ",
     "titles": {
       "clone": "clone",
       "edit": "edit"
     },
     "list": {
-      "list": "ランク",
+      "list": "単価ランクマスタ",
       "filters": {
-        "search_label": "ランク・説明",
+        "search_label": "ランク・備考",
         "search_placeholder": "部分一致"
       }
     },
@@ -407,7 +488,7 @@
     },
     "table": {
       "code": "ランク",
-      "name": "説明",
+      "note": "備考",
       "unit_price": "単価"
     }
   },
@@ -416,8 +497,8 @@
   },
   "approve_routes": {
     "home": "見積",
-    "parent": "承認ルート",
-    "approve_routes": "承認ルート",
+    "parent": "承認ルート設定",
+    "approve_routes": "承認ルート設定",
     "list": "承認ルート一覧",
     "detail": "承認ルート詳細",
     "create": "承認ルート登録",
@@ -576,11 +657,14 @@
       "created_by": "登録者",
       "updated_by": "更新者",
       "created_at": "登録日",
-      "updated_at": "更新日"
+      "updated_at": "更新日",
+      "hash": "ハイフン",
+      "yes": "あり",
+      "no": "なし"
     }
   },
   "product_categories": {
-    "product_categories": "商品カテゴリ設定",
+    "product_categories": "商品カテゴリ一覧",
     "all_open": "すべて閉じる",
     "all_close": "すべて開く",
     "validate": {
@@ -600,11 +684,11 @@
   "parameter_settings": {
     "parameter_settings": "パラメーター設定",
     "description": "説明",
-    "is_manage": "管理する",
-    "not_manage": "管理しない"
+    "is_manage": "利用する",
+    "not_manage": "利用しない"
   },
   "estimate_form_settings": {
-    "estimate_form_settings": "見積フォーム設定"
+    "estimate_form_settings": "見積書フォーム設定"
   },
   "mail_templates": {
     "mail_templates": "メールテンプレート設定",
@@ -615,10 +699,10 @@
     "form": {
       "subject": "件名",
       "body": "本文",
-      "titleMail": "【見積書送付】お知らせメール",
-      "titlePassword": "【見積書パスワード送付】お知らせメール",
-      "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付の通りお見積りを送付いたします。\nよろしくご査収ください。",
-      "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先程と送付致しましたお見積書のパスワードを送付致します。\nパスワードは\n\n[[パスワード]]\n\nです。\nよろしくお願い致します。",
+      "titleMail": "【見積書送付のご案内】",
+      "titlePassword": "【見積書パスワードのご案内】",
+      "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付にてお見積書をお送りいたします。\nご確認のほどよろしくお願いいたします。\nご不明点等ございましたらお気軽にお申し付けください。",
+      "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先ほどお送りしたお見積書のパスワードをお知らせいたします。\nパスワードは下記の通りです。\n\n[[パスワード]]\n\nよろしくお願いいたします。",
       "signature": {
         "label": "署名（自動挿入）",
         "content": "─ Commerce Robotics Inc 株式会社コマースロボティクス─\nSales Team email: info@commerce-robotics.com\n【東京本社】 〒105-0021 東京都港区東新橋2-11-4 マキヤ汐留プラザ 5F\nTEL: 03-4431-1337"
@@ -761,6 +845,7 @@
     "purpose": "変更目的",
     "quick_start": "1. クイックスタート用設定",
     "advanced": "2. 高度設定（プロ用）",
+    "advanced_settings": "高度な設定",
     "enterprise": "3. エンタープライズ向け設定",
     "advanced_content": "高度設定の内容",
     "enterprise_content": "エンタープライズ設定の内容",
@@ -858,6 +943,9 @@
       }
     }
   },
+  "user_management": {
+    "user_management": "ユーザー管理"
+  },
   "departments": {
     "departments": "部門",
     "list": {
@@ -917,7 +1005,7 @@
     }
   },
   "product_units": {
-    "product_units": "商品単位設定",
+    "product_units": "単位設定",
     "filters": {
       "label": "単位名",
       "placeholder": "部分一致",
@@ -1027,7 +1115,7 @@
     "show": "show"
   },
   "tenant_settings": {
-    "tenant_settings": "見積フォーム設定",
+    "tenant_settings": "見積書フォーム設定",
     "hide": "非表示",
     "greeting": {
       "label": "あいさつ文",
@@ -1087,12 +1175,12 @@
       "title": "プレビュー"
     },
     "digitalStamp": {
-      "label": "担当者デジタル捺印",
+      "label": "担当者捺印",
       "withStamp": "捺印あり",
       "withoutStamp": "捺印なし"
     },
     "consumptionTax": {
-      "label": "消費税（デフォルト）",
+      "label": "消費税",
       "taxExclusive": "外税",
       "taxInclusive": "内税",
       "taxExempt": "非課税",
@@ -1118,14 +1206,14 @@
   "forbiddenMessage": "申し訳ありませんが、このページへのアクセス権限がありません。",
   "notFoundPageMessage": "申し訳ありませんが、アクセスされたページは存在しません。",
   "list_received": {
-    "list_received": "確定見積一覧"
+    "list_received": "継続見積一覧"
   },
   "price_groups": {
-    "message": "ランク別単価について",
+    "message": "単価ランク（商品別）について",
     "message_description": "掛率で自動設定後に「操作」から絶対値金額に修正可能です。見積書作成時には、対象顧客のランクに応じた商品単価が自動的に適用されます。",
-    "price_groups": "ランク別商品単価",
-    "product_price_by_rank": "ランク別単価",
-    "business_partner": "取引先",
+    "price_groups": "単価ランク（商品別)",
+    "product_price_by_rank": "単価ランク（商品別）",
+    "business_partner": "商品",
     "list": {
       "list": "単価グループ設定"
     },
@@ -1137,12 +1225,16 @@
       "packaging_name": "荷姿名",
       "selling_price": "販売価格",
       "selling_price_unit": "円",
-      "is_rate_based": "設定方式",
+      "pricing_method": "設定方式",
       "rate": "換率",
       "absolute": "絶対",
-      "percentage": "掛率"
+      "percentage": "掛率",
+      "list_price": "定価"
     },
-    "rank_prices_title": "ランク"
+    "rank_prices_title": "ランク",
+    "validation": {
+      "rank_price_lte_selling": "ランク価格は販売価格以下で入力してください。"
+    }
   },
 
   "agreed_prices/customer": {
@@ -1156,12 +1248,14 @@
   },
 
   "agreed_prices": {
-    "title": "継続見積管理",
-    "description": "※継続契約に関する見積内容の確認と見積期限、更新を管理します。",
-    "parent": "確定見積一覧",
-    "agreed_prices": "継続見積管理",
+    "title": "継続見積一覧",
+    "description": "※基本契約に基づく継続見積の契約期間管理です。",
+    "parent": "継続見積一覧",
+    "agreed_prices": "継続見積一覧",
+    "tooltip": "基本契約に基づく継続契約の見積一覧です。",
+    "basic_info_note": "※表示と編集ともに一般の見積と表示内容を合わせてください。",
     "tab": {
-      "decided_estimate_list": "確定見積一覧",
+      "decided_estimate_list": "継続見積一覧",
       "agreed_price_by_customer": "顧客別決定単価"
     },
     "summary": {
@@ -1173,16 +1267,19 @@
     "search": {
       "estimate_number": "見積番号",
       "customer": "取引先",
+      "customer_search_placeholder": "選択してください",
+      "category": "取引区分",
       "creator": "作成者",
       "department": "部門(支社/部/課)",
       "tag_name": "タグ名",
-      "application_completion": "期間",
+      "application_completion": "見積期間",
       "partial_match": "部分一致",
       "please_select": "選択してください"
     },
     "table": {
       "status": "状態",
       "estimate_number": "見積番号",
+      "category": "取引区分",
       "customer": "取引先",
       "creator": "作成者",
       "product_count": "商品数",
@@ -1199,11 +1296,16 @@
       "expired": "期限切れ",
       "nearing_expiration": "期限間近"
     },
+    "category": {
+      "merchandise": "物販",
+      "service": "役務ｻｰﾋﾞｽ"
+    },
     "action": {
       "search": "検索",
       "clear": "クリア",
       "add_from_estimate_list": "見積一覧から追加",
-      "update": "更新"
+      "update": "更新",
+      "duplicate_quota": "複製"
     },
     "modal": {
       "update_title": "決定見積更新",
@@ -1266,6 +1368,40 @@
     "created_at": "作成日",
     "not_set": "未設定",
     "coming_soon": "近日公開",
-    "error_loading_data": "データの読み込み中にエラーが発生しました"
+    "error_loading_data": "データの読み込み中にエラーが発生しました",
+    "note": "注意"
+  },
+
+  "images": {
+    "modal": { "title": "画像を更新" },
+    "tabs": {
+      "computer": "コンピュータから",
+      "web_link": "ウェブリンク"
+    },
+    "actions": {
+      "change": "画像を変更",
+      "delete": "削除",
+      "upload": "画像をアップロード",
+      "select_another": "別のファイルを選択"
+    },
+    "dragger": {
+      "hint": "ここにファイルをドラッグ＆ドロップ",
+      "formats": "対応形式: JPG, PNG, WEBP",
+      "max_size": "最大容量：5MB"
+    },
+    "url_input": {
+      "label": "画像のURL",
+      "placeholder": "URLを貼り付け (https://...)",
+      "warning_note": "リンク切れを防ぐため、この画像はシステムにダウンロードされ保存されます。"
+    },
+    "notifications": {
+      "upload_success": "画像のアップロードに成功しました",
+      "input_url_warning": "画像のリンクを入力してください",
+      "size_error": "画像サイズが5MBを超えています。別の画像を選択してください。",
+      "copyright_error": "この画像リンクには著作権があります。著作権のないリンクを使用するか、画像アップロード機能をご利用ください。",
+      "format_error": "形式のファイルのみアップロード可能です。",
+      "size_limit": "画像サイズは5MB以下にしてください。",
+      "select_file_warning": "ファイルを選択してください"
+    }
   }
 }

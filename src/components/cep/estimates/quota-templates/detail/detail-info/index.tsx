@@ -4,10 +4,8 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
-import type {
-  QuotaTemplateProductGroupResponse,
-  QuotaTemplateProductResponse,
-} from '@sdk/hey-api'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
+import { calculateTax } from '@shared/tax/tax.utils'
 import { PRIMARY } from '@utility/color'
 import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -19,6 +17,7 @@ const { Title, Text } = Typography
 
 interface Props {
   detail: QuoteTemplateDetailType
+  taxRoundingMethod: RoundingMethodEnumType
 }
 
 const DetailInfo: FC<Props> = (props) => {
@@ -29,32 +28,31 @@ const DetailInfo: FC<Props> = (props) => {
       prev.includes(id) ? prev.filter((key) => key !== id) : [...prev, id],
     )
   }
-  const { detail } = props
+  const { detail, taxRoundingMethod } = props
   const t = useTranslate()
 
-  const dataSource = (detail?.main_product ?? []).flatMap(
-    (item: QuotaTemplateProductGroupResponse, index: number) => [
-      ...(item.group_name
-        ? [
-            {
-              index,
-              key: `header-${index}`,
-              isHeader: true,
-              title: item.group_name,
-            },
-          ]
-        : []),
-      ...(item.products ?? []).flatMap(
-        (item2: QuotaTemplateProductResponse, index2: number) => [
-          {
-            index,
-            index2,
-            ...item2,
-          },
-        ],
-      ),
-    ],
-  )
+  const dataSource: any[] = (detail?.main_product ?? [])
+    .filter((item: any) => {
+      if (item.kind === 'group') {
+        return !!item.name && item.name.trim() !== ''
+      }
+      return true
+    })
+    .sort((a: any, b: any) => {
+      const orderA = a.display_order ?? 0
+      const orderB = b.display_order ?? 0
+      return orderA - orderB
+    })
+    .map((item: any) => {
+      if (item.kind === 'group') {
+        return {
+          isHeader: true,
+          title: item.name,
+          ...item,
+        }
+      }
+      return { ...item }
+    })
 
   const calculateGroupedTotal = (data: Record<string, any>) => {
     const totalByTaxRate = data.reduce(
@@ -65,27 +63,42 @@ const DetailInfo: FC<Props> = (props) => {
         const sellingPrice = parseFloat(item.selling_price || 0)
         const quantity = parseFloat(item.quantity || 0)
         const taxRate = parseFloat(item.tax_rate || 0)
-        const calculatedValue = (sellingPrice * quantity * taxRate) / 100
+        const subTotal = sellingPrice * quantity
+        const sellingAmount = sellingPrice * quantity
         const key = String(taxRate)
-        acc[key] = (acc[key] || 0) + calculatedValue
+        if (!acc[key]) {
+          acc[key] = { sellingTotal: 0, taxRate, subTotal: 0 }
+        }
+        acc[key].sellingTotal += sellingAmount
+        acc[key].subTotal += subTotal
 
         return acc
       },
       {},
     )
 
-    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
-      taxRate: parseFloat(taxRate),
-      total: (total as number).toFixed(2),
-    }))
+    return Object.entries(totalByTaxRate).map(
+      ([taxRateKey, group]: [string, any]) => {
+        const rawTax = (group.sellingTotal * group.taxRate) / 100
+        const roundedTax = calculateTax(rawTax, taxRoundingMethod)
+        return {
+          taxRate: parseFloat(taxRateKey),
+          total: roundedTax.toString(),
+          subTotal: group.subTotal,
+        }
+      },
+    )
   }
 
   const groupedTotals = useMemo(() => {
-    if (detail.tax_rate_group) {
-      return detail.tax_rate_group
-    }
     return calculateGroupedTotal(dataSource)
-  }, [dataSource])
+  }, [dataSource, taxRoundingMethod])
+
+  const totalSubTotalAllTaxRates = useMemo(() => {
+    return groupedTotals.reduce((sum, item) => {
+      return sum + item.subTotal
+    }, 0)
+  }, [groupedTotals])
 
   const columns: ColumnsType = [
     {
@@ -298,11 +311,7 @@ const DetailInfo: FC<Props> = (props) => {
                   小計
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="center">
-                  {(detail?.consumption_tax === 'exclusive'
-                    ? +detail?.total_price_tax_included -
-                      +detail?.consumption_tax_amount
-                    : +detail?.total_price_tax_included
-                  ).toLocaleString()}
+                  {(totalSubTotalAllTaxRates || 0).toLocaleString()}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             )

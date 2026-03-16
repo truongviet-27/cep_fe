@@ -12,7 +12,7 @@ import {
 } from '@refinedev/core'
 import type { CodeIssueSetting } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { message } from 'antd'
 import { useParams } from 'next/navigation'
 
@@ -38,6 +38,11 @@ export const useCustomerEdit = () => {
 
   const record = queryResult?.data?.data
 
+  // Track if receivers have been initialized to prevent overwriting user input
+  const receiversInitialized = useRef(false)
+  // Store receivers before submit to restore on error
+  const receiversBeforeSubmit = useRef<any[] | null>(null)
+
   // TODO: Remove this when customer API show endpoint includes contacts in response
   // Fetch customer contacts only after customer data is loaded
   const { data: contactsData, refetch: refetchContacts } = useCustom({
@@ -55,27 +60,30 @@ export const useCustomerEdit = () => {
 
   const handleFinish = async (values: any) => {
     try {
-      // Validate form fields (all validation rules in Form will be checked)
-      // await form.validateFields()
-
+      // Save receivers before submit to restore on error
       const receivers = values?.receivers || []
+      receiversBeforeSubmit.current = receivers
 
       let company_type =
         values?.company_type === 'other'
           ? values?.temp_company_type
           : values?.company_type
       let industry = values?.industry
-      if (!values?.industry && values?.temp_industry) {
+      if (values?.industry === -1 && values?.temp_industry) {
         industry = values?.temp_industry
+      } else if (values?.industry === -1) {
+        industry = null
+      } else {
+        industry = values?.industry ?? null
       }
 
       // Prepare contacts data for API
       const contacts = receivers
         .filter(
           (receiver: any) => receiver.contact_person_name || receiver.email,
-        ) // Filter out empty contacts
+        )
         .map((receiver: any) => ({
-          id: receiver.id, // Include id for updates, omit for new contacts
+          id: receiver.id,
           contact_person_name: receiver.contact_person_name,
           email: receiver.email,
           department_name: receiver.department_name,
@@ -84,53 +92,80 @@ export const useCustomerEdit = () => {
       // Remove receivers from customer data
       const { receivers: _, ...customerData } = values
 
-      try {
-        // Update customer with contacts in single API call
-        const response = await onFinish({
-          ...customerData,
-          contacts,
-          company_type,
-          industry,
-        })
-        try {
-          const response = await refetchContacts()
-          const freshContacts = response?.data?.data
-          if (freshContacts) {
-            form.setFieldsValue({ receivers: freshContacts })
-          }
-        } catch (refetchError) {
-          console.error('Failed to refetch contacts:', refetchError)
-        }
+      // Update customer with contacts in single API call
+      await onFinish({
+        ...customerData,
+        contacts,
+        company_type,
+        industry,
+      })
 
-        go({
-          to: `/customers/show/${customerId}`,
-          type: 'push',
-        })
-      } catch (error: any) {
-        try {
-          const response = await refetchContacts()
-          const freshContacts = response?.data?.data
-          if (freshContacts) {
-            form.setFieldsValue({ receivers: freshContacts })
-          }
-        } catch (refetchError) {
-          console.error('Failed to refetch contacts after error:', refetchError)
+      // Only refetch contacts when save is successful
+      try {
+        const response = await refetchContacts()
+        const freshContacts = response?.data?.data
+        if (freshContacts) {
+          form.setFieldsValue({ receivers: freshContacts })
         }
-        return
+      } catch (refetchError) {
+        console.error('Failed to refetch contacts:', refetchError)
       }
 
+      // Navigate to list page on success
       go({
-        to: `/customers/show/${customerId}`,
+        to: `/customers`,
         type: 'push',
       })
     } catch (error: any) {
-      console.error('Error updating customer:', error)
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        t('notifications.updateError')
+      // Parse and set field errors from API response
+      const apiErrors = error?.response?.data?.errors
+      const fieldErrors: Array<{
+        name: (string | number)[]
+        errors: string[]
+      }> = []
 
-      message.error(errorMessage)
+      if (apiErrors && typeof apiErrors === 'object') {
+        // Convert API error format (contacts.0.email) to form field path (receivers[0].email)
+        Object.keys(apiErrors).forEach((errorKey) => {
+          // Match pattern: contacts.0.email, contacts.1.email, etc.
+          const match = errorKey.match(/^contacts\.(\d+)\.(.+)$/)
+          if (match) {
+            const index = parseInt(match[1], 10)
+            const fieldName = match[2] // 'email', 'contact_person_name', etc.
+            const errorMessages = Array.isArray(apiErrors[errorKey])
+              ? apiErrors[errorKey]
+              : [String(apiErrors[errorKey])]
+
+            fieldErrors.push({
+              name: ['receivers', index, fieldName],
+              errors: errorMessages,
+            })
+          }
+        })
+      }
+
+      // Restore receivers to preserve user's input when error occurs
+      // Use setTimeout to ensure form values are restored after any potential refetch
+      setTimeout(() => {
+        if (
+          receiversBeforeSubmit.current &&
+          receiversBeforeSubmit.current.length > 0
+        ) {
+          form.setFieldsValue({ receivers: receiversBeforeSubmit.current })
+        } else {
+          // If no receivers were saved, get current receivers from form
+          const currentReceivers = form.getFieldValue('receivers')
+          if (currentReceivers && currentReceivers.length > 0) {
+            // Keep current receivers if they exist
+            form.setFieldsValue({ receivers: currentReceivers })
+          }
+        }
+
+        // Set field errors to highlight invalid fields
+        if (fieldErrors.length > 0) {
+          form.setFields(fieldErrors)
+        }
+      }, 100)
     }
   }
 
@@ -168,31 +203,62 @@ export const useCustomerEdit = () => {
   const rule = validateCustomerRule(t)
 
   // Set customer record into form (excluding receivers as they come from separate API)
+  // Always preserve receivers if they have been initialized
   useEffect(() => {
     if (record) {
       const { receivers: _, ...recordWithoutReceivers } = record as any
-      form.setFieldsValue(recordWithoutReceivers)
-    }
-  }, [record, form])
-  // Set receivers into form only after customer data is loaded and contacts are fetched
-  useEffect(() => {
-    if (record && contactsData?.data !== undefined) {
-      const receivers = contactsData.data
-      if (!receivers || receivers.length === 0) {
+      // Get current receivers from form to preserve them
+      const currentReceivers = form.getFieldValue('receivers')
+      // If receivers are already initialized, always preserve them when setting other fields
+      if (receiversInitialized.current) {
+        // Always preserve receivers, even if they're empty array (user might have cleared them)
         form.setFieldsValue({
-          receivers: [
-            {
-              department_name: null,
-              contact_person_name: null,
-              email: null,
-            },
-          ],
+          ...recordWithoutReceivers,
+          receivers: currentReceivers || receiversBeforeSubmit.current || [],
         })
       } else {
-        form.setFieldsValue({ receivers: contactsData.data })
+        // If receivers not initialized yet, only set other fields (receivers will be set by next useEffect)
+        form.setFieldsValue(recordWithoutReceivers)
       }
     }
-  }, [record, contactsData, form])
+  }, [record, form])
+
+  // Reset receiversInitialized when customerId changes (navigate to different customer)
+  useEffect(() => {
+    receiversInitialized.current = false
+    receiversBeforeSubmit.current = null
+  }, [customerId])
+
+  // Set receivers into form when contacts data is loaded
+  // Only set if not already initialized or if form doesn't have receivers
+  useEffect(() => {
+    if (contactsData?.data !== undefined) {
+      const currentReceivers = form.getFieldValue('receivers')
+      const hasReceivers =
+        currentReceivers &&
+        Array.isArray(currentReceivers) &&
+        currentReceivers.length > 0
+
+      // Only set receivers if not initialized yet or form doesn't have receivers
+      if (!receiversInitialized.current || !hasReceivers) {
+        const receivers = contactsData.data
+        const initialReceivers =
+          Array.isArray(receivers) && receivers.length > 0
+            ? receivers
+            : [
+                {
+                  department_name: null,
+                  contact_person_name: null,
+                  email: null,
+                },
+              ]
+
+        form.setFieldsValue({ receivers: initialReceivers })
+        // Mark receivers as initialized
+        receiversInitialized.current = true
+      }
+    }
+  }, [contactsData, form])
 
   return {
     t,

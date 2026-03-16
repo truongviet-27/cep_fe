@@ -1,16 +1,24 @@
-import type { ActionType } from '@components/common/action'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { DEFAULT_TAX_RATES } from '@components/cep/estimates/quotas/utils'
+import type { ActionType, CreateProductType } from '@components/common/action'
 import { Action } from '@components/common/action'
 import ProductSelect from '@components/common/product-select'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
-import type {
-  QuotaTemplateProductGroupRequest,
-  QuotaTemplateProductItemRequest,
-} from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
-import { Button, Flex, Form, Input, InputNumber, Modal, Typography } from 'antd'
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+  Select,
+  Typography,
+} from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { type FC, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
@@ -28,9 +36,19 @@ const OptionalInfo: FC = () => {
     onChangeProductName,
   } = useController()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [categoryModalKey, setCategoryModalKey] = useState(0)
+
+  useEffect(() => {
+    if (isModalOpen) {
+      form?.setFieldsValue({
+        category_id: null,
+        parent: undefined,
+      } as Parameters<NonNullable<typeof form>['setFieldsValue']>[0])
+    }
+  }, [isModalOpen, form])
 
   return (
-    <>
+    <div style={{ marginTop: 8 }}>
       <Title
         level={5}
         style={{ color: PRIMARY }}
@@ -40,27 +58,28 @@ const OptionalInfo: FC = () => {
       </Title>
       <Form.List name={'optional_product'}>
         {(_, { add, remove }) => {
-          const mainProduct = (form?.getFieldValue('optional_product') ??
-            []) as QuotaTemplateProductGroupRequest[]
-          const dataSource = mainProduct.flatMap(
-            (item: QuotaTemplateProductGroupRequest, index: number) => [
-              {
+          const optionalProduct = form?.getFieldValue('optional_product') ?? []
+          const dataSource: any[] = (optionalProduct ?? [])
+            .sort(
+              (a: any, b: any) =>
+                (a.display_order ?? 0) - (b.display_order ?? 0),
+            )
+            .map((item: any, index: number) => {
+              if (item.kind === 'group') {
+                return {
+                  ...item,
+                  index,
+                  key: `header-optional-${index}`,
+                  isHeader: true,
+                  title: item.name,
+                }
+              }
+              return {
                 index,
-                key: `header-${index}`,
-                isHeader: true,
-                title: item.group_name,
-              },
-              ...(item.products ?? []).flatMap(
-                (item2: QuotaTemplateProductItemRequest, index2: number) => [
-                  {
-                    index,
-                    index2,
-                    ...item2,
-                  },
-                ],
-              ),
-            ],
-          )
+                isSelfCreate: !item.product_id && item.name,
+                ...item,
+              }
+            })
 
           const columns: ColumnsType = [
             {
@@ -68,33 +87,88 @@ const OptionalInfo: FC = () => {
               dataIndex: 'code',
               key: 'code',
               align: 'left',
-              width: 200,
+              width: '8%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return {
                     children: (
                       <Form.Item
-                        name={[record.index, 'group_name']}
+                        name={[record.index, 'name']}
                         className="ant-form-item-hidden-margin"
                       >
                         <Input
-                          placeholder="商品リスト名入力"
-                          style={{
-                            width: 400,
-                          }}
+                          placeholder="タイトル入力"
+                          style={{ width: '100%' }}
                         />
                       </Form.Item>
                     ),
                     props: { colSpan: columns.length - 1 },
                   }
                 }
-                return form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'code',
-                ])
+                if (!record.isSelfCreate) {
+                  return form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'code',
+                  ])
+                }
+                return (
+                  <Form.Item
+                    name={[record.index, 'code']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        whitespace: true,
+                        message: '',
+                      },
+                      {
+                        max: 255,
+                        message: '',
+                      },
+                      {
+                        pattern: /^[A-Z0-9-]+$/,
+                        message: '',
+                      },
+                      {
+                        validator: async () => {
+                          const allProducts =
+                            form.getFieldValue('optional_product') || []
+                          const currentCode = allProducts[record.index]?.code
+                          if (
+                            !currentCode ||
+                            allProducts[record.index]?.kind === 'group'
+                          ) {
+                            return Promise.resolve()
+                          }
+                          const isDuplicate = allProducts.some(
+                            (item: any, idx: number) =>
+                              item.kind !== 'group' &&
+                              item.code === currentCode &&
+                              idx !== record.index,
+                          )
+                          if (isDuplicate) {
+                            notification.error({
+                              message: `${currentCode}${t('quotas.action.detail_info.duplicate_product_code')}`,
+                              key: `${currentCode}-code-optional-product`,
+                              placement: 'topRight',
+                            })
+                            return Promise.reject()
+                          }
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder={t('placeholders.input_please')}
+                      title={form.getFieldValue([
+                        'optional_product',
+                        record.index,
+                        'code',
+                      ])}
+                    />
+                  </Form.Item>
+                )
               },
             },
             {
@@ -102,55 +176,134 @@ const OptionalInfo: FC = () => {
               dataIndex: 'name',
               key: 'name',
               align: 'left',
-              width: 200,
+              width: '22%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
 
-                const productId = form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'product_id',
-                ])
+                if (!record.isSelfCreate) {
+                  const productId = form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'product_id',
+                  ])
 
-                const defaultValue = productId
-                  ? {
-                      value: productId,
-                      label: form.getFieldValue([
-                        'optional_product',
-                        record.index,
-                        'products',
-                        record.index2,
-                        'name',
-                      ]),
-                    }
-                  : null
+                  const defaultValue = productId
+                    ? {
+                        value: productId,
+                        label: form.getFieldValue([
+                          'optional_product',
+                          record.index,
+                          'name',
+                        ]),
+                      }
+                    : null
 
+                  return (
+                    <Form.Item
+                      name={[record.index, 'product_id']}
+                      className="ant-form-item-hidden-margin"
+                      rules={[
+                        {
+                          required: false,
+                          message: '',
+                        },
+                        {
+                          validator: async () => {
+                            const allProducts =
+                              form.getFieldValue('optional_product') || []
+                            const currentProductId =
+                              allProducts[record.index]?.product_id
+                            if (
+                              !currentProductId ||
+                              allProducts[record.index]?.kind === 'group'
+                            ) {
+                              return Promise.resolve()
+                            }
+                            let count = 0
+                            for (const item of allProducts) {
+                              if (
+                                item?.kind !== 'group' &&
+                                item?.product_id === currentProductId
+                              ) {
+                                count++
+                              }
+                              if (count > 1) {
+                                notification.error({
+                                  message: t(
+                                    'quotas.action.detail_info.duplicate_product',
+                                  ),
+                                  key: `name-optional-product`,
+                                  placement: 'topRight',
+                                })
+                                return Promise.reject()
+                              }
+                            }
+                            return Promise.resolve()
+                          },
+                        },
+                      ]}
+                    >
+                      <ProductSelect
+                        defaultValue={defaultValue}
+                        onChange={(value: any) =>
+                          onChangeProductName(value, record.index)
+                        }
+                      />
+                    </Form.Item>
+                  )
+                }
                 return (
                   <Form.Item
-                    name={[
-                      record.index,
-                      'products',
-                      record.index2,
-                      'product_id',
-                    ]}
+                    name={[record.index, 'name']}
                     className="ant-form-item-hidden-margin"
-                    // required
                     rules={[
                       {
-                        required: false,
+                        whitespace: true,
                         message: '',
+                      },
+                      {
+                        max: 255,
+                        message: '',
+                      },
+                      {
+                        validator: async () => {
+                          const allProducts =
+                            form.getFieldValue('optional_product') || []
+                          const currentName = allProducts[record.index]?.name
+                          if (
+                            !currentName ||
+                            allProducts[record.index]?.kind === 'group'
+                          ) {
+                            return Promise.resolve()
+                          }
+                          const isDuplicate = allProducts.some(
+                            (item: any, idx: number) =>
+                              item.kind !== 'group' &&
+                              item.name === currentName &&
+                              idx !== record.index,
+                          )
+                          if (isDuplicate) {
+                            notification.error({
+                              message: `${currentName}${t('quotas.action.detail_info.duplicate_product_name')}`,
+                              key: `${currentName}-name-optional-product`,
+                              placement: 'topRight',
+                            })
+                            return Promise.reject()
+                          }
+                          return Promise.resolve()
+                        },
                       },
                     ]}
                   >
-                    <ProductSelect
-                      defaultValue={defaultValue}
-                      onChange={(value) =>
-                        onChangeProductName(value, record.index, record.index2)
-                      }
+                    <Input
+                      placeholder={t('placeholders.input_please')}
+                      title={form.getFieldValue([
+                        'optional_product',
+                        record.index,
+                        'name',
+                      ])}
                     />
                   </Form.Item>
                 )
@@ -160,25 +313,49 @@ const OptionalInfo: FC = () => {
               title: '単位',
               dataIndex: 'unit',
               key: 'unit',
+              width: '5%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                if (!record.isSelfCreate) {
+                  return (
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'unit',
+                    ]) ??
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'unit_name',
+                    ])
+                  )
+                }
                 return (
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'unit',
-                  ]) ??
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'unit_name',
-                  ])
+                  <Form.Item
+                    name={[record.index, 'unit_name']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        whitespace: true,
+                        message: '',
+                      },
+                      {
+                        max: 255,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder={t('placeholders.input_please')}
+                      title={form.getFieldValue([
+                        'optional_product',
+                        record.index,
+                        'unit_name',
+                      ])}
+                    />
+                  </Form.Item>
                 )
               },
             },
@@ -186,90 +363,105 @@ const OptionalInfo: FC = () => {
               title: '荷姿',
               dataIndex: 'package_id',
               key: 'package_id',
-              width: 200,
+              width: '8%',
+              onHeaderCell: () => ({
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.2',
+                },
+              }),
+              ellipsis: true,
               align: 'left',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
 
-                const packageId = form.getFieldValue([
-                  'optional_product',
-                  record.index,
-                  'products',
-                  record.index2,
-                  'package_id',
-                ])
-                const defaultValue = packageId
-                  ? {
-                      value: packageId,
-                      label: form.getFieldValue([
-                        'optional_product',
-                        record.index,
-                        'products',
-                        record.index2,
-                        'package_name',
-                      ]),
-                    }
-                  : null
-
-                return (
-                  <Form.Item
-                    name={[
+                if (!record.isSelfCreate) {
+                  const packageId = form.getFieldValue([
+                    'optional_product',
+                    record.index,
+                    'package_id',
+                  ])
+                  const packagings =
+                    form.getFieldValue([
                       'optional_product',
                       record.index,
-                      'products',
-                      record.index2,
-                      'package_id',
-                    ]}
-                    className="ant-form-item-hidden-margin"
-                  >
-                    <PackageSelect
-                      key={
-                        record.index +
-                        '-' +
-                        record.index2 +
-                        '-' +
-                        optionalProducts?.[record.index]?.products?.[
-                          record.index2
-                        ].product_id
-                      }
-                      productId={form.getFieldValue([
-                        'optional_product',
-                        record.index,
-                        'products',
-                        record.index2,
-                        'product_id',
-                      ])}
-                      onChange={(value, option) => {
-                        form.setFieldValue(
-                          [
+                      'packagings',
+                    ]) || []
+                  const defaultValue = packageId
+                    ? {
+                        value: packageId,
+                        label:
+                          packagings.find((pkg: any) => pkg.id === packageId)
+                            ?.name ||
+                          form.getFieldValue([
                             'optional_product',
                             record.index,
-                            'products',
-                            record.index2,
-                            'package_id',
-                          ],
-                          value,
-                        )
+                            'package_name',
+                          ]),
+                      }
+                    : {
+                        value: packagings[0]?.id,
+                        label: packagings[0]?.name,
+                      }
 
-                        form.setFieldValue(
-                          [
-                            'optional_product',
-                            record.index,
-                            'products',
-                            record.index2,
-                            'selling_price',
-                          ],
-                          option.selling_price,
-                        )
-                      }}
-                      defaultOptions={
-                        optionalProducts?.[record.index].products[record.index2]
-                          ?.packagings ?? []
-                      }
-                      defaultValue={defaultValue}
-                    />
+                  return (
+                    <Form.Item
+                      name={['optional_product', record.index, 'package_id']}
+                      className="ant-form-item-hidden-margin"
+                    >
+                      <PackageSelect
+                        key={
+                          record.index +
+                          '-' +
+                          optionalProducts?.[record.index]?.product_id
+                        }
+                        productId={form.getFieldValue([
+                          'optional_product',
+                          record.index,
+                          'product_id',
+                        ])}
+                        onChange={(value, option) => {
+                          form.setFieldValue(
+                            ['optional_product', record.index, 'package_id'],
+                            value,
+                          )
+
+                          form.setFieldValue(
+                            ['optional_product', record.index, 'selling_price'],
+                            option.selling_price,
+                          )
+                        }}
+                        defaultOptions={
+                          optionalProducts?.[record.index]?.packagings ?? []
+                        }
+                        defaultValue={defaultValue}
+                        style={{
+                          maxWidth: '200px',
+                          width: '100%',
+                        }}
+                      />
+                    </Form.Item>
+                  )
+                }
+                return (
+                  <Form.Item
+                    name={[record.index, 'package_name']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        whitespace: true,
+                        message: '',
+                      },
+                      {
+                        max: 255,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <Input disabled={record.isSelfCreate} />
                   </Form.Item>
                 )
               },
@@ -278,51 +470,98 @@ const OptionalInfo: FC = () => {
               title: '原価',
               dataIndex: 'cost_price',
               key: 'cost_price',
+              width: '8%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
-                if (
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'cost_price',
-                  ]) === null
-                ) {
-                  return null
+                if (!record.isSelfCreate) {
+                  if (
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'cost_price',
+                    ]) === null
+                  ) {
+                    return null
+                  }
+                  return (
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'cost_price',
+                    ]) | 0
+                  ).toLocaleString()
                 }
-                return form
-                  .getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'cost_price',
-                  ])
-                  .toLocaleString()
+                return (
+                  <Form.Item
+                    name={[record.index, 'cost_price']}
+                    className="ant-form-item-hidden-margin"
+                  >
+                    <InputNumber
+                      title={(
+                        form.getFieldValue([
+                          'optional_product',
+                          record.index,
+                          'cost_price',
+                        ]) | 0
+                      ).toLocaleString()}
+                      min={0}
+                      precision={0}
+                      controls={false}
+                      style={{
+                        maxWidth: '100px',
+                        width: '100%',
+                      }}
+                    />
+                  </Form.Item>
+                )
               },
             },
             {
               title: '売単価',
               dataIndex: 'selling_price',
               key: 'selling_price',
+              width: '8%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
                 return (
                   <Form.Item
-                    name={[
-                      record.index,
-                      'products',
-                      record.index2,
-                      'selling_price',
+                    rules={[
+                      {
+                        validator(_, value) {
+                          const name = form.getFieldValue([
+                            'optional_product',
+                            record.index,
+                            'name',
+                          ])
+
+                          if (name && !value) {
+                            return Promise.reject()
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
                     ]}
+                    name={[record.index, 'selling_price']}
                     className="ant-form-item-hidden-margin"
+                    style={{ width: '100%' }}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber
+                      min={0}
+                      controls={false}
+                      style={{ width: '100%', minWidth: 0 }}
+                      title={(
+                        form.getFieldValue([
+                          'optional_product',
+                          record.index,
+                          'selling_price',
+                        ]) | 0
+                      ).toLocaleString()}
+                    />
                   </Form.Item>
                 )
               },
@@ -331,16 +570,46 @@ const OptionalInfo: FC = () => {
               title: '数量',
               dataIndex: 'quantity',
               key: 'quantity',
+              width: '8%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
                 return (
                   <Form.Item
-                    name={[record.index, 'products', record.index2, 'quantity']}
+                    rules={[
+                      {
+                        validator(_, value) {
+                          const name = form.getFieldValue([
+                            'optional_product',
+                            record.index,
+                            'name',
+                          ])
+
+                          if (name && !value) {
+                            return Promise.reject()
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                    name={[record.index, 'quantity']}
                     className="ant-form-item-hidden-margin"
+                    style={{ width: '100%' }}
                   >
-                    <InputNumber min={0} controls={false} />
+                    <InputNumber
+                      min={0}
+                      controls={false}
+                      style={{ width: '100%', minWidth: 0 }}
+                      title={(
+                        form.getFieldValue([
+                          'optional_product',
+                          record.index,
+                          'quantity',
+                        ]) | 0
+                      ).toLocaleString()}
+                    />
                   </Form.Item>
                 )
               },
@@ -349,6 +618,7 @@ const OptionalInfo: FC = () => {
               title: '利益率',
               dataIndex: 'profit_margin',
               key: 'profit_margin',
+              width: '6%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -357,19 +627,11 @@ const OptionalInfo: FC = () => {
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'cost_price',
                   ]) === null
                 ) {
                   form.setFieldValue(
-                    [
-                      'optional_product',
-                      record.index,
-                      'products',
-                      record.index2,
-                      'profit_margin',
-                    ],
+                    ['optional_product', record.index, 'profit_margin'],
                     0,
                   )
                   return '0%'
@@ -378,8 +640,6 @@ const OptionalInfo: FC = () => {
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'cost_price',
                   ]) || 0
 
@@ -387,19 +647,11 @@ const OptionalInfo: FC = () => {
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'selling_price',
                   ]) || 0
 
                 form.setFieldValue(
-                  [
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'profit_margin',
-                  ],
+                  ['optional_product', record.index, 'profit_margin'],
                   (selling > 0
                     ? ((selling - cost) / selling) * 100
                     : 0
@@ -413,6 +665,7 @@ const OptionalInfo: FC = () => {
               title: '売価金額',
               dataIndex: 'sellingAmount',
               key: 'sellingAmount',
+              width: '8%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -421,8 +674,6 @@ const OptionalInfo: FC = () => {
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'quantity',
                   ]) || 0
 
@@ -430,8 +681,6 @@ const OptionalInfo: FC = () => {
                   form.getFieldValue([
                     'optional_product',
                     record.index,
-                    'products',
-                    record.index2,
                     'selling_price',
                   ]) || 0
                 return (quantity * selling).toLocaleString()
@@ -441,82 +690,132 @@ const OptionalInfo: FC = () => {
               title: t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
+              width: '7%',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
 
+                if (!record.isSelfCreate) {
+                  return (
+                    form.getFieldValue([
+                      'optional_product',
+                      record.index,
+                      'tax_rate',
+                    ]) + '%'
+                  )
+                }
                 return (
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                    record.index2,
-                    'tax_rate',
-                  ]) + '%'
+                  <Form.Item
+                    name={[record.index, 'tax_rate']}
+                    className="ant-form-item-hidden-margin"
+                    rules={[
+                      {
+                        required: false,
+                        message: '',
+                      },
+                    ]}
+                  >
+                    <Select options={DEFAULT_TAX_RATES} />
+                  </Form.Item>
                 )
               },
             },
             {
               title: '行編集',
               key: 'action',
-              render: (_, record) => {
+              width: '12%',
+              render: (_, record, index) => {
                 const isHeader = record.isHeader
+                const isFirstRow = index === 0
+                const optionalProduct =
+                  form.getFieldValue('optional_product') || []
 
-                const lengthOriginalProduct =
-                  form.getFieldValue('optional_product').length > 1
-                const lengthProduct =
-                  form.getFieldValue([
-                    'optional_product',
-                    record.index,
-                    'products',
-                  ]).length > 1
-
-                const actionList: ActionType[] = isHeader
-                  ? lengthOriginalProduct
-                    ? ['append', 'remove']
-                    : ['append']
-                  : lengthProduct
-                    ? ['append', 'remove']
-                    : ['append']
+                const actionList: ActionType[] = []
+                if (isHeader) {
+                  actionList.push('append')
+                  actionList.push('remove')
+                } else {
+                  actionList.push('onAppendFromMasterOrCreateNewAction')
+                  if (
+                    optionalProduct?.[index - 1]?.kind === 'product' ||
+                    optionalProduct?.[index + 1]?.kind === 'product'
+                  ) {
+                    actionList.push('remove')
+                  }
+                }
 
                 const handleAppend = () => {
+                  const nextHeaderIndex = optionalProduct.findIndex(
+                    (item: any, i: number) =>
+                      i > index && item.kind === 'group',
+                  )
+                  const insertAt =
+                    nextHeaderIndex === -1
+                      ? optionalProduct.length
+                      : nextHeaderIndex
                   if (isHeader) {
                     add(
                       {
-                        group_name: '',
-                        products: [
-                          {
-                            product_id: null,
-                            package_id: null,
-                            name: '',
-                            code: '自動採番',
-                            quantity: 0,
-                            cost_price: null,
-                            selling_price: 0,
-                            profit_margin: 0,
-                            is_add_total: false,
-                          },
-                        ],
+                        name: '',
+                        kind: 'group',
+                        isHeader: true,
+                        quantity: 1,
                       },
-                      record.index + 1,
+                      insertAt,
+                    )
+                    add(
+                      {
+                        product_id: null,
+                        package_id: null,
+                        name: '',
+                        code: '',
+                        isSelfCreate: false,
+                        quantity: 0,
+                        cost_price: 0,
+                        selling_price: 0,
+                        profit_margin: 0,
+                        tax_rate: 0,
+                        is_add_total: true,
+                        kind: 'product',
+                      },
+                      insertAt + 1,
                     )
                   } else {
                     handleAddProduct(record.index)
                   }
                 }
 
+                const onAppendFromMasterOrCreateNewAction = (
+                  type: CreateProductType,
+                ) => {
+                  handleAddProduct(index, type === 'create_new')
+                }
+
                 const handleRemove = () => {
-                  if (isHeader) {
-                    remove(record.index)
+                  if (isFirstRow && isHeader) {
+                    const newData = [...optionalProduct]
+                    newData[0] = {
+                      ...newData[0],
+                      name: '',
+                      title: '',
+                    }
+                    form.setFieldValue('optional_product', newData)
                   } else {
-                    handleRemoveProduct(record.index, record.index2)
+                    if (isHeader) {
+                      remove(index)
+                    } else {
+                      handleRemoveProduct(index)
+                    }
                   }
                 }
 
                 return (
                   <Action
                     actionList={actionList}
+                    onAppendFromMasterOrCreateNewAction={
+                      onAppendFromMasterOrCreateNewAction
+                    }
                     onAppendAction={handleAppend}
                     onRemoveAction={handleRemove}
                   />
@@ -534,7 +833,13 @@ const OptionalInfo: FC = () => {
                   marginBottom: 20,
                 }}
               >
-                <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setCategoryModalKey((k) => k + 1)
+                    setIsModalOpen(true)
+                  }}
+                >
                   カテゴリから入力
                 </Button>
               </Flex>
@@ -545,6 +850,7 @@ const OptionalInfo: FC = () => {
                   record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
                 }
                 pagination={false}
+                scroll={undefined}
               />
             </Flex>
           )
@@ -559,11 +865,12 @@ const OptionalInfo: FC = () => {
         footer={null}
       >
         <ProductCategoryModal
+          key={categoryModalKey}
           name="optional_product"
           close={() => setIsModalOpen(false)}
         />
       </Modal>
-    </>
+    </div>
   )
 }
 

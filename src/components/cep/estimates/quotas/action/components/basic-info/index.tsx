@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line simple-import-sort/imports */
 import { useCallback, useEffect, useState } from 'react'
+import './basic-info.css'
 
 import {
   Button,
@@ -10,6 +11,7 @@ import {
   Form,
   Input,
   Modal,
+  notification,
   Radio,
   Row,
   Select,
@@ -25,17 +27,32 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import { IssueMethod } from '@components/cep/estimates/quotas/enum'
 import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
+import CreateCustomerModal from '../create-customer-modal'
+import type { ParameterSettingType } from '@interfaces/permission'
 
 const BasicInfo = ({
   handleChangeProductPrincing,
+  parameterSettings,
+  isEdit,
+  embeddedContactFromQuota,
+  quotaCustomerContactId,
 }: {
   handleChangeProductPrincing: (
     productIds: number[],
     productIdsOptional: number[],
   ) => void
+  parameterSettings: ParameterSettingType
+  isEdit?: boolean
+  embeddedContactFromQuota?: {
+    department_name?: string
+    contact_person_name?: string
+    email?: string
+  }
+  quotaCustomerContactId?: number | null
 }) => {
   const t = useTranslate()
 
@@ -56,11 +73,30 @@ const BasicInfo = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
     null,
   )
+  const [openModalCreateCustomer, setOpenModalCreateCustomer] =
+    useState<boolean>(false)
 
   const expirationDate = Form.useWatch('expiration_date', form)
   const issueDate = Form.useWatch('issue_date', form)
   const customer = Form.useWatch('customer', form)
   const selectedContactId = Form.useWatch('customer_contact_id', form)
+
+  // Set default approve_route when approve_routes data is available
+  useEffect(() => {
+    const approveRoutes = form.getFieldValue('approve_routes')
+    const currentApproveRoute = form.getFieldValue('approve_route_id')
+
+    if (approveRoutes?.length > 0 && !currentApproveRoute) {
+      form.setFieldsValue({
+        approve_route: approveRoutes[0].id,
+      })
+    }
+  }, [form.getFieldValue('approve_routes')])
+
+  const useEmbeddedContact =
+    !!embeddedContactFromQuota &&
+    selectedContactId != null &&
+    selectedContactId === quotaCustomerContactId
 
   const { data: customerContactData } = useCustom<CustomerContact>({
     url: selectedContactId
@@ -68,7 +104,7 @@ const BasicInfo = ({
       : '',
     method: 'get',
     queryOptions: {
-      enabled: !!selectedContactId,
+      enabled: !!selectedContactId && !useEmbeddedContact && !isEdit,
     },
   })
 
@@ -80,11 +116,25 @@ const BasicInfo = ({
 
   useEffect(() => {
     if (selectedContactId) {
-      // selectedContactId updated
+      if (useEmbeddedContact && embeddedContactFromQuota) {
+        setSelectedContact({
+          id: selectedContactId,
+          department_name: embeddedContactFromQuota.department_name ?? '',
+          contact_person_name:
+            embeddedContactFromQuota.contact_person_name ?? '',
+          email: embeddedContactFromQuota.email ?? '',
+        } as CustomerContact)
+      }
     } else {
       setSelectedContact(null)
     }
-  }, [selectedContactId])
+  }, [
+    selectedContactId,
+    useEmbeddedContact,
+    embeddedContactFromQuota?.department_name,
+    embeddedContactFromQuota?.contact_person_name,
+    embeddedContactFromQuota?.email,
+  ])
 
   const { selectProps: selectPropsCt, query } = useSelect({
     resource: 'customers',
@@ -175,11 +225,47 @@ const BasicInfo = ({
     }
   }
 
-  const handleOpenContactModal = () => {
+  useEffect(() => {
+    if (
+      codeIssueSetting?.data?.issue_method === 'automatic' &&
+      !form.getFieldValue('code') &&
+      !isCloneVersion &&
+      !isEdit
+    ) {
+      refetchIssueSetting().then(({ data: latestData }) => {
+        const code = latestData?.data?.preview_code
+        if (code) {
+          form.setFieldsValue({ code })
+        }
+      })
+    }
+  }, [codeIssueSetting?.data?.issue_method, form, refetchIssueSetting, isEdit])
+
+  const handleOpenContactModal = async () => {
     if (!selectedCustomerId) {
       return
     }
-    setContactModalOpen(true)
+    try {
+      const response = await axiosInstance.get(`${apiUrl}/customer-contacts`, {
+        params: { customer_id: selectedCustomerId },
+      })
+      const data = response?.data
+      if (data?.message && String(data.message).includes('deleted')) {
+        notification.error({
+          message: t('notifications.error'),
+          description: data.message,
+        })
+        return
+      }
+      setContactModalOpen(true)
+    } catch (err: any) {
+      const description =
+        err?.response?.data?.message || err?.message || t('notifications.error')
+      notification.error({
+        message: t('notifications.error'),
+        description,
+      })
+    }
   }
 
   const handleSelectContact = (contact: CustomerContact) => {
@@ -198,6 +284,7 @@ const BasicInfo = ({
 
   return (
     <Card
+      className="quotas-basic-info-card"
       title={boldText(t('quotas.action.basic_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
@@ -214,13 +301,15 @@ const BasicInfo = ({
           </Col>
         </Row>
 
-        <Row gutter={[8, 0]}>
+        {/* Row 1: Estimate Number + Customer */}
+        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               required
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_number'),
               )}
+              labelCol={{ span: 3 }}
               className="[&>.ant-row]:!flex-nowrap"
             >
               <div className="flex flex-row flex-nowrap items-center gap-4">
@@ -285,15 +374,93 @@ const BasicInfo = ({
               </div>
             </Form.Item>
           </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              label={boldText(t('quotas.action.basic_info.fields.customer'))}
+              labelCol={{ span: 3 }}
+              required
+            >
+              <Row gutter={[8, 0]} align="top" wrap={false}>
+                <Col style={{ width: '100%' }}>
+                  <Form.Item
+                    name={'customer'}
+                    rules={[
+                      {
+                        required: true,
+                        message: t(
+                          'quotas.validation.basic_info.required.customer',
+                        ),
+                      },
+                    ]}
+                    className="no-margin-bottom-important"
+                  >
+                    <Select
+                      key={`customer-select-${selectedCustomerId}`}
+                      {...selectPropsCt}
+                      options={options.map((item) => ({
+                        label: item.name,
+                        value: item.id,
+                        rank_id: item?.rank?.id,
+                      }))}
+                      allowClear
+                      showSearch
+                      disabled={isCloneVersion}
+                      labelInValue
+                      loading={query.isFetching}
+                      onPopupScroll={handlePopupScroll}
+                      onSearch={(val) => {
+                        setCurrent(1)
+                        selectPropsCt.onSearch?.(val)
+                      }}
+                      filterOption={false}
+                      onChange={(value) => {
+                        const selectedOption = options.find(
+                          (item) => item.id === value?.value,
+                        )
+                        const rankId = selectedOption?.rank?.id ?? null
+                        form.setFieldsValue({ rank_id: rankId })
+                        setSelectedCustomerId(value?.value || null)
+                        form.setFieldsValue({ customer: value })
+                        // Clear selected contact when customer changes
+                        setSelectedContact(null)
+                        form.setFieldsValue({ customer_contact_id: null })
+                        handleChangeProductPrincing(
+                          (form.getFieldValue(['main_product']) ?? []).flatMap(
+                            (item: any) => item.product_id,
+                          ),
+                          (
+                            form.getFieldValue(['optional_product']) ?? []
+                          ).flatMap((item: any) => item.product_id),
+                        )
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => setOpenModalCreateCustomer(true)}
+                    style={{ marginBottom: 12 }}
+                  >
+                    {t('quotas.action.create_customer_button')}
+                  </Button>
+                </Col>
+              </Row>
+            </Form.Item>
+          </Col>
         </Row>
-        <Row>
-          <Col xs={24} xl={5}>
+        {/* Row 2: Customer Term, Estimate Category + Customer Contact */}
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={5} lg={5} xl={5}>
             <Form.Item
               required
               name={'type'}
+              className="hidden"
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_type'),
               )}
+              labelCol={{ span: 3 }}
               rules={[
                 {
                   required: true,
@@ -314,14 +481,53 @@ const BasicInfo = ({
                 ]}
               />
             </Form.Item>
+            <Form.Item
+              required
+              name={'customer_term'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.customer_term'),
+              )}
+              labelCol={{ span: 3 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: 'short_term',
+                    label: t(
+                      'quotas.action.basic_info.customer_term.short_term',
+                    ),
+                  },
+                  {
+                    value: 'long_term',
+                    label: t(
+                      'quotas.action.basic_info.customer_term.long_term',
+                    ),
+                  },
+                ]}
+              />
+            </Form.Item>
           </Col>
-          <Col xs={24} xl={5}>
+          <Col
+            xs={24}
+            sm={16}
+            md={5}
+            lg={5}
+            xl={5}
+            style={{ paddingLeft: '0px' }}
+          >
             <Form.Item
               required
               name={'category'}
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_category'),
               )}
+              labelCol={{ span: 3 }}
               rules={[
                 {
                   required: true,
@@ -343,107 +549,6 @@ const BasicInfo = ({
               />
             </Form.Item>
           </Col>
-        </Row>
-
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              required
-              label={boldText(t('quotas.action.basic_info.fields.title'))}
-              name={'title'}
-              rules={[
-                {
-                  required: true,
-                  message: t('quotas.validation.basic_info.required.title'),
-                },
-                {
-                  whitespace: true,
-                  message: t('quotas.validation.basic_info.invalid_format'),
-                },
-                {
-                  max: 255,
-                  message: t('quotas.validation.basic_info.max255'),
-                },
-              ]}
-            >
-              <Input disabled={isCloneVersion} />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              label={boldText(t('quotas.action.basic_info.fields.customer'))}
-              required
-            >
-              <Row gutter={[8, 0]} align="top" wrap={false}>
-                <Col style={{ width: '100%' }}>
-                  <Form.Item
-                    name={'customer'}
-                    rules={[
-                      {
-                        required: true,
-                        message: t(
-                          'quotas.validation.basic_info.required.customer',
-                        ),
-                      },
-                    ]}
-                    style={{ marginBottom: 0 }}
-                  >
-                    <Select
-                      key={`customer-select-${selectedCustomerId}`}
-                      {...selectPropsCt}
-                      options={options.map((item) => ({
-                        label: item.name,
-                        value: item.id,
-                      }))}
-                      allowClear
-                      showSearch
-                      disabled={isCloneVersion}
-                      labelInValue
-                      loading={query.isFetching}
-                      onPopupScroll={handlePopupScroll}
-                      onSearch={(val) => {
-                        setCurrent(1)
-                        selectPropsCt.onSearch?.(val)
-                      }}
-                      filterOption={false}
-                      onChange={(value) => {
-                        setSelectedCustomerId(value?.value || null)
-                        form.setFieldsValue({ customer: value })
-                        // Clear selected contact when customer changes
-                        setSelectedContact(null)
-                        form.setFieldsValue({ customer_contact_id: null })
-                        handleChangeProductPrincing(
-                          (form.getFieldValue(['main_product']) ?? []).flatMap(
-                            (item: any) =>
-                              item.products.map((p: any) => p.product_id),
-                          ),
-                          (
-                            form.getFieldValue(['optional_product']) ?? []
-                          ).flatMap((item: any) =>
-                            item.products.map((p: any) => p.product_id),
-                          ),
-                        )
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={handleOpenContactModal}
-                    disabled={!selectedCustomerId}
-                    style={{ marginBottom: 12 }}
-                  >
-                    {t('quotas.action.customer_contact_modal.select_button')}
-                  </Button>
-                </Col>
-              </Row>
-            </Form.Item>
-          </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             {/* Display selected contact information with validation */}
             <Form.Item
@@ -453,6 +558,7 @@ const BasicInfo = ({
                 ),
               )}
               name="customer_contact_id"
+              labelCol={{ span: 3 }}
               rules={[
                 {
                   required: true,
@@ -501,20 +607,101 @@ const BasicInfo = ({
                 >
                   <strong>
                     {t('quotas.action.customer_contact_modal.email')}:
-                  </strong>
+                  </strong>{' '}
                   {selectedContact?.email || ''}
                 </Col>
               </Row>
             </Form.Item>
           </Col>
+          <Col
+            xs={24}
+            sm={16}
+            md={10}
+            lg={10}
+            xl={2}
+            style={{ paddingLeft: '0px', marginLeft: '-20px' }}
+          >
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={handleOpenContactModal}
+                disabled={!selectedCustomerId}
+                size="small"
+                className="text-sm"
+              >
+                {t('quotas.action.customer_contact_modal.select_button')}
+              </Button>
+              <Button
+                color="danger"
+                variant="outlined"
+                onClick={() => {
+                  setSelectedContact(null)
+                  form.setFieldsValue({ customer_contact_id: null })
+                }}
+                disabled={!selectedContact}
+                size="small"
+                className="text-sm"
+              >
+                クリア
+              </Button>
+            </div>
+          </Col>
         </Row>
-        <Row gutter={[100, 0]} wrap>
+
+        {/* Row 3: Title + Delivery Date */}
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              required
+              label={boldText(t('quotas.action.basic_info.fields.title'))}
+              name={'title'}
+              labelCol={{ span: 3 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('quotas.validation.basic_info.required.title'),
+                },
+                {
+                  whitespace: true,
+                  message: t('quotas.validation.basic_info.invalid_format'),
+                },
+                {
+                  max: 255,
+                  message: t('quotas.validation.basic_info.max255'),
+                },
+              ]}
+            >
+              <Input disabled={isCloneVersion} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_date'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_date'),
+              )}
+              labelCol={{ span: 3 }}
+            >
+              <DatePicker
+                style={{ width: '100%' }}
+                placeholder={FORMAT_DATE_CROSS}
+                format={FORMAT_DATE_CROSS}
+                minDate={Form.useWatch('issue_date', form)}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* Row 4: Estimate Date + Payment Due Date */}
+        <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               name={'issue_date'}
               label={boldText(
                 t('quotas.action.basic_info.fields.estimate_date'),
               )}
+              labelCol={{ span: 3 }}
               required
               rules={[
                 {
@@ -534,38 +721,11 @@ const BasicInfo = ({
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              name={'delivery_date'}
-              label={boldText(
-                t('quotas.action.basic_info.fields.delivery_date'),
-              )}
-            >
-              <DatePicker
-                style={{ width: '100%' }}
-                placeholder={FORMAT_DATE_CROSS}
-                format={FORMAT_DATE_CROSS}
-                minDate={Form.useWatch('issue_date', form)}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={[100, 0]}>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
-              name={'delivery_method'}
-              label={boldText(
-                t('quotas.action.basic_info.fields.delivery_method'),
-              )}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
-            <Form.Item
               name={'payment_due_date'}
               label={boldText(
                 t('quotas.action.basic_info.fields.payment_due_date'),
               )}
+              labelCol={{ span: 3 }}
             >
               <Select
                 allowClear
@@ -612,17 +772,49 @@ const BasicInfo = ({
           </Col>
         </Row>
 
+        {/* Row 5: Delivery Method + Department Name */}
+        <Row gutter={[100, 0]}>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item
+              name={'delivery_method'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.delivery_method'),
+              )}
+              labelCol={{ span: 3 }}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            <Form.Item name={'department_id'} className="hidden">
+              <Input style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              name={'department_name'}
+              label={boldText(
+                t('quotas.action.basic_info.fields.department_name'),
+              )}
+              labelCol={{ span: 3 }}
+            >
+              <Input disabled readOnly style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* Row 6: Expiration Date + Approve Route */}
         <Row gutter={[100, 0]}>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               label={boldText(
                 t('quotas.action.basic_info.fields.expiration_date'),
               )}
+              labelCol={{ span: 3 }}
             >
               <div style={{ alignItems: 'center', gap: 12 }}>
                 <Form.Item
+                  className="no-margin-bottom-important"
                   name={'expiration_date'}
-                  style={{ marginBottom: 0, flex: 1 }}
+                  style={{ flex: 1 }}
                 >
                   <Select
                     allowClear
@@ -678,7 +870,7 @@ const BasicInfo = ({
                     ]}
                   />
                 </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }}>
+                <Form.Item>
                   {expirationDate && (
                     <span style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
                       {dayjs(getExpiryDate(expirationDate, issueDate)).format(
@@ -691,40 +883,121 @@ const BasicInfo = ({
               </div>
             </Form.Item>
           </Col>
+          <Col xs={24} sm={16} md={10} lg={10} xl={10}>
+            {(() => {
+              let approveRoutes = form.getFieldValue('approve_routes')
+              const isSingleRoute = approveRoutes?.length === 1
 
-          <Col xs={24} sm={16} md={14} lg={14} xl={11} xxl={10}>
-            <div className="flex flex-wrap gap-4">
-              <Form.Item
-                name="consumption_tax"
-                label={boldText(
-                  t('quotas.action.basic_info.fields.consumption_tax'),
-                )}
-                style={{ marginBottom: 0, flex: 1 }}
-                rules={[
+              // case
+              if (!isEdit && !parameterSettings.get('approve-routes')) {
+                form.setFieldsValue({ approve_route_id: '' })
+                approveRoutes = []
+              }
+              if (isSingleRoute) {
+                const singleRoute = approveRoutes[0]
+
+                return (
+                  <>
+                    <Form.Item
+                      name={'approve_route_id'}
+                      className="hidden"
+                      initialValue={
+                        parameterSettings.get('approve-routes')
+                          ? singleRoute?.id
+                          : ''
+                      }
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      name={'approve_route_name'}
+                      label={boldText(
+                        t('quotas.action.basic_info.fields.approve_route'),
+                      )}
+                      labelCol={{ span: 3 }}
+                      initialValue={
+                        parameterSettings.get('approve-routes')
+                          ? singleRoute?.name
+                          : ''
+                      }
+                    >
+                      <Input disabled readOnly style={{ width: '100%' }} />
+                    </Form.Item>
+                  </>
+                )
+              }
+
+              return (
+                <Form.Item
+                  name={'approve_route_id'}
+                  label={boldText(
+                    t('quotas.action.basic_info.fields.approve_route'),
+                  )}
+                  labelCol={{ span: 3 }}
+                >
+                  <Select
+                    disabled={!parameterSettings.get('approve-routes')}
+                    style={{ width: '100%' }}
+                    options={
+                      approveRoutes?.map((route: any) => ({
+                        value: route.id,
+                        label: route.name,
+                      })) || []
+                    }
+                  />
+                </Form.Item>
+              )
+            })()}
+            {(() => {
+              const approveRoutes = form.getFieldValue('approve_routes')
+              if (
+                (!approveRoutes || approveRoutes.length === 0) &&
+                parameterSettings.get('approve-routes')
+              ) {
+                return (
+                  <div
+                    style={{
+                      color: '#ff4d4f',
+                      fontSize: '12px',
+                      marginTop: '4px',
+                    }}
+                  >
+                    ⚠️{' '}
+                    {t('quotas.action.basic_info.warnings.no_approve_routes') ||
+                      'No approve routes available'}
+                  </div>
+                )
+              }
+              return null
+            })()}
+            {/* hidden form */}
+            <Form.Item
+              name="consumption_tax"
+              className="hidden"
+              label={boldText(
+                t('quotas.action.basic_info.fields.consumption_tax'),
+              )}
+              style={{ marginBottom: 0, flex: 1 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('validations.required'),
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
                   {
-                    required: true,
-                    message: t('validations.required'),
+                    value: 'exclusive',
+                    label: t('tenant_settings.consumptionTax.taxExclusive'),
+                  },
+                  {
+                    value: 'external',
+                    label: t('tenant_settings.consumptionTax.taxExempt'),
                   },
                 ]}
-              >
-                <Radio.Group
-                  options={[
-                    {
-                      value: 'exclusive',
-                      label: t('tenant_settings.consumptionTax.taxExclusive'),
-                    },
-                    // {
-                    //   value: 'inclusive',
-                    //   label: t('tenant_settings.consumptionTax.taxInclusive'),
-                    // },
-                    {
-                      value: 'external',
-                      label: t('tenant_settings.consumptionTax.taxExempt'),
-                    },
-                  ]}
-                />
-              </Form.Item>
-            </div>
+              />
+            </Form.Item>
           </Col>
         </Row>
       </div>
@@ -739,6 +1012,13 @@ const BasicInfo = ({
         customerId={selectedCustomerId}
         onSelect={handleSelectContact}
       />
+
+      {openModalCreateCustomer && (
+        <CreateCustomerModal
+          open={openModalCreateCustomer}
+          onClose={() => setOpenModalCreateCustomer(false)}
+        />
+      )}
     </Card>
   )
 }

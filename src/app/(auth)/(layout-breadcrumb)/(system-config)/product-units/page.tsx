@@ -27,24 +27,13 @@ export default function Page() {
     getRowIdForDnd,
     onDragEnd,
     setFilters,
+    edited,
   } = useProductUnits()
 
   return (
     <List
       title={
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
-      }
-      footer={
-        <Col>
-          <Button
-            type="primary"
-            onClick={onSaveAll}
-            loading={savingAll}
-            disabled={savingAll || !isFullAccess}
-          >
-            {t('buttons.save_all', { defaultValue: '並び順を保存' })}
-          </Button>
-        </Col>
       }
     >
       <Form {...searchFormProps} layout="vertical" colon={false}>
@@ -85,15 +74,26 @@ export default function Page() {
                   {t('buttons.clear')}
                 </Button>
               </Space>
-              <CreateButton
-                type="primary"
-                size="middle"
-                onClick={addNew}
-                icon={null}
-                disabled={!isFullAccess}
-              >
-                {t('buttons.create_new')}
-              </CreateButton>
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={onSaveAll}
+                  loading={savingAll}
+                  disabled={savingAll || !isFullAccess || !edited}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.save_all', { defaultValue: '並び順を保存' })}
+                </Button>
+                <CreateButton
+                  type="primary"
+                  size="middle"
+                  onClick={addNew}
+                  icon={null}
+                  disabled={!isFullAccess}
+                >
+                  {t('buttons.create_new')}
+                </CreateButton>
+              </Space>
             </Space>
           </Col>
         </Row>

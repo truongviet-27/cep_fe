@@ -1,13 +1,11 @@
 import { useDebounce } from '@hook/use-debounce'
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useModalForm } from '@refinedev/antd'
-import type { GetListResponse } from '@refinedev/core'
 import { useApiUrl, useCustom, useList } from '@refinedev/core'
 import type {
   CodeIssueSetting,
   ProductPackagingInput,
   ProductUnit,
-  Rank,
 } from '@sdk/hey-api'
 import type { Category } from '@utility/renderCategories'
 import { Form, type FormInstance } from 'antd'
@@ -23,7 +21,6 @@ export const useBasicInfoController = (
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >,
   setIsAllowedSaveButton: (value: boolean) => void,
-  ranks?: GetListResponse<Rank>,
 ) => {
   const apiUrl = useApiUrl()
   const [productUnitSearchText, setProductUnitSearchText] = useState<string>('')
@@ -47,6 +44,20 @@ export const useBasicInfoController = (
       form?.setFieldsValue({ code: codeGen?.preview_code })
     })
   }
+
+  useEffect(() => {
+    if (
+      codeIssueSetting?.data?.issue_method === 'automatic' &&
+      !form.getFieldValue('code')
+    ) {
+      refetch().then((response) => {
+        const codeGen = response?.data?.data
+        if (codeGen?.preview_code) {
+          form?.setFieldsValue({ code: codeGen.preview_code })
+        }
+      })
+    }
+  }, [codeIssueSetting?.data?.issue_method, form, refetch])
 
   const modalFormProps = useModalForm({
     action: 'edit',
@@ -100,6 +111,11 @@ export const useBasicInfoController = (
     )
   }, [productUnits])
 
+  const orderNumberProductUnits = useMemo(() => {
+    if (!productUnits?.data) return 1
+    return (productUnits?.data[0]?.order ?? 0) + 1
+  }, [productUnits?.data])
+
   const handleChooseCategory = useCallback(
     (
       level: number,
@@ -146,14 +162,6 @@ export const useBasicInfoController = (
     const packagings: ProductPackagingInput[] = (getFieldValue('packagings') ??
       []) as ProductPackagingInput[]
 
-    const rankObject: Record<string, number> = {}
-
-    ranks?.data?.forEach(({ id, rate }) => {
-      rankObject[`rank_${id}`] = Math.round(
-        ((rate ?? 0) / 100) * getFieldValue('selling_price'),
-      )
-    })
-
     if (!packagings.length) {
       if (addRef.current) {
         addRef.current({
@@ -166,9 +174,7 @@ export const useBasicInfoController = (
           selling_price: getFieldValue('selling_price'),
           is_standard_price: true,
           is_active: true,
-          is_rate_based: true,
           barcode: getFieldValue('barcode'),
-          ...rankObject,
         })
         //eslint-disable-next-line
         setFieldsValue({
@@ -180,19 +186,7 @@ export const useBasicInfoController = (
               unit_id: getFieldValue('unit_id'),
               selling_price: getFieldValue('selling_price'),
               is_standard_price: true,
-              is_rate_based: true,
               barcode: getFieldValue('barcode'),
-              ...rankObject,
-            },
-            {
-              code: getFieldValue('code') ? `${getFieldValue('code')}-1` : '1',
-              name: '',
-              quantity_in_package: 1,
-              unit_id: getFieldValue('unit_id'),
-              selling_price: getFieldValue(`selling_price`),
-              is_standard_price: true,
-              is_rate_based: true,
-              ...rankObject,
             },
           ],
         })
@@ -207,15 +201,12 @@ export const useBasicInfoController = (
               ...item,
               barcode: getFieldValue('barcode'),
               selling_price: getFieldValue('selling_price'),
-              ...rankObject,
             }
           : {
               ...item,
               selling_price:
                 getFieldValue('selling_price') *
                 getFieldValue(['packagings', index, 'quantity_in_package']),
-              is_rate_based: true,
-              ...rankObject,
             }
       }),
     })
@@ -256,6 +247,13 @@ export const useBasicInfoController = (
     handleBasicInfoChange()
   }, [codeWatch, unitWatch, barcodeWatch])
 
+  const modalFormProductUnit = useModalForm({
+    action: 'create',
+    resource: 'product-units',
+    autoResetFormWhenClose: true,
+    warnWhenUnsavedChanges: false,
+  })
+
   return [
     {
       loadingPd,
@@ -264,6 +262,8 @@ export const useBasicInfoController = (
       modalFormProps,
       codeIssueSetting,
       productUnitOptions,
+      modalFormProductUnit,
+      orderNumberProductUnits,
     },
     {
       handleAutoNumber,

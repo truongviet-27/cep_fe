@@ -4,8 +4,6 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
-import { ParameterResourceEnum } from '@sdk/hey-api'
-import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -25,7 +23,7 @@ import Link from 'next/link'
 import { useRef, useState } from 'react'
 
 import BasicInfo from './basic-info'
-import PriceGroup from './price-group'
+import Packaging from './packaging'
 import ProductInformation from './product-information'
 import type { ProductComboFormType } from './use-product-combo-form'
 import useProductComboForm from './use-product-combo-form'
@@ -36,14 +34,20 @@ const ProductComboFormContainer: React.FC = () => {
   const t = useTranslate()
   const go = useGo()
   const [
-    { ranks, methods, isLoadingSubmit, isUpdateMode },
-    { handleOnSubmit },
+    {
+      methods,
+      isLoadingSubmit,
+      isUpdateMode,
+      isPendingDraft,
+      dataProductComboDraft,
+      isFetchingProductComboDraft,
+    },
+    { handleOnSubmit, handleSaveDraft, handleApplyDraft },
   ] = useProductComboForm()
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
   const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
 
   return (
     <PageContainer
@@ -102,7 +106,6 @@ const ProductComboFormContainer: React.FC = () => {
                     addRef={addRef}
                     isAllowedSaveButton={isAllowedSaveButton}
                     setIsAllowedSaveButton={setIsAllowedSaveButton}
-                    ranks={ranks}
                   />
                 ),
               },
@@ -146,39 +149,10 @@ const ProductComboFormContainer: React.FC = () => {
               />
             )}
           />
-          {parameterSettings.get(ParameterResourceEnum.RANKS) && (
-            <Collapse
-              style={{
-                marginTop: '20px',
-              }}
-              items={[
-                {
-                  key: 1,
-                  label: (
-                    <span className="font-bold">
-                      {t('products.unitPriceGroup.tableTitle')}
-                    </span>
-                  ),
-                  children: (
-                    <PriceGroup
-                      form={
-                        form as unknown as FormInstance<ProductComboFormType>
-                      }
-                      ranks={ranks}
-                    />
-                  ),
-                },
-              ]}
-              expandIconPosition="end"
-              defaultActiveKey={[1]}
-              expandIcon={({ isActive }) => (
-                <DownOutlined
-                  style={{ transition: '0.3s' }}
-                  rotate={isActive ? 180 : 0}
-                />
-              )}
-            />
-          )}
+
+          <div className="hidden">
+            <Packaging />
+          </div>
 
           {isUpdateMode && (
             <>
@@ -226,6 +200,28 @@ const ProductComboFormContainer: React.FC = () => {
               >
                 {t('products.buttons.back')}
               </Button>
+              {!isUpdateMode &&
+                dataProductComboDraft?.data &&
+                Array.isArray(dataProductComboDraft.data) &&
+                dataProductComboDraft.data.length > 0 && (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={handleApplyDraft}
+                    disabled={isFetchingProductComboDraft}
+                  >
+                    {t('buttons.apply_draft')}
+                  </Button>
+                )}
+              {!isUpdateMode && (
+                <Button
+                  type="primary"
+                  onClick={handleSaveDraft}
+                  loading={isPendingDraft}
+                >
+                  {t('buttons.draft')}
+                </Button>
+              )}
               <Button
                 type="primary"
                 htmlType="submit"

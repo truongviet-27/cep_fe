@@ -19,7 +19,7 @@ import { PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import Link from 'next/link'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const { Text } = Typography
 
@@ -90,6 +90,17 @@ export default function Page() {
 
   const isAutomatic = data?.data?.issue_method === 'automatic'
 
+  useEffect(() => {
+    if (isAutomatic && !form.getFieldValue('code')) {
+      refetch().then(() => {
+        const codeGen = data?.data
+        if (codeGen?.preview_code) {
+          form?.setFieldsValue({ code: codeGen.preview_code })
+        }
+      })
+    }
+  }, [isAutomatic, form, refetch, data?.data])
+
   const onSubmit = (values: DepartmentPayload) => {
     create(
       { resource: resource?.name ?? 'departments', values },
@@ -129,6 +140,7 @@ export default function Page() {
             htmlType="submit"
             loading={isLoading}
             onClick={() => form.submit()}
+            autoInsertSpace={false}
           >
             {t('buttons.create')}
           </Button>
@@ -167,7 +179,11 @@ export default function Page() {
               <Space direction="horizontal" size={3} wrap>
                 <Button
                   size="middle"
-                  type="primary"
+                  style={{
+                    background: '#fff',
+                    borderColor: PRIMARY,
+                    color: PRIMARY,
+                  }}
                   loading={loadingDp}
                   onClick={() => {
                     refetch().then(() => {
@@ -181,8 +197,10 @@ export default function Page() {
                 <Button
                   type="link"
                   onClick={() => show(data?.data?.id)}
-                  className="text-blue-500"
-                  style={{ marginLeft: -16 }}
+                  style={{
+                    marginLeft: -16,
+                    color: PRIMARY,
+                  }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>

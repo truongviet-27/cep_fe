@@ -1,10 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useForm } from '@refinedev/antd'
-import { useList, useParsed } from '@refinedev/core'
-import type { ProductDetail, Rank, StoreProductInput } from '@sdk/hey-api'
-import { ParameterResourceEnum } from '@sdk/hey-api'
-import { useUserStore } from '@stores/useUserStore'
-import { isNumber } from 'lodash'
+import {
+  useApiUrl,
+  useCustom,
+  useCustomMutation,
+  useGo,
+  useNotification,
+  useParsed,
+  useTranslate,
+} from '@refinedev/core'
+import type {
+  DraftControllerIndexResponse,
+  ProductDetail,
+  StoreProductInput,
+} from '@sdk/hey-api'
 
 export type ProductComboFormType = {
   unit: string
@@ -41,12 +51,36 @@ export type ProductComboFormType = {
 
 function useProductComboForm() {
   const { params } = useParsed()
-  const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const go = useGo()
+  const apiUrl = useApiUrl()
+  const t = useTranslate()
+  const { open: openNotification } = useNotification()
+  const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+
+  const {
+    data: dataProductComboDraft,
+    isFetching: isFetchingProductComboDraft,
+  } = useCustom<DraftControllerIndexResponse>({
+    method: 'get',
+    url: `${apiUrl}/drafts`,
+    config: {
+      query: {
+        type: 'product_combo',
+      },
+    },
+    queryOptions: {
+      enabled: !params?.id, // Only fetch draft when creating new product combo
+    },
+  })
 
   const methods = useForm<ProductComboFormType>({
     resource: 'product-combos',
     id: params?.id,
-    redirect: 'show',
+    redirect: false,
+    mutationMode: 'pessimistic',
+    onMutationSuccess: () => {
+      go({ to: '/products?tab=combo' })
+    },
     queryOptions: {
       select: (response) => {
         const data = response.data as unknown as ProductDetail
@@ -60,16 +94,8 @@ function useProductComboForm() {
             unit: data?.unit?.name,
             unit_id: data?.unit?.id,
             packagings: packagings.map((packaging) => {
-              const ranks: Record<string, number> = {}
-              ;(packaging.rank_prices || []).forEach(({ rank_id, price }) => {
-                if (rank_id && isNumber(rank_id) && isNumber(price)) {
-                  ranks[`rank_${rank_id}`] = price
-                }
-              })
-
               return {
                 ...packaging,
-                ...ranks,
                 cost_price: data.cost_price || 0,
               }
             }),
@@ -79,32 +105,11 @@ function useProductComboForm() {
     },
   })
 
-  const { data: ranks } = useList<Rank>({
-    resource: 'ranks',
-    queryOptions: {
-      enabled: parameterSettings?.get?.(ParameterResourceEnum.RANKS),
-    },
-  })
-
   const handleOnSubmit = (values: ProductComboFormType) => {
     const packagings = (values?.packagings || []).map(
       (packaging: ProductPackagingInputType) => {
-        const rank_prices: Array<{
-          rank_id: number
-          price: number
-        }> = []
-        ranks?.data?.forEach(({ id }) => {
-          if (!id) return
-
-          rank_prices.push({
-            rank_id: id,
-            price: (packaging?.[`rank_${id}`] ?? 0) as number,
-          })
-        })
-
         return {
           ...packaging,
-          rank_prices,
         }
       },
     )
@@ -117,14 +122,88 @@ function useProductComboForm() {
     methods.onFinish(valuesConverted)
   }
 
+  const handleSaveDraft = () => {
+    const values: any = methods.form.getFieldsValue()
+
+    const packagings = (values?.packagings || []).map(
+      (packaging: ProductPackagingInputType) => {
+        return {
+          ...packaging,
+        }
+      },
+    )
+
+    const payload = {
+      ...values,
+      packagings,
+    }
+
+    mutateDraft(
+      {
+        url: `${apiUrl}/drafts`,
+        method: 'put',
+        values: {
+          type: 'product_combo',
+          payload,
+        },
+      },
+      {
+        onSuccess() {
+          openNotification?.({
+            message: t('notifications.draftSaveSuccess'),
+            description: t('notifications.draftSaveSuccess'),
+            type: 'success',
+          })
+          go({ to: '/products?tab=combo' })
+        },
+        onError(error: any) {
+          openNotification?.({
+            message:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            description:
+              error?.response?.data?.message ||
+              t('notifications.draftSaveError'),
+            type: 'error',
+          })
+        },
+      },
+    )
+  }
+
+  const handleApplyDraft = () => {
+    if (
+      !dataProductComboDraft?.data ||
+      !Array.isArray(dataProductComboDraft.data) ||
+      dataProductComboDraft.data.length === 0
+    ) {
+      return
+    }
+
+    const draft: any = dataProductComboDraft.data[0]
+    const draftPayload = draft.payload || draft
+
+    methods.form.setFieldsValue({
+      ...draftPayload,
+    })
+
+    openNotification?.({
+      message: t('notifications.draftApplySuccess'),
+      description: t('notifications.draftApplySuccess'),
+      type: 'success',
+    })
+  }
+
   return [
     {
       methods,
       isLoadingSubmit: methods.saveButtonProps.loading,
       isUpdateMode: !!params?.id,
-      ranks,
+      isPendingDraft,
+      dataProductComboDraft,
+      isFetchingProductComboDraft,
     },
-    { handleOnSubmit },
+    { handleOnSubmit, handleSaveDraft, handleApplyDraft },
   ] as const
 }
 

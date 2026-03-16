@@ -4,6 +4,7 @@ import {
   CloseOutlined,
   QuestionCircleFilled,
   RightOutlined,
+  WarningOutlined,
 } from '@ant-design/icons'
 import { Action } from '@components/common/action'
 import CoreAutoComplete from '@components/common/auto-complete'
@@ -86,23 +87,6 @@ function ApproveAction() {
 
   const { query } = useShow({
     queryOptions: { enabled: isUpdate },
-  })
-
-  const { selectProps: selectPropsDp, query: querySelectDp1 } = useSelect({
-    resource: 'departments',
-    optionLabel: 'name',
-    optionValue: 'id',
-    filters: [
-      {
-        field: 'without_approve_route',
-        operator: 'eq',
-        value: true,
-      },
-    ],
-    pagination: {
-      mode: 'server',
-      pageSize: 100,
-    },
   })
 
   const { selectProps: selectPropsDp2, query: querySelectDp2 } = useSelect({
@@ -209,7 +193,6 @@ function ApproveAction() {
         spinning={
           isUpdate
             ? query.isFetching ||
-              querySelectDp1.isLoading ||
               querySelectDp2.isLoading ||
               querySelectEp.isLoading
             : false
@@ -333,7 +316,7 @@ function ApproveAction() {
                 ]}
               >
                 <Select
-                  {...selectPropsDp}
+                  {...selectPropsDp2}
                   mode="multiple"
                   onSearch={() => {}}
                   maxTagCount={'responsive'}
@@ -344,23 +327,7 @@ function ApproveAction() {
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
-                  options={(() => {
-                    const optionFromDp2 = selectPropsDp2?.options?.filter(
-                      (opt) =>
-                        query.data?.data.departments
-                          ?.map((item: any) => item.id)
-                          ?.includes(opt.value),
-                    )
-
-                    const optionsFromDp = selectPropsDp?.options || []
-
-                    const newOptions = [
-                      ...(optionFromDp2 ?? []),
-                      ...optionsFromDp,
-                    ]
-
-                    return newOptions
-                  })()}
+                  options={selectPropsDp2?.options || []}
                   onChange={() => {}}
                 />
               </Form.Item>
@@ -462,7 +429,6 @@ function ApproveAction() {
                               />
                             </Col>
                           </Row>
-
                           <Row>
                             <Col
                               xs={24}
@@ -522,12 +488,18 @@ function ApproveAction() {
                               </Form.Item>
                             </Col>
                           </Row>
-
                           <Form.List name={[item.name, 'employees']}>
                             {(fields2, { add, remove }) => {
                               return (
                                 <div className="flex flex-col">
                                   {fields2.map((item2, index2) => {
+                                    const _isDeleted = form.getFieldValue([
+                                      'steps',
+                                      item.name,
+                                      'employees',
+                                      item2.name,
+                                      'is_deleted',
+                                    ])
                                     return (
                                       <Space
                                         key={item2.key}
@@ -591,7 +563,13 @@ function ApproveAction() {
                                               />
                                             </Form.Item>
                                           </Col>
-                                          <Col xs={10} md={8}>
+                                          <Col
+                                            xs={10}
+                                            md={8}
+                                            style={{
+                                              display: 'flex',
+                                            }}
+                                          >
                                             <Form.Item
                                               label={boldText(
                                                 t(
@@ -609,6 +587,7 @@ function ApproveAction() {
                                                   ),
                                                 },
                                               ]}
+                                              className={'relative'}
                                             >
                                               <CoreAutoComplete
                                                 nameFilter="department_id"
@@ -619,12 +598,27 @@ function ApproveAction() {
                                                   item2.name,
                                                   'department_id',
                                                 ]}
+                                                watchPath={[
+                                                  'steps',
+                                                  item.name,
+                                                  'employees',
+                                                ]}
+                                                currentIndex={index2}
                                                 resource="employees"
                                                 style={{ width: 200 }}
                                               />
                                             </Form.Item>
+                                            {_isDeleted && (
+                                              <WarningOutlined
+                                                style={{
+                                                  color: '#AC3C00',
+                                                  position: 'absolute',
+                                                  right: 30,
+                                                  top: '58%',
+                                                }}
+                                              />
+                                            )}
                                           </Col>
-
                                           {fields2.length > 1 && (
                                             <Col
                                               className="mt-10"
@@ -696,7 +690,6 @@ function ApproveAction() {
               )
             }}
           </Form.List>
-
           <Divider />
           {isUpdate && (
             <ShowMoreInfo
@@ -722,7 +715,6 @@ function ApproveAction() {
               ]}
             />
           )}
-
           <Flex
             justify="space-between"
             style={{
@@ -754,7 +746,11 @@ function ApproveAction() {
                 {t('buttons.back')}
               </Button>
 
-              <Button {...saveButtonProps} type="primary">
+              <Button
+                {...saveButtonProps}
+                type="primary"
+                autoInsertSpace={false}
+              >
                 {isUpdate ? t('buttons.save') : t('buttons.create')}
               </Button>
             </Space>

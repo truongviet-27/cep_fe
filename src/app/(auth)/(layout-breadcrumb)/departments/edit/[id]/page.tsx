@@ -10,6 +10,7 @@ import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
@@ -25,10 +26,14 @@ export default function EmployeeEdit() {
 
   const { formProps, saveButtonProps, queryResult, form } = useForm<Department>(
     {
-      redirect: 'show',
+      redirect: false,
+      onMutationSuccess: () => {
+        go({ to: '/departments' })
+      },
     },
   )
   const employeeData = queryResult?.data?.data
+  const isDefaultDepartment = employeeData?.name === DEPARTMENT_DEFAULT
 
   const apiUrl = useApiUrl()
 
@@ -123,7 +128,6 @@ export default function EmployeeEdit() {
               },
             ]}
           />
-
           <div className="mt-4 flex w-full justify-start pb-4">
             <DeleteButton
               icon={null}
@@ -218,6 +222,7 @@ export default function EmployeeEdit() {
             placeholder="例）営業本部 / 営業部 / 第一課"
             size="middle"
             style={{ maxWidth: 560 }}
+            disabled={isDefaultDepartment}
           />
         </Form.Item>
       </Form>

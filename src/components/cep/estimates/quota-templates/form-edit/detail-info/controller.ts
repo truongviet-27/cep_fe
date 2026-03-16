@@ -1,27 +1,21 @@
-import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
-import type {
-  QuotaTemplateFormType,
-  QuotaTemplateMainProductType,
-  QuotaTemplateProductType,
-} from '@interfaces/quota-templates'
-import {
-  ConsumptionTaxEnum,
-  type ProductListItem,
-  type QuotaTemplateProductGroupRequest,
-  type QuotaTemplateProductItemRequest,
-} from '@sdk/hey-api'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { getDefaultTaxRate } from '@components/cep/estimates/quotas/utils'
+import type { QuotaTemplateFormType } from '@interfaces/quota-templates'
+import { type ProductListItem } from '@sdk/hey-api'
+import { calculateTax } from '@shared/tax/tax.utils'
 import { Form } from 'antd'
 import { useEffect, useState } from 'react'
 
 export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
-
   const totalPriceWatch = Form.useWatch('total_price', form)
-  const taxRateWatch = Form.useWatch('tax_rate', form) ?? 0
-  const mainProducts = Form.useWatch(
-    'main_product',
+  const totalPriceTaxIncludedWatch = Form.useWatch(
+    'total_price_tax_included',
     form,
-  ) as QuotaTemplateMainProductType[]
+  )
+  const taxRateWatch = Form.useWatch('tax_rate', form) ?? 0
+  const mainProducts = Form.useWatch('main_product', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
 
@@ -29,43 +23,34 @@ export const useController = () => {
   const [profitRate, setProfitRate] = useState(0)
   const [taxTotal, setTaxTotal] = useState(0)
   const [sellTotalWithTax, setSellTotalWithTax] = useState(0)
-  const [checkNull, setcheckNull] = useState(false)
 
-  const handleAddProduct = (groupIndex: number) => {
-    const values = mainProducts || []
-    const products = (values[groupIndex].products ||
-      []) as QuotaTemplateProductType[]
-
-    values[groupIndex].products = [
-      ...products,
-      {
-        product_id: null,
-        name: '',
-        code: '自動採番',
-        quantity: 0,
-        cost_price: 0,
-        selling_price: 0,
-        profit_margin: 0,
-        tax_rate: 0,
-        is_add_total: true,
-      } as unknown as QuotaTemplateProductType,
-    ]
-
+  const handleAddProduct = (index: number, isSelfCreate = false) => {
+    const values = [...(form.getFieldValue('main_product') || [])]
+    const newProduct = {
+      product_id: null,
+      name: '',
+      code: '',
+      quantity: 1,
+      cost_price: 0,
+      isSelfCreate: isSelfCreate,
+      selling_price: 0,
+      profit_margin: 0,
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
+      is_add_total: true,
+      kind: 'product',
+    }
+    values.splice(index + 1, 0, newProduct)
     form?.setFieldsValue({ main_product: values })
   }
 
-  const handleRemoveProduct = (groupIndex: number, productIndex: number) => {
+  const handleRemoveProduct = (index: number) => {
     const values = form.getFieldValue('main_product') || []
-    const products = values[groupIndex].products || []
-
-    values[groupIndex].products = products.filter(
-      (_: unknown, idx: number) => idx !== productIndex,
-    )
-
-    form?.setFieldsValue({ main_product: values })
+    const newValues = values.filter((_: unknown, idx: number) => idx !== index)
+    form?.setFieldsValue({ main_product: newValues })
   }
 
   const calculateSummary = () => {
+    let _checkNull = false
     let costTotal = 0
     let sellTotal = 0
 
@@ -74,122 +59,80 @@ export const useController = () => {
       {}
 
     // Calculate per-product totals and group by tax_rate
-    ;(mainProducts ?? []).forEach((group: QuotaTemplateProductGroupRequest) => {
-      ;(group.products ?? []).forEach(
-        (product: QuotaTemplateProductItemRequest) => {
-          if (!product.is_add_total) return
+    ;(mainProducts ?? []).forEach((product: any) => {
+      if (!product.is_add_total) return
 
-          const qty = product.quantity || 0
-          const selling = (product.selling_price || 0) * qty
-          const cost = (product.cost_price || 0) * qty
+      const qty = product.quantity || 0
+      const selling = (product.selling_price || 0) * qty
+      const cost = (product.cost_price || 0) * qty
 
-          if (product.cost_price === null) setcheckNull(true)
+      if (product.cost_price === null && product.kind != 'group')
+        _checkNull = true
 
-          costTotal += cost
-          sellTotal += selling
+      costTotal += cost
+      sellTotal += selling
 
-          // Use product's individual tax rate, fallback to global tax_rate if not set
-          const productTaxRate = product.tax_rate ?? taxRateWatch ?? 0
-          const taxRateKey = productTaxRate.toString()
+      // Use product's individual tax rate, fallback to global tax_rate if not set
+      const productTaxRate = product.tax_rate ?? taxRateWatch ?? 0
+      const taxRateKey = productTaxRate.toString()
 
-          // Group products by tax rate
-          if (!taxGroups[taxRateKey]) {
-            taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
-          }
-          taxGroups[taxRateKey].selling += selling
-        },
-      )
+      // Group products by tax rate
+      if (!taxGroups[taxRateKey]) {
+        taxGroups[taxRateKey] = { selling: 0, taxRate: productTaxRate }
+      }
+      taxGroups[taxRateKey].selling += selling
     })
 
     // Calculate tax for each tax rate group with rounding
     let taxTotal = 0
     Object.values(taxGroups).forEach((group) => {
-      const rawTax = group.selling * (group.taxRate / 100)
-      let roundedTax = 0
-
-      // Apply rounding method per tax group
-      if (taxRoundingMethodWatch === TaxRoundingMethod.RoundDown) {
-        roundedTax = Math.floor(rawTax)
-      } else if (taxRoundingMethodWatch === TaxRoundingMethod.RoundUp) {
-        roundedTax = Math.ceil(rawTax)
-      } else {
-        roundedTax = Number(rawTax.toFixed(0))
-      }
-
+      const rawTax = (group.selling * group.taxRate) / 100
+      const roundedTax = calculateTax(rawTax, taxRoundingMethodWatch)
       taxTotal += roundedTax
     })
 
     let sellTotalWithTax = 0
-    if (consumptionTaxWatch === ConsumptionTaxEnum.EXTERNAL) {
-      // For external tax, selling total already includes tax
-      sellTotalWithTax = sellTotal
-    } else {
-      // For internal tax, add tax to selling total
-      sellTotalWithTax = sellTotal + taxTotal
-    }
+    sellTotalWithTax = sellTotal + taxTotal
 
     const profitRate =
       costTotal > 0 ? ((sellTotal - costTotal) / sellTotal) * 100 : 0
 
     setCostTotal(costTotal)
     setTaxTotal(taxTotal)
-    setProfitRate(checkNull ? 0 : profitRate)
+    setProfitRate(_checkNull ? 0 : profitRate)
     setSellTotalWithTax(sellTotalWithTax)
     form.setFieldValue('total_price', sellTotal)
     form.setFieldValue('consumption_tax_amount', taxTotal)
-    form.setFieldValue('total_profit_margin', profitRate)
+    form.setFieldValue('total_profit_margin', _checkNull ? 0 : profitRate)
     form.setFieldValue('total_price_tax_included', sellTotalWithTax)
   }
 
   const onChangeProductName = (
     value: ProductListItem & {
       tax_rate: number
+      packagings: any[]
     },
     index: number,
-    index2: number,
   ) => {
+    form.setFieldValue(['main_product', index, 'product_id'], value?.id)
+    form.setFieldValue(['main_product', index, 'name'], value?.name)
+    form.setFieldValue(['main_product', index, 'packagings'], value?.packagings)
     form.setFieldValue(
-      ['main_product', index, 'products', index2, 'product_id'],
-      value?.id,
+      ['main_product', index, 'package_id'],
+      value?.packagings?.[0]?.id,
     )
+    form.setFieldValue(['main_product', index, 'code'], value?.code)
+    form.setFieldValue(['main_product', index, 'unit'], value?.unit)
+    form.setFieldValue(['main_product', index, 'cost_price'], value?.cost_price)
     form.setFieldValue(
-      ['main_product', index, 'products', index2, 'package_id'],
-      null,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'name'],
-      value?.name,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'code'],
-      value?.code,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'unit'],
-      value?.unit,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'cost_price'],
-      value?.cost_price,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'selling_price'],
+      ['main_product', index, 'selling_price'],
       value?.sale_price,
     )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'tax_rate'],
-      value?.tax_rate,
-    )
-    form.setFieldValue(
-      ['main_product', index, 'products', index2, 'quantity'],
-      1,
-    )
+    form.setFieldValue(['main_product', index, 'tax_rate'], value?.tax_rate)
+    form.setFieldValue(['main_product', index, 'quantity'], 1)
 
     if (!value) {
-      form.setFieldValue(
-        ['main_product', index, 'products', index, 'quantity'],
-        0,
-      )
+      form.setFieldValue(['main_product', index, 'quantity'], 1)
     }
   }
 
@@ -210,5 +153,6 @@ export const useController = () => {
     handleRemoveProduct,
     onChangeProductName,
     consumptionTaxWatch,
+    totalPriceTaxIncludedWatch,
   }
 }

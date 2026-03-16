@@ -10,7 +10,6 @@ import {
   DateField,
   DeleteButton,
   EditButton,
-  RefreshButton,
   ShowButton,
   useTable,
 } from '@refinedev/antd'
@@ -26,6 +25,7 @@ import {
 import { Department, PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import { CSV_LINK, PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -43,6 +43,7 @@ export default function Page() {
   const isEditPermission = hasFullAccessModule(PermissionEnum.DEPARTMENT_EDIT)
 
   const { tableProps, searchFormProps, setFilters } = useTable<Department>({
+    pagination: { pageSize: 20 },
     syncWithLocation: true,
     onSearch: (values: any) => [
       {
@@ -131,7 +132,12 @@ export default function Page() {
   const columns: ColumnsType<RowVM> = [
     {
       dataIndex: 'code',
-      title: t('departments.fields.code'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.code')}
+        </div>
+      ),
+      width: '8%',
       render: (value, record) => {
         return (
           <Link
@@ -143,48 +149,126 @@ export default function Page() {
         )
       },
     },
-    { dataIndex: 'name', title: t('departments.fields.name'), align: 'left' },
+    {
+      dataIndex: 'name',
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.name')}
+        </div>
+      ),
+      align: 'left',
+    },
     {
       dataIndex: 'number_of_employee',
-      title: t('departments.fields.number_of_employee'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.number_of_employee')}
+        </div>
+      ),
       align: 'right',
+      width: '4%',
     },
     {
       dataIndex: 'author',
-      title: t('common.created_by'),
+      title: (
+        <div style={{ textAlign: 'center' }}>{t('common.created_by')}</div>
+      ),
       align: 'left',
+      width: '19%',
       render: (value: any) => {
         return value?.name || '---'
       },
     },
     {
       dataIndex: 'editor',
-      title: t('common.updated_by'),
+      title: (
+        <div style={{ textAlign: 'center' }}>{t('common.updated_by')}</div>
+      ),
       align: 'left',
+      width: '19%',
       render: (value: any) => {
         return value?.name || '---'
       },
     },
     {
       dataIndex: 'created_at',
-      title: t('departments.fields.created_at'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.created_at')}
+        </div>
+      ),
+      width: '7%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
       dataIndex: 'updated_at',
-      title: t('departments.fields.updated_at'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('departments.fields.updated_at')}
+        </div>
+      ),
+      width: '7%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
-      title: t('table.actions'),
+      title: <div style={{ textAlign: 'center' }}>{t('table.actions')}</div>,
       dataIndex: 'actions',
-      render: (_: any, record: BaseRecord) => (
-        <Space>
-          <ShowButton hideText size="small" recordItemId={record.id} />
-          <EditButton hideText size="small" recordItemId={record.id} />
-          <DeleteButton hideText size="small" recordItemId={record.id} />
-        </Space>
-      ),
+      width: '8%',
+      onCell: () => ({
+        style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+      }),
+      render: (_: any, record: BaseRecord) => {
+        const isDefaultDepartment =
+          (record as Department).name === DEPARTMENT_DEFAULT
+        return (
+          <Space wrap size={4}>
+            <ShowButton
+              autoInsertSpace={false}
+              size="small"
+              icon={null}
+              recordItemId={record.id}
+              resource="departments"
+              style={{
+                color: isDefaultDepartment ? '#999999' : '#2784FF',
+                borderColor: isDefaultDepartment ? '#d9d9d9' : '#2784FF',
+              }}
+              disabled={isDefaultDepartment}
+            >
+              {t('buttons.show')}
+            </ShowButton>
+            <EditButton
+              autoInsertSpace={false}
+              size="small"
+              icon={null}
+              recordItemId={record.id}
+              resource="departments"
+              disabled={isDefaultDepartment}
+              style={{
+                color: isDefaultDepartment ? '#999999' : '#FFFFFF',
+                background: isDefaultDepartment ? '#d9d9d9' : '#1FDB51',
+                borderColor: isDefaultDepartment ? '#d9d9d9' : '#1FDB51',
+              }}
+            >
+              {t('buttons.edit')}
+            </EditButton>
+            <DeleteButton
+              autoInsertSpace={false}
+              size="small"
+              icon={null}
+              recordItemId={record.id}
+              resource="departments"
+              disabled={isDefaultDepartment}
+              style={{
+                color: isDefaultDepartment ? '#999999' : '#FFFFFF',
+                background: isDefaultDepartment ? '#d9d9d9' : '#E74C3C',
+                borderColor: isDefaultDepartment ? '#d9d9d9' : '#E74C3C',
+              }}
+            >
+              {t('buttons.delete')}
+            </DeleteButton>
+          </Space>
+        )
+      },
     },
   ]
 
@@ -242,22 +326,26 @@ export default function Page() {
               <Button htmlType="submit" type="primary" autoInsertSpace={false}>
                 {t('buttons.search')}
               </Button>
-              <RefreshButton
-                size="middle"
-                icon={null}
+              <Button
+                type="default"
                 onClick={() => {
                   searchFormProps.form?.resetFields()
                   setFilters([], 'replace')
                 }}
               >
                 {t('buttons.clear')}
-              </RefreshButton>
+              </Button>
             </Space>
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
             <div className="flex flex-col items-end">
-              <CreateButton icon={null} disabled={!isEditPermission}>
+              <CreateButton
+                icon={null}
+                type="primary"
+                autoInsertSpace={false}
+                disabled={!isEditPermission}
+              >
                 {t('buttons.create_new')}
               </CreateButton>
               <Button

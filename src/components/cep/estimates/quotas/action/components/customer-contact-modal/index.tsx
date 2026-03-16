@@ -120,7 +120,7 @@ function CustomerContactSelectionModal({
         ],
       })
 
-      message.success(t('notifications.createSuccess'))
+      message.success(t('notifications.success'))
       setIsAdding(false)
       form.resetFields()
       refetch()

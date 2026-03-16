@@ -2,6 +2,8 @@
 import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
+import type { RoundingMethodEnumType } from '@sdk/hey-api'
+import { calculateTax } from '@shared/tax/tax.utils'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Card, Checkbox, Col, Flex, Row, Typography } from 'antd'
@@ -11,7 +13,15 @@ import { useMemo, useState } from 'react'
 
 const { Text } = Typography
 
-function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
+function DetailInfo({
+  basicInfo,
+  taxRoundingMethod,
+  data,
+}: {
+  basicInfo: any
+  data: any
+  taxRoundingMethod: RoundingMethodEnumType
+}) {
   const [expandedKeys, setExpandedKeys] = useState<any[]>([])
 
   const toggleExpand = (id: any) => {
@@ -21,14 +31,28 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
   }
 
   const t = useTranslate()
-  const dataSource: any[] = (data ?? []).flatMap((item: any) => [
-    ...(item.group_name ? [{ isHeader: true, title: item.group_name }] : []),
-    ...(item.products ?? []).flatMap((item2: any) => [
-      {
-        ...item2,
-      },
-    ]),
-  ])
+  const dataSource: any[] = (data ?? [])
+    .filter((item: any) => {
+      if (item.kind === 'group') {
+        return !!item.name && item.name.trim() !== ''
+      }
+      return true
+    })
+    .sort((a: any, b: any) => {
+      const orderA = a.display_order ?? 0
+      const orderB = b.display_order ?? 0
+      return orderA - orderB
+    })
+    .map((item: any) => {
+      if (item.kind === 'group') {
+        return {
+          isHeader: true,
+          title: item.name,
+          ...item,
+        }
+      }
+      return { ...item }
+    })
   const columns: ColumnsType = [
     {
       title: t('quotas.show.table.product_code'),
@@ -219,20 +243,27 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       const sellingPrice = parseFloat(item.selling_price || 0)
       const quantity = parseFloat(item.quantity || 0)
       const taxRate = parseFloat(item.tax_rate || 0)
-
-      // Công thức: selling_price * quantity * tax_rate / 100
-      const calculatedValue = (sellingPrice * quantity * taxRate) / 100
-
+      const sellingAmount = sellingPrice * quantity
       const key = String(taxRate)
-      acc[key] = (acc[key] || 0) + calculatedValue
+
+      // Group selling amounts by tax rate
+      if (!acc[key]) {
+        acc[key] = { sellingTotal: 0, taxRate }
+      }
+      acc[key].sellingTotal += sellingAmount
 
       return acc
     }, {})
-
-    return Object.entries(totalByTaxRate).map(([taxRate, total]) => ({
-      taxRate: parseFloat(taxRate),
-      total: (total as number).toFixed(0),
-    }))
+    return Object.entries(totalByTaxRate).map(
+      ([taxRateKey, group]: [string, any]) => {
+        const rawTax = (group.sellingTotal * group.taxRate) / 100
+        const roundedTax = calculateTax(rawTax, taxRoundingMethod)
+        return {
+          taxRate: parseFloat(taxRateKey),
+          total: roundedTax.toString(),
+        }
+      },
+    )
   }
 
   // 🌟 SỬ DỤNG useMemo: Biến này chỉ được tính toán lại khi dataSource thay đổi
@@ -241,7 +272,7 @@ function DetailInfo({ basicInfo, data }: { basicInfo: any; data: any }) {
       return basicInfo?.tax_rate_group
     }
     return calculateGroupedTotal(dataSource)
-  }, [dataSource]) // Dependency array: chỉ chạy lại khi dataSource thay đổi
+  }, [dataSource, taxRoundingMethod]) // Dependency array: chỉ chạy lại khi dataSource thay đổi
 
   return (
     <Card
