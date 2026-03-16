@@ -104,18 +104,9 @@ export default function InitialSetupGuidePage() {
     [router],
   )
 
-  const currentIndex = MENU_ITEMS_VISIBLE.findIndex((m) => m.id === selectedId)
   const handleBack = useCallback(() => {
-    if (currentIndex <= 0) {
-      router.replace('/quotas')
-      return
-    }
-    const prev = MENU_ITEMS_VISIBLE[currentIndex - 1]
-    if (prev) {
-      setSelectedId(prev.id)
-      router.replace(`/initial-setup-guide?step=${prev.id}`, { scroll: false })
-    }
-  }, [currentIndex, router])
+    router.back()
+  }, [router])
 
   const handleLater = useCallback(() => {
     if (permission) {
