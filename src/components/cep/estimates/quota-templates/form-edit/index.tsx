@@ -23,7 +23,6 @@ const QuoteTemplateFormEditContainer: FC = () => {
     isUpdateMode,
     isLoading,
     methods,
-    taxRoundingMethod,
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,
@@ -75,7 +74,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
           }}
         >
           <BasicInfo />
-          <DetailInfo taxRoundingMethod={taxRoundingMethod} />
+          <DetailInfo />
           <OptionalInfo />
           <NoteForm />
           <TagForm />
