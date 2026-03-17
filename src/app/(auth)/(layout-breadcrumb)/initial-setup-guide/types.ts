@@ -11,6 +11,7 @@ export interface Manual {
   note?: string | null
   note_warning?: string | null
   link?: string | null
+  app_type?: 'quota' | 'control' | string | null
   breadcrumb?: string | null
   status: 'complete' | 'pending'
   created_at?: string
