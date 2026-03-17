@@ -39,6 +39,17 @@ function getLeftColumnBgForManual(manual: Manual): string {
   return '#e6fffb'
 }
 
+function getManualLinkHref(manual: Manual): string | undefined {
+  if (!manual.link) return undefined
+  if (manual.app_type === 'control') {
+    const base = process.env.NEXT_PUBLIC_CONTROL_APP_BASE_URL
+    if (!base) return manual.link
+    const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base
+    return `${normalizedBase}${manual.link}`
+  }
+  return manual.link
+}
+
 function getNotesFromManual(
   manual: Manual,
 ): Array<{ text: string; italic?: boolean; danger?: boolean }> | undefined {
@@ -248,6 +259,7 @@ export default function GuideContent({
                   ) : null}
                   {items.map((manual) => {
                     const isComplete = manual.status === 'complete'
+                    const linkHref = getManualLinkHref(manual)
                     return (
                       <GuideStepCard
                         key={manual.id}
@@ -263,11 +275,11 @@ export default function GuideContent({
                         }
                         description={manual.description.replace(/\\n/g, '\n')}
                         notes={getNotesFromManual(manual)}
-                        linkHref={manual.link ?? undefined}
+                        linkHref={linkHref}
                         linkText={
                           manual.breadcrumb
                             ? undefined
-                            : manual.link
+                            : linkHref
                               ? t('initial-setup-guide.screen_link')
                               : undefined
                         }
@@ -294,6 +306,7 @@ export default function GuideContent({
             >
               {manuals.map((manual) => {
                 const isComplete = manual.status === 'complete'
+                const linkHref = getManualLinkHref(manual)
                 return (
                   <GuideStepCard
                     key={manual.id}
@@ -308,11 +321,11 @@ export default function GuideContent({
                     }
                     description={manual.description.replace(/\\n/g, '\n')}
                     notes={getNotesFromManual(manual)}
-                    linkHref={manual.link ?? undefined}
+                    linkHref={linkHref}
                     linkText={
                       manual.breadcrumb
                         ? undefined
-                        : manual.link
+                        : linkHref
                           ? t('initial-setup-guide.screen_link')
                           : undefined
                     }
