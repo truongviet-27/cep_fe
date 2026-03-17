@@ -68,36 +68,35 @@ export const useBootstrap = () => {
       console.log('refreshToken: ', refreshToken)
 
       if (pathname === '/' && token) {
-        // check current user
         const currentSession = await getSessionOnce()
         const currentUserId = getUserIdFromToken(currentSession?.accessToken)
         const newUserId = getUserIdFromToken(token)
 
-        console.log(
-          'Current User ID:',
-          currentUserId,
-          'New User ID:',
-          newUserId,
-        )
-
+        // Check if same user and already logged in with valid session
         if (
+          isLoggedIn &&
+          currentUserId === newUserId &&
           currentSession?.accessToken &&
-          currentUserId &&
-          newUserId &&
-          currentUserId !== newUserId
+          !currentSession?.error
         ) {
-          useUserStore.getState().logout?.()
-          useTenantStore.getState().clearTenant() // Clear tenant when user changes
+          console.log('[Controller] Same user already logged in, skipping')
+          return false
+        }
+
+        // Different user or expired session - need to sign out first
+        if (currentSession?.accessToken) {
+          console.log('[Controller] Signing out old session before TokenLogin')
+          if (currentUserId && newUserId && currentUserId !== newUserId) {
+            console.log('[Controller] Different user detected')
+            useUserStore.getState().logout?.()
+            useTenantStore.getState().clearTenant()
+          }
           await signOut({
             redirect: false,
           })
         }
 
-        //if user on token = current user do not login again
-        if (isLoggedIn && currentUserId === newUserId) {
-          return false
-        }
-
+        console.log('[Controller] Starting TokenLogin')
         const res = await signIn('TokenLogin', {
           token,
           refreshToken,
@@ -109,6 +108,7 @@ export const useBootstrap = () => {
           throw res
         }
 
+        console.log('[Controller] TokenLogin successful')
         return true
       }
 
