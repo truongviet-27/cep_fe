@@ -183,6 +183,7 @@
   },
   "employees": {
     "employees": "Employees",
+    "deleted": "The employee has been removed.",
     "edit": {
       "title": "Edit Employee"
     },
