@@ -44,8 +44,14 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Only check token for TokenLogin provider
-  if (token.provider === 'TokenLogin' && token.accessToken) {
+  // If token has error (e.g., RefreshAccessTokenError), skip introspect check
+  // User will be logged out by client-side logic
+  if (token.error) {
+    console.log('[Middleware] Token has error, skipping introspect check')
+    return NextResponse.next()
+  }
+
+  if (token.accessToken) {
     const accessToken = token.accessToken as string
     const now = Date.now()
 
@@ -53,7 +59,9 @@ export async function middleware(req: NextRequest) {
     const cached = tokenCheckCache.get(accessToken)
     if (cached && now - cached.timestamp < CACHE_DURATION) {
       if (!cached.isValid) {
-        console.error('Token is invalid (from cache), redirecting to login')
+        console.error(
+          '[Middleware] Token invalid (cached), redirecting to auth-revoked',
+        )
         const response = NextResponse.redirect(
           new URL('/auth-revoked', req.url),
         )
@@ -76,8 +84,14 @@ export async function middleware(req: NextRequest) {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({
-            client_id: process.env.NEXT_PUBLIC_CLIENT_ID_TENANT_ADMIN!,
-            client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET_TENANT_ADMIN!,
+            client_id:
+              token.provider === 'TokenLogin'
+                ? process.env.NEXT_PUBLIC_CLIENT_ID_TENANT_ADMIN!
+                : process.env.NEXT_PUBLIC_CLIENT_ID!,
+            client_secret:
+              token.provider === 'TokenLogin'
+                ? process.env.NEXT_PUBLIC_CLIENT_SECRET_TENANT_ADMIN!
+                : process.env.NEXT_PUBLIC_CLIENT_SECRET!,
             token: accessToken,
           }),
         },
@@ -91,7 +105,7 @@ export async function middleware(req: NextRequest) {
 
       // If token is not active, redirect to clear session page
       if (!isValid) {
-        console.error('Token has been revoked, redirecting to clear session')
+        console.error('[Middleware] Token revoked, redirecting to auth-revoked')
 
         // Delete cookies and redirect to special page to clear session data
         const response = NextResponse.redirect(
@@ -106,7 +120,7 @@ export async function middleware(req: NextRequest) {
         return response
       }
     } catch (error) {
-      console.error('Error checking token status in middleware:', error)
+      console.error('[Middleware] Error checking token:', error)
       // If there is an error when checking, allow request to continue
       // but do not cache the result
     }
