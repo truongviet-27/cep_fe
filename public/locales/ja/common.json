@@ -567,6 +567,7 @@
   },
   "employees": {
     "employees": "社員",
+    "deleted": "当該従業員は解雇されました。",
     "list": {
       "list": "社員一覧"
     },

@@ -26,6 +26,7 @@ import {
   DeleteButton,
   EditButton,
   ShowButton,
+  useSelect,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -748,9 +749,14 @@ function QuotaList() {
           value: values.creator_name?.value,
         },
         {
-          field: 'tag_name',
+          field: 'tag_id',
           operator: 'eq',
-          value: values.tag_name,
+          value:
+            typeof values.tag_id === 'object' &&
+            values.tag_id != null &&
+            'value' in values.tag_id
+              ? (values.tag_id as { value: number }).value
+              : values.tag_id,
         },
         {
           field: 'approver_id',
@@ -1181,6 +1187,15 @@ function QuotaList() {
       })
     }
   }
+  const { selectProps: tagSelectProps } = useSelect({
+    resource: 'tags',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
 
   return (
     <List
@@ -1288,7 +1303,7 @@ function QuotaList() {
                 }}
               />
             </Col>
-            <Col xs={12} md={6} lg={3} xxl={3}>
+            <Col xs={12} md={6} lg={4} xxl={3}>
               <Form.Item
                 label={
                   <span className="font-bold">
@@ -1296,9 +1311,21 @@ function QuotaList() {
                   </span>
                 }
                 layout="vertical"
-                name={'tag_name'}
+                name={'tag_id'}
               >
-                <Input placeholder={t('quotas.filters.partial_match')} />
+                <Select
+                  {...tagSelectProps}
+                  allowClear
+                  showSearch
+                  onSearch={() => {}}
+                  filterOption={(input, option) =>
+                    ((option?.label ?? '') as string)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  labelInValue={true}
+                  placeholder={t('placeholders.select')}
+                />
               </Form.Item>
             </Col>
           </Row>
