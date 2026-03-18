@@ -3,7 +3,7 @@
 import { AuditOutlined, UsergroupAddOutlined } from '@ant-design/icons'
 import { useList, useTranslate, useUpdate } from '@refinedev/core'
 import { Card, Typography } from 'antd'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import type { MenuItem } from '../constants'
 import type { Manual } from '../types'
@@ -73,6 +73,9 @@ export default function GuideContent({
 }: GuideContentProps) {
   const t = useTranslate()
   const [updatingId, setUpdatingId] = useState<number | null>(null)
+  const [statusOverrides, setStatusOverrides] = useState<
+    Record<number, 'complete' | 'pending'>
+  >({})
 
   const typeFilter =
     selectedItem.id === 'basic' || selectedItem.id === 'advanced'
@@ -123,6 +126,10 @@ export default function GuideContent({
     }))
   })()
 
+  useEffect(() => {
+    setStatusOverrides({})
+  }, [data?.data])
+
   const handleStatusChange = useCallback(
     (manualId: number, newStatus: 'complete' | 'pending') => {
       setUpdatingId(manualId)
@@ -135,6 +142,7 @@ export default function GuideContent({
         {
           onSettled: () => setUpdatingId(null),
           onSuccess: () => {
+            setStatusOverrides((prev) => ({ ...prev, [manualId]: newStatus }))
             refetch()
             onStatusUpdated?.()
           },
@@ -258,7 +266,9 @@ export default function GuideContent({
                     </div>
                   ) : null}
                   {items.map((manual) => {
-                    const isComplete = manual.status === 'complete'
+                    const effectiveStatus =
+                      statusOverrides[manual.id] ?? manual.status
+                    const isComplete = effectiveStatus === 'complete'
                     const linkHref = getManualLinkHref(manual)
                     return (
                       <GuideStepCard
@@ -284,7 +294,7 @@ export default function GuideContent({
                               : undefined
                         }
                         breadcrumb={manual.breadcrumb ?? undefined}
-                        status={manual.status}
+                        status={effectiveStatus}
                         leftBg="gray"
                         manualId={manual.id}
                         onStatusChange={handleStatusChange}
@@ -305,7 +315,9 @@ export default function GuideContent({
               }}
             >
               {manuals.map((manual) => {
-                const isComplete = manual.status === 'complete'
+                const effectiveStatus =
+                  statusOverrides[manual.id] ?? manual.status
+                const isComplete = effectiveStatus === 'complete'
                 const linkHref = getManualLinkHref(manual)
                 return (
                   <GuideStepCard
@@ -330,7 +342,7 @@ export default function GuideContent({
                           : undefined
                     }
                     breadcrumb={manual.breadcrumb ?? undefined}
-                    status={manual.status}
+                    status={effectiveStatus}
                     leftBg="gray"
                     manualId={manual.id}
                     onStatusChange={handleStatusChange}

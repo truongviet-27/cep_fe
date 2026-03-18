@@ -409,6 +409,7 @@ const AgreedPriceQuotaTab = () => {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
+                  fontSize: 14,
                 }}
               >
                 <span>{t('agreed_prices.table.department')}</span>
@@ -441,7 +442,7 @@ const AgreedPriceQuotaTab = () => {
                 <Typography.Text
                   ellipsis={{ tooltip: deptName }}
                   style={{
-                    fontSize: '16px',
+                    fontSize: 14,
                     color: '#666',
                     display: 'block',
                     width: '100%',
@@ -454,6 +455,7 @@ const AgreedPriceQuotaTab = () => {
               <Typography.Text
                 ellipsis={{ tooltip: amountStr }}
                 style={{
+                  fontSize: 14,
                   display: 'block',
                   width: '100%',
                   textAlign: 'center',
