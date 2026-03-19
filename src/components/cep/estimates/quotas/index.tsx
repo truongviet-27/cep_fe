@@ -184,7 +184,7 @@ function QuotaList() {
         ),
         dataIndex: 'status',
         key: 'status',
-        width: '8%',
+        width: '6%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -237,7 +237,7 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
-        width: '8%',
+        width: '11%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -566,7 +566,23 @@ function QuotaList() {
               >
                 {t('quotas.goDetailLabel')}
               </ShowButton>
-
+              {(record.status === QuotaStatus.Completed ||
+                record.status === QuotaStatus.Cancelled) &&
+                (permission?.is_module_admin || record.display) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    style={{ background: '#D77703', color: WHITE }}
+                    size="small"
+                    onClick={() =>
+                      handleChangeStatus('back-to-sent-customer', {
+                        quota_ids: [record.id],
+                      })
+                    }
+                  >
+                    {t('quotas.show.actions.move_to_send')}
+                  </Button>
+                )}
               {(record.status === QuotaStatus.Creating ||
                 record.status === QuotaStatus.Rejected) &&
                 (permission?.is_module_admin || record.is_author) && (
@@ -615,27 +631,8 @@ function QuotaList() {
                 </Button>
               )}
 
-              {(record.status === QuotaStatus.Completed ||
-                record.status === QuotaStatus.Cancelled) &&
-                (permission?.is_module_admin || record.display) &&
-                !record?.has_agreed_price && (
-                  <Button
-                    type="default"
-                    style={{ background: '#D77703', color: WHITE }}
-                    size="small"
-                    onClick={() =>
-                      handleChangeStatus('back-to-sent-customer', {
-                        quota_ids: [record.id],
-                      })
-                    }
-                  >
-                    {t('quotas.show.actions.move_to_send')}
-                  </Button>
-                )}
-
               {(record.status === QuotaStatus.Creating ||
-                record.status === QuotaStatus.Rejected ||
-                record.status === QuotaStatus.Cancelled) &&
+                record.status === QuotaStatus.Rejected) &&
                 (record.is_author || permission?.is_module_admin) && (
                   <DeleteButton
                     autoInsertSpace={false}
@@ -689,6 +686,25 @@ function QuotaList() {
                   {t('quotas.downloadLabel')}
                 </Button>
               </Link>
+
+              {record.status === QuotaStatus.Cancelled &&
+                (record.is_author || permission?.is_module_admin) && (
+                  <DeleteButton
+                    autoInsertSpace={false}
+                    successNotification={() => {
+                      return notificationFunction()
+                    }}
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#E74C3C',
+                    }}
+                  >
+                    {t('quotas.actions.delete')}
+                  </DeleteButton>
+                )}
             </Space>
           </div>
         ),
