@@ -394,10 +394,6 @@ const DetailInfo: FC = () => {
                     className="ant-form-item-hidden-margin"
                     rules={[
                       {
-                        required: true,
-                        message: '',
-                      },
-                      {
                         whitespace: true,
                         message: '',
                       },
@@ -511,10 +507,6 @@ const DetailInfo: FC = () => {
                     name={[record.index, 'package_name']}
                     className="ant-form-item-hidden-margin"
                     rules={[
-                      {
-                        required: true,
-                        message: '',
-                      },
                       {
                         whitespace: true,
                         message: '',

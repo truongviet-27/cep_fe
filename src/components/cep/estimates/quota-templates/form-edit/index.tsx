@@ -1,7 +1,6 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -145,17 +144,6 @@ const QuoteTemplateFormEditContainer: FC = () => {
               >
                 {isUpdateMode ? t('buttons.save') : t('buttons.create')}
               </Button>
-              {isUpdateMode && (
-                <DeleteButton
-                  icon={null}
-                  onSuccess={() => {
-                    go({
-                      to: '/quota-templates',
-                    })
-                  }}
-                  autoInsertSpace={false}
-                />
-              )}
             </Space>
           </Flex>
         </Form>
