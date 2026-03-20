@@ -207,7 +207,7 @@ function useProduct() {
         dataIndex: 'category',
         key: 'category',
         align: 'left',
-        width: '19%',
+        width: '14%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -280,7 +280,7 @@ function useProduct() {
         title: t('table.actions'),
         dataIndex: 'action',
         key: 'action',
-        width: '8%',
+        width: '13%',
         onCell: () => ({
           style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
         }),
