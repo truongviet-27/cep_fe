@@ -250,7 +250,11 @@ function Page() {
         >
           <Table.Column
             dataIndex={['packaging_code']}
-            title={t('price-groups.fields.product_code')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.product_code')}
+              </div>
+            }
             align="left"
             width="12%"
             render={(product_code, record) => (
@@ -267,7 +271,11 @@ function Page() {
           />
           <Table.Column
             dataIndex="product_name"
-            title={t('price-groups.fields.product_name')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.product_name')}
+              </div>
+            }
             align="left"
             width="10%"
           />

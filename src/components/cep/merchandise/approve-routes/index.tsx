@@ -172,7 +172,7 @@ function Approve() {
         key: 'author',
         dataIndex: 'author',
         title: t('approve_routes.table.creator'),
-        width: '21%',
+        width: '16%',
         render(value) {
           return value?.name
         },
@@ -190,7 +190,7 @@ function Approve() {
         key: 'action',
         dataIndex: 'action',
         title: t('approve_routes.table.action'),
-        width: '8%',
+        width: '12%',
         onCell: () => ({
           style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
         }),
