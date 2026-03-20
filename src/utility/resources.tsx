@@ -48,9 +48,9 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     name: 'agreed-prices/customer',
     show: '/agreed-prices/customer/:id',
   },
-  {
-    name: 'business_partner',
-  },
+  // {
+  //   name: 'business_partner',
+  // },
   {
     name: 'customers',
     list: '/customers',
@@ -58,7 +58,7 @@ export const resource: (ResourceProps & { isNotMenu?: boolean })[] = [
     create: '/customers/create',
     edit: '/customers/edit/:id',
     meta: {
-      parent: 'business_partner',
+      // parent: 'business_partner',
       canDelete: true,
       canCreate: true,
     },

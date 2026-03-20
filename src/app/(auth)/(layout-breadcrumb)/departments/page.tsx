@@ -137,7 +137,7 @@ export default function Page() {
           {t('departments.fields.code')}
         </div>
       ),
-      width: '8%',
+      width: '12%',
       render: (value, record) => {
         return (
           <Link
@@ -157,6 +157,7 @@ export default function Page() {
         </div>
       ),
       align: 'left',
+      width: '18%',
     },
     {
       dataIndex: 'number_of_employee',
@@ -213,7 +214,7 @@ export default function Page() {
     {
       title: <div style={{ textAlign: 'center' }}>{t('table.actions')}</div>,
       dataIndex: 'actions',
-      width: '8%',
+      width: '10%',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
