@@ -106,9 +106,9 @@ function Right() {
               }}
             >
               <div className="relative my-4 min-h-[200px] rounded-lg border border-solid border-[#ccc] p-4">
-                {watchCompanyLogoImage && (
-                  <div className="mb-4 ml-[60%]">
-                    <div className="relative h-[80px] w-[142px]">
+                <div className="mb-4 ml-[15%]">
+                  <div className="relative h-[96px] w-[176px]">
+                    {watchCompanyLogoImage && (
                       <Image
                         src={
                           watchCompanyLogoImage instanceof File
@@ -123,27 +123,33 @@ function Right() {
                           objectFit: 'contain',
                         }}
                       />
-                    </div>
+                    )}
                   </div>
-                )}
+                </div>
 
                 <div className="relative flex items-start justify-between">
-                  <div className="ml-[60%] flex flex-1 flex-col space-y-1">
-                    {watchCompanyName && (
-                      <Text strong className="text-base">
-                        {watchCompanyName}
-                      </Text>
-                    )}
-                    {watchAddress && (
-                      <Text className="text-sm">{watchAddress}</Text>
-                    )}
-                    {watchPhone && (
-                      <Text className="text-sm">{watchPhone}</Text>
-                    )}
+                  <div className="ml-[15%] flex flex-1 flex-col space-y-1">
+                    <div className="min-h-[24px]">
+                      {watchCompanyName ? (
+                        <Text strong className="text-base">
+                          {watchCompanyName}
+                        </Text>
+                      ) : null}
+                    </div>
+                    <div className="min-h-[22px]">
+                      {watchAddress ? (
+                        <Text className="text-sm">{watchAddress}</Text>
+                      ) : null}
+                    </div>
+                    <div className="min-h-[22px]">
+                      {watchPhone ? (
+                        <Text className="text-sm">{watchPhone}</Text>
+                      ) : null}
+                    </div>
                   </div>
 
-                  {watchCompanySealImage && (
-                    <div className="relative ml-4 h-[80px] w-[80px] flex-shrink-0">
+                  <div className="relative ml-4 h-[80px] w-[80px] flex-shrink-0">
+                    {watchCompanySealImage && (
                       <Image
                         src={
                           watchCompanySealImage instanceof File
@@ -158,8 +164,8 @@ function Right() {
                           objectFit: 'contain',
                         }}
                       />
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </Form.Item>
