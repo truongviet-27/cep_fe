@@ -248,8 +248,8 @@ export default function CustomerListPage() {
     return record.deleted_at ? '!bg-gray-300' : ''
   }
 
-  const columns: TableColumnsType<SimpleCustomer> = useMemo(
-    () => [
+  const columns: TableColumnsType<SimpleCustomer> = useMemo(() => {
+    const baseColumns: TableColumnsType<SimpleCustomer> = [
       {
         title: t('customers.tables.header.code'),
         dataIndex: 'customer_code',
@@ -540,7 +540,7 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
-        width: '10%',
+        width: '8%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -620,7 +620,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        width: '6%',
+        width: '8%',
         render: (text) =>
           text && <div>{dayjs(text).format(FORMAT_DATE_CROSS)}</div>,
       },
@@ -628,7 +628,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
-        width: '6%',
+        width: '8%',
         render: (text) =>
           text && <div>{dayjs(text).format(FORMAT_DATE_CROSS)}</div>,
       },
@@ -653,19 +653,66 @@ export default function CustomerListPage() {
           </Space>
         ),
       },
-    ],
-    [
-      t,
-      go,
-      isFullAccess,
-      isLoading,
-      mutate,
-      editModalShow,
-      refetchCount,
-      tableQueryResult,
-      updatingId,
-    ],
-  )
+    ]
+
+    const numberColumnKeys = ['total_revenue']
+    const centerColumnKeys = ['status', 'actions']
+
+    return baseColumns.map((column) => {
+      const dataIndex =
+        'dataIndex' in column && column.dataIndex !== undefined
+          ? column.dataIndex
+          : ''
+      const key = String(column.key ?? dataIndex)
+      const originalOnCell =
+        'onCell' in column && typeof column.onCell === 'function'
+          ? column.onCell
+          : undefined
+
+      return {
+        ...column,
+        align: centerColumnKeys.includes(key)
+          ? 'center'
+          : numberColumnKeys.includes(key)
+            ? 'right'
+            : 'left',
+        onHeaderCell: (col: unknown) => {
+          const originalHeaderCell =
+            'onHeaderCell' in column &&
+            typeof column.onHeaderCell === 'function'
+              ? (column.onHeaderCell(col as any) ?? {})
+              : {}
+          return {
+            ...originalHeaderCell,
+            style: {
+              ...(originalHeaderCell as any).style,
+              textAlign: 'center',
+            },
+          }
+        },
+        onCell: (record: unknown, rowIndex: number | undefined) => {
+          const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+          return {
+            ...originalCell,
+            style: {
+              ...(originalCell as any).style,
+              padding: '8px 12px',
+            },
+          }
+        },
+      }
+    })
+  }, [
+    t,
+    go,
+    isFullAccess,
+    isLoading,
+    mutate,
+    editModalShow,
+    refetchCount,
+    tableQueryResult,
+    updatingId,
+  ])
 
   const handleClear = () => {
     searchFormProps.form?.resetFields()

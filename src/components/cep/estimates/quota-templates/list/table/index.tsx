@@ -13,7 +13,7 @@ import type { ColumnsType } from 'antd/es/table'
 import type { TableProps } from 'antd/lib'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import type { FC } from 'react'
+import type { CSSProperties, FC } from 'react'
 
 const { Text } = Typography
 
@@ -26,7 +26,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
   const go = useGo()
   const permission = useUserStore((state) => state.permission)
 
-  const columns: ColumnsType<QuotaTemplateListItemType> = [
+  const baseColumns: ColumnsType<QuotaTemplateListItemType> = [
     {
       key: 'name',
       dataIndex: 'name',
@@ -92,6 +92,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
         </>
       ),
       width: '10%',
+      align: 'left',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
@@ -118,6 +119,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       dataIndex: 'number_product',
       title: t('quota_templates.list.numberOfItems'),
       width: '5%',
+      align: 'right',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
@@ -127,6 +129,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       dataIndex: 'total_price',
       title: t('quota_templates.list.bassPrice'),
       width: '10%',
+      align: 'right',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
@@ -164,6 +167,7 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       dataIndex: 'operation',
       title: t('quota_templates.list.operation'),
       width: '12%',
+      align: 'center',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
@@ -232,6 +236,30 @@ const QuotaTemplateTable: FC<Props> = ({ tableProps }) => {
       ),
     },
   ]
+
+  const columns: ColumnsType<QuotaTemplateListItemType> = baseColumns.map(
+    (column) => ({
+      ...column,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
+      onCell: (record: QuotaTemplateListItemType, rowIndex?: number) => {
+        const originalOnCell = column.onCell?.(record, rowIndex) || {}
+        const originalStyle = (originalOnCell.style || {}) as CSSProperties
+        return {
+          ...originalOnCell,
+          style: {
+            ...originalStyle,
+            padding: '8px 10px',
+          },
+        }
+      },
+      align:
+        column.key === 'number_product' || column.key === 'total_price'
+          ? 'right'
+          : column.key === 'operation'
+            ? 'center'
+            : 'left',
+    }),
+  )
 
   return (
     <>

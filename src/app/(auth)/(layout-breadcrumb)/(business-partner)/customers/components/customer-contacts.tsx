@@ -103,7 +103,7 @@ function CustomerContacts(
                         required
                         noStyle
                       >
-                        <Input style={{ width: '100%' }} />
+                        <Input style={{ width: '100%', textAlign: 'right' }} />
                       </Form.Item>
                     ),
                   },

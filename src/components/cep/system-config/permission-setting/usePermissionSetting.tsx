@@ -139,13 +139,13 @@ function usePermissionSetting() {
     }
   }
 
-  const columns: ColumnsType = [
+  const baseColumns: ColumnsType = [
     {
       title: t('permission_settings.table.settingItem'),
       dataIndex: 'settingItem',
       key: 'settingItem',
       width: 300,
-      align: 'center',
+      align: 'left',
     },
     {
       title: t('permission_settings.table.manager'),
@@ -183,12 +183,27 @@ function usePermissionSetting() {
       title: t('permission_settings.table.purpose'),
       dataIndex: 'purpose',
       key: 'purpose',
-      align: 'center',
+      align: 'left',
       render: (text) => (
         <div className="text-sm whitespace-pre-line text-gray-600">{text}</div>
       ),
     },
   ]
+  const centerColumnKeys = ['manager', 'employee']
+  const columns: ColumnsType = baseColumns.map((column) => {
+    const dataIndex =
+      'dataIndex' in column && column.dataIndex !== undefined
+        ? column.dataIndex
+        : ''
+    const key = String(column.key ?? dataIndex)
+
+    return {
+      ...column,
+      align: centerColumnKeys.includes(key) ? 'center' : 'left',
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
+      onCell: () => ({ style: { padding: '8px 12px' } }),
+    }
+  })
 
   const dataSource = [
     {

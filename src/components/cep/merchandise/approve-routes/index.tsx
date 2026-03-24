@@ -79,7 +79,7 @@ function Approve() {
   })
 
   const columns = useMemo(() => {
-    return [
+    const baseColumns = [
       {
         key: 'code',
         dataIndex: 'code',
@@ -241,6 +241,46 @@ function Approve() {
         },
       },
     ] as ColumnsType
+
+    const numberColumnKeys = ['total_steps']
+    const centerColumnKeys = ['action', 'status']
+    const dateColumnKeys = ['updated_at', 'created_at', 'deleted_at']
+
+    return baseColumns.map((column) => {
+      const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+      const originalOnCell = (column as any).onCell
+
+      return {
+        ...column,
+        align: centerColumnKeys.includes(key)
+          ? 'center'
+          : numberColumnKeys.includes(key)
+            ? 'right'
+            : dateColumnKeys.includes(key)
+              ? 'left'
+              : 'left',
+        onHeaderCell: (col: unknown) => {
+          const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+          return {
+            ...originalHeaderCell,
+            style: {
+              ...(originalHeaderCell as any).style,
+              textAlign: 'center',
+            },
+          }
+        },
+        onCell: (record: unknown, rowIndex: number | undefined) => {
+          const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+          return {
+            ...originalCell,
+            style: {
+              ...(originalCell as any).style,
+              padding: '8px 12px',
+            },
+          }
+        },
+      }
+    }) as ColumnsType
   }, [t])
 
   const go = useGo()

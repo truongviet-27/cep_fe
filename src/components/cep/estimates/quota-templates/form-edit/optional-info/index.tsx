@@ -551,6 +551,7 @@ const OptionalInfo: FC = () => {
                     style={{ width: '100%' }}
                   >
                     <InputNumber
+                      className="quota-template-number-input-right"
                       min={0}
                       controls={false}
                       style={{ width: '100%', minWidth: 0 }}
@@ -599,6 +600,7 @@ const OptionalInfo: FC = () => {
                     style={{ width: '100%' }}
                   >
                     <InputNumber
+                      className="quota-template-number-input-right"
                       min={0}
                       controls={false}
                       style={{ width: '100%', minWidth: 0 }}
@@ -824,6 +826,38 @@ const OptionalInfo: FC = () => {
             },
           ]
 
+          const numericColumnKeys = new Set([
+            'cost_price',
+            'selling_price',
+            'quantity',
+            'profit_margin',
+            'sellingAmount',
+            'tax_rate',
+          ])
+          const centerColumnKeys = new Set(['action'])
+          const normalizedColumns: ColumnsType = columns.map((column) => {
+            const originalOnHeaderCell = column.onHeaderCell
+            return {
+              ...column,
+              onHeaderCell: (col: any) => {
+                const originalHeaderCell =
+                  originalOnHeaderCell?.(col) ?? ({} as any)
+                return {
+                  ...originalHeaderCell,
+                  style: {
+                    ...(originalHeaderCell as any).style,
+                    textAlign: 'center',
+                  },
+                }
+              },
+              align: centerColumnKeys.has(String(column.key))
+                ? 'center'
+                : numericColumnKeys.has(String(column.key))
+                  ? 'right'
+                  : 'left',
+            }
+          })
+
           return (
             <Flex vertical>
               <Flex
@@ -844,7 +878,7 @@ const OptionalInfo: FC = () => {
                 </Button>
               </Flex>
               <CommonTable
-                columns={columns}
+                columns={normalizedColumns}
                 dataSource={dataSource}
                 rowClassName={(record) =>
                   record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
@@ -852,6 +886,11 @@ const OptionalInfo: FC = () => {
                 pagination={false}
                 scroll={undefined}
               />
+              <style jsx global>{`
+                .quota-template-number-input-right .ant-input-number-input {
+                  text-align: right !important;
+                }
+              `}</style>
             </Flex>
           )
         }}

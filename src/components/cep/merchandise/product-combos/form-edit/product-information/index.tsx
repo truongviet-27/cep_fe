@@ -9,6 +9,7 @@ import { PRIMARY } from '@utility/color'
 import type { FormInstance } from 'antd'
 import { Button, Card, Flex, Form, InputNumber, notification } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
+import type { AlignType } from 'rc-table/lib/interface'
 import { type MutableRefObject, useEffect } from 'react'
 
 import type { ProductComboFormType } from '../use-product-combo-form'
@@ -193,7 +194,12 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
                     ]}
                     normalize={(val) => val ?? 1}
                   >
-                    <InputNumber min={1} precision={0} controls={false} />
+                    <InputNumber
+                      min={1}
+                      precision={0}
+                      controls={false}
+                      className="product-combo-quantity-input-right"
+                    />
                   </Form.Item>
                 )
               },
@@ -237,12 +243,51 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               ),
             },
           ]
+          const numberColumnKeys = ['cost_price', 'selling_price']
+          const centerColumnKeys = ['action', 'quantity']
+          const mappedColumns = columns.map((column) => {
+            const key = String(
+              (column as any).key ?? (column as any).dataIndex ?? '',
+            )
+            const originalOnCell = (column as any).onCell
+
+            return {
+              ...column,
+              align: (centerColumnKeys.includes(key)
+                ? 'center'
+                : numberColumnKeys.includes(key)
+                  ? 'right'
+                  : 'left') as AlignType,
+              onHeaderCell: (col: unknown) => {
+                const originalHeaderCell =
+                  (column as any).onHeaderCell?.(col) ?? {}
+                return {
+                  ...originalHeaderCell,
+                  style: {
+                    ...(originalHeaderCell as any).style,
+                    textAlign: 'center',
+                  },
+                }
+              },
+              onCell: (record: unknown, rowIndex: number | undefined) => {
+                const originalCell =
+                  originalOnCell?.(record as any, rowIndex) ?? {}
+                return {
+                  ...originalCell,
+                  style: {
+                    ...(originalCell as any).style,
+                    padding: '8px 12px',
+                  },
+                }
+              },
+            }
+          })
 
           return (
             <>
               <Flex vertical>
                 <CommonTable
-                  columns={columns}
+                  columns={mappedColumns}
                   dataSource={fields}
                   rowClassName={(record) =>
                     record.isHeader ? 'bg-[#E6F7FF] font-bold' : ''
@@ -250,6 +295,11 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
                   pagination={false}
                   rowKey={'key'}
                 />
+                <style jsx global>{`
+                  .product-combo-quantity-input-right .ant-input-number-input {
+                    text-align: right !important;
+                  }
+                `}</style>
               </Flex>
               <div className="mt-4 text-right">
                 <Button
