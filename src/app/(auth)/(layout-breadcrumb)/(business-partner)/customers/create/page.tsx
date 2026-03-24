@@ -34,6 +34,8 @@ export default function CustomerCreatePage() {
     handleApplyDraft,
     isPendingDraft,
     isSavingDraft,
+    isApplyingDraft,
+    isDraftAppliedOnce,
     isRedirectingAfterDraftSave,
     dataCustomerDraft,
     isFetchingCustomerDraft,
@@ -75,8 +77,11 @@ export default function CustomerCreatePage() {
                   isLoading ||
                   isFetchingCustomerDraft ||
                   isSavingDraft ||
+                  isApplyingDraft ||
+                  isDraftAppliedOnce ||
                   isRedirectingAfterDraftSave
                 }
+                loading={isApplyingDraft && !isDraftAppliedOnce}
               >
                 {t('buttons.apply_draft')}
               </Button>
@@ -85,7 +90,9 @@ export default function CustomerCreatePage() {
             type="primary"
             onClick={handleSaveDraft}
             loading={isPendingDraft || isSavingDraft}
-            disabled={isSavingDraft || isRedirectingAfterDraftSave}
+            disabled={
+              isSavingDraft || isApplyingDraft || isRedirectingAfterDraftSave
+            }
             autoInsertSpace={false}
           >
             {t('buttons.draft')}

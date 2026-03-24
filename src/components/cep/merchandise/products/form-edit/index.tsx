@@ -39,6 +39,8 @@ const ProductFormContainer: React.FC = () => {
       isUpdateMode,
       isPendingDraft,
       isSavingDraft,
+      isApplyingDraft,
+      isDraftAppliedOnce,
       isRedirectingAfterDraftSave,
       dataProductDraft,
       isFetchingProductDraft,
@@ -190,8 +192,11 @@ const ProductFormContainer: React.FC = () => {
                     disabled={
                       isFetchingProductDraft ||
                       isSavingDraft ||
+                      isApplyingDraft ||
+                      isDraftAppliedOnce ||
                       isRedirectingAfterDraftSave
                     }
+                    loading={isApplyingDraft && !isDraftAppliedOnce}
                   >
                     {t('buttons.apply_draft')}
                   </Button>
@@ -201,7 +206,11 @@ const ProductFormContainer: React.FC = () => {
                   type="primary"
                   onClick={handleSaveDraft}
                   loading={isPendingDraft || isSavingDraft}
-                  disabled={isSavingDraft || isRedirectingAfterDraftSave}
+                  disabled={
+                    isSavingDraft ||
+                    isApplyingDraft ||
+                    isRedirectingAfterDraftSave
+                  }
                 >
                   {t('buttons.draft')}
                 </Button>

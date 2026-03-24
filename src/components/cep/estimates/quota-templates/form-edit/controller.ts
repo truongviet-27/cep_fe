@@ -35,7 +35,10 @@ export function useController() {
   const { open: openNotification } = useNotification()
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
   const saveDraftLockRef = useRef(false)
+  const applyDraftLockRef = useRef(false)
   const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isApplyingDraft, setIsApplyingDraft] = useState(false)
+  const [isDraftAppliedOnce, setIsDraftAppliedOnce] = useState(false)
   const [isRedirectingAfterDraftSave, setIsRedirectingAfterDraftSave] =
     useState(false)
 
@@ -251,26 +254,44 @@ export function useController() {
   }
 
   const handleApplyDraft = () => {
+    if (applyDraftLockRef.current || isDraftAppliedOnce) return
+    applyDraftLockRef.current = true
+    setIsApplyingDraft(true)
+    let appliedSuccessfully = false
+
     if (
       !dataQuotaTemplateDraft?.data ||
       !Array.isArray(dataQuotaTemplateDraft.data) ||
       dataQuotaTemplateDraft.data.length === 0
     ) {
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
       return
     }
 
-    const draft: any = dataQuotaTemplateDraft.data[0]
-    const draftPayload = draft.payload || draft
-    form.setFieldsValue({
-      ...draftPayload,
-      payment_due_date: draftPayload?.payment_due_date,
-      expiration_date: draftPayload?.expiration_date,
-    })
-    openNotification?.({
-      message: t('notifications.draftApplySuccess'),
-      description: t('notifications.draftApplySuccess'),
-      type: 'success',
-    })
+    try {
+      const draft: any = dataQuotaTemplateDraft.data[0]
+      const draftPayload = draft.payload || draft
+      form.setFieldsValue({
+        ...draftPayload,
+        payment_due_date: draftPayload?.payment_due_date,
+        expiration_date: draftPayload?.expiration_date,
+      })
+      openNotification?.({
+        message: t('notifications.draftApplySuccess'),
+        description: t('notifications.draftApplySuccess'),
+        type: 'success',
+      })
+      setIsDraftAppliedOnce(true)
+      appliedSuccessfully = true
+    } finally {
+      if (appliedSuccessfully) {
+        setIsApplyingDraft(false)
+        return
+      }
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
+    }
   }
 
   return {
@@ -281,6 +302,8 @@ export function useController() {
     handleApplyDraft,
     isPendingDraft,
     isSavingDraft,
+    isApplyingDraft,
+    isDraftAppliedOnce,
     isRedirectingAfterDraftSave,
     dataQuotaTemplateDraft,
     isFetchingQuotaTemplateDraft,

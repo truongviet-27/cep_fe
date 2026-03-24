@@ -26,6 +26,8 @@ const QuoteTemplateFormEditContainer: FC = () => {
     handleApplyDraft,
     isPendingDraft,
     isSavingDraft,
+    isApplyingDraft,
+    isDraftAppliedOnce,
     isRedirectingAfterDraftSave,
     dataQuotaTemplateDraft,
     isFetchingQuotaTemplateDraft,
@@ -127,8 +129,11 @@ const QuoteTemplateFormEditContainer: FC = () => {
                     disabled={
                       isFetchingQuotaTemplateDraft ||
                       isSavingDraft ||
+                      isApplyingDraft ||
+                      isDraftAppliedOnce ||
                       isRedirectingAfterDraftSave
                     }
+                    loading={isApplyingDraft && !isDraftAppliedOnce}
                   >
                     {t('buttons.apply_draft')}
                   </Button>
@@ -138,7 +143,11 @@ const QuoteTemplateFormEditContainer: FC = () => {
                   type="primary"
                   onClick={handleSaveDraft}
                   loading={isPendingDraft || isSavingDraft}
-                  disabled={isSavingDraft || isRedirectingAfterDraftSave}
+                  disabled={
+                    isSavingDraft ||
+                    isApplyingDraft ||
+                    isRedirectingAfterDraftSave
+                  }
                   autoInsertSpace={false}
                 >
                   {t('buttons.draft')}
