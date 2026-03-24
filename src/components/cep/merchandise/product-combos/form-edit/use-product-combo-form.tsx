@@ -15,6 +15,7 @@ import type {
   ProductDetail,
   StoreProductInput,
 } from '@sdk/hey-api'
+import { useRef, useState } from 'react'
 
 export type ProductComboFormType = {
   unit: string
@@ -56,6 +57,13 @@ function useProductComboForm() {
   const t = useTranslate()
   const { open: openNotification } = useNotification()
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+  const saveDraftLockRef = useRef(false)
+  const applyDraftLockRef = useRef(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isApplyingDraft, setIsApplyingDraft] = useState(false)
+  const [isDraftAppliedOnce, setIsDraftAppliedOnce] = useState(false)
+  const [isRedirectingAfterDraftSave, setIsRedirectingAfterDraftSave] =
+    useState(false)
 
   const {
     data: dataProductComboDraft,
@@ -123,6 +131,10 @@ function useProductComboForm() {
   }
 
   const handleSaveDraft = () => {
+    if (saveDraftLockRef.current || isRedirectingAfterDraftSave) return
+    saveDraftLockRef.current = true
+    setIsSavingDraft(true)
+
     const values: any = methods.form.getFieldsValue()
 
     const packagings = (values?.packagings || []).map(
@@ -138,60 +150,87 @@ function useProductComboForm() {
       packagings,
     }
 
-    mutateDraft(
-      {
-        url: `${apiUrl}/drafts`,
-        method: 'put',
-        values: {
-          type: 'product_combo',
-          payload,
+    try {
+      mutateDraft(
+        {
+          url: `${apiUrl}/drafts`,
+          method: 'put',
+          values: {
+            type: 'product_combo',
+            payload,
+          },
         },
-      },
-      {
-        onSuccess() {
-          openNotification?.({
-            message: t('notifications.draftSaveSuccess'),
-            description: t('notifications.draftSaveSuccess'),
-            type: 'success',
-          })
-          go({ to: '/products?tab=combo' })
+        {
+          onSuccess() {
+            setIsRedirectingAfterDraftSave(true)
+            openNotification?.({
+              message: t('notifications.draftSaveSuccess'),
+              description: t('notifications.draftSaveSuccess'),
+              type: 'success',
+            })
+            go({ to: '/products?tab=combo' })
+          },
+          onError(error: any) {
+            openNotification?.({
+              message:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              description:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              type: 'error',
+            })
+            saveDraftLockRef.current = false
+            setIsSavingDraft(false)
+          },
         },
-        onError(error: any) {
-          openNotification?.({
-            message:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            description:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            type: 'error',
-          })
-        },
-      },
-    )
+      )
+    } catch (error) {
+      saveDraftLockRef.current = false
+      setIsSavingDraft(false)
+      throw error
+    }
   }
 
   const handleApplyDraft = () => {
+    if (applyDraftLockRef.current || isDraftAppliedOnce) return
+    applyDraftLockRef.current = true
+    setIsApplyingDraft(true)
+    let appliedSuccessfully = false
+
     if (
       !dataProductComboDraft?.data ||
       !Array.isArray(dataProductComboDraft.data) ||
       dataProductComboDraft.data.length === 0
     ) {
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
       return
     }
 
-    const draft: any = dataProductComboDraft.data[0]
-    const draftPayload = draft.payload || draft
+    try {
+      const draft: any = dataProductComboDraft.data[0]
+      const draftPayload = draft.payload || draft
 
-    methods.form.setFieldsValue({
-      ...draftPayload,
-    })
+      methods.form.setFieldsValue({
+        ...draftPayload,
+      })
 
-    openNotification?.({
-      message: t('notifications.draftApplySuccess'),
-      description: t('notifications.draftApplySuccess'),
-      type: 'success',
-    })
+      openNotification?.({
+        message: t('notifications.draftApplySuccess'),
+        description: t('notifications.draftApplySuccess'),
+        type: 'success',
+      })
+      setIsDraftAppliedOnce(true)
+      appliedSuccessfully = true
+    } finally {
+      if (appliedSuccessfully) {
+        setIsApplyingDraft(false)
+        return
+      }
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
+    }
   }
 
   return [
@@ -200,6 +239,10 @@ function useProductComboForm() {
       isLoadingSubmit: methods.saveButtonProps.loading,
       isUpdateMode: !!params?.id,
       isPendingDraft,
+      isSavingDraft,
+      isApplyingDraft,
+      isDraftAppliedOnce,
+      isRedirectingAfterDraftSave,
       dataProductComboDraft,
       isFetchingProductComboDraft,
     },

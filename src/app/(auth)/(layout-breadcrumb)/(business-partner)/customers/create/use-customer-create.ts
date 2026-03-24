@@ -14,7 +14,7 @@ import type {
   DraftControllerIndexResponse,
 } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import type { CrudFilter } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
@@ -25,6 +25,13 @@ export const useCustomerCreate = () => {
   const go = useGo()
   const { open: openNotification } = useNotification()
   const { permission } = useUserStore.getState()
+  const saveDraftLockRef = useRef(false)
+  const applyDraftLockRef = useRef(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isApplyingDraft, setIsApplyingDraft] = useState(false)
+  const [isDraftAppliedOnce, setIsDraftAppliedOnce] = useState(false)
+  const [isRedirectingAfterDraftSave, setIsRedirectingAfterDraftSave] =
+    useState(false)
 
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
 
@@ -218,6 +225,10 @@ export const useCustomerCreate = () => {
   }, [departmentData, form])
 
   const handleSaveDraft = () => {
+    if (saveDraftLockRef.current || isRedirectingAfterDraftSave) return
+    saveDraftLockRef.current = true
+    setIsSavingDraft(true)
+
     const values: any = form.getFieldsValue()
 
     let company_type = values?.company_type
@@ -251,80 +262,107 @@ export const useCustomerCreate = () => {
       industry,
     }
 
-    mutateDraft(
-      {
-        url: `${apiUrl}/drafts`,
-        method: 'put',
-        values: {
-          type: 'customer',
-          payload,
+    try {
+      mutateDraft(
+        {
+          url: `${apiUrl}/drafts`,
+          method: 'put',
+          values: {
+            type: 'customer',
+            payload,
+          },
         },
-      },
-      {
-        onSuccess() {
-          openNotification?.({
-            message: t('notifications.draftSaveSuccess'),
-            description: t('notifications.draftSaveSuccess'),
-            type: 'success',
-          })
-          go({
-            to: `/customers`,
-          })
+        {
+          onSuccess() {
+            setIsRedirectingAfterDraftSave(true)
+            openNotification?.({
+              message: t('notifications.draftSaveSuccess'),
+              description: t('notifications.draftSaveSuccess'),
+              type: 'success',
+            })
+            go({
+              to: `/customers`,
+            })
+          },
+          onError(error: any) {
+            openNotification?.({
+              message:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              description:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              type: 'error',
+            })
+            saveDraftLockRef.current = false
+            setIsSavingDraft(false)
+          },
         },
-        onError(error: any) {
-          openNotification?.({
-            message:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            description:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            type: 'error',
-          })
-        },
-      },
-    )
+      )
+    } catch (error) {
+      saveDraftLockRef.current = false
+      setIsSavingDraft(false)
+      throw error
+    }
   }
 
   const handleApplyDraft = () => {
+    if (applyDraftLockRef.current || isDraftAppliedOnce) return
+    applyDraftLockRef.current = true
+    setIsApplyingDraft(true)
+    let appliedSuccessfully = false
+
     if (
       !dataCustomerDraft?.data ||
       (dataCustomerDraft.data as any[]).length === 0
     ) {
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
       return
     }
 
-    const draft: any = (dataCustomerDraft.data as any[])[0]
-    const draftPayload = draft.payload || draft
+    try {
+      const draft: any = (dataCustomerDraft.data as any[])[0]
+      const draftPayload = draft.payload || draft
 
-    const receivers = draftPayload.contacts?.length
-      ? draftPayload.contacts?.map((contact: any) => ({
-          department_name: contact.department_name,
-          contact_person_name: contact.contact_person_name,
-          email: contact.email,
-        }))
-      : [
-          {
-            department_name: null,
-            contact_person_name: null,
-            email: null,
-          },
-        ]
+      const receivers = draftPayload.contacts?.length
+        ? draftPayload.contacts?.map((contact: any) => ({
+            department_name: contact.department_name,
+            contact_person_name: contact.contact_person_name,
+            email: contact.email,
+          }))
+        : [
+            {
+              department_name: null,
+              contact_person_name: null,
+              email: null,
+            },
+          ]
 
-    const { contacts, ...restPayload } = draftPayload
+      const { contacts, ...restPayload } = draftPayload
 
-    form.setFieldsValue({
-      ...restPayload,
-      country: draftPayload?.country,
-      department_in_charge_id: draftPayload?.department_in_charge_id,
-      receivers,
-    })
+      form.setFieldsValue({
+        ...restPayload,
+        country: draftPayload?.country,
+        department_in_charge_id: draftPayload?.department_in_charge_id,
+        receivers,
+      })
 
-    openNotification?.({
-      description: t('notifications.draftApplySuccess'),
-      message: t('notifications.draftApplySuccess'),
-      type: 'success',
-    })
+      openNotification?.({
+        description: t('notifications.draftApplySuccess'),
+        message: t('notifications.draftApplySuccess'),
+        type: 'success',
+      })
+      setIsDraftAppliedOnce(true)
+      appliedSuccessfully = true
+    } finally {
+      if (appliedSuccessfully) {
+        setIsApplyingDraft(false)
+        return
+      }
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
+    }
   }
 
   const rule = validateCustomerRule(t)
@@ -347,6 +385,10 @@ export const useCustomerCreate = () => {
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,
+    isSavingDraft,
+    isApplyingDraft,
+    isDraftAppliedOnce,
+    isRedirectingAfterDraftSave,
     dataCustomerDraft,
     isFetchingCustomerDraft,
   }
