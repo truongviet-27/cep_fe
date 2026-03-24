@@ -107,8 +107,8 @@ function Right() {
             >
               <div className="relative my-4 min-h-[200px] rounded-lg border border-solid border-[#ccc] p-4">
                 {watchCompanyLogoImage && (
-                  <div className="mb-4 ml-[60%]">
-                    <div className="relative h-[80px] w-[142px]">
+                  <div className="mb-4 ml-[15%]">
+                    <div className="relative h-[96px] w-[176px]">
                       <Image
                         src={
                           watchCompanyLogoImage instanceof File
@@ -128,7 +128,7 @@ function Right() {
                 )}
 
                 <div className="relative flex items-start justify-between">
-                  <div className="ml-[60%] flex flex-1 flex-col space-y-1">
+                  <div className="ml-[15%] flex flex-1 flex-col space-y-1">
                     {watchCompanyName && (
                       <Text strong className="text-base">
                         {watchCompanyName}
