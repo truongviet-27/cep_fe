@@ -1,4 +1,4 @@
-import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
+import { CaretDownOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import { ProductUnitModal } from '@components/cep/merchandise/products/form-edit/modal/product-unit'
 import CoreInput from '@components/common/core-input'
@@ -6,7 +6,6 @@ import ProductCategoryEditDropdown from '@components/common/product-category-edi
 import UploadImage from '@components/common/upload-image/upload-image'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { PRIMARY } from '@utility/color'
 import {
   Button,
   Col,
@@ -19,7 +18,6 @@ import {
   Typography,
 } from 'antd'
 import { Empty, type FormInstance } from 'antd/lib'
-import { type MutableRefObject } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import type { ProductComboFormType } from '../use-product-combo-form'
@@ -27,16 +25,10 @@ import { useBasicInfoController } from './controller'
 
 interface BasicInfoProps {
   form: FormInstance<ProductComboFormType>
-  addRef: MutableRefObject<
-    ((defaultValue?: object, insertIndex?: number) => void) | undefined
-  >
-  isAllowedSaveButton: boolean
-
-  setIsAllowedSaveButton: (value: boolean) => void
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
-  const { form, addRef, isAllowedSaveButton, setIsAllowedSaveButton } = props
+  const { form } = props
   const t = useTranslate()
   const [
     {
@@ -53,9 +45,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       handleAutoNumber,
       handleChooseCategory,
       handleSearchProductUnit,
-      handleAppendPackaging,
+      // handleAppendPackaging,
     },
-  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton)
+  ] = useBasicInfoController(form)
 
   const { show, close, open } = modalFormProps
   const {
@@ -356,40 +348,8 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 },
               ]}
             >
-              {isAllowedSaveButton ? (
-                <>
-                  <span
-                    className="mr-2 rounded-sm p-1 text-white"
-                    style={{ background: PRIMARY }}
-                  >
-                    {Number(
-                      form.getFieldValue('selling_price'),
-                    ).toLocaleString()}
-                  </span>
-                  <EditFilled
-                    onClick={() => {
-                      setIsAllowedSaveButton(false)
-                    }}
-                  />
-                </>
-              ) : (
-                <InputNumber controls={false} min={0} className="!w-full" />
-              )}
+              <InputNumber controls={false} min={0} className="!w-full" />
             </Form.Item>
-          </Col>
-          <Col>
-            <div className="mt-1 ml-10">
-              {!isAllowedSaveButton && (
-                <Button
-                  size="small"
-                  color="blue"
-                  variant="outlined"
-                  onClick={handleAppendPackaging}
-                >
-                  {t('更新')}
-                </Button>
-              )}
-            </div>
           </Col>
         </Row>
         <Row>
