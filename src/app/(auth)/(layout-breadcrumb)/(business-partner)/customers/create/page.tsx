@@ -33,6 +33,8 @@ export default function CustomerCreatePage() {
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,
+    isSavingDraft,
+    isRedirectingAfterDraftSave,
     dataCustomerDraft,
     isFetchingCustomerDraft,
   } = hookProps
@@ -69,7 +71,12 @@ export default function CustomerCreatePage() {
                 color="primary"
                 variant="outlined"
                 onClick={handleApplyDraft}
-                disabled={isLoading || isFetchingCustomerDraft}
+                disabled={
+                  isLoading ||
+                  isFetchingCustomerDraft ||
+                  isSavingDraft ||
+                  isRedirectingAfterDraftSave
+                }
               >
                 {t('buttons.apply_draft')}
               </Button>
@@ -77,7 +84,8 @@ export default function CustomerCreatePage() {
           <Button
             type="primary"
             onClick={handleSaveDraft}
-            loading={isPendingDraft}
+            loading={isPendingDraft || isSavingDraft}
+            disabled={isSavingDraft || isRedirectingAfterDraftSave}
             autoInsertSpace={false}
           >
             {t('buttons.draft')}

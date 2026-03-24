@@ -39,6 +39,10 @@ const ProductComboFormContainer: React.FC = () => {
       isLoadingSubmit,
       isUpdateMode,
       isPendingDraft,
+      isSavingDraft,
+      isApplyingDraft,
+      isDraftAppliedOnce,
+      isRedirectingAfterDraftSave,
       dataProductComboDraft,
       isFetchingProductComboDraft,
     },
@@ -208,7 +212,14 @@ const ProductComboFormContainer: React.FC = () => {
                     color="primary"
                     variant="outlined"
                     onClick={handleApplyDraft}
-                    disabled={isFetchingProductComboDraft}
+                    disabled={
+                      isFetchingProductComboDraft ||
+                      isSavingDraft ||
+                      isApplyingDraft ||
+                      isDraftAppliedOnce ||
+                      isRedirectingAfterDraftSave
+                    }
+                    loading={isApplyingDraft && !isDraftAppliedOnce}
                   >
                     {t('buttons.apply_draft')}
                   </Button>
@@ -217,7 +228,12 @@ const ProductComboFormContainer: React.FC = () => {
                 <Button
                   type="primary"
                   onClick={handleSaveDraft}
-                  loading={isPendingDraft}
+                  loading={isPendingDraft || isSavingDraft}
+                  disabled={
+                    isSavingDraft ||
+                    isApplyingDraft ||
+                    isRedirectingAfterDraftSave
+                  }
                 >
                   {t('buttons.draft')}
                 </Button>

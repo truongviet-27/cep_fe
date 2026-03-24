@@ -21,7 +21,7 @@ import type {
 } from '@sdk/hey-api'
 import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function useController() {
   const t = useTranslate()
@@ -34,6 +34,10 @@ export function useController() {
   const permission = useUserStore((state) => state.permission)
   const { open: openNotification } = useNotification()
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+  const saveDraftLockRef = useRef(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isRedirectingAfterDraftSave, setIsRedirectingAfterDraftSave] =
+    useState(false)
 
   const {
     data: dataQuotaTemplateDraft,
@@ -193,6 +197,10 @@ export function useController() {
   }, [data, taxRoundingMethod])
 
   const handleSaveDraft = () => {
+    if (saveDraftLockRef.current || isRedirectingAfterDraftSave) return
+    saveDraftLockRef.current = true
+    setIsSavingDraft(true)
+
     const values: any = form.getFieldsValue()
 
     const payload = {
@@ -200,37 +208,46 @@ export function useController() {
       tags: values?.tags || [],
     }
 
-    mutateDraft(
-      {
-        url: `${apiUrl}/drafts`,
-        method: 'put',
-        values: {
-          type: 'quota_template',
-          payload,
+    try {
+      mutateDraft(
+        {
+          url: `${apiUrl}/drafts`,
+          method: 'put',
+          values: {
+            type: 'quota_template',
+            payload,
+          },
         },
-      },
-      {
-        onSuccess() {
-          openNotification?.({
-            message: t('notifications.draftSaveSuccess'),
-            description: t('notifications.draftSaveSuccess'),
-            type: 'success',
-          })
-          go({ to: '/quota-templates' })
+        {
+          onSuccess() {
+            setIsRedirectingAfterDraftSave(true)
+            openNotification?.({
+              message: t('notifications.draftSaveSuccess'),
+              description: t('notifications.draftSaveSuccess'),
+              type: 'success',
+            })
+            go({ to: '/quota-templates' })
+          },
+          onError(error: any) {
+            openNotification?.({
+              message:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              description:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              type: 'error',
+            })
+            saveDraftLockRef.current = false
+            setIsSavingDraft(false)
+          },
         },
-        onError(error: any) {
-          openNotification?.({
-            message:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            description:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            type: 'error',
-          })
-        },
-      },
-    )
+      )
+    } catch (error) {
+      saveDraftLockRef.current = false
+      setIsSavingDraft(false)
+      throw error
+    }
   }
 
   const handleApplyDraft = () => {
@@ -263,6 +280,8 @@ export function useController() {
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,
+    isSavingDraft,
+    isRedirectingAfterDraftSave,
     dataQuotaTemplateDraft,
     isFetchingQuotaTemplateDraft,
   }

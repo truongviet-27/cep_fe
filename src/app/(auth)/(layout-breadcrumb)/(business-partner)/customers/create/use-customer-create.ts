@@ -14,7 +14,7 @@ import type {
   DraftControllerIndexResponse,
 } from '@sdk/hey-api/types.gen'
 import { validateCustomerRule } from '@validate/customer'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import type { CrudFilter } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
@@ -25,6 +25,10 @@ export const useCustomerCreate = () => {
   const go = useGo()
   const { open: openNotification } = useNotification()
   const { permission } = useUserStore.getState()
+  const saveDraftLockRef = useRef(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isRedirectingAfterDraftSave, setIsRedirectingAfterDraftSave] =
+    useState(false)
 
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
 
@@ -218,6 +222,10 @@ export const useCustomerCreate = () => {
   }, [departmentData, form])
 
   const handleSaveDraft = () => {
+    if (saveDraftLockRef.current || isRedirectingAfterDraftSave) return
+    saveDraftLockRef.current = true
+    setIsSavingDraft(true)
+
     const values: any = form.getFieldsValue()
 
     let company_type = values?.company_type
@@ -251,39 +259,48 @@ export const useCustomerCreate = () => {
       industry,
     }
 
-    mutateDraft(
-      {
-        url: `${apiUrl}/drafts`,
-        method: 'put',
-        values: {
-          type: 'customer',
-          payload,
+    try {
+      mutateDraft(
+        {
+          url: `${apiUrl}/drafts`,
+          method: 'put',
+          values: {
+            type: 'customer',
+            payload,
+          },
         },
-      },
-      {
-        onSuccess() {
-          openNotification?.({
-            message: t('notifications.draftSaveSuccess'),
-            description: t('notifications.draftSaveSuccess'),
-            type: 'success',
-          })
-          go({
-            to: `/customers`,
-          })
+        {
+          onSuccess() {
+            setIsRedirectingAfterDraftSave(true)
+            openNotification?.({
+              message: t('notifications.draftSaveSuccess'),
+              description: t('notifications.draftSaveSuccess'),
+              type: 'success',
+            })
+            go({
+              to: `/customers`,
+            })
+          },
+          onError(error: any) {
+            openNotification?.({
+              message:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              description:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              type: 'error',
+            })
+            saveDraftLockRef.current = false
+            setIsSavingDraft(false)
+          },
         },
-        onError(error: any) {
-          openNotification?.({
-            message:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            description:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            type: 'error',
-          })
-        },
-      },
-    )
+      )
+    } catch (error) {
+      saveDraftLockRef.current = false
+      setIsSavingDraft(false)
+      throw error
+    }
   }
 
   const handleApplyDraft = () => {
@@ -347,6 +364,8 @@ export const useCustomerCreate = () => {
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,
+    isSavingDraft,
+    isRedirectingAfterDraftSave,
     dataCustomerDraft,
     isFetchingCustomerDraft,
   }
