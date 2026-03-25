@@ -15,6 +15,7 @@ import type {
   ProductDetail,
   StoreProductInput,
 } from '@sdk/hey-api'
+import { useEffect } from 'react'
 
 export type ProductFormType = {
   unit: string
@@ -91,14 +92,53 @@ function useProductForm() {
     },
   })
 
+  useEffect(() => {
+    if (!params?.id) {
+      methods.form.resetFields()
+      methods.form.setFieldsValue({
+        code: undefined,
+        packagings: [],
+      } as Partial<ProductFormType>)
+    }
+  }, [methods.form, params?.id])
+
+  const normalizePackagings = (values: ProductFormType) => {
+    const packagings = values?.packagings || []
+
+    if (!packagings.length) {
+      return [
+        {
+          code: values.code,
+          name: 'ピース',
+          quantity_in_package: 1,
+          unit_id: values.unit_id,
+          selling_price: values.selling_price,
+          is_standard_price: true,
+          is_active: true,
+          barcode: values.barcode,
+        },
+      ]
+    }
+
+    return packagings.map((packaging: ProductPackagingInputType, index) => ({
+      ...packaging,
+      code: index ? `${values.code}-${index}` : values.code,
+      name: index === 0 ? (packaging?.name ?? 'ピース') : packaging?.name,
+      quantity_in_package: index === 0 ? 1 : packaging?.quantity_in_package,
+      unit_id: values.unit_id,
+      barcode: index === 0 ? values.barcode : packaging?.barcode,
+      selling_price:
+        index === 0
+          ? values.selling_price
+          : packaging?.is_standard_price
+            ? Number(values.selling_price || 0) *
+              Number(packaging?.quantity_in_package || 1)
+            : packaging?.selling_price,
+    }))
+  }
+
   const handleOnSubmit = (values: ProductFormType) => {
-    const packagings = (values?.packagings || []).map(
-      (packaging: ProductPackagingInputType) => {
-        return {
-          ...packaging,
-        }
-      },
-    )
+    const packagings = normalizePackagings(values)
 
     const valuesConverted = {
       ...values,
