@@ -112,9 +112,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   size="small"
                   onClick={handleAutoNumber}
                   loading={loadingPd}
-                  disabled={
-                    codeIssueSetting?.data?.issue_method !== 'automatic'
-                  }
+                  disabled={codeIssueSetting?.issue_method !== 'automatic'}
                 >
                   {t('products.buttons.autoNumbering')}
                 </Button>
@@ -124,7 +122,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   variant="link"
                   size="small"
                   onClick={() => {
-                    show(codeIssueSetting?.data.id)
+                    show(codeIssueSetting?.id)
                   }}
                 >
                   {t('products.codeNumberingSettings')}
