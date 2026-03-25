@@ -32,10 +32,17 @@ interface BasicInfoProps {
   >
   isAllowedSaveButton: boolean
   setIsAllowedSaveButton: (value: boolean) => void
+  setIsInitializingCode: (value: boolean) => void
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
-  const { form, addRef, isAllowedSaveButton, setIsAllowedSaveButton } = props
+  const {
+    form,
+    addRef,
+    isAllowedSaveButton,
+    setIsAllowedSaveButton,
+    setIsInitializingCode,
+  } = props
   const t = useTranslate()
   const [
     {
@@ -48,13 +55,13 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       modalFormProductUnit,
       orderNumberProductUnits,
     },
-    {
-      handleAutoNumber,
-      handleChooseCategory,
-      handleSearchProductUnit,
-      handleAppendPackaging,
-    },
-  ] = useBasicInfoController(form, addRef, setIsAllowedSaveButton)
+    { handleAutoNumber, handleChooseCategory, handleSearchProductUnit },
+  ] = useBasicInfoController(
+    form,
+    addRef,
+    setIsAllowedSaveButton,
+    setIsInitializingCode,
+  )
 
   const { show, close, open } = modalFormProps
   const {
@@ -105,9 +112,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   size="small"
                   onClick={handleAutoNumber}
                   loading={loadingPd}
-                  disabled={
-                    codeIssueSetting?.data?.issue_method !== 'automatic'
-                  }
+                  disabled={codeIssueSetting?.issue_method !== 'automatic'}
                 >
                   {t('products.buttons.autoNumbering')}
                 </Button>
@@ -117,7 +122,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   variant="link"
                   size="small"
                   onClick={() => {
-                    show(codeIssueSetting?.data.id)
+                    show(codeIssueSetting?.id)
                   }}
                 >
                   {t('products.codeNumberingSettings')}
@@ -376,7 +381,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               )}
             </Form.Item>
           </Col>
-          <Col>
+          {/* <Col>
             <div className="mt-1 ml-10">
               {!isAllowedSaveButton && (
                 <Button
@@ -389,7 +394,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 </Button>
               )}
             </div>
-          </Col>
+          </Col> */}
         </Row>
         <Row>
           <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
