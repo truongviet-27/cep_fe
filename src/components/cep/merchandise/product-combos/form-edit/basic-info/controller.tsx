@@ -10,17 +10,12 @@ import type {
 import type { Category } from '@utility/renderCategories'
 import { Form, type FormInstance } from 'antd'
 import debounce from 'lodash/debounce'
-import type { MutableRefObject } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { ProductComboFormType } from '../use-product-combo-form'
 
 export const useBasicInfoController = (
   form: FormInstance<ProductComboFormType>,
-  addRef: MutableRefObject<
-    ((defaultValue?: object, insertIndex?: number) => void) | undefined
-  >,
-  setIsAllowedSaveButton: (value: boolean) => void,
 ) => {
   const apiUrl = useApiUrl()
   const [productUnitSearchText, setProductUnitSearchText] = useState<string>('')
@@ -28,6 +23,58 @@ export const useBasicInfoController = (
   const codeWatch = Form.useWatch('code', form)
   const unitWatch = Form.useWatch('unit', form)
   const barcodeWatch = Form.useWatch('barcode', form)
+  const unitIdWatch = Form.useWatch('unit_id', form)
+  const nameWatch = Form.useWatch('name', form)
+  const sellingPriceWatch = Form.useWatch('selling_price', form)
+
+  useEffect(() => {
+    const currentPackagings = (getFieldValue('packagings') ??
+      []) as ProductPackagingInput[]
+    if (currentPackagings.length === 0) {
+      if (codeWatch || nameWatch) {
+        setFieldsValue({
+          packagings: [
+            {
+              code: codeWatch,
+              name: nameWatch,
+              quantity_in_package: 1,
+              unit_id: unitIdWatch,
+              selling_price: sellingPriceWatch,
+              is_standard_price: true,
+              barcode: barcodeWatch,
+            },
+          ],
+        })
+      }
+      return
+    }
+    const updatedPackagings = currentPackagings.map((item, index) => {
+      if (index === 0) {
+        return {
+          ...item,
+          code: codeWatch,
+          name: nameWatch,
+          unit_id: unitIdWatch,
+          selling_price: sellingPriceWatch,
+          barcode: barcodeWatch,
+        }
+      } else {
+        return {
+          ...item,
+          selling_price:
+            (sellingPriceWatch ?? 0) * (item.quantity_in_package ?? 1),
+        }
+      }
+    })
+    setFieldsValue({ packagings: updatedPackagings })
+  }, [
+    codeWatch,
+    unitWatch,
+    unitIdWatch,
+    barcodeWatch,
+    nameWatch,
+    sellingPriceWatch,
+  ])
 
   const {
     data: codeIssueSetting,
@@ -129,62 +176,6 @@ export const useBasicInfoController = (
     [],
   )
 
-  const handleAppendPackaging = async () => {
-    try {
-      await form.validateFields([
-        'code',
-        'name',
-        'category',
-        'unit_id',
-        'cost_price',
-        'selling_price',
-      ])
-      setIsAllowedSaveButton(true)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_error) {
-      return
-    }
-
-    const packagings: ProductPackagingInput[] = (getFieldValue('packagings') ??
-      []) as ProductPackagingInput[]
-
-    if (!packagings.length) {
-      if (addRef.current) {
-        //eslint-disable-next-line
-        setFieldsValue({
-          packagings: [
-            {
-              code: getFieldValue('code'),
-              name: getFieldValue('name'),
-              quantity_in_package: 1,
-              unit_id: getFieldValue('unit_id'),
-              selling_price: getFieldValue('selling_price'),
-              is_standard_price: true,
-              barcode: getFieldValue('barcode'),
-            },
-          ],
-        })
-      }
-      return
-    }
-
-    setFieldsValue({
-      packagings: packagings.map((item: object, index: number) => {
-        return index === 0
-          ? {
-              ...item,
-              selling_price: getFieldValue('selling_price'),
-            }
-          : {
-              ...item,
-              selling_price:
-                getFieldValue('selling_price') *
-                getFieldValue(['packagings', index, 'quantity_in_package']),
-            }
-      }),
-    })
-  }
-
   const handleBasicInfoChange = () => {
     const packagings = form.getFieldValue(
       'packagings',
@@ -242,7 +233,6 @@ export const useBasicInfoController = (
       handleAutoNumber,
       handleChooseCategory,
       handleSearchProductUnit,
-      handleAppendPackaging,
     },
   ] as const
 }

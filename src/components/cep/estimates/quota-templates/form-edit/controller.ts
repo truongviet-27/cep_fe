@@ -21,7 +21,7 @@ import type {
 } from '@sdk/hey-api'
 import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function useController() {
   const t = useTranslate()
@@ -34,6 +34,13 @@ export function useController() {
   const permission = useUserStore((state) => state.permission)
   const { open: openNotification } = useNotification()
   const { mutate: mutateDraft, isPending: isPendingDraft } = useCustomMutation()
+  const saveDraftLockRef = useRef(false)
+  const applyDraftLockRef = useRef(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isApplyingDraft, setIsApplyingDraft] = useState(false)
+  const [isDraftAppliedOnce, setIsDraftAppliedOnce] = useState(false)
+  const [isRedirectingAfterDraftSave, setIsRedirectingAfterDraftSave] =
+    useState(false)
 
   const {
     data: dataQuotaTemplateDraft,
@@ -193,6 +200,10 @@ export function useController() {
   }, [data, taxRoundingMethod])
 
   const handleSaveDraft = () => {
+    if (saveDraftLockRef.current || isRedirectingAfterDraftSave) return
+    saveDraftLockRef.current = true
+    setIsSavingDraft(true)
+
     const values: any = form.getFieldsValue()
 
     const payload = {
@@ -200,60 +211,87 @@ export function useController() {
       tags: values?.tags || [],
     }
 
-    mutateDraft(
-      {
-        url: `${apiUrl}/drafts`,
-        method: 'put',
-        values: {
-          type: 'quota_template',
-          payload,
+    try {
+      mutateDraft(
+        {
+          url: `${apiUrl}/drafts`,
+          method: 'put',
+          values: {
+            type: 'quota_template',
+            payload,
+          },
         },
-      },
-      {
-        onSuccess() {
-          openNotification?.({
-            message: t('notifications.draftSaveSuccess'),
-            description: t('notifications.draftSaveSuccess'),
-            type: 'success',
-          })
-          go({ to: '/quota-templates' })
+        {
+          onSuccess() {
+            setIsRedirectingAfterDraftSave(true)
+            openNotification?.({
+              message: t('notifications.draftSaveSuccess'),
+              description: t('notifications.draftSaveSuccess'),
+              type: 'success',
+            })
+            go({ to: '/quota-templates' })
+          },
+          onError(error: any) {
+            openNotification?.({
+              message:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              description:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              type: 'error',
+            })
+            saveDraftLockRef.current = false
+            setIsSavingDraft(false)
+          },
         },
-        onError(error: any) {
-          openNotification?.({
-            message:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            description:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            type: 'error',
-          })
-        },
-      },
-    )
+      )
+    } catch (error) {
+      saveDraftLockRef.current = false
+      setIsSavingDraft(false)
+      throw error
+    }
   }
 
   const handleApplyDraft = () => {
+    if (applyDraftLockRef.current || isDraftAppliedOnce) return
+    applyDraftLockRef.current = true
+    setIsApplyingDraft(true)
+    let appliedSuccessfully = false
+
     if (
       !dataQuotaTemplateDraft?.data ||
       !Array.isArray(dataQuotaTemplateDraft.data) ||
       dataQuotaTemplateDraft.data.length === 0
     ) {
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
       return
     }
 
-    const draft: any = dataQuotaTemplateDraft.data[0]
-    const draftPayload = draft.payload || draft
-    form.setFieldsValue({
-      ...draftPayload,
-      payment_due_date: draftPayload?.payment_due_date,
-      expiration_date: draftPayload?.expiration_date,
-    })
-    openNotification?.({
-      message: t('notifications.draftApplySuccess'),
-      description: t('notifications.draftApplySuccess'),
-      type: 'success',
-    })
+    try {
+      const draft: any = dataQuotaTemplateDraft.data[0]
+      const draftPayload = draft.payload || draft
+      form.setFieldsValue({
+        ...draftPayload,
+        payment_due_date: draftPayload?.payment_due_date,
+        expiration_date: draftPayload?.expiration_date,
+      })
+      openNotification?.({
+        message: t('notifications.draftApplySuccess'),
+        description: t('notifications.draftApplySuccess'),
+        type: 'success',
+      })
+      setIsDraftAppliedOnce(true)
+      appliedSuccessfully = true
+    } finally {
+      if (appliedSuccessfully) {
+        setIsApplyingDraft(false)
+        return
+      }
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
+    }
   }
 
   return {
@@ -263,6 +301,10 @@ export function useController() {
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,
+    isSavingDraft,
+    isApplyingDraft,
+    isDraftAppliedOnce,
+    isRedirectingAfterDraftSave,
     dataQuotaTemplateDraft,
     isFetchingQuotaTemplateDraft,
   }
