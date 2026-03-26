@@ -52,6 +52,8 @@ function Page() {
     },
     { title: boldText(t('employees.list.list'), PRIMARY) },
   ]
+  const headerCellStyle = { textAlign: 'center' as const }
+  const bodyCellStyle = { padding: '8px 12px' }
 
   const getRowClassName = (record: BaseRecord) => {
     return !record.email || !record.code ? 'bg-gray-200' : ''
@@ -188,7 +190,10 @@ function Page() {
         <Table.Column
           dataIndex="code"
           title={t('employees.fields.code')}
-          width="8%"
+          align="left"
+          width="12%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
           render={(value, record) => {
             const isDisabled = record.status === 'inactive'
             return (
@@ -212,6 +217,8 @@ function Page() {
           title={t('employees.fields.name')}
           align={'left'}
           width="15%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
           render={(value, record: BaseRecord) =>
             renderEmployeeName(value, record)
           }
@@ -220,13 +227,18 @@ function Page() {
           dataIndex={['department']}
           title={t('employees.fields.department')}
           align={'left'}
-          width="50%"
+          width="30%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
           render={(value) => renderFieldNotSet(value?.name)}
         />
         <Table.Column
           dataIndex={['email']}
           title={t('employees.fields.email')}
-          width="13%"
+          align="left"
+          width="15%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
           render={(value, record) => {
             const isDisabled = record.status === 'inactive'
             if (isDisabled) {
@@ -248,16 +260,20 @@ function Page() {
         <Table.Column
           dataIndex={['role']}
           title={t('employees.fields.role')}
-          width="7%"
+          width="10%"
           render={(value) => renderFieldNotSet(value?.display_name)}
           align={'left'}
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
         />
         <Table.Column
           title={t('table.actions')}
           dataIndex="actions"
-          width="7%"
+          align="center"
+          width="10%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
           onCell={() => ({
-            style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+            style: { ...bodyCellStyle, overflow: 'hidden', minWidth: 0 },
           })}
           render={(_, record: BaseRecord) => {
             const isDisabled = record.status === 'inactive'

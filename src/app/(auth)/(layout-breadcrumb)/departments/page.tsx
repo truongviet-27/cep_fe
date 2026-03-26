@@ -129,7 +129,7 @@ export default function Page() {
     handleUpdateOrdering(values)
   }
 
-  const columns: ColumnsType<RowVM> = [
+  const baseColumns: ColumnsType<RowVM> = [
     {
       dataIndex: 'code',
       title: (
@@ -157,7 +157,7 @@ export default function Page() {
         </div>
       ),
       align: 'left',
-      width: '18%',
+      width: '16%',
     },
     {
       dataIndex: 'number_of_employee',
@@ -214,7 +214,7 @@ export default function Page() {
     {
       title: <div style={{ textAlign: 'center' }}>{t('table.actions')}</div>,
       dataIndex: 'actions',
-      width: '10%',
+      width: '12%',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
@@ -272,6 +272,42 @@ export default function Page() {
       },
     },
   ]
+
+  const numberColumnKeys = ['number_of_employee']
+  const centerColumnKeys = ['actions']
+  const columns: ColumnsType<RowVM> = baseColumns.map((column) => {
+    const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+    const originalOnCell = (column as any).onCell
+
+    return {
+      ...column,
+      align: centerColumnKeys.includes(key)
+        ? 'center'
+        : numberColumnKeys.includes(key)
+          ? 'right'
+          : 'left',
+      onHeaderCell: (col: unknown) => {
+        const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+        return {
+          ...originalHeaderCell,
+          style: {
+            ...(originalHeaderCell as any).style,
+            textAlign: 'center',
+          },
+        }
+      },
+      onCell: (record: unknown, rowIndex: number | undefined) => {
+        const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+        return {
+          ...originalCell,
+          style: {
+            ...(originalCell as any).style,
+            padding: '8px 12px',
+          },
+        }
+      },
+    }
+  })
 
   const breadcrumbItems = [
     {

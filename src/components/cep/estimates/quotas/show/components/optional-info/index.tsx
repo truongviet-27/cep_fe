@@ -38,7 +38,7 @@ function OptionalInfo({ data }: { data: any }) {
       }
       return { ...item }
     })
-  const columns: ColumnsType = [
+  const baseColumns: ColumnsType = [
     {
       title: t('quotas.action.optional_info.title'),
       dataIndex: 'code',
@@ -58,6 +58,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.show.table.product_service_name'),
       dataIndex: 'name',
       key: 'name',
+      align: 'left',
       render: (_, record) => {
         if (record.isHeader) return { props: { colSpan: 0 } }
 
@@ -108,6 +109,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.action.optional_info.table.unit'),
       dataIndex: 'unit',
       key: 'unit',
+      align: 'left',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -119,6 +121,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.action.optional_info.table.package'),
       dataIndex: 'package',
       key: 'package',
+      align: 'left',
       width: 200,
       render: (_, record) => {
         if (record.isHeader) {
@@ -131,6 +134,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.action.optional_info.table.cost_price'),
       dataIndex: 'cost_price',
       key: 'cost_price',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -145,6 +149,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.action.optional_info.table.selling_price'),
       dataIndex: 'selling_price',
       key: 'selling_price',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -156,6 +161,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.action.optional_info.table.quantity'),
       dataIndex: 'quantity',
       key: 'quantity',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -167,6 +173,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.action.optional_info.table.profit_margin'),
       dataIndex: 'profit_margin',
       key: 'profit_margin',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -178,6 +185,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.show.table.tax_rate'),
       dataIndex: 'tax_rate',
       key: 'tax_rate',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -189,6 +197,7 @@ function OptionalInfo({ data }: { data: any }) {
       title: t('quotas.action.optional_info.table.selling_amount'),
       dataIndex: 'sellingAmount',
       key: 'sellingAmount',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -199,6 +208,12 @@ function OptionalInfo({ data }: { data: any }) {
       },
     },
   ]
+  const columns: ColumnsType = baseColumns.map((column) => ({
+    ...column,
+    onHeaderCell: () => ({
+      style: { textAlign: 'center' },
+    }),
+  }))
   return (
     <Card
       title={boldText(t('quotas.action.optional_info.title'), PRIMARY, 16)}

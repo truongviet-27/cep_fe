@@ -37,6 +37,8 @@ import Link from 'next/link'
 
 function Page() {
   const [editIds, setEditIds] = useState<number[]>([])
+  const headerCellStyle = { textAlign: 'center' as const }
+  const bodyCellStyle = { padding: '8px 12px' }
 
   const {
     tableProps,
@@ -257,6 +259,8 @@ function Page() {
             }
             align="left"
             width="12%"
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
             render={(product_code, record) => (
               <Link
                 href={`/products/show/${record.product_id}`}
@@ -278,23 +282,35 @@ function Page() {
             }
             align="left"
             width="10%"
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
           />
           <Table.Column
             dataIndex="packaging_name"
-            title={t('price-groups.fields.packaging_name')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.packaging_name')}
+              </div>
+            }
+            align="left"
             width="10%"
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
           />
           <Table.Column
             dataIndex="selling_price"
-            width="6%"
+            width="8%"
+            align="right"
             title={() => {
               return (
-                <>
+                <div style={{ textAlign: 'center' }}>
                   <div>{t('price-groups.fields.selling_price')}</div>
                   <div>({t('price-groups.fields.selling_price_unit')})</div>
-                </>
+                </div>
               )
             }}
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
             render={(value) => {
               return value !== null && value !== undefined
                 ? Number(value).toLocaleString()
@@ -304,7 +320,14 @@ function Page() {
 
           <Table.Column
             dataIndex="pricing_method"
-            title={t('price-groups.fields.pricing_method')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.pricing_method')}
+              </div>
+            }
+            align="left"
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
             render={(value, record, index) => {
               const currentVal =
                 value === 'percentage'
@@ -373,9 +396,11 @@ function Page() {
           />
           <Table.ColumnGroup
             title={
-              <Link href="/ranks" className="!h-4 !underline">
-                {t('price_groups.rank_prices_title')}
-              </Link>
+              <div style={{ textAlign: 'center' }}>
+                <Link href="/ranks" className="!h-4 !underline">
+                  {t('price_groups.rank_prices_title')}
+                </Link>
+              </div>
             }
           >
             {(ranks?.data ?? []).map((item, indexChild) => {
@@ -383,12 +408,15 @@ function Page() {
                 <Table.Column<PriceGroupItem>
                   key={indexChild}
                   dataIndex={'rank_prices'}
+                  align="right"
                   title={
-                    <>
+                    <div style={{ textAlign: 'center' }}>
                       <div>{boldText(`${item.code}`, PRIMARY)}</div>
                       <div>{boldText(`${item.rate}% (円)`, PRIMARY)}</div>
-                    </>
+                    </div>
                   }
+                  onHeaderCell={() => ({ style: headerCellStyle })}
+                  onCell={() => ({ style: bodyCellStyle })}
                   render={(value, record, index) => {
                     const rankPrices = getCurrentPrices(index)
 
@@ -438,9 +466,16 @@ function Page() {
           </Table.ColumnGroup>
 
           <Table.Column
-            title={t('employees.fields.actions')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('employees.fields.actions')}
+              </div>
+            }
             dataIndex="actions"
             fixed="right"
+            align="center"
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
             render={(_, record, index) => {
               const onClick = () => {
                 form.setFieldValue([index], {

@@ -175,7 +175,7 @@ function QuotaList() {
   }
 
   const columns: ColumnsType<any> = useMemo(() => {
-    return [
+    const baseColumns: ColumnsType<any> = [
       {
         title: (
           <div className="flex flex-col">
@@ -185,7 +185,7 @@ function QuotaList() {
         ),
         dataIndex: 'status',
         key: 'status',
-        width: '6%',
+        width: '7%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -238,7 +238,7 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
-        width: '11%',
+        width: '16%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -257,7 +257,9 @@ function QuotaList() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              textAlign: 'center',
+              textAlign: 'left',
+              padding: 0,
+              height: 'auto',
             }}
             className="underline"
             title={value}
@@ -280,7 +282,7 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
-        width: '16%',
+        width: '20%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -300,7 +302,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {record.title}
@@ -313,7 +315,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {record.customer_name}
@@ -329,7 +331,7 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        width: '10%',
+        width: '7%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -352,7 +354,7 @@ function QuotaList() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
             {record.transaction_type &&
@@ -390,12 +392,12 @@ function QuotaList() {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  textAlign: 'center',
+                  textAlign: 'left',
                 }}
               >
                 {record?.author?.name}
               </div>
-              <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
+              <div className="flex flex-col flex-wrap items-start justify-start gap-[2px]">
                 {record.approvers?.map((item: any, index: number) => {
                   const numSteps = item?.number_step ?? 1
                   const isApproved = item.status === 'approved'
@@ -409,7 +411,7 @@ function QuotaList() {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
-                        textAlign: 'center',
+                        textAlign: 'left',
                       }}
                       key={index}
                       className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
@@ -432,7 +434,7 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
-        width: '14%',
+        width: '8%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -456,7 +458,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {record.department_in_charge}
@@ -470,7 +472,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {Number(record?.total_price || 0).toLocaleString()}
@@ -489,7 +491,7 @@ function QuotaList() {
         key: 'createdAt',
         width: '8%',
         render: (_, record) => (
-          <div>
+          <div style={{ textAlign: 'left' }}>
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
             <div>
               {record.expiration_date &&
@@ -517,7 +519,7 @@ function QuotaList() {
             record.customer_cancelled_date
           ) {
             return (
-              <div>
+              <div style={{ textAlign: 'left' }}>
                 <div>
                   {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
                     '-'}
@@ -540,7 +542,7 @@ function QuotaList() {
         title: t('quotas.table.actions'),
         key: 'action',
         width: '14%',
-        align: 'left',
+        align: 'center',
         onCell: () => ({
           style: { padding: '4px 8px', overflow: 'hidden', minWidth: 0 },
         }),
@@ -551,7 +553,7 @@ function QuotaList() {
               minWidth: 0,
               overflow: 'hidden',
               display: 'flex',
-              justifyContent: 'flex-start',
+              justifyContent: 'left',
             }}
           >
             <Space wrap size={4}>
@@ -711,6 +713,37 @@ function QuotaList() {
         ),
       },
     ]
+    const numericColumnKeys = new Set<string>()
+    const centerColumnKeys = new Set(['action'])
+
+    return baseColumns.map((column) => ({
+      ...column,
+      onHeaderCell: (col: any) => {
+        const originalHeaderCell = column.onHeaderCell?.(col) || {}
+        return {
+          ...originalHeaderCell,
+          style: {
+            ...(originalHeaderCell as any).style,
+            textAlign: 'center',
+          },
+        }
+      },
+      onCell: (record: any, rowIndex: any) => {
+        const originalOnCell = column.onCell?.(record, rowIndex) || {}
+        return {
+          ...originalOnCell,
+          style: {
+            ...(originalOnCell as any).style,
+            padding: '8px 10px',
+          },
+        }
+      },
+      align: centerColumnKeys.has(String(column.key))
+        ? 'center'
+        : numericColumnKeys.has(String(column.key))
+          ? 'right'
+          : 'left',
+    }))
   }, [t])
 
   const [status, setStatus] = useState<string | null>(null)

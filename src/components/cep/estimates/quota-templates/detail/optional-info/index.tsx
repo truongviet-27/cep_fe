@@ -47,7 +47,7 @@ const OptionalInfo: FC<Props> = (props) => {
       return { ...item }
     })
 
-  const columns: ColumnsType = [
+  const baseColumns: ColumnsType = [
     {
       title: '商品コード',
       dataIndex: 'code',
@@ -210,6 +210,30 @@ const OptionalInfo: FC<Props> = (props) => {
       },
     },
   ]
+
+  const numericColumnKeys = new Set([
+    'cost_price',
+    'selling_price',
+    'quantity',
+    'profit_margin',
+    'tax_rate',
+    'sellingAmount',
+  ])
+
+  const columns: ColumnsType = baseColumns.map((column) => ({
+    ...column,
+    onHeaderCell: (col: any) => {
+      const originalHeaderCell = column.onHeaderCell?.(col) ?? ({} as any)
+      return {
+        ...originalHeaderCell,
+        style: {
+          ...(originalHeaderCell as any).style,
+          textAlign: 'center',
+        },
+      }
+    },
+    align: numericColumnKeys.has(String(column.key)) ? 'right' : 'left',
+  }))
 
   return (
     <>
