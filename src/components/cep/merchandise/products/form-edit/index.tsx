@@ -38,6 +38,10 @@ const ProductFormContainer: React.FC = () => {
       isLoadingSubmit,
       isUpdateMode,
       isPendingDraft,
+      isSavingDraft,
+      isApplyingDraft,
+      isDraftAppliedOnce,
+      isRedirectingAfterDraftSave,
       dataProductDraft,
       isFetchingProductDraft,
     },
@@ -48,6 +52,7 @@ const ProductFormContainer: React.FC = () => {
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
   const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
   const [showEditPackaging, setShowEditPackaging] = useState<boolean>(false)
+  const [isInitializingCode, setIsInitializingCode] = useState(!isUpdateMode)
 
   const currentPackagings = form.getFieldValue('packagings') || []
   const newPackaging = {
@@ -92,7 +97,7 @@ const ProductFormContainer: React.FC = () => {
         </Title>
       }
     >
-      <Spin spinning={methods.formLoading}>
+      <Spin spinning={methods.formLoading || isInitializingCode}>
         <Form<ProductFormType>
           {...formProps}
           form={form as unknown as FormInstance<ProductFormType>}
@@ -117,6 +122,7 @@ const ProductFormContainer: React.FC = () => {
                     addRef={addRef}
                     isAllowedSaveButton={isAllowedSaveButton}
                     setIsAllowedSaveButton={setIsAllowedSaveButton}
+                    setIsInitializingCode={setIsInitializingCode}
                   />
                 ),
               },
@@ -185,7 +191,14 @@ const ProductFormContainer: React.FC = () => {
                     color="primary"
                     variant="outlined"
                     onClick={handleApplyDraft}
-                    disabled={isFetchingProductDraft}
+                    disabled={
+                      isFetchingProductDraft ||
+                      isSavingDraft ||
+                      isApplyingDraft ||
+                      isDraftAppliedOnce ||
+                      isRedirectingAfterDraftSave
+                    }
+                    loading={isApplyingDraft && !isDraftAppliedOnce}
                   >
                     {t('buttons.apply_draft')}
                   </Button>
@@ -194,7 +207,12 @@ const ProductFormContainer: React.FC = () => {
                 <Button
                   type="primary"
                   onClick={handleSaveDraft}
-                  loading={isPendingDraft}
+                  loading={isPendingDraft || isSavingDraft}
+                  disabled={
+                    isSavingDraft ||
+                    isApplyingDraft ||
+                    isRedirectingAfterDraftSave
+                  }
                 >
                   {t('buttons.draft')}
                 </Button>
@@ -203,7 +221,6 @@ const ProductFormContainer: React.FC = () => {
                 type="primary"
                 htmlType="submit"
                 loading={isLoadingSubmit}
-                disabled={!isAllowedSaveButton}
                 autoInsertSpace={false}
               >
                 {isUpdateMode
@@ -212,7 +229,6 @@ const ProductFormContainer: React.FC = () => {
               </Button>
               <Button
                 disabled={
-                  !isAllowedSaveButton ||
                   showEditPackaging ||
                   (form.getFieldValue('packagings')?.length ?? 0) >= 2
                 }

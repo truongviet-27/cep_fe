@@ -49,7 +49,6 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
 
   return (
     <Card
-      title={boldText(t('quotas.action.detail_info.title'), PRIMARY, 16)}
       style={{
         border: 'none',
         marginTop: 20,
