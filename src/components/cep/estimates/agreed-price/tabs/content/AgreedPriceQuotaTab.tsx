@@ -209,8 +209,8 @@ const AgreedPriceQuotaTab = () => {
     return AgreedPriceStatus.Active
   }
 
-  const columns: ColumnsType<QuotaAgreedPrice> = useMemo(
-    () => [
+  const columns: ColumnsType<QuotaAgreedPrice> = useMemo(() => {
+    const baseColumns: ColumnsType<QuotaAgreedPrice> = [
       {
         title: (
           <div style={{ textAlign: 'center' }}>
@@ -220,7 +220,7 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'status',
         key: 'status',
         width: '7%',
-        align: 'center',
+        align: 'left',
         onCell: () => ({
           style: { padding: '2px 2px', minWidth: 0, overflow: 'hidden' },
         }),
@@ -260,7 +260,7 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'quota_code',
         key: 'quota_code',
         width: '8%',
-        align: 'center',
+        align: 'left',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -309,7 +309,7 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'category',
         key: 'category',
         width: '6%',
-        align: 'center',
+        align: 'left',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -336,7 +336,7 @@ const AgreedPriceQuotaTab = () => {
         ),
         key: 'customer_name',
         width: '12%',
-        align: 'center',
+        align: 'left',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -364,8 +364,8 @@ const AgreedPriceQuotaTab = () => {
           </div>
         ),
         key: 'created_by_name',
-        width: '10%',
-        align: 'center',
+        width: '13%',
+        align: 'left',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -394,7 +394,7 @@ const AgreedPriceQuotaTab = () => {
         ),
         dataIndex: 'number_products',
         key: 'number_products',
-        width: '6%',
+        width: '4%',
         align: 'center',
       },
       {
@@ -421,12 +421,12 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'total_price',
         key: 'total_price',
         align: 'center',
-        minWidth: 180,
+        width: '10%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            maxWidth: 180,
-            minWidth: 180,
+            maxWidth: 140,
+            minWidth: 140,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -437,7 +437,7 @@ const AgreedPriceQuotaTab = () => {
           const deptName = (record.creator as any)?.department_name
           const amountStr = formatNumberWithCommas(totalPrice)
           return (
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'left' }}>
               {deptName && (
                 <Typography.Text
                   ellipsis={{ tooltip: deptName }}
@@ -446,7 +446,7 @@ const AgreedPriceQuotaTab = () => {
                     color: '#666',
                     display: 'block',
                     width: '100%',
-                    textAlign: 'center',
+                    textAlign: 'left',
                   }}
                 >
                   {deptName}
@@ -458,7 +458,7 @@ const AgreedPriceQuotaTab = () => {
                   fontSize: 14,
                   display: 'block',
                   width: '100%',
-                  textAlign: 'center',
+                  textAlign: 'left',
                 }}
               >
                 {amountStr}
@@ -475,8 +475,8 @@ const AgreedPriceQuotaTab = () => {
           </div>
         ),
         key: 'estimateDateApplicationEnd',
-        width: '10%',
-        align: 'center',
+        width: '8%',
+        align: 'left',
         render: (_, record: any) => {
           let calculatedStatus = ''
           const validToDate = record.valid_to
@@ -488,7 +488,7 @@ const AgreedPriceQuotaTab = () => {
             t,
           )
           return (
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'left' }}>
               {!record?.is_unlimited ? (
                 <>
                   <div>
@@ -514,7 +514,7 @@ const AgreedPriceQuotaTab = () => {
         dataIndex: 'number_updating',
         key: 'number_updating',
         width: '5%',
-        align: 'center',
+        align: 'right',
       },
       {
         title: (
@@ -523,7 +523,7 @@ const AgreedPriceQuotaTab = () => {
           </div>
         ),
         key: 'operation',
-        width: '22%',
+        width: '10%',
         align: 'center',
         render: (_: unknown, record: QuotaAgreedPrice) => (
           <Space wrap size={4}>
@@ -572,9 +572,30 @@ const AgreedPriceQuotaTab = () => {
           </Space>
         ),
       },
-    ],
-    [t, go],
-  )
+    ]
+
+    const numericColumnKeys = new Set(['number_products', 'number_updating'])
+    const centerColumnKeys = new Set(['status', 'operation'])
+
+    return baseColumns.map((column) => ({
+      ...column,
+      onCell: (record: any, rowIndex: any) => {
+        const originalOnCell = column.onCell?.(record, rowIndex) || {}
+        return {
+          ...originalOnCell,
+          style: {
+            ...(originalOnCell as any).style,
+            padding: '8px 10px',
+          },
+        }
+      },
+      align: centerColumnKeys.has(String(column.key))
+        ? 'center'
+        : numericColumnKeys.has(String(column.key))
+          ? 'right'
+          : 'left',
+    }))
+  }, [t, go])
 
   const { data: count, refetch: refetchCount } = useCustom({
     method: 'get',

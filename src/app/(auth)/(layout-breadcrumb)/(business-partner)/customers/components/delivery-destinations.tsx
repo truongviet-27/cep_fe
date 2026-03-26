@@ -122,7 +122,10 @@ function DeliveryDestinations(
                         required
                         noStyle
                       >
-                        <Input style={{ width: '100%' }} disabled={idx === 0} />
+                        <Input
+                          style={{ width: '100%', textAlign: 'left' }}
+                          disabled={idx === 0}
+                        />
                       </Form.Item>
                     ),
                   },
@@ -140,7 +143,10 @@ function DeliveryDestinations(
                         rules={[rule]}
                         noStyle
                       >
-                        <Input style={{ width: '100%' }} disabled={idx === 0} />
+                        <Input
+                          style={{ width: '100%', textAlign: 'right' }}
+                          disabled={idx === 0}
+                        />
                       </Form.Item>
                     ),
                   },
@@ -159,7 +165,10 @@ function DeliveryDestinations(
                         noStyle
                         required
                       >
-                        <Input style={{ width: '100%' }} disabled={idx === 0} />
+                        <Input
+                          style={{ width: '100%', textAlign: 'left' }}
+                          disabled={idx === 0}
+                        />
                       </Form.Item>
                     ),
                   },
@@ -177,7 +186,10 @@ function DeliveryDestinations(
                         rules={[rule]}
                         noStyle
                       >
-                        <Input style={{ width: '100%' }} disabled={idx === 0} />
+                        <Input
+                          style={{ width: '100%', textAlign: 'right' }}
+                          disabled={idx === 0}
+                        />
                       </Form.Item>
                     ),
                   },

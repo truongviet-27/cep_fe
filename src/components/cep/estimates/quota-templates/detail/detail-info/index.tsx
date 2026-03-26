@@ -100,7 +100,7 @@ const DetailInfo: FC<Props> = (props) => {
     }, 0)
   }, [groupedTotals])
 
-  const columns: ColumnsType = [
+  const baseColumns: ColumnsType = [
     {
       title: '商品コード',
       dataIndex: 'code',
@@ -281,6 +281,30 @@ const DetailInfo: FC<Props> = (props) => {
     },
   ]
 
+  const numericColumnKeys = new Set([
+    'cost_price',
+    'selling_price',
+    'quantity',
+    'profit_margin',
+    'tax_rate',
+    'sellingAmount',
+  ])
+
+  const columns: ColumnsType = baseColumns.map((column) => ({
+    ...column,
+    onHeaderCell: (col: any) => {
+      const originalHeaderCell = column.onHeaderCell?.(col) ?? ({} as any)
+      return {
+        ...originalHeaderCell,
+        style: {
+          ...(originalHeaderCell as any).style,
+          textAlign: 'center',
+        },
+      }
+    },
+    align: numericColumnKeys.has(String(column.key)) ? 'right' : 'left',
+  }))
+
   return (
     <>
       <Title
@@ -307,10 +331,10 @@ const DetailInfo: FC<Props> = (props) => {
                   fontWeight: 700,
                 }}
               >
-                <Table.Summary.Cell index={0} colSpan={10} align="center">
+                <Table.Summary.Cell index={0} colSpan={10} align="left">
                   小計
                 </Table.Summary.Cell>
-                <Table.Summary.Cell index={1} align="center">
+                <Table.Summary.Cell index={1} align="right">
                   {(totalSubTotalAllTaxRates || 0).toLocaleString()}
                 </Table.Summary.Cell>
               </Table.Summary.Row>

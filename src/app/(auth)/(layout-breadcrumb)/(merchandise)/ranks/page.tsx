@@ -55,7 +55,7 @@ export default function Page() {
     ],
   })
 
-  const columns: ColumnsType<Rank> = [
+  const baseColumns: ColumnsType<Rank> = [
     {
       dataIndex: 'code',
       title: t('ranks.table.code'),
@@ -145,6 +145,43 @@ export default function Page() {
       ),
     },
   ]
+
+  const numberColumnKeys = ['rate', 'number_of_customers']
+  const centerColumnKeys = ['actions']
+  const columns: ColumnsType<Rank> = baseColumns.map((column) => {
+    const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+    const originalOnCell = (column as any).onCell
+
+    return {
+      ...column,
+      align: centerColumnKeys.includes(key)
+        ? 'center'
+        : numberColumnKeys.includes(key)
+          ? 'right'
+          : 'left',
+      onHeaderCell: (col: unknown) => {
+        const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+        return {
+          ...originalHeaderCell,
+          style: {
+            ...(originalHeaderCell as any).style,
+            textAlign: 'center',
+          },
+        }
+      },
+      onCell: (record: unknown, rowIndex: number | undefined) => {
+        const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+        const cellPadding = key === 'code' ? '6px 8px' : '8px 12px'
+        return {
+          ...originalCell,
+          style: {
+            ...(originalCell as any).style,
+            padding: cellPadding,
+          },
+        }
+      },
+    }
+  })
 
   const breadcrumbItems = [
     {

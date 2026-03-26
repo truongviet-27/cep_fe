@@ -50,8 +50,7 @@ function useProduct() {
   const columns = useMemo(() => {
     const isDefaultProduct = (record: ProductListItem) =>
       DEFAULT_PRODUCT_CODES.has(record.code?.trim() ?? '')
-
-    return [
+    const baseColumns = [
       {
         title: t('products.list.table.headers.image'),
         dataIndex: 'image',
@@ -116,7 +115,7 @@ function useProduct() {
         title: t('products.list.table.headers.productCode'),
         dataIndex: 'code',
         key: 'code',
-        width: '8%',
+        width: '11%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -149,7 +148,7 @@ function useProduct() {
         dataIndex: 'name',
         key: 'name',
         align: 'left',
-        width: '21%',
+        width: '15%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -343,6 +342,51 @@ function useProduct() {
         },
       },
     ] as ColumnsType
+
+    const numberColumnKeys = [
+      'packaging_count',
+      'cost_price',
+      'sale_price',
+      'barcode',
+    ]
+    const centerColumnKeys = ['image', 'action']
+    const dateColumnKeys = ['created_at', 'updated_at', 'deleted_at']
+
+    return baseColumns.map((column) => {
+      const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+      const originalOnCell = (column as any).onCell
+
+      return {
+        ...column,
+        align: centerColumnKeys.includes(key)
+          ? 'center'
+          : numberColumnKeys.includes(key)
+            ? 'right'
+            : dateColumnKeys.includes(key)
+              ? 'left'
+              : 'left',
+        onHeaderCell: (col: unknown) => {
+          const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+          return {
+            ...originalHeaderCell,
+            style: {
+              ...(originalHeaderCell as any).style,
+              textAlign: 'center',
+            },
+          }
+        },
+        onCell: (record: unknown, rowIndex: number | undefined) => {
+          const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+          return {
+            ...originalCell,
+            style: {
+              ...(originalCell as any).style,
+              padding: '8px 12px',
+            },
+          }
+        },
+      }
+    }) as ColumnsType
   }, [t])
 
   return [

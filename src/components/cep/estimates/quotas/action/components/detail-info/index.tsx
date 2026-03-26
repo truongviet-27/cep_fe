@@ -313,7 +313,7 @@ function DetailInfo({
 
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
-          const columns: ColumnsType = [
+          const baseColumns: ColumnsType = [
             {
               title: t('quotas.action.detail_info.table.product_code'),
               dataIndex: 'code',
@@ -833,6 +833,7 @@ function DetailInfo({
                     ]}
                   >
                     <InputNumber
+                      className="quota-number-input-right"
                       min={0}
                       precision={0}
                       controls={false}
@@ -882,6 +883,7 @@ function DetailInfo({
                     ]}
                   >
                     <InputNumber
+                      className="quota-number-input-right"
                       min={1}
                       precision={0}
                       controls={false}
@@ -1205,6 +1207,40 @@ function DetailInfo({
             },
           ]
 
+          const numericColumnKeys = new Set([
+            'cost_price',
+            'selling_price',
+            'quantity',
+            'profit_margin',
+            'sellingAmount',
+            'tax_rate',
+          ])
+          const centerColumnKeys = new Set(['action'])
+
+          const columns: ColumnsType = baseColumns.map((column) => {
+            const originalOnHeaderCell = column.onHeaderCell
+
+            return {
+              ...column,
+              onHeaderCell: (col: any) => {
+                const originalHeaderCell =
+                  originalOnHeaderCell?.(col) ?? ({} as any)
+                return {
+                  ...originalHeaderCell,
+                  style: {
+                    ...(originalHeaderCell as any).style,
+                    textAlign: 'center',
+                  },
+                }
+              },
+              align: centerColumnKeys.has(String(column.key))
+                ? 'center'
+                : numericColumnKeys.has(String(column.key))
+                  ? 'right'
+                  : 'left',
+            }
+          })
+
           return (
             <Flex vertical>
               <Flex
@@ -1252,7 +1288,7 @@ function DetailInfo({
                         fontWeight: 700,
                       }}
                     >
-                      <Table.Summary.Cell index={0} colSpan={3} align="center">
+                      <Table.Summary.Cell index={0} colSpan={3} align="left">
                         {t('quotas.action.detail_info.summary.subtotal')}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={1}></Table.Summary.Cell>
@@ -1260,7 +1296,7 @@ function DetailInfo({
                       <Table.Summary.Cell index={3}></Table.Summary.Cell>
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={6} align="center">
+                      <Table.Summary.Cell index={6} align="right">
                         {Number(total).toLocaleString() || 0}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
@@ -1411,6 +1447,11 @@ function DetailInfo({
           handleChangeProductPrincing={handleChangeProductPrincingMain}
         />
       </Modal>
+      <style jsx global>{`
+        .quota-number-input-right .ant-input-number-input {
+          text-align: right !important;
+        }
+      `}</style>
     </Card>
   )
 }
