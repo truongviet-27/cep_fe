@@ -90,6 +90,7 @@ export default function Page() {
                   onClick={addNew}
                   icon={null}
                   disabled={!isFullAccess}
+                  autoInsertSpace={false}
                 >
                   {t('buttons.create_new')}
                 </CreateButton>

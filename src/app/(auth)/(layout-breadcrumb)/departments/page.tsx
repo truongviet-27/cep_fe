@@ -158,6 +158,30 @@ export default function Page() {
       ),
       align: 'left',
       width: '16%',
+      render: (value: string) => {
+        const text = value || '---'
+        return (
+          <div
+            style={{
+              minWidth: 0,
+              width: '100%',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              title={text}
+              style={{
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {text}
+            </div>
+          </div>
+        )
+      },
     },
     {
       dataIndex: 'number_of_employee',

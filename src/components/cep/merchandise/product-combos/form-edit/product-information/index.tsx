@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Action, type ActionType } from '@components/common/action'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
@@ -233,12 +232,20 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               dataIndex: 'action',
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
-                <Action
-                  actionList={['remove']}
-                  onRemoveAction={() => {
+                <Button
+                  size="small"
+                  autoInsertSpace={false}
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#E74C3C',
+                    borderColor: '#E74C3C',
+                  }}
+                  onClick={() => {
                     remove(index)
                   }}
-                />
+                >
+                  {t('buttons.delete')}
+                </Button>
               ),
             },
           ]

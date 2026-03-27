@@ -493,6 +493,7 @@ function AgreedPriceQuotaDetail() {
                 queryBasic.data?.is_author && (
                   <Button
                     type="primary"
+                    autoInsertSpace={false}
                     onClick={() => {
                       go({
                         to: `/quotas/edit/${id}`,

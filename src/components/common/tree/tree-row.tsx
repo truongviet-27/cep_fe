@@ -134,6 +134,7 @@ const TreeRow: React.FC<TreeRowProps> = ({
               loading={saving}
               onClick={() => onSave(cat.id)}
               icon={null}
+              autoInsertSpace={false}
               disabled={!localName}
               style={{
                 color: '#FFFFFF',
