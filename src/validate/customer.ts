@@ -202,14 +202,14 @@ export const validateCustomerRule = (t: any) => {
               })
               return
             }
-            if (val.length > 255) {
+            if (val.length > 50) {
               ctx.addIssue({
                 code: z.ZodIssueCode.too_big,
                 origin: 'string',
-                maximum: 255,
+                maximum: 50,
                 type: 'string',
                 inclusive: true,
-                message: t('validation.customer.name.max', { max: 255 }),
+                message: t('validation.customer.name.max', { max: 50 }),
               })
               return
             }
