@@ -500,6 +500,27 @@ function ApproveAction() {
                                       item2.name,
                                       'is_deleted',
                                     ])
+                                    const selectedEmployeeIdsInAllSteps = (
+                                      getFieldValue(['steps']) || []
+                                    ).flatMap(
+                                      (
+                                        step: {
+                                          employees?: {
+                                            employee_id?: number | null
+                                          }[]
+                                        },
+                                        stepIndex: number,
+                                      ) =>
+                                        (step?.employees || []).flatMap(
+                                          (employee, employeeIndex) =>
+                                            stepIndex === index &&
+                                            employeeIndex === index2
+                                              ? []
+                                              : employee?.employee_id
+                                                ? [employee.employee_id]
+                                                : [],
+                                        ),
+                                    )
                                     return (
                                       <Space
                                         key={item2.key}
@@ -598,12 +619,9 @@ function ApproveAction() {
                                                   item2.name,
                                                   'department_id',
                                                 ]}
-                                                watchPath={[
-                                                  'steps',
-                                                  item.name,
-                                                  'employees',
-                                                ]}
-                                                currentIndex={index2}
+                                                excludeIds={
+                                                  selectedEmployeeIdsInAllSteps
+                                                }
                                                 resource="employees"
                                                 style={{ width: 200 }}
                                               />
