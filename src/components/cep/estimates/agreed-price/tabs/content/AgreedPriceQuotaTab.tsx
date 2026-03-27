@@ -990,6 +990,9 @@ const AgreedPriceQuotaTab = () => {
             rowKey="id"
             columns={columns}
             scroll={undefined}
+            rowClassName={(record: any) =>
+              !record.is_active ? 'bg-gray-300 pointer-events-none' : ''
+            }
           />
         )
       })()}
