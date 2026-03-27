@@ -1051,7 +1051,8 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.total_calculation'),
               dataIndex: 'is_add_total',
               key: 'is_add_total',
-              width: '4%',
+              width: '8%',
+              align: 'center',
               onHeaderCell: () => ({
                 style: {
                   whiteSpace: 'normal',
@@ -1065,26 +1066,28 @@ function DetailInfo({
                   return { props: { colSpan: 0 } }
                 }
                 return (
-                  <Form.Item
-                    name={[record.index, 'is_add_total']}
-                    valuePropName="checked"
-                    className="ant-form-item-hidden-margin"
-                  >
-                    <Checkbox
-                      style={{
-                        transform: 'scale(1.3)',
-                        marginBottom: 0,
-                      }}
-                      defaultChecked={form.getFieldValue([
-                        'main_product',
-                        record.index,
-                        'is_add_total',
-                      ])}
-                      onChange={() => {
-                        calculateSummary(form.getFieldValue('main_product'))
-                      }}
-                    />
-                  </Form.Item>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Form.Item
+                      name={[record.index, 'is_add_total']}
+                      valuePropName="checked"
+                      className="ant-form-item-hidden-margin"
+                    >
+                      <Checkbox
+                        style={{
+                          transform: 'scale(1.3)',
+                          marginBottom: 0,
+                        }}
+                        defaultChecked={form.getFieldValue([
+                          'main_product',
+                          record.index,
+                          'is_add_total',
+                        ])}
+                        onChange={() => {
+                          calculateSummary(form.getFieldValue('main_product'))
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
                 )
               },
             },
@@ -1215,7 +1218,7 @@ function DetailInfo({
             'sellingAmount',
             'tax_rate',
           ])
-          const centerColumnKeys = new Set(['action'])
+          const centerColumnKeys = new Set(['action', 'is_add_total'])
 
           const columns: ColumnsType = baseColumns.map((column) => {
             const originalOnHeaderCell = column.onHeaderCell

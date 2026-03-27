@@ -380,7 +380,7 @@ export default function useProductUnits() {
     }
   }
 
-  const columns: ColumnsType<RowVM> = [
+  const baseColumns: ColumnsType<RowVM> = [
     {
       title: '単位名',
       dataIndex: 'name',
@@ -504,6 +504,24 @@ export default function useProductUnits() {
       },
     },
   ]
+
+  const columns: ColumnsType<RowVM> = baseColumns.map((column) => ({
+    ...column,
+    onHeaderCell: (col: unknown) => {
+      const originalHeaderCell =
+        typeof (column as any).onHeaderCell === 'function'
+          ? ((column as any).onHeaderCell(col) ?? {})
+          : {}
+
+      return {
+        ...originalHeaderCell,
+        style: {
+          ...(originalHeaderCell as any).style,
+          textAlign: 'center',
+        },
+      }
+    },
+  }))
 
   const isDirty = useMemo(() => {
     return watchedRows.some((r) => r._isNew || r._isEditing)
