@@ -24,6 +24,7 @@ function Right() {
   const watchAddress = Form.useWatch('address', form)
   const watchPhone = Form.useWatch('phone_number', form)
   const watchCompanyName = Form.useWatch('company_name', form)
+  const watchPostalCode = Form.useWatch('postal_code', form)
 
   return (
     <Col xs={24} xl={12}>
@@ -134,6 +135,11 @@ function Right() {
                         <Text strong className="text-base">
                           {watchCompanyName}
                         </Text>
+                      ) : null}
+                    </div>
+                    <div className="min-h-[22px]">
+                      {watchPostalCode ? (
+                        <Text className="text-sm">{watchPostalCode}</Text>
                       ) : null}
                     </div>
                     <div className="min-h-[22px]">
