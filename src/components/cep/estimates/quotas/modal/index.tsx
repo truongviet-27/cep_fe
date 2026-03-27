@@ -180,7 +180,7 @@ function ModalAgreePrice({
             {t('buttons.cancel')}
           </Button>
 
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" autoInsertSpace={false}>
             {t('buttons.save')}
           </Button>
         </Space>

@@ -280,6 +280,7 @@ export default function CustomerShowPage() {
         <Space>
           <Button
             type="primary"
+            autoInsertSpace={false}
             disabled={
               params?.disable ||
               !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT) ||

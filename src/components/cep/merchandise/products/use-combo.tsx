@@ -106,19 +106,20 @@ function useCombo() {
         title: t('product_combos.list.table.headers.barcode'), // barcode
         dataIndex: 'barcode',
         key: 'barcode',
-        width: '10%',
+        width: '8%',
       },
       {
         title: t('product_combos.list.table.headers.subcategory'), // Category small
         dataIndex: 'category',
         key: 'category',
         align: 'left',
-        width: '13%',
+        width: '10%',
       },
       {
         title: t('product_combos.list.table.headers.unit'), // Unit
         dataIndex: 'unit',
         key: 'unit',
+        width: '8%',
       },
       {
         title: (
@@ -129,6 +130,7 @@ function useCombo() {
         dataIndex: 'cost_price',
         key: 'cost_price',
         align: 'center',
+        width: '8%',
         render: (item: number) => item?.toLocaleString(),
       },
       {
@@ -139,34 +141,58 @@ function useCombo() {
         ), // sale_price (JPY)
         dataIndex: 'sale_price',
         key: 'sale_price',
+        width: '8%',
         render: (item: number) => item.toLocaleString(),
       },
       {
         title: t('table.actions'),
         dataIndex: 'action',
         key: 'action',
-        width: 120,
+        width: 220,
         render(_, record) {
           return (
-            <Space>
+            <Space wrap size={4}>
               <ShowButton
-                hideText
                 size="small"
+                icon={null}
+                autoInsertSpace={false}
                 recordItemId={record.id}
                 resource={'product-combos'}
-              />
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
               <EditButton
-                hideText
                 size="small"
+                icon={null}
+                autoInsertSpace={false}
                 recordItemId={record.id}
                 resource={'product-combos'}
-              />
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                  borderColor: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
               <DeleteButton
-                hideText
                 size="small"
+                icon={null}
+                autoInsertSpace={false}
                 recordItemId={record.id}
                 resource={'product-combos'}
-              />
+                style={{
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
+                  borderColor: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </DeleteButton>
             </Space>
           )
         },

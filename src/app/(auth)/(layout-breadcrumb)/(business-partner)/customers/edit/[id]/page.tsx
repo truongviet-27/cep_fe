@@ -56,7 +56,12 @@ export default function CustomerEditPage() {
       isLoading={isLoading}
       saveButtonProps={saveButtonProps}
       rightFooterButtons={
-        <Button {...saveButtonProps} type="primary" htmlType={'submit'}>
+        <Button
+          {...saveButtonProps}
+          type="primary"
+          htmlType={'submit'}
+          autoInsertSpace={false}
+        >
           {t('buttons.save')}
         </Button>
       }
@@ -98,7 +103,7 @@ export default function CustomerEditPage() {
       >
         <CorporateNumberSearchModal
           key={corporateSearchKey}
-          modalProps={modalFormProps}
+          modalProps={modalFormCorporate}
           onSelect={(record) =>
             form.setFieldValue('corporate_number', record.corporateNumber)
           }

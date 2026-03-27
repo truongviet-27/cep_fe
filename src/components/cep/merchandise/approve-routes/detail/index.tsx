@@ -349,6 +349,7 @@ function ApproveDetail() {
               <EditButton
                 type="primary"
                 icon={false}
+                autoInsertSpace={false}
                 onClick={() => {
                   go({
                     to: `/approve-routes/edit/${params?.id}`,

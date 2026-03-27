@@ -115,7 +115,10 @@ export default function AuthHeader({
                 className={cn(isAdmin && 'cursor-pointer')}
                 onClick={isAdmin ? () => modalProps.show() : undefined}
               >
-                <div className="text-[22px] font-semibold text-[#74232A]">
+                <div
+                  className="max-w-[260px] truncate text-[22px] font-semibold whitespace-nowrap text-[#74232A]"
+                  title={tenantName ?? ''}
+                >
                   {tenantName ?? ''}
                 </div>
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}

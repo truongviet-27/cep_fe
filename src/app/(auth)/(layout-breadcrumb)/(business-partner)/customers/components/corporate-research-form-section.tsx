@@ -158,6 +158,7 @@ export const CorporateResearchFormSection = (
             size="small"
             type="primary"
             icon={null}
+            autoInsertSpace={false}
             onClick={() => {
               let type: 'credit' | 'anti-social' | 'certified' | 'contract' =
                 'credit'
@@ -303,6 +304,8 @@ export const CorporateResearchFormSection = (
           onCancel={close}
           okText={t('buttons.save')}
           cancelText={t('buttons.cancel')}
+          okButtonProps={{ autoInsertSpace: false }}
+          cancelButtonProps={{ autoInsertSpace: false }}
         >
           <Form
             labelCol={{ span: 4 }}

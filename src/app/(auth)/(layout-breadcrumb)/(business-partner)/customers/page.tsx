@@ -654,7 +654,13 @@ export default function CustomerListPage() {
                 icon={null}
                 recordItemId={record.id}
                 size={'small'}
+                autoInsertSpace={false}
                 disabled={!isFullAccess || isDefaultCustomer(record)}
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                  borderColor: '#1FDB51',
+                }}
               >
                 {t('buttons.edit')}
               </EditButton>
@@ -927,7 +933,11 @@ export default function CustomerListPage() {
 
       <Row justify="end" className="mb-4">
         <Space direction={'vertical'}>
-          <CreateButton icon={null} disabled={!isFullAccess}>
+          <CreateButton
+            icon={null}
+            disabled={!isFullAccess}
+            autoInsertSpace={false}
+          >
             {t('buttons.create_new')}
           </CreateButton>
           <Link
