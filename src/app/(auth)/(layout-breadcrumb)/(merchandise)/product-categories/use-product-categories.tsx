@@ -110,6 +110,7 @@ function useProductCategories() {
 
   const handleUpdateAll = (
     values: SavePayloadNode[],
+    savedTree?: CatNode[],
     onSuccess?: () => void,
   ) => {
     updateAll(
@@ -132,7 +133,7 @@ function useProductCategories() {
           onSuccess?.()
           // after successful save, update originalTreeRef
           setTimeout(() => {
-            originalTreeRef.current = tree
+            originalTreeRef.current = savedTree ?? tree
           }, 100)
         },
       },
@@ -230,7 +231,9 @@ function useProductCategories() {
     formFields
       .validateFields()
       .then(() => {
-        handleUpdateAll(toSaveTree(patched), () => {
+        // Keep latest typed names in UI while waiting refetch
+        setTree(patched)
+        handleUpdateAll(toSaveTree(patched), patched, () => {
           // after API successful, refetch data from server to delete tmp
           tableQueryResult?.refetch().then(() => {
             // new data has been loaded, tmp has been deleted
