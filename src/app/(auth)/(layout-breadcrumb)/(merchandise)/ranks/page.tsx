@@ -115,6 +115,10 @@ export default function Page() {
               editModalShow(record.id)
             }}
             autoInsertSpace={false}
+            style={{
+              color: '#2784FF',
+              borderColor: '#2784FF',
+            }}
           >
             <span>{t('buttons.show')}</span>
           </ShowButton>
@@ -129,6 +133,11 @@ export default function Page() {
             }}
             recordItemId={record.id}
             autoInsertSpace={false}
+            style={{
+              color: '#FFFFFF',
+              background: '#1FDB51',
+              borderColor: '#1FDB51',
+            }}
           >
             {t('buttons.edit')}
           </EditButton>
@@ -138,6 +147,11 @@ export default function Page() {
             size="small"
             recordItemId={record.id}
             autoInsertSpace={false}
+            style={{
+              color: '#FFFFFF',
+              background: '#E74C3C',
+              borderColor: '#E74C3C',
+            }}
           >
             {t('buttons.delete')}
           </DeleteButton>
@@ -248,7 +262,11 @@ export default function Page() {
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
-            <CreateButton onClick={modalCreate.show} icon={null}>
+            <CreateButton
+              onClick={modalCreate.show}
+              icon={null}
+              autoInsertSpace={false}
+            >
               {t('buttons.create_new')}
             </CreateButton>
           </Col>

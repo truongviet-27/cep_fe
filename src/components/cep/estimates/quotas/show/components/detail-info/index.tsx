@@ -58,6 +58,7 @@ function DetailInfo({
       title: t('quotas.show.table.product_code'),
       dataIndex: 'code',
       key: 'code',
+      width: '12%',
       align: 'left',
       render: (_, record) => {
         if (record.isHeader) {
@@ -73,6 +74,7 @@ function DetailInfo({
       title: t('quotas.show.table.product_service_name'),
       dataIndex: 'name',
       key: 'name',
+      width: '15%',
       align: 'left',
       render: (_, record) => {
         if (record.isHeader) return { props: { colSpan: 0 } }
@@ -124,6 +126,7 @@ function DetailInfo({
       title: t('quotas.show.table.unit'),
       dataIndex: 'unit',
       key: 'unit',
+      width: '6%',
       align: 'left',
       render: (_, record) => {
         if (record.isHeader) {
@@ -137,7 +140,7 @@ function DetailInfo({
       dataIndex: 'package',
       key: 'package',
       align: 'left',
-      width: 200,
+      width: '8%',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }

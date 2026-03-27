@@ -763,28 +763,31 @@ const DetailInfo: FC = () => {
               dataIndex: 'is_add_total',
               key: 'is_add_total',
               width: '6%',
+              align: 'center',
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
                 return (
-                  <Form.Item
-                    name={[record.index, 'is_add_total']}
-                    className="ant-form-item-hidden-margin"
-                    valuePropName="checked"
-                  >
-                    <Checkbox
-                      style={{
-                        transform: 'scale(1.3)',
-                        marginBottom: 0,
-                      }}
-                      defaultChecked={form.getFieldValue([
-                        'main_product',
-                        record.index,
-                        'is_add_total',
-                      ])}
-                    />
-                  </Form.Item>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Form.Item
+                      name={[record.index, 'is_add_total']}
+                      className="ant-form-item-hidden-margin"
+                      valuePropName="checked"
+                    >
+                      <Checkbox
+                        style={{
+                          transform: 'scale(1.3)',
+                          marginBottom: 0,
+                        }}
+                        defaultChecked={form.getFieldValue([
+                          'main_product',
+                          record.index,
+                          'is_add_total',
+                        ])}
+                      />
+                    </Form.Item>
+                  </div>
                 )
               },
             },
@@ -898,7 +901,7 @@ const DetailInfo: FC = () => {
             'sellingAmount',
             'tax_rate',
           ])
-          const centerColumnKeys = new Set(['action'])
+          const centerColumnKeys = new Set(['action', 'is_add_total'])
           const normalizedColumns: ColumnsType = columns.map((column) => {
             const originalOnHeaderCell = column.onHeaderCell
             return {
