@@ -382,7 +382,12 @@ function useTags() {
       title: 'タグ名',
       dataIndex: 'name',
       key: 'name',
-      align: 'left',
+      onHeaderCell: () => ({
+        style: { textAlign: 'center' as const },
+      }),
+      onCell: () => ({
+        style: { textAlign: 'left' as const },
+      }),
       render: (_val, record, index) => {
         const isEditing = (watchedRows[index] as TagRow | undefined)?._isEditing
         return isEditing ? (
@@ -409,7 +414,7 @@ function useTags() {
             )}
           />
         ) : (
-          <Typography.Text>
+          <Typography.Text style={{ textAlign: 'left', display: 'block' }}>
             {(watchedRows[index] as TagRow | undefined)?.name}
           </Typography.Text>
         )
