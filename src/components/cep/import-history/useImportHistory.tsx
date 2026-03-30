@@ -97,18 +97,24 @@ function useImportHistory() {
   }, [t])
 
   const columns = useMemo(() => {
+    const centerHeaderCell = () => ({
+      style: { textAlign: 'center' as const },
+    })
+
     return [
       {
         key: 'id',
         dataIndex: 'id',
         title: t('import_history.table.headers.taskCode'),
         width: '8%',
+        onHeaderCell: centerHeaderCell,
         onCell: () => ({
           style: {
-            padding: '2px 2px',
+            padding: '8px 12px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            textAlign: 'right',
           },
         }),
         render: (val: string) => (
@@ -117,6 +123,7 @@ function useImportHistory() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
+              textAlign: 'right',
             }}
           >
             {val ?? '-'}
@@ -129,7 +136,7 @@ function useImportHistory() {
         dataIndex: 'status',
         width: '8%',
         onCell: () => ({
-          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+          style: { padding: '8px 12px', overflow: 'hidden', minWidth: 0 },
         }),
         render(value: string) {
           const status = statusMap[value]
@@ -141,12 +148,14 @@ function useImportHistory() {
         dataIndex: 'common_name',
         title: t('import_history.table.headers.type'),
         width: '11%',
+        onHeaderCell: centerHeaderCell,
         onCell: () => ({
           style: {
-            padding: '2px 2px',
+            padding: '8px 12px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            textAlign: 'left',
           },
         }),
         render(value: string) {
@@ -157,6 +166,7 @@ function useImportHistory() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                textAlign: 'left',
               }}
             >
               {commonName?.text ?? value}
@@ -169,12 +179,14 @@ function useImportHistory() {
         dataIndex: 'created_by',
         title: t('import_history.table.headers.creator'),
         width: '27%',
+        onHeaderCell: centerHeaderCell,
         onCell: () => ({
           style: {
-            padding: '2px 2px',
+            padding: '8px 12px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            textAlign: 'left',
           },
         }),
         render: (val: string) => (
@@ -183,6 +195,7 @@ function useImportHistory() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
+              textAlign: 'left',
             }}
           >
             {val ?? '-'}
@@ -211,11 +224,17 @@ function useImportHistory() {
             </Text>
           </div>
         ),
+        onHeaderCell: centerHeaderCell,
         onCell: () => ({
-          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+          style: {
+            padding: '8px 12px',
+            overflow: 'hidden',
+            minWidth: 0,
+            textAlign: 'left',
+          },
         }),
         render: (_: any, record: any) => (
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
             <Text>
               {record?.start_time_import
                 ? dayjs(record?.start_time_import).format('YYYY/MM/DD HH:mm')
@@ -234,6 +253,7 @@ function useImportHistory() {
         dataIndex: 'result',
         title: t('import_history.table.headers.result'),
         width: '14%',
+        onHeaderCell: centerHeaderCell,
         children: [
           {
             title: (
@@ -244,9 +264,20 @@ function useImportHistory() {
             dataIndex: 'data_inserted',
             key: 'data_inserted',
             width: '7%',
+            onHeaderCell: centerHeaderCell,
             onCell: () => ({
-              style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+              style: {
+                padding: '8px 12px',
+                overflow: 'hidden',
+                minWidth: 0,
+                textAlign: 'right',
+              },
             }),
+            render: (val: number) => (
+              <Text style={{ textAlign: 'right', display: 'block' }}>
+                {val ?? 0}
+              </Text>
+            ),
           },
           {
             title: (
@@ -257,9 +288,20 @@ function useImportHistory() {
             dataIndex: 'data_failed',
             key: 'data_failed',
             width: '7%',
+            onHeaderCell: centerHeaderCell,
             onCell: () => ({
-              style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+              style: {
+                padding: '8px 12px',
+                overflow: 'hidden',
+                minWidth: 0,
+                textAlign: 'right',
+              },
             }),
+            render: (val: number) => (
+              <Text style={{ textAlign: 'right', display: 'block' }}>
+                {val ?? 0}
+              </Text>
+            ),
           },
         ],
       },
@@ -268,15 +310,23 @@ function useImportHistory() {
         dataIndex: 'dataCount',
         title: t('import_history.table.headers.dataCount'),
         width: '7%',
+        onHeaderCell: centerHeaderCell,
         onCell: () => ({
-          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+          style: {
+            padding: '8px 12px',
+            overflow: 'hidden',
+            minWidth: 0,
+            textAlign: 'right',
+          },
         }),
         render(_, record) {
+          const total =
+            (record?.data_inserted ?? 0) +
+            (record?.data_updated ?? 0) +
+            (record?.data_failed ?? 0)
           return (
-            <Text>
-              {record?.data_inserted +
-                record?.data_updated +
-                record?.data_failed}
+            <Text style={{ textAlign: 'right', display: 'block' }}>
+              {total}
             </Text>
           )
         },
@@ -287,7 +337,7 @@ function useImportHistory() {
         title: t('import_history.table.headers.errorResult'),
         width: '14%',
         onCell: () => ({
-          style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+          style: { padding: '8px 12px', overflow: 'hidden', minWidth: 0 },
         }),
         render(value, record) {
           if (record.status === 'PENDING' || record.status === 'PROCESSING') {

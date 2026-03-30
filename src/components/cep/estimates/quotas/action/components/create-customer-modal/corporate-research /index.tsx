@@ -7,13 +7,19 @@ import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import dayjs from 'dayjs'
-import { FORMAT_DATE } from '@utility/instances'
 
 const { Panel } = Collapse
 
 export default function CorporateResearch() {
   const t = useTranslate()
   const form = Form.useFormInstance()
+
+  const centerHeaderCell = () => ({
+    style: { textAlign: 'center' as const },
+  })
+  const leftCell = () => ({
+    style: { textAlign: 'left' as const },
+  })
 
   const columns = [
     {
@@ -23,6 +29,8 @@ export default function CorporateResearch() {
         </span>
       ),
       key: 'material_name',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'material_name']} noStyle>
           {record.material_name}
@@ -37,6 +45,8 @@ export default function CorporateResearch() {
       ),
       key: 'judgement',
       width: 150,
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'judgement']} noStyle initialValue="A">
           {record.judgement}
@@ -50,6 +60,8 @@ export default function CorporateResearch() {
         </span>
       ),
       key: 'files',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) => {
         return (
           <>
@@ -66,6 +78,8 @@ export default function CorporateResearch() {
       ),
       key: 'editor',
       width: 120,
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) =>
         record.editor?.name ?? record.author?.name,
     },
@@ -77,10 +91,12 @@ export default function CorporateResearch() {
       ),
       key: 'updated_at',
       width: 180,
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) =>
         (record?.updated_at || record?.created_at) &&
         dayjs(record?.updated_at ?? record?.created_at ?? '').format(
-          FORMAT_DATE,
+          'YYYY/MM/DD',
         ),
     },
   ]
