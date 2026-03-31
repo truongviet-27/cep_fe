@@ -91,7 +91,12 @@ const ProductDetailContainer: React.FC = () => {
                 >
                   {t('products.buttons.back')}
                 </Button>
-                <EditButton resource="products" type="primary" icon={null}>
+                <EditButton
+                  resource="products"
+                  type="primary"
+                  icon={null}
+                  autoInsertSpace={false}
+                >
                   {t('products.buttons.edit')}
                 </EditButton>
               </Space>

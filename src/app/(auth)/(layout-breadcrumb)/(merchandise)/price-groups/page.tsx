@@ -161,6 +161,7 @@ function Page() {
             type="primary"
             onClick={handleSaveAll}
             loading={loadingCreate}
+            autoInsertSpace={false}
           >
             {t('buttons.save_all')}
           </Button>

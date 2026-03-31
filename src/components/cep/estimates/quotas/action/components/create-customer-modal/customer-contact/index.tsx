@@ -202,6 +202,7 @@ export default function CustomerContact() {
                         <Button
                           size="small"
                           disabled={!canRemove}
+                          autoInsertSpace={false}
                           onClick={() => remove(field.name)}
                           style={
                             canRemove

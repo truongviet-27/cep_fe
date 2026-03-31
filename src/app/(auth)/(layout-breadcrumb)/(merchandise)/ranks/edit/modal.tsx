@@ -163,6 +163,7 @@ export const RankModalEdit: React.FC<Props> = ({
               setIsShow(true)
               close()
             }}
+            autoInsertSpace={false}
           >
             {t('buttons.cancel')}
           </Button>
@@ -172,11 +173,12 @@ export const RankModalEdit: React.FC<Props> = ({
                 setIsShow(false)
               }}
               type="primary"
+              autoInsertSpace={false}
             >
               {t('products.buttons.edit')}
             </Button>
           ) : (
-            <Button {...saveButtonProps} type="primary">
+            <Button {...saveButtonProps} type="primary" autoInsertSpace={false}>
               {t('products.buttons.save')}
             </Button>
           )}

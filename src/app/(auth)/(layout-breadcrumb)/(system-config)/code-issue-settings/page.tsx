@@ -194,6 +194,7 @@ export default function Page() {
             <Button
               size="small"
               icon={null}
+              autoInsertSpace={false}
               onClick={() => {
                 show(record.id)
               }}
