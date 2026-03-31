@@ -87,7 +87,12 @@ export default function EmployeeShow() {
       }
       rightFooterButtons={
         <Space size={2} className="flex justify-end">
-          <EditButton icon={null} recordItemId={id} type="primary" />
+          <EditButton
+            icon={null}
+            recordItemId={id}
+            type="primary"
+            autoInsertSpace={false}
+          />
         </Space>
       }
     >

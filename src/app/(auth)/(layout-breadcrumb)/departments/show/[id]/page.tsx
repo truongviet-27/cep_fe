@@ -104,7 +104,9 @@ export default function Page() {
           </div>
         </div>
       }
-      rightFooterButtons={<EditButton icon={null} type={'primary'} />}
+      rightFooterButtons={
+        <EditButton icon={null} type={'primary'} autoInsertSpace={false} />
+      }
     >
       <div className="flex flex-col space-y-6">
         <DetailItem label={t('departments.fields.code')}>

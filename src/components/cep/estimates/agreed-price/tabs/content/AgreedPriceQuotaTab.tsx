@@ -1194,11 +1194,17 @@ const AgreedPriceQuotaTab = () => {
               gap: 8,
             }}
           >
-            <Button onClick={() => setIsUpdateOpen(false)}>キャンセル</Button>
+            <Button
+              onClick={() => setIsUpdateOpen(false)}
+              autoInsertSpace={false}
+            >
+              キャンセル
+            </Button>
             <Button
               type="primary"
               loading={updating}
               onClick={handleUpdateSubmit}
+              autoInsertSpace={false}
             >
               更新
             </Button>
