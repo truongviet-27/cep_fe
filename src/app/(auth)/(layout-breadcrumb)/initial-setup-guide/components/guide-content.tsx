@@ -42,8 +42,9 @@ function getLeftColumnBgForManual(manual: Manual): string {
 function getManualLinkHref(manual: Manual): string | undefined {
   if (!manual.link) return undefined
   if (manual.app_type === 'control') {
-    const base = process.env.NEXT_PUBLIC_KEYCLOAK_APP_BASE_URL
-    if (!base) return manual.link
+    const base =
+      process.env.NEXT_PUBLIC_KEYCLOAK_APP_BASE_URL ||
+      'https://dev-control.eerp.jp/'
     const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base
     return `${normalizedBase}${manual.link}`
   }
