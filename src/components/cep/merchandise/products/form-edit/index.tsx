@@ -55,14 +55,26 @@ const ProductFormContainer: React.FC = () => {
   const [isInitializingCode, setIsInitializingCode] = useState(!isUpdateMode)
 
   const currentPackagings = form.getFieldValue('packagings') || []
+  const baseCode = form.getFieldValue('code')
+  const basePackaging = {
+    code: baseCode,
+    name: 'ピース',
+    quantity_in_package: 1,
+    unit_id: form.getFieldValue('unit_id'),
+    selling_price: form.getFieldValue('selling_price'),
+    is_standard_price: true,
+    is_active: true,
+    barcode: form.getFieldValue('barcode'),
+  }
   const newPackaging = {
-    code: form.getFieldValue('code') ? `${form.getFieldValue('code')}-1` : '1',
+    code: baseCode ? `${baseCode}-1` : '1',
     name: '',
     quantity_in_package: 1,
     unit_id: form.getFieldValue('unit_id'),
     selling_price: form.getFieldValue('selling_price'),
     is_standard_price: true,
     is_rate_based: true,
+    is_active: true,
   }
 
   return (
@@ -235,7 +247,10 @@ const ProductFormContainer: React.FC = () => {
                 onClick={() => {
                   setShowEditPackaging(true)
                   form.setFieldsValue({
-                    packagings: [...currentPackagings, newPackaging],
+                    packagings:
+                      currentPackagings.length === 0
+                        ? [basePackaging, newPackaging]
+                        : [...currentPackagings, newPackaging],
                   })
                 }}
                 color="primary"

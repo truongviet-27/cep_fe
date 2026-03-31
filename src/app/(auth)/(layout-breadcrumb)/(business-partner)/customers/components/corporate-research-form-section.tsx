@@ -77,6 +77,13 @@ export const CorporateResearchFormSection = (
     form.setFieldValue('company_research_information', defaultVal)
   }
 
+  const centerHeaderCell = () => ({
+    style: { textAlign: 'center' as const },
+  })
+  const leftCell = () => ({
+    style: { textAlign: 'left' as const },
+  })
+
   const columns = [
     {
       title: (
@@ -86,6 +93,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'material_name',
       width: '20%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'material_name']} noStyle>
           {record.material_name}
@@ -100,6 +109,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'judgement',
       width: '12%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'judgement']} noStyle initialValue="A">
           {record.judgement}
@@ -114,6 +125,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'files',
       width: '21%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) => {
         return (
           <>
@@ -130,6 +143,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'editor',
       width: '15%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) =>
         record.editor?.name ?? record.author?.name,
     },
@@ -141,16 +156,19 @@ export const CorporateResearchFormSection = (
       ),
       key: 'updated_at',
       width: '16%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) =>
         (record?.updated_at || record?.created_at) &&
         dayjs(record?.updated_at ?? record?.created_at ?? '').format(
-          FORMAT_DATE,
+          'YYYY/MM/DD',
         ),
     },
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
       key: 'actions',
       width: '16%',
+      onHeaderCell: centerHeaderCell,
       align: 'center' as const,
       render: (_: any, record: any, index: number) => (
         <Space wrap size={4}>

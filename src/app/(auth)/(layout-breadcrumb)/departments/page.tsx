@@ -222,7 +222,7 @@ export default function Page() {
           {t('departments.fields.created_at')}
         </div>
       ),
-      width: '7%',
+      width: '9%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
@@ -232,7 +232,7 @@ export default function Page() {
           {t('departments.fields.updated_at')}
         </div>
       ),
-      width: '7%',
+      width: '9%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
@@ -348,18 +348,6 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       i18nHeading={t('departments.list.list')}
-      footer={
-        <Col>
-          <Button
-            type="primary"
-            onClick={onSaveAll}
-            loading={savingAll}
-            disabled={!isDirty}
-          >
-            {t('buttons.save_all', { defaultValue: '並び順を保存' })}
-          </Button>
-        </Col>
-      }
     >
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
@@ -401,14 +389,25 @@ export default function Page() {
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
             <div className="flex flex-col items-end">
-              <CreateButton
-                icon={null}
-                type="primary"
-                autoInsertSpace={false}
-                disabled={!isEditPermission}
-              >
-                {t('buttons.create_new')}
-              </CreateButton>
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  type="primary"
+                  onClick={onSaveAll}
+                  loading={savingAll}
+                  disabled={!isDirty || !isEditPermission}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.save_all', { defaultValue: '並び順を保存' })}
+                </Button>
+                <CreateButton
+                  icon={null}
+                  type="primary"
+                  autoInsertSpace={false}
+                  disabled={!isEditPermission}
+                >
+                  {t('buttons.create_new')}
+                </CreateButton>
+              </div>
               <Button
                 type="link"
                 disabled={!isEditPermission}

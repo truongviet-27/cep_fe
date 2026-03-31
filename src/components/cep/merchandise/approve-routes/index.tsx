@@ -14,7 +14,6 @@ import type { BaseRecord, CrudFilters } from '@refinedev/core'
 import { useGo, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
 import {
   Breadcrumb,
   Button,
@@ -174,8 +173,17 @@ function Approve() {
         title: t('approve_routes.table.creator'),
         width: '16%',
         render(value) {
-          return value?.name
+          const name = value?.name ?? ''
+          return <span title={name}>{name}</span>
         },
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
       },
       {
         key: 'updated_at',
@@ -183,7 +191,7 @@ function Approve() {
         title: t('approve_routes.table.updatedAt'),
         width: '9%',
         render(value) {
-          return dayjs(value).format(FORMAT_DATE)
+          return value ? dayjs(value).format('YYYY/MM/DD') : ''
         },
       },
       {

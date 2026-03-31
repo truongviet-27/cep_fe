@@ -20,25 +20,87 @@ function Page() {
   const t = useTranslate()
 
   const renderFieldNotSet = (value?: any) => {
+    const text = value ? String(value) : t('common.not_set')
     return (
-      <Space>
-        <Text>{value ? value : t('common.not_set')}</Text>
-        {!value && <WarningOutlined style={{ color: '#AC3C00' }} />}
-      </Space>
+      <div
+        style={{
+          minWidth: 0,
+          width: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          title={text}
+          style={{
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Text
+            style={{
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              flex: '1 1 auto',
+            }}
+          >
+            {text}
+          </Text>
+          {!value && <WarningOutlined style={{ color: '#AC3C00' }} />}
+        </div>
+      </div>
     )
   }
 
   const renderEmployeeName = (value: any, record: BaseRecord) => {
+    const text = value ? String(value) : ''
     return (
-      <Space>
-        <Text>{value ? value : ''}</Text>
-        {record?.status === 'inactive' && (
-          <WarningOutlined
-            style={{ color: '#AC3C00' }}
-            title={t('employees.deleted')}
-          />
-        )}
-      </Space>
+      <div
+        style={{
+          minWidth: 0,
+          width: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          title={text}
+          style={{
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Text
+            style={{
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              flex: '1 1 auto',
+            }}
+          >
+            {text}
+          </Text>
+          {record?.status === 'inactive' && (
+            <WarningOutlined
+              style={{ color: '#AC3C00' }}
+              title={t('employees.deleted')}
+            />
+          )}
+        </div>
+      </div>
     )
   }
 
