@@ -325,6 +325,7 @@ function CustomerContactSelectionModal({
                 type="default"
                 onClick={() => handleSelect(record)}
                 style={{ color: '#1890ff', borderColor: '#1890ff' }}
+                autoInsertSpace={false}
               >
                 {t('buttons.select')}
               </Button>
