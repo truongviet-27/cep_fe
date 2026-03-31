@@ -531,22 +531,28 @@ const AgreedPriceQuotaTab = () => {
               size="small"
               recordItemId={(record as any).quota_id as number}
               resource="agreed-prices"
-              style={{
-                color: '#2784FF',
-                borderColor: '#2784FF',
-                backgroundColor: '#fff',
-              }}
+              style={
+                (record as any).is_active && {
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                  backgroundColor: '#fff',
+                }
+              }
+              disabled={!(record as any).is_active}
               icon={false}
               autoInsertSpace={false}
             />
             <Button
               size="small"
               onClick={() => openUpdate(record)}
-              style={{
-                color: '#fff',
-                backgroundColor: '#1FDB51',
-                borderColor: '#1FDB51',
-              }}
+              style={
+                (record as any).is_active && {
+                  color: '#fff',
+                  backgroundColor: '#1FDB51',
+                  borderColor: '#1FDB51',
+                }
+              }
+              disabled={!(record as any).is_active}
               autoInsertSpace={false}
             >
               {t('agreed_prices.action.update')}
@@ -558,14 +564,17 @@ const AgreedPriceQuotaTab = () => {
               meta={{ idsBody: true, method: 'delete' }}
               onSuccess={() => tableQuery?.refetch?.()}
               disabled={
-                !permission?.is_module_admin &&
-                permission?.user?.id !== record.creator?.id
+                (!permission?.is_module_admin &&
+                  permission?.user?.id !== record.creator?.id) ||
+                !(record as any).is_active
               }
-              style={{
-                color: '#fff',
-                backgroundColor: '#E74C3C',
-                borderColor: '#E74C3C',
-              }}
+              style={
+                (record as any).is_active && {
+                  color: '#fff',
+                  backgroundColor: '#E74C3C',
+                  borderColor: '#E74C3C',
+                }
+              }
               autoInsertSpace={false}
               icon={false}
             />
