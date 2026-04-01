@@ -18,8 +18,6 @@ interface ISearch {
   category_id: string
 }
 
-const DEFAULT_PRODUCT_CODES = new Set(['PD00'])
-
 function useProduct() {
   const t = useTranslate()
   const { hasFullAccessModule } = useUserStore.getState()
@@ -48,8 +46,6 @@ function useProduct() {
   })
 
   const columns = useMemo(() => {
-    const isDefaultProduct = (record: ProductListItem) =>
-      DEFAULT_PRODUCT_CODES.has(record.code?.trim() ?? '')
     const baseColumns = [
       {
         title: t('products.list.table.headers.image'),
@@ -289,7 +285,6 @@ function useProduct() {
           style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
         }),
         render(_: unknown, record: ProductListItem) {
-          const isDefault = isDefaultProduct(record)
           return (
             <Space wrap size={4}>
               <ShowButton
@@ -298,11 +293,9 @@ function useProduct() {
                 icon={null}
                 recordItemId={record.id}
                 resource="products"
-                disabled={isDefault}
                 style={{
-                  color: isDefault ? '#8C8C8C' : '#2784FF',
-                  background: isDefault ? '#F5F5F5' : undefined,
-                  borderColor: isDefault ? '#D9D9D9' : '#2784FF',
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
                 }}
               >
                 {t('buttons.show')}
@@ -313,11 +306,9 @@ function useProduct() {
                 icon={null}
                 recordItemId={record.id}
                 resource="products"
-                disabled={isDefault}
                 style={{
-                  color: isDefault ? '#8C8C8C' : '#FFFFFF',
-                  background: isDefault ? '#F5F5F5' : '#1FDB51',
-                  borderColor: isDefault ? '#D9D9D9' : '#1FDB51',
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
                 }}
               >
                 {t('buttons.edit')}
@@ -328,11 +319,9 @@ function useProduct() {
                 icon={null}
                 recordItemId={record.id}
                 resource="products"
-                disabled={isDefault}
                 style={{
-                  color: isDefault ? '#8C8C8C' : '#FFFFFF',
-                  background: isDefault ? '#F5F5F5' : '#E74C3C',
-                  borderColor: isDefault ? '#D9D9D9' : '#E74C3C',
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
                 }}
               >
                 {t('buttons.delete')}
