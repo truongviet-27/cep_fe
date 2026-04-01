@@ -78,8 +78,6 @@ interface ICustomer {
   suspension_date: string | null
 }
 
-const DEFAULT_CUSTOMER_CODES = new Set(['CT00', '自社'])
-
 export default function CustomerListPage() {
   const statusKeys = ['new', 'prospecting', 'contracted', 'lost', 'suspended']
   const [status, setStatus] = useState<string | null>(null)
@@ -250,9 +248,6 @@ export default function CustomerListPage() {
     return record.deleted_at ? '!bg-gray-300' : ''
   }
 
-  const isDefaultCustomer = (record: SimpleCustomer) =>
-    DEFAULT_CUSTOMER_CODES.has(record.customer_code?.trim() ?? '')
-
   const columns: TableColumnsType<SimpleCustomer> = useMemo(() => {
     const baseColumns: TableColumnsType<SimpleCustomer> = [
       {
@@ -336,11 +331,7 @@ export default function CustomerListPage() {
             <Select
               value={status}
               style={{ width: '100%', maxWidth: '100%' }}
-              disabled={
-                !isFullAccess ||
-                updatingId === record.id ||
-                isDefaultCustomer(record)
-              }
+              disabled={!isFullAccess || updatingId === record.id}
               loading={updatingId === record.id}
               onChange={async (value) => {
                 setUpdatingId(record.id ?? null)
@@ -655,7 +646,7 @@ export default function CustomerListPage() {
                 recordItemId={record.id}
                 size={'small'}
                 autoInsertSpace={false}
-                disabled={!isFullAccess || isDefaultCustomer(record)}
+                disabled={!isFullAccess}
                 style={{
                   color: '#FFFFFF',
                   background: '#1FDB51',
