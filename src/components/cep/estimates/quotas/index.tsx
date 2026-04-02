@@ -21,6 +21,7 @@ import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import useCurrency from '@hook/use-currency'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 import {
   CloneButton,
   DeleteButton,
@@ -107,6 +108,7 @@ function QuotaList() {
   ]
   const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
   const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
+  const [isExportingCsv, setIsExportingCsv] = useState(false)
 
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
@@ -1246,6 +1248,99 @@ function QuotaList() {
     },
   })
 
+  const handleExportCsv = async () => {
+    const values = (searchFormProps.form?.getFieldsValue?.() ?? {}) as {
+      code?: string
+      title?: string
+      customer_name?: { value?: string | number }
+      creator_name?: { value?: string | number }
+      tag_id?: { value?: string | number } | string | number
+      approver_name?: { value?: string | number }
+      department_in_charge?: { value?: string | number }
+      search_date_type?: string
+      date?: [string, string]
+      category_id?: string | number
+      transaction_type?: string
+      product_name?: string
+    }
+
+    setIsExportingCsv(true)
+    try {
+      notification.info({
+        message:
+          'システムエラーの発生を抑制するため、最新の1,000件のレコードのみダウンロードを実施いたします。',
+      })
+
+      const response = await axiosInstance.get(`${apiUrl}/quotas/export-csv`, {
+        params: {
+          status: status ?? undefined,
+          code: values.code || undefined,
+          title: values.title || undefined,
+          customer_id: values.customer_name?.value || undefined,
+          creator_id: values.creator_name?.value || undefined,
+          tag_id:
+            typeof values.tag_id === 'object' &&
+            values.tag_id != null &&
+            'value' in values.tag_id
+              ? values.tag_id.value
+              : values.tag_id || undefined,
+          approver_id: values.approver_name?.value || undefined,
+          department_in_charge_id:
+            values.department_in_charge?.value || undefined,
+          search_date_type: values.search_date_type || undefined,
+          start_date: values.date?.[0]
+            ? dayjs(values.date[0]).format('YYYY-MM-DD')
+            : undefined,
+          end_date: values.date?.[1]
+            ? dayjs(values.date[1]).format('YYYY-MM-DD')
+            : undefined,
+          category_id: values.category_id || undefined,
+          transaction_type: values.transaction_type?.trim() || undefined,
+          product_name: values.product_name || undefined,
+        },
+        responseType: 'blob',
+      })
+
+      const contentType = String(response.headers?.['content-type'] ?? '')
+      const isCsvResponse =
+        contentType.includes('text/csv') ||
+        contentType.includes('application/octet-stream')
+
+      let taskId: string | number | undefined
+      if (isCsvResponse) {
+        const blob = new Blob([response.data], {
+          type: 'text/csv; charset=UTF-8',
+        })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `quotas_export_${Date.now()}.csv`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+      } else {
+        const text = await response.data.text()
+        const payload = text ? JSON.parse(text) : undefined
+        taskId =
+          payload?.id ??
+          payload?.task_id ??
+          payload?.data?.id ??
+          payload?.data?.task_id
+      }
+
+      const params = new URLSearchParams()
+      params.set('pageSize', '10')
+      params.set('current', '1')
+      if (taskId) {
+        params.set('id', String(taskId))
+      }
+      router.replace(`/import-history?${params.toString()}`)
+    } finally {
+      setIsExportingCsv(false)
+    }
+  }
+
   return (
     <List
       title={
@@ -1600,7 +1695,15 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                <Button
+                  onClick={handleExportCsv}
+                  color="primary"
+                  variant="outlined"
+                  loading={isExportingCsv}
+                >
+                  全件CSV出力
+                </Button>
                 <Dropdown
                   menu={{
                     items: rightOptions,

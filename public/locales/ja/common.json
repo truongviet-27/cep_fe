@@ -360,7 +360,8 @@
       },
       "actions": {
         "createNewButton": "新規作成",
-        "csvBulkUploadLink": "CSV一括登録"
+        "csvBulkUploadLink": "CSV一括登録",
+        "csvExportButton": "CSV出力"
       },
       "table": {
         "headers": {
