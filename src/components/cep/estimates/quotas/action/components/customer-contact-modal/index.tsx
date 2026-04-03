@@ -11,7 +11,7 @@ import type { CustomerContact } from '@sdk/hey-api'
 
 import CommonTable from '@components/common/table'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 
@@ -286,7 +286,7 @@ function CustomerContactSelectionModal({
           if (record.isNew) {
             return ''
           }
-          return text ? dayjs(text).format(FORMAT_DATE) : ''
+          return text ? dayjs(text).format(FORMAT_DATE_CROSS) : ''
         },
       },
       {

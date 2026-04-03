@@ -32,7 +32,7 @@ import {
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { CSV_LINK, PRIMARY } from '@utility/color'
-import { FORMAT_DATE, FORMAT_DATE_CROSS } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   antiSocialCheckOptions,
   countryOptions,
@@ -180,14 +180,14 @@ export default function CustomerListPage() {
         field: 'date_start',
         operator: 'null',
         value: values.date_range?.[0]
-          ? dayjs(values.date_range[0]).format(FORMAT_DATE)
+          ? dayjs(values.date_range[0]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
       {
         field: 'date_end',
         operator: 'null',
         value: values.date_range?.[1]
-          ? dayjs(values.date_range[1]).format(FORMAT_DATE)
+          ? dayjs(values.date_range[1]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
     ],
@@ -235,14 +235,14 @@ export default function CustomerListPage() {
         field: 'date_start',
         operator: 'null',
         value: values.date_range?.[0]
-          ? dayjs(values.date_range[0]).format('YYYY-MM-DD')
+          ? dayjs(values.date_range[0]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
       {
         field: 'date_end',
         operator: 'null',
         value: values.date_range?.[1]
-          ? dayjs(values.date_range[1]).format('YYYY-MM-DD')
+          ? dayjs(values.date_range[1]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
     ])
@@ -814,10 +814,10 @@ export default function CustomerListPage() {
             anti_social_rank: values.anti_social_rank || undefined,
             search_date_type: values.search_date_type || undefined,
             date_start: dateRange[0]
-              ? dayjs(dateRange[0]).format(FORMAT_DATE)
+              ? dayjs(dateRange[0]).format(FORMAT_DATE_CROSS)
               : undefined,
             date_end: dateRange[1]
-              ? dayjs(dateRange[1]).format(FORMAT_DATE)
+              ? dayjs(dateRange[1]).format(FORMAT_DATE_CROSS)
               : undefined,
           },
           responseType: 'blob',

@@ -6,7 +6,7 @@ import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { Button, Collapse, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -179,7 +179,7 @@ export default function CustomerContact() {
                         'created_at',
                       ])
                       return createdAt
-                        ? dayjs(createdAt).format(FORMAT_DATE)
+                        ? dayjs(createdAt).format(FORMAT_DATE_CROSS)
                         : '---'
                     },
                   },

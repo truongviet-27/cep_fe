@@ -25,7 +25,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/instances'
 import dayjs from 'dayjs'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { useSession } from 'next-auth/react'
 
 const { Title } = Typography
@@ -310,7 +310,7 @@ export const CorporateResearchFormSection = (
                   files: currentType.fileList,
                   judgement: currentType.judgement,
                   material_name: currentType.name,
-                  updated_at: dayjs().format(FORMAT_DATE),
+                  updated_at: dayjs().format(FORMAT_DATE_CROSS),
                   editor: {
                     name: session.data?.user?.name,
                   },
@@ -387,7 +387,7 @@ export const CorporateResearchFormSection = (
                     'company_research_information',
                     currentType.index,
                   ])?.updated_at,
-                ).format(FORMAT_DATE)}
+                ).format(FORMAT_DATE_CROSS)}
             </Typography.Text>
           </Form>
         </Modal>

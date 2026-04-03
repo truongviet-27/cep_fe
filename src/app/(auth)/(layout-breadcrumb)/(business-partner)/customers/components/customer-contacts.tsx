@@ -4,7 +4,7 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(busines
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { Button, Collapse, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -181,7 +181,7 @@ function CustomerContacts(
                         'created_at',
                       ])
                       return createdAt
-                        ? dayjs(createdAt).format(FORMAT_DATE)
+                        ? dayjs(createdAt).format(FORMAT_DATE_CROSS)
                         : '---'
                     },
                   },
