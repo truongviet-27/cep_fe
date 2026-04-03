@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line simple-import-sort/imports */
-import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons'
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Modal, Space, Spin, message } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
@@ -11,7 +11,7 @@ import type { CustomerContact } from '@sdk/hey-api'
 
 import CommonTable from '@components/common/table'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 
@@ -286,7 +286,7 @@ function CustomerContactSelectionModal({
           if (record.isNew) {
             return ''
           }
-          return text ? dayjs(text).format(FORMAT_DATE) : ''
+          return text ? dayjs(text).format(FORMAT_DATE_CROSS) : ''
         },
       },
       {
@@ -326,16 +326,24 @@ function CustomerContactSelectionModal({
                 onClick={() => handleSelect(record)}
                 style={{ color: '#1890ff', borderColor: '#1890ff' }}
                 autoInsertSpace={false}
+                size="small"
               >
                 {t('buttons.select')}
               </Button>
               <Button
                 danger
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record.id)}
                 size="small"
                 disabled={!canDelete}
-              />
+                autoInsertSpace={false}
+                onClick={() => handleDelete(record.id)}
+                style={{
+                  color: '#fff',
+                  background: '#E74C3C',
+                  borderColor: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </Button>
             </Space>
           )
         },

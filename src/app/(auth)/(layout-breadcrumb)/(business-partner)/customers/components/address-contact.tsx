@@ -4,7 +4,7 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(busines
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import boldText from '@utility/bold-text'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   fieldDistinctionOptions,
   INDUSTRY_OTHER_VALUE,
@@ -161,14 +161,14 @@ function AddressContact(
           name="date_of_establishment"
           rules={[rule]}
           getValueProps={(value) => ({
-            value: value ? dayjs(value, FORMAT_DATE) : null,
+            value: value ? dayjs(value, FORMAT_DATE_CROSS) : null,
           })}
         >
           <DatePicker
-            placeholder={FORMAT_DATE}
-            // format={FORMAT_DATE}
+            placeholder={FORMAT_DATE_CROSS}
+            format={FORMAT_DATE_CROSS}
             onChange={(date) =>
-              date ? dayjs(date, FORMAT_DATE).toString() : null
+              date ? dayjs(date, FORMAT_DATE_CROSS).toString() : null
             }
           />
         </Form.Item>
