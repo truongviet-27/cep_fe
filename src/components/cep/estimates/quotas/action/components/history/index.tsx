@@ -5,7 +5,7 @@ import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY, WHITE } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { Button, Card, Collapse, Tag, Typography } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -30,7 +30,7 @@ function History({ data }: { data: any }) {
         dataIndex: 'date',
         key: 'date',
         render(value) {
-          return dayjs(value).format(FORMAT_DATE)
+          return dayjs(value).format(FORMAT_DATE_CROSS)
         },
       },
       {
@@ -72,7 +72,7 @@ function History({ data }: { data: any }) {
         dataIndex: 'created_at',
         key: 'created_at',
         render(value) {
-          return dayjs(value).format(FORMAT_DATE)
+          return dayjs(value).format(FORMAT_DATE_CROSS)
         },
       },
       {
@@ -80,7 +80,7 @@ function History({ data }: { data: any }) {
         dataIndex: 'sent_to_customer_date',
         key: 'sent_to_customer_date',
         render(value) {
-          return value ? dayjs(value).format(FORMAT_DATE) : ''
+          return value ? dayjs(value).format(FORMAT_DATE_CROSS) : ''
         },
       },
       {

@@ -1,7 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 'use client'
 
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
@@ -204,11 +204,18 @@ function DeliveryDestinations(
                     align: 'center',
                     render: (field, _, idx) => (
                       <Button
-                        danger
-                        icon={<DeleteOutlined />}
+                        size="small"
                         disabled={idx === 0}
+                        autoInsertSpace={false}
                         onClick={() => remove(field.name)}
-                      />
+                        style={{
+                          color: '#fff',
+                          background: '#E74C3C',
+                          borderColor: '#E74C3C',
+                        }}
+                      >
+                        {t('buttons.delete')}
+                      </Button>
                     ),
                   },
                 ]}
