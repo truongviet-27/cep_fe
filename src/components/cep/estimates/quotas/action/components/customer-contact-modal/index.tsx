@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line simple-import-sort/imports */
-import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons'
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Modal, Space, Spin, message } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
@@ -326,16 +326,24 @@ function CustomerContactSelectionModal({
                 onClick={() => handleSelect(record)}
                 style={{ color: '#1890ff', borderColor: '#1890ff' }}
                 autoInsertSpace={false}
+                size="small"
               >
                 {t('buttons.select')}
               </Button>
               <Button
                 danger
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record.id)}
                 size="small"
                 disabled={!canDelete}
-              />
+                autoInsertSpace={false}
+                onClick={() => handleDelete(record.id)}
+                style={{
+                  color: '#fff',
+                  background: '#E74C3C',
+                  borderColor: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </Button>
             </Space>
           )
         },

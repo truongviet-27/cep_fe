@@ -1,5 +1,5 @@
 'use client'
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
@@ -198,13 +198,18 @@ function CustomerContacts(
                       return (
                         <Button
                           danger
-                          icon={<DeleteOutlined />}
+                          size="small"
                           disabled={fields.length === 1}
-                          onClick={() => {
-                            // Remove from form - API will handle soft delete automatically
-                            remove(field.name)
+                          autoInsertSpace={false}
+                          onClick={() => remove(field.name)}
+                          style={{
+                            color: '#fff',
+                            background: '#E74C3C',
+                            borderColor: '#E74C3C',
                           }}
-                        />
+                        >
+                          {t('buttons.delete')}
+                        </Button>
                       )
                     },
                   },
