@@ -788,7 +788,9 @@
     "label": {
       "id": "タスクコード",
       "status": "ステータス",
-      "common_name": "種別",
+      "common_name": "CSV登録 / CSV出力",
+      "csv_import": "CSV登録",
+      "csv_export": "CSV出力",
       "created_by": "登録者",
       "date": "開始日時"
     },
@@ -828,6 +830,20 @@
         "CUSTOMERS": "取引先登録",
         "DEPARTMENTS": "部門登録",
         "OTHER": "その他"
+      },
+      "category_export": {
+        "QUOTAS_SENT_EXPORT": "見積一覧（送信済）出力",
+        "PRODUCTS_EXPORT": "商品一覧出力",
+        "CUSTOMERS_EXPORT": "取引先一覧出力",
+        "CUSTOMERS_NEW_EXPORT": "取引先一覧（新規）出力",
+        "CUSTOMERS_PROSPECTING_EXPORT": "取引先一覧（営業中）出力",
+        "CUSTOMERS_CONTRACTED_EXPORT": "取引先一覧（契約中）出力",
+        "CUSTOMERS_LOST_EXPORT": "取引先一覧（失注）出力",
+        "CUSTOMERS_SUSPENDED_EXPORT": "取引先一覧（停止）出力",
+        "ORDERS_WAITING_EXPORT": "受注一覧（受注待）出力",
+        "ORDERS_NEW_EXPORT": "受注一覧（新規受注）出力",
+        "ORDERS_SHIPPED_EXPORT": "受注一覧（出荷済）出力",
+        "REVENUES_EXPORT": "売上一覧（売上）出力"
       },
       "error": "処理が途中で失敗しました。"
     }

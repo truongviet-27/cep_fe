@@ -15,12 +15,26 @@ import {
   Row,
   Select,
 } from 'antd'
+import { useEffect } from 'react'
 
 const { RangePicker } = DatePicker
 
 function ImportHistory() {
   const [{ columns, tableProps, searchFormProps }, { t, onReset }] =
     useImportHistory()
+  const form = searchFormProps.form
+
+  useEffect(() => {
+    const importValue = form?.getFieldValue?.('import')
+    const exportValue = form?.getFieldValue?.('export')
+
+    if (importValue) {
+      form?.setFieldValue('common_name_import', importValue)
+    }
+    if (exportValue) {
+      form?.setFieldValue('common_name_export', exportValue)
+    }
+  }, [form])
 
   return (
     <PageContainer
@@ -37,7 +51,7 @@ function ImportHistory() {
     >
       <Form {...searchFormProps}>
         <Row gutter={[16, 0]}>
-          <Col xs={24} md={8}>
+          <Col xs={24} md={6}>
             <CoreInput
               name="id"
               label={
@@ -49,7 +63,7 @@ function ImportHistory() {
             />
           </Col>
 
-          <Col xs={24} md={8}>
+          <Col xs={24} md={6}>
             <Form.Item
               label={
                 <span className="font-bold">
@@ -77,12 +91,12 @@ function ImportHistory() {
             </Form.Item>
           </Col>
 
-          <Col xs={24} md={8}>
+          <Col xs={24} md={6}>
             <Form.Item
-              name="common_name"
+              name="common_name_import"
               label={
                 <span className="font-bold">
-                  {t('import_history.label.common_name')}
+                  {t('import_history.label.csv_import')}
                 </span>
               }
               layout="vertical"
@@ -106,6 +120,74 @@ function ImportHistory() {
                 </Select.Option>
                 <Select.Option value="OTHER">
                   {t('import_history.text.category.OTHER')}
+                </Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={6}>
+            <Form.Item
+              name="common_name_export"
+              label={
+                <span className="font-bold">
+                  {t('import_history.label.csv_export')}
+                </span>
+              }
+              layout="vertical"
+            >
+              <Select
+                showSearch
+                placeholder={t('import_history.placeholder.common_name')}
+                allowClear
+              >
+                <Select.Option value="QUOTAS_SENT_EXPORT">
+                  {t('import_history.text.category_export.QUOTAS_SENT_EXPORT')}
+                </Select.Option>
+                <Select.Option value="PRODUCTS_EXPORT">
+                  {t('import_history.text.category_export.PRODUCTS_EXPORT')}
+                </Select.Option>
+                <Select.Option value="CUSTOMERS_EXPORT">
+                  {t('import_history.text.category_export.CUSTOMERS_EXPORT')}
+                </Select.Option>
+                <Select.Option value="CUSTOMERS_NEW_EXPORT">
+                  {t(
+                    'import_history.text.category_export.CUSTOMERS_NEW_EXPORT',
+                  )}
+                </Select.Option>
+                <Select.Option value="CUSTOMERS_PROSPECTING_EXPORT">
+                  {t(
+                    'import_history.text.category_export.CUSTOMERS_PROSPECTING_EXPORT',
+                  )}
+                </Select.Option>
+                <Select.Option value="CUSTOMERS_CONTRACTED_EXPORT">
+                  {t(
+                    'import_history.text.category_export.CUSTOMERS_CONTRACTED_EXPORT',
+                  )}
+                </Select.Option>
+                <Select.Option value="CUSTOMERS_LOST_EXPORT">
+                  {t(
+                    'import_history.text.category_export.CUSTOMERS_LOST_EXPORT',
+                  )}
+                </Select.Option>
+                <Select.Option value="CUSTOMERS_SUSPENDED_EXPORT">
+                  {t(
+                    'import_history.text.category_export.CUSTOMERS_SUSPENDED_EXPORT',
+                  )}
+                </Select.Option>
+                <Select.Option value="ORDERS_WAITING_EXPORT">
+                  {t(
+                    'import_history.text.category_export.ORDERS_WAITING_EXPORT',
+                  )}
+                </Select.Option>
+                <Select.Option value="ORDERS_NEW_EXPORT">
+                  {t('import_history.text.category_export.ORDERS_NEW_EXPORT')}
+                </Select.Option>
+                <Select.Option value="ORDERS_SHIPPED_EXPORT">
+                  {t(
+                    'import_history.text.category_export.ORDERS_SHIPPED_EXPORT',
+                  )}
+                </Select.Option>
+                <Select.Option value="REVENUES_EXPORT">
+                  {t('import_history.text.category_export.REVENUES_EXPORT')}
                 </Select.Option>
               </Select>
             </Form.Item>
@@ -153,7 +235,7 @@ function ImportHistory() {
             </Form.Item>
           </Col>
 
-          <Col xs={12} md={4}>
+          <Col xs={24} md={8}>
             <div className="mt-7 mb-4 flex items-center gap-4">
               <Button type="primary" htmlType="submit" autoInsertSpace={false}>
                 {t('buttons.search')}

@@ -855,7 +855,6 @@ export default function CustomerListPage() {
       const params = new URLSearchParams()
       params.set('pageSize', '10')
       params.set('current', '1')
-      params.set('common_name', 'CUSTOMERS')
       if (taskId) {
         params.set('id', String(taskId))
       }
