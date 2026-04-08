@@ -103,7 +103,8 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               title: t('products.fields.packagingCode'),
               dataIndex: 'code',
               width: 10,
-              align: 'center',
+              align: 'left',
+              onHeaderCell: centerHeaderCell,
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
                 <div className="mt-1">
@@ -303,9 +304,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'unit_id',
               width: 10,
               className: '!content-start',
-              onHeaderCell: () => ({
-                style: { textAlign: 'left' as const },
-              }),
+              onHeaderCell: centerHeaderCell,
               onCell: () => ({
                 style: {
                   overflow: 'hidden',

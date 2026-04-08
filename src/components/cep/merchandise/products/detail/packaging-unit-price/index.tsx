@@ -9,42 +9,56 @@ interface PackagingUnitPriceProps {
 
 const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = ({ product }) => {
   const t = useTranslate()
-  const columns = [
+  const baseColumns = [
     {
       title: t('products.fields.packagingCode'),
       dataIndex: 'code',
+      align: 'left',
     },
     {
       title: t('products.fields.packagingName'),
       dataIndex: 'name',
+      align: 'left',
     },
     {
       title: t('products.fields.barcode'),
       dataIndex: 'barcode',
+      align: 'right',
     },
     {
       title: t('products.fields.quantity'),
       dataIndex: 'quantity_in_package',
+      align: 'right',
       render: (value: number) =>
         value !== null && value !== undefined ? value.toLocaleString() : '-',
     },
     {
       title: t('products.fields.unit'),
       dataIndex: 'unit',
+      align: 'left',
     },
     {
       title: t('products.fields.standardPrice'),
       dataIndex: 'standard_price',
+      align: 'right',
       render: (value: number) =>
         value !== null && value !== undefined ? value.toLocaleString() : '-',
     },
     {
       title: t('products.fields.sellingPrice'),
       dataIndex: 'selling_price',
+      align: 'right',
       render: (value: number) =>
         value !== null && value !== undefined ? value.toLocaleString() : '-',
     },
   ] as ColumnsType
+
+  const columns: ColumnsType = baseColumns.map((column) => ({
+    ...column,
+    onHeaderCell: () => ({
+      style: { textAlign: 'center' },
+    }),
+  }))
 
   const dataSource = product?.packagings || []
 

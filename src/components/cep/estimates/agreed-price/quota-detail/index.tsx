@@ -323,7 +323,7 @@ function AgreedPriceQuotaDetail() {
             }}
           >
             <Space>
-              {queryBasic?.data?.is_author && (
+              {queryBasic?.data?.is_author && !agreedPriceItem?.is_active && (
                 <DeleteButton
                   icon={null}
                   size={'small'}
