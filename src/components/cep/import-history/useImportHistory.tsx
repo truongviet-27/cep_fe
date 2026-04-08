@@ -20,9 +20,15 @@ function useImportHistory() {
       const filters = [] as CrudFilters
 
       filters.push({
-        field: 'common_name',
+        field: 'import',
         operator: 'eq',
-        value: data.common_name,
+        value: data.common_name_import,
+      })
+
+      filters.push({
+        field: 'export',
+        operator: 'eq',
+        value: data.common_name_export,
       })
 
       filters.push({
@@ -93,6 +99,48 @@ function useImportHistory() {
         text: t('import_history.text.category.DEPARTMENTS'),
       },
       OTHER: { text: t('import_history.text.category.OTHER') },
+      QUOTAS_SENT_EXPORT: {
+        text: t('import_history.text.category_export.QUOTAS_SENT_EXPORT'),
+      },
+      PRODUCTS_EXPORT: {
+        text: t('import_history.text.category_export.PRODUCTS_EXPORT'),
+      },
+      CUSTOMERS_EXPORT: {
+        text: t('import_history.text.category_export.CUSTOMERS_EXPORT'),
+      },
+      CUSTOMERS_NEW_EXPORT: {
+        text: t('import_history.text.category_export.CUSTOMERS_NEW_EXPORT'),
+      },
+      CUSTOMERS_PROSPECTING_EXPORT: {
+        text: t(
+          'import_history.text.category_export.CUSTOMERS_PROSPECTING_EXPORT',
+        ),
+      },
+      CUSTOMERS_CONTRACTED_EXPORT: {
+        text: t(
+          'import_history.text.category_export.CUSTOMERS_CONTRACTED_EXPORT',
+        ),
+      },
+      CUSTOMERS_LOST_EXPORT: {
+        text: t('import_history.text.category_export.CUSTOMERS_LOST_EXPORT'),
+      },
+      CUSTOMERS_SUSPENDED_EXPORT: {
+        text: t(
+          'import_history.text.category_export.CUSTOMERS_SUSPENDED_EXPORT',
+        ),
+      },
+      ORDERS_WAITING_EXPORT: {
+        text: t('import_history.text.category_export.ORDERS_WAITING_EXPORT'),
+      },
+      ORDERS_NEW_EXPORT: {
+        text: t('import_history.text.category_export.ORDERS_NEW_EXPORT'),
+      },
+      ORDERS_SHIPPED_EXPORT: {
+        text: t('import_history.text.category_export.ORDERS_SHIPPED_EXPORT'),
+      },
+      REVENUES_EXPORT: {
+        text: t('import_history.text.category_export.REVENUES_EXPORT'),
+      },
     } as Record<string, { text: string }>
   }, [t])
 
