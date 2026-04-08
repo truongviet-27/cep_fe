@@ -74,7 +74,6 @@ export default function ProductTab() {
       const params = new URLSearchParams()
       params.set('pageSize', '10')
       params.set('current', '1')
-      params.set('common_name', 'PRODUCTS')
       if (taskId) {
         params.set('id', String(taskId))
       }
