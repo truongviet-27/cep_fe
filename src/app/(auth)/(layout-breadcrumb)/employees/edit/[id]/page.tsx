@@ -173,7 +173,9 @@ export default function EmployeeEdit() {
               </Form.Item>
             </Col>
             <Col flex="none">
-              <Text type="secondary">(A-Z, 0-9, -)</Text>
+              <Text style={{ whiteSpace: 'nowrap', color: '#000' }}>
+                (A-Z, 0-9, -)
+              </Text>
             </Col>
             <Col xs={24} sm="auto" flex="none">
               <Space direction="horizontal" size={12}>

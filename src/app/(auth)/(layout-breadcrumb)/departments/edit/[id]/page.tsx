@@ -79,6 +79,7 @@ export default function EmployeeEdit() {
     const codeGen = data?.data
     form?.setFieldsValue({ code: codeGen?.preview_code })
   }
+  const isAutomatic = data?.data?.issue_method === 'automatic'
 
   const breadcrumbItems = [
     {
@@ -173,12 +174,16 @@ export default function EmployeeEdit() {
                   placeholder="DEP001"
                   size="middle"
                   style={{ width: 240 }}
+                  disabled={isAutomatic}
                 />
               </Form.Item>
             </Col>
 
             <Col flex="none" className={'!-mt-2'}>
-              <Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
+              <Text
+                type="secondary"
+                style={{ whiteSpace: 'nowrap', color: '#000' }}
+              >
                 (A-Z, 0-9, -)
               </Text>
             </Col>
@@ -187,15 +192,19 @@ export default function EmployeeEdit() {
               <Space direction="horizontal" size={6} wrap>
                 <Button
                   size="middle"
-                  color="primary"
-                  variant="outlined"
                   loading={isLoading}
                   onClick={() => {
                     refetch().then(() => {
                       handleAutoNumber()
                     })
                   }}
-                  disabled={data?.data?.issue_method === 'manual'}
+                  disabled={!isAutomatic}
+                  {...(isAutomatic
+                    ? {
+                        color: 'primary' as const,
+                        variant: 'outlined' as const,
+                      }
+                    : {})}
                 >
                   {t('departments.create.auto_number')}
                 </Button>
