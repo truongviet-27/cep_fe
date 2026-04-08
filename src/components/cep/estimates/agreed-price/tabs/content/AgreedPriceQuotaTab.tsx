@@ -531,14 +531,11 @@ const AgreedPriceQuotaTab = () => {
               size="small"
               recordItemId={(record as any).quota_id as number}
               resource="agreed-prices"
-              style={
-                (record as any).is_active && {
-                  color: '#2784FF',
-                  borderColor: '#2784FF',
-                  backgroundColor: '#fff',
-                }
-              }
-              disabled={!(record as any).is_active}
+              style={{
+                color: '#2784FF',
+                borderColor: '#2784FF',
+                backgroundColor: '#fff',
+              }}
               icon={false}
               autoInsertSpace={false}
             />
@@ -566,14 +563,7 @@ const AgreedPriceQuotaTab = () => {
               disabled={
                 (!permission?.is_module_admin &&
                   permission?.user?.id !== record.creator?.id) ||
-                !(record as any).is_active
-              }
-              style={
-                (record as any).is_active && {
-                  color: '#fff',
-                  backgroundColor: '#E74C3C',
-                  borderColor: '#E74C3C',
-                }
+                (record as any).is_active
               }
               autoInsertSpace={false}
               icon={false}
@@ -1000,7 +990,7 @@ const AgreedPriceQuotaTab = () => {
             columns={columns}
             scroll={undefined}
             rowClassName={(record: any) =>
-              !record.is_active ? 'bg-gray-300 pointer-events-none' : ''
+              !record.is_active ? 'bg-gray-300' : ''
             }
           />
         )

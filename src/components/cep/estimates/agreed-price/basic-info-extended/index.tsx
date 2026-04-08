@@ -130,7 +130,7 @@ function BasicInfoExtended({
               {t('agreed_prices.basic_info_note')}
             </span>
           </div>
-          {showApplicablePeriod && (
+          {showApplicablePeriod && agreedPriceItem?.is_active && (
             <div
               style={{
                 display: 'flex',
