@@ -165,12 +165,20 @@ export default function Page() {
           <Row align="middle" gutter={[8, 8]}>
             <Col flex="none">
               <Form.Item name="code" rules={codeRules} noStyle>
-                <Input placeholder="DEP001" size="middle" className="w-full" />
+                <Input
+                  placeholder="DEP001"
+                  size="middle"
+                  className="w-full"
+                  disabled={isAutomatic}
+                />
               </Form.Item>
             </Col>
 
             <Col flex="none">
-              <Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
+              <Text
+                type="secondary"
+                style={{ whiteSpace: 'nowrap', color: '#000' }}
+              >
                 (A-Z, 0-9, -)
               </Text>
             </Col>
@@ -179,11 +187,6 @@ export default function Page() {
               <Space direction="horizontal" size={3} wrap>
                 <Button
                   size="middle"
-                  style={{
-                    background: '#fff',
-                    borderColor: PRIMARY,
-                    color: PRIMARY,
-                  }}
                   loading={loadingDp}
                   onClick={() => {
                     refetch().then(() => {
@@ -191,6 +194,12 @@ export default function Page() {
                     })
                   }}
                   disabled={!isAutomatic}
+                  {...(isAutomatic
+                    ? {
+                        color: 'primary' as const,
+                        variant: 'outlined' as const,
+                      }
+                    : {})}
                 >
                   {t('departments.create.auto_number')}
                 </Button>
