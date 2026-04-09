@@ -85,10 +85,9 @@ export default function SidebarMenu({
                 {t(`initial-setup-guide.menu.${menuIdKey(item.id)}.title`)}
               </Title>
               <Text
-                type="secondary"
                 style={{
                   fontSize: 11,
-                  color: isSelected ? 'rgba(255,255,255,0.85)' : undefined,
+                  color: isSelected ? 'rgba(255,255,255,0.85)' : '#000',
                 }}
               >
                 {t(`initial-setup-guide.menu.${menuIdKey(item.id)}.subtitle`)}
@@ -100,7 +99,7 @@ export default function SidebarMenu({
                       fontSize: 10,
                       display: 'block',
                       marginBottom: 4,
-                      color: isSelected ? 'rgba(255,255,255,0.85)' : undefined,
+                      color: isSelected ? 'rgba(255,255,255,0.85)' : '#000',
                     }}
                   >
                     {t('initial-setup-guide.progress_status')}
@@ -122,9 +121,7 @@ export default function SidebarMenu({
                       <Text
                         style={{
                           fontSize: 10,
-                          color: isSelected
-                            ? 'rgba(255,255,255,0.85)'
-                            : undefined,
+                          color: isSelected ? 'rgba(255,255,255,0.85)' : '#000',
                           flexShrink: 0,
                         }}
                       >

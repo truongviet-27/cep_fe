@@ -4,7 +4,7 @@ export interface Manual {
   module?: string | null
   type?: string | null
   group?: string | null
-  category?: 'system' | 'user' | null
+  category?: 'system' | 'user' | 'system_all' | null
   step?: number
   name: string
   description: string

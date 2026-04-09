@@ -9,9 +9,11 @@ import { persist } from 'zustand/middleware'
 type UserStore = {
   isLoggedIn: boolean
   permission: PermissionType | null
+  organizationName: string | null
   parameterSettings: ParameterSettingType
   logout: () => void
   setPermission: (permission: PermissionType) => void
+  setOrganizationName: (name: string | null) => void
   setParameterSettings: (parameterSettings: ParameterSettingType) => void
   setIsLoggedIn: (isLoggedIn: boolean) => void
   hasFullAccessModule: (permissionName: PermissionEnum) => boolean
@@ -23,7 +25,13 @@ export const useUserStore = create<UserStore>()(
       isLoggedIn: false,
       permission: null,
       parameterSettings: new Map(),
-      setPermission: (permission: PermissionType) => set({ permission }),
+      organizationName: null,
+      setPermission: (permission: PermissionType) =>
+        set({
+          permission,
+          organizationName: permission?.organization_name ?? null,
+        }),
+      setOrganizationName: (name) => set({ organizationName: name }),
       setParameterSettings: (parameterSettings: ParameterSettingType) =>
         set({ parameterSettings }),
       setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
@@ -32,6 +40,7 @@ export const useUserStore = create<UserStore>()(
           permission: null,
           isLoggedIn: false,
           parameterSettings: new Map(),
+          organizationName: null,
         }),
       hasFullAccessModule: (permissionName: PermissionEnum) => {
         const permission = get().permission

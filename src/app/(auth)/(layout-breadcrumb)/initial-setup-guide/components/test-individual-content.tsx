@@ -58,7 +58,7 @@ function StepRow({
     <Flex
       gap={16}
       justify="space-between"
-      align="flex-start"
+      align="center"
       style={{ width: '100%' }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -66,12 +66,12 @@ function StepRow({
           {title}
         </div>
         <Text
-          type="secondary"
           style={{
             fontSize: 12,
             lineHeight: 1.6,
             display: 'block',
             whiteSpace: 'pre-line',
+            color: '#000',
           }}
         >
           {desc}
@@ -98,6 +98,10 @@ const BASE = 'initial-setup-guide.test_individual'
 
 export default function TestIndividualContent() {
   const t = useTranslate()
+  const step1ChildLines = t(`${BASE}.step1_child_desc`).split('\n')
+  const step5Line1 = t(`${BASE}.step5_desc_line1`)
+  const step5LinkLabel = t(`${BASE}.step5_link_label`)
+  const [step5Prefix, step5Suffix] = step5Line1.split(step5LinkLabel)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
       <div style={stepCardStyle}>
@@ -110,22 +114,32 @@ export default function TestIndividualContent() {
         />
         <div style={subStepStyle}>
           <StepRow
-            title={t(`${BASE}.step1_1_title`)}
-            desc={t(`${BASE}.step1_1_desc`)}
-            badges={
-              <Badge style={BADGES.yellow}>
-                {t(`${BASE}.badge_waiting_approval`)}
-              </Badge>
+            title={t(`${BASE}.step1_child_title`)}
+            desc={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {step1ChildLines.map((line, index) => (
+                  <Text
+                    key={`${line}-${index}`}
+                    strong={/^[①②③]/.test(line.trim())}
+                    style={{
+                      fontSize: 12,
+                      lineHeight: 1.6,
+                      whiteSpace: 'pre-line',
+                      color: '#000',
+                    }}
+                  >
+                    {line}
+                  </Text>
+                ))}
+              </div>
             }
-            titleSize={14}
-          />
-        </div>
-        <div style={subStepStyle}>
-          <StepRow
-            title={t(`${BASE}.step1_2_title`)}
-            desc={t(`${BASE}.step1_2_desc`)}
             badges={
-              <Badge style={BADGES.red}>{t(`${BASE}.badge_rejected`)}</Badge>
+              <>
+                <Badge style={BADGES.yellow}>
+                  {t(`${BASE}.badge_waiting_approval`)}
+                </Badge>
+                <Badge style={BADGES.red}>{t(`${BASE}.badge_rejected`)}</Badge>
+              </>
             }
             titleSize={14}
           />
@@ -174,7 +188,19 @@ export default function TestIndividualContent() {
           title={t(`${BASE}.step5_title`)}
           desc={
             <>
-              {t(`${BASE}.step5_desc_line1`)}
+              {step5Prefix ?? step5Line1}
+              {step5Prefix !== undefined && step5Suffix !== undefined ? (
+                <a
+                  href="/agreed-prices"
+                  style={{
+                    color: '#1677ff',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  {step5LinkLabel}
+                </a>
+              ) : null}
+              {step5Suffix ?? ''}
               <br />
               {t(`${BASE}.step5_desc_line2`)}
             </>

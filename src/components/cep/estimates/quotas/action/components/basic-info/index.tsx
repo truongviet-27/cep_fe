@@ -280,6 +280,19 @@ const BasicInfo = ({
     }
   }
 
+  const getCustomerContacts = useCallback(
+    async (customerId: number) => {
+      const response = await axiosInstance.get(`${apiUrl}/customer-contacts`, {
+        params: { customer_id: customerId },
+      })
+      const data = response?.data?.data
+      if (data?.length > 0) {
+        handleSelectContact(data[0])
+      }
+    },
+    [handleSelectContact],
+  )
+
   const { show, close, open } = modalFormProps
 
   return (
@@ -432,6 +445,7 @@ const BasicInfo = ({
                             form.getFieldValue(['optional_product']) ?? []
                           ).flatMap((item: any) => item.product_id),
                         )
+                        getCustomerContacts(value?.value || null)
                       }}
                     />
                   </Form.Item>
