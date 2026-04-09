@@ -10,7 +10,7 @@ import TenantSwitchingModal from '@components/layout/header/tenant-switching-mod
 import { useGo, useLogout, useModal } from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
-import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
+import { isSupperAdmin } from '@utility/decode-token'
 import {
   Avatar,
   Badge,
@@ -46,9 +46,9 @@ export default function AuthHeader({
     'https://app.eebot.jp/fastdesk/d5bac3ba-6c59-499c-be14-4847905ac901'
 
   const isAdmin = isSupperAdmin(session.data?.accessToken)
+  const { organizationName } = useUserStore()
   const storeTenantName = useTenantStore((s) => s.tenantName)
-  const tokenTenantName = getOrgFromToken(session.data?.accessToken)?.name
-  const tenantName = isAdmin ? storeTenantName : tokenTenantName
+  const tenantName = isAdmin ? storeTenantName : organizationName
   const menuItems = [{ key: 'logout', label: t_menu('logout') }]
   const onMenuClick = ({ key }: { key: string }) => {
     if (key === 'logout') {
