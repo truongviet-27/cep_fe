@@ -29,12 +29,12 @@ export default function InitialSetupGuidePage() {
 
   const { data: basicData, refetch: refetchBasic } = useList<Manual>({
     resource: 'initial-setup-guide',
-    pagination: { mode: 'client' },
+    pagination: { mode: 'server', current: 1, pageSize: 100 },
     filters: [{ field: 'type', operator: 'eq', value: 'basic' }],
   })
   const { data: advancedData, refetch: refetchAdvanced } = useList<Manual>({
     resource: 'initial-setup-guide',
-    pagination: { mode: 'client' },
+    pagination: { mode: 'server', current: 1, pageSize: 100 },
     filters: [{ field: 'type', operator: 'eq', value: 'advanced' }],
   })
 
