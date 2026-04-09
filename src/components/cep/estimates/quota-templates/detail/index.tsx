@@ -167,6 +167,7 @@ const QuoteTemplateDetailContainer: FC = () => {
                 permission?.user?.id === quoteTemplateDetail?.author?.id) && (
                 <Button
                   type="primary"
+                  autoInsertSpace={false}
                   onClick={() => {
                     go({
                       to: `/quota-templates/edit/${quoteTemplateDetail.id}`,

@@ -42,6 +42,8 @@ export default function AuthHeader({
   const modalProps = useModal()
   const { mutate: logout } = useLogout()
   const { permission } = useUserStore()
+  const helpUrl =
+    'https://app.eebot.jp/fastdesk/d5bac3ba-6c59-499c-be14-4847905ac901'
 
   const isAdmin = isSupperAdmin(session.data?.accessToken)
   const storeTenantName = useTenantStore((s) => s.tenantName)
@@ -90,13 +92,33 @@ export default function AuthHeader({
             >
               初期設定ガイド
             </Button>
+            <a
+              href={helpUrl}
+              target="_blank"
+              rel="noreferrer"
+              style={{ display: 'inline-flex' }}
+            >
+              <Button
+                type="default"
+                style={{
+                  color: '#B2AC00',
+                  borderColor: '#B2AC00',
+                  backgroundColor: WHITE,
+                }}
+              >
+                ヘルプ
+              </Button>
+            </a>
             <div className="text-right leading-tight">
               <Space
                 size={4}
                 className={cn(isAdmin && 'cursor-pointer')}
                 onClick={isAdmin ? () => modalProps.show() : undefined}
               >
-                <div className="text-[22px] font-semibold text-[#74232A]">
+                <div
+                  className="max-w-[260px] truncate text-[22px] font-semibold whitespace-nowrap text-[#74232A]"
+                  title={tenantName ?? ''}
+                >
                   {tenantName ?? ''}
                 </div>
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}

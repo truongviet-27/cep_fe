@@ -25,7 +25,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { defaultCustomerCompanyResearchInformation } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/components/instances'
 import dayjs from 'dayjs'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { useSession } from 'next-auth/react'
 
 const { Title } = Typography
@@ -77,6 +77,13 @@ export const CorporateResearchFormSection = (
     form.setFieldValue('company_research_information', defaultVal)
   }
 
+  const centerHeaderCell = () => ({
+    style: { textAlign: 'center' as const },
+  })
+  const leftCell = () => ({
+    style: { textAlign: 'left' as const },
+  })
+
   const columns = [
     {
       title: (
@@ -86,6 +93,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'material_name',
       width: '20%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'material_name']} noStyle>
           {record.material_name}
@@ -100,6 +109,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'judgement',
       width: '12%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (field: any, record: any) => (
         <Form.Item name={[field.name, 'judgement']} noStyle initialValue="A">
           {record.judgement}
@@ -114,6 +125,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'files',
       width: '21%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) => {
         return (
           <>
@@ -130,6 +143,8 @@ export const CorporateResearchFormSection = (
       ),
       key: 'editor',
       width: '15%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) =>
         record.editor?.name ?? record.author?.name,
     },
@@ -141,16 +156,19 @@ export const CorporateResearchFormSection = (
       ),
       key: 'updated_at',
       width: '16%',
+      onHeaderCell: centerHeaderCell,
+      onCell: leftCell,
       render: (_: any, record: any) =>
         (record?.updated_at || record?.created_at) &&
         dayjs(record?.updated_at ?? record?.created_at ?? '').format(
-          FORMAT_DATE,
+          'YYYY/MM/DD',
         ),
     },
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
       key: 'actions',
       width: '16%',
+      onHeaderCell: centerHeaderCell,
       align: 'center' as const,
       render: (_: any, record: any, index: number) => (
         <Space wrap size={4}>
@@ -158,6 +176,7 @@ export const CorporateResearchFormSection = (
             size="small"
             type="primary"
             icon={null}
+            autoInsertSpace={false}
             onClick={() => {
               let type: 'credit' | 'anti-social' | 'certified' | 'contract' =
                 'credit'
@@ -291,7 +310,7 @@ export const CorporateResearchFormSection = (
                   files: currentType.fileList,
                   judgement: currentType.judgement,
                   material_name: currentType.name,
-                  updated_at: dayjs().format(FORMAT_DATE),
+                  updated_at: dayjs().format(FORMAT_DATE_CROSS),
                   editor: {
                     name: session.data?.user?.name,
                   },
@@ -303,6 +322,8 @@ export const CorporateResearchFormSection = (
           onCancel={close}
           okText={t('buttons.save')}
           cancelText={t('buttons.cancel')}
+          okButtonProps={{ autoInsertSpace: false }}
+          cancelButtonProps={{ autoInsertSpace: false }}
         >
           <Form
             labelCol={{ span: 4 }}
@@ -366,7 +387,7 @@ export const CorporateResearchFormSection = (
                     'company_research_information',
                     currentType.index,
                   ])?.updated_at,
-                ).format(FORMAT_DATE)}
+                ).format(FORMAT_DATE_CROSS)}
             </Typography.Text>
           </Form>
         </Modal>

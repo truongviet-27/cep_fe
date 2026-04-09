@@ -21,11 +21,13 @@ import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import useCurrency from '@hook/use-currency'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 import {
   CloneButton,
   DeleteButton,
   EditButton,
   ShowButton,
+  useSelect,
   useTable,
 } from '@refinedev/antd'
 import {
@@ -106,6 +108,7 @@ function QuotaList() {
   ]
   const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
   const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
+  const [isExportingCsv, setIsExportingCsv] = useState(false)
 
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
@@ -174,7 +177,7 @@ function QuotaList() {
   }
 
   const columns: ColumnsType<any> = useMemo(() => {
-    return [
+    const baseColumns: ColumnsType<any> = [
       {
         title: (
           <div className="flex flex-col">
@@ -184,7 +187,7 @@ function QuotaList() {
         ),
         dataIndex: 'status',
         key: 'status',
-        width: '8%',
+        width: '7%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -237,7 +240,7 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
-        width: '8%',
+        width: '16%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -256,7 +259,9 @@ function QuotaList() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              textAlign: 'center',
+              textAlign: 'left',
+              padding: 0,
+              height: 'auto',
             }}
             className="underline"
             title={value}
@@ -279,7 +284,7 @@ function QuotaList() {
         ),
         dataIndex: 'title',
         key: 'title',
-        width: '16%',
+        width: '20%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -299,7 +304,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {record.title}
@@ -312,7 +317,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {record.customer_name}
@@ -328,7 +333,7 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        width: '10%',
+        width: '7%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -351,7 +356,7 @@ function QuotaList() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
             {record.transaction_type &&
@@ -389,12 +394,12 @@ function QuotaList() {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  textAlign: 'center',
+                  textAlign: 'left',
                 }}
               >
                 {record?.author?.name}
               </div>
-              <div className="flex flex-col flex-wrap items-center justify-center gap-[2px]">
+              <div className="flex flex-col flex-wrap items-start justify-start gap-[2px]">
                 {record.approvers?.map((item: any, index: number) => {
                   const numSteps = item?.number_step ?? 1
                   const isApproved = item.status === 'approved'
@@ -408,7 +413,7 @@ function QuotaList() {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
-                        textAlign: 'center',
+                        textAlign: 'left',
                       }}
                       key={index}
                       className={`${isApproved ? 'text-gray-400' : 'text-inherit'}`}
@@ -431,7 +436,7 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
-        width: '14%',
+        width: '8%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -455,7 +460,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {record.department_in_charge}
@@ -469,7 +474,7 @@ function QuotaList() {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
               {Number(record?.total_price || 0).toLocaleString()}
@@ -488,7 +493,7 @@ function QuotaList() {
         key: 'createdAt',
         width: '8%',
         render: (_, record) => (
-          <div>
+          <div style={{ textAlign: 'left' }}>
             <div>{dayjs(record.created_at).format('YYYY/MM/DD')}</div>
             <div>
               {record.expiration_date &&
@@ -516,7 +521,7 @@ function QuotaList() {
             record.customer_cancelled_date
           ) {
             return (
-              <div>
+              <div style={{ textAlign: 'left' }}>
                 <div>
                   {dayjs(record.sent_to_customer_date).format('YYYY/MM/DD') ||
                     '-'}
@@ -539,7 +544,7 @@ function QuotaList() {
         title: t('quotas.table.actions'),
         key: 'action',
         width: '14%',
-        align: 'left',
+        align: 'center',
         onCell: () => ({
           style: { padding: '4px 8px', overflow: 'hidden', minWidth: 0 },
         }),
@@ -550,7 +555,7 @@ function QuotaList() {
               minWidth: 0,
               overflow: 'hidden',
               display: 'flex',
-              justifyContent: 'flex-start',
+              justifyContent: 'left',
             }}
           >
             <Space wrap size={4}>
@@ -566,7 +571,23 @@ function QuotaList() {
               >
                 {t('quotas.goDetailLabel')}
               </ShowButton>
-
+              {(record.status === QuotaStatus.Completed ||
+                record.status === QuotaStatus.Cancelled) &&
+                (permission?.is_module_admin || record.display) &&
+                !record?.has_agreed_price && (
+                  <Button
+                    type="default"
+                    style={{ background: '#D77703', color: WHITE }}
+                    size="small"
+                    onClick={() =>
+                      handleChangeStatus('back-to-sent-customer', {
+                        quota_ids: [record.id],
+                      })
+                    }
+                  >
+                    {t('quotas.show.actions.move_to_send')}
+                  </Button>
+                )}
               {(record.status === QuotaStatus.Creating ||
                 record.status === QuotaStatus.Rejected) &&
                 (permission?.is_module_admin || record.is_author) && (
@@ -615,27 +636,8 @@ function QuotaList() {
                 </Button>
               )}
 
-              {(record.status === QuotaStatus.Completed ||
-                record.status === QuotaStatus.Cancelled) &&
-                (permission?.is_module_admin || record.display) &&
-                !record?.has_agreed_price && (
-                  <Button
-                    type="default"
-                    style={{ background: '#D77703', color: WHITE }}
-                    size="small"
-                    onClick={() =>
-                      handleChangeStatus('back-to-sent-customer', {
-                        quota_ids: [record.id],
-                      })
-                    }
-                  >
-                    {t('quotas.show.actions.move_to_send')}
-                  </Button>
-                )}
-
               {(record.status === QuotaStatus.Creating ||
-                record.status === QuotaStatus.Rejected ||
-                record.status === QuotaStatus.Cancelled) &&
+                record.status === QuotaStatus.Rejected) &&
                 (record.is_author || permission?.is_module_admin) && (
                   <DeleteButton
                     autoInsertSpace={false}
@@ -689,11 +691,61 @@ function QuotaList() {
                   {t('quotas.downloadLabel')}
                 </Button>
               </Link>
+
+              {record.status === QuotaStatus.Cancelled &&
+                (record.is_author || permission?.is_module_admin) && (
+                  <DeleteButton
+                    autoInsertSpace={false}
+                    successNotification={() => {
+                      return notificationFunction()
+                    }}
+                    size="small"
+                    icon={null}
+                    recordItemId={record.id}
+                    style={{
+                      color: '#FFFFFF',
+                      background: '#E74C3C',
+                    }}
+                  >
+                    {t('quotas.actions.delete')}
+                  </DeleteButton>
+                )}
             </Space>
           </div>
         ),
       },
     ]
+    const numericColumnKeys = new Set<string>()
+    const centerColumnKeys = new Set(['action'])
+
+    return baseColumns.map((column) => ({
+      ...column,
+      onHeaderCell: (col: any) => {
+        const originalHeaderCell = column.onHeaderCell?.(col) || {}
+        return {
+          ...originalHeaderCell,
+          style: {
+            ...(originalHeaderCell as any).style,
+            textAlign: 'center',
+          },
+        }
+      },
+      onCell: (record: any, rowIndex: any) => {
+        const originalOnCell = column.onCell?.(record, rowIndex) || {}
+        return {
+          ...originalOnCell,
+          style: {
+            ...(originalOnCell as any).style,
+            padding: '8px 10px',
+          },
+        }
+      },
+      align: centerColumnKeys.has(String(column.key))
+        ? 'center'
+        : numericColumnKeys.has(String(column.key))
+          ? 'right'
+          : 'left',
+    }))
   }, [t])
 
   const [status, setStatus] = useState<string | null>(null)
@@ -748,9 +800,14 @@ function QuotaList() {
           value: values.creator_name?.value,
         },
         {
-          field: 'tag_name',
+          field: 'tag_id',
           operator: 'eq',
-          value: values.tag_name,
+          value:
+            typeof values.tag_id === 'object' &&
+            values.tag_id != null &&
+            'value' in values.tag_id
+              ? (values.tag_id as { value: number }).value
+              : values.tag_id,
         },
         {
           field: 'approver_id',
@@ -1181,6 +1238,108 @@ function QuotaList() {
       })
     }
   }
+  const { selectProps: tagSelectProps } = useSelect({
+    resource: 'tags',
+    optionLabel: 'name',
+    optionValue: 'id',
+    pagination: {
+      mode: 'server',
+      pageSize: 100,
+    },
+  })
+
+  const handleExportCsv = async () => {
+    const values = (searchFormProps.form?.getFieldsValue?.() ?? {}) as {
+      code?: string
+      title?: string
+      customer_name?: { value?: string | number }
+      creator_name?: { value?: string | number }
+      tag_id?: { value?: string | number } | string | number
+      approver_name?: { value?: string | number }
+      department_in_charge?: { value?: string | number }
+      search_date_type?: string
+      date?: [string, string]
+      category_id?: string | number
+      transaction_type?: string
+      product_name?: string
+    }
+
+    setIsExportingCsv(true)
+    try {
+      notification.info({
+        message:
+          'システムエラーの発生を抑制するため、最新の1,000件のレコードのみダウンロードを実施いたします。',
+      })
+
+      const response = await axiosInstance.get(`${apiUrl}/quotas/export-csv`, {
+        params: {
+          status: status ?? undefined,
+          code: values.code || undefined,
+          title: values.title || undefined,
+          customer_id: values.customer_name?.value || undefined,
+          creator_id: values.creator_name?.value || undefined,
+          tag_id:
+            typeof values.tag_id === 'object' &&
+            values.tag_id != null &&
+            'value' in values.tag_id
+              ? values.tag_id.value
+              : values.tag_id || undefined,
+          approver_id: values.approver_name?.value || undefined,
+          department_in_charge_id:
+            values.department_in_charge?.value || undefined,
+          search_date_type: values.search_date_type || undefined,
+          start_date: values.date?.[0]
+            ? dayjs(values.date[0]).format('YYYY-MM-DD')
+            : undefined,
+          end_date: values.date?.[1]
+            ? dayjs(values.date[1]).format('YYYY-MM-DD')
+            : undefined,
+          category_id: values.category_id || undefined,
+          transaction_type: values.transaction_type?.trim() || undefined,
+          product_name: values.product_name || undefined,
+        },
+        responseType: 'blob',
+      })
+
+      const contentType = String(response.headers?.['content-type'] ?? '')
+      const isCsvResponse =
+        contentType.includes('text/csv') ||
+        contentType.includes('application/octet-stream')
+
+      let taskId: string | number | undefined
+      if (isCsvResponse) {
+        const blob = new Blob([response.data], {
+          type: 'text/csv; charset=UTF-8',
+        })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `quotas_export_${Date.now()}.csv`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+      } else {
+        const text = await response.data.text()
+        const payload = text ? JSON.parse(text) : undefined
+        taskId =
+          payload?.id ??
+          payload?.task_id ??
+          payload?.data?.id ??
+          payload?.data?.task_id
+      }
+
+      const params = new URLSearchParams()
+      params.set('pageSize', '10')
+      params.set('current', '1')
+      if (taskId) {
+        params.set('id', String(taskId))
+      }
+      router.replace(`/import-history?${params.toString()}`)
+    } finally {
+      setIsExportingCsv(false)
+    }
+  }
 
   return (
     <List
@@ -1288,7 +1447,7 @@ function QuotaList() {
                 }}
               />
             </Col>
-            <Col xs={12} md={6} lg={3} xxl={3}>
+            <Col xs={12} md={6} lg={4} xxl={3}>
               <Form.Item
                 label={
                   <span className="font-bold">
@@ -1296,9 +1455,21 @@ function QuotaList() {
                   </span>
                 }
                 layout="vertical"
-                name={'tag_name'}
+                name={'tag_id'}
               >
-                <Input placeholder={t('quotas.filters.partial_match')} />
+                <Select
+                  {...tagSelectProps}
+                  allowClear
+                  showSearch
+                  onSearch={() => {}}
+                  filterOption={(input, option) =>
+                    ((option?.label ?? '') as string)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  labelInValue={true}
+                  placeholder={t('placeholders.select')}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -1524,7 +1695,15 @@ function QuotaList() {
             </Col>
 
             <Col xs={16} md={18} lg={20}>
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                <Button
+                  onClick={handleExportCsv}
+                  color="primary"
+                  variant="outlined"
+                  loading={isExportingCsv}
+                >
+                  全件CSV出力
+                </Button>
                 <Dropdown
                   menu={{
                     items: rightOptions,

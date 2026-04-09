@@ -115,7 +115,11 @@ export default function Page() {
 
   const columns: ColumnsType<ParameterSettingControllerIndexResponse> = [
     {
-      title: t('system_config.setting_item'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('system_config.setting_item')}
+        </div>
+      ),
       dataIndex: 'name',
       key: 'settingItem',
       width: 400,
@@ -123,7 +127,11 @@ export default function Page() {
       className: '!px-4',
     },
     {
-      title: t('system_config.initial_setting'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('system_config.initial_setting')}
+        </div>
+      ),
       key: 'is_manage',
       width: 400,
       align: 'left',
@@ -187,7 +195,11 @@ export default function Page() {
       },
     },
     {
-      title: t('parameter_settings.description'),
+      title: (
+        <div style={{ textAlign: 'center' }}>
+          {t('parameter_settings.description')}
+        </div>
+      ),
       dataIndex: 'description',
       key: 'description',
       align: 'left',

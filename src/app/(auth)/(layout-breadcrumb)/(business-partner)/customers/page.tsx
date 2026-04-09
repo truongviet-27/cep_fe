@@ -5,6 +5,7 @@ import { ExclamationCircleOutlined, RightOutlined } from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
+import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 import {
   CreateButton,
   DeleteButton,
@@ -31,7 +32,7 @@ import {
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { CSV_LINK, PRIMARY } from '@utility/color'
-import { FORMAT_DATE, FORMAT_DATE_CROSS } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   antiSocialCheckOptions,
   countryOptions,
@@ -55,13 +56,14 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useCallback, useMemo, useState } from 'react'
 import AutoHeading from '@components/common/auto-heading'
 import { SelectPagination } from '@components/common/select-pagination'
 import { RankModalEdit } from '@app/(auth)/(layout-breadcrumb)/(merchandise)/ranks/edit/modal'
 import StatusDashboard from './components/status-dashboard'
 import { CustomerStatusStyle } from './components/utils/customer-status-style'
-
+import { notification } from 'antd'
 const { RangePicker } = DatePicker
 const { Title, Text } = Typography
 
@@ -83,9 +85,11 @@ export default function CustomerListPage() {
   const [status, setStatus] = useState<string | null>(null)
   const t = useTranslate()
   const go = useGo()
+  const router = useRouter()
   const apiUrl = useApiUrl()
   const [isShow, setIsShow] = useState(true)
   const [updatingId, setUpdatingId] = useState<number | null>(null)
+  const [isExportingCsv, setIsExportingCsv] = useState(false)
   const { mutateAsync: updateStatusMutation } = useCustomMutation()
 
   const { mutate, isLoading } = useUpdate()
@@ -176,14 +180,14 @@ export default function CustomerListPage() {
         field: 'date_start',
         operator: 'null',
         value: values.date_range?.[0]
-          ? dayjs(values.date_range[0]).format(FORMAT_DATE)
+          ? dayjs(values.date_range[0]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
       {
         field: 'date_end',
         operator: 'null',
         value: values.date_range?.[1]
-          ? dayjs(values.date_range[1]).format(FORMAT_DATE)
+          ? dayjs(values.date_range[1]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
     ],
@@ -231,14 +235,14 @@ export default function CustomerListPage() {
         field: 'date_start',
         operator: 'null',
         value: values.date_range?.[0]
-          ? dayjs(values.date_range[0]).format('YYYY-MM-DD')
+          ? dayjs(values.date_range[0]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
       {
         field: 'date_end',
         operator: 'null',
         value: values.date_range?.[1]
-          ? dayjs(values.date_range[1]).format('YYYY-MM-DD')
+          ? dayjs(values.date_range[1]).format(FORMAT_DATE_CROSS)
           : undefined,
       },
     ])
@@ -248,8 +252,8 @@ export default function CustomerListPage() {
     return record.deleted_at ? '!bg-gray-300' : ''
   }
 
-  const columns: TableColumnsType<SimpleCustomer> = useMemo(
-    () => [
+  const columns: TableColumnsType<SimpleCustomer> = useMemo(() => {
+    const baseColumns: TableColumnsType<SimpleCustomer> = [
       {
         title: t('customers.tables.header.code'),
         dataIndex: 'customer_code',
@@ -540,7 +544,7 @@ export default function CustomerListPage() {
         ),
         dataIndex: 'anti_social_rank_update_at',
         key: 'anti_social_rank_update_at',
-        width: '10%',
+        width: '8%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -620,7 +624,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.registration_date'),
         dataIndex: 'created_at',
         key: 'created_at',
-        width: '6%',
+        width: '8%',
         render: (text) =>
           text && <div>{dayjs(text).format(FORMAT_DATE_CROSS)}</div>,
       },
@@ -628,7 +632,7 @@ export default function CustomerListPage() {
         title: t('customers.fields.suspension_date'),
         dataIndex: 'deleted_at',
         key: 'deleted_at',
-        width: '6%',
+        width: '8%',
         render: (text) =>
           text && <div>{dayjs(text).format(FORMAT_DATE_CROSS)}</div>,
       },
@@ -645,7 +649,13 @@ export default function CustomerListPage() {
                 icon={null}
                 recordItemId={record.id}
                 size={'small'}
+                autoInsertSpace={false}
                 disabled={!isFullAccess}
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                  borderColor: '#1FDB51',
+                }}
               >
                 {t('buttons.edit')}
               </EditButton>
@@ -653,19 +663,66 @@ export default function CustomerListPage() {
           </Space>
         ),
       },
-    ],
-    [
-      t,
-      go,
-      isFullAccess,
-      isLoading,
-      mutate,
-      editModalShow,
-      refetchCount,
-      tableQueryResult,
-      updatingId,
-    ],
-  )
+    ]
+
+    const numberColumnKeys = ['total_revenue']
+    const centerColumnKeys = ['status', 'actions']
+
+    return baseColumns.map((column) => {
+      const dataIndex =
+        'dataIndex' in column && column.dataIndex !== undefined
+          ? column.dataIndex
+          : ''
+      const key = String(column.key ?? dataIndex)
+      const originalOnCell =
+        'onCell' in column && typeof column.onCell === 'function'
+          ? column.onCell
+          : undefined
+
+      return {
+        ...column,
+        align: centerColumnKeys.includes(key)
+          ? 'center'
+          : numberColumnKeys.includes(key)
+            ? 'right'
+            : 'left',
+        onHeaderCell: (col: unknown) => {
+          const originalHeaderCell =
+            'onHeaderCell' in column &&
+            typeof column.onHeaderCell === 'function'
+              ? (column.onHeaderCell(col as any) ?? {})
+              : {}
+          return {
+            ...originalHeaderCell,
+            style: {
+              ...(originalHeaderCell as any).style,
+              textAlign: 'center',
+            },
+          }
+        },
+        onCell: (record: unknown, rowIndex: number | undefined) => {
+          const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+          return {
+            ...originalCell,
+            style: {
+              ...(originalCell as any).style,
+              padding: '8px 12px',
+            },
+          }
+        },
+      }
+    })
+  }, [
+    t,
+    go,
+    isFullAccess,
+    isLoading,
+    mutate,
+    editModalShow,
+    refetchCount,
+    tableQueryResult,
+    updatingId,
+  ])
 
   const handleClear = () => {
     searchFormProps.form?.resetFields()
@@ -721,6 +778,91 @@ export default function CustomerListPage() {
     },
     [setFilters],
   )
+
+  const handleExportCsv = async () => {
+    const values = (searchFormProps.form?.getFieldsValue?.() ?? {}) as {
+      q?: string
+      country?: string
+      department_in_charge_id?: string | number
+      price_rank_id?: string | number
+      credit_rank?: string
+      anti_social_rank?: string
+      search_date_type?: string
+      date_range?: [string, string]
+    }
+    const dateRange = Array.isArray(values.date_range) ? values.date_range : []
+
+    setIsExportingCsv(true)
+    try {
+      notification.open?.({
+        type: 'progress',
+        message: '',
+        description:
+          'システムエラーの発生を抑制するため、最新の1,000件のレコードのみダウンロードを実施いたします。',
+      })
+
+      const response = await axiosInstance.get(
+        `${apiUrl}/customers/export-csv`,
+        {
+          params: {
+            q: values.q || undefined,
+            country: values.country || undefined,
+            department_in_charge_id:
+              values.department_in_charge_id || undefined,
+            price_rank_id: values.price_rank_id || undefined,
+            credit_rank: values.credit_rank || undefined,
+            anti_social_rank: values.anti_social_rank || undefined,
+            search_date_type: values.search_date_type || undefined,
+            date_start: dateRange[0]
+              ? dayjs(dateRange[0]).format(FORMAT_DATE_CROSS)
+              : undefined,
+            date_end: dateRange[1]
+              ? dayjs(dateRange[1]).format(FORMAT_DATE_CROSS)
+              : undefined,
+          },
+          responseType: 'blob',
+        },
+      )
+
+      const contentType = String(response.headers?.['content-type'] ?? '')
+      const isCsvResponse =
+        contentType.includes('text/csv') ||
+        contentType.includes('application/octet-stream')
+
+      let taskId: string | number | undefined
+      if (isCsvResponse) {
+        const blob = new Blob([response.data], {
+          type: 'text/csv; charset=UTF-8',
+        })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `customers_export_${Date.now()}.csv`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+      } else {
+        const text = await response.data.text()
+        const payload = text ? JSON.parse(text) : undefined
+        taskId =
+          payload?.id ??
+          payload?.task_id ??
+          payload?.data?.id ??
+          payload?.data?.task_id
+      }
+
+      const params = new URLSearchParams()
+      params.set('pageSize', '10')
+      params.set('current', '1')
+      if (taskId) {
+        params.set('id', String(taskId))
+      }
+      router.replace(`/import-history?${params.toString()}`)
+    } finally {
+      setIsExportingCsv(false)
+    }
+  }
 
   return (
     <List
@@ -870,17 +1012,34 @@ export default function CustomerListPage() {
       </Form>
 
       <Row justify="end" className="mb-4">
-        <Space direction={'vertical'}>
-          <CreateButton icon={null} disabled={!isFullAccess}>
-            {t('buttons.create_new')}
-          </CreateButton>
-          <Link
-            href={isFullAccess ? '/customers/csv' : '#'}
-            className={isFullAccess ? '!underline' : '!text-gray-400'}
-            style={{ color: CSV_LINK }}
-          >
-            {t('projects.csv_upload.title')}
-          </Link>
+        <Space direction="vertical">
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={handleExportCsv}
+              color="primary"
+              variant="outlined"
+              loading={isExportingCsv}
+              disabled={!isFullAccess}
+            >
+              {t('products.list.actions.csvExportButton')}
+            </Button>
+            <CreateButton
+              icon={null}
+              disabled={!isFullAccess}
+              autoInsertSpace={false}
+            >
+              {t('buttons.create_new')}
+            </CreateButton>
+          </div>
+          <div className="flex items-end justify-end gap-2">
+            <Link
+              href={isFullAccess ? '/customers/csv' : '#'}
+              className={isFullAccess ? '!underline' : '!text-gray-400'}
+              style={{ color: CSV_LINK }}
+            >
+              {t('projects.csv_upload.title')}
+            </Link>
+          </div>
         </Space>
       </Row>
 

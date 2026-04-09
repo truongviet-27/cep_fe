@@ -129,7 +129,7 @@ export default function Page() {
     handleUpdateOrdering(values)
   }
 
-  const columns: ColumnsType<RowVM> = [
+  const baseColumns: ColumnsType<RowVM> = [
     {
       dataIndex: 'code',
       title: (
@@ -137,7 +137,7 @@ export default function Page() {
           {t('departments.fields.code')}
         </div>
       ),
-      width: '8%',
+      width: '12%',
       render: (value, record) => {
         return (
           <Link
@@ -157,6 +157,31 @@ export default function Page() {
         </div>
       ),
       align: 'left',
+      width: '16%',
+      render: (value: string) => {
+        const text = value || '---'
+        return (
+          <div
+            style={{
+              minWidth: 0,
+              width: '100%',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              title={text}
+              style={{
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {text}
+            </div>
+          </div>
+        )
+      },
     },
     {
       dataIndex: 'number_of_employee',
@@ -197,7 +222,7 @@ export default function Page() {
           {t('departments.fields.created_at')}
         </div>
       ),
-      width: '7%',
+      width: '9%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
@@ -207,13 +232,13 @@ export default function Page() {
           {t('departments.fields.updated_at')}
         </div>
       ),
-      width: '7%',
+      width: '9%',
       render: (value: any) => <DateField value={value} format="YYYY/MM/DD" />,
     },
     {
       title: <div style={{ textAlign: 'center' }}>{t('table.actions')}</div>,
       dataIndex: 'actions',
-      width: '8%',
+      width: '12%',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
@@ -272,6 +297,42 @@ export default function Page() {
     },
   ]
 
+  const numberColumnKeys = ['number_of_employee']
+  const centerColumnKeys = ['actions']
+  const columns: ColumnsType<RowVM> = baseColumns.map((column) => {
+    const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+    const originalOnCell = (column as any).onCell
+
+    return {
+      ...column,
+      align: centerColumnKeys.includes(key)
+        ? 'center'
+        : numberColumnKeys.includes(key)
+          ? 'right'
+          : 'left',
+      onHeaderCell: (col: unknown) => {
+        const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+        return {
+          ...originalHeaderCell,
+          style: {
+            ...(originalHeaderCell as any).style,
+            textAlign: 'center',
+          },
+        }
+      },
+      onCell: (record: unknown, rowIndex: number | undefined) => {
+        const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+        return {
+          ...originalCell,
+          style: {
+            ...(originalCell as any).style,
+            padding: '8px 12px',
+          },
+        }
+      },
+    }
+  })
+
   const breadcrumbItems = [
     {
       title: boldText(t('departments.departments')),
@@ -287,18 +348,6 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} separator={<RightOutlined />} />
       }
       i18nHeading={t('departments.list.list')}
-      footer={
-        <Col>
-          <Button
-            type="primary"
-            onClick={onSaveAll}
-            loading={savingAll}
-            disabled={!isDirty}
-          >
-            {t('buttons.save_all', { defaultValue: '並び順を保存' })}
-          </Button>
-        </Col>
-      }
     >
       <Form {...searchFormProps} layout="inline">
         <Row gutter={[16, 16]} style={{ width: '100%' }}>
@@ -340,14 +389,25 @@ export default function Page() {
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
             <div className="flex flex-col items-end">
-              <CreateButton
-                icon={null}
-                type="primary"
-                autoInsertSpace={false}
-                disabled={!isEditPermission}
-              >
-                {t('buttons.create_new')}
-              </CreateButton>
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  type="primary"
+                  onClick={onSaveAll}
+                  loading={savingAll}
+                  disabled={!isDirty || !isEditPermission}
+                  autoInsertSpace={false}
+                >
+                  {t('buttons.save_all', { defaultValue: '並び順を保存' })}
+                </Button>
+                <CreateButton
+                  icon={null}
+                  type="primary"
+                  autoInsertSpace={false}
+                  disabled={!isEditPermission}
+                >
+                  {t('buttons.create_new')}
+                </CreateButton>
+              </div>
               <Button
                 type="link"
                 disabled={!isEditPermission}

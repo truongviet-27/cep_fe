@@ -172,7 +172,7 @@
     "business_partner": "取引先"
   },
   "customers": {
-    "customers": "取引一覧",
+    "customers": "取引先",
     "list": {
       "list": "取引一覧"
     },
@@ -360,7 +360,8 @@
       },
       "actions": {
         "createNewButton": "新規作成",
-        "csvBulkUploadLink": "CSV一括登録"
+        "csvBulkUploadLink": "CSV一括登録",
+        "csvExportButton": "CSV出力"
       },
       "table": {
         "headers": {
@@ -567,6 +568,7 @@
   },
   "employees": {
     "employees": "社員",
+    "deleted": "該当の従業員は削除されました。",
     "list": {
       "list": "社員一覧"
     },
@@ -699,8 +701,8 @@
     "form": {
       "subject": "件名",
       "body": "本文",
-      "titleMail": "【見積書送付のご案内】",
-      "titlePassword": "【見積書パスワードのご案内】",
+      "titleMail": "【見積書送付のご案内】[[自社名]]",
+      "titlePassword": "【見積書パスワードのご案内】[[自社名]]",
       "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付にてお見積書をお送りいたします。\nご確認のほどよろしくお願いいたします。\nご不明点等ございましたらお気軽にお申し付けください。",
       "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先ほどお送りしたお見積書のパスワードをお知らせいたします。\nパスワードは下記の通りです。\n\n[[パスワード]]\n\nよろしくお願いいたします。",
       "signature": {
@@ -786,7 +788,9 @@
     "label": {
       "id": "タスクコード",
       "status": "ステータス",
-      "common_name": "種別",
+      "common_name": "CSV登録 / CSV出力",
+      "csv_import": "CSV登録",
+      "csv_export": "CSV出力",
       "created_by": "登録者",
       "date": "開始日時"
     },
@@ -826,6 +830,20 @@
         "CUSTOMERS": "取引先登録",
         "DEPARTMENTS": "部門登録",
         "OTHER": "その他"
+      },
+      "category_export": {
+        "QUOTAS_SENT_EXPORT": "見積一覧（送信済）出力",
+        "PRODUCTS_EXPORT": "商品一覧出力",
+        "CUSTOMERS_EXPORT": "取引先一覧出力",
+        "CUSTOMERS_NEW_EXPORT": "取引先一覧（新規）出力",
+        "CUSTOMERS_PROSPECTING_EXPORT": "取引先一覧（営業中）出力",
+        "CUSTOMERS_CONTRACTED_EXPORT": "取引先一覧（契約中）出力",
+        "CUSTOMERS_LOST_EXPORT": "取引先一覧（失注）出力",
+        "CUSTOMERS_SUSPENDED_EXPORT": "取引先一覧（停止）出力",
+        "ORDERS_WAITING_EXPORT": "受注一覧（受注待）出力",
+        "ORDERS_NEW_EXPORT": "受注一覧（新規受注）出力",
+        "ORDERS_SHIPPED_EXPORT": "受注一覧（出荷済）出力",
+        "REVENUES_EXPORT": "売上一覧（売上）出力"
       },
       "error": "処理が途中で失敗しました。"
     }

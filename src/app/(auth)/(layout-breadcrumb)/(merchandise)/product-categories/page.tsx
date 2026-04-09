@@ -117,6 +117,7 @@ export default function Page() {
               size="middle"
               onClick={addRootCategory}
               icon={null}
+              autoInsertSpace={false}
             >
               {t('buttons.create_new')}
             </CreateButton>

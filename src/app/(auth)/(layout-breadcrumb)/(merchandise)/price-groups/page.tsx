@@ -7,13 +7,7 @@ import ProductCategoryDropdown from '@components/common/product-category-dropdow
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import {
-  DeleteButton,
-  EditButton,
-  RefreshButton,
-  SaveButton,
-  useEditableTable,
-} from '@refinedev/antd'
+import { EditButton, RefreshButton, useEditableTable } from '@refinedev/antd'
 import { useCreate, useList } from '@refinedev/core'
 import type { PriceGroupItem, Rank } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
@@ -37,6 +31,8 @@ import Link from 'next/link'
 
 function Page() {
   const [editIds, setEditIds] = useState<number[]>([])
+  const headerCellStyle = { textAlign: 'center' as const }
+  const bodyCellStyle = { padding: '8px 12px' }
 
   const {
     tableProps,
@@ -136,6 +132,7 @@ function Page() {
   }
 
   const { t } = usePriceGroups()
+  const rankColumnWidth = 120
 
   const getCurrentPrices = (index: number) => {
     return tableProps?.dataSource?.[index].rank_prices?.sort(
@@ -164,6 +161,7 @@ function Page() {
             type="primary"
             onClick={handleSaveAll}
             loading={loadingCreate}
+            autoInsertSpace={false}
           >
             {t('buttons.save_all')}
           </Button>
@@ -246,13 +244,19 @@ function Page() {
           {...tableProps}
           loading={tableProps.loading || isLoading}
           rowKey="id"
-          scroll={{ x: undefined }}
+          scroll={{ x: 'max-content' }}
         >
           <Table.Column
             dataIndex={['packaging_code']}
-            title={t('price-groups.fields.product_code')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.product_code')}
+              </div>
+            }
             align="left"
-            width="8%"
+            width={150}
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
             render={(product_code, record) => (
               <Link
                 href={`/products/show/${record.product_id}`}
@@ -267,25 +271,42 @@ function Page() {
           />
           <Table.Column
             dataIndex="product_name"
-            title={t('price-groups.fields.product_name')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.product_name')}
+              </div>
+            }
             align="left"
-            width="10%"
+            width={180}
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
           />
           <Table.Column
             dataIndex="packaging_name"
-            title={t('price-groups.fields.packaging_name')}
-            width="10%"
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.packaging_name')}
+              </div>
+            }
+            align="left"
+            width={140}
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
           />
           <Table.Column
             dataIndex="selling_price"
+            width={120}
+            align="right"
             title={() => {
               return (
-                <>
+                <div style={{ textAlign: 'center' }}>
                   <div>{t('price-groups.fields.selling_price')}</div>
                   <div>({t('price-groups.fields.selling_price_unit')})</div>
-                </>
+                </div>
               )
             }}
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
             render={(value) => {
               return value !== null && value !== undefined
                 ? Number(value).toLocaleString()
@@ -295,7 +316,15 @@ function Page() {
 
           <Table.Column
             dataIndex="pricing_method"
-            title={t('price-groups.fields.pricing_method')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('price-groups.fields.pricing_method')}
+              </div>
+            }
+            align="left"
+            width={110}
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({ style: bodyCellStyle })}
             render={(value, record, index) => {
               const currentVal =
                 value === 'percentage'
@@ -364,9 +393,11 @@ function Page() {
           />
           <Table.ColumnGroup
             title={
-              <Link href="/ranks" className="!h-4 !underline">
-                {t('price_groups.rank_prices_title')}
-              </Link>
+              <div style={{ textAlign: 'center' }}>
+                <Link href="/ranks" className="!h-4 !underline">
+                  {t('price_groups.rank_prices_title')}
+                </Link>
+              </div>
             }
           >
             {(ranks?.data ?? []).map((item, indexChild) => {
@@ -374,12 +405,16 @@ function Page() {
                 <Table.Column<PriceGroupItem>
                   key={indexChild}
                   dataIndex={'rank_prices'}
+                  width={rankColumnWidth}
+                  align="right"
                   title={
-                    <>
+                    <div style={{ textAlign: 'center' }}>
                       <div>{boldText(`${item.code}`, PRIMARY)}</div>
                       <div>{boldText(`${item.rate}% (円)`, PRIMARY)}</div>
-                    </>
+                    </div>
                   }
+                  onHeaderCell={() => ({ style: headerCellStyle })}
+                  onCell={() => ({ style: bodyCellStyle })}
                   render={(value, record, index) => {
                     const rankPrices = getCurrentPrices(index)
 
@@ -429,9 +464,21 @@ function Page() {
           </Table.ColumnGroup>
 
           <Table.Column
-            title={t('employees.fields.actions')}
+            title={
+              <div style={{ textAlign: 'center' }}>
+                {t('employees.fields.actions')}
+              </div>
+            }
             dataIndex="actions"
-            fixed="right"
+            width={160}
+            align="center"
+            onHeaderCell={() => ({ style: headerCellStyle })}
+            onCell={() => ({
+              style: {
+                ...bodyCellStyle,
+                verticalAlign: 'middle',
+              },
+            })}
             render={(_, record, index) => {
               const onClick = () => {
                 form.setFieldValue([index], {
@@ -443,24 +490,35 @@ function Page() {
 
               if (includes(editIds, record.packaging_id)) {
                 return (
-                  <Space>
-                    <SaveButton
+                  <Space size="small" wrap={false}>
+                    <Button
+                      type="primary"
+                      size="small"
                       onClick={handleSaveAll}
                       loading={loadingCreate}
-                      size="small"
-                      icon={false}
                       autoInsertSpace={false}
+                      icon={null}
+                      style={{
+                        color: '#FFFFFF',
+                        background: '#1FDB51',
+                        borderColor: '#1FDB51',
+                      }}
                     >
                       {t('buttons.update')}
-                    </SaveButton>
-                    <DeleteButton
-                      icon={false}
+                    </Button>
+                    <Button
                       size="small"
                       onClick={onClick}
                       autoInsertSpace={false}
+                      icon={null}
+                      style={{
+                        color: '#FFFFFF',
+                        background: '#E74C3C',
+                        borderColor: '#E74C3C',
+                      }}
                     >
                       {t('buttons.cancel')}
-                    </DeleteButton>
+                    </Button>
                   </Space>
                 )
               }
@@ -469,8 +527,13 @@ function Page() {
                   onClick={onClick}
                   loading={tableProps.loading}
                   size="small"
-                  icon={false}
+                  icon={null}
                   autoInsertSpace={false}
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#1FDB51',
+                    borderColor: '#1FDB51',
+                  }}
                 >
                   {t('buttons.edit')}
                 </EditButton>

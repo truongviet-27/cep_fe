@@ -20,11 +20,87 @@ function Page() {
   const t = useTranslate()
 
   const renderFieldNotSet = (value?: any) => {
+    const text = value ? String(value) : t('common.not_set')
     return (
-      <Space>
-        <Text>{value ? value : t('common.not_set')}</Text>
-        {!value && <WarningOutlined style={{ color: '#AC3C00' }} />}
-      </Space>
+      <div
+        style={{
+          minWidth: 0,
+          width: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          title={text}
+          style={{
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Text
+            style={{
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              flex: '1 1 auto',
+            }}
+          >
+            {text}
+          </Text>
+          {!value && <WarningOutlined style={{ color: '#AC3C00' }} />}
+        </div>
+      </div>
+    )
+  }
+
+  const renderEmployeeName = (value: any, record: BaseRecord) => {
+    const text = value ? String(value) : ''
+    return (
+      <div
+        style={{
+          minWidth: 0,
+          width: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          title={text}
+          style={{
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Text
+            style={{
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              flex: '1 1 auto',
+            }}
+          >
+            {text}
+          </Text>
+          {record?.status === 'inactive' && (
+            <WarningOutlined
+              style={{ color: '#AC3C00' }}
+              title={t('employees.deleted')}
+            />
+          )}
+        </div>
+      </div>
     )
   }
 
@@ -38,6 +114,8 @@ function Page() {
     },
     { title: boldText(t('employees.list.list'), PRIMARY) },
   ]
+  const headerCellStyle = { textAlign: 'center' as const }
+  const bodyCellStyle = { padding: '8px 12px' }
 
   const getRowClassName = (record: BaseRecord) => {
     return !record.email || !record.code ? 'bg-gray-200' : ''
@@ -158,86 +236,143 @@ function Page() {
         {...tableProps}
         className={'mt-6'}
         rowKey="id"
-        onRow={(record) => ({
-          className: getRowClassName(record),
-        })}
+        onRow={(record) => {
+          const isRowDisabled = record.status === 'inactive'
+          return {
+            style: isRowDisabled
+              ? {
+                  opacity: 0.5,
+                  cursor: 'not-allowed',
+                }
+              : {},
+            className: getRowClassName(record),
+          }
+        }}
       >
         <Table.Column
           dataIndex="code"
           title={t('employees.fields.code')}
-          width="8%"
-          render={(value, record) => (
-            <Link
-              style={{ textDecoration: 'underline' }}
-              href={`/employees/show/${record?.id}`}
-            >
-              {value}
-            </Link>
-          )}
+          align="left"
+          width="12%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
+          render={(value, record) => {
+            const isDisabled = record.status === 'inactive'
+            return (
+              <Link
+                href={`/employees/show/${record?.id}`}
+                style={{
+                  textDecoration: 'underline',
+                  pointerEvents: isDisabled ? 'none' : 'auto',
+                  color: isDisabled ? '#999' : undefined,
+                  cursor: isDisabled ? 'not-allowed' : 'pointer',
+                }}
+                title={isDisabled ? t('employees.deleted') : ''}
+              >
+                {value}
+              </Link>
+            )
+          }}
         />
         <Table.Column
           dataIndex="name"
           title={t('employees.fields.name')}
           align={'left'}
           width="15%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
+          render={(value, record: BaseRecord) =>
+            renderEmployeeName(value, record)
+          }
         />
         <Table.Column
           dataIndex={['department']}
           title={t('employees.fields.department')}
           align={'left'}
-          width="50%"
+          width="30%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
           render={(value) => renderFieldNotSet(value?.name)}
         />
         <Table.Column
           dataIndex={['email']}
           title={t('employees.fields.email')}
-          width="13%"
-          render={(value) => <EmailField value={value} />}
+          align="left"
+          width="15%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
+          render={(value, record) => {
+            const isDisabled = record.status === 'inactive'
+            if (isDisabled) {
+              return (
+                <span
+                  style={{
+                    color: '#999',
+                    cursor: 'not-allowed',
+                  }}
+                  title={t('employees.deleted')}
+                >
+                  {value}
+                </span>
+              )
+            }
+            return <EmailField value={value} />
+          }}
         />
         <Table.Column
           dataIndex={['role']}
           title={t('employees.fields.role')}
-          width="7%"
+          width="10%"
           render={(value) => renderFieldNotSet(value?.display_name)}
           align={'left'}
+          onHeaderCell={() => ({ style: headerCellStyle })}
+          onCell={() => ({ style: bodyCellStyle })}
         />
         <Table.Column
           title={t('table.actions')}
           dataIndex="actions"
-          width="7%"
+          align="center"
+          width="10%"
+          onHeaderCell={() => ({ style: headerCellStyle })}
           onCell={() => ({
-            style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
+            style: { ...bodyCellStyle, overflow: 'hidden', minWidth: 0 },
           })}
-          render={(_, record: BaseRecord) => (
-            <Space wrap size={4}>
-              <ShowButton
-                autoInsertSpace={false}
-                size="small"
-                icon={null}
-                recordItemId={record.id}
-                resource="employees"
-                style={{
-                  color: '#2784FF',
-                  borderColor: '#2784FF',
-                }}
-              >
-                {t('buttons.show')}
-              </ShowButton>
-              <EditButton
-                autoInsertSpace={false}
-                size="small"
-                icon={null}
-                recordItemId={record.id}
-                resource="employees"
-                style={{
-                  color: '#FFFFFF',
-                  background: '#1FDB51',
-                }}
-              >
-                {t('buttons.edit')}
-              </EditButton>
-            </Space>
-          )}
+          render={(_, record: BaseRecord) => {
+            const isDisabled = record.status === 'inactive'
+
+            return (
+              <Space wrap size={4}>
+                <ShowButton
+                  disabled={isDisabled}
+                  autoInsertSpace={false}
+                  size="small"
+                  icon={null}
+                  recordItemId={record.id}
+                  resource="employees"
+                  style={{
+                    color: '#2784FF',
+                    borderColor: '#2784FF',
+                  }}
+                >
+                  {t('buttons.show')}
+                </ShowButton>
+                <EditButton
+                  disabled={isDisabled}
+                  autoInsertSpace={false}
+                  size="small"
+                  icon={null}
+                  recordItemId={record.id}
+                  resource="employees"
+                  style={{
+                    color: '#FFFFFF',
+                    background: '#1FDB51',
+                  }}
+                >
+                  {t('buttons.edit')}
+                </EditButton>
+              </Space>
+            )
+          }}
         />
       </CommonTable>
     </List>

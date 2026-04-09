@@ -103,14 +103,17 @@ function BasicInformation(
               </Form.Item>
             </Col>
             <Col flex="none">
-              <Text type="secondary">(A-Z, 0-9, -)</Text>
+              <Text
+                type="secondary"
+                style={{ whiteSpace: 'nowrap', color: '#000' }}
+              >
+                (A-Z, 0-9, -)
+              </Text>
             </Col>
             <Col>
               <Button
                 onClick={handleAutoNumber}
                 loading={isCodeGenLoading}
-                color="primary"
-                variant="outlined"
                 disabled={!isAutomatic}
               >
                 {t('departments.create.auto_number')}

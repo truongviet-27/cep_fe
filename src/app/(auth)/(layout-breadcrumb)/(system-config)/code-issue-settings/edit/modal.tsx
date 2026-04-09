@@ -168,22 +168,14 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
           rules={[rule]}
         >
           <Select placeholder={t('placeholders.select')} disabled={isManual}>
-            {[...Array(10)].map((_, i) => {
-              const value = i + 1
-              const minLength = current_serial_number
-                ? current_serial_number.toString().length
-                : 1
-              // Skip options smaller than current serial number digit count
-              if (value < minLength) return null
-
-              // Skip value 1 (when i === 0) - original logic
-              if (i === 0) return null
-              return (
-                <Select.Option key={value} value={value}>
-                  {value}
+            {[...Array(10)]
+              .map((_, i) => i + 1)
+              .filter((val) => val >= (record?.serial_length || 1))
+              .map((val) => (
+                <Select.Option key={val} value={val}>
+                  {val}
                 </Select.Option>
-              )
-            })}
+              ))}
           </Select>
         </Form.Item>
         <Form.Item

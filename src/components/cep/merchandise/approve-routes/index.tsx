@@ -14,7 +14,6 @@ import type { BaseRecord, CrudFilters } from '@refinedev/core'
 import { useGo, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { GREEN, GREY_TAG, PRIMARY } from '@utility/color'
-import { FORMAT_DATE } from '@utility/instances'
 import {
   Breadcrumb,
   Button,
@@ -79,7 +78,7 @@ function Approve() {
   })
 
   const columns = useMemo(() => {
-    return [
+    const baseColumns = [
       {
         key: 'code',
         dataIndex: 'code',
@@ -172,10 +171,19 @@ function Approve() {
         key: 'author',
         dataIndex: 'author',
         title: t('approve_routes.table.creator'),
-        width: '21%',
+        width: '16%',
         render(value) {
-          return value?.name
+          const name = value?.name ?? ''
+          return <span title={name}>{name}</span>
         },
+        onCell: () => ({
+          style: {
+            maxWidth: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }),
       },
       {
         key: 'updated_at',
@@ -183,14 +191,14 @@ function Approve() {
         title: t('approve_routes.table.updatedAt'),
         width: '9%',
         render(value) {
-          return dayjs(value).format(FORMAT_DATE)
+          return value ? dayjs(value).format('YYYY/MM/DD') : ''
         },
       },
       {
         key: 'action',
         dataIndex: 'action',
         title: t('approve_routes.table.action'),
-        width: '8%',
+        width: '12%',
         onCell: () => ({
           style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
         }),
@@ -241,6 +249,46 @@ function Approve() {
         },
       },
     ] as ColumnsType
+
+    const numberColumnKeys = ['total_steps']
+    const centerColumnKeys = ['action', 'status']
+    const dateColumnKeys = ['updated_at', 'created_at', 'deleted_at']
+
+    return baseColumns.map((column) => {
+      const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+      const originalOnCell = (column as any).onCell
+
+      return {
+        ...column,
+        align: centerColumnKeys.includes(key)
+          ? 'center'
+          : numberColumnKeys.includes(key)
+            ? 'right'
+            : dateColumnKeys.includes(key)
+              ? 'left'
+              : 'left',
+        onHeaderCell: (col: unknown) => {
+          const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+          return {
+            ...originalHeaderCell,
+            style: {
+              ...(originalHeaderCell as any).style,
+              textAlign: 'center',
+            },
+          }
+        },
+        onCell: (record: unknown, rowIndex: number | undefined) => {
+          const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+          return {
+            ...originalCell,
+            style: {
+              ...(originalCell as any).style,
+              padding: '8px 12px',
+            },
+          }
+        },
+      }
+    }) as ColumnsType
   }, [t])
 
   const go = useGo()

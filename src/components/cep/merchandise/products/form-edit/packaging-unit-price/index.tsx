@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable simple-import-sort/imports */
 
+import { useEffect, type MutableRefObject } from 'react'
 import { Action } from '@components/common/action'
 import CoreInput from '@components/common/core-input'
 import CommonTable from '@components/common/table'
@@ -8,7 +10,6 @@ import type { FormInstance } from 'antd'
 import { Button, Checkbox, Form, Input, InputNumber, notification } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { CheckboxChangeEvent } from 'antd/lib'
-import type { MutableRefObject } from 'react'
 
 import type { ProductFormType } from '../use-product-form'
 
@@ -25,6 +26,11 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
   const { getFieldValue, setFieldValue } = form
   const packagings = Form.useWatch('packagings', form) ?? []
 
+  const toNumberOrZero = (value: unknown) => {
+    const n = typeof value === 'number' ? value : Number(value)
+    return Number.isFinite(n) ? n : 0
+  }
+
   const codeWatch = Form.useWatch('code', form)
   const nameWatch = Form.useWatch('name', form)
   const categoryWatch = Form.useWatch('category', form)
@@ -32,17 +38,34 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
   const costPriceWatch = Form.useWatch('cost_price', form)
   const sellingPriceWatch = Form.useWatch('selling_price', form)
 
-  // const isRequiredFieldsFilled = !!(
-  //   codeWatch &&
-  //   nameWatch &&
-  //   categoryWatch &&
-  //   unitIdWatch !== undefined &&
-  //   unitIdWatch !== null &&
-  //   costPriceWatch !== undefined &&
-  //   costPriceWatch !== null &&
-  //   sellingPriceWatch !== undefined &&
-  //   sellingPriceWatch !== null
-  // )
+  useEffect(() => {
+    if (!packagings?.length) return
+    if (sellingPriceWatch === undefined || sellingPriceWatch === null) return
+
+    const baseSellingPrice = toNumberOrZero(sellingPriceWatch)
+    const currentBase = toNumberOrZero(
+      getFieldValue(['packagings', 0, 'selling_price']),
+    )
+
+    if (currentBase !== baseSellingPrice) {
+      setFieldValue(['packagings', 0, 'selling_price'], baseSellingPrice)
+    }
+
+    packagings.forEach((packaging, index) => {
+      if (index === 0) return
+      if (!packaging?.is_standard_price) return
+      const quantity = toNumberOrZero(
+        getFieldValue(['packagings', index, 'quantity_in_package']),
+      )
+      const nextSellingPrice = quantity * baseSellingPrice
+      const currentSellingPrice = toNumberOrZero(
+        getFieldValue(['packagings', index, 'selling_price']),
+      )
+      if (currentSellingPrice !== nextSellingPrice) {
+        setFieldValue(['packagings', index, 'selling_price'], nextSellingPrice)
+      }
+    })
+  }, [sellingPriceWatch, packagings, getFieldValue, setFieldValue])
 
   const onStandardPriceChange = (event: CheckboxChangeEvent, index: number) => {
     const isChecked = event.target.checked
@@ -63,12 +86,25 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
         {(fields, { add, remove }) => {
           addRef.current = add
 
+          const centerHeaderCell = () => ({
+            style: { textAlign: 'center' as const },
+          })
+          const rightCell = () => ({
+            style: {
+              overflow: 'hidden',
+              minWidth: 0,
+              maxWidth: '100%',
+              textAlign: 'right' as const,
+            },
+          })
+
           const columns = [
             {
               title: t('products.fields.packagingCode'),
               dataIndex: 'code',
               width: 10,
-              align: 'center',
+              align: 'left',
+              onHeaderCell: centerHeaderCell,
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
                 <div className="mt-1">
@@ -136,10 +172,19 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'barcode',
               width: 15,
               className: '!content-start',
+              onHeaderCell: centerHeaderCell,
+              onCell: () => ({
+                style: {
+                  overflow: 'hidden',
+                  minWidth: 0,
+                  maxWidth: '100%',
+                  textAlign: 'center' as const,
+                },
+              }),
               render: (_: unknown, __: unknown, index: number) => (
                 <>
                   {index === 0 && (
-                    <div className="mt-1">
+                    <div className="mt-1 text-center">
                       {form.getFieldValue(['packagings', index, 'barcode'])}
                     </div>
                   )}
@@ -147,6 +192,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     name={[index, 'barcode']}
                     styleForm={{ marginBottom: '0px !important' }}
                     hidden={index === 0}
+                    style={{ textAlign: 'right' }}
                     rules={[
                       {
                         pattern: /^[0-9]*$/,
@@ -185,13 +231,12 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'quantity_in_package',
               width: 10,
               className: '!content-start',
-              onCell: () => ({
-                style: { overflow: 'hidden', minWidth: 0, maxWidth: '100%' },
-              }),
+              onHeaderCell: centerHeaderCell,
+              onCell: rightCell,
               render: (_: unknown, __: unknown, index: number) => (
                 <>
                   {index === 0 && (
-                    <div className="mt-1">
+                    <div className="mt-1 text-right">
                       {form.getFieldValue([
                         'packagings',
                         index,
@@ -200,42 +245,56 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                     </div>
                   )}
                   <div style={{ width: '100%', minWidth: 0 }}>
-                    <Form.Item
-                      name={[index, 'quantity_in_package']}
-                      required
-                      hidden={index === 0}
-                      rules={[{ required: true, message: '' }]}
-                      className="ant-form-item-hidden-margin"
-                      style={{ marginBottom: '0px !important', width: '100%' }}
-                      help=""
-                    >
-                      <InputNumber
-                        min={1}
-                        controls={false}
-                        style={{ width: '100%', minWidth: 0 }}
-                        onChange={(value) => {
-                          const costPrice =
-                            (value as number) * getFieldValue('selling_price')
-                          setFieldValue(
-                            ['packagings', index, 'cost_price' as keyof object],
-                            costPrice,
-                          )
-
-                          if (
-                            getFieldValue([
-                              'packagings',
-                              index,
-                              'is_standard_price',
-                            ])
-                          ) {
-                            setFieldValue(
-                              ['packagings', index, 'selling_price'],
-                              costPrice,
-                            )
-                          }
+                    {index !== 0 && (
+                      <Form.Item
+                        name={[index, 'quantity_in_package']}
+                        required
+                        rules={[{ required: true, message: '' }]}
+                        className="ant-form-item-hidden-margin"
+                        style={{
+                          marginBottom: '0px !important',
+                          width: '100%',
                         }}
-                      />
-                    </Form.Item>
+                        help=""
+                      >
+                        <InputNumber
+                          min={1}
+                          controls={false}
+                          className="packaging-unit-price-number-input-right"
+                          style={{ width: '100%', minWidth: 0 }}
+                          onChange={(value) => {
+                            const baseSellingPrice = toNumberOrZero(
+                              getFieldValue('selling_price'),
+                            )
+                            const quantity = toNumberOrZero(value) || 1
+                            const standardSellingPrice =
+                              quantity * baseSellingPrice
+
+                            setFieldValue(
+                              [
+                                'packagings',
+                                index,
+                                'cost_price' as keyof object,
+                              ],
+                              standardSellingPrice,
+                            )
+
+                            if (
+                              getFieldValue([
+                                'packagings',
+                                index,
+                                'is_standard_price',
+                              ])
+                            ) {
+                              setFieldValue(
+                                ['packagings', index, 'selling_price'],
+                                standardSellingPrice,
+                              )
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    )}
                   </div>
                 </>
               ),
@@ -245,6 +304,15 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'unit_id',
               width: 10,
               className: '!content-start',
+              onHeaderCell: centerHeaderCell,
+              onCell: () => ({
+                style: {
+                  overflow: 'hidden',
+                  minWidth: 0,
+                  maxWidth: '100%',
+                  textAlign: 'left' as const,
+                },
+              }),
               render: (_: unknown, __: unknown, index: number) => (
                 <div className="mt-1">
                   <CoreInput name={[index, 'unit_id']} readOnly={true} hidden />
@@ -257,15 +325,19 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'cost_price',
               width: 10,
               className: '!content-start',
+              onHeaderCell: centerHeaderCell,
+              onCell: rightCell,
               render: (value: string, __: unknown, index: number) => (
-                <div className="mt-1">
-                  {Number(
-                    getFieldValue('selling_price') *
+                <div className="mt-1 text-right">
+                  {(
+                    toNumberOrZero(getFieldValue('selling_price')) *
+                    toNumberOrZero(
                       getFieldValue([
                         'packagings',
                         index,
                         'quantity_in_package',
                       ]),
+                    )
                   ).toLocaleString()}
                 </div>
               ),
@@ -275,15 +347,14 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'selling_price',
               width: 10,
               className: '!content-start',
-              onCell: () => ({
-                style: { overflow: 'hidden', minWidth: 0, maxWidth: '100%' },
-              }),
+              onHeaderCell: centerHeaderCell,
+              onCell: rightCell,
               render: (_: unknown, __: unknown, index: number) => {
                 return (
                   <>
                     {index === 0 && (
-                      <div className="mt-1">
-                        {Number(
+                      <div className="mt-1 text-right">
+                        {toNumberOrZero(
                           form.getFieldValue([
                             'packagings',
                             index,
@@ -293,26 +364,31 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                       </div>
                     )}
                     <div style={{ width: '100%', minWidth: 0 }}>
-                      <Form.Item
-                        className="ant-form-item-hidden-margin"
-                        name={[index, 'selling_price']}
-                        required
-                        hidden={index === 0}
-                        rules={[
-                          { required: true, message: t('validation.required') },
-                        ]}
-                        style={{
-                          marginBottom: '0px !important',
-                          width: '100%',
-                        }}
-                      >
-                        <InputNumber
-                          min={0}
-                          controls={false}
-                          disabled={packagings?.[index]?.is_standard_price}
-                          style={{ width: '100%', minWidth: 0 }}
-                        />
-                      </Form.Item>
+                      {index !== 0 && (
+                        <Form.Item
+                          className="ant-form-item-hidden-margin"
+                          name={[index, 'selling_price']}
+                          required
+                          rules={[
+                            {
+                              required: true,
+                              message: t('validation.required'),
+                            },
+                          ]}
+                          style={{
+                            marginBottom: '0px !important',
+                            width: '100%',
+                          }}
+                        >
+                          <InputNumber
+                            min={0}
+                            controls={false}
+                            disabled={packagings?.[index]?.is_standard_price}
+                            className="packaging-unit-price-number-input-right"
+                            style={{ width: '100%', minWidth: 0 }}
+                          />
+                        </Form.Item>
+                      )}
                     </div>
                   </>
                 )
@@ -387,6 +463,12 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                   }}
                 />
               </Form.Item>
+              <style jsx global>{`
+                .packaging-unit-price-number-input-right
+                  .ant-input-number-input {
+                  text-align: right !important;
+                }
+              `}</style>
               <div className="mt-4 text-right">
                 <Button
                   type="primary"

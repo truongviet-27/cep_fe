@@ -1,10 +1,10 @@
 'use client'
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
-import { FORMAT_DATE } from '@utility/instances'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { Button, Collapse, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -103,7 +103,7 @@ function CustomerContacts(
                         required
                         noStyle
                       >
-                        <Input style={{ width: '100%' }} />
+                        <Input style={{ width: '100%', textAlign: 'left' }} />
                       </Form.Item>
                     ),
                   },
@@ -181,7 +181,7 @@ function CustomerContacts(
                         'created_at',
                       ])
                       return createdAt
-                        ? dayjs(createdAt).format(FORMAT_DATE)
+                        ? dayjs(createdAt).format(FORMAT_DATE_CROSS)
                         : '---'
                     },
                   },
@@ -198,13 +198,18 @@ function CustomerContacts(
                       return (
                         <Button
                           danger
-                          icon={<DeleteOutlined />}
+                          size="small"
                           disabled={fields.length === 1}
-                          onClick={() => {
-                            // Remove from form - API will handle soft delete automatically
-                            remove(field.name)
+                          autoInsertSpace={false}
+                          onClick={() => remove(field.name)}
+                          style={{
+                            color: '#fff',
+                            background: '#E74C3C',
+                            borderColor: '#E74C3C',
                           }}
-                        />
+                        >
+                          {t('buttons.delete')}
+                        </Button>
                       )
                     },
                   },

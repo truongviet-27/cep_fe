@@ -55,7 +55,7 @@ export default function Page() {
     ],
   })
 
-  const columns: ColumnsType<Rank> = [
+  const baseColumns: ColumnsType<Rank> = [
     {
       dataIndex: 'code',
       title: t('ranks.table.code'),
@@ -115,6 +115,10 @@ export default function Page() {
               editModalShow(record.id)
             }}
             autoInsertSpace={false}
+            style={{
+              color: '#2784FF',
+              borderColor: '#2784FF',
+            }}
           >
             <span>{t('buttons.show')}</span>
           </ShowButton>
@@ -129,6 +133,11 @@ export default function Page() {
             }}
             recordItemId={record.id}
             autoInsertSpace={false}
+            style={{
+              color: '#FFFFFF',
+              background: '#1FDB51',
+              borderColor: '#1FDB51',
+            }}
           >
             {t('buttons.edit')}
           </EditButton>
@@ -138,6 +147,11 @@ export default function Page() {
             size="small"
             recordItemId={record.id}
             autoInsertSpace={false}
+            style={{
+              color: '#FFFFFF',
+              background: '#E74C3C',
+              borderColor: '#E74C3C',
+            }}
           >
             {t('buttons.delete')}
           </DeleteButton>
@@ -145,6 +159,43 @@ export default function Page() {
       ),
     },
   ]
+
+  const numberColumnKeys = ['rate', 'number_of_customers']
+  const centerColumnKeys = ['actions']
+  const columns: ColumnsType<Rank> = baseColumns.map((column) => {
+    const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+    const originalOnCell = (column as any).onCell
+
+    return {
+      ...column,
+      align: centerColumnKeys.includes(key)
+        ? 'center'
+        : numberColumnKeys.includes(key)
+          ? 'right'
+          : 'left',
+      onHeaderCell: (col: unknown) => {
+        const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+        return {
+          ...originalHeaderCell,
+          style: {
+            ...(originalHeaderCell as any).style,
+            textAlign: 'center',
+          },
+        }
+      },
+      onCell: (record: unknown, rowIndex: number | undefined) => {
+        const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+        const cellPadding = key === 'code' ? '6px 8px' : '8px 12px'
+        return {
+          ...originalCell,
+          style: {
+            ...(originalCell as any).style,
+            padding: cellPadding,
+          },
+        }
+      },
+    }
+  })
 
   const breadcrumbItems = [
     {
@@ -211,7 +262,11 @@ export default function Page() {
           </Col>
           <Col xs={12} sm={12} md={12} style={{ textAlign: 'right' }}>
             <div className={'h-[32px]'} />
-            <CreateButton onClick={modalCreate.show} icon={null}>
+            <CreateButton
+              onClick={modalCreate.show}
+              icon={null}
+              autoInsertSpace={false}
+            >
               {t('buttons.create_new')}
             </CreateButton>
           </Col>

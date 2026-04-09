@@ -52,7 +52,7 @@ import {
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import BasicInfo from './components/basic-info'
 import Link from 'next/link'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
@@ -132,6 +132,13 @@ function QuotaAction() {
 
   const [isPdf, setIsPdf] = useState(false)
   const [previewPdf, setPreviewPdf] = useState('')
+  const saveDraftLockRef = useRef(false)
+  const applyDraftLockRef = useRef(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isApplyingDraft, setIsApplyingDraft] = useState(false)
+  const [isRedirectingAfterDraftSave, setIsRedirectingAfterDraftSave] =
+    useState(false)
+  const [isDraftAppliedOnce, setIsDraftAppliedOnce] = useState(false)
 
   const { data, isFetching } = useCustom<QuotaFormSettingResponse>({
     method: 'get',
@@ -888,6 +895,10 @@ function QuotaAction() {
   }
 
   const handleSaveDraft = () => {
+    if (saveDraftLockRef.current || isRedirectingAfterDraftSave) return
+    saveDraftLockRef.current = true
+    setIsSavingDraft(true)
+
     const values: any = form.getFieldsValue()
 
     const payload = {
@@ -914,108 +925,136 @@ function QuotaAction() {
       source_id: isCloneVersion ? Number(id) : null,
     }
 
-    mutateDraft(
-      {
-        url: `${apiUrl}/drafts`,
-        method: 'put',
-        values: {
-          type: 'quota',
-          payload,
+    try {
+      mutateDraft(
+        {
+          url: `${apiUrl}/drafts`,
+          method: 'put',
+          values: {
+            type: 'quota',
+            payload,
+          },
         },
-      },
-      {
-        onSuccess() {
-          openNotification?.({
-            message: t('notifications.draftSaveSuccess'),
-            description: t('notifications.draftSaveSuccess'),
-            type: 'success',
-          })
-          go({
-            to: `/quotas`,
-          })
+        {
+          onSuccess() {
+            setIsRedirectingAfterDraftSave(true)
+            openNotification?.({
+              message: t('notifications.draftSaveSuccess'),
+              description: t('notifications.draftSaveSuccess'),
+              type: 'success',
+            })
+            go({
+              to: `/quotas`,
+            })
+          },
+          onError(error: any) {
+            openNotification?.({
+              message:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              description:
+                error?.response?.data?.message ||
+                t('notifications.draftSaveError'),
+              type: 'error',
+            })
+            saveDraftLockRef.current = false
+            setIsSavingDraft(false)
+          },
         },
-        onError(error: any) {
-          openNotification?.({
-            message:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            description:
-              error?.response?.data?.message ||
-              t('notifications.draftSaveError'),
-            type: 'error',
-          })
-        },
-      },
-    )
+      )
+    } catch (error) {
+      saveDraftLockRef.current = false
+      setIsSavingDraft(false)
+      throw error
+    }
   }
 
   const handleApplyDraft = () => {
-    if (!dataQuotaDraft?.data || (dataQuotaDraft.data as any[]).length === 0) {
-      return
+    if (applyDraftLockRef.current || isDraftAppliedOnce) return
+    applyDraftLockRef.current = true
+    setIsApplyingDraft(true)
+    let appliedSuccessfully = false
+
+    try {
+      if (
+        !dataQuotaDraft?.data ||
+        (dataQuotaDraft.data as any[]).length === 0
+      ) {
+        return
+      }
+
+      const draft: any = (dataQuotaDraft.data as any[])[0]
+      const draftPayload = draft.payload || draft
+
+      form.setFieldsValue({
+        ...draftPayload,
+        payment_due_date: draftPayload?.payment_due_date,
+        expiration_date: draftPayload?.expiration_date,
+        customer: draftPayload.customer_id
+          ? {
+              value: draftPayload.customer_id,
+              label: draftPayload.customer_name,
+            }
+          : null,
+        delivery_date: draftPayload.delivery_date
+          ? dayjs(draftPayload.delivery_date)
+          : null,
+        issue_date: draftPayload.issue_date
+          ? dayjs(draftPayload.issue_date)
+          : null,
+        tags:
+          draftPayload.tags?.map((item: any) => ({
+            value: item.id,
+            label: item.name,
+          })) || [],
+        main_product: draftPayload.main_product?.map((item: any) => ({
+          ...item,
+          product: { value: item.product_id, label: item.name },
+          package: { value: item.package_id, label: item.package_name },
+          tax_rate: item.tax_rate ?? 0,
+          isSelfCreate: !item.product_id,
+          unit:
+            item.unit_name ??
+            t('quotas.action.detail_info.default_values.default_unit'),
+          unit_name:
+            item.unit_name ??
+            t('quotas.action.detail_info.default_values.default_unit'),
+        })),
+        optional_product: draftPayload.optional_product?.length
+          ? draftPayload.optional_product.map((item: any) => ({
+              ...item,
+              product: { value: item.product_id, label: item.name },
+              package: {
+                value: item.package_id,
+                label: item.package_name,
+              },
+              tax_rate: item.tax_rate ?? 0,
+              isSelfCreate: !item.product_id && item.prodcut_name,
+              unit:
+                item.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+              unit_name:
+                item.unit_name ??
+                t('quotas.action.detail_info.default_values.default_unit'),
+            }))
+          : defaultOptionalProduct,
+      })
+
+      openNotification?.({
+        description: t('notifications.draftApplySuccess'),
+        message: t('notifications.draftApplySuccess'),
+        type: 'success',
+      })
+      setIsDraftAppliedOnce(true)
+      appliedSuccessfully = true
+    } finally {
+      if (appliedSuccessfully) {
+        setIsApplyingDraft(false)
+        return
+      }
+      applyDraftLockRef.current = false
+      setIsApplyingDraft(false)
     }
-
-    const draft: any = (dataQuotaDraft.data as any[])[0]
-    const draftPayload = draft.payload || draft
-
-    form.setFieldsValue({
-      ...draftPayload,
-      payment_due_date: draftPayload?.payment_due_date,
-      expiration_date: draftPayload?.expiration_date,
-      customer: draftPayload.customer_id
-        ? {
-            value: draftPayload.customer_id,
-            label: draftPayload.customer_name,
-          }
-        : null,
-      delivery_date: draftPayload.delivery_date
-        ? dayjs(draftPayload.delivery_date)
-        : null,
-      issue_date: draftPayload.issue_date
-        ? dayjs(draftPayload.issue_date)
-        : null,
-      tags:
-        draftPayload.tags?.map((item: any) => ({
-          value: item.id,
-          label: item.name,
-        })) || [],
-      main_product: draftPayload.main_product?.map((item: any) => ({
-        ...item,
-        product: { value: item.product_id, label: item.name },
-        package: { value: item.package_id, label: item.package_name },
-        tax_rate: item.tax_rate ?? 0,
-        isSelfCreate: !item.product_id,
-        unit:
-          item.unit_name ??
-          t('quotas.action.detail_info.default_values.default_unit'),
-        unit_name:
-          item.unit_name ??
-          t('quotas.action.detail_info.default_values.default_unit'),
-      })),
-      optional_product: draftPayload.optional_product?.length
-        ? draftPayload.optional_product.map((item: any) => ({
-            ...item,
-            product: { value: item.product_id, label: item.name },
-            package: {
-              value: item.package_id,
-              label: item.package_name,
-            },
-            tax_rate: item.tax_rate ?? 0,
-            isSelfCreate: !item.product_id && item.prodcut_name,
-            unit:
-              item.unit_name ??
-              t('quotas.action.detail_info.default_values.default_unit'),
-            unit_name:
-              item.unit_name ??
-              t('quotas.action.detail_info.default_values.default_unit'),
-          }))
-        : defaultOptionalProduct,
-    })
-
-    openNotification?.({
-      description: t('notifications.draftApplySuccess'),
-      message: t('notifications.draftApplySuccess'),
-      type: 'success',
-    })
   }
 
   const [productPrincing, setProductPrincing] = useState<number[]>()
@@ -1244,8 +1283,13 @@ function QuotaAction() {
                       isFetchingProduct ||
                       isFetchingHistory ||
                       quoteTemplateQuery.isFetching ||
-                      isFetchingQuotaDraft
+                      isFetchingQuotaDraft ||
+                      isSavingDraft ||
+                      isApplyingDraft ||
+                      isRedirectingAfterDraftSave ||
+                      isDraftAppliedOnce
                     }
+                    loading={isApplyingDraft && !isDraftAppliedOnce}
                   >
                     {t('buttons.apply_draft')}
                   </Button>
@@ -1253,8 +1297,13 @@ function QuotaAction() {
               {action === 'create' && (
                 <Button
                   type="primary"
-                  loading={isPendingDraft}
+                  loading={isPendingDraft || isSavingDraft}
                   onClick={handleSaveDraft}
+                  disabled={
+                    isSavingDraft ||
+                    isApplyingDraft ||
+                    isRedirectingAfterDraftSave
+                  }
                   autoInsertSpace={false}
                 >
                   {t('buttons.draft')}

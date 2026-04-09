@@ -323,7 +323,7 @@ function AgreedPriceQuotaDetail() {
             }}
           >
             <Space>
-              {queryBasic?.data?.is_author && (
+              {queryBasic?.data?.is_author && !agreedPriceItem?.is_active && (
                 <DeleteButton
                   icon={null}
                   size={'small'}
@@ -493,6 +493,7 @@ function AgreedPriceQuotaDetail() {
                 queryBasic.data?.is_author && (
                   <Button
                     type="primary"
+                    autoInsertSpace={false}
                     onClick={() => {
                       go({
                         to: `/quotas/edit/${id}`,

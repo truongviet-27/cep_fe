@@ -53,11 +53,12 @@ function DetailInfo({
       }
       return { ...item }
     })
-  const columns: ColumnsType = [
+  const baseColumns: ColumnsType = [
     {
       title: t('quotas.show.table.product_code'),
       dataIndex: 'code',
       key: 'code',
+      width: '12%',
       align: 'left',
       render: (_, record) => {
         if (record.isHeader) {
@@ -73,6 +74,8 @@ function DetailInfo({
       title: t('quotas.show.table.product_service_name'),
       dataIndex: 'name',
       key: 'name',
+      width: '15%',
+      align: 'left',
       render: (_, record) => {
         if (record.isHeader) return { props: { colSpan: 0 } }
 
@@ -123,6 +126,8 @@ function DetailInfo({
       title: t('quotas.show.table.unit'),
       dataIndex: 'unit',
       key: 'unit',
+      width: '6%',
+      align: 'left',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -134,7 +139,8 @@ function DetailInfo({
       title: t('quotas.show.table.package'),
       dataIndex: 'package',
       key: 'package',
-      width: 200,
+      align: 'left',
+      width: '8%',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -146,6 +152,7 @@ function DetailInfo({
       title: t('quotas.show.table.cost_price'),
       dataIndex: 'cost_price',
       key: 'cost_price',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -160,6 +167,7 @@ function DetailInfo({
       title: t('quotas.show.table.selling_price'),
       dataIndex: 'selling_price',
       key: 'selling_price',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -171,6 +179,7 @@ function DetailInfo({
       title: t('quotas.show.table.quantity'),
       dataIndex: 'quantity',
       key: 'quantity',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -182,6 +191,7 @@ function DetailInfo({
       title: t('quotas.show.table.profit_margin'),
       dataIndex: 'profit_margin',
       key: 'profit_margin',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -193,6 +203,7 @@ function DetailInfo({
       title: t('quotas.show.table.tax_rate'),
       dataIndex: 'tax_rate',
       key: 'tax_rate',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -204,6 +215,7 @@ function DetailInfo({
       title: t('quotas.show.table.total_calculation'),
       dataIndex: 'is_add_total',
       key: 'is_add_total',
+      align: 'left',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -223,6 +235,7 @@ function DetailInfo({
       title: t('quotas.show.table.selling_amount'),
       dataIndex: 'sellingAmount',
       key: 'sellingAmount',
+      align: 'right',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -233,6 +246,12 @@ function DetailInfo({
       },
     },
   ]
+  const columns: ColumnsType = baseColumns.map((column) => ({
+    ...column,
+    onHeaderCell: () => ({
+      style: { textAlign: 'center' },
+    }),
+  }))
 
   const calculateGroupedTotal = (data: any) => {
     const totalByTaxRate = data.reduce((acc: any, item: any) => {
@@ -311,7 +330,7 @@ function DetailInfo({
                   fontWeight: 700,
                 }}
               >
-                <Table.Summary.Cell index={0} colSpan={3} align="center">
+                <Table.Summary.Cell index={0} colSpan={3} align="left">
                   {t('quotas.action.detail_info.summary.subtotal')}
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1}></Table.Summary.Cell>
@@ -321,7 +340,7 @@ function DetailInfo({
                 <Table.Summary.Cell index={5}></Table.Summary.Cell>
                 <Table.Summary.Cell index={6}></Table.Summary.Cell>
                 <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                <Table.Summary.Cell index={8} align="center">
+                <Table.Summary.Cell index={8} align="right">
                   {Number(
                     basicInfo?.consumption_tax === 'exclusive'
                       ? +basicInfo?.total_price_tax_included -

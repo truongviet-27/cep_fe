@@ -313,7 +313,7 @@ function DetailInfo({
 
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
-          const columns: ColumnsType = [
+          const baseColumns: ColumnsType = [
             {
               title: t('quotas.action.detail_info.table.product_code'),
               dataIndex: 'code',
@@ -833,6 +833,7 @@ function DetailInfo({
                     ]}
                   >
                     <InputNumber
+                      className="quota-number-input-right"
                       min={0}
                       precision={0}
                       controls={false}
@@ -882,6 +883,7 @@ function DetailInfo({
                     ]}
                   >
                     <InputNumber
+                      className="quota-number-input-right"
                       min={1}
                       precision={0}
                       controls={false}
@@ -1049,7 +1051,8 @@ function DetailInfo({
               title: t('quotas.action.detail_info.table.total_calculation'),
               dataIndex: 'is_add_total',
               key: 'is_add_total',
-              width: '4%',
+              width: '8%',
+              align: 'center',
               onHeaderCell: () => ({
                 style: {
                   whiteSpace: 'normal',
@@ -1063,26 +1066,28 @@ function DetailInfo({
                   return { props: { colSpan: 0 } }
                 }
                 return (
-                  <Form.Item
-                    name={[record.index, 'is_add_total']}
-                    valuePropName="checked"
-                    className="ant-form-item-hidden-margin"
-                  >
-                    <Checkbox
-                      style={{
-                        transform: 'scale(1.3)',
-                        marginBottom: 0,
-                      }}
-                      defaultChecked={form.getFieldValue([
-                        'main_product',
-                        record.index,
-                        'is_add_total',
-                      ])}
-                      onChange={() => {
-                        calculateSummary(form.getFieldValue('main_product'))
-                      }}
-                    />
-                  </Form.Item>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Form.Item
+                      name={[record.index, 'is_add_total']}
+                      valuePropName="checked"
+                      className="ant-form-item-hidden-margin"
+                    >
+                      <Checkbox
+                        style={{
+                          transform: 'scale(1.3)',
+                          marginBottom: 0,
+                        }}
+                        defaultChecked={form.getFieldValue([
+                          'main_product',
+                          record.index,
+                          'is_add_total',
+                        ])}
+                        onChange={() => {
+                          calculateSummary(form.getFieldValue('main_product'))
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
                 )
               },
             },
@@ -1205,6 +1210,40 @@ function DetailInfo({
             },
           ]
 
+          const numericColumnKeys = new Set([
+            'cost_price',
+            'selling_price',
+            'quantity',
+            'profit_margin',
+            'sellingAmount',
+            'tax_rate',
+          ])
+          const centerColumnKeys = new Set(['action', 'is_add_total'])
+
+          const columns: ColumnsType = baseColumns.map((column) => {
+            const originalOnHeaderCell = column.onHeaderCell
+
+            return {
+              ...column,
+              onHeaderCell: (col: any) => {
+                const originalHeaderCell =
+                  originalOnHeaderCell?.(col) ?? ({} as any)
+                return {
+                  ...originalHeaderCell,
+                  style: {
+                    ...(originalHeaderCell as any).style,
+                    textAlign: 'center',
+                  },
+                }
+              },
+              align: centerColumnKeys.has(String(column.key))
+                ? 'center'
+                : numericColumnKeys.has(String(column.key))
+                  ? 'right'
+                  : 'left',
+            }
+          })
+
           return (
             <Flex vertical>
               <Flex
@@ -1252,7 +1291,7 @@ function DetailInfo({
                         fontWeight: 700,
                       }}
                     >
-                      <Table.Summary.Cell index={0} colSpan={3} align="center">
+                      <Table.Summary.Cell index={0} colSpan={3} align="left">
                         {t('quotas.action.detail_info.summary.subtotal')}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={1}></Table.Summary.Cell>
@@ -1260,7 +1299,7 @@ function DetailInfo({
                       <Table.Summary.Cell index={3}></Table.Summary.Cell>
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={6} align="center">
+                      <Table.Summary.Cell index={6} align="right">
                         {Number(total).toLocaleString() || 0}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
@@ -1411,6 +1450,11 @@ function DetailInfo({
           handleChangeProductPrincing={handleChangeProductPrincingMain}
         />
       </Modal>
+      <style jsx global>{`
+        .quota-number-input-right .ant-input-number-input {
+          text-align: right !important;
+        }
+      `}</style>
     </Card>
   )
 }

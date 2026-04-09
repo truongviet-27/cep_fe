@@ -72,7 +72,12 @@ export default function BasicInformation() {
               </Form.Item>
             </Col>
             <Col flex="none">
-              <Text type="secondary">(A-Z, 0-9, -)</Text>
+              <Text
+                type="secondary"
+                style={{ whiteSpace: 'nowrap', color: '#000' }}
+              >
+                (A-Z, 0-9, -)
+              </Text>
             </Col>
             <Col>
               <Button

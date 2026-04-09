@@ -36,7 +36,12 @@ const authOptions: AuthOptions = {
         refreshToken: { label: 'Refresh Token', type: 'text' },
       },
       async authorize(credentials) {
-        if (!credentials?.token) return null
+        console.log('[TokenLogin] Starting authorization')
+
+        if (!credentials?.token || !credentials?.refreshToken) {
+          console.error('[TokenLogin] Missing token or refreshToken')
+          return null
+        }
 
         const introspectRes = await fetch(
           `${process.env.NEXT_PUBLIC_ISSUER}/protocol/openid-connect/token/introspect`,
@@ -53,28 +58,24 @@ const authOptions: AuthOptions = {
         )
 
         const introspect = await introspectRes.json()
+
         if (!introspectRes.ok || !introspect.active) {
-          console.error('Token invalid or expired')
+          console.error('[TokenLogin] Token invalid or expired')
           return null
         }
 
-        let refreshed = null
-        try {
-          refreshed = await refreshAccessToken({
-            accessToken: credentials.token,
-            refreshToken: credentials.refreshToken,
-            provider: 'TokenLogin',
-          })
-        } catch (err) {
-          console.error('Error refreshing tokens:', err)
+        const result = {
+          ...introspect,
+          access_token: credentials.token,
+          refresh_token: credentials.refreshToken,
+          expires_at: introspect.exp,
         }
 
-        return {
-          ...introspect,
-          access_token: refreshed?.accessToken ?? credentials.token,
-          refresh_token: refreshed?.refreshToken ?? credentials.refreshToken,
-          expires_at: refreshed?.expiresAt ?? introspect.exp,
-        }
+        console.log(
+          '[TokenLogin] Authorization successful, expires at:',
+          new Date(introspect.exp * 1000).toISOString(),
+        )
+        return result
       },
     }),
   ],
@@ -86,13 +87,21 @@ const authOptions: AuthOptions = {
         | undefined
       const credsUser = user as CredentialsUser
 
-      // Xử lý cập nhật name từ session.update()
       if (trigger === 'update' && updateSession?.user?.name) {
         token.name = updateSession.user.name
       }
 
       if (account || credsUser) {
-        // token.idToken = account?.id_token ?? credsUser.id_token
+        const provider = account?.provider || 'TokenLogin'
+        console.log(
+          '[JWT Callback] New login, provider:',
+          provider,
+          'expires at:',
+          new Date(
+            (account?.expires_at ?? credsUser.expires_at ?? 0) * 1000,
+          ).toISOString(),
+        )
+
         token.accessToken = account?.access_token ?? credsUser.access_token
         token.refreshToken = account?.refresh_token ?? credsUser.refresh_token
         token.expiresAt = account?.expires_at ?? credsUser.expires_at
@@ -105,13 +114,32 @@ const authOptions: AuthOptions = {
         return token
       }
 
-      const willExpireIn =
-        (Number(token.expiresAt) ?? 0) - Math.floor(Date.now() / 1000)
+      const currentTime = Math.floor(Date.now() / 1000)
+      const willExpireIn = (Number(token.expiresAt) ?? 0) - currentTime
+
+      // If token already has error, don't attempt refresh again
+      if (token.error) {
+        console.log('[JWT Callback] Token has error, skipping refresh')
+        return token
+      }
+
       if (willExpireIn > 0) {
         return token
       }
 
-      return await refreshAccessToken(token)
+      console.log('[JWT Callback] Token expired, attempting refresh...')
+      const refreshedToken = await refreshAccessToken(token)
+
+      if (refreshedToken.error) {
+        console.error('[JWT Callback] Refresh failed:', refreshedToken.error)
+        return { ...token, error: 'RefreshAccessTokenError' }
+      }
+
+      console.log(
+        '[JWT Callback] Token refreshed successfully, expires at:',
+        new Date((Number(refreshedToken.expiresAt) ?? 0) * 1000).toISOString(),
+      )
+      return refreshedToken
     },
 
     async session({ session, token }) {
@@ -124,6 +152,11 @@ const authOptions: AuthOptions = {
         session.user.family_name = token.family_name as string
         session.user.name = token.name as string
         session.provider = token.provider as string
+        session.error = token.error as string | undefined
+
+        if (session.error) {
+          console.error('[Session Callback] Session has error:', session.error)
+        }
       }
 
       return session

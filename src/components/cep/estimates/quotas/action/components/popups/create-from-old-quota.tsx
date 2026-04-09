@@ -114,6 +114,7 @@ function CreateFromOldQuota({ open, onClose, t }: CreateFromOldQuotaProps) {
             <Button
               type="primary"
               variant="filled"
+              autoInsertSpace={false}
               onClick={() => handleSelectTemplate(record.id)}
             >
               {t('buttons.select')}
@@ -178,7 +179,12 @@ function CreateFromOldQuota({ open, onClose, t }: CreateFromOldQuotaProps) {
                   marginBottom: 10,
                 }}
               >
-                <Button type="primary" variant="filled" htmlType="submit">
+                <Button
+                  type="primary"
+                  variant="filled"
+                  htmlType="submit"
+                  autoInsertSpace={false}
+                >
                   {t('quota_templates.button.search')}
                 </Button>
                 <Button

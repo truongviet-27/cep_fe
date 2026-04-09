@@ -20,7 +20,7 @@ import {
 import type { FormInstance } from 'antd/lib'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 
 import BasicInfo from './basic-info'
 import Packaging from './packaging'
@@ -39,6 +39,10 @@ const ProductComboFormContainer: React.FC = () => {
       isLoadingSubmit,
       isUpdateMode,
       isPendingDraft,
+      isSavingDraft,
+      isApplyingDraft,
+      isDraftAppliedOnce,
+      isRedirectingAfterDraftSave,
       dataProductComboDraft,
       isFetchingProductComboDraft,
     },
@@ -47,7 +51,6 @@ const ProductComboFormContainer: React.FC = () => {
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
-  const [isAllowedSaveButton, setIsAllowedSaveButton] = useState(isUpdateMode)
 
   return (
     <PageContainer
@@ -103,9 +106,6 @@ const ProductComboFormContainer: React.FC = () => {
                 children: (
                   <BasicInfo
                     form={form as unknown as FormInstance<ProductComboFormType>}
-                    addRef={addRef}
-                    isAllowedSaveButton={isAllowedSaveButton}
-                    setIsAllowedSaveButton={setIsAllowedSaveButton}
                   />
                 ),
               },
@@ -208,7 +208,14 @@ const ProductComboFormContainer: React.FC = () => {
                     color="primary"
                     variant="outlined"
                     onClick={handleApplyDraft}
-                    disabled={isFetchingProductComboDraft}
+                    disabled={
+                      isFetchingProductComboDraft ||
+                      isSavingDraft ||
+                      isApplyingDraft ||
+                      isDraftAppliedOnce ||
+                      isRedirectingAfterDraftSave
+                    }
+                    loading={isApplyingDraft && !isDraftAppliedOnce}
                   >
                     {t('buttons.apply_draft')}
                   </Button>
@@ -217,7 +224,12 @@ const ProductComboFormContainer: React.FC = () => {
                 <Button
                   type="primary"
                   onClick={handleSaveDraft}
-                  loading={isPendingDraft}
+                  loading={isPendingDraft || isSavingDraft}
+                  disabled={
+                    isSavingDraft ||
+                    isApplyingDraft ||
+                    isRedirectingAfterDraftSave
+                  }
                 >
                   {t('buttons.draft')}
                 </Button>
@@ -226,7 +238,6 @@ const ProductComboFormContainer: React.FC = () => {
                 type="primary"
                 htmlType="submit"
                 loading={isLoadingSubmit}
-                disabled={!isAllowedSaveButton}
               >
                 {isUpdateMode
                   ? t('products.buttons.save')

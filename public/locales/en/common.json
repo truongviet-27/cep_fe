@@ -183,6 +183,7 @@
   },
   "employees": {
     "employees": "Employees",
+    "deleted": "The employee has been removed.",
     "edit": {
       "title": "Edit Employee"
     },
@@ -544,6 +545,28 @@
         "packagingInfo": "Packaging Information",
         "basicLabel": "basic",
         "detailLabel": "detail"
+      }
+    }
+  },
+  "import_history": {
+    "label": {
+      "csv_import": "CSV Import",
+      "csv_export": "CSV Export"
+    },
+    "text": {
+      "category_export": {
+        "QUOTAS_SENT_EXPORT": "Quotation list (Sent) export",
+        "PRODUCTS_EXPORT": "Product list export",
+        "CUSTOMERS_EXPORT": "Customer list export",
+        "CUSTOMERS_NEW_EXPORT": "Customer list (New) export",
+        "CUSTOMERS_PROSPECTING_EXPORT": "Customer list (Prospecting) export",
+        "CUSTOMERS_CONTRACTED_EXPORT": "Customer list (Contracted) export",
+        "CUSTOMERS_LOST_EXPORT": "Customer list (Lost) export",
+        "CUSTOMERS_SUSPENDED_EXPORT": "Customer list (Suspended) export",
+        "ORDERS_WAITING_EXPORT": "Order list (Waiting) export",
+        "ORDERS_NEW_EXPORT": "Order list (New order) export",
+        "ORDERS_SHIPPED_EXPORT": "Order list (Shipped) export",
+        "REVENUES_EXPORT": "Revenue list export"
       }
     }
   }

@@ -1,7 +1,6 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -26,6 +25,10 @@ const QuoteTemplateFormEditContainer: FC = () => {
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,
+    isSavingDraft,
+    isApplyingDraft,
+    isDraftAppliedOnce,
+    isRedirectingAfterDraftSave,
     dataQuotaTemplateDraft,
     isFetchingQuotaTemplateDraft,
   } = useController()
@@ -123,7 +126,14 @@ const QuoteTemplateFormEditContainer: FC = () => {
                     color="primary"
                     variant="outlined"
                     onClick={handleApplyDraft}
-                    disabled={isFetchingQuotaTemplateDraft}
+                    disabled={
+                      isFetchingQuotaTemplateDraft ||
+                      isSavingDraft ||
+                      isApplyingDraft ||
+                      isDraftAppliedOnce ||
+                      isRedirectingAfterDraftSave
+                    }
+                    loading={isApplyingDraft && !isDraftAppliedOnce}
                   >
                     {t('buttons.apply_draft')}
                   </Button>
@@ -132,7 +142,12 @@ const QuoteTemplateFormEditContainer: FC = () => {
                 <Button
                   type="primary"
                   onClick={handleSaveDraft}
-                  loading={isPendingDraft}
+                  loading={isPendingDraft || isSavingDraft}
+                  disabled={
+                    isSavingDraft ||
+                    isApplyingDraft ||
+                    isRedirectingAfterDraftSave
+                  }
                   autoInsertSpace={false}
                 >
                   {t('buttons.draft')}
@@ -145,17 +160,6 @@ const QuoteTemplateFormEditContainer: FC = () => {
               >
                 {isUpdateMode ? t('buttons.save') : t('buttons.create')}
               </Button>
-              {isUpdateMode && (
-                <DeleteButton
-                  icon={null}
-                  onSuccess={() => {
-                    go({
-                      to: '/quota-templates',
-                    })
-                  }}
-                  autoInsertSpace={false}
-                />
-              )}
             </Space>
           </Flex>
         </Form>

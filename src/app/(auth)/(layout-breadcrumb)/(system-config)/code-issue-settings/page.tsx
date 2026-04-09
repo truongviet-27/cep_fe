@@ -90,14 +90,22 @@ export default function Page() {
       >
         <Table.Column
           dataIndex="name"
-          title={t('code_issue_settings.fields.name')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.name')}
+            </div>
+          }
           align={'left'}
           width="13%"
         />
 
         <Table.Column
           dataIndex="issue_method"
-          title={t('code_issue_settings.fields.issue_method')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.issue_method')}
+            </div>
+          }
           width="8%"
           render={(value: 'manual' | 'automatic') => {
             const colorMap: Record<'manual' | 'automatic', string> = {
@@ -113,19 +121,31 @@ export default function Page() {
         />
         <Table.Column
           dataIndex="prefix"
-          title={t('code_issue_settings.fields.prefix')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.prefix')}
+            </div>
+          }
           align={'left'}
           width="7%"
         />
         <Table.Column
           dataIndex={['hash_dash']}
-          title={t('code_issue_settings.fields.hash')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.hash')}
+            </div>
+          }
           width="5%"
           render={(value) => value && <BooleanField value={!!value} />}
         />
         <Table.Column
           dataIndex="segment"
-          title={t('code_issue_settings.fields.segment')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.segment')}
+            </div>
+          }
           width="20%"
           render={(value: SegmentedValue) =>
             segmentLabelByValue[value] ?? String(value)
@@ -134,13 +154,21 @@ export default function Page() {
         />
         <Table.Column
           dataIndex="serial_length"
-          title={t('code_issue_settings.fields.serial_length')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.serial_length')}
+            </div>
+          }
           align={'right'}
           width="7%"
         />
         <Table.Column
           dataIndex="current_serial_number"
-          title={t('code_issue_settings.fields.total')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.total')}
+            </div>
+          }
           align={'right'}
           width="6%"
         />
@@ -148,17 +176,25 @@ export default function Page() {
           dataIndex="preview_code"
           width="13%"
           render={(value: SegmentedValue) => <Tag>{value}</Tag>}
-          title={t('code_issue_settings.fields.preview_code')}
+          title={
+            <div style={{ textAlign: 'center' }}>
+              {t('code_issue_settings.fields.preview_code')}
+            </div>
+          }
+          align={'left'}
         />
         <Table.Column
           align={'center'}
-          title={t('table.actions')}
+          title={
+            <div style={{ textAlign: 'center' }}>{t('table.actions')}</div>
+          }
           dataIndex="actions"
           width="5%"
           render={(_, record: BaseRecord) => (
             <Button
               size="small"
               icon={null}
+              autoInsertSpace={false}
               onClick={() => {
                 show(record.id)
               }}

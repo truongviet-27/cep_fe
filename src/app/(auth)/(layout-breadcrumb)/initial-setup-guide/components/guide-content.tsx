@@ -3,7 +3,7 @@
 import { AuditOutlined, UsergroupAddOutlined } from '@ant-design/icons'
 import { useList, useTranslate, useUpdate } from '@refinedev/core'
 import { Card, Typography } from 'antd'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import type { MenuItem } from '../constants'
 import type { Manual } from '../types'
@@ -39,6 +39,18 @@ function getLeftColumnBgForManual(manual: Manual): string {
   return '#e6fffb'
 }
 
+function getManualLinkHref(manual: Manual): string | undefined {
+  if (!manual.link) return undefined
+  if (manual.app_type === 'control') {
+    const base =
+      process.env.NEXT_PUBLIC_KEYCLOAK_APP_BASE_URL ||
+      'https://dev-control.eerp.jp/'
+    const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base
+    return `${normalizedBase}${manual.link}`
+  }
+  return manual.link
+}
+
 function getNotesFromManual(
   manual: Manual,
 ): Array<{ text: string; italic?: boolean; danger?: boolean }> | undefined {
@@ -62,6 +74,9 @@ export default function GuideContent({
 }: GuideContentProps) {
   const t = useTranslate()
   const [updatingId, setUpdatingId] = useState<number | null>(null)
+  const [statusOverrides, setStatusOverrides] = useState<
+    Record<number, 'complete' | 'pending'>
+  >({})
 
   const typeFilter =
     selectedItem.id === 'basic' || selectedItem.id === 'advanced'
@@ -112,6 +127,10 @@ export default function GuideContent({
     }))
   })()
 
+  useEffect(() => {
+    setStatusOverrides({})
+  }, [data?.data])
+
   const handleStatusChange = useCallback(
     (manualId: number, newStatus: 'complete' | 'pending') => {
       setUpdatingId(manualId)
@@ -124,6 +143,7 @@ export default function GuideContent({
         {
           onSettled: () => setUpdatingId(null),
           onSuccess: () => {
+            setStatusOverrides((prev) => ({ ...prev, [manualId]: newStatus }))
             refetch()
             onStatusUpdated?.()
           },
@@ -247,7 +267,10 @@ export default function GuideContent({
                     </div>
                   ) : null}
                   {items.map((manual) => {
-                    const isComplete = manual.status === 'complete'
+                    const effectiveStatus =
+                      statusOverrides[manual.id] ?? manual.status
+                    const isComplete = effectiveStatus === 'complete'
+                    const linkHref = getManualLinkHref(manual)
                     return (
                       <GuideStepCard
                         key={manual.id}
@@ -263,16 +286,16 @@ export default function GuideContent({
                         }
                         description={manual.description.replace(/\\n/g, '\n')}
                         notes={getNotesFromManual(manual)}
-                        linkHref={manual.link ?? undefined}
+                        linkHref={linkHref}
                         linkText={
                           manual.breadcrumb
                             ? undefined
-                            : manual.link
+                            : linkHref
                               ? t('initial-setup-guide.screen_link')
                               : undefined
                         }
                         breadcrumb={manual.breadcrumb ?? undefined}
-                        status={manual.status}
+                        status={effectiveStatus}
                         leftBg="gray"
                         manualId={manual.id}
                         onStatusChange={handleStatusChange}
@@ -293,7 +316,10 @@ export default function GuideContent({
               }}
             >
               {manuals.map((manual) => {
-                const isComplete = manual.status === 'complete'
+                const effectiveStatus =
+                  statusOverrides[manual.id] ?? manual.status
+                const isComplete = effectiveStatus === 'complete'
+                const linkHref = getManualLinkHref(manual)
                 return (
                   <GuideStepCard
                     key={manual.id}
@@ -308,16 +334,16 @@ export default function GuideContent({
                     }
                     description={manual.description.replace(/\\n/g, '\n')}
                     notes={getNotesFromManual(manual)}
-                    linkHref={manual.link ?? undefined}
+                    linkHref={linkHref}
                     linkText={
                       manual.breadcrumb
                         ? undefined
-                        : manual.link
+                        : linkHref
                           ? t('initial-setup-guide.screen_link')
                           : undefined
                     }
                     breadcrumb={manual.breadcrumb ?? undefined}
-                    status={manual.status}
+                    status={effectiveStatus}
                     leftBg="gray"
                     manualId={manual.id}
                     onStatusChange={handleStatusChange}

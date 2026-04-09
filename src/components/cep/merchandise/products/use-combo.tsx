@@ -45,11 +45,11 @@ function useCombo() {
   })
 
   const columns = useMemo(() => {
-    return [
+    const baseColumns = [
       {
         title: t('product_combos.list.table.headers.image'),
-        dataIndex: 'code',
-        key: 'code',
+        dataIndex: 'image',
+        key: 'image',
         width: 100,
         render: (_: unknown, record: any) =>
           (record as any).image_file_url ? (
@@ -88,7 +88,7 @@ function useCombo() {
         dataIndex: 'name',
         key: 'name',
         align: 'left',
-        width: '20%',
+        width: '13%',
       },
       {
         title: t('product_combos.list.table.headers.products'), // Bạn có thể đặt tên khác
@@ -106,19 +106,20 @@ function useCombo() {
         title: t('product_combos.list.table.headers.barcode'), // barcode
         dataIndex: 'barcode',
         key: 'barcode',
-        width: '10%',
+        width: '8%',
       },
       {
         title: t('product_combos.list.table.headers.subcategory'), // Category small
         dataIndex: 'category',
         key: 'category',
         align: 'left',
-        width: '20%',
+        width: '10%',
       },
       {
         title: t('product_combos.list.table.headers.unit'), // Unit
         dataIndex: 'unit',
         key: 'unit',
+        width: '8%',
       },
       {
         title: (
@@ -129,6 +130,7 @@ function useCombo() {
         dataIndex: 'cost_price',
         key: 'cost_price',
         align: 'center',
+        width: '8%',
         render: (item: number) => item?.toLocaleString(),
       },
       {
@@ -139,39 +141,103 @@ function useCombo() {
         ), // sale_price (JPY)
         dataIndex: 'sale_price',
         key: 'sale_price',
+        width: '8%',
         render: (item: number) => item.toLocaleString(),
       },
       {
         title: t('table.actions'),
         dataIndex: 'action',
         key: 'action',
-        width: 120,
+        width: 220,
         render(_, record) {
           return (
-            <Space>
+            <Space wrap size={4}>
               <ShowButton
-                hideText
                 size="small"
+                icon={null}
+                autoInsertSpace={false}
                 recordItemId={record.id}
                 resource={'product-combos'}
-              />
+                style={{
+                  color: '#2784FF',
+                  borderColor: '#2784FF',
+                }}
+              >
+                {t('buttons.show')}
+              </ShowButton>
               <EditButton
-                hideText
                 size="small"
+                icon={null}
+                autoInsertSpace={false}
                 recordItemId={record.id}
                 resource={'product-combos'}
-              />
+                style={{
+                  color: '#FFFFFF',
+                  background: '#1FDB51',
+                  borderColor: '#1FDB51',
+                }}
+              >
+                {t('buttons.edit')}
+              </EditButton>
               <DeleteButton
-                hideText
                 size="small"
+                icon={null}
+                autoInsertSpace={false}
                 recordItemId={record.id}
                 resource={'product-combos'}
-              />
+                style={{
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
+                  borderColor: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </DeleteButton>
             </Space>
           )
         },
       },
     ] as ColumnsType
+
+    const numberColumnKeys = ['cost_price', 'sale_price', 'barcode']
+    const centerColumnKeys = ['image', 'action']
+    const dateColumnKeys = ['created_at', 'updated_at', 'deleted_at']
+
+    return baseColumns.map((column) => {
+      const key = String((column as any).key ?? (column as any).dataIndex ?? '')
+      const originalOnCell = (column as any).onCell
+
+      return {
+        ...column,
+        align: centerColumnKeys.includes(key)
+          ? 'center'
+          : numberColumnKeys.includes(key)
+            ? 'right'
+            : dateColumnKeys.includes(key)
+              ? 'left'
+              : 'left',
+        onHeaderCell: (col: unknown) => {
+          const originalHeaderCell = (column as any).onHeaderCell?.(col) ?? {}
+          return {
+            ...originalHeaderCell,
+            style: {
+              ...(originalHeaderCell as any).style,
+              textAlign: 'center',
+            },
+          }
+        },
+        onCell: (record: unknown, rowIndex: number | undefined) => {
+          const originalCell = originalOnCell?.(record as any, rowIndex) ?? {}
+          return {
+            ...originalCell,
+            style: {
+              ...(originalCell as any).style,
+              padding: '8px 12px',
+            },
+          }
+        },
+      }
+    }) as ColumnsType
   }, [t])
 
   return [

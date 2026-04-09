@@ -29,7 +29,7 @@ import {
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE, FORMAT_DATE_TIME } from '@utility/instances'
+import { FORMAT_DATE_CROSS, FORMAT_DATE_TIME_CROSS } from '@utility/instances'
 import { Button, Collapse, Space, Tag, Typography } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -108,7 +108,7 @@ export default function CustomerShowPage() {
       dataIndex: 'created_at',
       key: 'created_at',
       width: '25%',
-      render: (date: string) => date && dayjs(date).format(FORMAT_DATE),
+      render: (date: string) => date && dayjs(date).format(FORMAT_DATE_CROSS),
     },
   ]
 
@@ -232,7 +232,7 @@ export default function CustomerShowPage() {
       dataIndex: 'updated_at',
       key: 'updated_at',
       width: 180,
-      render: (date: string) => date && dayjs(date).format(FORMAT_DATE),
+      render: (date: string) => date && dayjs(date).format(FORMAT_DATE_CROSS),
     },
   ]
 
@@ -280,6 +280,7 @@ export default function CustomerShowPage() {
         <Space>
           <Button
             type="primary"
+            autoInsertSpace={false}
             disabled={
               params?.disable ||
               !hasFullAccessModule(PermissionEnum.CUSTOMER_EDIT) ||
@@ -308,14 +309,14 @@ export default function CustomerShowPage() {
               value:
                 (record?.author?.name ?? '--') +
                 ' ' +
-                dayjs(record?.created_at).format(FORMAT_DATE_TIME),
+                dayjs(record?.created_at).format(FORMAT_DATE_TIME_CROSS),
             },
             {
               title: t('common.updated_by'),
               value:
                 (record?.editor?.name ?? '--') +
                 ' ' +
-                dayjs(record?.updated_at).format(FORMAT_DATE_TIME),
+                dayjs(record?.updated_at).format(FORMAT_DATE_TIME_CROSS),
             },
           ]}
         />
@@ -416,7 +417,9 @@ export default function CustomerShowPage() {
               </DetailItem>
               <DetailItem label={t('customers.show.date_of_establishment')}>
                 {record?.date_of_establishment &&
-                  dayjs(record?.date_of_establishment).format(FORMAT_DATE)}
+                  dayjs(record?.date_of_establishment).format(
+                    FORMAT_DATE_CROSS,
+                  )}
               </DetailItem>
               <DetailItem label={t('customers.show.department_in_charge')}>
                 {typeof record?.department_in_charge === 'object'

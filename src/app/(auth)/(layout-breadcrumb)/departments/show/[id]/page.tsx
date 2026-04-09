@@ -64,6 +64,8 @@ export default function Page() {
       title: boldText(t('departments.show.show'), PRIMARY),
     },
   ]
+  const headerCellStyle = { textAlign: 'center' as const }
+  const bodyCellStyle = { padding: '8px 12px' }
 
   return (
     <Show
@@ -102,7 +104,9 @@ export default function Page() {
           </div>
         </div>
       }
-      rightFooterButtons={<EditButton icon={null} type={'primary'} />}
+      rightFooterButtons={
+        <EditButton icon={null} type={'primary'} autoInsertSpace={false} />
+      }
     >
       <div className="flex flex-col space-y-6">
         <DetailItem label={t('departments.fields.code')}>
@@ -129,6 +133,9 @@ export default function Page() {
             <Table.Column
               dataIndex="code"
               title={t('employees.fields.code')}
+              align="left"
+              onHeaderCell={() => ({ style: headerCellStyle })}
+              onCell={() => ({ style: bodyCellStyle })}
               render={(value, record) => (
                 <Link
                   style={{ textDecoration: 'underline' }}
@@ -138,19 +145,34 @@ export default function Page() {
                 </Link>
               )}
             />
-            <Table.Column dataIndex="name" title={t('employees.fields.name')} />
+            <Table.Column
+              dataIndex="name"
+              title={t('employees.fields.name')}
+              align="left"
+              onHeaderCell={() => ({ style: headerCellStyle })}
+              onCell={() => ({ style: bodyCellStyle })}
+            />
             <Table.Column
               dataIndex={['email']}
               title={t('employees.fields.email')}
+              align="left"
+              onHeaderCell={() => ({ style: headerCellStyle })}
+              onCell={() => ({ style: bodyCellStyle })}
             />
             <Table.Column
               dataIndex={['role', 'display_name']}
               title={t('employees.fields.role')}
+              align="left"
+              onHeaderCell={() => ({ style: headerCellStyle })}
+              onCell={() => ({ style: bodyCellStyle })}
               render={(value) => renderFieldNotSet(value)}
             />
             <Table.Column
               title={t('table.actions')}
               dataIndex="actions"
+              align="center"
+              onHeaderCell={() => ({ style: headerCellStyle })}
+              onCell={() => ({ style: bodyCellStyle })}
               render={(_, record: BaseRecord) => (
                 <Space>
                   <EditButton
