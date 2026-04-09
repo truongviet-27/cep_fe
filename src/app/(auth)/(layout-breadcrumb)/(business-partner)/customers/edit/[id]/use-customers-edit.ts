@@ -45,7 +45,7 @@ export const useCustomerEdit = () => {
 
   // TODO: Remove this when customer API show endpoint includes contacts in response
   // Fetch customer contacts only after customer data is loaded
-  const { data: contactsData, refetch: refetchContacts } = useCustom({
+  const { data: contactsData } = useCustom({
     url: `${apiUrl}/customer-contacts`,
     method: 'get',
     config: {
@@ -99,17 +99,6 @@ export const useCustomerEdit = () => {
         company_type,
         industry,
       })
-
-      // Only refetch contacts when save is successful
-      try {
-        const response = await refetchContacts()
-        const freshContacts = response?.data?.data
-        if (freshContacts) {
-          form.setFieldsValue({ receivers: freshContacts })
-        }
-      } catch (refetchError) {
-        console.error('Failed to refetch contacts:', refetchError)
-      }
 
       // Navigate to list page on success
       go({
