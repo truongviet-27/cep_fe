@@ -140,7 +140,12 @@ export default function EmployeeEdit() {
       }
       rightFooterButtons={
         <Space size={2} className={'flex justify-end'}>
-          <Button {...saveButtonProps} type="primary" autoInsertSpace={false}>
+          <Button
+            {...saveButtonProps}
+            type="primary"
+            autoInsertSpace={false}
+            disabled={isDefaultDepartment}
+          >
             {t('products.buttons.save')}
           </Button>
         </Space>

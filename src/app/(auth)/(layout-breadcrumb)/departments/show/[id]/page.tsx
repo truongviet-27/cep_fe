@@ -12,6 +12,7 @@ import type { BaseRecord } from '@refinedev/core'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import { Space, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -105,7 +106,12 @@ export default function Page() {
         </div>
       }
       rightFooterButtons={
-        <EditButton icon={null} type={'primary'} autoInsertSpace={false} />
+        <EditButton
+          icon={null}
+          type={'primary'}
+          autoInsertSpace={false}
+          disabled={departmentData?.name === DEPARTMENT_DEFAULT}
+        />
       }
     >
       <div className="flex flex-col space-y-6">
