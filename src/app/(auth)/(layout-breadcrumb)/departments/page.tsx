@@ -137,7 +137,7 @@ export default function Page() {
           {t('departments.fields.code')}
         </div>
       ),
-      width: '12%',
+      width: '15%',
       render: (value, record) => {
         return (
           <Link
@@ -157,7 +157,7 @@ export default function Page() {
         </div>
       ),
       align: 'left',
-      width: '16%',
+      width: '20%',
       render: (value: string) => {
         const text = value || '---'
         return (
@@ -199,7 +199,7 @@ export default function Page() {
         <div style={{ textAlign: 'center' }}>{t('common.created_by')}</div>
       ),
       align: 'left',
-      width: '19%',
+      width: '12%',
       render: (value: any) => {
         return value?.name || '---'
       },
@@ -210,7 +210,7 @@ export default function Page() {
         <div style={{ textAlign: 'center' }}>{t('common.updated_by')}</div>
       ),
       align: 'left',
-      width: '19%',
+      width: '12%',
       render: (value: any) => {
         return value?.name || '---'
       },
@@ -238,7 +238,7 @@ export default function Page() {
     {
       title: <div style={{ textAlign: 'center' }}>{t('table.actions')}</div>,
       dataIndex: 'actions',
-      width: '12%',
+      width: '20%',
       onCell: () => ({
         style: { padding: '2px 2px', overflow: 'hidden', minWidth: 0 },
       }),
