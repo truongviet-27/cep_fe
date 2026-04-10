@@ -658,14 +658,9 @@ function QuotaList() {
 
               {(record.is_author || permission?.is_module_admin) &&
                 record.status === QuotaStatus.SentToCustomer && (
-                  <Button
-                    type="default"
-                    size="small"
-                    style={{
-                      color: '#FFFFFF',
-                      background: '#8207BA',
-                    }}
-                    onClick={() =>
+                  <Popconfirm
+                    title="取引先に再度見積書をメールでお送りいたします。よろしいでしょうか？"
+                    onConfirm={() =>
                       handleChangeStatus(
                         'resend-email-to-customer',
                         {
@@ -674,9 +669,20 @@ function QuotaList() {
                         'post',
                       )
                     }
+                    okText="送信"
+                    cancelText="キャンセル"
                   >
-                    {t('quotas.actions.resend_email_to_customer')}
-                  </Button>
+                    <Button
+                      type="default"
+                      size="small"
+                      style={{
+                        color: '#FFFFFF',
+                        background: '#8207BA',
+                      }}
+                    >
+                      {t('quotas.actions.resend_email_to_customer')}
+                    </Button>
+                  </Popconfirm>
                 )}
 
               <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
