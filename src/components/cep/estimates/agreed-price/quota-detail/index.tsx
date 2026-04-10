@@ -11,7 +11,7 @@ import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { usePdfViewerLayoutPlugin } from '@hooks/usePdfViewerLayout'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { DeleteButton, useForm } from '@refinedev/antd'
+import { useForm } from '@refinedev/antd'
 import {
   type OpenNotificationParams,
   useApiUrl,
@@ -299,9 +299,7 @@ function AgreedPriceQuotaDetail() {
           <OptionalInfo data={dataProducts?.data?.optional_product} />
           <Conditions note={queryBasic?.data?.note} />
           <Tags tags={queryBasic?.data?.tags} />
-
           {queryBasic?.data?.display && <Reason />}
-
           <Divider />
           <ShowMoreInfo
             descriptions={[
@@ -317,25 +315,11 @@ function AgreedPriceQuotaDetail() {
             ]}
           />
           <Flex
-            justify="space-between"
+            justify="end"
             style={{
               marginTop: 40,
             }}
           >
-            <Space>
-              {queryBasic?.data?.is_author && !agreedPriceItem?.is_active && (
-                <DeleteButton
-                  icon={null}
-                  size={'small'}
-                  onSuccess={() => {
-                    go({
-                      to: '/quotas',
-                    })
-                  }}
-                />
-              )}
-            </Space>
-
             <Space>
               {queryBasic?.data?.status === QuotaStatus.Creating &&
                 queryBasic?.data?.is_author && (
@@ -398,7 +382,6 @@ function AgreedPriceQuotaDetail() {
                     </Button>
                   </>
                 )}
-
               {queryBasic?.data?.status === QuotaStatus.Approved &&
                 queryBasic?.data?.is_author && (
                   <Button
@@ -418,7 +401,6 @@ function AgreedPriceQuotaDetail() {
                     送信
                   </Button>
                 )}
-
               {queryBasic?.data?.status === QuotaStatus.SentToCustomer &&
                 (queryBasic.data?.display || queryBasic?.data?.is_author) && (
                   <>
@@ -454,7 +436,6 @@ function AgreedPriceQuotaDetail() {
                     </Button>
                   </>
                 )}
-
               {(queryBasic?.data?.status === QuotaStatus.Completed ||
                 queryBasic?.data?.status === QuotaStatus.Cancelled) &&
                 queryBasic.data?.display && (
@@ -475,7 +456,6 @@ function AgreedPriceQuotaDetail() {
                   </Button>
                 )}
             </Space>
-
             <Space className="items-end">
               <Button
                 type="default"

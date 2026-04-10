@@ -38,6 +38,7 @@
     "status_complete": "Complete",
     "progress_status": "Progress",
     "label_estimate_management": "Estimate management",
+    "label_sales_management": "Sales management",
     "label_system_all_management": "System all management",
     "label_account_management": "Account management",
     "step_prefix": "Step",
