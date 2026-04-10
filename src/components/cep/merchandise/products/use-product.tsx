@@ -3,15 +3,16 @@
 import { PictureOutlined } from '@ant-design/icons'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
-import { useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
 import { PermissionEnum, type ProductListItem } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import { Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import type { TableRowSelection } from 'antd/es/table/interface'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 interface ISearch {
   search: string
@@ -20,10 +21,17 @@ interface ISearch {
 
 function useProduct() {
   const t = useTranslate()
+  const apiUrl = useApiUrl()
   const { hasFullAccessModule } = useUserStore.getState()
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
 
-  const { tableProps, searchFormProps, setFilters } = useTable<
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [selectedRows, setSelectedRows] = useState<ProductListItem[]>([])
+  const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
+
+  const { mutate, isPending: isBulkDeleting } = useCustomMutation()
+
+  const { tableProps, searchFormProps, setFilters, tableQuery } = useTable<
     ProductListItem,
     HttpError,
     ISearch
@@ -44,6 +52,44 @@ function useProduct() {
       },
     ],
   })
+
+  const onSelectChange = useCallback(
+    (newSelectedRowKeys: React.Key[], newSelectedRows: ProductListItem[]) => {
+      setSelectedRowKeys(newSelectedRowKeys)
+      setSelectedRows(newSelectedRows)
+    },
+    [],
+  )
+
+  const rowSelection: TableRowSelection<ProductListItem> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  }
+
+  const handleBulkDelete = useCallback(() => {
+    mutate(
+      {
+        values: {
+          ids: selectedRows.map((item) => item.id),
+        },
+        method: 'delete',
+        url: `${apiUrl}/products`,
+        successNotification: () => ({
+          message: t('notifications.success'),
+          description: t('notifications.success'),
+          type: 'success' as const,
+        }),
+      },
+      {
+        onSuccess: () => {
+          setSelectedRowKeys([])
+          setSelectedRows([])
+          setIsOpenManyDelete(false)
+          tableQuery.refetch()
+        },
+      },
+    )
+  }, [mutate, selectedRows, apiUrl, t, tableQuery])
 
   const columns = useMemo(() => {
     const baseColumns = [
@@ -384,8 +430,12 @@ function useProduct() {
       columns,
       tableProps,
       searchFormProps,
+      rowSelection,
+      selectedRowKeys,
+      isOpenManyDelete,
+      isBulkDeleting,
     },
-    { t, setFilters },
+    { t, setFilters, setIsOpenManyDelete, handleBulkDelete },
   ] as const
 }
 

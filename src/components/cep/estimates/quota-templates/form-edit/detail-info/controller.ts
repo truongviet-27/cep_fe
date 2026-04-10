@@ -35,7 +35,7 @@ export const useController = () => {
       isSelfCreate: isSelfCreate,
       selling_price: 0,
       profit_margin: 0,
-      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 10,
       is_add_total: true,
       kind: 'product',
     }

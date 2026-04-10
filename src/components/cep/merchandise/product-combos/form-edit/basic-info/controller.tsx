@@ -1,7 +1,7 @@
 import { useDebounce } from '@hook/use-debounce'
 import type { ProductPackagingInputType } from '@interfaces/products'
 import { useModalForm } from '@refinedev/antd'
-import { useApiUrl, useCustom, useList } from '@refinedev/core'
+import { useApiUrl, useCustom, useList, useParsed } from '@refinedev/core'
 import type {
   CodeIssueSetting,
   ProductPackagingInput,
@@ -16,6 +16,7 @@ import type { ProductComboFormType } from '../use-product-combo-form'
 
 export const useBasicInfoController = (
   form: FormInstance<ProductComboFormType>,
+  setIsInitializingCode: (value: boolean) => void,
 ) => {
   const apiUrl = useApiUrl()
   const [productUnitSearchText, setProductUnitSearchText] = useState<string>('')
@@ -26,6 +27,10 @@ export const useBasicInfoController = (
   const unitIdWatch = Form.useWatch('unit_id', form)
   const nameWatch = Form.useWatch('name', form)
   const sellingPriceWatch = Form.useWatch('selling_price', form)
+  const [latestCodeIssueSetting, setLatestCodeIssueSetting] =
+    useState<CodeIssueSetting>()
+  const { params } = useParsed()
+  const isCreateMode = !params?.id
 
   useEffect(() => {
     const currentPackagings = (getFieldValue('packagings') ??
@@ -85,6 +90,13 @@ export const useBasicInfoController = (
     method: 'get',
   })
 
+  const fetchLatestCodeIssueSetting = useCallback(async () => {
+    const response = await refetch()
+    const data = response?.data?.data
+    setLatestCodeIssueSetting(data)
+    return data
+  }, [refetch])
+
   const handleAutoNumber = () => {
     refetch().then(() => {
       const codeGen = codeIssueSetting?.data
@@ -92,12 +104,47 @@ export const useBasicInfoController = (
     })
   }
 
+  useEffect(() => {
+    let isMounted = true
+
+    const initializeCodeSetting = async () => {
+      if (isCreateMode) {
+        setIsInitializingCode(true)
+        form?.setFieldsValue({ code: undefined })
+      }
+
+      try {
+        const codeGen = await fetchLatestCodeIssueSetting()
+
+        if (!isMounted || !isCreateMode) return
+
+        if (
+          codeGen?.issue_method === 'automatic' &&
+          !form.isFieldTouched('code') &&
+          codeGen?.preview_code
+        ) {
+          form?.setFieldsValue({ code: codeGen.preview_code })
+        }
+      } finally {
+        if (isMounted && isCreateMode) {
+          setIsInitializingCode(false)
+        }
+      }
+    }
+
+    initializeCodeSetting()
+
+    return () => {
+      isMounted = false
+    }
+  }, [fetchLatestCodeIssueSetting, form, isCreateMode, setIsInitializingCode])
+
   const modalFormProps = useModalForm({
     action: 'edit',
     resource: 'code-issue-settings',
     autoResetFormWhenClose: true,
     warnWhenUnsavedChanges: false,
-    id: codeIssueSetting?.data?.id,
+    id: latestCodeIssueSetting?.id,
     defaultFormValues: {
       hash_dash: true,
     },

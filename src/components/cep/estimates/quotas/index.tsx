@@ -658,14 +658,9 @@ function QuotaList() {
 
               {(record.is_author || permission?.is_module_admin) &&
                 record.status === QuotaStatus.SentToCustomer && (
-                  <Button
-                    type="default"
-                    size="small"
-                    style={{
-                      color: '#FFFFFF',
-                      background: '#8207BA',
-                    }}
-                    onClick={() =>
+                  <Popconfirm
+                    title="取引先に再度見積書をメールでお送りいたします。よろしいでしょうか？"
+                    onConfirm={() =>
                       handleChangeStatus(
                         'resend-email-to-customer',
                         {
@@ -674,9 +669,20 @@ function QuotaList() {
                         'post',
                       )
                     }
+                    okText="送信"
+                    cancelText="キャンセル"
                   >
-                    {t('quotas.actions.resend_email_to_customer')}
-                  </Button>
+                    <Button
+                      type="default"
+                      size="small"
+                      style={{
+                        color: '#FFFFFF',
+                        background: '#8207BA',
+                      }}
+                    >
+                      {t('quotas.actions.resend_email_to_customer')}
+                    </Button>
+                  </Popconfirm>
                 )}
 
               <Link href={record?.pdf_path} target="_blank" style={{ flex: 1 }}>
@@ -1157,6 +1163,11 @@ function QuotaList() {
               }),
             )
           }
+          refetch()
+          refetchStats()
+          setSelectedRowKeys([])
+          setOptions([])
+          setIsOpenManyDelete(false)
           return false
         },
         errorNotification: (data) => {
@@ -1659,8 +1670,55 @@ function QuotaList() {
                       },
                       method: 'delete',
                       url: `${apiUrl}/quotas`,
-                      successNotification: (data) =>
-                        notificationFunction(data?.data.message),
+                      successNotification: (data) => {
+                        const idToCodeMap = new Map(
+                          selectedRows.map((item: any) => [item.id, item.code]),
+                        )
+                        const successCodes =
+                          data?.data?.results
+                            ?.map((id: number) => idToCodeMap.get(id))
+                            .filter(Boolean) ?? []
+
+                        const errorCodes =
+                          data?.data?.errors
+                            ?.map((id: number) => idToCodeMap.get(id))
+                            .filter(Boolean) ?? []
+
+                        const formatCodes = (codes: string[], limit = 10) => {
+                          if (codes.length <= limit) return codes.join(', ')
+                          return `${codes.length}`
+                        }
+
+                        if (errorCodes.length) {
+                          notification.open({
+                            message: t('notifications.notProceedRecords', {
+                              recordAsString: formatCodes(errorCodes),
+                            }),
+                            type: 'error',
+                          })
+                        }
+
+                        if (successCodes.length) {
+                          return notificationFunction(
+                            t('notifications.proceedRecords', {
+                              recordAsString: formatCodes(successCodes),
+                            }),
+                          )
+                        }
+                        refetch()
+                        refetchStats()
+                        setSelectedRowKeys([])
+                        setOptions([])
+                        setIsOpenManyDelete(false)
+                        return false
+                      },
+                      errorNotification: (data) => {
+                        notification.open({
+                          message: data?.message,
+                          type: 'error',
+                        })
+                        return false
+                      },
                     })
                   }}
                   onCancel={() => setIsOpenManyDelete(false)}
