@@ -38,6 +38,7 @@
     "status_complete": "完了",
     "progress_status": "進捗状況",
     "label_estimate_management": "見積管理",
+    "label_sales_management": "販売管理",
     "label_system_all_management": "見積/販売管理",
     "label_account_management": "アカウント管理",
     "step_prefix": "ステップ",
