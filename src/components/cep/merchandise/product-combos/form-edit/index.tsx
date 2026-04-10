@@ -20,7 +20,7 @@ import {
 import type { FormInstance } from 'antd/lib'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import BasicInfo from './basic-info'
 import Packaging from './packaging'
@@ -51,6 +51,7 @@ const ProductComboFormContainer: React.FC = () => {
   const { form, formProps, query } = methods
   const product = query?.data?.data
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
+  const [isInitializingCode, setIsInitializingCode] = useState(!isUpdateMode)
 
   return (
     <PageContainer
@@ -84,7 +85,7 @@ const ProductComboFormContainer: React.FC = () => {
         </Title>
       }
     >
-      <Spin spinning={methods.formLoading}>
+      <Spin spinning={methods.formLoading || isInitializingCode}>
         <Form<ProductComboFormType>
           {...formProps}
           form={form as unknown as FormInstance<ProductComboFormType>}
@@ -106,6 +107,7 @@ const ProductComboFormContainer: React.FC = () => {
                 children: (
                   <BasicInfo
                     form={form as unknown as FormInstance<ProductComboFormType>}
+                    setIsInitializingCode={setIsInitializingCode}
                   />
                 ),
               },
