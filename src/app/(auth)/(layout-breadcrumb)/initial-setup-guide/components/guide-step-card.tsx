@@ -24,6 +24,8 @@ export interface GuideStepCardProps {
   iconBg?: string
   leftColumnBg?: string
   showLeftIcon?: boolean
+  /** When set, overrides label text color (e.g. system_sale uses green while icon stays orange). */
+  labelTextColor?: string
 }
 
 const LEFT_BG_STYLES = {
@@ -66,6 +68,7 @@ export default function GuideStepCard({
   iconBg,
   leftColumnBg,
   showLeftIcon = true,
+  labelTextColor,
 }: GuideStepCardProps) {
   const t = useTranslate()
   const statusOptions: Array<{ value: 'pending' | 'complete'; label: string }> =
@@ -90,7 +93,9 @@ export default function GuideStepCard({
   const leftBgColor = grayedOut
     ? '#e8e8e8'
     : (leftColumnBg ?? leftStyle.background)
-  const labelColor = grayedOut ? '#8c8c8c' : (iconBg ?? leftStyle.labelColor)
+  const labelColor = grayedOut
+    ? '#8c8c8c'
+    : (labelTextColor ?? iconBg ?? leftStyle.labelColor)
 
   return (
     <div

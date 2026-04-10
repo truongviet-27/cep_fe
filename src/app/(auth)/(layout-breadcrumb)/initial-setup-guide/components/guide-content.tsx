@@ -18,30 +18,43 @@ const ADVANCED_GROUP_ORDER = [
   'user_role',
 ]
 
+function isSystemLikeCategory(
+  category: Manual['category'],
+): category is 'system' | 'system_all' | 'system_sale' {
+  return (
+    category === 'system' ||
+    category === 'system_all' ||
+    category === 'system_sale'
+  )
+}
+
 function getIconForManual(manual: Manual) {
-  if (manual.category === 'system' || manual.category === 'system_all')
-    return <AuditOutlined />
+  if (isSystemLikeCategory(manual.category)) return <AuditOutlined />
   return <UsergroupAddOutlined />
 }
 
 function getIconBgForManual(manual: Manual): string {
-  if (manual.category === 'system' || manual.category === 'system_all')
-    return '#fa8c16'
+  if (isSystemLikeCategory(manual.category)) return '#fa8c16'
   return '#08979c'
 }
 
 function getLabelForManual(manual: Manual, t: (key: string) => string): string {
   if (manual.category === 'system')
     return t('initial-setup-guide.label_estimate_management')
+  if (manual.category === 'system_sale')
+    return t('initial-setup-guide.label_sales_management')
   if (manual.category === 'system_all')
     return t('initial-setup-guide.label_system_all_management')
   return t('initial-setup-guide.label_account_management')
 }
 
 function getLeftColumnBgForManual(manual: Manual): string {
-  if (manual.category === 'system' || manual.category === 'system_all')
-    return '#fff7e6'
+  if (isSystemLikeCategory(manual.category)) return '#fff7e6'
   return '#e6fffb'
+}
+
+function getLabelTextColorForManual(manual: Manual): string | undefined {
+  return manual.category === 'system_sale' ? '#53B60C' : undefined
 }
 
 function getManualLinkHref(manual: Manual): string | undefined {
@@ -317,6 +330,7 @@ export default function GuideContent({
                         onStatusChange={handleStatusChange}
                         updating={updatingId === manual.id}
                         isComplete={isComplete}
+                        labelTextColor={getLabelTextColorForManual(manual)}
                       />
                     )
                   })}
@@ -366,6 +380,7 @@ export default function GuideContent({
                     updating={updatingId === manual.id}
                     isComplete={isComplete}
                     disableStatusChange={manual.step === 1}
+                    labelTextColor={getLabelTextColorForManual(manual)}
                   />
                 )
               })}
