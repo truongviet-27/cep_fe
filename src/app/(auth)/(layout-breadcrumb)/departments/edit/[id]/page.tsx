@@ -174,7 +174,6 @@ export default function EmployeeEdit() {
                   placeholder="DEP001"
                   size="middle"
                   style={{ width: 240 }}
-                  disabled={isAutomatic}
                 />
               </Form.Item>
             </Col>
