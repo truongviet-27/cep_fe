@@ -34,14 +34,17 @@ export const useCustomerEdit = () => {
   } = useForm({
     action: 'edit',
     redirect: false,
+    queryOptions: {
+      refetchOnWindowFocus: false,
+    },
   })
 
   const record = queryResult?.data?.data
 
-  // Track if receivers have been initialized to prevent overwriting user input
   const receiversInitialized = useRef(false)
-  // Store receivers before submit to restore on error
   const receiversBeforeSubmit = useRef<any[] | null>(null)
+  // Store contacts data to restore when Refine resets form
+  const contactsDataRef = useRef<any[] | null>(null)
 
   // TODO: Remove this when customer API show endpoint includes contacts in response
   // Fetch customer contacts only after customer data is loaded
@@ -191,44 +194,41 @@ export const useCustomerEdit = () => {
 
   const rule = validateCustomerRule(t)
 
-  // Set customer record into form (excluding receivers as they come from separate API)
-  // Always preserve receivers if they have been initialized
+  // Sync customer record into form (separate receivers from contacts API response).
+  // When Refine refetch → reset form → receivers are deleted → restore from contactsDataRef.
   useEffect(() => {
     if (record) {
       const { receivers: _, ...recordWithoutReceivers } = record as any
-      // Get current receivers from form to preserve them
-      const currentReceivers = form.getFieldValue('receivers')
-      // If receivers are already initialized, always preserve them when setting other fields
       if (receiversInitialized.current) {
-        // Always preserve receivers, even if they're empty array (user might have cleared them)
+        const currentReceivers = form.getFieldValue('receivers')
+        const hasValidReceivers =
+          Array.isArray(currentReceivers) && currentReceivers.length > 0
+        const fallbackReceivers = contactsDataRef.current ||
+          receiversBeforeSubmit.current || [
+            { department_name: null, contact_person_name: null, email: null },
+          ]
         form.setFieldsValue({
           ...recordWithoutReceivers,
-          receivers: currentReceivers || receiversBeforeSubmit.current || [],
+          receivers: hasValidReceivers ? currentReceivers : fallbackReceivers,
         })
       } else {
-        // If receivers not initialized yet, only set other fields (receivers will be set by next useEffect)
         form.setFieldsValue(recordWithoutReceivers)
       }
     }
   }, [record, form])
 
-  // Reset receiversInitialized when customerId changes (navigate to different customer)
   useEffect(() => {
     receiversInitialized.current = false
     receiversBeforeSubmit.current = null
+    contactsDataRef.current = null
   }, [customerId])
 
-  // Set receivers into form when contacts data is loaded
-  // Only set if not already initialized or if form doesn't have receivers
   useEffect(() => {
     if (contactsData?.data !== undefined) {
       const currentReceivers = form.getFieldValue('receivers')
       const hasReceivers =
-        currentReceivers &&
-        Array.isArray(currentReceivers) &&
-        currentReceivers.length > 0
+        Array.isArray(currentReceivers) && currentReceivers.length > 0
 
-      // Only set receivers if not initialized yet or form doesn't have receivers
       if (!receiversInitialized.current || !hasReceivers) {
         const receivers = contactsData.data
         const initialReceivers =
@@ -242,8 +242,8 @@ export const useCustomerEdit = () => {
                 },
               ]
 
+        contactsDataRef.current = initialReceivers
         form.setFieldsValue({ receivers: initialReceivers })
-        // Mark receivers as initialized
         receiversInitialized.current = true
       }
     }
