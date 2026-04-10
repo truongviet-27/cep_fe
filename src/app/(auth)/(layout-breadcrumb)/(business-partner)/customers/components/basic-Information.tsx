@@ -410,13 +410,13 @@ function BasicInformation(
         <Form.Item
           label={boldText(t('customers.fields.unit_price_rank_code'))}
           required
-          hidden={!allowRankResource}
           style={{ marginTop: -10 }}
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Row align="middle" gutter={12}>
             <Col flex="none" style={{ width: 570 }}>
               <SelectPagination
+                disabled={!allowRankResource}
                 selectProps={{
                   resource: 'ranks',
                   queryOptions: { enabled: allowRankResource },
