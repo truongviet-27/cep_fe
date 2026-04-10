@@ -2,7 +2,6 @@
 import { DownOutlined, RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -171,20 +170,7 @@ const ProductFormContainer: React.FC = () => {
               />
             </>
           )}
-          <Flex justify="space-between" style={{ marginTop: 24 }}>
-            {isUpdateMode ? (
-              <DeleteButton
-                icon={null}
-                size={'small'}
-                onSuccess={() => {
-                  go({
-                    to: '/products',
-                  })
-                }}
-              />
-            ) : (
-              <div></div>
-            )}
+          <Flex justify="end" style={{ marginTop: 24 }}>
             <Space size="small">
               <Button
                 onClick={() => {
