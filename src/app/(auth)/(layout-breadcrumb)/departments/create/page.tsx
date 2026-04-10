@@ -165,12 +165,7 @@ export default function Page() {
           <Row align="middle" gutter={[8, 8]}>
             <Col flex="none">
               <Form.Item name="code" rules={codeRules} noStyle>
-                <Input
-                  placeholder="DEP001"
-                  size="middle"
-                  className="w-full"
-                  disabled={isAutomatic}
-                />
+                <Input placeholder="DEP001" size="middle" className="w-full" />
               </Form.Item>
             </Col>
 
