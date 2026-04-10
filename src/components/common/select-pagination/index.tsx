@@ -7,6 +7,7 @@ import { get, uniqBy } from 'lodash' // Nhớ import uniqBy
 
 type Props = {
   selectProps: UseSelectProps<any, any, any>
+  disabled?: boolean
   selectComponentProps: SelectProps
   formItemProps?: FormItemProps
   optionLabel?: any
@@ -16,6 +17,7 @@ type Props = {
 }
 
 export const SelectPagination = ({
+  disabled = false,
   selectComponentProps,
   selectProps,
   formItemProps,
@@ -78,13 +80,14 @@ export const SelectPagination = ({
       {isNotReady ? (
         <div>
           <Select
-            disabled
+            disabled={disabled}
             {...selectComponentProps}
             placeholder="読み込み中..."
           />
         </div>
       ) : (
         <Select
+          disabled={disabled}
           options={options}
           {...selectComponentProps}
           {...props}
