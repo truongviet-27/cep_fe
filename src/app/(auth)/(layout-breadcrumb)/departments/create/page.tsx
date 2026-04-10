@@ -83,23 +83,18 @@ export default function Page() {
 
   const { show, close, open } = modalFormProps
 
-  const handleAutoNumber = () => {
-    const codeGen = data?.data
-    form?.setFieldsValue({ code: codeGen?.preview_code })
-  }
-
   const isAutomatic = data?.data?.issue_method === 'automatic'
 
   useEffect(() => {
     if (isAutomatic && !form.getFieldValue('code')) {
-      refetch().then(() => {
-        const codeGen = data?.data
-        if (codeGen?.preview_code) {
-          form?.setFieldsValue({ code: codeGen.preview_code })
+      refetch().then((result) => {
+        const preview_code = result?.data?.data?.preview_code
+        if (preview_code) {
+          form?.setFieldsValue({ code: preview_code })
         }
       })
     }
-  }, [isAutomatic, form, refetch, data?.data])
+  }, [isAutomatic, form, refetch])
 
   const onSubmit = (values: DepartmentPayload) => {
     create(
@@ -189,8 +184,11 @@ export default function Page() {
                   size="middle"
                   loading={loadingDp}
                   onClick={() => {
-                    refetch().then(() => {
-                      handleAutoNumber()
+                    refetch().then((result) => {
+                      const preview_code = result?.data?.data?.preview_code
+                      if (preview_code) {
+                        form?.setFieldsValue({ code: preview_code })
+                      }
                     })
                   }}
                   disabled={!isAutomatic}
