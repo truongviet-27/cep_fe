@@ -118,7 +118,7 @@ function Page() {
   const bodyCellStyle = { padding: '8px 12px' }
 
   const getRowClassName = (record: BaseRecord) => {
-    return !record.email || !record.code ? 'bg-gray-200' : ''
+    return !record.email && !record.code ? 'bg-gray-200' : ''
   }
 
   useEffect(() => {
