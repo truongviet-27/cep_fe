@@ -16,7 +16,6 @@ import React from 'react'
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
 import boldText from '@utility/bold-text'
-import { DeleteButton } from '@refinedev/antd'
 import { validateRankRule } from '@validate/rank'
 import AutoHeading from '@components/common/auto-heading'
 
@@ -153,10 +152,7 @@ export const RankModalEdit: React.FC<Props> = ({
         />
       </Form>
 
-      <Space className={'mt-4 flex w-full justify-between'}>
-        <DeleteButton icon={null} size={'small'}>
-          {t('buttons.delete')}
-        </DeleteButton>
+      <Space className={'mt-4 flex w-full justify-end'}>
         <Space className={'flex justify-end'}>
           <Button
             onClick={() => {
