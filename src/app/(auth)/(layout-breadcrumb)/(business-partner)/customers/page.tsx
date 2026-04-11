@@ -1,7 +1,11 @@
 /* eslint-disable */
 'use client'
 
-import { ExclamationCircleOutlined, RightOutlined } from '@ant-design/icons'
+import {
+  DownOutlined,
+  ExclamationCircleOutlined,
+  RightOutlined,
+} from '@ant-design/icons'
 import CommonTable from '@components/common/table'
 import { List } from '@components/crud/list'
 import Breadcrumbs from '@components/layout/breadcrumbs'
@@ -43,6 +47,7 @@ import {
   Button,
   Col,
   DatePicker,
+  Dropdown,
   Form,
   Input,
   Modal,
@@ -90,7 +95,15 @@ export default function CustomerListPage() {
   const [isShow, setIsShow] = useState(true)
   const [updatingId, setUpdatingId] = useState<number | null>(null)
   const [isExportingCsv, setIsExportingCsv] = useState(false)
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [selectedRows, setSelectedRows] = useState<any[]>([])
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [checkDeleteResult, setCheckDeleteResult] = useState<any>(null)
   const { mutateAsync: updateStatusMutation } = useCustomMutation()
+  const { mutate: bulkDeleteMutate, isPending: isBulkDeleting } =
+    useCustomMutation()
+  const { mutate: checkDeleteMutate, isPending: isCheckingDelete } =
+    useCustomMutation()
 
   const { mutate, isLoading } = useUpdate()
   const { parameterSettings, hasFullAccessModule } = useUserStore(
@@ -660,6 +673,22 @@ export default function CustomerListPage() {
                 {t('buttons.edit')}
               </EditButton>
             )}
+            {!record.deleted_at && (record as any).status === 'suspended' && (
+              <DeleteButton
+                icon={null}
+                recordItemId={record.id}
+                resource="customers"
+                size={'small'}
+                autoInsertSpace={false}
+                disabled={!isFullAccess}
+                style={{
+                  color: '#FFFFFF',
+                  background: '#E74C3C',
+                }}
+              >
+                {t('buttons.delete')}
+              </DeleteButton>
+            )}
           </Space>
         ),
       },
@@ -768,6 +797,8 @@ export default function CustomerListPage() {
     (nextStatus: string | null) => {
       setCurrent(1)
       setStatus(nextStatus)
+      setSelectedRowKeys([])
+      setSelectedRows([])
       setFilters([
         {
           field: 'status',
@@ -778,6 +809,77 @@ export default function CustomerListPage() {
     },
     [setFilters],
   )
+
+  const onSelectChange = useCallback(
+    (newSelectedRowKeys: React.Key[], newSelectedRows: any[]) => {
+      setSelectedRowKeys(newSelectedRowKeys)
+      setSelectedRows(newSelectedRows)
+    },
+    [],
+  )
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    getCheckboxProps: (record: any) => ({
+      disabled: record.status !== 'suspended',
+    }),
+  }
+
+  const handleCheckDelete = useCallback(() => {
+    checkDeleteMutate(
+      {
+        values: { ids: selectedRows.map((item: any) => item.id) },
+        method: 'post',
+        url: `${apiUrl}/customers/check-delete`,
+      },
+      {
+        onSuccess: (response: any) => {
+          setCheckDeleteResult(response?.data)
+          setIsDeleteModalOpen(true)
+        },
+      },
+    )
+  }, [checkDeleteMutate, selectedRows, apiUrl])
+
+  const handleBulkDelete = useCallback(() => {
+    const deletableIds = [
+      ...(checkDeleteResult?.deletable ?? []),
+      ...(checkDeleteResult?.deletable_with_warnings ?? []),
+    ].map((item: any) => item.id)
+
+    if (deletableIds.length === 0) return
+
+    bulkDeleteMutate(
+      {
+        values: { ids: deletableIds },
+        method: 'delete',
+        url: `${apiUrl}/customers`,
+        successNotification: () => ({
+          message: t('notifications.success'),
+          description: t('notifications.success'),
+          type: 'success' as const,
+        }),
+      },
+      {
+        onSuccess: () => {
+          setSelectedRowKeys([])
+          setSelectedRows([])
+          setIsDeleteModalOpen(false)
+          setCheckDeleteResult(null)
+          tableQueryResult.refetch()
+          refetchCount()
+        },
+      },
+    )
+  }, [
+    bulkDeleteMutate,
+    checkDeleteResult,
+    apiUrl,
+    t,
+    tableQueryResult,
+    refetchCount,
+  ])
 
   const handleExportCsv = async () => {
     const values = (searchFormProps.form?.getFieldsValue?.() ?? {}) as {
@@ -1011,36 +1113,106 @@ export default function CustomerListPage() {
         </Row>
       </Form>
 
-      <Row justify="end" className="mb-4">
-        <Space direction="vertical">
-          <div className="flex items-center gap-2">
+      <Modal
+        open={isDeleteModalOpen}
+        onCancel={() => {
+          setIsDeleteModalOpen(false)
+          setCheckDeleteResult(null)
+        }}
+        onOk={handleBulkDelete}
+        okText="削除"
+        cancelText="キャンセル"
+        confirmLoading={isBulkDeleting}
+        okButtonProps={{
+          style:
+            checkDeleteResult?.not_deletable?.length > 0
+              ? { display: 'none' }
+              : {},
+        }}
+      >
+        {checkDeleteResult?.not_deletable?.length > 0 ? (
+          <p>
+            以下の取引先は処理中のデータがあるため、削除できません。
+            <br />
+            {checkDeleteResult.not_deletable.map((c: any) => c.name).join('、')}
+          </p>
+        ) : checkDeleteResult?.deletable_with_warnings?.length > 0 ? (
+          <p>
+            以下の取引先を削除すると、関連する見積もすべて削除されます。よろしいでしょうか？
+            <br />
+            {checkDeleteResult.deletable_with_warnings
+              .map((c: any) => c.name)
+              .join('、')}
+          </p>
+        ) : (
+          <p>削除してもよろしいですか？</p>
+        )}
+      </Modal>
+
+      <Row justify="space-between" align="top" className="mb-4">
+        <Col>
+          <Dropdown
+            menu={{
+              items:
+                selectedRowKeys.length > 0
+                  ? [
+                      {
+                        key: 'delete',
+                        label: t('buttons.delete'),
+                      },
+                    ]
+                  : [],
+              onClick: (info) => {
+                if (info.key === 'delete') {
+                  handleCheckDelete()
+                }
+              },
+            }}
+            disabled={!isFullAccess}
+          >
             <Button
-              onClick={handleExportCsv}
-              color="primary"
-              variant="outlined"
-              loading={isExportingCsv}
+              size="middle"
               disabled={!isFullAccess}
+              loading={isCheckingDelete}
             >
-              {t('products.list.actions.csvExportButton')}
+              <Space style={{ fontSize: 14 }}>
+                {t('products.list.actions.bulkProcessing')}
+                <DownOutlined style={{ fontSize: 13 }} />
+              </Space>
             </Button>
-            <CreateButton
-              icon={null}
-              disabled={!isFullAccess}
-              autoInsertSpace={false}
-            >
-              {t('buttons.create_new')}
-            </CreateButton>
-          </div>
-          <div className="flex items-end justify-end gap-2">
-            <Link
-              href={isFullAccess ? '/customers/csv' : '#'}
-              className={isFullAccess ? '!underline' : '!text-gray-400'}
-              style={{ color: CSV_LINK }}
-            >
-              {t('projects.csv_upload.title')}
-            </Link>
-          </div>
-        </Space>
+          </Dropdown>
+        </Col>
+        <Col>
+          <Space direction="vertical">
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleExportCsv}
+                color="primary"
+                variant="outlined"
+                loading={isExportingCsv}
+                disabled={!isFullAccess}
+              >
+                {t('products.list.actions.csvExportButton')}
+              </Button>
+              <CreateButton
+                icon={null}
+                disabled={!isFullAccess}
+                autoInsertSpace={false}
+              >
+                {t('buttons.create_new')}
+              </CreateButton>
+            </div>
+            <div className="flex items-end justify-end gap-2">
+              <Link
+                href={isFullAccess ? '/customers/csv' : '#'}
+                className={isFullAccess ? '!underline' : '!text-gray-400'}
+                style={{ color: CSV_LINK }}
+              >
+                {t('projects.csv_upload.title')}
+              </Link>
+            </div>
+          </Space>
+        </Col>
       </Row>
 
       <Modal
@@ -1066,6 +1238,7 @@ export default function CustomerListPage() {
         })}
         {...tableProps}
         rowKey="id"
+        rowSelection={isFullAccess ? rowSelection : undefined}
         columns={columns as any}
         scroll={undefined}
       />
