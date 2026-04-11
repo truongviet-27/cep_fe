@@ -20,6 +20,8 @@ import {
   Layout,
   Modal,
   Space,
+  Tooltip,
+  Typography,
 } from 'antd'
 import { useKBar } from 'kbar'
 import { useSession } from 'next-auth/react'
@@ -28,6 +30,8 @@ import React from 'react'
 
 import { cn } from '@/utility/cn'
 import { GRAY, WHITE } from '@/utility/color'
+
+const { Text } = Typography
 
 const { Header } = Layout
 
@@ -115,12 +119,22 @@ export default function AuthHeader({
                 className={cn(isAdmin && 'cursor-pointer')}
                 onClick={isAdmin ? () => modalProps.show() : undefined}
               >
-                <div
-                  className="max-w-[260px] truncate text-[22px] font-semibold whitespace-nowrap text-[#74232A]"
-                  title={tenantName ?? ''}
-                >
-                  {tenantName ?? ''}
-                </div>
+                <Tooltip title={tenantName ?? ''}>
+                  <Text
+                    className="text-[22px] font-semibold !text-[#74232A]"
+                    style={{
+                      width: '260px',
+                      fontSize: '22px',
+                      color: '#74232A',
+                      margin: 0,
+                      display: 'inline-block',
+                      verticalAlign: 'middle',
+                    }}
+                    ellipsis={true}
+                  >
+                    {tenantName ?? ''}
+                  </Text>
+                </Tooltip>
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}
               </Space>
 
