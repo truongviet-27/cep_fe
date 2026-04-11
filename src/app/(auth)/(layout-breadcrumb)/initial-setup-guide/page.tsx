@@ -205,31 +205,38 @@ export default function InitialSetupGuidePage() {
           >
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 16,
+                padding: '15px 16px 1px 16px',
                 flexShrink: 0,
               }}
             >
-              <Typography.Title level={5} style={{ margin: 0 }}>
-                {t(`initial-setup-guide.menu.${selectedItem.id}.title`)}
-              </Typography.Title>
-              <Button
-                type="default"
-                onClick={isFirstLogin ? handleLater : handleBack}
+              <div
                 style={{
-                  background: '#fff',
-                  borderColor: PRIMARY,
-                  color: PRIMARY,
-                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: 1,
                 }}
               >
-                {isFirstLogin
-                  ? t('initial-setup-guide.button_later')
-                  : t('buttons.back')}
-              </Button>
+                <Typography.Title level={5} style={{ margin: 0 }}>
+                  {t(`initial-setup-guide.menu.${selectedItem.id}.title`)}
+                </Typography.Title>
+                <Button
+                  type="default"
+                  onClick={isFirstLogin ? handleLater : handleBack}
+                  style={{
+                    marginLeft: 'auto',
+                    background: '#fff',
+                    borderColor: PRIMARY,
+                    color: PRIMARY,
+                    fontWeight: 600,
+                  }}
+                >
+                  {isFirstLogin
+                    ? t('initial-setup-guide.button_later')
+                    : t('buttons.back')}
+                </Button>
+              </div>
             </div>
+
             <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
               <GuideContent
                 selectedItem={selectedItem}
