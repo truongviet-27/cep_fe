@@ -30,6 +30,7 @@
     "approval_route_setting": "承認ルート設定",
     "price_rank_setting": "単価ランク設定",
     "user_role": "ユーザー権限",
+    "initial_setup_guide_label": "初期設定ガイド",
     "breadcrumb_root": "初期設定",
     "button_later": "あとで設定",
     "target_menu_label": "対象作業メニュー：見積一覧",
@@ -45,9 +46,9 @@
     "screen_link": "画面へ",
     "menu": {
       "basic": {
-        "title": "初期設定（見積/販売管理）",
+        "title": "初期設定（見積/販売管理）1",
         "subtitle": "システムの基本設定",
-        "breadcrumb_label": "初期設定（見積/販売管理）"
+        "breadcrumb_label": "初期設定（見積/販売管理）2"
       },
       "advanced": {
         "title": "高度な設定（見積管理）",
