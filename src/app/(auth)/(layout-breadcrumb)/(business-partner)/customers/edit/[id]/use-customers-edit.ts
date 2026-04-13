@@ -264,5 +264,6 @@ export const useCustomerEdit = () => {
     modalFormCorporate,
     handleFinish,
     isAutomatic,
+    disableCustomerCodeInput: false,
   }
 }

@@ -810,7 +810,12 @@ const BasicInfo = ({
               )}
               labelCol={{ span: 3 }}
             >
-              <Input disabled readOnly style={{ width: '100%' }} />
+              <Input
+                readOnly
+                tabIndex={-1}
+                className="quota-basic-info-department-readonly"
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Col>
         </Row>
