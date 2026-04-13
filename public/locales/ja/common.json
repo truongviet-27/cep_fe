@@ -46,9 +46,9 @@
     "screen_link": "画面へ",
     "menu": {
       "basic": {
-        "title": "初期設定（見積/販売管理）1",
+        "title": "初期設定（見積/販売管理）",
         "subtitle": "システムの基本設定",
-        "breadcrumb_label": "初期設定（見積/販売管理）2"
+        "breadcrumb_label": "初期設定（見積/販売管理）"
       },
       "advanced": {
         "title": "高度な設定（見積管理）",
