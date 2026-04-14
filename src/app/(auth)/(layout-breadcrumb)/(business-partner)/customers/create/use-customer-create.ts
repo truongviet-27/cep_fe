@@ -382,6 +382,7 @@ export const useCustomerCreate = () => {
     modalFormCorporate,
     handleFinish,
     isAutomatic,
+    disableCustomerCodeInput: isAutomatic,
     handleSaveDraft,
     handleApplyDraft,
     isPendingDraft,

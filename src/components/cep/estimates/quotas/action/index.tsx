@@ -36,6 +36,7 @@ import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
+  Alert,
   Breadcrumb,
   Button,
   Checkbox,
@@ -62,6 +63,22 @@ import { refreshUserData } from '@utility/refresh-user-data'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
+
+function pickMainProductForApiByTotalCalculation(mainProduct: unknown) {
+  if (!Array.isArray(mainProduct)) return []
+  const filtered = mainProduct.filter((row: any) => {
+    if (!row) return false
+    if (row.kind === 'group') return true
+    if (row.kind === 'product') return row.is_add_total === true
+    return row.is_add_total === true
+  })
+  return filtered.map((row: any, i: number) => {
+    if (row.kind === 'group') {
+      return { ...row }
+    }
+    return { ...row, display_order: i + 1 }
+  })
+}
 
 function QuotaAction() {
   const t = useTranslate()
@@ -132,6 +149,7 @@ function QuotaAction() {
 
   const [isPdf, setIsPdf] = useState(false)
   const [previewPdf, setPreviewPdf] = useState('')
+  const [previewPdfError, setPreviewPdfError] = useState<string | null>(null)
   const saveDraftLockRef = useRef(false)
   const applyDraftLockRef = useRef(false)
   const [isSavingDraft, setIsSavingDraft] = useState(false)
@@ -346,14 +364,22 @@ function QuotaAction() {
     })
 
   const handlePreviewPdf = () => {
+    setPreviewPdf('')
+    setPreviewPdfError(null)
+
     const delivery_date = form.getFieldValue('delivery_date')
       ? form.getFieldValue('delivery_date').format('YYYY/MM/DD HH:mm')
       : null
+    const fields = form.getFieldsValue() as Record<string, any>
+    const tagItems = form.getFieldValue('tags') ?? []
     const customValues = {
-      ...form.getFieldsValue(),
+      ...fields,
+      main_product: pickMainProductForApiByTotalCalculation(
+        fields.main_product,
+      ),
       type: form.getFieldValue('type'),
       delivery_date: delivery_date,
-      tags: form.getFieldValue('tags').map((item: any) => ({
+      tags: tagItems.map((item: any) => ({
         id: item?.value,
         name: item?.label,
       })),
@@ -371,7 +397,28 @@ function QuotaAction() {
       },
       {
         onSuccess(data) {
+          setPreviewPdfError(null)
           setPreviewPdf(data.data?.pdf_base64 ?? '')
+        },
+        onError(error: any) {
+          setPreviewPdf('')
+          const res = error?.response?.data
+          let msg =
+            typeof res?.message === 'string' && res.message.trim()
+              ? res.message
+              : ''
+          if (!msg && res?.errors && typeof res.errors === 'object') {
+            msg = Object.values(res.errors)
+              .flat()
+              .filter((x): x is string => typeof x === 'string')
+              .join(' ')
+          }
+          if (!msg && typeof error?.message === 'string') {
+            msg = error.message
+          }
+          if (!msg) msg = t('notifications.error')
+          setPreviewPdfError(msg)
+          notification.error({ message: msg })
         },
       },
     )
@@ -721,7 +768,13 @@ function QuotaAction() {
     }
   }, [departmentData, data, quoteTemplateQuery?.data?.data, taxRoundingMethod])
 
-  const performCreateOrEdit = (values: any) => {
+  const performCreateOrEdit = (formValues: any) => {
+    const values = {
+      ...formValues,
+      main_product: pickMainProductForApiByTotalCalculation(
+        formValues.main_product,
+      ),
+    }
     const retryWithTaxMethod = (useTaxMethodValue?: boolean) => {
       const newValues = { ...values }
       if (useTaxMethodValue !== undefined) {
@@ -903,6 +956,9 @@ function QuotaAction() {
 
     const payload = {
       ...values,
+      main_product: pickMainProductForApiByTotalCalculation(
+        values.main_product,
+      ),
       type: values.type || 'normal',
       category: values.category || 'merchandise',
       customer_id: values.customer?.value,
@@ -1128,7 +1184,7 @@ function QuotaAction() {
               variant="outlined"
               onClick={async () => {
                 await form.validateFields()
-                setIsPdf(!isPdf)
+                setIsPdf(true)
                 handlePreviewPdf()
               }}
               disabled={
@@ -1329,6 +1385,7 @@ function QuotaAction() {
           open={isPdf}
           onCancel={() => {
             setIsPdf(false)
+            setPreviewPdfError(null)
           }}
           footer={null}
           style={{ top: 20 }}
@@ -1340,7 +1397,10 @@ function QuotaAction() {
         >
           <div>
             <Spin spinning={isPendingPreviewPdf}>
-              {!isPendingPreviewPdf && (
+              {!isPendingPreviewPdf && previewPdfError && (
+                <Alert type="error" message={previewPdfError} showIcon />
+              )}
+              {!isPendingPreviewPdf && previewPdf && !previewPdfError && (
                 <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                   <Viewer
                     fileUrl={`data:application/pdf;base64,${previewPdf}`}
