@@ -125,7 +125,12 @@ function DetailInfo({
 
   useEffect(() => {
     calculateSummary(form.getFieldValue('main_product'))
-  }, [taxRateWatch, mainProductWatch, consumptionTaxWatch])
+  }, [
+    taxRateWatch,
+    mainProductWatch,
+    consumptionTaxWatch,
+    taxRoundingMethodWatch,
+  ])
 
   const handleAddProduct = (productIndex: number, isSelfCreate = false) => {
     const currentList = form?.getFieldValue('main_product') || []
