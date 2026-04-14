@@ -23,3 +23,18 @@
 .container-important {
   padding: 16px !important;
 }
+
+/* 部門: read-only nhưng không dùng disabled — tránh nền/text bị gray */
+.quotas-basic-info-card .quota-basic-info-department-readonly.ant-input {
+  color: rgba(0, 0, 0, 0.88);
+  background-color: #fff;
+  cursor: default;
+}
+
+.quotas-basic-info-card .quota-basic-info-department-readonly.ant-input:hover,
+.quotas-basic-info-card .quota-basic-info-department-readonly.ant-input:focus,
+.quotas-basic-info-card
+  .quota-basic-info-department-readonly.ant-input:focus-within {
+  color: rgba(0, 0, 0, 0.88);
+  background-color: #fff;
+}

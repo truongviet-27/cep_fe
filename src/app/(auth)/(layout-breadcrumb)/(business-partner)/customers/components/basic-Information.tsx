@@ -7,6 +7,7 @@ import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { countryOptions, typesCompanyOptions } from '@utility/options'
 import {
   Button,
@@ -43,6 +44,7 @@ function BasicInformation(
     form,
     modalFormCorporate,
     isAutomatic,
+    disableCustomerCodeInput,
   } = props
 
   const isCompany = Form.useWatch('customer_type', form) === 'company'
@@ -96,10 +98,14 @@ function BasicInformation(
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           required
         >
-          <Row align="middle" gutter={8}>
+          <Row align="middle" gutter={[8, 8]}>
             <Col>
               <Form.Item rules={[rule]} name="customer_code" required noStyle>
-                <Input style={{ width: 240 }} />
+                <Input
+                  style={{ width: 240 }}
+                  size="middle"
+                  disabled={disableCustomerCodeInput}
+                />
               </Form.Item>
             </Col>
             <Col flex="none">
@@ -110,22 +116,33 @@ function BasicInformation(
                 (A-Z, 0-9, -)
               </Text>
             </Col>
-            <Col>
-              <Button
-                onClick={handleAutoNumber}
-                loading={isCodeGenLoading}
-                disabled={!isAutomatic}
-              >
-                {t('departments.create.auto_number')}
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                type="link"
-                onClick={() => modalFormProps.show(codeGenData?.data?.id)}
-              >
-                {t('departments.create.popup_number_setting')}
-              </Button>
+            <Col xs={24} sm="auto" flex="none">
+              <Space direction="horizontal" size={3} wrap>
+                <Button
+                  size="middle"
+                  onClick={handleAutoNumber}
+                  loading={isCodeGenLoading}
+                  disabled={!isAutomatic}
+                  {...(isAutomatic
+                    ? {
+                        color: 'primary' as const,
+                        variant: 'outlined' as const,
+                      }
+                    : {})}
+                >
+                  {t('departments.create.auto_number')}
+                </Button>
+                <Button
+                  type="link"
+                  onClick={() => modalFormProps.show(codeGenData?.data?.id)}
+                  style={{
+                    marginLeft: -16,
+                    color: PRIMARY,
+                  }}
+                >
+                  {t('departments.create.popup_number_setting')}
+                </Button>
+              </Space>
             </Col>
           </Row>
         </Form.Item>
