@@ -211,7 +211,7 @@ export default function ProductTab() {
             disabled={!isFullAccess}
           >
             <Popconfirm
-              title={t('confirm.delete_confirm')}
+              title={t('confirm.product_delete_confirm')}
               open={isOpenManyDelete}
               placement="topRight"
               okButtonProps={{
