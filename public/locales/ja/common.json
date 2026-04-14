@@ -23,7 +23,8 @@
     }
   },
   "confirm": {
-    "delete_confirm": "削除してもよろしいですか？"
+    "delete_confirm": "削除してもよろしいですか？",
+    "product_delete_confirm": "本当に削除してもよろしいでしょうか。"
   },
   "initial_setup_guide": {
     "advanced_note": "高度な機能を設定いただけます。各種設定から必要な設定をご利用ください。",
