@@ -181,6 +181,11 @@
       "contact_person": "Contact Person",
       "phone": "Phone Number",
       "email": "Email Address"
+    },
+    "message": {
+      "delete_not_deletable": "The following customers cannot be deleted because they have data being processed.",
+      "delete_with_warnings": "Deleting the following customers will also delete all related quotas. Are you sure?",
+      "delete_confirm": "Are you sure you want to delete?"
     }
   },
   "products": {
