@@ -138,7 +138,7 @@ export const useController = () => {
 
   useEffect(() => {
     calculateSummary()
-  }, [mainProducts, taxRateWatch, consumptionTaxWatch])
+  }, [mainProducts, taxRateWatch, consumptionTaxWatch, taxRoundingMethodWatch])
 
   return {
     form,
