@@ -285,7 +285,10 @@
       "suspended": "取引停止"
     },
     "message": {
-      "status_updated_successfully": "顧客ステータスを更新しました。"
+      "status_updated_successfully": "顧客ステータスを更新しました。",
+      "delete_not_deletable": "以下の取引先は受注済みの見積データが存在するため、削除できません。\n削除が必要な場合は、システム管理者にお問い合わせください。",
+      "delete_with_warnings": "以下の取引先を削除すると、関連する見積もすべて削除されます。よろしいでしょうか？",
+      "delete_confirm": "本当に削除してもよろしいでしょうか？"
     }
   },
   "partners": {

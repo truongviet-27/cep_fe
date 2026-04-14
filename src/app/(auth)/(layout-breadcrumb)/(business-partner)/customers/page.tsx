@@ -1120,8 +1120,8 @@ export default function CustomerListPage() {
           setCheckDeleteResult(null)
         }}
         onOk={handleBulkDelete}
-        okText="削除"
-        cancelText="キャンセル"
+        okText={'OK'}
+        cancelText={t('buttons.cancel')}
         confirmLoading={isBulkDeleting}
         okButtonProps={{
           style:
@@ -1129,23 +1129,31 @@ export default function CustomerListPage() {
               ? { display: 'none' }
               : {},
         }}
+        styles={{
+          body: {
+            maxHeight: '30vh',
+            overflowY: 'auto',
+          },
+        }}
       >
         {checkDeleteResult?.not_deletable?.length > 0 ? (
           <p>
-            以下の取引先は処理中のデータがあるため、削除できません。
+            <span style={{ whiteSpace: 'pre-line' }}>
+              {t('customers.message.delete_not_deletable')}
+            </span>
             <br />
             {checkDeleteResult.not_deletable.map((c: any) => c.name).join('、')}
           </p>
         ) : checkDeleteResult?.deletable_with_warnings?.length > 0 ? (
           <p>
-            以下の取引先を削除すると、関連する見積もすべて削除されます。よろしいでしょうか？
+            {t('customers.message.delete_with_warnings')}
             <br />
             {checkDeleteResult.deletable_with_warnings
               .map((c: any) => c.name)
               .join('、')}
           </p>
         ) : (
-          <p>削除してもよろしいですか？</p>
+          <p>{t('customers.message.delete_confirm')}</p>
         )}
       </Modal>
 
