@@ -205,7 +205,7 @@ export default function InitialSetupGuidePage() {
           >
             <div
               style={{
-                padding: '15px 16px 1px 16px',
+                padding: '15px 0 1px 0',
                 flexShrink: 0,
               }}
             >

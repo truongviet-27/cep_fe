@@ -262,7 +262,7 @@ export default function GuideContent({
               minHeight: 0,
               overflowY: 'auto',
               overflowX: 'hidden',
-              padding: 16,
+              padding: selectedItem.id === 'basic' ? '16px 0 0 0' : 16,
             },
           }}
         >

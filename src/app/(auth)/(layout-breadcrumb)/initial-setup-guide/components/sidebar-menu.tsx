@@ -4,7 +4,7 @@ import { useTranslate } from '@refinedev/core'
 import { Card, Flex, Progress, Space, Typography } from 'antd'
 
 import type { MenuItem } from '../constants'
-import { DISABLED_MENU_IDS, MENU_ITEMS } from '../constants'
+import { DISABLED_MENU_IDS, MENU_ITEMS_VISIBLE } from '../constants'
 
 const { Text, Title } = Typography
 
@@ -29,7 +29,7 @@ export default function SidebarMenu({
   return (
     <div style={{ width: 280, flexShrink: 0 }}>
       <Space direction="vertical" size={12} style={{ width: '100%' }}>
-        {MENU_ITEMS.map((item: MenuItem) => {
+        {MENU_ITEMS_VISIBLE.map((item: MenuItem) => {
           const isDisabled = DISABLED_MENU_IDS.includes(item.id)
           const isSelected = !isDisabled && selectedId === item.id
           const isDashed = item.type === 'dashed'
@@ -78,7 +78,7 @@ export default function SidebarMenu({
                 style={{
                   margin: 0,
                   marginBottom: 4,
-                  fontSize: 15,
+                  fontSize: 16,
                   color: isSelected ? '#fff' : undefined,
                 }}
               >
@@ -86,7 +86,7 @@ export default function SidebarMenu({
               </Title>
               <Text
                 style={{
-                  fontSize: 11,
+                  fontSize: 14,
                   color: isSelected ? 'rgba(255,255,255,0.85)' : '#000',
                 }}
               >
@@ -96,7 +96,7 @@ export default function SidebarMenu({
                 <div style={{ marginTop: 12 }}>
                   <Text
                     style={{
-                      fontSize: 10,
+                      fontSize: 14,
                       display: 'block',
                       marginBottom: 4,
                       color: isSelected ? 'rgba(255,255,255,0.85)' : '#000',
@@ -120,7 +120,7 @@ export default function SidebarMenu({
                     {countText != null && (
                       <Text
                         style={{
-                          fontSize: 10,
+                          fontSize: 14,
                           color: isSelected ? 'rgba(255,255,255,0.85)' : '#000',
                           flexShrink: 0,
                         }}
