@@ -3,6 +3,7 @@ import { DownOutlined } from '@ant-design/icons'
 import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/create/use-customer-create'
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
+import { useParsed } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { Button, Collapse, Form, Input, Space } from 'antd'
@@ -17,7 +18,8 @@ function CustomerContacts(
   props: ReturnType<typeof useCustomerCreate | typeof useCustomerEdit>,
 ) {
   const { t, form } = props
-
+  const { params } = useParsed()
+  const isUpdate = !!params?.id
   return (
     <Collapse
       expandIconPosition="end"
@@ -115,56 +117,73 @@ function CustomerContacts(
                     ),
                     key: 'email',
                     width: '36%',
-                    render: (field) => (
-                      <Form.Item
-                        name={[field.name, 'email']}
-                        validateTrigger="onBlur"
-                        rules={[
-                          {
-                            required: true,
-                            message: t(
-                              'validation.customer.email_customer_contacts.required',
-                            ),
-                          },
-                          {
-                            type: 'email',
-                            message: t('validation.email_format'),
-                          },
-                          {
-                            validator: (_, value) => {
-                              if (!value) return Promise.resolve()
+                    render: (field) => {
+                      const email = form.getFieldValue([
+                        'receivers',
+                        field.name,
+                        'email',
+                      ])
+                      const id = form.getFieldValue([
+                        'receivers',
+                        field.name,
+                        'id',
+                      ])
+                      const isExistingRow = isUpdate && !!id
 
-                              const receivers =
-                                form.getFieldValue('receivers') || []
-                              const currentEmail = value.trim().toLowerCase()
-
-                              // Count how many times this email appears
-                              const emailCount = receivers.filter(
-                                (r: {
-                                  email?: string
-                                  [key: string]: unknown
-                                }) =>
-                                  r?.email?.trim().toLowerCase() ===
-                                  currentEmail,
-                              ).length
-
-                              // If this email appears more than once, show error
-                              if (emailCount > 1) {
-                                return Promise.reject(
-                                  new Error(t('validation.duplicate_email')),
-                                )
-                              }
-
-                              return Promise.resolve()
+                      if (isExistingRow) {
+                        return email || '---'
+                      }
+                      return (
+                        <Form.Item
+                          name={[field.name, 'email']}
+                          validateTrigger="onBlur"
+                          rules={[
+                            {
+                              required: true,
+                              message: t(
+                                'validation.customer.email_customer_contacts.required',
+                              ),
                             },
-                          },
-                        ]}
-                        required
-                        noStyle
-                      >
-                        <Input type="email" style={{ width: '100%' }} />
-                      </Form.Item>
-                    ),
+                            {
+                              type: 'email',
+                              message: t('validation.email_format'),
+                            },
+                            {
+                              validator: (_, value) => {
+                                if (!value) return Promise.resolve()
+
+                                const receivers =
+                                  form.getFieldValue('receivers') || []
+                                const currentEmail = value.trim().toLowerCase()
+
+                                // Count how many times this email appears
+                                const emailCount = receivers.filter(
+                                  (r: {
+                                    email?: string
+                                    [key: string]: unknown
+                                  }) =>
+                                    r?.email?.trim().toLowerCase() ===
+                                    currentEmail,
+                                ).length
+
+                                // If this email appears more than once, show error
+                                if (emailCount > 1) {
+                                  return Promise.reject(
+                                    new Error(t('validation.duplicate_email')),
+                                  )
+                                }
+
+                                return Promise.resolve()
+                              },
+                            },
+                          ]}
+                          required
+                          noStyle
+                        >
+                          <Input type="email" style={{ width: '100%' }} />
+                        </Form.Item>
+                      )
+                    },
                   },
                   {
                     title: (
