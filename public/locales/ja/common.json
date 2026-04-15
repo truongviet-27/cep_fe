@@ -797,7 +797,7 @@
       "common_name": "CSV登録 / CSV出力",
       "csv_import": "CSV登録",
       "csv_export": "CSV出力",
-      "created_by": "登録者",
+      "created_by": "作業者",
       "date": "開始日時"
     },
     "placeholder": {
@@ -811,7 +811,7 @@
         "taskCode": "タスクコード",
         "status": "ステータス",
         "type": "種別",
-        "creator": "登録者",
+        "creator": "作業者",
         "startDate": "開始日時",
         "endDate": "終了日時",
         "result": "結果",
