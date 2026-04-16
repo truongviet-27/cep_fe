@@ -128,6 +128,7 @@ function UploadSetting({
                 },
               })
               .then(() => {
+                form.setFieldValue(name, null)
                 form.setFieldValue(name, croppedFile)
                 form.setFieldValue(`${name}_file_key`, data.data.file_key)
                 form.setFieldValue(`${name}_name`, currentFileName)

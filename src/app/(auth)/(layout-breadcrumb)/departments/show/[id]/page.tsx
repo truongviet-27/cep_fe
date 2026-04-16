@@ -49,7 +49,7 @@ export default function Page() {
   }
 
   const getRowClassName = (record: BaseRecord) => {
-    return !record.email || !record.code ? 'bg-gray-200' : ''
+    return !record.email && !record.code ? 'bg-gray-200' : ''
   }
 
   const breadcrumbItems = [
