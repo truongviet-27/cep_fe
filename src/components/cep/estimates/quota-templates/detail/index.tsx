@@ -3,7 +3,6 @@ import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
-import { DeleteButton } from '@refinedev/antd'
 import { useGo, useShow, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -131,25 +130,11 @@ const QuoteTemplateDetailContainer: FC = () => {
             ]}
           />
           <Flex
-            justify="space-between"
+            justify="end"
             style={{
               marginTop: 40,
             }}
           >
-            <Space>
-              {(permission?.is_module_admin ||
-                permission?.user?.id === quoteTemplateDetail?.author?.id) && (
-                <DeleteButton
-                  icon={null}
-                  size={'small'}
-                  onSuccess={() => {
-                    go({
-                      to: '/quota-templates',
-                    })
-                  }}
-                />
-              )}
-            </Space>
             <Space className="items-end">
               <Button
                 color="primary"

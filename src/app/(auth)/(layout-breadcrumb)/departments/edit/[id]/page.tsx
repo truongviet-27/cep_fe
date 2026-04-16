@@ -5,7 +5,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import ShowMoreInfo from '@components/common/show-more-info'
 import { Edit } from '@components/crud/edit'
 import Breadcrumbs from '@components/layout/breadcrumbs'
-import { DeleteButton, useForm, useModalForm } from '@refinedev/antd'
+import { useForm, useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
@@ -129,18 +129,16 @@ export default function EmployeeEdit() {
               },
             ]}
           />
-          <div className="mt-4 flex w-full justify-start pb-4">
-            <DeleteButton
-              icon={null}
-              size={'small'}
-              onSuccess={() => go({ type: 'replace', to: '/departments' })}
-            />
-          </div>
         </div>
       }
       rightFooterButtons={
         <Space size={2} className={'flex justify-end'}>
-          <Button {...saveButtonProps} type="primary" autoInsertSpace={false}>
+          <Button
+            {...saveButtonProps}
+            type="primary"
+            autoInsertSpace={false}
+            disabled={isDefaultDepartment}
+          >
             {t('products.buttons.save')}
           </Button>
         </Space>
@@ -174,7 +172,6 @@ export default function EmployeeEdit() {
                   placeholder="DEP001"
                   size="middle"
                   style={{ width: 240 }}
-                  disabled={isAutomatic}
                 />
               </Form.Item>
             </Col>

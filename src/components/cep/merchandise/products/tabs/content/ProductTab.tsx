@@ -1,3 +1,4 @@
+import { DownOutlined } from '@ant-design/icons'
 import useProduct from '@components/cep/merchandise/products/use-product'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
@@ -5,15 +6,33 @@ import CommonTable from '@components/common/table'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils'
 import { CreateButton } from '@refinedev/antd'
 import { useApiUrl } from '@refinedev/core'
-import { Button, Col, Form, notification, Row } from 'antd'
+import {
+  Button,
+  Col,
+  Dropdown,
+  Form,
+  notification,
+  Popconfirm,
+  Row,
+  Space,
+} from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function ProductTab() {
   const [
-    { columns, tableProps, searchFormProps, isFullAccess },
-    { t, setFilters },
+    {
+      columns,
+      tableProps,
+      searchFormProps,
+      isFullAccess,
+      rowSelection,
+      selectedRowKeys,
+      isOpenManyDelete,
+      isBulkDeleting,
+    },
+    { t, setFilters, setIsOpenManyDelete, handleBulkDelete },
   ] = useProduct()
   const apiUrl = useApiUrl()
   const router = useRouter()
@@ -170,9 +189,60 @@ export default function ProductTab() {
           </div>
         </div>
       </Row>
+      <Row justify="space-between" align="top" className="mb-4">
+        <Col>
+          <Dropdown
+            menu={{
+              items:
+                selectedRowKeys.length > 0
+                  ? [
+                      {
+                        key: 'delete',
+                        label: t('buttons.delete'),
+                      },
+                    ]
+                  : [],
+              onClick: (info) => {
+                if (info.key === 'delete') {
+                  setIsOpenManyDelete(true)
+                }
+              },
+            }}
+            disabled={!isFullAccess}
+          >
+            <Popconfirm
+              title={t('confirm.product_delete_confirm')}
+              open={isOpenManyDelete}
+              placement="topRight"
+              okButtonProps={{
+                loading: isBulkDeleting,
+                style: {
+                  border: '1px solid red',
+                  borderRadius: '4px',
+                  color: 'red',
+                  backgroundColor: 'white',
+                },
+              }}
+              onConfirm={handleBulkDelete}
+              onCancel={() => setIsOpenManyDelete(false)}
+              cancelText={t('buttons.cancel')}
+              okText={t('buttons.delete')}
+            >
+              <Button size="middle" disabled={!isFullAccess}>
+                <Space style={{ fontSize: 14 }}>
+                  {t('products.list.actions.bulkProcessing')}
+                  <DownOutlined style={{ fontSize: 13 }} />
+                </Space>
+              </Button>
+            </Popconfirm>
+          </Dropdown>
+        </Col>
+      </Row>
       <div>
         <CommonTable
           {...tableProps}
+          rowKey="id"
+          rowSelection={isFullAccess ? rowSelection : undefined}
           columns={columns}
           scroll={undefined}
           pagination={{

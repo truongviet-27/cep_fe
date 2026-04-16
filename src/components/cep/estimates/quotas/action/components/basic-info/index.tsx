@@ -280,6 +280,19 @@ const BasicInfo = ({
     }
   }
 
+  const getCustomerContacts = useCallback(
+    async (customerId: number) => {
+      const response = await axiosInstance.get(`${apiUrl}/customer-contacts`, {
+        params: { customer_id: customerId },
+      })
+      const data = response?.data?.data
+      if (data?.length > 0) {
+        handleSelectContact(data[0])
+      }
+    },
+    [handleSelectContact],
+  )
+
   const { show, close, open } = modalFormProps
 
   return (
@@ -432,6 +445,7 @@ const BasicInfo = ({
                             form.getFieldValue(['optional_product']) ?? []
                           ).flatMap((item: any) => item.product_id),
                         )
+                        getCustomerContacts(value?.value || null)
                       }}
                     />
                   </Form.Item>
@@ -796,7 +810,12 @@ const BasicInfo = ({
               )}
               labelCol={{ span: 3 }}
             >
-              <Input disabled readOnly style={{ width: '100%' }} />
+              <Input
+                readOnly
+                tabIndex={-1}
+                className="quota-basic-info-department-readonly"
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Col>
         </Row>

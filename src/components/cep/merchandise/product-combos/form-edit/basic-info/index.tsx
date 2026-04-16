@@ -25,10 +25,11 @@ import { useBasicInfoController } from './controller'
 
 interface BasicInfoProps {
   form: FormInstance<ProductComboFormType>
+  setIsInitializingCode: (value: boolean) => void
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
-  const { form } = props
+  const { form, setIsInitializingCode } = props
   const t = useTranslate()
   const [
     {
@@ -47,7 +48,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
       handleSearchProductUnit,
       // handleAppendPackaging,
     },
-  ] = useBasicInfoController(form)
+  ] = useBasicInfoController(form, setIsInitializingCode)
 
   const { show, close, open } = modalFormProps
   const {

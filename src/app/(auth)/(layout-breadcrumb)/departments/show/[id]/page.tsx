@@ -7,11 +7,12 @@ import CommonTable from '@components/common/table'
 import { Show } from '@components/crud/show'
 import Breadcrumbs from '@components/layout/breadcrumbs'
 import type { IDepartments } from '@interfaces/departments'
-import { DeleteButton, EditButton, useTable } from '@refinedev/antd'
+import { EditButton, useTable } from '@refinedev/antd'
 import type { BaseRecord } from '@refinedev/core'
-import { useGo, useShow, useTranslate } from '@refinedev/core'
+import { useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import { DEPARTMENT_DEFAULT } from '@utility/constant'
 import { Space, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -21,7 +22,6 @@ const { Text } = Typography
 export default function Page() {
   const t = useTranslate()
   const { queryResult } = useShow<IDepartments>()
-  const go = useGo()
 
   const departmentData = queryResult?.data?.data
 
@@ -95,17 +95,15 @@ export default function Page() {
               },
             ]}
           />
-          <div className="mt-4 flex w-full justify-start pb-4">
-            <DeleteButton
-              icon={null}
-              size={'small'}
-              onSuccess={() => go({ type: 'replace', to: '/departments' })}
-            />
-          </div>
         </div>
       }
       rightFooterButtons={
-        <EditButton icon={null} type={'primary'} autoInsertSpace={false} />
+        <EditButton
+          icon={null}
+          type={'primary'}
+          autoInsertSpace={false}
+          disabled={departmentData?.name === DEPARTMENT_DEFAULT}
+        />
       }
     >
       <div className="flex flex-col space-y-6">

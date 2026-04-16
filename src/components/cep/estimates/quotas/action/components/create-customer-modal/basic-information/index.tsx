@@ -8,6 +8,7 @@ import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-co
 import { SelectPagination } from '@components/common/select-pagination'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
+import { PRIMARY } from '@utility/color'
 import { typesCompanyOptions } from '@utility/options'
 import { validateCustomerRule } from '@validate/customer'
 import {
@@ -65,10 +66,14 @@ export default function BasicInformation() {
     >
       <Panel header={boldText(t('customers.show.basic_info'))} key="1">
         <Form.Item label={boldText(t('customers.fields.code'))} required>
-          <Row align="middle" gutter={8} wrap={false}>
+          <Row align="middle" gutter={[8, 8]}>
             <Col>
               <Form.Item rules={[rule]} name="customer_code" required noStyle>
-                <Input style={{ width: 200 }} />
+                <Input
+                  style={{ width: 200 }}
+                  size="middle"
+                  disabled={isAutomatic}
+                />
               </Form.Item>
             </Col>
             <Col flex="none">
@@ -79,24 +84,33 @@ export default function BasicInformation() {
                 (A-Z, 0-9, -)
               </Text>
             </Col>
-            <Col>
-              <Button
-                onClick={handleAutoNumber}
-                loading={isCodeGenLoading}
-                color="primary"
-                variant="outlined"
-                disabled={!isAutomatic}
-              >
-                {t('departments.create.auto_number')}
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                type="link"
-                onClick={() => modalFormProps.show(codeGenData?.data?.id)}
-              >
-                {t('departments.create.popup_number_setting')}
-              </Button>
+            <Col xs={24} sm="auto" flex="none">
+              <Space direction="horizontal" size={3} wrap>
+                <Button
+                  size="middle"
+                  onClick={handleAutoNumber}
+                  loading={isCodeGenLoading}
+                  disabled={!isAutomatic}
+                  {...(isAutomatic
+                    ? {
+                        color: 'primary' as const,
+                        variant: 'outlined' as const,
+                      }
+                    : {})}
+                >
+                  {t('departments.create.auto_number')}
+                </Button>
+                <Button
+                  type="link"
+                  onClick={() => modalFormProps.show(codeGenData?.data?.id)}
+                  style={{
+                    marginLeft: -16,
+                    color: PRIMARY,
+                  }}
+                >
+                  {t('departments.create.popup_number_setting')}
+                </Button>
+              </Space>
             </Col>
           </Row>
         </Form.Item>
@@ -297,12 +311,12 @@ export default function BasicInformation() {
         <Form.Item
           label={boldText(t('customers.fields.unit_price_rank_code'))}
           required
-          hidden={!allowRankResource}
           style={{ marginTop: -10 }}
         >
           <Row align="middle" gutter={12}>
             <Col flex="none" style={{ width: 570 }}>
               <SelectPagination
+                disabled={!allowRankResource}
                 selectProps={{
                   resource: 'ranks',
                   queryOptions: { enabled: allowRankResource },

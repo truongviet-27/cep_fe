@@ -118,7 +118,7 @@ function Page() {
   const bodyCellStyle = { padding: '8px 12px' }
 
   const getRowClassName = (record: BaseRecord) => {
-    return !record.email || !record.code ? 'bg-gray-200' : ''
+    return !record.email && !record.code ? 'bg-gray-200' : ''
   }
 
   useEffect(() => {
@@ -253,7 +253,7 @@ function Page() {
           dataIndex="code"
           title={t('employees.fields.code')}
           align="left"
-          width="12%"
+          width="15%"
           onHeaderCell={() => ({ style: headerCellStyle })}
           onCell={() => ({ style: bodyCellStyle })}
           render={(value, record) => {
@@ -278,7 +278,7 @@ function Page() {
           dataIndex="name"
           title={t('employees.fields.name')}
           align={'left'}
-          width="15%"
+          width="20%"
           onHeaderCell={() => ({ style: headerCellStyle })}
           onCell={() => ({ style: bodyCellStyle })}
           render={(value, record: BaseRecord) =>
@@ -289,7 +289,7 @@ function Page() {
           dataIndex={['department']}
           title={t('employees.fields.department')}
           align={'left'}
-          width="30%"
+          width="15%"
           onHeaderCell={() => ({ style: headerCellStyle })}
           onCell={() => ({ style: bodyCellStyle })}
           render={(value) => renderFieldNotSet(value?.name)}
@@ -298,7 +298,7 @@ function Page() {
           dataIndex={['email']}
           title={t('employees.fields.email')}
           align="left"
-          width="15%"
+          width="20%"
           onHeaderCell={() => ({ style: headerCellStyle })}
           onCell={() => ({ style: bodyCellStyle })}
           render={(value, record) => {

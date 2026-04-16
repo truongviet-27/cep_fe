@@ -26,7 +26,7 @@ import {
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import { isArray } from 'lodash'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { SelectPagination } from '@components/common/select-pagination'
 import Link from 'next/link'
 
@@ -82,12 +82,23 @@ export default function EmployeeEdit() {
 
   const { show, close, open } = modalFormProps
 
-  const handleAutoNumber = () => {
-    const codeGen = data?.data
-    form?.setFieldsValue({ code: codeGen?.preview_code })
-  }
-
   const isAutomatic = data?.data?.issue_method === 'automatic'
+
+  useEffect(() => {
+    if (
+      isAutomatic &&
+      employeeData &&
+      !employeeData.code &&
+      !form.getFieldValue('code')
+    ) {
+      refetch().then((result) => {
+        const preview_code = result?.data?.data?.preview_code
+        if (preview_code) {
+          form?.setFieldsValue({ code: preview_code })
+        }
+      })
+    }
+  }, [isAutomatic, employeeData, form, refetch])
 
   const breadcrumbItems = [
     {
@@ -185,8 +196,11 @@ export default function EmployeeEdit() {
                   color={'primary'}
                   variant="outlined"
                   onClick={() => {
-                    refetch().then(() => {
-                      handleAutoNumber()
+                    refetch().then((result) => {
+                      const preview_code = result?.data?.data?.preview_code
+                      if (preview_code) {
+                        form?.setFieldsValue({ code: preview_code })
+                      }
                     })
                   }}
                   loading={loadingEm}

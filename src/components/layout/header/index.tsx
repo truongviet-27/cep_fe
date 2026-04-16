@@ -10,7 +10,7 @@ import TenantSwitchingModal from '@components/layout/header/tenant-switching-mod
 import { useGo, useLogout, useModal } from '@refinedev/core'
 import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
-import { getOrgFromToken, isSupperAdmin } from '@utility/decode-token'
+import { isSupperAdmin } from '@utility/decode-token'
 import {
   Avatar,
   Badge,
@@ -20,6 +20,8 @@ import {
   Layout,
   Modal,
   Space,
+  Tooltip,
+  Typography,
 } from 'antd'
 import { useKBar } from 'kbar'
 import { useSession } from 'next-auth/react'
@@ -29,6 +31,8 @@ import React from 'react'
 import { cn } from '@/utility/cn'
 import { GRAY, WHITE } from '@/utility/color'
 
+const { Text } = Typography
+
 const { Header } = Layout
 
 export default function AuthHeader({
@@ -37,6 +41,7 @@ export default function AuthHeader({
   const t_btn = useTranslations('buttons')
   const t_menu = useTranslations('menu')
   const { query } = useKBar()
+  const t = useTranslations()
   const session = useSession()
   const go = useGo()
   const modalProps = useModal()
@@ -46,9 +51,9 @@ export default function AuthHeader({
     'https://app.eebot.jp/fastdesk/d5bac3ba-6c59-499c-be14-4847905ac901'
 
   const isAdmin = isSupperAdmin(session.data?.accessToken)
+  const { organizationName } = useUserStore()
   const storeTenantName = useTenantStore((s) => s.tenantName)
-  const tokenTenantName = getOrgFromToken(session.data?.accessToken)?.name
-  const tenantName = isAdmin ? storeTenantName : tokenTenantName
+  const tenantName = isAdmin ? storeTenantName : organizationName
   const menuItems = [{ key: 'logout', label: t_menu('logout') }]
   const onMenuClick = ({ key }: { key: string }) => {
     if (key === 'logout') {
@@ -81,46 +86,64 @@ export default function AuthHeader({
 
         {children ? (
           <div className="flex items-end gap-2">
-            <Button
-              type="default"
-              style={{
-                color: 'rgb(39, 132, 255)',
-                borderColor: 'rgb(39, 132, 255)',
-                backgroundColor: WHITE,
-              }}
-              onClick={() => go({ to: '/initial-setup-guide' })}
-            >
-              初期設定ガイド
-            </Button>
-            <a
-              href={helpUrl}
-              target="_blank"
-              rel="noreferrer"
-              style={{ display: 'inline-flex' }}
-            >
+            <div className="mb-2 flex items-center gap-2">
               <Button
                 type="default"
+                size="small"
                 style={{
-                  color: '#B2AC00',
-                  borderColor: '#B2AC00',
+                  color: 'rgb(39, 132, 255)',
+                  borderColor: 'rgb(39, 132, 255)',
                   backgroundColor: WHITE,
+                  fontSize: '12px',
+                  height: '28px',
                 }}
+                onClick={() => go({ to: '/initial-setup-guide' })}
               >
-                ヘルプ
+                {t('initial_setup_guide.initial_setup_guide_label')}
               </Button>
-            </a>
+              <a
+                href={helpUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{ display: 'inline-flex' }}
+              >
+                <Button
+                  type="default"
+                  size="small"
+                  style={{
+                    color: '#B2AC00',
+                    borderColor: '#B2AC00',
+                    backgroundColor: WHITE,
+                    fontSize: '12px',
+                    height: '28px',
+                  }}
+                >
+                  ヘルプ
+                </Button>
+              </a>
+            </div>
             <div className="text-right leading-tight">
               <Space
                 size={4}
                 className={cn(isAdmin && 'cursor-pointer')}
                 onClick={isAdmin ? () => modalProps.show() : undefined}
               >
-                <div
-                  className="max-w-[260px] truncate text-[22px] font-semibold whitespace-nowrap text-[#74232A]"
-                  title={tenantName ?? ''}
-                >
-                  {tenantName ?? ''}
-                </div>
+                <Tooltip title={tenantName ?? ''}>
+                  <Text
+                    className="text-[20px] !text-[#74232A]"
+                    style={{
+                      width: '260px',
+                      fontSize: '20px',
+                      color: '#74232A',
+                      margin: 0,
+                      display: 'inline-block',
+                      verticalAlign: 'middle',
+                    }}
+                    ellipsis={true}
+                  >
+                    {tenantName ?? ''}
+                  </Text>
+                </Tooltip>
                 {isAdmin && <DownOutlined style={{ fontSize: '10px' }} />}
               </Space>
 

@@ -74,7 +74,8 @@
     "actions": {
       "createNewButton": "新規登録",
       "csvBulkUploadLink": "CSV一括登録",
-      "csvExportButton": "CSV出力"
+      "csvExportButton": "CSV出力",
+      "bulkProcessing": "一括処理"
     },
     "table": {
       "headers": {

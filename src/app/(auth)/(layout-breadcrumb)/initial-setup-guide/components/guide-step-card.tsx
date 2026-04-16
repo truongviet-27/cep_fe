@@ -24,6 +24,8 @@ export interface GuideStepCardProps {
   iconBg?: string
   leftColumnBg?: string
   showLeftIcon?: boolean
+  /** When set, overrides label text color (e.g. system_sale uses green while icon stays orange). */
+  labelTextColor?: string
 }
 
 const LEFT_BG_STYLES = {
@@ -66,6 +68,7 @@ export default function GuideStepCard({
   iconBg,
   leftColumnBg,
   showLeftIcon = true,
+  labelTextColor,
 }: GuideStepCardProps) {
   const t = useTranslate()
   const statusOptions: Array<{ value: 'pending' | 'complete'; label: string }> =
@@ -90,7 +93,9 @@ export default function GuideStepCard({
   const leftBgColor = grayedOut
     ? '#e8e8e8'
     : (leftColumnBg ?? leftStyle.background)
-  const labelColor = grayedOut ? '#8c8c8c' : (iconBg ?? leftStyle.labelColor)
+  const labelColor = grayedOut
+    ? '#8c8c8c'
+    : (labelTextColor ?? iconBg ?? leftStyle.labelColor)
 
   return (
     <div
@@ -171,8 +176,8 @@ export default function GuideStepCard({
               color: grayedOut
                 ? '#8c8c8c'
                 : status === 'complete'
-                  ? '#999'
-                  : '#262626',
+                  ? '#000'
+                  : '#000',
             }}
           >
             {title}
@@ -183,8 +188,8 @@ export default function GuideStepCard({
               color: grayedOut
                 ? '#b0b0b0'
                 : status === 'complete'
-                  ? '#bfbfbf'
-                  : '#595959',
+                  ? '#000'
+                  : '#000',
               marginTop: 4,
               whiteSpace: 'pre-line',
             }}
@@ -198,11 +203,7 @@ export default function GuideStepCard({
                 fontSize: 10,
                 marginTop: 4,
                 fontStyle: note.italic ? 'italic' : undefined,
-                color: grayedOut
-                  ? '#b0b0b0'
-                  : note.danger
-                    ? '#ff4d4f'
-                    : 'rgb(89, 89, 89)',
+                color: grayedOut ? '#b0b0b0' : note.danger ? '#ff4d4f' : '#000',
               }}
             >
               {note.text}
@@ -228,7 +229,7 @@ export default function GuideStepCard({
               <span
                 style={{
                   fontSize: 12,
-                  color: grayedOut ? '#8c8c8c' : '#595959',
+                  color: grayedOut ? '#8c8c8c' : '#000',
                   marginTop: 8,
                   display: 'inline-flex',
                   alignItems: 'center',

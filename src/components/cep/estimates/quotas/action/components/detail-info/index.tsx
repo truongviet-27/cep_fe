@@ -125,7 +125,12 @@ function DetailInfo({
 
   useEffect(() => {
     calculateSummary(form.getFieldValue('main_product'))
-  }, [taxRateWatch, mainProductWatch, consumptionTaxWatch])
+  }, [
+    taxRateWatch,
+    mainProductWatch,
+    consumptionTaxWatch,
+    taxRoundingMethodWatch,
+  ])
 
   const handleAddProduct = (productIndex: number, isSelfCreate = false) => {
     const currentList = form?.getFieldValue('main_product') || []
@@ -139,11 +144,11 @@ function DetailInfo({
       package_name: '-',
       name: '',
       code: '',
-      quantity: 0,
+      quantity: 1,
       cost_price: 0,
       selling_price: 0,
       profit_margin: 0,
-      tax_rate: isSelfCreate ? getDefaultTaxRate() : 0,
+      tax_rate: isSelfCreate ? getDefaultTaxRate() : 10,
       is_add_total: true,
       unit: t('quotas.action.detail_info.default_values.default_unit'),
       unit_name: t('quotas.action.detail_info.default_values.default_unit'),
@@ -1151,11 +1156,11 @@ function DetailInfo({
                         package_name: '-',
                         name: '',
                         code: '',
-                        quantity: 0,
+                        quantity: 1,
                         cost_price: 0,
                         selling_price: 0,
                         profit_margin: 0,
-                        tax_rate: 0,
+                        tax_rate: 10,
                         is_add_total: true,
                         unit: t(
                           'quotas.action.detail_info.default_values.default_unit',

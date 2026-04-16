@@ -2,6 +2,7 @@ import type { ParameterResourceEnum, PermissionEnum } from '@sdk/hey-api'
 
 export type PermissionType = {
   is_module_admin: boolean
+  organization_name: string | null
   is_first_login?: boolean
   role: {
     id: number
