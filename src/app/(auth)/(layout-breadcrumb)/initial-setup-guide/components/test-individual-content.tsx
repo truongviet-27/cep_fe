@@ -23,7 +23,7 @@ const subStepStyle: CSSProperties = {
 }
 
 const badgeStyle = (bg: string, color: string): CSSProperties => ({
-  fontSize: 12,
+  fontSize: 14,
   padding: '4px 10px',
   borderRadius: 4,
   fontWeight: 700,
@@ -67,7 +67,7 @@ function StepRow({
         </div>
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 14,
             lineHeight: 1.6,
             display: 'block',
             whiteSpace: 'pre-line',
@@ -122,7 +122,7 @@ export default function TestIndividualContent() {
                     key={`${line}-${index}`}
                     strong={/^[①②③]/.test(line.trim())}
                     style={{
-                      fontSize: 12,
+                      fontSize: 14,
                       lineHeight: 1.6,
                       whiteSpace: 'pre-line',
                       color: '#000',
