@@ -111,8 +111,8 @@ export default function GuideStepCard({
       {showLeftIcon && (
         <div
           style={{
-            width: 128,
-            minWidth: 128,
+            width: 144,
+            minWidth: 144,
             background: leftBgColor,
             display: 'flex',
             flexDirection: 'column',
@@ -147,7 +147,7 @@ export default function GuideStepCard({
           </div>
           <span
             style={{
-              fontSize: 10,
+              fontSize: 14,
               color: labelColor,
               fontWeight: leftStyle.labelFontWeight,
             }}
@@ -171,7 +171,7 @@ export default function GuideStepCard({
         <div style={{ minWidth: 0 }}>
           <div
             style={{
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: 700,
               color: grayedOut
                 ? '#8c8c8c'
@@ -184,7 +184,7 @@ export default function GuideStepCard({
           </div>
           <div
             style={{
-              fontSize: 12,
+              fontSize: 14,
               color: grayedOut
                 ? '#b0b0b0'
                 : status === 'complete'
@@ -200,7 +200,7 @@ export default function GuideStepCard({
             <div
               key={i}
               style={{
-                fontSize: 10,
+                fontSize: 14,
                 marginTop: 4,
                 fontStyle: note.italic ? 'italic' : undefined,
                 color: grayedOut ? '#b0b0b0' : note.danger ? '#ff4d4f' : '#000',
@@ -214,7 +214,7 @@ export default function GuideStepCard({
               <a
                 href={linkHref}
                 style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   color: grayedOut ? '#8c8c8c' : '#1677ff',
                   marginTop: 8,
                   display: 'inline-flex',
@@ -228,7 +228,7 @@ export default function GuideStepCard({
             ) : (
               <span
                 style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   color: grayedOut ? '#8c8c8c' : '#000',
                   marginTop: 8,
                   display: 'inline-flex',
@@ -243,7 +243,7 @@ export default function GuideStepCard({
             <a
               href={linkHref}
               style={{
-                fontSize: 12,
+                fontSize: 14,
                 color: grayedOut ? '#8c8c8c' : '#1677ff',
                 marginTop: 8,
                 display: 'inline-flex',
@@ -279,7 +279,7 @@ export default function GuideStepCard({
             disabled={!canChangeStatus || updating}
             style={{
               flexShrink: 0,
-              fontSize: 12,
+              fontSize: 14,
               background: status === 'complete' ? '#bfbfbf' : '#fa8c16',
               borderColor: status === 'complete' ? '#bfbfbf' : '#fa8c16',
               color: '#fff',
