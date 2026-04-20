@@ -112,13 +112,14 @@ function QuotaAction() {
   // Use reactive store selector instead of getState() to auto-update on changes
   const permission = useUserStore((state) => state.permission)
   const parameterSettings = useUserStore((state) => state.parameterSettings)
+  const isApproveRoutesEnabled =
+    parameterSettings?.get('approve-routes') ?? false
 
   // Refresh permissions and parameter settings when window regains focus
   // This handles the multi-tab scenario where settings are updated in another tab
   // Wrapped in useCallback to prevent re-creating on every render
   const handleRefreshUserData = useCallback(async () => {
     try {
-      console.log('Refreshing user data on focus...')
       await refreshUserData()
     } catch (error) {
       console.error('Failed to refresh user data', error)
@@ -129,7 +130,6 @@ function QuotaAction() {
   // This runs ONCE when component mounts, not on every render
   // because handleRefreshUserData is memoized with useCallback([])
   useEffect(() => {
-    console.log('Component mounted, refreshing user data...')
     handleRefreshUserData()
   }, [handleRefreshUserData])
 
@@ -165,6 +165,7 @@ function QuotaAction() {
       enabled: !params?.templateId,
     },
   })
+
   const { data: dataQuotaDraft, isFetching: isFetchingQuotaDraft } =
     useCustom<DraftControllerIndexResponse>({
       method: 'get',
@@ -290,8 +291,6 @@ function QuotaAction() {
 
   // Refetch department data when approve-routes parameter setting changes
   useEffect(() => {
-    const isApproveRoutesEnabled = parameterSettings?.get('approve-routes')
-
     if (isApproveRoutesEnabled !== undefined && departmentData?.data) {
       refetchDepartmentData().then(({ data: latestDepartmentData }) => {
         const approveRoutes = latestDepartmentData?.data?.approve_routes || []
@@ -468,7 +467,20 @@ function QuotaAction() {
     if (isCloneVersion) {
       if (dataBasicInfo?.data && dataProducts?.data && dataHistory?.data) {
         // 承認ルート: options from department, selected from quota API (dataBasicInfo)
-        const approveRoutes = departmentData?.data.approve_routes || []
+        const approveRoutes = isApproveRoutesEnabled
+          ? departmentData?.data.approve_routes || []
+          : []
+        const nextApproveRouteId = isApproveRoutesEnabled
+          ? (dataBasicInfo.data.approve_route?.id ??
+            approveRoutes[0]?.id ??
+            null)
+          : ''
+        const nextApproveRouteName = isApproveRoutesEnabled
+          ? (dataBasicInfo.data.approve_route?.name ??
+            approveRoutes[0]?.name ??
+            null)
+          : ''
+
         form.setFieldsValue({
           ...dataBasicInfo.data,
           code: `${dataBasicInfo.data.code}-${(dataHistory.data?.clone_history?.length ?? 0) + 1}`,
@@ -487,14 +499,8 @@ function QuotaAction() {
           department_name: departmentData?.data.name,
           tax_rounding_method: taxRoundingMethod,
           approve_routes: approveRoutes,
-          approve_route_id:
-            dataBasicInfo.data.approve_route?.id ??
-            approveRoutes[0]?.id ??
-            null,
-          approve_route_name:
-            dataBasicInfo.data.approve_route?.name ??
-            approveRoutes[0]?.name ??
-            null,
+          approve_route_id: nextApproveRouteId,
+          approve_route_name: nextApproveRouteName,
           tags:
             dataBasicInfo.data.tags?.map((item: any) => ({
               value: item.id,
@@ -551,11 +557,15 @@ function QuotaAction() {
         let approve_route_id = dataBasicInfo.data.approve_route?.id
         let approve_route_name = dataBasicInfo.data.approve_route?.name
         if (isCloneNew) {
-          approve_routes = departmentData?.data.approve_routes || []
-          approve_route_id = departmentData?.data.approve_routes
-            ? departmentData?.data.approve_routes[0]?.id
-            : null
-          approve_route_name = departmentData?.data.approve_routes?.[0]?.name
+          approve_routes = isApproveRoutesEnabled
+            ? departmentData?.data.approve_routes || []
+            : []
+          approve_route_id = isApproveRoutesEnabled
+            ? departmentData?.data.approve_routes?.[0]?.id || null
+            : ''
+          approve_route_name = isApproveRoutesEnabled
+            ? departmentData?.data.approve_routes?.[0]?.name || null
+            : ''
         }
         form.setFieldsValue({
           ...basicData,
@@ -634,6 +644,7 @@ function QuotaAction() {
       delete quoteTemplate.updated_at
       delete quoteTemplate.author
       delete quoteTemplate.editor
+
       form.setFieldsValue({
         ...form.getFieldsValue(),
         category: quoteTemplate?.category,
@@ -649,12 +660,15 @@ function QuotaAction() {
         customer_term: quoteTemplate?.customer_term,
         department_id: departmentData?.data?.id,
         department_name: departmentData?.data?.name,
-        approve_routes: parameterSettings?.get('approve-routes')
+        approve_routes: isApproveRoutesEnabled
           ? departmentData?.data.approve_routes || []
           : [],
-        approve_route_id: departmentData?.data.approve_routes
-          ? departmentData?.data.approve_routes[0]?.id
-          : null,
+        approve_route_id: isApproveRoutesEnabled
+          ? departmentData?.data.approve_routes?.[0]?.id || null
+          : '',
+        approve_route_name: isApproveRoutesEnabled
+          ? departmentData?.data.approve_routes?.[0]?.name || null
+          : '',
         main_product: quoteTemplate?.main_product?.map((item: any) => ({
           ...item,
           product: { value: item.product_id, label: item.name },
@@ -717,10 +731,16 @@ function QuotaAction() {
         customer_term: 'short_term',
         department_id: departmentData?.data.id,
         department_name: departmentData?.data.name,
-        approve_routes: departmentData?.data.approve_routes || [],
-        approve_route_id: departmentData?.data.approve_routes
-          ? departmentData?.data.approve_routes[0]?.id
-          : null,
+        approve_routes: isApproveRoutesEnabled
+          ? departmentData?.data.approve_routes || []
+          : [],
+        approve_route_id: isApproveRoutesEnabled
+          ? departmentData?.data.approve_routes?.[0]?.id || null
+          : '',
+        approve_route_name: isApproveRoutesEnabled
+          ? departmentData?.data.approve_routes?.[0]?.name || null
+          : '',
+
         main_product: [
           {
             product: null,
@@ -766,7 +786,13 @@ function QuotaAction() {
         optional_product: defaultOptionalProduct,
       })
     }
-  }, [departmentData, data, quoteTemplateQuery?.data?.data, taxRoundingMethod])
+  }, [
+    departmentData,
+    data,
+    quoteTemplateQuery?.data?.data,
+    taxRoundingMethod,
+    isApproveRoutesEnabled,
+  ])
 
   const performCreateOrEdit = (formValues: any) => {
     const values = {
