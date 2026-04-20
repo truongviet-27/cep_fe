@@ -81,18 +81,6 @@ const BasicInfo = ({
   const customer = Form.useWatch('customer', form)
   const selectedContactId = Form.useWatch('customer_contact_id', form)
 
-  // Set default approve_route when approve_routes data is available
-  useEffect(() => {
-    const approveRoutes = form.getFieldValue('approve_routes')
-    const currentApproveRoute = form.getFieldValue('approve_route_id')
-
-    if (approveRoutes?.length > 0 && !currentApproveRoute) {
-      form.setFieldsValue({
-        approve_route: approveRoutes[0].id,
-      })
-    }
-  }, [form.getFieldValue('approve_routes')])
-
   const useEmbeddedContact =
     !!embeddedContactFromQuota &&
     selectedContactId != null &&
@@ -904,14 +892,11 @@ const BasicInfo = ({
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             {(() => {
-              let approveRoutes = form.getFieldValue('approve_routes')
+              const approveRoutes = parameterSettings.get('approve-routes')
+                ? form.getFieldValue('approve_routes')
+                : []
               const isSingleRoute = approveRoutes?.length === 1
 
-              // case
-              if (!isEdit && !parameterSettings.get('approve-routes')) {
-                form.setFieldsValue({ approve_route_id: '' })
-                approveRoutes = []
-              }
               if (isSingleRoute) {
                 const singleRoute = approveRoutes[0]
 
