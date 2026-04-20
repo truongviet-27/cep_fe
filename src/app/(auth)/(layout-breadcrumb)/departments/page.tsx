@@ -30,7 +30,7 @@ import { CSV_LINK, PRIMARY } from '@utility/color'
 import { Button, Col, Form, Input, Row, Space, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 const { Title, Text } = Typography
 
@@ -200,8 +200,32 @@ export default function Page() {
       ),
       align: 'left',
       width: '12%',
+      onCell: () => ({
+        style: {
+          padding: '8px 4px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          verticalAlign: 'left',
+        },
+      }),
       render: (value: any) => {
-        return value?.name || '---'
+        return (
+          <div title={value?.name}>
+            <span
+              style={{
+                display: 'block',
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              {value?.name || '---'}
+            </span>
+          </div>
+        )
       },
     },
     {
@@ -209,10 +233,33 @@ export default function Page() {
       title: (
         <div style={{ textAlign: 'center' }}>{t('common.updated_by')}</div>
       ),
-      align: 'left',
       width: '12%',
+      onCell: () => ({
+        style: {
+          padding: '8px 4px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          verticalAlign: 'left',
+        },
+      }),
       render: (value: any) => {
-        return value?.name || '---'
+        return (
+          <div title={value?.name}>
+            <span
+              style={{
+                display: 'block',
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              {value?.name || '---'}
+            </span>
+          </div>
+        )
       },
     },
     {
