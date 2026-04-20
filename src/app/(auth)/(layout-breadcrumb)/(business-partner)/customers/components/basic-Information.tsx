@@ -101,11 +101,7 @@ function BasicInformation(
           <Row align="middle" gutter={[8, 8]}>
             <Col>
               <Form.Item rules={[rule]} name="customer_code" required noStyle>
-                <Input
-                  style={{ width: 240 }}
-                  size="middle"
-                  disabled={disableCustomerCodeInput}
-                />
+                <Input style={{ width: 240 }} size="middle" />
               </Form.Item>
             </Col>
             <Col flex="none">
