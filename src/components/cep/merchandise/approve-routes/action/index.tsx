@@ -11,7 +11,7 @@ import CoreAutoComplete from '@components/common/auto-complete'
 import CoreInput from '@components/common/core-input'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton, useForm, useSelect } from '@refinedev/antd'
+import { useForm, useSelect } from '@refinedev/antd'
 import {
   useGo,
   useParsed,
@@ -739,19 +739,7 @@ function ApproveAction() {
               marginTop: 40,
             }}
           >
-            <Space>
-              {isUpdate && (
-                <DeleteButton
-                  icon={null}
-                  size={'small'}
-                  onSuccess={() => {
-                    go({
-                      to: '/approve-routes',
-                    })
-                  }}
-                />
-              )}
-            </Space>
+            <div></div>
             <Space className="items-end">
               <Button
                 type="default"
