@@ -3,10 +3,10 @@
 import { RightOutlined, WarningOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton, EditButton, useForm } from '@refinedev/antd'
+import { EditButton, useForm } from '@refinedev/antd'
 import { useGo, useParsed, useShow, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { BLACK, PRIMARY, WHITE } from '@utility/color'
+import { PRIMARY, WHITE } from '@utility/color'
 import {
   Breadcrumb,
   Button,
@@ -325,15 +325,7 @@ function ApproveDetail() {
               marginTop: 40,
             }}
           >
-            <DeleteButton
-              icon={null}
-              size={'small'}
-              onSuccess={() => {
-                go({
-                  to: '/approve-routes',
-                })
-              }}
-            />
+            <div></div>
             <Space>
               <Button
                 type="default"
