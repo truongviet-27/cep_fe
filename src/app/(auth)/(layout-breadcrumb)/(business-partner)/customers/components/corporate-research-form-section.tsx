@@ -10,6 +10,7 @@ import {
   Modal,
   Select,
   Space,
+  Tooltip,
   Typography,
   type UploadFile,
 } from 'antd'
@@ -77,13 +78,6 @@ export const CorporateResearchFormSection = (
     form.setFieldValue('company_research_information', defaultVal)
   }
 
-  const centerHeaderCell = () => ({
-    style: { textAlign: 'center' as const },
-  })
-  const leftCell = () => ({
-    style: { textAlign: 'left' as const },
-  })
-
   const columns = [
     {
       title: (
@@ -92,14 +86,38 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'material_name',
-      width: '20%',
-      onHeaderCell: centerHeaderCell,
-      onCell: leftCell,
-      render: (field: any, record: any) => (
-        <Form.Item name={[field.name, 'material_name']} noStyle>
-          {record.material_name}
-        </Form.Item>
-      ),
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'left',
+        },
+      }),
+      render: (field: any, record: any) => {
+        const value = record.material_name
+        return (
+          <Tooltip title={value} placement="topLeft">
+            <div
+              style={{
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              <Form.Item
+                name={[field.name, 'material_name']}
+                style={{ marginBottom: 0 }}
+              >
+                <span>{value}</span>
+              </Form.Item>
+            </div>
+          </Tooltip>
+        )
+      },
     },
     {
       title: (
@@ -108,14 +126,39 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'judgement',
-      width: '12%',
-      onHeaderCell: centerHeaderCell,
-      onCell: leftCell,
-      render: (field: any, record: any) => (
-        <Form.Item name={[field.name, 'judgement']} noStyle initialValue="A">
-          {record.judgement}
-        </Form.Item>
-      ),
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (field: any, record: any) => {
+        const value = record.judgement
+        return (
+          <Tooltip title={value} placement="topLeft">
+            <div
+              style={{
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              <Form.Item
+                name={[field.name, 'judgement']}
+                noStyle
+                initialValue="A"
+              >
+                <span>{value}</span>
+              </Form.Item>
+            </div>
+          </Tooltip>
+        )
+      },
     },
     {
       title: (
@@ -124,16 +167,33 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'files',
-      width: '21%',
-      onHeaderCell: centerHeaderCell,
-      onCell: leftCell,
+      width: '25%',
       render: (_: any, record: any) => {
         return (
-          <>
-            {record?.files?.map((file: any, index: number) => (
-              <div key={file?.url ?? file.name ?? index}>{file.name}</div>
-            ))}
-          </>
+          <Space direction="vertical" size={4} style={{ width: '100%' }}>
+            {record?.files?.map((file: any, index: number) => {
+              const value = file?.name
+              return (
+                <Tooltip
+                  key={file?.url ?? file?.name ?? index}
+                  title={value}
+                  placement="topLeft"
+                >
+                  <div
+                    style={{
+                      width: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      textAlign: 'left',
+                    }}
+                  >
+                    {value}
+                  </div>
+                </Tooltip>
+              )
+            })}
+          </Space>
         )
       },
     },
@@ -142,11 +202,33 @@ export const CorporateResearchFormSection = (
         <span className={styles.tableTitle}>{t('common.updated_by')}</span>
       ),
       key: 'editor',
-      width: '15%',
-      onHeaderCell: centerHeaderCell,
-      onCell: leftCell,
-      render: (_: any, record: any) =>
-        record.editor?.name ?? record.author?.name,
+      width: '30%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (_: any, record: any) => (
+        <Tooltip
+          title={record.editor?.name ?? record.author?.name}
+          placement="topLeft"
+        >
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {record.editor?.name ?? record.author?.name}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -155,20 +237,43 @@ export const CorporateResearchFormSection = (
         </span>
       ),
       key: 'updated_at',
-      width: '16%',
-      onHeaderCell: centerHeaderCell,
-      onCell: leftCell,
-      render: (_: any, record: any) =>
-        (record?.updated_at || record?.created_at) &&
-        dayjs(record?.updated_at ?? record?.created_at ?? '').format(
-          'YYYY/MM/DD',
-        ),
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (_: any, record: any) => {
+        const value =
+          record?.updated_at || record?.created_at
+            ? dayjs(record?.updated_at || record?.created_at).format(
+                FORMAT_DATE_CROSS,
+              )
+            : ''
+        return (
+          <Tooltip title={value} placement="topLeft">
+            <div
+              style={{
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              {value}
+            </div>
+          </Tooltip>
+        )
+      },
     },
     {
       title: <span className={styles.tableTitle}>{t('table.actions')}</span>,
       key: 'actions',
       width: '16%',
-      onHeaderCell: centerHeaderCell,
       align: 'center' as const,
       render: (_: any, record: any, index: number) => (
         <Space wrap size={4}>

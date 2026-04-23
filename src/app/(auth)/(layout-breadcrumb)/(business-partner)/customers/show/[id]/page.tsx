@@ -30,7 +30,7 @@ import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_CROSS, FORMAT_DATE_TIME_CROSS } from '@utility/instances'
-import { Button, Collapse, Space, Tag, Typography } from 'antd'
+import { Button, Collapse, Space, Tag, Tooltip, Typography } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -78,6 +78,29 @@ export default function CustomerShowPage() {
       dataIndex: 'department_name',
       key: 'department_name',
       width: '20%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -88,6 +111,29 @@ export default function CustomerShowPage() {
       dataIndex: 'contact_person_name',
       key: 'contact_person_name',
       width: '20%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -98,6 +144,29 @@ export default function CustomerShowPage() {
       dataIndex: 'email',
       key: 'email',
       width: '35%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -108,7 +177,32 @@ export default function CustomerShowPage() {
       dataIndex: 'created_at',
       key: 'created_at',
       width: '25%',
-      render: (date: string) => date && dayjs(date).format(FORMAT_DATE_CROSS),
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (date: any) => {
+        const value = date ? dayjs(date).format(FORMAT_DATE_CROSS) : ''
+        return (
+          <Tooltip title={value} placement="topLeft">
+            <div
+              style={{
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              {value}
+            </div>
+          </Tooltip>
+        )
+      },
     },
   ]
 
@@ -121,7 +215,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'delivery_address_code',
       key: 'delivery_address_code',
-      width: 200,
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -131,9 +248,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'delivery_address_name',
       key: 'delivery_address_name',
-      render: (text: string) => text,
       width: '20%',
-      align: 'left',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -143,8 +281,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'post_code',
       key: 'post_code',
-      render: (text: string) => text,
-      width: 200,
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'right',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -154,8 +314,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'address',
       key: 'address',
-      render: (text: string) => text,
-      align: 'left',
+      width: '35%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -165,8 +347,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'phone',
       key: 'phone',
-      render: (text: string) => text,
-      width: 200,
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'right',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
   ]
 
@@ -179,6 +383,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'material_name',
       key: 'material_name',
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -188,8 +416,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'judgement',
       key: 'judgement',
-      width: 150,
-      render: (text: string) => text,
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -199,18 +449,29 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'files',
       key: 'files',
+      width: '25%',
       render: (files: Array<{ name: string; url: string }>) => (
-        <Space direction="vertical" size="small">
+        <Space direction="vertical" size="small" style={{ width: '100%' }}>
           {files?.map((file) => (
-            <a
-              key={file.name}
-              href={file.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FileImageOutlined style={{ marginRight: 8 }} />
-              {file.name}
-            </a>
+            <Tooltip key={file.name} title={file.name} placement="topLeft">
+              <a
+                key={file.name}
+                href={file.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
+                }}
+              >
+                <FileImageOutlined style={{ marginRight: 8 }} />
+                {file.name}
+              </a>
+            </Tooltip>
           ))}
         </Space>
       ),
@@ -221,7 +482,30 @@ export default function CustomerShowPage() {
       ),
       dataIndex: ['editor', 'name'], // SỬA LẠI: Lấy dữ liệu lồng nhau
       key: 'editor',
-      width: 120,
+      width: '30%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (value: any) => (
+        <Tooltip title={value} placement="topLeft">
+          <div
+            style={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -231,8 +515,33 @@ export default function CustomerShowPage() {
       ),
       dataIndex: 'updated_at',
       key: 'updated_at',
-      width: 180,
-      render: (date: string) => date && dayjs(date).format(FORMAT_DATE_CROSS),
+      width: '15%',
+      onCell: () => ({
+        style: {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          verticalAlign: 'middle',
+        },
+      }),
+      render: (date: any) => {
+        const value = date ? dayjs(date).format(FORMAT_DATE_CROSS) : ''
+        return (
+          <Tooltip title={value} placement="topLeft">
+            <div
+              style={{
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              {value}
+            </div>
+          </Tooltip>
+        )
+      },
     },
   ]
 
