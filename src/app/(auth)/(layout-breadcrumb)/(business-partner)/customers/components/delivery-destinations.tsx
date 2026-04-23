@@ -115,6 +115,14 @@ function DeliveryDestinations(
                     ),
                     key: 'name',
                     width: '16%',
+                    onCell: () => ({
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        verticalAlign: 'left',
+                      },
+                    }),
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'delivery_address_name']}
@@ -123,7 +131,13 @@ function DeliveryDestinations(
                         noStyle
                       >
                         <Input
-                          style={{ width: '100%', textAlign: 'left' }}
+                          style={{
+                            width: '100%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            textAlign: 'left',
+                          }}
                           disabled={idx === 0}
                         />
                       </Form.Item>
@@ -137,6 +151,14 @@ function DeliveryDestinations(
                     ),
                     key: 'post_code',
                     width: '12%',
+                    onCell: () => ({
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        verticalAlign: 'right',
+                      },
+                    }),
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'post_code']}
@@ -144,7 +166,13 @@ function DeliveryDestinations(
                         noStyle
                       >
                         <Input
-                          style={{ width: '100%', textAlign: 'right' }}
+                          style={{
+                            width: '100%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            textAlign: 'right',
+                          }}
                           disabled={idx === 0}
                         />
                       </Form.Item>
@@ -158,6 +186,14 @@ function DeliveryDestinations(
                     ),
                     key: 'address',
                     width: '28%',
+                    onCell: () => ({
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        verticalAlign: 'left',
+                      },
+                    }),
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'address']}
@@ -166,7 +202,13 @@ function DeliveryDestinations(
                         required
                       >
                         <Input
-                          style={{ width: '100%', textAlign: 'left' }}
+                          style={{
+                            width: '100%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            textAlign: 'left',
+                          }}
                           disabled={idx === 0}
                         />
                       </Form.Item>
@@ -180,6 +222,14 @@ function DeliveryDestinations(
                     ),
                     key: 'phone',
                     width: '14%',
+                    onCell: () => ({
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        verticalAlign: 'left',
+                      },
+                    }),
                     render: (field, _, idx) => (
                       <Form.Item
                         name={[field.name, 'phone']}
@@ -187,7 +237,13 @@ function DeliveryDestinations(
                         noStyle
                       >
                         <Input
-                          style={{ width: '100%', textAlign: 'right' }}
+                          style={{
+                            width: '100%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            textAlign: 'right',
+                          }}
                           disabled={idx === 0}
                         />
                       </Form.Item>
