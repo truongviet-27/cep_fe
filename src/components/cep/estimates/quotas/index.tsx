@@ -240,7 +240,7 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
-        width: '16%',
+        width: '12%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -333,7 +333,7 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        width: '7%',
+        width: '9%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -436,7 +436,7 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
-        width: '8%',
+        width: '10%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
