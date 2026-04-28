@@ -7,7 +7,7 @@ const tokenCheckCache = new Map<
   string,
   { isValid: boolean; timestamp: number }
 >()
-const CACHE_DURATION = 30 * 1000 // Cache for 30 seconds
+const CACHE_DURATION = 5 * 1000 // Cache for 30 seconds
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl
@@ -105,7 +105,19 @@ export async function middleware(req: NextRequest) {
 
       // If token is not active, redirect to clear session page
       if (!isValid) {
-        console.error('[Middleware] Token revoked, redirecting to auth-revoked')
+        console.error('[Middleware] Introspect failed', {
+          pathname,
+          httpStatus: introspectRes.status,
+          httpOk: introspectRes.ok,
+          active: introspect.active,
+          error: introspect.error,
+          errorDescription: introspect.error_description,
+          provider: token.provider,
+          clientIdType:
+            token.provider === 'TokenLogin' ? 'TENANT_ADMIN' : 'DEFAULT',
+          tokenSubFromCookie:
+            typeof token.sub === 'string' ? token.sub.slice(0, 8) : undefined,
+        })
 
         // Delete cookies and redirect to special page to clear session data
         const response = NextResponse.redirect(
