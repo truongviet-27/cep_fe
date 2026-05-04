@@ -82,9 +82,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   message: 'アソートコードは20文字以内で入力してください',
                 },
                 {
-                  pattern: /^[A-Z0-9-]+$/,
+                  pattern: /^[A-Za-z0-9-]+$/,
                   message:
-                    'アソートコードには A〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
+                    'アソートコードには A〜Z、a〜z の英字、0〜9 の数字、およびハイフン（-）のみ使用できます',
                 },
               ]}
             />
