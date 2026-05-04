@@ -5,6 +5,7 @@
 import { setUserLocale } from '@/i18n'
 import { dataProvider } from '@/providers/data-provider'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
+import { ConfigProvider } from 'antd'
 import LoadingPage from '@components/common/loading-page'
 import { NProgressProvider } from '@components/common/progress-provider'
 import { accessControlProvider } from '@lib/accessControlProvider'
@@ -76,25 +77,27 @@ const App = (props: React.PropsWithChildren) => {
   return (
     <RefineKbarProvider>
       <AntdRegistry>
-        <NProgressProvider />
-        <Refine
-          i18nProvider={i18nProvider}
-          routerProvider={routerProvider}
-          dataProvider={{ default: dataProvider, corporationProvider }}
-          notificationProvider={customNotificationProvider}
-          authProvider={authProvider}
-          resources={resource}
-          accessControlProvider={accessControlProvider}
-          options={{
-            syncWithLocation: true,
-            warnWhenUnsavedChanges: false,
-            useNewQueryKeys: true,
-            title: { icon: null },
-          }}
-        >
-          {props.children}
-          <RefineKbar />
-        </Refine>
+        <ConfigProvider button={{ autoInsertSpace: false }}>
+          <NProgressProvider />
+          <Refine
+            i18nProvider={i18nProvider}
+            routerProvider={routerProvider}
+            dataProvider={{ default: dataProvider, corporationProvider }}
+            notificationProvider={customNotificationProvider}
+            authProvider={authProvider}
+            resources={resource}
+            accessControlProvider={accessControlProvider}
+            options={{
+              syncWithLocation: true,
+              warnWhenUnsavedChanges: false,
+              useNewQueryKeys: true,
+              title: { icon: null },
+            }}
+          >
+            {props.children}
+            <RefineKbar />
+          </Refine>
+        </ConfigProvider>
       </AntdRegistry>
     </RefineKbarProvider>
   )
