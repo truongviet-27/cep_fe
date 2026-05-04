@@ -63,21 +63,22 @@ export const useBootstrap = () => {
 
   const validateToken = async () => {
     try {
-      console.log('pathname: ', pathname)
-      console.log('token: ', token)
-      console.log('refreshToken: ', refreshToken)
-
       if (pathname === '/' && token) {
         const currentSession = await getSessionOnce()
         const currentUserId = getUserIdFromToken(currentSession?.accessToken)
         const newUserId = getUserIdFromToken(token)
 
         // Check if same user and already logged in with valid session
+        // Skip signIn only if the URL token matches the cookie token exactly.
+        // If the URL carries a different token (even for the same user), re-signIn
+        // to refresh the session — the cookie token may have an expired SSO session.
+        const sameToken = currentSession?.accessToken === token
         if (
           isLoggedIn &&
           currentUserId === newUserId &&
           currentSession?.accessToken &&
-          !currentSession?.error
+          !currentSession?.error &&
+          sameToken
         ) {
           console.log('[Controller] Same user already logged in, skipping')
           return false
