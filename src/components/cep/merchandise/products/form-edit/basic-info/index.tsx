@@ -104,7 +104,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           </Col>
           <Col xs={24} lg={8}>
             <div className="mt-1 flex">
-              <Typography>（A-Z, 0-9, -）</Typography>
+              <Typography>（A-Z, a-z, 0-9, -）</Typography>
               <div className="flex flex-col items-center">
                 <Button
                   color="primary"
