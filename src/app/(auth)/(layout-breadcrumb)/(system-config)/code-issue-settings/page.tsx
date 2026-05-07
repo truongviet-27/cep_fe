@@ -55,6 +55,12 @@ export default function Page() {
 
   const { show, close, open } = modalFormProps
 
+  const editingId = modalFormProps.id
+  const editingRecord = tableProps.dataSource?.find(
+    (item) => item.id === editingId,
+  )
+  const currentType = editingRecord?.code
+
   const segmentLabelByValue: Record<SegmentedValue, string> =
     Object.fromEntries(segmentOptions.map((o) => [o.value, o.label])) as Record<
       SegmentedValue,
@@ -216,7 +222,7 @@ export default function Page() {
         okButtonProps={{ style: { display: 'none' } }}
         width={'35vw'}
       >
-        <CodeIssueSettingEdit modalProps={modalFormProps} />
+        <CodeIssueSettingEdit modalProps={modalFormProps} type={currentType} />
       </Modal>
     </List>
   )

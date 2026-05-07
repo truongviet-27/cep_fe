@@ -414,7 +414,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           okButtonProps={{ style: { display: 'none' } }}
           width="650px"
         >
-          <CodeIssueSettingEdit modalProps={modalFormProps} />
+          <CodeIssueSettingEdit modalProps={modalFormProps} type="products" />
         </Modal>
         <Modal
           open={isOpenCategoryModal}
