@@ -205,6 +205,8 @@
     "prefix": {
       "required": "接続詞は必須です",
       "numeric": "A〜Zの大文字のみ使用できます。",
+      "invalid_alpha": "A~Z, a~zの文字のみ使用できます。",
+      "uppercase_only": "A〜Zの大文字のみ使用できます。",
       "max": "2文字以内で入力してください。"
     },
     "hash_dash": {

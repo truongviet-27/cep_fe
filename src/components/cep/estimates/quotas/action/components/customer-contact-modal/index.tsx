@@ -209,7 +209,19 @@ function CustomerContactSelectionModal({
               </Form.Item>
             )
           }
-          return text || ''
+          return (
+            <div
+              className="text-left"
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              title={text || ''}
+            >
+              {text || ''}
+            </div>
+          )
         },
       },
       {
@@ -242,7 +254,19 @@ function CustomerContactSelectionModal({
               </Form.Item>
             )
           }
-          return text
+          return (
+            <div
+              className="text-left"
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              title={text}
+            >
+              {text}
+            </div>
+          )
         },
       },
       {
@@ -274,7 +298,19 @@ function CustomerContactSelectionModal({
               </Form.Item>
             )
           }
-          return text
+          return (
+            <div
+              className="text-left"
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              title={text}
+            >
+              {text}
+            </div>
+          )
         },
       },
       {
@@ -286,7 +322,11 @@ function CustomerContactSelectionModal({
           if (record.isNew) {
             return ''
           }
-          return text ? dayjs(text).format(FORMAT_DATE_CROSS) : ''
+          return (
+            <div className="text-left">
+              {text ? dayjs(text).format(FORMAT_DATE_CROSS) : ''}
+            </div>
+          )
         },
       },
       {

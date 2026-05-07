@@ -2,7 +2,7 @@
 import { createSchemaFieldRule } from 'antd-zod'
 import { z } from 'zod'
 
-export const validateCodeIssueSettingsRule = (t: any) => {
+export const validateCodeIssueSettingsRule = (t: any, type?: string) => {
   return createSchemaFieldRule(
     z.object({
       issue_method: z.optional(
@@ -37,11 +37,16 @@ export const validateCodeIssueSettingsRule = (t: any) => {
           return
         }
 
-        if (!/^[A-Z ]+$/.test(val)) {
+        const isProduct = type === 'products'
+        const regex = isProduct ? /^[A-Za-z ]+$/ : /^[A-Z ]+$/
+
+        if (!regex.test(val)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             validation: 'regex',
-            message: t('validation.code_issue_settings.prefix.numeric'),
+            message: isProduct
+              ? t('validation.code_issue_settings.prefix.invalid_alpha')
+              : t('validation.code_issue_settings.prefix.uppercase_only'),
           })
           return
         }
