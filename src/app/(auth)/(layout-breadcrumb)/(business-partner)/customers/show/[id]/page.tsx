@@ -450,13 +450,15 @@ export default function CustomerShowPage() {
       dataIndex: 'files',
       key: 'files',
       width: '25%',
-      render: (files: Array<{ name: string; url: string }>) => (
+      render: (
+        files: Array<{ name: string; url: string; access_url: string }>,
+      ) => (
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           {files?.map((file) => (
             <Tooltip key={file.name} title={file.name} placement="topLeft">
               <a
                 key={file.name}
-                href={file.url}
+                href={file.access_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
