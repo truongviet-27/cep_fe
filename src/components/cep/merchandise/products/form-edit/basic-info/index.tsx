@@ -95,16 +95,16 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   message: '商品コードは20文字以内で入力してください',
                 },
                 {
-                  pattern: /^[A-Z0-9-]+$/,
+                  pattern: /^[A-Za-z0-9-]+$/,
                   message:
-                    '商品コードには A〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
+                    '商品コードには A〜Z、a〜z の英字、0〜9 の数字、およびハイフン（-）のみ使用できます',
                 },
               ]}
             />
           </Col>
           <Col xs={24} lg={8}>
             <div className="mt-1 flex">
-              <Typography>（A-Z, 0-9, -）</Typography>
+              <Typography>（A-Z, a-z, 0-9, -）</Typography>
               <div className="flex flex-col items-center">
                 <Button
                   color="primary"
@@ -414,7 +414,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           okButtonProps={{ style: { display: 'none' } }}
           width="650px"
         >
-          <CodeIssueSettingEdit modalProps={modalFormProps} />
+          <CodeIssueSettingEdit modalProps={modalFormProps} type="products" />
         </Modal>
         <Modal
           open={isOpenCategoryModal}

@@ -44,7 +44,6 @@ export const refreshUserData = async () => {
 
     // Update parameter settings
     const dataConvert: Map<ParameterResourceEnum, boolean> = new Map()
-    console.log('parameterSettings', parameterSettings)
     parameterSettings.forEach(
       ({
         is_manage,
@@ -59,8 +58,6 @@ export const refreshUserData = async () => {
 
     setParameterSettings(dataConvert)
     setIsLoggedIn(true)
-
-    console.log('User data refreshed successfully')
   } catch (error) {
     console.error('Failed to refresh user data:', error)
     throw error

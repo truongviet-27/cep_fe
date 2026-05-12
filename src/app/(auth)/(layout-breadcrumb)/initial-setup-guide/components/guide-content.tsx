@@ -205,7 +205,7 @@ export default function GuideContent({
           style={{
             display: 'block',
             marginBottom: 16,
-            fontSize: 12,
+            fontSize: 14,
             flexShrink: 0,
             color: '#000',
           }}
@@ -286,7 +286,7 @@ export default function GuideContent({
                   {groupName ? (
                     <div
                       style={{
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: 700,
                         color: '#262626',
                         marginBottom: 4,

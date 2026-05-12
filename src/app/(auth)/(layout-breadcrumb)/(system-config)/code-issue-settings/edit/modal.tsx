@@ -29,11 +29,13 @@ import { PRIMARY, RED } from '@utility/color'
 type Props = {
   modalProps: any
   refetchParent?: () => void
+  type?: string
 }
 
 export const CodeIssueSettingEdit: React.FC<Props> = ({
   modalProps,
   refetchParent,
+  type,
 }) => {
   const t = useTranslate()
   const { close, formProps, queryResult, saveButtonProps, formLoading, form } =
@@ -70,7 +72,7 @@ export const CodeIssueSettingEdit: React.FC<Props> = ({
     ],
   )
 
-  const rule = validateCodeIssueSettingsRule(t)
+  const rule = validateCodeIssueSettingsRule(t, type)
 
   useLayoutEffect(() => {
     if (record) {

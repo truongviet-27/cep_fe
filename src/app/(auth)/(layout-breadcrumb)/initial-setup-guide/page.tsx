@@ -216,7 +216,7 @@ export default function InitialSetupGuidePage() {
                   marginBottom: 1,
                 }}
               >
-                <Typography.Title level={5} style={{ margin: 0 }}>
+                <Typography.Title level={5} style={{ margin: 0, fontSize: 16 }}>
                   {t(`initial-setup-guide.menu.${selectedItem.id}.title`)}
                 </Typography.Title>
                 <Button

@@ -2,7 +2,7 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { DeleteButton, EditButton } from '@refinedev/antd'
+import { EditButton } from '@refinedev/antd'
 import { useGo, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -70,15 +70,7 @@ const ProductComboDetailContainer: React.FC = () => {
               ]}
             />
             <Flex justify="space-between" style={{ marginTop: 24 }}>
-              <DeleteButton
-                icon={null}
-                size={'small'}
-                onSuccess={() => {
-                  go({
-                    to: '/products',
-                  })
-                }}
-              />
+              <div></div>
               <Space size="small">
                 <Button
                   onClick={() => {

@@ -254,7 +254,7 @@ function OptionalInfo({
                           message: '',
                         },
                         {
-                          pattern: /^[A-Z0-9-]+$/,
+                          pattern: /^[A-Za-z0-9-]+$/,
                           message: '',
                         },
                         {

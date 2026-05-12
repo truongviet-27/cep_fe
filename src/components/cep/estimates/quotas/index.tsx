@@ -240,13 +240,13 @@ function QuotaList() {
         title: t('quotas.table.estimate_number'),
         dataIndex: 'code',
         key: 'code',
-        width: '16%',
+        width: '15%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
-            overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            whiteSpace: 'normal',
+            wordBreak: 'break-all',
             verticalAlign: 'center',
           },
         }),
@@ -256,9 +256,8 @@ function QuotaList() {
             style={{
               display: 'block',
               width: '100%',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              whiteSpace: 'normal',
+              wordBreak: 'break-all',
               textAlign: 'left',
               padding: 0,
               height: 'auto',
@@ -333,7 +332,7 @@ function QuotaList() {
         ),
         dataIndex: 'transaction_type',
         key: 'transaction_type',
-        width: '7%',
+        width: '11%',
         onCell: () => ({
           style: {
             padding: '2px 2px',
@@ -436,7 +435,7 @@ function QuotaList() {
         ),
         dataIndex: 'department',
         key: 'department',
-        width: '8%',
+        width: '10%',
         onCell: () => ({
           style: {
             padding: '2px 2px',

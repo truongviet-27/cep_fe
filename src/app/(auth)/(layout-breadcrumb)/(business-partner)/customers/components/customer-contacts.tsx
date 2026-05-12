@@ -6,7 +6,7 @@ import CommonTable from '@components/common/table'
 import { useParsed } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
-import { Button, Collapse, Form, Input, Space } from 'antd'
+import { Button, Collapse, Form, Input, Space, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
@@ -105,7 +105,7 @@ function CustomerContacts(
                         required
                         noStyle
                       >
-                        <Input style={{ width: '100%', textAlign: 'left' }} />
+                        <Input style={{ width: '100%' }} />
                       </Form.Item>
                     ),
                   },
@@ -117,6 +117,14 @@ function CustomerContacts(
                     ),
                     key: 'email',
                     width: '36%',
+                    onCell: () => ({
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        verticalAlign: 'middle',
+                      },
+                    }),
                     render: (field) => {
                       const email = form.getFieldValue([
                         'receivers',
@@ -131,7 +139,21 @@ function CustomerContacts(
                       const isExistingRow = isUpdate && !!id
 
                       if (isExistingRow) {
-                        return email || '---'
+                        return (
+                          <Tooltip title={email} placement="topLeft">
+                            <div
+                              style={{
+                                maxWidth: '100%',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                textAlign: 'left',
+                              }}
+                            >
+                              {email || '---'}
+                            </div>
+                          </Tooltip>
+                        )
                       }
                       return (
                         <Form.Item
@@ -193,15 +215,38 @@ function CustomerContacts(
                     ),
                     key: 'created_at',
                     width: '14%',
+                    onCell: () => ({
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'normal',
+                        verticalAlign: 'middle',
+                      },
+                    }),
                     render: (field) => {
                       const createdAt = form.getFieldValue([
                         'receivers',
                         field.name,
                         'created_at',
                       ])
-                      return createdAt
+                      const value = createdAt
                         ? dayjs(createdAt).format(FORMAT_DATE_CROSS)
                         : '---'
+                      return (
+                        <Tooltip title={value} placement="topLeft">
+                          <div
+                            style={{
+                              maxWidth: '100%',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              textAlign: 'left',
+                            }}
+                          >
+                            {value}
+                          </div>
+                        </Tooltip>
+                      )
                     },
                   },
                   {

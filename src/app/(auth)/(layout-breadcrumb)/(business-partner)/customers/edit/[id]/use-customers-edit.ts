@@ -229,23 +229,21 @@ export const useCustomerEdit = () => {
       const hasReceivers =
         Array.isArray(currentReceivers) && currentReceivers.length > 0
 
-      if (!receiversInitialized.current || !hasReceivers) {
-        const receivers = contactsData.data
-        const initialReceivers =
-          Array.isArray(receivers) && receivers.length > 0
-            ? receivers
-            : [
-                {
-                  department_name: null,
-                  contact_person_name: null,
-                  email: null,
-                },
-              ]
+      const receivers = contactsData.data
+      const initialReceivers =
+        Array.isArray(receivers) && receivers.length > 0
+          ? receivers
+          : [
+              {
+                department_name: null,
+                contact_person_name: null,
+                email: null,
+              },
+            ]
 
-        contactsDataRef.current = initialReceivers
-        form.setFieldsValue({ receivers: initialReceivers })
-        receiversInitialized.current = true
-      }
+      contactsDataRef.current = initialReceivers
+      form.setFieldsValue({ receivers: initialReceivers })
+      receiversInitialized.current = true
     }
   }, [contactsData, form])
 
