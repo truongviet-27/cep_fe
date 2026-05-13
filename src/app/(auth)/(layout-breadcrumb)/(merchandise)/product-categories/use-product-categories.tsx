@@ -42,6 +42,7 @@ const MAX_DEPTH = 3
 function useProductCategories() {
   const [tree, setTree] = useState<CatNode[]>([])
   const [dirty, setDirty] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [editing, setEditing] = useState<
     Record<string, { name: string; original: string }>
   >({})
@@ -135,6 +136,9 @@ function useProductCategories() {
           setTimeout(() => {
             originalTreeRef.current = savedTree ?? tree
           }, 100)
+        },
+        onError: () => {
+          setIsSaving(false)
         },
       },
     )
@@ -231,6 +235,7 @@ function useProductCategories() {
     formFields
       .validateFields()
       .then(() => {
+        setIsSaving(true)
         // Keep latest typed names in UI while waiting refetch
         setTree(patched)
         handleUpdateAll(toSaveTree(patched), patched, () => {
@@ -482,6 +487,7 @@ function useProductCategories() {
     toTreeData,
     tableProps,
     dirty,
+    isSaving,
     allOpen,
     expandedKeys,
     onDrop,

@@ -4,7 +4,7 @@ import PageContainer from '@components/common/page-container'
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { FORMAT_DATE_TIME } from '@utility/instances'
+import { FORMAT_DATE_TIME_CROSS_HM } from '@utility/instances'
 import {
   Breadcrumb,
   Button,
@@ -230,7 +230,11 @@ function ImportHistory() {
                   width: '100%',
                 }}
                 showTime
-                placeholder={[FORMAT_DATE_TIME, FORMAT_DATE_TIME]}
+                format={FORMAT_DATE_TIME_CROSS_HM}
+                placeholder={[
+                  FORMAT_DATE_TIME_CROSS_HM,
+                  FORMAT_DATE_TIME_CROSS_HM,
+                ]}
               />
             </Form.Item>
           </Col>
