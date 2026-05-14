@@ -313,7 +313,7 @@ const BasicInfo = ({
               labelCol={{ span: 3 }}
               className="[&>.ant-row]:!flex-nowrap"
             >
-              <div className="flex flex-row flex-nowrap items-center gap-4">
+              <div className="flex flex-row flex-wrap items-center gap-4">
                 <Form.Item
                   rules={[
                     {

@@ -16,6 +16,7 @@ import {
 } from '@refinedev/core'
 import { type QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import type { TableProps } from 'antd'
 import {
   Button,
@@ -916,6 +917,7 @@ const AgreedPriceQuotaTab = () => {
               <RangePicker
                 allowClear
                 className="w-full"
+                format={FORMAT_DATE_CROSS}
                 placeholder={['YYYY/MM/DD', 'YYYY/MM/DD']}
               />
             </Form.Item>
