@@ -28,8 +28,8 @@ export const SelectPagination = ({
 }: Props) => {
   const [page, setPage] = useState<number>(1)
   const [options, setOptions] = useState<SelectProps['options']>([])
-  const [search, setSearch] = useState<string>('')
   const hasMore = useRef(true)
+  const isScrollPage = useRef(false)
   const { selectProps: props, query } = useSelect({
     ...selectProps,
     optionLabel,
@@ -40,13 +40,14 @@ export const SelectPagination = ({
       mode: 'server',
     },
     onSearch: (value) => {
-      // setPage(1)
-      // hasMore.current = true
-      // setSearch(value)
+      isScrollPage.current = false
+      setPage(1)
+      hasMore.current = true
+      if (!value) return []
       return [
         {
           field: fieldSearch,
-          operator: 'null',
+          operator: 'eq',
           value,
         },
       ]
@@ -60,54 +61,47 @@ export const SelectPagination = ({
       return
     }
 
-    const normalizedData = data.data?.map((item: any) => ({
+    const normalizedData = data.data.map((item: any) => ({
       label: get(item, optionLabel),
       value: get(item, optionValue),
     }))
 
-    setOptions((prev) => {
-      const merged = [...(prev || []), ...normalizedData]
-      return uniqBy(merged, 'value')
-    })
-
-    if (data.length === 0 && page > 1) hasMore.current = false
+    setOptions((prev) =>
+      isScrollPage.current
+        ? uniqBy([...(prev || []), ...normalizedData], 'value')
+        : uniqBy(normalizedData, 'value'),
+    )
   }, [query?.data])
-
-  const isNotReady = query.isLoading || query.fetchStatus === 'fetching'
 
   return (
     <Form.Item {...formItemProps}>
-      {isNotReady ? (
-        <div>
-          <Select
-            disabled={disabled}
-            {...selectComponentProps}
-            placeholder="読み込み中..."
-          />
-        </div>
-      ) : (
-        <Select
-          disabled={disabled}
-          options={options}
-          {...selectComponentProps}
-          {...props}
-          onSearch={props.onSearch} // Đảm bảo search hoạt động
-          allowClear={allowClear}
-          showSearch
-          filterOption={false}
-          onPopupScroll={(event) => {
-            const target = event.currentTarget
-            if (
-              target.scrollTop + target.offsetHeight >=
-              target.scrollHeight - 10
-            ) {
-              if (hasMore.current && !query.isFetching) {
-                setPage((curr) => curr + 1)
-              }
+      <Select
+        disabled={disabled}
+        {...selectComponentProps}
+        {...props}
+        options={options}
+        loading={query.isFetching}
+        onSearch={props.onSearch}
+        allowClear={allowClear}
+        showSearch
+        filterOption={false}
+        onChange={(value, option) => {
+          selectComponentProps.onChange?.(value, option)
+          props.onSearch?.('')
+        }}
+        onPopupScroll={(event) => {
+          const target = event.currentTarget
+          if (
+            target.scrollTop + target.offsetHeight >=
+            target.scrollHeight - 10
+          ) {
+            if (hasMore.current && !query.isFetching) {
+              isScrollPage.current = true
+              setPage((curr) => curr + 1)
             }
-          }}
-        />
-      )}
+          }
+        }}
+      />
     </Form.Item>
   )
 }
