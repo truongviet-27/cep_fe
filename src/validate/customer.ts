@@ -6,81 +6,81 @@ import { z } from 'zod'
 const zDeliveryAddressRule = (t: any) =>
   z.object({
     id: z.optional(z.int()),
-    delivery_address_name: z.optional(
-      z
-        .string({
-          error: t('validation.customer.delivery_address_name.string'),
-        })
-        .max(50, {
-          error: t('validation.customer.delivery_address_name.max', {
-            max: 50,
-          }),
-        })
-        .optional()
-        .or(z.literal(''))
-        .superRefine((val: any, ctx: any) => {
-          if (val && val.length > 0) {
-            if (val.trim().length === 0) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: t(
-                  'validation.customer.delivery_address_name.only_spaces',
-                ),
-              })
-            }
-          }
+    delivery_address_name: z
+      .string({
+        error: t('validation.customer.delivery_address_name.string'),
+      })
+      .min(1, {
+        message: t('validation.customer.delivery_address_name.required'),
+      })
+      .max(50, {
+        error: t('validation.customer.delivery_address_name.max', {
+          max: 50,
         }),
-    ),
-    post_code: z.optional(
-      z
-        .string({ error: t('validation.customer.post_code.string') })
-        .max(20, { error: t('validation.customer.post_code.max', { max: 20 }) })
-        .superRefine((val, ctx) => {
-          if (!val) return
-          // Remove hyphens for validation
-          const normalized = val.replace(/-/g, '')
-          // Check if contains only digits and hyphens
-          if (!/^[\d-]+$/.test(val)) {
+      })
+      .superRefine((val: any, ctx: any) => {
+        if (val && val.length > 0) {
+          if (val.trim().length === 0) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: t('validation.customer.post_code.numeric_only'),
+              message: t(
+                'validation.customer.delivery_address_name.only_spaces',
+              ),
             })
-            return
           }
-          // Check length of normalized value (without hyphens)
-          if (normalized.length > 10) {
+        }
+      }),
+    post_code: z
+      .string({ error: t('validation.customer.post_code.string') })
+      .max(20, { error: t('validation.customer.post_code.max', { max: 20 }) })
+      .superRefine((val, ctx) => {
+        if (!val) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.customer.post_code.required'),
+          })
+          return
+        }
+        // Remove hyphens for validation
+        const normalized = val.replace(/-/g, '')
+        // Check if contains only digits and hyphens
+        if (!/^[\d-]+$/.test(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.customer.post_code.numeric_only'),
+          })
+          return
+        }
+        // Check length of normalized value (without hyphens)
+        if (normalized.length > 10) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.too_big,
+            origin: 'string',
+            maximum: 10,
+            type: 'string',
+            inclusive: true,
+            message: t('validation.customer.post_code.max', { max: 10 }),
+          })
+        }
+      }),
+    address: z
+      .string({ error: t('validation.customer.address.string') })
+      .min(1, { message: t('validation.customer.address.required') })
+      .max(255, {
+        error: t('validation.customer.address.max', { max: 255 }),
+      })
+      .superRefine((val: any, ctx: any) => {
+        if (val && val.length > 0) {
+          if (val.trim().length === 0) {
             ctx.addIssue({
-              code: z.ZodIssueCode.too_big,
-              origin: 'string',
-              maximum: 10,
-              type: 'string',
-              inclusive: true,
-              message: t('validation.customer.post_code.max', { max: 10 }),
+              code: z.ZodIssueCode.custom,
+              message: t(
+                'validation.customer.delivery_address_name.only_spaces',
+              ),
             })
           }
-        }),
-    ),
-    address: z.optional(
-      z
-        .string({ error: t('validation.customer.address.string') })
-        .max(255, {
-          error: t('validation.customer.address.max', { max: 255 }),
-        })
-        .optional()
-        .or(z.literal(''))
-        .superRefine((val: any, ctx: any) => {
-          if (val && val.length > 0) {
-            if (val.trim().length === 0) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: t(
-                  'validation.customer.delivery_address_name.only_spaces',
-                ),
-              })
-            }
-          }
-        }),
-    ),
+        }
+      }),
     phone: z
       .union([z.string(), z.null(), z.undefined(), z.literal('')])
       .optional()
