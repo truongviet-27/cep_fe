@@ -445,7 +445,7 @@ function BasicInfoExtended({
                 >
                   {data?.expiration_date &&
                     dayjs(
-                      getExpiryDate(data?.expiration_date, data?.created_at),
+                      getExpiryDate(data?.expiration_date, data?.issue_date),
                     ).format('YYYY/MM/DD') + 'まで'}
                 </span>
               </Form.Item>

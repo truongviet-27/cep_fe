@@ -55,11 +55,17 @@ import type {
   GetCorporateNumberData,
   GetCorporateNumberResponses,
   GetCorporateNumberErrors,
+  CustomerControllerBulkDestroyData,
+  CustomerControllerBulkDestroyResponses,
+  CustomerControllerBulkDestroyErrors,
   CustomerControllerIndexData,
   CustomerControllerIndexResponses,
   CustomerControllerStoreData,
   CustomerControllerStoreResponses,
   CustomerControllerStoreErrors,
+  CustomerControllerExportCsvData,
+  CustomerControllerExportCsvResponses,
+  CustomerControllerExportCsvErrors,
   CustomerControllerDestroyData,
   CustomerControllerDestroyResponses,
   CustomerControllerDestroyErrors,
@@ -78,6 +84,9 @@ import type {
   CustomerControllerRestoreData,
   CustomerControllerRestoreResponses,
   CustomerControllerRestoreErrors,
+  CustomerControllerCheckDeleteData,
+  CustomerControllerCheckDeleteResponses,
+  CustomerControllerCheckDeleteErrors,
   CustomerContactControllerBatchDeleteData,
   CustomerContactControllerBatchDeleteResponses,
   CustomerContactControllerBatchDeleteErrors,
@@ -148,6 +157,12 @@ import type {
   MailTemplateControllerStoreData,
   MailTemplateControllerStoreResponses,
   MailTemplateControllerStoreErrors,
+  ManualControllerIndexData,
+  ManualControllerIndexResponses,
+  ManualControllerIndexErrors,
+  ManualControllerUpdateStatusData,
+  ManualControllerUpdateStatusResponses,
+  ManualControllerUpdateStatusErrors,
   ParameterSettingControllerIndexData,
   ParameterSettingControllerIndexResponses,
   ParameterSettingControllerIndexErrors,
@@ -176,6 +191,9 @@ import type {
   PriceGroupControllerUpdateData,
   PriceGroupControllerUpdateResponses,
   PriceGroupControllerUpdateErrors,
+  ProductControllerBulkDestroyData,
+  ProductControllerBulkDestroyResponses,
+  ProductControllerBulkDestroyErrors,
   ProductControllerIndexData,
   ProductControllerIndexResponses,
   ProductControllerIndexErrors,
@@ -185,6 +203,9 @@ import type {
   ProductControllerListAllData,
   ProductControllerListAllResponses,
   ProductControllerListAllErrors,
+  ProductControllerExportCsvData,
+  ProductControllerExportCsvResponses,
+  ProductControllerExportCsvErrors,
   ProductControllerDestroyData,
   ProductControllerDestroyResponses,
   ProductControllerDestroyErrors,
@@ -416,14 +437,17 @@ import {
   zEed87Adddef6126Fa051Bd6Cd2D733E6Data,
   zCodeIssueSettingControllerShowByCodeData,
   zGetCorporateNumberData,
+  zCustomerControllerBulkDestroyData,
   zCustomerControllerIndexData,
   zCustomerControllerStoreData,
+  zCustomerControllerExportCsvData,
   zCustomerControllerDestroyData,
   zCustomerControllerShowData,
   zCustomerControllerUpdateData,
   zCustomerControllerUpdateStatusData,
   zCustomerControllerCountData,
   zCustomerControllerRestoreData,
+  zCustomerControllerCheckDeleteData,
   zCustomerContactControllerBatchDeleteData,
   zCustomerContactControllerIndexData,
   zCustomerContactControllerBatchUpdateData,
@@ -448,6 +472,8 @@ import {
   zImportControllerGetImportHistoryData,
   zMailTemplateControllerShowByCodeData,
   zMailTemplateControllerStoreData,
+  zManualControllerIndexData,
+  zManualControllerUpdateStatusData,
   zParameterSettingControllerIndexData,
   zParameterSettingControllerUpdateManyData,
   zPermissionControllerIndexData,
@@ -458,9 +484,11 @@ import {
   zDdd0B8D0A4Fbdc804Fe40999F5Eb58E8Data,
   zPriceGroupControllerIndexData,
   zPriceGroupControllerUpdateData,
+  zProductControllerBulkDestroyData,
   zProductControllerIndexData,
   zE475E7Ead1848Aa17C399Ba311C51Data,
   zProductControllerListAllData,
+  zProductControllerExportCsvData,
   zProductControllerDestroyData,
   zProductControllerShowData,
   zFa01A6Fd51Ec78D4Cf2Ab50875Ece1C3Data,
@@ -1048,6 +1076,38 @@ export const getCorporateNumber = <ThrowOnError extends boolean = false>(
 }
 
 /**
+ * Bulk force delete customers (only suspended status)
+ * Bulk force delete customers by IDs. Only customers with 'suspended' status can be deleted. Related non-completed quotas will be deleted.
+ */
+export const customerControllerBulkDestroy = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CustomerControllerBulkDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    CustomerControllerBulkDestroyResponses,
+    CustomerControllerBulkDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerBulkDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get all customers
  * Get a list of customers with pagination and advanced filters.
  */
@@ -1100,6 +1160,33 @@ export const customerControllerStore = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  })
+}
+
+/**
+ * Export customers to CSV
+ */
+export const customerControllerExportCsv = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<CustomerControllerExportCsvData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    CustomerControllerExportCsvResponses,
+    CustomerControllerExportCsvErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerExportCsvData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers/export-csv',
+    ...options,
   })
 }
 
@@ -1266,6 +1353,38 @@ export const customerControllerRestore = <ThrowOnError extends boolean = false>(
     ],
     url: '/api/v1/customers/{id}/restore',
     ...options,
+  })
+}
+
+/**
+ * Check which customers can be deleted
+ * Check deletability of customers by IDs. Returns deletable, deletable with warnings (has non-completed quotas), and not deletable lists.
+ */
+export const customerControllerCheckDelete = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CustomerControllerCheckDeleteData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    CustomerControllerCheckDeleteResponses,
+    CustomerControllerCheckDeleteErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zCustomerControllerCheckDeleteData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/customers/check-delete',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 
@@ -1939,6 +2058,64 @@ export const mailTemplateControllerStore = <
 }
 
 /**
+ * Get initial setup guide (manuals) for current tenant
+ * Returns quota module manuals for current tenant. Optional filter: type (basic|advanced).
+ */
+export const manualControllerIndex = <ThrowOnError extends boolean = false>(
+  options?: Options<ManualControllerIndexData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ManualControllerIndexResponses,
+    ManualControllerIndexErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zManualControllerIndexData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/initial-setup-guide',
+    ...options,
+  })
+}
+
+/**
+ * Update manual status
+ * Update status (complete|pending) of a manual by ID. Manual must belong to current tenant.
+ */
+export const manualControllerUpdateStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ManualControllerUpdateStatusData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    ManualControllerUpdateStatusResponses,
+    ManualControllerUpdateStatusErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zManualControllerUpdateStatusData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/initial-setup-guide/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * List parameter settings
  * List parameter settings for current tenant
  */
@@ -2233,6 +2410,37 @@ export const priceGroupControllerUpdate = <
 }
 
 /**
+ * Bulk soft delete products (and related packagings & rank prices)
+ */
+export const productControllerBulkDestroy = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ProductControllerBulkDestroyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    ProductControllerBulkDestroyResponses,
+    ProductControllerBulkDestroyErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductControllerBulkDestroyData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/products',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+}
+
+/**
  * Get list of products
  */
 export const productControllerIndex = <ThrowOnError extends boolean = false>(
@@ -2303,6 +2511,33 @@ export const productControllerListAll = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/api/v1/products/list-all',
+    ...options,
+  })
+}
+
+/**
+ * Export products to CSV
+ */
+export const productControllerExportCsv = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ProductControllerExportCsvData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ProductControllerExportCsvResponses,
+    ProductControllerExportCsvErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zProductControllerExportCsvData.parseAsync(data)
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/products/export-csv',
     ...options,
   })
 }
@@ -2624,8 +2859,8 @@ export const productCategoryControllerUpdate = <
 }
 
 /**
- * Get all products and packages for a category
- * Get all products and their product packages for a specific category without pagination.
+ * Get all products and packages for a category tree branch
+ * Get all products and their product packages for the given category and every descendant category (children, grandchildren, …), without pagination.
  */
 export const productCategoryControllerGetProducts = <
   ThrowOnError extends boolean = false,

@@ -3150,6 +3150,8 @@ export type SimpleQuota = {
   is_author?: boolean
   has_approval_route?: boolean
   has_agreed_price?: boolean
+  transaction_type?: string | null
+  issue_date?: string
   author?: string | null
   /**
    * List of approver names
@@ -3708,6 +3710,7 @@ export type QuotaTemplateDetailResponse = {
     id?: number
     tenant_id?: string
     name?: string
+    tax_rounding_method?: RoundingMethodEnumType
     description?: string
     type?: 'normal' | 'channel_limited'
     category?: 'merchandise' | 'service'
@@ -5337,6 +5340,59 @@ export type GetCorporateNumberResponses = {
 export type GetCorporateNumberResponse =
   GetCorporateNumberResponses[keyof GetCorporateNumberResponses]
 
+export type CustomerControllerBulkDestroyData = {
+  body: {
+    ids: Array<number>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/customers'
+}
+
+export type CustomerControllerBulkDestroyErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Validation error
+   */
+  422: ValidationErrorResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type CustomerControllerBulkDestroyError =
+  CustomerControllerBulkDestroyErrors[keyof CustomerControllerBulkDestroyErrors]
+
+export type CustomerControllerBulkDestroyResponses = {
+  /**
+   * Bulk delete result
+   */
+  200: {
+    data?: {
+      deleted_count?: number
+      error_count?: number
+      failed_customer_names?: Array<string>
+      errors?: Array<{
+        id?: number
+        name?: string | null
+        reason?: string
+      }>
+    }
+    message?: string
+  }
+}
+
+export type CustomerControllerBulkDestroyResponse =
+  CustomerControllerBulkDestroyResponses[keyof CustomerControllerBulkDestroyResponses]
+
 export type CustomerControllerIndexData = {
   body?: never
   path?: never
@@ -5440,6 +5496,35 @@ export type CustomerControllerStoreResponses = {
 
 export type CustomerControllerStoreResponse =
   CustomerControllerStoreResponses[keyof CustomerControllerStoreResponses]
+
+export type CustomerControllerExportCsvData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/customers/export-csv'
+}
+
+export type CustomerControllerExportCsvErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+  /**
+   * Forbidden
+   */
+  403: unknown
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type CustomerControllerExportCsvResponses = {
+  /**
+   * CSV exported successfully
+   */
+  200: unknown
+}
 
 export type CustomerControllerDestroyData = {
   body?: never
@@ -5713,6 +5798,40 @@ export type CustomerControllerRestoreResponses = {
 
 export type CustomerControllerRestoreResponse =
   CustomerControllerRestoreResponses[keyof CustomerControllerRestoreResponses]
+
+export type CustomerControllerCheckDeleteData = {
+  body: {
+    ids: Array<number>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/customers/check-delete'
+}
+
+export type CustomerControllerCheckDeleteErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Validation error
+   */
+  422: ValidationErrorResponse
+}
+
+export type CustomerControllerCheckDeleteError =
+  CustomerControllerCheckDeleteErrors[keyof CustomerControllerCheckDeleteErrors]
+
+export type CustomerControllerCheckDeleteResponses = {
+  /**
+   * Check result
+   */
+  200: unknown
+}
 
 export type CustomerContactControllerBatchDeleteData = {
   body: CustomerContactBatchDeleteRequest
@@ -6178,7 +6297,7 @@ export type DraftControllerIndexData = {
     /**
      * Draft type
      */
-    type?: 'quota' | 'customer' | 'product' | 'quota_template'
+    type?: 'quota' | 'customer' | 'product' | 'quota_template' | 'product_combo'
   }
   url: '/api/v1/drafts'
 }
@@ -6199,7 +6318,7 @@ export type DraftControllerIndexResponse =
 
 export type DraftControllerStoreData = {
   body: {
-    type: 'quota' | 'customer' | 'product' | 'quota_template'
+    type: 'quota' | 'customer' | 'product' | 'quota_template' | 'product_combo'
     /**
      * Draft payload data
      */
@@ -6676,14 +6795,30 @@ export type ImportControllerGetImportHistoryData = {
      */
     status?: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
     /**
-     * Filter by common name
+     * Filter by import common name
      */
-    common_name?:
+    import?:
       | 'PRODUCTS'
       | 'CATEGORY_PRODUCTS'
       | 'CUSTOMERS'
       | 'DEPARTMENTS'
       | 'OTHER'
+    /**
+     * Filter by export common name
+     */
+    export?:
+      | 'QUOTAS_SENT_EXPORT'
+      | 'PRODUCTS_EXPORT'
+      | 'CUSTOMERS_EXPORT'
+      | 'CUSTOMERS_NEW_EXPORT'
+      | 'CUSTOMERS_PROSPECTING_EXPORT'
+      | 'CUSTOMERS_CONTRACTED_EXPORT'
+      | 'CUSTOMERS_LOST_EXPORT'
+      | 'CUSTOMERS_SUSPENDED_EXPORT'
+      | 'ORDERS_WAITING_EXPORT'
+      | 'ORDERS_NEW_EXPORT'
+      | 'ORDERS_SHIPPED_EXPORT'
+      | 'REVENUES_EXPORT'
     start_date?: string
     end_date?: string
     created_by?: string
@@ -6823,6 +6958,66 @@ export type MailTemplateControllerStoreResponses = {
 
 export type MailTemplateControllerStoreResponse =
   MailTemplateControllerStoreResponses[keyof MailTemplateControllerStoreResponses]
+
+export type ManualControllerIndexData = {
+  body?: never
+  path?: never
+  query?: {
+    type?: 'basic' | 'advanced'
+  }
+  url: '/api/v1/initial-setup-guide'
+}
+
+export type ManualControllerIndexErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type ManualControllerIndexResponses = {
+  /**
+   * List of manuals
+   */
+  200: unknown
+}
+
+export type ManualControllerUpdateStatusData = {
+  body: {
+    status: 'complete' | 'pending'
+  }
+  path: {
+    id: number
+  }
+  query?: never
+  url: '/api/v1/initial-setup-guide/{id}'
+}
+
+export type ManualControllerUpdateStatusErrors = {
+  /**
+   * Manual not found
+   */
+  404: unknown
+  /**
+   * Validation error
+   */
+  422: unknown
+  /**
+   * Internal server error
+   */
+  500: unknown
+}
+
+export type ManualControllerUpdateStatusResponses = {
+  /**
+   * Manual updated
+   */
+  200: unknown
+}
 
 export type ParameterSettingControllerIndexData = {
   body?: never
@@ -7204,6 +7399,59 @@ export type PriceGroupControllerUpdateResponses = {
 export type PriceGroupControllerUpdateResponse =
   PriceGroupControllerUpdateResponses[keyof PriceGroupControllerUpdateResponses]
 
+export type ProductControllerBulkDestroyData = {
+  body: {
+    ids: Array<number>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/products'
+}
+
+export type ProductControllerBulkDestroyErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Validation error
+   */
+  422: ValidationErrorResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductControllerBulkDestroyError =
+  ProductControllerBulkDestroyErrors[keyof ProductControllerBulkDestroyErrors]
+
+export type ProductControllerBulkDestroyResponses = {
+  /**
+   * Bulk delete result
+   */
+  200: {
+    data?: {
+      deleted_count?: number
+      error_count?: number
+      failed_product_names?: Array<string>
+      errors?: Array<{
+        id?: number
+        name?: string | null
+        reason?: string
+      }>
+    }
+    message?: string
+  }
+}
+
+export type ProductControllerBulkDestroyResponse =
+  ProductControllerBulkDestroyResponses[keyof ProductControllerBulkDestroyResponses]
+
 export type ProductControllerIndexData = {
   body?: never
   path?: never
@@ -7334,6 +7582,47 @@ export type ProductControllerListAllResponses = {
 
 export type ProductControllerListAllResponse =
   ProductControllerListAllResponses[keyof ProductControllerListAllResponses]
+
+export type ProductControllerExportCsvData = {
+  body?: never
+  path?: never
+  query?: {
+    /**
+     * Search keyword for code or name
+     */
+    q?: string
+    /**
+     * Filter by category id
+     */
+    category_id?: number
+  }
+  url: '/api/v1/products/export-csv'
+}
+
+export type ProductControllerExportCsvErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse
+  /**
+   * Internal server error
+   */
+  500: InternalServerErrorResponse
+}
+
+export type ProductControllerExportCsvError =
+  ProductControllerExportCsvErrors[keyof ProductControllerExportCsvErrors]
+
+export type ProductControllerExportCsvResponses = {
+  /**
+   * CSV exported successfully
+   */
+  200: unknown
+}
 
 export type ProductControllerDestroyData = {
   body?: never
@@ -10061,6 +10350,10 @@ export type QuotaTemplateControllerIndexData = {
      * Filter by creator name
      */
     creator?: string
+    /**
+     * Filter by creator ID
+     */
+    created_by?: number
     /**
      * Filter templates created from date (YYYY-MM-DD)
      */
