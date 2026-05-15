@@ -82,16 +82,16 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   message: 'アソートコードは20文字以内で入力してください',
                 },
                 {
-                  pattern: /^[A-Za-z0-9-]+$/,
+                  pattern: /^[A-Za-z0-9-_]+$/,
                   message:
-                    'アソートコードには A〜Z、a〜z の英字、0〜9 の数字、およびハイフン（-）のみ使用できます',
+                    'アソートコードにはA〜Z, a〜zの英字, 0〜9の数字, ハイフン(-), およびアンダースコア(_)のみ使用できます',
                 },
               ]}
             />
           </Col>
           <Col xs={24} lg={8}>
             <div className="mt-1 flex">
-              <Typography>（A-Z, a-z, 0-9, -）</Typography>
+              <Typography>（A-Z, a-z, 0-9, -, _）</Typography>
               <div className="flex flex-col items-center">
                 <Button
                   color="primary"
