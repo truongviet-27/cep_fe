@@ -392,7 +392,7 @@ function DetailInfo({
                           message: '',
                         },
                         {
-                          pattern: /^[A-Za-z0-9-]+$/,
+                          pattern: /^[A-Za-z0-9_-]+$/,
                           message: '',
                         },
                         {
