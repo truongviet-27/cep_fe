@@ -11,7 +11,7 @@ import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
-import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
+import { Button, Form, Input, Modal, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -19,7 +19,7 @@ import React, { useMemo } from 'react'
 
 const { Text } = Typography
 
-export default function EmployeeEdit() {
+export default function DepartmentEdit() {
   const t = useTranslate()
 
   const go = useGo()
@@ -161,32 +161,51 @@ export default function EmployeeEdit() {
           }
           style={{ marginBottom: 16 }}
         >
-          <Row align="middle" gutter={[8, 8]}>
-            <Col flex="none">
-              <Form.Item
-                name="code"
-                rules={codeRules}
-                style={{ marginBottom: 0 }}
-              >
-                <Input
-                  placeholder="DEP001"
-                  size="middle"
-                  style={{ width: 240 }}
-                />
-              </Form.Item>
-            </Col>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 8,
+              flexWrap: 'nowrap',
+            }}
+          >
+            <Form.Item
+              name="code"
+              rules={codeRules}
+              style={{ marginBottom: 0 }}
+            >
+              <Input
+                placeholder="DEP001"
+                size="middle"
+                style={{ width: 240 }}
+              />
+            </Form.Item>
 
-            <Col flex="none" className={'!-mt-2'}>
+            <div
+              style={{
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+              }}
+            >
               <Text
                 type="secondary"
                 style={{ whiteSpace: 'nowrap', color: '#000' }}
               >
                 (A-Z, 0-9, -)
               </Text>
-            </Col>
+            </div>
 
-            <Col xs={24} sm="auto" flex="none" className={'!-mt-3'}>
-              <Space direction="horizontal" size={6} wrap>
+            <div
+              style={{
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Space direction="horizontal" size={6}>
                 <Button
                   size="middle"
                   loading={isLoading}
@@ -210,13 +229,12 @@ export default function EmployeeEdit() {
                   onClick={() => show(data?.data?.id)}
                   className="text-blue-500"
                   disabled={!data?.data?.id}
-                  style={{ marginLeft: -16, marginTop: -10 }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>
               </Space>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </Form.Item>
 
         <Form.Item

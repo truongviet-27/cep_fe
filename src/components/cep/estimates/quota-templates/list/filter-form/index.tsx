@@ -2,6 +2,7 @@ import CoreInput from '@components/common/core-input'
 import type { SearchQuotaTemplateType } from '@interfaces/quota-templates'
 import { useSelect } from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
+import { FORMAT_DATE_CROSS } from '@utility/instances'
 import { Button, Col, DatePicker, Flex, Form, Row, Select, Space } from 'antd'
 import type { FormProps } from 'antd/lib'
 import type { FC } from 'react'
@@ -80,6 +81,7 @@ const QuotaTemplateFilterForm: FC<Props> = ({
               className="w-full"
             >
               <DatePicker.RangePicker
+                format={FORMAT_DATE_CROSS}
                 placeholder={['YYYY/MM/DD', 'YYYY/MM/DD']}
                 className="w-full"
               />

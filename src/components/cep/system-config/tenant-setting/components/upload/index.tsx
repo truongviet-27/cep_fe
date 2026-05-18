@@ -204,7 +204,7 @@ function UploadSetting({
   }
 
   return (
-    <div className="flex items-center">
+    <div className="flex flex-nowrap items-center">
       <Upload
         onPreview={handlePreview}
         accept=".png,.jpg,.jpeg"
@@ -217,6 +217,7 @@ function UploadSetting({
         style={{
           height: 50,
         }}
+        className="flex-shrink-0 [&_.ant-upload-list]:flex-nowrap"
         onRemove={() => {
           form.setFieldValue(`${name}_name`, null)
           form.setFieldValue(name, null)
