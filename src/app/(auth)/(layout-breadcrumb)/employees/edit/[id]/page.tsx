@@ -12,17 +12,7 @@ import type { CodeIssueSetting, Employee } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Modal,
-  Radio,
-  Row,
-  Space,
-  Typography,
-} from 'antd'
+import { Button, Form, Input, Modal, Radio, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import { isArray } from 'lodash'
@@ -173,22 +163,47 @@ export default function EmployeeEdit() {
         autoComplete="off"
       >
         <Form.Item label={boldText(t('employees.fields.code'))}>
-          <Row align="middle" gutter={[8, 8]} style={{ marginTop: -10 }}>
-            <Col flex="none">
-              <Form.Item
-                name="code"
-                rules={codeRules}
-                style={{ marginBottom: 0 }}
-              >
-                <Input placeholder="EMP001" size="middle" />
-              </Form.Item>
-            </Col>
-            <Col flex="none">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 8,
+              flexWrap: 'nowrap',
+            }}
+          >
+            <Form.Item
+              name="code"
+              rules={codeRules}
+              style={{ marginBottom: 0 }}
+            >
+              <Input
+                placeholder="EMP001"
+                size="middle"
+                style={{ width: 240 }}
+              />
+            </Form.Item>
+
+            <div
+              style={{
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+              }}
+            >
               <Text style={{ whiteSpace: 'nowrap', color: '#000' }}>
                 (A-Z, 0-9, -)
               </Text>
-            </Col>
-            <Col xs={24} sm="auto" flex="none">
+            </div>
+
+            <div
+              style={{
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+              }}
+            >
               <Space direction="horizontal" size={12}>
                 <Button
                   size="middle"
@@ -212,13 +227,12 @@ export default function EmployeeEdit() {
                   type="link"
                   onClick={() => show(data?.data?.id)}
                   className="text-blue-500 !underline"
-                  style={{ marginLeft: -16, marginTop: -10 }}
                 >
                   {t('departments.create.popup_number_setting')}
                 </Button>
               </Space>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </Form.Item>
 
         <Form.Item

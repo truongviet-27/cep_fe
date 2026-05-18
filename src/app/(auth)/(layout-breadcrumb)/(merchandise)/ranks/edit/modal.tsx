@@ -82,7 +82,7 @@ export const RankModalEdit: React.FC<Props> = ({
             </Form.Item>
             &nbsp;
             {!isShow && (
-              <div className={'mt-1'}>
+              <div className="mt-1 text-nowrap">
                 {t('products.validation.codeFormat')}
               </div>
             )}
