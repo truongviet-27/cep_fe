@@ -77,7 +77,7 @@ function useCombo() {
             onClick={() => {
               sessionStorage.setItem('list_products', 'products')
             }}
-            className="!underline"
+            className="!underline underline-offset-4"
           >
             {record.code}
           </Link>
