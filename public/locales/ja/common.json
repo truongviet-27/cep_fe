@@ -239,6 +239,7 @@
       "suspension_date": "停止日",
       "actions": "操作",
       "name_kana": "取引先名（カナ)",
+      "in_kana": "(カナ)",
       "corporate_number": "法人番号",
       "company_classification": "取引先分類",
       "manual_input_placeholder": "会社種別を手入力",
