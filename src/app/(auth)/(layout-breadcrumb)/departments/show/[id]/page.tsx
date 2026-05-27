@@ -119,7 +119,7 @@ export default function Page() {
       </div>
 
       {departmentData?.id && (
-        <div className="mt-8">
+        <div className="mt-8 [&_.ant-table-content]:!overflow-x-hidden">
           <CommonTable
             {...tableProps}
             rowKey="id"
