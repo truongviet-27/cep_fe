@@ -1956,6 +1956,8 @@ export const zSimpleQuota = z.object({
   is_author: z.optional(z.boolean()),
   has_approval_route: z.optional(z.boolean()),
   has_agreed_price: z.optional(z.boolean()),
+  transaction_type: z.optional(z.union([z.string(), z.null()])),
+  issue_date: z.optional(z.iso.datetime()),
   author: z.optional(z.union([z.string(), z.null()])),
   approvers: z.optional(z.array(z.string())),
   latest_approval_comment: z.optional(
@@ -2301,6 +2303,7 @@ export const zQuotaTemplateDetailResponse = z.object({
       id: z.optional(z.int()),
       tenant_id: z.optional(z.string()),
       name: z.optional(z.string()),
+      tax_rounding_method: z.optional(zRoundingMethodEnumType),
       description: z.optional(z.string()),
       type: z.optional(z.enum(['normal', 'channel_limited'])),
       category: z.optional(z.enum(['merchandise', 'service'])),
@@ -3057,6 +3060,37 @@ export const zGetCorporateNumberData = z.object({
  */
 export const zGetCorporateNumberResponse = zCorporateNumberResponse
 
+export const zCustomerControllerBulkDestroyData = z.object({
+  body: z.object({
+    ids: z.array(z.int()),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Bulk delete result
+ */
+export const zCustomerControllerBulkDestroyResponse = z.object({
+  data: z.optional(
+    z.object({
+      deleted_count: z.optional(z.int()),
+      error_count: z.optional(z.int()),
+      failed_customer_names: z.optional(z.array(z.string())),
+      errors: z.optional(
+        z.array(
+          z.object({
+            id: z.optional(z.int()),
+            name: z.optional(z.union([z.string(), z.null()])),
+            reason: z.optional(z.string()),
+          }),
+        ),
+      ),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
 export const zCustomerControllerIndexData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -3101,6 +3135,12 @@ export const zCustomerControllerStoreData = z.object({
 export const zCustomerControllerStoreResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zCustomer),
+})
+
+export const zCustomerControllerExportCsvData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
 })
 
 export const zCustomerControllerDestroyData = z.object({
@@ -3208,6 +3248,14 @@ export const zCustomerControllerRestoreData = z.object({
 export const zCustomerControllerRestoreResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(z.union([z.object({}), z.null()])),
+})
+
+export const zCustomerControllerCheckDeleteData = z.object({
+  body: z.object({
+    ids: z.array(z.int()),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
 })
 
 export const zCustomerContactControllerBatchDeleteData = z.object({
@@ -3378,7 +3426,13 @@ export const zDraftControllerIndexData = z.object({
   query: z.optional(
     z.object({
       type: z.optional(
-        z.enum(['quota', 'customer', 'product', 'quota_template']),
+        z.enum([
+          'quota',
+          'customer',
+          'product',
+          'quota_template',
+          'product_combo',
+        ]),
       ),
     }),
   ),
@@ -3393,7 +3447,13 @@ export const zDraftControllerIndexResponse = z.object({
 
 export const zDraftControllerStoreData = z.object({
   body: z.object({
-    type: z.enum(['quota', 'customer', 'product', 'quota_template']),
+    type: z.enum([
+      'quota',
+      'customer',
+      'product',
+      'quota_template',
+      'product_combo',
+    ]),
     payload: z.object({}),
   }),
   path: z.optional(z.never()),
@@ -3586,13 +3646,29 @@ export const zImportControllerGetImportHistoryData = z.object({
       status: z.optional(
         z.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED']),
       ),
-      common_name: z.optional(
+      import: z.optional(
         z.enum([
           'PRODUCTS',
           'CATEGORY_PRODUCTS',
           'CUSTOMERS',
           'DEPARTMENTS',
           'OTHER',
+        ]),
+      ),
+      export: z.optional(
+        z.enum([
+          'QUOTAS_SENT_EXPORT',
+          'PRODUCTS_EXPORT',
+          'CUSTOMERS_EXPORT',
+          'CUSTOMERS_NEW_EXPORT',
+          'CUSTOMERS_PROSPECTING_EXPORT',
+          'CUSTOMERS_CONTRACTED_EXPORT',
+          'CUSTOMERS_LOST_EXPORT',
+          'CUSTOMERS_SUSPENDED_EXPORT',
+          'ORDERS_WAITING_EXPORT',
+          'ORDERS_NEW_EXPORT',
+          'ORDERS_SHIPPED_EXPORT',
+          'REVENUES_EXPORT',
         ]),
       ),
       start_date: z.optional(z.iso.date()),
@@ -3684,6 +3760,26 @@ export const zMailTemplateControllerStoreData = z.object({
 export const zMailTemplateControllerStoreResponse = z.object({
   message: z.optional(z.string()),
   data: z.optional(zMailTemplate),
+})
+
+export const zManualControllerIndexData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      type: z.optional(z.enum(['basic', 'advanced'])),
+    }),
+  ),
+})
+
+export const zManualControllerUpdateStatusData = z.object({
+  body: z.object({
+    status: z.enum(['complete', 'pending']),
+  }),
+  path: z.object({
+    id: z.int(),
+  }),
+  query: z.optional(z.never()),
 })
 
 export const zParameterSettingControllerIndexData = z.object({
@@ -3875,6 +3971,37 @@ export const zPriceGroupControllerUpdateData = z.object({
  */
 export const zPriceGroupControllerUpdateResponse = zPriceGroupUpdateResponse
 
+export const zProductControllerBulkDestroyData = z.object({
+  body: z.object({
+    ids: z.array(z.int()),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * Bulk delete result
+ */
+export const zProductControllerBulkDestroyResponse = z.object({
+  data: z.optional(
+    z.object({
+      deleted_count: z.optional(z.int()),
+      error_count: z.optional(z.int()),
+      failed_product_names: z.optional(z.array(z.string())),
+      errors: z.optional(
+        z.array(
+          z.object({
+            id: z.optional(z.int()),
+            name: z.optional(z.union([z.string(), z.null()])),
+            reason: z.optional(z.string()),
+          }),
+        ),
+      ),
+    }),
+  ),
+  message: z.optional(z.string()),
+})
+
 export const zProductControllerIndexData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
@@ -3921,6 +4048,17 @@ export const zProductControllerListAllData = z.object({
  * Products retrieved successfully
  */
 export const zProductControllerListAllResponse = zProductsListResponse
+
+export const zProductControllerExportCsvData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(
+    z.object({
+      q: z.optional(z.string()),
+      category_id: z.optional(z.int()),
+    }),
+  ),
+})
 
 export const zProductControllerDestroyData = z.object({
   body: z.optional(z.never()),
@@ -5095,6 +5233,7 @@ export const zQuotaTemplateControllerIndexData = z.object({
       _per_page: z.optional(z.int()),
       name_lk: z.optional(z.string()),
       creator: z.optional(z.string()),
+      created_by: z.optional(z.int().gte(1)),
       start_date: z.optional(z.string()),
       end_date: z.optional(z.string()),
     }),

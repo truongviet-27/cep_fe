@@ -18,12 +18,13 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 
-import { useModalForm, useSelect } from '@refinedev/antd'
+import { useModalForm } from '@refinedev/antd'
 import { useApiUrl, useCustom, useParsed, useTranslate } from '@refinedev/core'
 
 import type { CodeIssueSetting, CustomerContact } from '@sdk/hey-api'
 
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import { IssueMethod } from '@components/cep/estimates/quotas/enum'
 import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
@@ -65,8 +66,6 @@ const BasicInfo = ({
 
   const apiUrl = useApiUrl()
 
-  const [current, setCurrent] = useState(1)
-  const [options, setOptions] = useState<any[]>([])
   const [contactModalOpen, setContactModalOpen] = useState(false)
   const [selectedContact, setSelectedContact] =
     useState<CustomerContact | null>(null)
@@ -124,41 +123,6 @@ const BasicInfo = ({
     embeddedContactFromQuota?.email,
   ])
 
-  const { selectProps: selectPropsCt, query } = useSelect({
-    resource: 'customers',
-    optionLabel: 'name',
-    optionValue: 'id',
-    pagination: {
-      mode: 'server',
-      pageSize: 20,
-      current,
-    },
-
-    onSearch(value) {
-      return [
-        {
-          field: 'q',
-          operator: 'eq',
-          value,
-        },
-      ]
-    },
-  })
-
-  useEffect(() => {
-    if (query.data?.data) {
-      // Only include items that are not deleted
-      const filtered = query.data.data.filter(
-        (it: any) => it.deleted_at == null,
-      )
-      if (current === 1) {
-        setOptions(filtered)
-      } else {
-        setOptions((prev) => [...prev, ...filtered])
-      }
-    }
-  }, [query.data?.data])
-
   useEffect(() => {
     if (customer?.value) {
       setSelectedCustomerId(customer.value)
@@ -166,20 +130,6 @@ const BasicInfo = ({
       setSelectedCustomerId(null)
     }
   }, [customer?.value, customer?.label])
-
-  const handlePopupScroll = useCallback(
-    (e: React.UIEvent<HTMLDivElement>) => {
-      const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
-      if (
-        scrollTop + clientHeight >= scrollHeight - 10 &&
-        !query.isFetching &&
-        (query.data?.total ?? 0) > options.length
-      ) {
-        setCurrent((prev) => prev + 1)
-      }
-    },
-    [query, options],
-  )
 
   const {
     data: codeIssueSetting,
@@ -313,7 +263,7 @@ const BasicInfo = ({
               labelCol={{ span: 3 }}
               className="[&>.ant-row]:!flex-nowrap"
             >
-              <div className="flex flex-row flex-nowrap items-center gap-4">
+              <div className="flex flex-row flex-wrap items-center gap-4">
                 <Form.Item
                   rules={[
                     {
@@ -383,8 +333,9 @@ const BasicInfo = ({
             >
               <Row gutter={[8, 0]} align="top" wrap={false}>
                 <Col style={{ width: '100%' }}>
-                  <Form.Item
+                  <CoreAutocompleteAPI
                     name={'customer'}
+                    resource="customers"
                     rules={[
                       {
                         required: true,
@@ -393,50 +344,27 @@ const BasicInfo = ({
                         ),
                       },
                     ]}
-                    className="no-margin-bottom-important"
-                  >
-                    <Select
-                      key={`customer-select-${selectedCustomerId}`}
-                      {...selectPropsCt}
-                      options={options.map((item) => ({
-                        label: item.name,
-                        value: item.id,
-                        rank_id: item?.rank?.id,
-                      }))}
-                      allowClear
-                      showSearch
-                      disabled={isCloneVersion}
-                      labelInValue
-                      loading={query.isFetching}
-                      onPopupScroll={handlePopupScroll}
-                      onSearch={(val) => {
-                        setCurrent(1)
-                        selectPropsCt.onSearch?.(val)
-                      }}
-                      filterOption={false}
-                      onChange={(value) => {
-                        const selectedOption = options.find(
-                          (item) => item.id === value?.value,
-                        )
-                        const rankId = selectedOption?.rank?.id ?? null
-                        form.setFieldsValue({ rank_id: rankId })
-                        setSelectedCustomerId(value?.value || null)
-                        form.setFieldsValue({ customer: value })
-                        // Clear selected contact when customer changes
-                        setSelectedContact(null)
-                        form.setFieldsValue({ customer_contact_id: null })
-                        handleChangeProductPrincing(
-                          (form.getFieldValue(['main_product']) ?? []).flatMap(
-                            (item: any) => item.product_id,
-                          ),
-                          (
-                            form.getFieldValue(['optional_product']) ?? []
-                          ).flatMap((item: any) => item.product_id),
-                        )
-                        getCustomerContacts(value?.value || null)
-                      }}
-                    />
-                  </Form.Item>
+                    disabled={isCloneVersion}
+                    labelInValue
+                    pageSize={20}
+                    onChangeValue={(valueOption) => {
+                      const rankId = valueOption?.rank?.id ?? null
+                      form.setFieldsValue({ rank_id: rankId })
+                      setSelectedContact(null)
+                      form.setFieldsValue({ customer_contact_id: null })
+                      handleChangeProductPrincing(
+                        (form.getFieldValue(['main_product']) ?? []).flatMap(
+                          (item: any) => item.product_id,
+                        ),
+                        (
+                          form.getFieldValue(['optional_product']) ?? []
+                        ).flatMap((item: any) => item.product_id),
+                      )
+                      if (valueOption?.id) {
+                        getCustomerContacts(valueOption.id)
+                      }
+                    }}
+                  />
                 </Col>
                 <Col>
                   <Button

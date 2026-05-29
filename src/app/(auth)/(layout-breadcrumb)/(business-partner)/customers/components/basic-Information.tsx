@@ -427,7 +427,7 @@ function BasicInformation(
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
           <Row align="middle" gutter={12}>
-            <Col flex="none" style={{ width: 570 }}>
+            <Col flex="none" style={{ width: 212 }}>
               <SelectPagination
                 disabled={!allowRankResource}
                 selectProps={{

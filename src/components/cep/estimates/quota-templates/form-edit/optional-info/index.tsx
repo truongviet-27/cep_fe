@@ -126,7 +126,7 @@ const OptionalInfo: FC = () => {
                         message: '',
                       },
                       {
-                        pattern: /^[A-Za-z0-9-]+$/,
+                        pattern: /^[A-Za-z0-9_-]+$/,
                         message: '',
                       },
                       {
@@ -201,9 +201,8 @@ const OptionalInfo: FC = () => {
                     : null
 
                   return (
-                    <Form.Item
+                    <ProductSelect
                       name={[record.index, 'product_id']}
-                      className="ant-form-item-hidden-margin"
                       rules={[
                         {
                           required: false,
@@ -244,14 +243,11 @@ const OptionalInfo: FC = () => {
                           },
                         },
                       ]}
-                    >
-                      <ProductSelect
-                        defaultValue={defaultValue}
-                        onChange={(value: any) =>
-                          onChangeProductName(value, record.index)
-                        }
-                      />
-                    </Form.Item>
+                      defaultValue={defaultValue}
+                      onChangeValue={(value: any) =>
+                        onChangeProductName(value, record.index)
+                      }
+                    />
                   )
                 }
                 return (

@@ -497,7 +497,7 @@ function QuotaList() {
             <div>
               {record.expiration_date &&
                 dayjs(
-                  getExpiryDate(record.expiration_date, record.created_at),
+                  getExpiryDate(record.expiration_date, record.issue_date),
                 ).format('YYYY/MM/DD')}
             </div>
           </div>
