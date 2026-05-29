@@ -215,7 +215,6 @@ function DetailInfo({
       title: t('quotas.show.table.total_calculation'),
       dataIndex: 'is_add_total',
       key: 'is_add_total',
-      align: 'left',
       render: (_, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
