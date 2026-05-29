@@ -346,7 +346,21 @@ function BasicInformation(
 
         <Form.Item
           style={{ marginTop: -8 }}
-          label={boldText(t('customers.fields.name_kana'))}
+          label={
+            <span
+              style={{
+                whiteSpace: 'normal',
+                paddingBottom: '4px',
+              }}
+            >
+              {boldText(<>{t('customers.fields.name')} </>)}
+              {boldText(
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  {t('customers.fields.in_kana')}
+                </span>,
+              )}
+            </span>
+          }
           name="customer_name_by_kana"
           rules={[rule]}
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}

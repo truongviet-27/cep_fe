@@ -372,7 +372,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                           rules={[
                             {
                               required: true,
-                              message: t('validation.required'),
+                              message: '',
                             },
                           ]}
                           style={{
