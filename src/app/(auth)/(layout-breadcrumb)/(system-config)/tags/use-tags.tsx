@@ -49,7 +49,7 @@ function useTags() {
     current,
     setCurrent,
     pageCount,
-    tableQueryResult: { isLoading, isFetching },
+    tableQueryResult: { isLoading, isFetching, refetch },
   } = useTable<TagRow>({
     pagination: { pageSize: 20 },
     syncWithLocation: true,
@@ -217,9 +217,10 @@ function useTags() {
       url: `${apiUrl}/${resource?.name}/upsert`,
       method: 'post',
       values,
-      successNotification: (data) => {
-        setValue('rows', values as any)
-        originalOrderRef.current = values
+      successNotification: () => {
+        stashedRowRef.current = []
+        setTotalPage(0)
+        refetch()
         setEdited(false)
         return {
           message: t('notifications.success'),
