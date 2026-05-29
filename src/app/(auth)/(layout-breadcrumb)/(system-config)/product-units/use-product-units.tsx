@@ -119,17 +119,10 @@ export default function useProductUnits() {
       url: `${apiUrl}/${resource?.name}/upsert`,
       method: 'post',
       values,
-      successNotification: (data) => {
-        reset({
-          rows: values.map((r, index) => ({
-            ...r,
-            name: watchedRows?.[index]?.name,
-            _isNew: false,
-            _isEditing: false,
-            __index: String(index),
-          })),
-        })
-        originalOrderRef.current = values
+      successNotification: () => {
+        preserveNewRowsRef.current = []
+        setTotalPage(0)
+        tableQuery.refetch()
         setEdited(false)
 
         return {
