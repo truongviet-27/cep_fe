@@ -308,8 +308,8 @@
         "tax_rate": "消費税率"
       },
       "duplicate_product": "商品が重複しています。",
-      "duplicate_product_code": "という商品コードは複数です。",
-      "duplicate_product_name": "という商品・サービス名は複数です。",
+      "duplicate_product_code": "という商品コードは重複です。",
+      "duplicate_product_name": "という商品・サービス名は重複です。",
       "placeholders": {
         "product_list_name": "タイトル入力",
         "product_search": "商品名・サービス名で検索"

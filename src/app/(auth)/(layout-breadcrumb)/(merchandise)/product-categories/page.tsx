@@ -19,6 +19,7 @@ export default function Page() {
     onDrop,
     tableProps,
     dirty,
+    isSaving,
     save,
     handleSearch,
     handleClear,
@@ -105,7 +106,7 @@ export default function Page() {
           <div style={{ marginTop: 4, display: 'block' }}>
             <Button
               type="primary"
-              disabled={!dirty || !isFullAccess}
+              disabled={isSaving || !dirty || !isFullAccess}
               onClick={save}
               className="shadow-sm disabled:opacity-60"
               style={{ marginRight: 16 }}

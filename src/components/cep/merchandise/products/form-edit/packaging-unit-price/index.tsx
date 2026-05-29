@@ -146,7 +146,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                           if (isDuplicate) {
                             notification.error({
                               message: ``,
-                              description: `${value}という荷姿名は複数です。`,
+                              description: `${value}という荷姿名は重複です。`,
                               key: `name-${value?.trim()}`,
                               placement: 'topRight',
                             })
@@ -212,7 +212,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
                           if (isDuplicate) {
                             notification.error({
                               message: ``,
-                              description: `${value}というバーコードは複数です。`,
+                              description: `${value}というバーコードは重複です。`,
                               key: `barcode-${value?.trim()}`,
                               placement: 'topRight',
                             })
