@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line simple-import-sort/imports
 import type { PermissionType } from '@interfaces/permission'
 import { getSessionOnce } from '@lib/get-session-once'
@@ -6,9 +7,11 @@ import useTenantStore from '@stores/useTenantStore'
 import { useUserStore } from '@stores/useUserStore'
 import { isSupperAdmin, getUserIdFromToken } from '@utility/decode-token'
 import { hasForbiddenRoute } from '@utility/permission'
+import { notification } from 'antd'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import authProvider from '@providers/keycloak-provider'
 
 // Fetch and set a tenant for super admin users when no org is present in token
 const getTenantForSuperAdmin = async () => {
@@ -45,6 +48,7 @@ const getTenantForSuperAdmin = async () => {
 export const useBootstrap = () => {
   const { status, update: updateSession } = useSession()
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const isRedirectingRef = useRef(false)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -139,10 +143,15 @@ export const useBootstrap = () => {
         method: 'POST',
         body: JSON.stringify(requestBody),
       })
-      const { permission, parameterSettings } = await response.json()
+      const data = await response.json()
+      const { permission, parameterSettings, error: apiError } = data
 
       if (!permission || !parameterSettings) {
-        throw new Error('Failed to fetch permission')
+        const err = new Error(
+          apiError || 'Failed to fetch permission',
+        ) as Error & { statusCode?: number }
+        err.statusCode = response.status
+        throw err
       }
 
       // Lưu permission để sử dụng trong useEffect sau
@@ -173,17 +182,37 @@ export const useBootstrap = () => {
         router.replace('/initial-setup-guide')
         return
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
-      if (isLoggedIn) {
-        logout()
-        signOut({
-          redirect: true,
-          callbackUrl: '/login',
+      const errorMessage = error?.message
+      const statusCode = error?.statusCode
+      // 401/403 (authentication error) -> log out completely (end Keycloak session)
+      // => Next time you will need to re-enter your email and password.
+      const shouldFullLogout = statusCode === 401 || statusCode === 403
+
+      // Regardless of the error, redirect to login, so keep loading during the redirect.
+      isRedirectingRef.current = true
+
+      if (errorMessage) {
+        notification.error({
+          key: 'get-profile-error',
+          message: errorMessage,
+          placement: 'topRight',
+          duration: 2,
         })
-      } else {
-        router.push('/login')
       }
+
+      if (shouldFullLogout) {
+        setTimeout(() => authProvider.logout({}), 2000)
+      } else {
+        // Other issues: only sign out locally, does NOT cancel SSO Keycloak session.
+        // => Keycloak still remembers the user -> just re-enter the password
+        setTimeout(() => {
+          logout()
+          signOut({ redirect: true, callbackUrl: '/login' })
+        }, 2000)
+      }
+
       throw error
     }
   }
@@ -211,7 +240,10 @@ export const useBootstrap = () => {
     } catch (error) {
       console.error(error)
     } finally {
-      setIsLoading(false)
+      // khong goi setIsLoading(false) khi dang redirect
+      if (!isRedirectingRef.current) {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -258,6 +290,6 @@ export const useBootstrap = () => {
   }, [status, permission?.user?.name, updateSession])
 
   return {
-    isLoadingPage: isLoading || status === 'loading',
+    isLoadingPage: isLoading,
   }
 }
