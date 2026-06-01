@@ -77,6 +77,7 @@ const BasicInfo = ({
 
   const expirationDate = Form.useWatch('expiration_date', form)
   const issueDate = Form.useWatch('issue_date', form)
+  const deliveryDate = Form.useWatch('delivery_date', form)
   const customer = Form.useWatch('customer', form)
   const selectedContactId = Form.useWatch('customer_contact_id', form)
 
@@ -617,7 +618,7 @@ const BasicInfo = ({
                 style={{ width: '100%' }}
                 placeholder={FORMAT_DATE_CROSS}
                 format={FORMAT_DATE_CROSS}
-                minDate={Form.useWatch('issue_date', form)}
+                minDate={issueDate ? issueDate.add(1, 'day') : undefined}
               />
             </Form.Item>
           </Col>
@@ -646,6 +647,9 @@ const BasicInfo = ({
                 style={{ width: '100%' }}
                 placeholder={FORMAT_DATE_CROSS}
                 format={FORMAT_DATE_CROSS}
+                maxDate={
+                  deliveryDate ? deliveryDate.subtract(1, 'day') : undefined
+                }
               />
             </Form.Item>
           </Col>
