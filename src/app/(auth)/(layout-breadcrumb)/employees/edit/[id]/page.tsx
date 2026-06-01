@@ -43,7 +43,7 @@ export default function EmployeeEdit() {
       {
         pattern: /^[A-Z0-9-]+$/,
         message:
-          '社員コードにはA〜Z の英字、1〜9 の数字、およびハイフン（-）のみ使用できます',
+          '社員コードにはA〜Z の英字、0〜9 の数字、およびハイフン（-）のみ使用できます',
       },
       { max: 20, message: '最大32文字までです。' },
     ],
