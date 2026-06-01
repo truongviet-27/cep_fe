@@ -181,7 +181,7 @@ export const validateCustomerRule = (t: any) => {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 validation: 'regex',
-                message: t('validation.rank.code.regex'),
+                message: t('validation.customer.customer_code.regex'),
               })
               return
             }
