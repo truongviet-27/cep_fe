@@ -77,6 +77,11 @@ function ImportHistory() {
                 showSearch
                 placeholder={t('import_history.placeholder.status')}
                 allowClear
+                filterOption={(input, option) =>
+                  String(option?.children)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               >
                 <Select.Option value="PROCESSING">
                   {t('import_history.text.status.PROCESSING')}
@@ -105,6 +110,11 @@ function ImportHistory() {
                 showSearch
                 placeholder={t('import_history.placeholder.common_name')}
                 allowClear
+                filterOption={(input, option) =>
+                  String(option?.children)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               >
                 <Select.Option value="PRODUCTS">
                   {t('import_history.text.category.PRODUCTS')}
@@ -138,6 +148,11 @@ function ImportHistory() {
                 showSearch
                 placeholder={t('import_history.placeholder.common_name')}
                 allowClear
+                filterOption={(input, option) =>
+                  String(option?.children)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               >
                 <Select.Option value="QUOTAS_SENT_EXPORT">
                   {t('import_history.text.category_export.QUOTAS_SENT_EXPORT')}
