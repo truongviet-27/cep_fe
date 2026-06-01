@@ -14,6 +14,7 @@ import {
   notification,
   Popconfirm,
   Row,
+  Select,
   Space,
 } from 'antd'
 import Link from 'next/link'
@@ -32,7 +33,13 @@ export default function ProductTab() {
       isOpenManyDelete,
       isBulkDeleting,
     },
-    { t, setFilters, setIsOpenManyDelete, handleBulkDelete },
+    {
+      t,
+      setFilters,
+      setIsOpenManyDelete,
+      handleBulkDelete,
+      clearCmrFilterAndSearch,
+    },
   ] = useProduct()
   const apiUrl = useApiUrl()
   const router = useRouter()
@@ -42,6 +49,7 @@ export default function ProductTab() {
     const values = (searchFormProps.form?.getFieldsValue?.() ?? {}) as {
       search?: string
       category_id?: string | number
+      is_sent_to_cmr?: number
     }
 
     setIsExportingCsv(true)
@@ -57,6 +65,10 @@ export default function ProductTab() {
           params: {
             q: values.search || undefined,
             category_id: values.category_id || undefined,
+            is_sent_to_cmr:
+              typeof values.is_sent_to_cmr === 'number'
+                ? values.is_sent_to_cmr
+                : undefined,
           },
           responseType: 'blob',
         },
@@ -136,6 +148,61 @@ export default function ProductTab() {
           </Form.Item>
         </Col>
 
+        <Col sm={12} md={6} lg={4}>
+          <Form.Item
+            label={
+              <span className="font-bold">
+                {t('products.list.searchArea.cmrStatusLabel', 'CMR連携')}
+              </span>
+            }
+            layout="vertical"
+            name="is_sent_to_cmr"
+            normalize={(value) => {
+              if (value === null || value === undefined || value === '') {
+                return undefined
+              }
+
+              const status = Number(value)
+              return [0, 1, 2].includes(status) ? status : undefined
+            }}
+          >
+            <Select
+              allowClear
+              placeholder={t(
+                'products.list.searchArea.cmrStatusPlaceholder',
+                '選択してください',
+              )}
+              optionFilterProp="label"
+              onClear={clearCmrFilterAndSearch}
+              onChange={(value) => {
+                if (value === undefined || value === null) {
+                  clearCmrFilterAndSearch()
+                }
+              }}
+              options={[
+                {
+                  value: 0,
+                  label: t(
+                    'products.list.table.text.cmrNotLinked',
+                    'CMR Not Linked',
+                  ),
+                },
+                {
+                  value: 1,
+                  label: t(
+                    'products.list.table.text.cmrInitiated',
+                    'CMR連携開始',
+                  ),
+                },
+                {
+                  value: 2,
+                  label: t('products.list.table.text.cmrLinked', 'CMR Linked'),
+                },
+              ]}
+            />
+          </Form.Item>
+        </Col>
+
         <div className="mx-3 mt-[29px] mb-2 flex flex-1 flex-wrap justify-between gap-4">
           <div className="mr-auto flex flex-1 gap-4">
             <Button
@@ -149,6 +216,7 @@ export default function ProductTab() {
             <Button
               onClick={() => {
                 searchFormProps.form?.resetFields?.()
+                searchFormProps.form?.setFieldValue('is_sent_to_cmr', undefined)
                 setFilters([], 'replace')
               }}
               color="primary"
