@@ -1424,6 +1424,7 @@ export const zProductListItem = z.object({
   packaging_count: z.optional(z.int()),
   cost_price: z.optional(z.int()),
   sale_price: z.optional(z.int()),
+  is_sent_to_cmr: z.optional(z.int()),
 })
 
 /**
