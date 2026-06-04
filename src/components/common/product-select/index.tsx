@@ -13,9 +13,16 @@ interface Props {
       packagings: any[]
     },
   ) => void
+  allowClear?: boolean
 }
 
-const ProductSelect = ({ name, rules, defaultValue, onChangeValue }: Props) => {
+const ProductSelect = ({
+  name,
+  rules,
+  defaultValue,
+  onChangeValue,
+  allowClear,
+}: Props) => {
   return (
     <CoreAutocompleteAPI
       key={`product-select-${defaultValue?.value ?? 'empty'}`}
@@ -25,7 +32,7 @@ const ProductSelect = ({ name, rules, defaultValue, onChangeValue }: Props) => {
       defaultValue={defaultValue}
       labelInValue={false}
       pageSize={30}
-      allowClear={false}
+      allowClear={allowClear ?? false}
       placeholder="商品名・サービス名で検索"
       onChangeValue={onChangeValue}
     />

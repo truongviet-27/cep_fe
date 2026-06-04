@@ -76,7 +76,7 @@ const DetailInfo: FC = () => {
       }
       return {
         index,
-        isSelfCreate: !item.product_id,
+        isSelfCreate: !item.product_id && item.name,
         ...item,
       }
     },
@@ -241,7 +241,6 @@ const DetailInfo: FC = () => {
                   const productId = form.getFieldValue([
                     'main_product',
                     record.index,
-
                     'product_id',
                   ])
 
@@ -298,6 +297,7 @@ const DetailInfo: FC = () => {
                       onChangeValue={(value: any) =>
                         onChangeProductName(value, record.index)
                       }
+                      allowClear={true}
                     />
                   )
                 }

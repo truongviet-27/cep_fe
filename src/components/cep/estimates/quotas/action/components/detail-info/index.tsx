@@ -507,12 +507,48 @@ function DetailInfo({
                         onChangeValue={(valueOption) => {
                           if (!valueOption) {
                             form.setFieldValue(
+                              ['main_product', record.index, 'product_id'],
+                              null,
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'name'],
+                              '',
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'code'],
+                              '',
+                            )
+                            form.setFieldValue(
                               ['main_product', record.index, 'package'],
                               null,
                             )
                             form.setFieldValue(
-                              ['main_product', record.index, 'quantity'],
+                              ['main_product', record.index, 'package_id'],
+                              null,
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'unit'],
+                              '-',
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'unit_name'],
+                              '',
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'cost_price'],
                               0,
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'selling_price'],
+                              0,
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'quantity'],
+                              1,
+                            )
+                            form.setFieldValue(
+                              ['main_product', record.index, 'tax_rate'],
+                              10,
                             )
                           }
 

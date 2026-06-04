@@ -375,68 +375,124 @@ function OptionalInfo({
                         onChangeValue={(valueOption) => {
                           if (!valueOption) {
                             form.setFieldValue(
+                              ['optional_product', record.index, 'product_id'],
+                              null,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'name'],
+                              '',
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'code'],
+                              '',
+                            )
+                            form.setFieldValue(
                               ['optional_product', record.index, 'package'],
                               null,
                             )
                             form.setFieldValue(
-                              ['optional_product', record.index, 'quantity'],
+                              ['optional_product', record.index, 'package_id'],
+                              null,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'package_name',
+                              ],
+                              '-',
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'unit'],
+                              '-',
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'unit_name'],
+                              '-',
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'cost_price'],
                               0,
                             )
-                          }
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'selling_price',
+                              ],
+                              0,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'tax_rate'],
+                              10,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'quantity'],
+                              1,
+                            )
+                          } else {
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'package'],
+                              {
+                                value: (valueOption?.packagings ?? [])[0]?.id,
+                                label: '-',
+                              },
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'package_name',
+                              ],
+                              '-',
+                            )
+                            if (valueOption) {
+                              handleChangeProductPrincingOptional([
+                                valueOption.id,
+                              ])
+                            }
 
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'package'],
-                            {
-                              value: (valueOption?.packagings ?? [])[0]?.id,
-                              label: '-',
-                            },
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'package_name'],
-                            '-',
-                          )
-                          if (valueOption) {
-                            handleChangeProductPrincingOptional([
-                              valueOption.id,
-                            ])
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'product_id'],
+                              valueOption?.id,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'name'],
+                              valueOption?.name,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'code'],
+                              valueOption?.code,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'unit'],
+                              valueOption?.unit,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'unit_name'],
+                              valueOption?.unit,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'cost_price'],
+                              valueOption?.cost_price,
+                            )
+                            form.setFieldValue(
+                              [
+                                'optional_product',
+                                record.index,
+                                'selling_price',
+                              ],
+                              valueOption?.sale_price,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'tax_rate'],
+                              valueOption?.tax_rate,
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'quantity'],
+                              1,
+                            )
                           }
-
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'product_id'],
-                            valueOption?.id,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'name'],
-                            valueOption?.name,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'code'],
-                            valueOption?.code,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'unit'],
-                            valueOption?.unit,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'unit_name'],
-                            valueOption?.unit,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'cost_price'],
-                            valueOption?.cost_price,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'selling_price'],
-                            valueOption?.sale_price,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'tax_rate'],
-                            valueOption?.tax_rate,
-                          )
-                          form.setFieldValue(
-                            ['optional_product', record.index, 'quantity'],
-                            1,
-                          )
                         }}
                       />
                     )
