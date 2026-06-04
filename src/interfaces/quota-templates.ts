@@ -19,6 +19,7 @@ export type QuotaTemplateFormType = QuotaTemplateStoreRequest & {
 export type QuotaTemplateProductType = QuotaTemplateProductItemRequest & {
   unit?: string
   unit_name?: string
+  isSelfCreate?: boolean
   product?: {
     id: number
     name: string
