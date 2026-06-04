@@ -247,6 +247,7 @@ const OptionalInfo: FC = () => {
                       onChangeValue={(value: any) =>
                         onChangeProductName(value, record.index)
                       }
+                      allowClear={true}
                     />
                   )
                 }
@@ -655,8 +656,7 @@ const OptionalInfo: FC = () => {
                     : 0
                   ).toFixed(2),
                 )
-
-                return `${(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toFixed(2)}%`
+                return `${Number(selling > 0 ? ((selling - cost) / selling) * 100 : 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
               },
             },
             {
