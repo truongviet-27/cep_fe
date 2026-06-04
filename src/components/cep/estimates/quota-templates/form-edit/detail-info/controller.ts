@@ -114,24 +114,39 @@ export const useController = () => {
     },
     index: number,
   ) => {
-    form.setFieldValue(['main_product', index, 'product_id'], value?.id)
-    form.setFieldValue(['main_product', index, 'name'], value?.name)
-    form.setFieldValue(['main_product', index, 'packagings'], value?.packagings)
-    form.setFieldValue(
-      ['main_product', index, 'package_id'],
-      value?.packagings?.[0]?.id,
-    )
-    form.setFieldValue(['main_product', index, 'code'], value?.code)
-    form.setFieldValue(['main_product', index, 'unit'], value?.unit)
-    form.setFieldValue(['main_product', index, 'cost_price'], value?.cost_price)
-    form.setFieldValue(
-      ['main_product', index, 'selling_price'],
-      value?.sale_price,
-    )
-    form.setFieldValue(['main_product', index, 'tax_rate'], value?.tax_rate)
-    form.setFieldValue(['main_product', index, 'quantity'], 1)
-
     if (!value) {
+      form.setFieldValue(['main_product', index, 'product_id'], null)
+      form.setFieldValue(['main_product', index, 'name'], '')
+      form.setFieldValue(['main_product', index, 'packagings'], [])
+      form.setFieldValue(['main_product', index, 'package_id'], null)
+      form.setFieldValue(['main_product', index, 'code'], '')
+      form.setFieldValue(['main_product', index, 'unit'], '')
+      form.setFieldValue(['main_product', index, 'cost_price'], 0)
+      form.setFieldValue(['main_product', index, 'selling_price'], 0)
+      form.setFieldValue(['main_product', index, 'tax_rate'], 10)
+      form.setFieldValue(['main_product', index, 'quantity'], 1)
+    } else {
+      form.setFieldValue(['main_product', index, 'product_id'], value.id)
+      form.setFieldValue(['main_product', index, 'name'], value.name)
+      form.setFieldValue(
+        ['main_product', index, 'packagings'],
+        value.packagings,
+      )
+      form.setFieldValue(
+        ['main_product', index, 'package_id'],
+        value.packagings?.[0]?.id,
+      )
+      form.setFieldValue(['main_product', index, 'code'], value.code)
+      form.setFieldValue(['main_product', index, 'unit'], value.unit)
+      form.setFieldValue(
+        ['main_product', index, 'cost_price'],
+        value.cost_price,
+      )
+      form.setFieldValue(
+        ['main_product', index, 'selling_price'],
+        value.sale_price,
+      )
+      form.setFieldValue(['main_product', index, 'tax_rate'], value.tax_rate)
       form.setFieldValue(['main_product', index, 'quantity'], 1)
     }
   }

@@ -41,33 +41,43 @@ export const useController = () => {
     },
     index: number,
   ) => {
-    form.setFieldValue(['optional_product', index, 'product_id'], value?.id)
-    form.setFieldValue(
-      ['optional_product', index, 'packagings'],
-      value?.packagings,
-    )
-    form.setFieldValue(
-      ['optional_product', index, 'package_id'],
-      value?.packagings?.[0]?.id,
-    )
-    form.setFieldValue(['optional_product', index, 'name'], value?.name)
-    form.setFieldValue(['optional_product', index, 'code'], value?.code)
-    form.setFieldValue(['optional_product', index, 'unit'], value?.unit)
-    form.setFieldValue(
-      ['optional_product', index, 'cost_price'],
-      value?.cost_price,
-    )
-    form.setFieldValue(
-      ['optional_product', index, 'selling_price'],
-      value?.sale_price,
-    )
-
-    form.setFieldValue(['optional_product', index, 'tax_rate'], value?.tax_rate)
-
-    form.setFieldValue(['optional_product', index, 'quantity'], 1)
-
     if (!value) {
-      form.setFieldValue(['optional_product', index, 'quantity'], 0)
+      form.setFieldValue(['optional_product', index, 'product_id'], null)
+      form.setFieldValue(['optional_product', index, 'name'], '')
+      form.setFieldValue(['optional_product', index, 'packagings'], [])
+      form.setFieldValue(['optional_product', index, 'package_id'], null)
+      form.setFieldValue(['optional_product', index, 'code'], '')
+      form.setFieldValue(['optional_product', index, 'unit'], '')
+      form.setFieldValue(['optional_product', index, 'cost_price'], 0)
+      form.setFieldValue(['optional_product', index, 'selling_price'], 0)
+      form.setFieldValue(['optional_product', index, 'tax_rate'], 10)
+      form.setFieldValue(['optional_product', index, 'quantity'], 1)
+    } else {
+      form.setFieldValue(['optional_product', index, 'product_id'], value.id)
+      form.setFieldValue(
+        ['optional_product', index, 'packagings'],
+        value.packagings,
+      )
+      form.setFieldValue(
+        ['optional_product', index, 'package_id'],
+        value.packagings?.[0]?.id,
+      )
+      form.setFieldValue(['optional_product', index, 'name'], value.name)
+      form.setFieldValue(['optional_product', index, 'code'], value.code)
+      form.setFieldValue(['optional_product', index, 'unit'], value.unit)
+      form.setFieldValue(
+        ['optional_product', index, 'cost_price'],
+        value.cost_price,
+      )
+      form.setFieldValue(
+        ['optional_product', index, 'selling_price'],
+        value.sale_price,
+      )
+      form.setFieldValue(
+        ['optional_product', index, 'tax_rate'],
+        value.tax_rate,
+      )
+      form.setFieldValue(['optional_product', index, 'quantity'], 1)
     }
   }
 
