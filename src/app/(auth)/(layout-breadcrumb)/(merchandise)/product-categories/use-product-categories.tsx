@@ -136,6 +136,7 @@ function useProductCategories() {
           setTimeout(() => {
             originalTreeRef.current = savedTree ?? tree
           }, 100)
+          setIsSaving(false)
         },
         onError: () => {
           setIsSaving(false)
