@@ -115,8 +115,8 @@ function useCombo() {
     > = {
       0: {
         label: t('products.list.table.text.cmrNotLinked', 'CMR Not Linked'),
-        color: '#FF8400',
-        backgroundColor: '#FFDFBF',
+        color: '#FF0000',
+        backgroundColor: '#FFDFDF',
       },
       1: {
         label: t('products.list.table.text.cmrInitiated', 'CMR連携開始'),
