@@ -75,16 +75,16 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               rules={[
                 {
                   required: true,
-                  message: 'アソートコードは必須です。',
+                  message: 'セットコードは必須です。',
                 },
                 {
                   max: 20,
-                  message: 'アソートコードは20文字以内で入力してください',
+                  message: 'セットコードは20文字以内で入力してください',
                 },
                 {
                   pattern: /^[A-Za-z0-9-_]+$/,
                   message:
-                    'アソートコードにはA〜Z, a〜zの英字, 0〜9の数字, ハイフン(-), およびアンダーバー(_)のみ使用できます。',
+                    'セットコードにはA〜Z, a〜zの英字, 0〜9の数字, ハイフン(-), およびアンダーバー(_)のみ使用できます。',
                 },
               ]}
             />
@@ -130,11 +130,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               rules={[
                 {
                   required: true,
-                  message: 'アソート名は必須です。',
+                  message: 'セット名は必須です。',
                 },
                 {
                   max: 100,
-                  message: 'アソート名は100文字以内で入力してください',
+                  message: 'セット名は100文字以内で入力してください',
                 },
               ]}
             />
