@@ -48,6 +48,11 @@ export default function Page() {
                 placeholder={t('placeholders.partial_match')}
                 allowClear
                 size="middle"
+                onChange={(e) => {
+                  if (!e.target.value) {
+                    setFilters([], 'replace')
+                  }
+                }}
               />
             </Form.Item>
           </Col>
