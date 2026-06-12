@@ -408,11 +408,11 @@
     "newRegistration": "新規登録",
     "codeNumberingSettings": "コード採番設定はこちら",
     "pleaseSelect": "選択してください",
-    "productCategoryEdit": "アソートカテゴリ新規登録",
+    "productCategoryEdit": "セットカテゴリ新規登録",
     "fields": {
-      "assortmentCode": "アソートコード",
-      "assortmentName": "アソート名",
-      "assortmentNameAbbr": "アソート名 (略称) ",
+      "assortmentCode": "セットコード",
+      "assortmentName": "セット名",
+      "assortmentNameAbbr": "セット名 (略称) ",
       "barcode": "バーコード",
       "category": "カテゴリ",
       "unit": "単位",
@@ -431,7 +431,7 @@
     "list": {
       "title": "商品一覧",
       "searchArea": {
-        "code_or_name": "アソートコード・アソート名",
+        "code_or_name": "セットコード・セット名",
         "category": "カテゴリ",
         "productInputPlaceholder": "部分一致",
         "categoryLabel": "カテゴリ",
@@ -444,8 +444,8 @@
       },
       "table": {
         "headers": {
-          "assortmentCode": "アソートコード（商品コード）",
-          "assortmentName": "アソート名",
+          "assortmentCode": "セットコード（商品コード）",
+          "assortmentName": "セット名",
           "products": "商品",
           "barcode": "バーコード",
           "subcategory": "カテゴリ",
