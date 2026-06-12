@@ -1,16 +1,18 @@
 import {
   CopyOutlined,
-  DeleteOutlined,
-  EditOutlined,
   ExportOutlined,
-  EyeOutlined,
   HistoryOutlined,
   ImportOutlined,
-  PlusOutlined,
 } from '@ant-design/icons'
+import {
+  CloneButton,
+  DeleteButton,
+  EditButton,
+  ShowButton,
+} from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import { Button, Popover } from 'antd'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 export type ActionType =
   | 'delete'
@@ -80,47 +82,52 @@ export const Action = ({
   return (
     <div className="flex items-center justify-center gap-4">
       {actionList.includes('view') && (
-        <Button
+        <ShowButton
           className="cursor-pointer"
-          color="blue"
-          variant="outlined"
+          size="small"
+          autoInsertSpace={false}
           onClick={onViewAction}
-          icon={
-            <EyeOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          style={{
+            color: '#2784FF',
+            borderColor: '#2784FF',
+          }}
+          icon={false}
+        >
+          {t('buttons.show')}
+        </ShowButton>
       )}
 
       {actionList.includes('edit') && (
-        <Button
-          className="cursor-pointer"
-          color="blue"
-          variant="outlined"
+        <EditButton
           onClick={onEditAction}
-          icon={
-            <EditOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          className="cursor-pointer"
+          size="small"
+          icon={null}
+          autoInsertSpace={false}
+          style={{
+            color: '#FFFFFF',
+            background: '#1FDB51',
+            borderColor: '#1FDB51',
+          }}
+        >
+          {t('buttons.edit')}
+        </EditButton>
       )}
 
       {actionList.includes('delete') && (
-        <Button
+        <DeleteButton
+          className="cursor-pointer"
+          size="small"
           onClick={onDeleteAction}
-          icon={<DeleteOutlined />}
+          autoInsertSpace={false}
           style={{
-            color: '#721c24',
-            border: '1px solid #721c24',
+            color: '#FFFFFF',
+            background: '#E74C3C',
           }}
-          className="cursor-pointer hover:!opacity-70"
-        />
+          icon={false}
+        >
+          {t('buttons.delete')}
+        </DeleteButton>
       )}
 
       {actionList.includes('onAppendFromMasterOrCreateNewAction') && (
@@ -131,51 +138,45 @@ export const Action = ({
           content={content}
           placement="bottomLeft"
         >
-          <Button
+          <CloneButton
             className="cursor-pointer"
-            color="blue"
-            variant="outlined"
-            icon={
-              <PlusOutlined
-                style={{
-                  fontSize: 12,
-                }}
-              />
-            }
-          />
+            size="small"
+            type="primary"
+            icon={false}
+          >
+            {t('buttons.add')}
+          </CloneButton>
         </Popover>
       )}
 
       {actionList.includes('append') && (
-        <Button
+        <CloneButton
           className="cursor-pointer"
-          color="blue"
-          variant="outlined"
+          size="small"
+          type="primary"
+          autoInsertSpace={false}
           onClick={onAppendAction}
-          icon={
-            <PlusOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          icon={false}
+        >
+          {t('buttons.add')}
+        </CloneButton>
       )}
 
       {actionList.includes('remove') && (
-        <Button
+        <DeleteButton
           className="cursor-pointer"
-          color="red"
-          variant="outlined"
+          size="small"
           onClick={onRemoveAction}
-          icon={
-            <DeleteOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          autoInsertSpace={false}
+          style={{
+            color: '#FFFFFF',
+            background: '#E74C3C',
+            borderColor: '#E74C3C',
+          }}
+          icon={false}
+        >
+          {t('buttons.delete')}
+        </DeleteButton>
       )}
 
       {actionList.includes('copy') && (
