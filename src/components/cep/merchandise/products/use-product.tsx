@@ -163,18 +163,18 @@ function useProduct() {
     > = {
       0: {
         label: t('products.list.table.text.cmrNotLinked', 'CMR Not Linked'),
-        color: '#E74C3C',
-        backgroundColor: '#FDECEC',
+        color: '#FF0000',
+        backgroundColor: '#FFDFDF',
       },
       1: {
         label: t('products.list.table.text.cmrInitiated', 'CMR連携開始'),
-        color: '#2784FF',
-        backgroundColor: '#E8F3FF',
+        color: '#666666',
+        backgroundColor: '#E2E2E2',
       },
       2: {
         label: t('products.list.table.text.cmrLinked', 'CMR Linked'),
-        color: '#1FDB51',
-        backgroundColor: '#E9FBEE',
+        color: '#0066CC',
+        backgroundColor: '#DAEDFF',
       },
     }
 
