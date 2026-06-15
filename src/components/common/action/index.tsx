@@ -4,12 +4,6 @@ import {
   HistoryOutlined,
   ImportOutlined,
 } from '@ant-design/icons'
-import {
-  CloneButton,
-  DeleteButton,
-  EditButton,
-  ShowButton,
-} from '@refinedev/antd'
 import { useTranslate } from '@refinedev/core'
 import { Button, Popover } from 'antd'
 import React, { useState } from 'react'
@@ -82,7 +76,7 @@ export const Action = ({
   return (
     <div className="flex items-center justify-center gap-4">
       {actionList.includes('view') && (
-        <ShowButton
+        <Button
           className="cursor-pointer"
           size="small"
           autoInsertSpace={false}
@@ -94,11 +88,11 @@ export const Action = ({
           icon={false}
         >
           {t('buttons.show')}
-        </ShowButton>
+        </Button>
       )}
 
       {actionList.includes('edit') && (
-        <EditButton
+        <Button
           onClick={onEditAction}
           className="cursor-pointer"
           size="small"
@@ -111,11 +105,11 @@ export const Action = ({
           }}
         >
           {t('buttons.edit')}
-        </EditButton>
+        </Button>
       )}
 
       {actionList.includes('delete') && (
-        <DeleteButton
+        <Button
           className="cursor-pointer"
           size="small"
           onClick={onDeleteAction}
@@ -127,7 +121,7 @@ export const Action = ({
           icon={false}
         >
           {t('buttons.delete')}
-        </DeleteButton>
+        </Button>
       )}
 
       {actionList.includes('onAppendFromMasterOrCreateNewAction') && (
@@ -138,19 +132,19 @@ export const Action = ({
           content={content}
           placement="bottomLeft"
         >
-          <CloneButton
+          <Button
             className="cursor-pointer"
             size="small"
             type="primary"
             icon={false}
           >
             {t('buttons.add')}
-          </CloneButton>
+          </Button>
         </Popover>
       )}
 
       {actionList.includes('append') && (
-        <CloneButton
+        <Button
           className="cursor-pointer"
           size="small"
           type="primary"
@@ -159,11 +153,11 @@ export const Action = ({
           icon={false}
         >
           {t('buttons.add')}
-        </CloneButton>
+        </Button>
       )}
 
       {actionList.includes('remove') && (
-        <DeleteButton
+        <Button
           className="cursor-pointer"
           size="small"
           onClick={onRemoveAction}
@@ -176,7 +170,7 @@ export const Action = ({
           icon={false}
         >
           {t('buttons.delete')}
-        </DeleteButton>
+        </Button>
       )}
 
       {actionList.includes('copy') && (
