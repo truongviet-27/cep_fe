@@ -198,7 +198,7 @@ export const useBootstrap = () => {
           key: 'get-profile-error',
           message: errorMessage,
           placement: 'topRight',
-          duration: 2,
+          duration: 0,
         })
       }
 
