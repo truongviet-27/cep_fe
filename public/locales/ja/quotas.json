@@ -44,9 +44,7 @@
       "title": "過去見積から作成",
       "created_at": "作成日",
       "place_holder": "部分一致",
-      "total_price": "金額",
-      "customer": "取引先",
-      "quota_title": "タイトル"
+      "total_price": "金額"
     }
   },
   "page_detail": {},
