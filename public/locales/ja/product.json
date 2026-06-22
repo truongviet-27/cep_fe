@@ -69,7 +69,7 @@
       "productInputPlaceholder": "部分一致",
       "categoryLabel": "カテゴリ",
       "categoryPlaceholder": "選択してください",
-      "cmrStatusLabel": "CMR連携",
+      "cmrStatusLabel": "CMR連携ステータス",
       "cmrStatusPlaceholder": "選択してください",
       "clearButton": "クリア"
     },
