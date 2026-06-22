@@ -50,7 +50,10 @@ export default function AssortmentTab() {
           <Form.Item
             label={
               <span className="font-bold">
-                {t('products.list.searchArea.cmrStatusLabel', 'CMR連携')}
+                {t(
+                  'products.list.searchArea.cmrStatusLabel',
+                  'CMR連携ステータス',
+                )}
               </span>
             }
             layout="vertical"
