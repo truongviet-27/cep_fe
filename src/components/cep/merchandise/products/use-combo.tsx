@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { PictureOutlined } from '@ant-design/icons'
+import {
+  ProductResourceEnum,
+  ProductResourceLabel,
+} from '@components/cep/merchandise/products/enum'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
@@ -15,6 +19,7 @@ import { useMemo } from 'react'
 interface ISearch {
   search: string
   category_id: string
+  resource: string
 }
 
 function useCombo() {
@@ -40,6 +45,11 @@ function useCombo() {
         field: 'q',
         operator: 'eq',
         value: params.search ?? null,
+      },
+      {
+        field: 'resource',
+        operator: 'eq',
+        value: params.resource ?? null,
       },
     ],
   })
@@ -89,6 +99,15 @@ function useCombo() {
         key: 'name',
         align: 'left',
         width: '13%',
+      },
+      {
+        title: 'セット区分',
+        dataIndex: 'resource',
+        key: 'resource',
+        width: '8%',
+        render: (val: string) =>
+          ProductResourceLabel[val as ProductResourceEnum] ??
+          ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
       },
       {
         title: t('product_combos.list.table.headers.products'), // Bạn có thể đặt tên khác

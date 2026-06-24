@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { DownOutlined, PictureOutlined } from '@ant-design/icons'
+import {
+  ProductResourceEnum,
+  ProductResourceLabel,
+} from '@components/cep/merchandise/products/enum'
 import { useTranslate } from '@refinedev/core'
 import type { ProductDetail } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
@@ -38,6 +42,16 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                     {t('products.fields.productName')}
                   </div>
                   <div>{product.name}</div>
+                </Row>
+                <Row>
+                  <div className="w-[150px] text-left font-bold">
+                    {t('products.fields.resource')}
+                  </div>
+                  <div>
+                    {ProductResourceLabel[
+                      product.resource as ProductResourceEnum
+                    ] ?? ProductResourceLabel[ProductResourceEnum.MERCHANDISE]}
+                  </div>
                 </Row>
                 <Row>
                   <div className="w-[150px] text-left font-bold">

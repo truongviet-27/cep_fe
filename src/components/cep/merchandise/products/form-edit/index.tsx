@@ -134,6 +134,7 @@ const ProductFormContainer: React.FC = () => {
                     isAllowedSaveButton={isAllowedSaveButton}
                     setIsAllowedSaveButton={setIsAllowedSaveButton}
                     setIsInitializingCode={setIsInitializingCode}
+                    isEdit={isUpdateMode}
                   />
                 ),
               },

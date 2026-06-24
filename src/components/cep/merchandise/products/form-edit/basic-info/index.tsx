@@ -1,5 +1,9 @@
 import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import {
+  ProductResourceEnum,
+  ProductResourceLabel,
+} from '@components/cep/merchandise/products/enum'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
 import UploadImage from '@components/common/upload-image/upload-image'
@@ -12,6 +16,7 @@ import {
   Form,
   InputNumber,
   Modal,
+  Radio,
   Row,
   Select,
   Spin,
@@ -33,6 +38,7 @@ interface BasicInfoProps {
   isAllowedSaveButton: boolean
   setIsAllowedSaveButton: (value: boolean) => void
   setIsInitializingCode: (value: boolean) => void
+  isEdit?: boolean
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
@@ -42,6 +48,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
     isAllowedSaveButton,
     setIsAllowedSaveButton,
     setIsInitializingCode,
+    isEdit,
   } = props
   const t = useTranslate()
   const [
@@ -149,6 +156,38 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 },
               ]}
             />
+          </Col>
+        </Row>
+        <Row className="mb-4">
+          <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
+            <Form.Item
+              name="resource"
+              label={boldText(t('products.fields.resource'))}
+              colon={false}
+              required={true}
+              rules={[
+                {
+                  required: true,
+                  message: '商品区分は必須です。',
+                },
+              ]}
+              initialValue={ProductResourceEnum.MERCHANDISE}
+            >
+              <Radio.Group
+                disabled={isEdit}
+                options={[
+                  {
+                    label:
+                      ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+                    value: ProductResourceEnum.MERCHANDISE,
+                  },
+                  {
+                    label: ProductResourceLabel[ProductResourceEnum.SERVICE],
+                    value: ProductResourceEnum.SERVICE,
+                  },
+                ]}
+              />
+            </Form.Item>
           </Col>
         </Row>
         <Row className="mb-4">

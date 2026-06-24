@@ -41,7 +41,7 @@ const BasicInfo: React.FC<Props> = (props) => {
           <Form.Item
             label={boldText(t('quota_templates.form.label.quote_transaction'))}
           >
-            {detail.category === 'merchandise' ? '物販' : '役務'}
+            {detail.category === 'merchandise' ? '物販' : '役務ｻｰﾋﾞｽ'}
           </Form.Item>
         </Col>
       </Row>
