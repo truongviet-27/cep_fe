@@ -1,5 +1,7 @@
+import { QuotaCategoryLabel } from '@components/cep/estimates/quotas/enum'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
+import { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { DISABLE_LABEL, PRIMARY } from '@utility/color'
 import { EXPIRATION_DATE, PAYMENT_DUE_DATE } from '@utility/constant'
@@ -41,7 +43,11 @@ const BasicInfo: React.FC<Props> = (props) => {
           <Form.Item
             label={boldText(t('quota_templates.form.label.quote_transaction'))}
           >
-            {detail.category === 'merchandise' ? '物販' : '役務ｻｰﾋﾞｽ'}
+            {
+              QuotaCategoryLabel[
+                detail.category ?? QuotaCategoryEnum.MERCHANDISE
+              ]
+            }
           </Form.Item>
         </Col>
       </Row>
