@@ -367,6 +367,11 @@
         "merchandise": "物販",
         "service": "役務ｻｰﾋﾞｽ"
       },
+      "category_change": {
+        "confirm": "取引区分を変更すると、登録済みの商品がクリアされます。よろしいでしょうか?",
+        "ok": "変更する",
+        "cancel": "キャンセル"
+      },
       "labels": {
         "until": "まで",
         "default_tax_rate": "デフォルト"

@@ -2040,6 +2040,10 @@ export type ProductCustomerPricingResponse = {
  */
 export type ProductDetail = {
   id?: number
+  /**
+   * 物販 or 役務
+   */
+  resource?: 'merchandise' | 'service'
   category?: {
     id?: number
     name?: string
@@ -2169,6 +2173,10 @@ export type StoreProductInput = {
    * Tax rate percentage for product (0-100)
    */
   tax_rate?: number
+  /**
+   * 物販 or 役務 (default: merchandise)
+   */
+  resource?: 'merchandise' | 'service'
   note?: string | null
   /**
    * Optional extra packagings. First (default) packaging is auto created.
@@ -2189,6 +2197,10 @@ export type UpdateProductInput = {
   cost_price?: number | null
   selling_price?: number | null
   tax_rate?: number | null
+  /**
+   * 物販 or 役務
+   */
+  resource?: 'merchandise' | 'service'
   note?: string | null
   packagings?: Array<ProductPackagingInput> | null
 }
@@ -2216,6 +2228,10 @@ export type Product = {
  */
 export type ProductListItem = {
   id?: number
+  /**
+   * 物販 or 役務
+   */
+  resource?: 'merchandise' | 'service'
   code?: string
   name?: string
   barcode?: string
@@ -7467,6 +7483,10 @@ export type ProductControllerIndexData = {
      * Filter by category id
      */
     category_id?: number
+    /**
+     * Filter by resource type: 物販 (merchandise) or 役務 (service)
+     */
+    resource?: 'merchandise' | 'service'
   }
   url: '/api/v1/products'
 }

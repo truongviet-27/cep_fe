@@ -10,6 +10,7 @@
     "productName": "商品名",
     "productNameAbbr": "商品名 (略称)",
     "barcode": "バーコード",
+    "resource": "商品区分",
     "category": "カテゴリ",
     "unit": "単位",
     "taxRate": "消費税率",

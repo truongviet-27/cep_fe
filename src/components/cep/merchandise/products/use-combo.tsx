@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { PictureOutlined } from '@ant-design/icons'
+import {
+  ProductResourceEnum,
+  ProductResourceLabelKey,
+} from '@components/cep/merchandise/products/enum'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { CrudFilters, HttpError } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
@@ -15,6 +19,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 interface ISearch {
   search: string
   category_id: string
+  resource: string
   is_sent_to_cmr?: number | string | null
 }
 
@@ -43,6 +48,11 @@ const buildComboSearchFilters = (params: ISearch): CrudFilters => {
       field: 'q',
       operator: 'eq',
       value: params.search ?? null,
+    },
+    {
+      field: 'resource',
+      operator: 'eq',
+      value: params.resource ?? null,
     },
     ...(cmrStatus === null
       ? []
@@ -198,6 +208,17 @@ function useCombo() {
         key: 'name',
         align: 'left',
         width: '13%',
+      },
+      {
+        title: t('product_combos.fields.resource'),
+        dataIndex: 'resource',
+        key: 'resource',
+        width: '8%',
+        render: (val: string) =>
+          t(
+            ProductResourceLabelKey[val as ProductResourceEnum] ??
+              ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+          ),
       },
       {
         title: t('product_combos.list.table.headers.products'), // Bạn có thể đặt tên khác

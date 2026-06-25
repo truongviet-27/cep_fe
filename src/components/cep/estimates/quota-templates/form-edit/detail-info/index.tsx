@@ -6,6 +6,7 @@ import { Action } from '@components/common/action'
 import ProductSelect from '@components/common/product-select'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
+import { QuotaCategoryEnum } from '@sdk/hey-api'
 import { calculateTax } from '@shared/tax/tax.utils'
 import { PRIMARY } from '@utility/color'
 import {
@@ -25,8 +26,8 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import type { FC } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import type { FC, MutableRefObject } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
@@ -34,7 +35,17 @@ import { useController } from './controller'
 
 const { Title, Text } = Typography
 
-const DetailInfo: FC = () => {
+interface Props {
+  isCategoryChangedByUserRef: MutableRefObject<boolean>
+  confirmedCategory: QuotaCategoryEnum
+  onCategoryConfirmed: (category: QuotaCategoryEnum) => void
+}
+
+const DetailInfo: FC<Props> = ({
+  isCategoryChangedByUserRef,
+  confirmedCategory,
+  onCategoryConfirmed,
+}) => {
   const {
     form,
     mainProducts,
@@ -50,6 +61,76 @@ const DetailInfo: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [categoryModalKey, setCategoryModalKey] = useState(0)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
+
+  const watchedCategoryValue =
+    Form.useWatch('category', form) ?? QuotaCategoryEnum.MERCHANDISE
+
+  const previousCategoryRef = useRef<string>(QuotaCategoryEnum.MERCHANDISE)
+
+  useEffect(() => {
+    if (!isCategoryChangedByUserRef.current) {
+      previousCategoryRef.current = watchedCategoryValue
+      onCategoryConfirmed(watchedCategoryValue as QuotaCategoryEnum)
+      return
+    }
+
+    isCategoryChangedByUserRef.current = false
+
+    if (watchedCategoryValue === previousCategoryRef.current) return
+
+    const emptyRow = {
+      product_id: undefined,
+      package_id: undefined,
+      isSelfCreate: false,
+      name: '',
+      code: '',
+      quantity: 0,
+      cost_price: 0,
+      selling_price: 0,
+      profit_margin: 0,
+      tax_rate: 10,
+      is_add_total: true,
+      kind: 'product',
+    }
+
+    const clearProducts = () => {
+      form.setFieldsValue({
+        main_product: [emptyRow],
+        optional_product: [{ ...emptyRow }],
+      })
+    }
+
+    const mainProducts = form.getFieldValue('main_product') || []
+    const optionalProducts = form.getFieldValue('optional_product') || []
+    const hasSelected =
+      mainProducts.some((p: any) => p?.product_id) ||
+      optionalProducts.some((p: any) => p?.product_id)
+
+    if (!hasSelected) {
+      previousCategoryRef.current = watchedCategoryValue
+      onCategoryConfirmed(watchedCategoryValue as QuotaCategoryEnum)
+      clearProducts()
+      return
+    }
+
+    Modal.confirm({
+      icon: null,
+      centered: true,
+      closable: true,
+      maskClosable: false,
+      content: t('quotas.action.basic_info.category_change.confirm'),
+      okText: t('quotas.action.basic_info.category_change.ok'),
+      cancelText: t('quotas.action.basic_info.category_change.cancel'),
+      onOk() {
+        previousCategoryRef.current = watchedCategoryValue
+        onCategoryConfirmed(watchedCategoryValue as QuotaCategoryEnum)
+        clearProducts()
+      },
+      onCancel() {
+        form.setFieldValue('category', previousCategoryRef.current)
+      },
+    })
+  }, [watchedCategoryValue])
 
   useEffect(() => {
     if (isModalOpen) {
@@ -257,7 +338,15 @@ const DetailInfo: FC = () => {
 
                   return (
                     <ProductSelect
+                      key={`main-product-${record.index}-${confirmedCategory}`}
                       name={[record.index, 'product_id']}
+                      filters={[
+                        {
+                          field: 'resource',
+                          operator: 'eq',
+                          value: confirmedCategory,
+                        },
+                      ]}
                       rules={[
                         {
                           required: true,

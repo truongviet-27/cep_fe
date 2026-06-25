@@ -1,5 +1,9 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
+import {
+  ProductResourceEnum,
+  ProductResourceLabelKey,
+} from '@components/cep/merchandise/products/enum'
 import { ProductUnitModal } from '@components/cep/merchandise/products/form-edit/modal/product-unit'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
@@ -12,12 +16,15 @@ import {
   Form,
   InputNumber,
   Modal,
+  Radio,
   Row,
   Select,
   Spin,
   Typography,
 } from 'antd'
 import { Empty, type FormInstance } from 'antd/lib'
+import type { MutableRefObject } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { ProductCategoryModal } from '../modal/product-category'
 import type { ProductComboFormType } from '../use-product-combo-form'
@@ -26,11 +33,25 @@ import { useBasicInfoController } from './controller'
 interface BasicInfoProps {
   form: FormInstance<ProductComboFormType>
   setIsInitializingCode: (value: boolean) => void
+  isEdit?: boolean
+  isResourceChangedByUserRef: MutableRefObject<boolean>
 }
 
 const BasicInfo: React.FC<BasicInfoProps> = (props) => {
-  const { form, setIsInitializingCode } = props
+  const { form, setIsInitializingCode, isEdit, isResourceChangedByUserRef } =
+    props
   const t = useTranslate()
+
+  const resourceWatch = Form.useWatch('resource', form)
+  const prevResourceRef = useRef<string>(
+    resourceWatch ?? ProductResourceEnum.MERCHANDISE,
+  )
+  const userResourceInteracted = useRef(false)
+  useEffect(() => {
+    if (!userResourceInteracted.current) {
+      prevResourceRef.current = resourceWatch ?? ProductResourceEnum.MERCHANDISE
+    }
+  }, [resourceWatch])
   const [
     {
       loadingPd,
@@ -138,6 +159,77 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 },
               ]}
             />
+          </Col>
+        </Row>
+        <Row className="mb-4">
+          <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
+            <Form.Item
+              name="resource"
+              label={boldText(t('product_combos.fields.resource'))}
+              colon={false}
+              required={true}
+              rules={[
+                {
+                  required: true,
+                  message: t('product_combos.fields.resourceRequired'),
+                },
+              ]}
+              initialValue={ProductResourceEnum.MERCHANDISE}
+            >
+              <Radio.Group
+                disabled={isEdit}
+                options={[
+                  {
+                    label: t(
+                      ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+                    ),
+                    value: ProductResourceEnum.MERCHANDISE,
+                  },
+                  {
+                    label: t(
+                      ProductResourceLabelKey[ProductResourceEnum.SERVICE],
+                    ),
+                    value: ProductResourceEnum.SERVICE,
+                  },
+                ]}
+                onChange={(e) => {
+                  userResourceInteracted.current = true
+                  const newValue = e.target.value
+                  const prevValue = prevResourceRef.current
+
+                  if (newValue === prevValue) {
+                    return
+                  }
+
+                  const products = form.getFieldValue('products') || []
+                  const hasSelected = products.some(
+                    (p: { id?: string | null }) => p && p.id,
+                  )
+                  if (hasSelected) {
+                    form.setFieldValue('resource', prevValue)
+                    Modal.confirm({
+                      icon: null,
+                      centered: true,
+                      closable: true,
+                      maskClosable: false,
+                      content: t('product_combos.fields.resourceChangeConfirm'),
+                      okText: t('product_combos.fields.resourceChangeOk'),
+                      cancelText: t(
+                        'product_combos.fields.resourceChangeCancel',
+                      ),
+                      onOk() {
+                        prevResourceRef.current = newValue
+                        isResourceChangedByUserRef.current = true
+                        form.setFieldValue('resource', newValue)
+                      },
+                    })
+                  } else {
+                    prevResourceRef.current = newValue
+                    isResourceChangedByUserRef.current = true
+                  }
+                }}
+              />
+            </Form.Item>
           </Col>
         </Row>
         <Row className="mb-4">
