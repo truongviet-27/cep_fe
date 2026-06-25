@@ -3,6 +3,10 @@
 // done
 import AutoComplete from '@components/cep/estimates/quotas/action/components/auto-complete'
 import { ProductCategoryModal } from '@components/cep/estimates/quotas/action/components/modal/product-category'
+import {
+  clearProductsOnCategoryChange,
+  hasProductSelected,
+} from '@components/cep/estimates/quotas/action/utils/category'
 import { TaxRoundingMethod } from '@components/cep/estimates/quotas/enum'
 import {
   DEFAULT_TAX_RATES,
@@ -17,7 +21,7 @@ import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import type { RoundingMethodEnumType } from '@sdk/hey-api'
-import { ConsumptionTaxEnum } from '@sdk/hey-api'
+import { ConsumptionTaxEnum, QuotaCategoryEnum } from '@sdk/hey-api'
 import { calculateTax } from '@shared/tax/tax.utils'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
@@ -39,15 +43,22 @@ import {
 } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { Table } from 'antd/lib'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { MutableRefObject } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const { Text } = Typography
 
 function DetailInfo({
+  isCategoryChangedByUserRef,
+  confirmedCategory,
+  onCategoryConfirmed,
   productPrincing,
   // handleChangeProductPrincing,
   mainProduct,
 }: {
+  isCategoryChangedByUserRef: MutableRefObject<boolean>
+  confirmedCategory: QuotaCategoryEnum
+  onCategoryConfirmed: (category: QuotaCategoryEnum) => void
   productPrincing?: number[]
   // handleChangeProductPrincing: (productIds: number[]) => void
   mainProduct: any
@@ -62,6 +73,55 @@ function DetailInfo({
   const consumptionTaxWatch = Form.useWatch('consumption_tax', form)
   const customerWatch = Form.useWatch('customer', form)
   const taxRoundingMethodWatch = Form.useWatch('tax_rounding_method', form)
+  const categoryWatch =
+    Form.useWatch('category', form) ?? QuotaCategoryEnum.MERCHANDISE
+
+  const prevCategoryRef = useRef<string>(QuotaCategoryEnum.MERCHANDISE)
+  useEffect(() => {
+    const currentCategoryValue = categoryWatch ?? QuotaCategoryEnum.MERCHANDISE
+
+    if (!isCategoryChangedByUserRef.current) {
+      prevCategoryRef.current = currentCategoryValue
+      onCategoryConfirmed(currentCategoryValue as QuotaCategoryEnum)
+      return
+    }
+
+    isCategoryChangedByUserRef.current = false
+    const prevValue = prevCategoryRef.current
+    const defaultUnit = t(
+      'quotas.action.detail_info.default_values.default_unit',
+    )
+    const clearProducts = () => clearProductsOnCategoryChange(form, defaultUnit)
+
+    const confirmCategory = () => {
+      prevCategoryRef.current = currentCategoryValue
+      onCategoryConfirmed(currentCategoryValue as QuotaCategoryEnum)
+    }
+
+    if (!hasProductSelected(form)) {
+      confirmCategory()
+      clearProducts()
+      return
+    }
+
+    Modal.confirm({
+      icon: null,
+      centered: true,
+      closable: true,
+      maskClosable: false,
+      content:
+        '取引区分を変更すると、登録済みの商品がクリアされます。よろしいでしょうか?',
+      okText: '変更する',
+      cancelText: 'キャンセル',
+      onOk() {
+        confirmCategory()
+        clearProducts()
+      },
+      onCancel() {
+        form.setFieldValue('category', prevValue)
+      },
+    })
+  }, [categoryWatch])
 
   const [costTotal, setCostTotal] = useState(0)
   const [profitRate, setProfitRate] = useState(0)
@@ -450,6 +510,7 @@ function DetailInfo({
                   if (!record.isSelfCreate) {
                     return (
                       <CoreAutocompleteAPI
+                        key={`main-product-${record.index}-${confirmedCategory}`}
                         name={[record.index, 'product']}
                         rules={[
                           {
@@ -487,6 +548,13 @@ function DetailInfo({
                           },
                         ]}
                         resource="products/list-all"
+                        filters={[
+                          {
+                            field: 'resource',
+                            operator: 'eq',
+                            value: confirmedCategory,
+                          },
+                        ]}
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}

@@ -1,3 +1,10 @@
+import { QuotaCategoryEnum } from '@sdk/hey-api'
+
+export const QuotaCategoryLabel: Record<QuotaCategoryEnum, string> = {
+  [QuotaCategoryEnum.MERCHANDISE]: '物販',
+  [QuotaCategoryEnum.SERVICE]: '役務ｻｰﾋﾞｽ',
+}
+
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum QuotaStatus {
   Creating = 'creating',

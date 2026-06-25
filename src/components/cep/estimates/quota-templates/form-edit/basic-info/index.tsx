@@ -18,10 +18,15 @@ import {
   Select,
   Typography,
 } from 'antd'
+import type { MutableRefObject } from 'react'
 
 const { Title } = Typography
 
-const BasicInfo = () => {
+interface Props {
+  isCategoryChangedByUserRef: MutableRefObject<boolean>
+}
+
+const BasicInfo = ({ isCategoryChangedByUserRef }: Props) => {
   const t = useTranslate()
 
   return (
@@ -162,6 +167,9 @@ const BasicInfo = () => {
                   label: t('quotas.action.basic_info.categories.service'),
                 },
               ]}
+              onChange={() => {
+                isCategoryChangedByUserRef.current = true
+              }}
             />
           </Form.Item>
         </Col>

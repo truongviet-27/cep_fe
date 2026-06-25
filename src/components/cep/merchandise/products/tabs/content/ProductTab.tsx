@@ -1,4 +1,8 @@
 import { DownOutlined } from '@ant-design/icons'
+import {
+  ProductResourceEnum,
+  ProductResourceLabel,
+} from '@components/cep/merchandise/products/enum'
 import useProduct from '@components/cep/merchandise/products/use-product'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
@@ -14,6 +18,7 @@ import {
   notification,
   Popconfirm,
   Row,
+  Select,
   Space,
 } from 'antd'
 import Link from 'next/link'
@@ -115,6 +120,29 @@ export default function ProductTab() {
             }
             placeholder={t('products.list.searchArea.productInputPlaceholder')}
           />
+        </Col>
+
+        <Col sm={12} md={6} lg={4}>
+          <Form.Item
+            label={<span className="font-bold">商品区分</span>}
+            layout="vertical"
+            name="resource"
+          >
+            <Select
+              allowClear
+              placeholder="選択してください"
+              options={[
+                {
+                  label: ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+                  value: ProductResourceEnum.MERCHANDISE,
+                },
+                {
+                  label: ProductResourceLabel[ProductResourceEnum.SERVICE],
+                  value: ProductResourceEnum.SERVICE,
+                },
+              ]}
+            />
+          </Form.Item>
         </Col>
 
         <Col sm={12} md={6} lg={4}>
