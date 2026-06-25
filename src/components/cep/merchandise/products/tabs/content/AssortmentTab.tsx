@@ -41,7 +41,7 @@ export default function AssortmentTab() {
           >
             <Select
               allowClear
-              placeholder="選択してください"
+              placeholder={t('pleaseSelect')}
               options={[
                 {
                   label: t(

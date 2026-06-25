@@ -132,7 +132,7 @@ export default function ProductTab() {
           >
             <Select
               allowClear
-              placeholder="選択してください"
+              placeholder={t('pleaseSelect')}
               options={[
                 {
                   label: t(
