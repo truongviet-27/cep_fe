@@ -410,6 +410,11 @@
     "pleaseSelect": "選択してください",
     "productCategoryEdit": "セットカテゴリ新規登録",
     "fields": {
+      "resource": "セット区分",
+      "resourceRequired": "セット区分は必須です。",
+      "resourceChangeConfirm": "セット区分を変更すると、登録済みの商品がクリアされます。よろしいでしょうか?",
+      "resourceChangeOk": "変更する",
+      "resourceChangeCancel": "キャンセル",
       "assortmentCode": "セットコード",
       "assortmentName": "セット名",
       "assortmentNameAbbr": "セット名 (略称) ",

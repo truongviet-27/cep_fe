@@ -3,7 +3,7 @@
 import { PictureOutlined } from '@ant-design/icons'
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
@@ -101,13 +101,15 @@ function useCombo() {
         width: '13%',
       },
       {
-        title: 'セット区分',
+        title: t('product_combos.fields.resource'),
         dataIndex: 'resource',
         key: 'resource',
         width: '8%',
         render: (val: string) =>
-          ProductResourceLabel[val as ProductResourceEnum] ??
-          ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+          t(
+            ProductResourceLabelKey[val as ProductResourceEnum] ??
+              ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+          ),
       },
       {
         title: t('product_combos.list.table.headers.products'), // Bạn có thể đặt tên khác

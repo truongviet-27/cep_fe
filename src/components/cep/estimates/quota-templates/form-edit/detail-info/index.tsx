@@ -118,10 +118,9 @@ const DetailInfo: FC<Props> = ({
       centered: true,
       closable: true,
       maskClosable: false,
-      content:
-        '取引区分を変更すると、登録済みの商品がクリアされます。よろしいでしょうか?',
-      okText: '変更する',
-      cancelText: 'キャンセル',
+      content: t('quotas.action.basic_info.category_change.confirm'),
+      okText: t('quotas.action.basic_info.category_change.ok'),
+      cancelText: t('quotas.action.basic_info.category_change.cancel'),
       onOk() {
         previousCategoryRef.current = watchedCategoryValue
         onCategoryConfirmed(watchedCategoryValue as QuotaCategoryEnum)

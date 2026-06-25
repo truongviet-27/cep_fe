@@ -1,7 +1,7 @@
 import { DownOutlined } from '@ant-design/icons'
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import useProduct from '@components/cep/merchandise/products/use-product'
 import CoreInput from '@components/common/core-input'
@@ -124,7 +124,9 @@ export default function ProductTab() {
 
         <Col sm={12} md={6} lg={4}>
           <Form.Item
-            label={<span className="font-bold">商品区分</span>}
+            label={
+              <span className="font-bold">{t('products.fields.resource')}</span>
+            }
             layout="vertical"
             name="resource"
           >
@@ -133,11 +135,15 @@ export default function ProductTab() {
               placeholder="選択してください"
               options={[
                 {
-                  label: ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+                  ),
                   value: ProductResourceEnum.MERCHANDISE,
                 },
                 {
-                  label: ProductResourceLabel[ProductResourceEnum.SERVICE],
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.SERVICE],
+                  ),
                   value: ProductResourceEnum.SERVICE,
                 },
               ]}

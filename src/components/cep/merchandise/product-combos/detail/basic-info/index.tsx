@@ -3,7 +3,7 @@
 import { DownOutlined, PictureOutlined } from '@ant-design/icons'
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import { useTranslate } from '@refinedev/core'
 import type { ProductDetail } from '@sdk/hey-api'
@@ -45,12 +45,17 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                 </Row>
                 <Row>
                   <div className="w-[150px] text-left font-bold">
-                    {'セット区分'}
+                    {t('product_combos.fields.resource')}
                   </div>
                   <div>
-                    {ProductResourceLabel[
-                      product.resource as ProductResourceEnum
-                    ] ?? ProductResourceLabel[ProductResourceEnum.MERCHANDISE]}
+                    {t(
+                      ProductResourceLabelKey[
+                        product.resource as ProductResourceEnum
+                      ] ??
+                        ProductResourceLabelKey[
+                          ProductResourceEnum.MERCHANDISE
+                        ],
+                    )}
                   </div>
                 </Row>
                 <Row>

@@ -3,7 +3,7 @@
 import { DownOutlined, PictureOutlined } from '@ant-design/icons'
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import { useTranslate } from '@refinedev/core'
 import type { ProductDetail } from '@sdk/hey-api'
@@ -48,9 +48,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ product }) => {
                     {t('products.fields.resource')}
                   </div>
                   <div>
-                    {ProductResourceLabel[
-                      product.resource as ProductResourceEnum
-                    ] ?? ProductResourceLabel[ProductResourceEnum.MERCHANDISE]}
+                    {t(
+                      ProductResourceLabelKey[
+                        product.resource as ProductResourceEnum
+                      ] ??
+                        ProductResourceLabelKey[
+                          ProductResourceEnum.MERCHANDISE
+                        ],
+                    )}
                   </div>
                 </Row>
                 <Row>

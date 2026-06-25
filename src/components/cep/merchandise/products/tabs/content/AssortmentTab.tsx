@@ -1,6 +1,6 @@
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import useCombo from '@components/cep/merchandise/products/use-combo'
 import CoreInput from '@components/common/core-input'
@@ -31,7 +31,11 @@ export default function AssortmentTab() {
 
         <Col sm={12} md={6} lg={4}>
           <Form.Item
-            label={<span className="font-bold">セット区分</span>}
+            label={
+              <span className="font-bold">
+                {t('product_combos.fields.resource')}
+              </span>
+            }
             layout="vertical"
             name="resource"
           >
@@ -40,11 +44,15 @@ export default function AssortmentTab() {
               placeholder="選択してください"
               options={[
                 {
-                  label: ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+                  ),
                   value: ProductResourceEnum.MERCHANDISE,
                 },
                 {
-                  label: ProductResourceLabel[ProductResourceEnum.SERVICE],
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.SERVICE],
+                  ),
                   value: ProductResourceEnum.SERVICE,
                 },
               ]}

@@ -2,7 +2,7 @@ import { CaretDownOutlined, EditFilled } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryEditDropdown from '@components/common/product-category-edit-dropdown'
@@ -168,7 +168,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               rules={[
                 {
                   required: true,
-                  message: '商品区分は必須です。',
+                  message: t('products.fields.resourceRequired'),
                 },
               ]}
               initialValue={ProductResourceEnum.MERCHANDISE}
@@ -177,12 +177,15 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 disabled={isEdit}
                 options={[
                   {
-                    label:
-                      ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+                    label: t(
+                      ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+                    ),
                     value: ProductResourceEnum.MERCHANDISE,
                   },
                   {
-                    label: ProductResourceLabel[ProductResourceEnum.SERVICE],
+                    label: t(
+                      ProductResourceLabelKey[ProductResourceEnum.SERVICE],
+                    ),
                     value: ProductResourceEnum.SERVICE,
                   },
                 ]}

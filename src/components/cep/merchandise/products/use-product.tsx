@@ -3,7 +3,7 @@
 import { PictureOutlined } from '@ant-design/icons'
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
@@ -222,13 +222,15 @@ function useProduct() {
         ),
       },
       {
-        title: '商品区分',
+        title: t('products.fields.resource'),
         dataIndex: 'resource',
         key: 'resource',
         width: '8%',
         render: (val: string) =>
-          ProductResourceLabel[val as ProductResourceEnum] ??
-          ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+          t(
+            ProductResourceLabelKey[val as ProductResourceEnum] ??
+              ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+          ),
       },
       {
         title: t('products.list.table.headers.packagingQuantity'),
