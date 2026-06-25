@@ -37,7 +37,7 @@ export function hasProductSelected(form: FormInstance): boolean {
   const mainProducts = form.getFieldValue('main_product') || []
   const optionalProducts = form.getFieldValue('optional_product') || []
   return (
-    mainProducts.some((p: never) => p?.product_id) ||
-    optionalProducts.some((p: never) => p?.product_id)
+    mainProducts.some((p: { product_id?: string | null }) => p?.product_id) ||
+    optionalProducts.some((p: { product_id?: string | null }) => p?.product_id)
   )
 }

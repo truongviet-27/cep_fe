@@ -2,7 +2,7 @@ import { CaretDownOutlined } from '@ant-design/icons'
 import { CodeIssueSettingEdit } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/modal'
 import {
   ProductResourceEnum,
-  ProductResourceLabel,
+  ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import { ProductUnitModal } from '@components/cep/merchandise/products/form-edit/modal/product-unit'
 import CoreInput from '@components/common/core-input'
@@ -165,13 +165,13 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
             <Form.Item
               name="resource"
-              label={boldText('セット区分')}
+              label={boldText(t('product_combos.fields.resource'))}
               colon={false}
               required={true}
               rules={[
                 {
                   required: true,
-                  message: 'セット区分は必須です。',
+                  message: t('product_combos.fields.resourceRequired'),
                 },
               ]}
               initialValue={ProductResourceEnum.MERCHANDISE}
@@ -180,12 +180,15 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 disabled={isEdit}
                 options={[
                   {
-                    label:
-                      ProductResourceLabel[ProductResourceEnum.MERCHANDISE],
+                    label: t(
+                      ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+                    ),
                     value: ProductResourceEnum.MERCHANDISE,
                   },
                   {
-                    label: ProductResourceLabel[ProductResourceEnum.SERVICE],
+                    label: t(
+                      ProductResourceLabelKey[ProductResourceEnum.SERVICE],
+                    ),
                     value: ProductResourceEnum.SERVICE,
                   },
                 ]}
@@ -199,7 +202,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   }
 
                   const products = form.getFieldValue('products') || []
-                  const hasSelected = products.some((p: never) => p && p.id)
+                  const hasSelected = products.some(
+                    (p: { id?: string | null }) => p && p.id,
+                  )
                   if (hasSelected) {
                     form.setFieldValue('resource', prevValue)
                     Modal.confirm({
@@ -207,10 +212,11 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                       centered: true,
                       closable: true,
                       maskClosable: false,
-                      content:
-                        'セット区分を変更すると、登録済みの商品がクリアされます。よろしいでしょうか?',
-                      okText: '変更する',
-                      cancelText: 'キャンセル',
+                      content: t('product_combos.fields.resourceChangeConfirm'),
+                      okText: t('product_combos.fields.resourceChangeOk'),
+                      cancelText: t(
+                        'product_combos.fields.resourceChangeCancel',
+                      ),
                       onOk() {
                         prevResourceRef.current = newValue
                         isResourceChangedByUserRef.current = true

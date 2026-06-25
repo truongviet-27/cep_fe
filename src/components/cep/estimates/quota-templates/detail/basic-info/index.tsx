@@ -1,4 +1,4 @@
-import { QuotaCategoryLabel } from '@components/cep/estimates/quotas/enum'
+import { QuotaCategoryLabelKey } from '@components/cep/estimates/quotas/enum'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
 import { useTranslate } from '@refinedev/core'
 import { QuotaCategoryEnum } from '@sdk/hey-api'
@@ -43,11 +43,11 @@ const BasicInfo: React.FC<Props> = (props) => {
           <Form.Item
             label={boldText(t('quota_templates.form.label.quote_transaction'))}
           >
-            {
-              QuotaCategoryLabel[
+            {t(
+              QuotaCategoryLabelKey[
                 detail.category ?? QuotaCategoryEnum.MERCHANDISE
-              ]
-            }
+              ],
+            )}
           </Form.Item>
         </Col>
       </Row>

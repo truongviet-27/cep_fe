@@ -6,7 +6,9 @@ export const ProductResourceEnum = {
 export type ProductResourceEnum =
   (typeof ProductResourceEnum)[keyof typeof ProductResourceEnum]
 
-export const ProductResourceLabel: Record<ProductResourceEnum, string> = {
-  [ProductResourceEnum.MERCHANDISE]: '物販',
-  [ProductResourceEnum.SERVICE]: '役務ｻｰﾋﾞｽ',
+// i18n keys for product/combo resource labels (resolve with useTranslate's `t`)
+// Kept in the `common` namespace so they are available in every locale (en/ja).
+export const ProductResourceLabelKey: Record<ProductResourceEnum, string> = {
+  [ProductResourceEnum.MERCHANDISE]: 'product_resource.merchandise',
+  [ProductResourceEnum.SERVICE]: 'product_resource.service',
 }
