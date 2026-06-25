@@ -388,6 +388,11 @@
       }
     }
   },
+  "product_resource": {
+    "merchandise": "物販",
+    "service": "役務ｻｰﾋﾞｽ",
+    "required": "商品区分は必須です。"
+  },
   "product_combos": {
     "sections": {
       "basicInfo": "基本情報",

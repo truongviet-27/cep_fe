@@ -1,4 +1,9 @@
 {
+  "product_resource": {
+    "merchandise": "Goods",
+    "service": "Service",
+    "required": "Product classification is required."
+  },
   "product_combos": {
     "fields": {
       "resource": "Set classification",

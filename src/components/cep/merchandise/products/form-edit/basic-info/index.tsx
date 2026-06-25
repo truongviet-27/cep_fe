@@ -168,7 +168,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               rules={[
                 {
                   required: true,
-                  message: t('products.fields.resourceRequired'),
+                  message: t('product_resource.required'),
                 },
               ]}
               initialValue={ProductResourceEnum.MERCHANDISE}

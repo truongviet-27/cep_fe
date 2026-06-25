@@ -11,7 +11,6 @@
     "productNameAbbr": "商品名 (略称)",
     "barcode": "バーコード",
     "resource": "商品区分",
-    "resourceRequired": "商品区分は必須です。",
     "category": "カテゴリ",
     "unit": "単位",
     "taxRate": "消費税率",
@@ -62,10 +61,6 @@
   "text": {
     "active": "有効",
     "inactive": "無効"
-  },
-  "resourceOptions": {
-    "merchandise": "物販",
-    "service": "役務ｻｰﾋﾞｽ"
   },
 
   "list": {
