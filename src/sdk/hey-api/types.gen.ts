@@ -2240,7 +2240,6 @@ export type ProductListItem = {
   packaging_count?: number
   cost_price?: number
   sale_price?: number
-  is_sent_to_cmr?: number
 }
 
 /**
