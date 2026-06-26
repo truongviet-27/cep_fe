@@ -23,9 +23,7 @@ function Page() {
   }, [searchParams])
 
   const onChangeTabs = (value: string) => {
-    const params = new URLSearchParams(searchParams?.toString())
-    params.set('tab', value)
-    router.replace(`${pathname}?${params.toString()}`)
+    router.replace(`${pathname}?tab=${value}`)
   }
 
   return (
