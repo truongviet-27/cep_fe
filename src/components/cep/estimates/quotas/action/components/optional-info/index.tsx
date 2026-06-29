@@ -13,6 +13,7 @@ import {
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
+import type { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -30,9 +31,11 @@ import { type ColumnsType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
 
 function OptionalInfo({
+  confirmedCategory,
   productPrincing,
   optionalProduct,
 }: {
+  confirmedCategory: QuotaCategoryEnum
   productPrincing?: number[]
   optionalProduct: any
 }) {
@@ -320,6 +323,7 @@ function OptionalInfo({
                   if (!record.isSelfCreate) {
                     return (
                       <CoreAutocompleteAPI
+                        key={`optional-product-${record.index}-${confirmedCategory}`}
                         rules={[
                           {
                             validator: async () => {
@@ -354,6 +358,13 @@ function OptionalInfo({
                         name={[record.index, 'product']}
                         labelInValue={true}
                         resource="products/list-all"
+                        filters={[
+                          {
+                            field: 'resource',
+                            operator: 'eq',
+                            value: confirmedCategory,
+                          },
+                        ]}
                         placeholder={t(
                           'quotas.action.detail_info.placeholders.product_search',
                         )}

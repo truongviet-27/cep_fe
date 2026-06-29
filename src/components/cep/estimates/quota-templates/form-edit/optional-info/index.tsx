@@ -5,6 +5,7 @@ import { Action } from '@components/common/action'
 import ProductSelect from '@components/common/product-select'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
+import type { QuotaCategoryEnum } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
 import {
   Button,
@@ -26,7 +27,11 @@ import { useController } from './controller'
 
 const { Title } = Typography
 
-const OptionalInfo: FC = () => {
+interface Props {
+  confirmedCategory: QuotaCategoryEnum
+}
+
+const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
   const t = useTranslate()
   const {
     form,
@@ -202,7 +207,15 @@ const OptionalInfo: FC = () => {
 
                   return (
                     <ProductSelect
+                      key={`optional-product-${record.index}-${confirmedCategory}`}
                       name={[record.index, 'product_id']}
+                      filters={[
+                        {
+                          field: 'resource',
+                          operator: 'eq',
+                          value: confirmedCategory,
+                        },
+                      ]}
                       rules={[
                         {
                           required: false,

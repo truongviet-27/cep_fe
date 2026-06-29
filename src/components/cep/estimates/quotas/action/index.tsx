@@ -31,7 +31,10 @@ import type {
   QuotaFormSettingResponse,
   DraftControllerIndexResponse,
 } from '@sdk/hey-api'
-import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
+import {
+  QuotaCategoryEnum,
+  RoundingMethodEnumType as RoundingMethodEnum,
+} from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -82,6 +85,12 @@ function pickMainProductForApiByTotalCalculation(mainProduct: unknown) {
 
 function QuotaAction() {
   const t = useTranslate()
+
+  const isCategoryChangedByUserRef = useRef(false)
+  const [confirmedCategory, setConfirmedCategory] = useState<QuotaCategoryEnum>(
+    QuotaCategoryEnum.MERCHANDISE,
+  )
+
   const methods = useForm({
     queryOptions: {
       enabled: false,
@@ -1259,6 +1268,7 @@ function QuotaAction() {
           name="basic"
         >
           <BasicInfo
+            isCategoryChangedByUserRef={isCategoryChangedByUserRef}
             parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
             isEdit={isEdit}
@@ -1278,10 +1288,14 @@ function QuotaAction() {
             quotaCustomerContactId={dataBasicInfo?.data?.customer_contact_id}
           />
           <DetailInfo
+            isCategoryChangedByUserRef={isCategoryChangedByUserRef}
+            confirmedCategory={confirmedCategory}
+            onCategoryConfirmed={setConfirmedCategory}
             productPrincing={productPrincing}
             mainProduct={dataProducts?.data.main_product}
           />
           <OptionalInfo
+            confirmedCategory={confirmedCategory}
             productPrincing={productPrincingOptional}
             optionalProduct={dataProducts?.data.optional_product}
           />

@@ -60,7 +60,7 @@ export function useController() {
 
   const methods = useForm<QuotaTemplateFormType>({
     resource: 'quota-templates',
-    redirect: 'show',
+    redirect: 'list',
     queryOptions: {
       select: (data) => {
         const detail = data.data as QuoteTemplateDetailType

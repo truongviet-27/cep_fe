@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { PictureOutlined } from '@ant-design/icons'
+import {
+  ProductResourceEnum,
+  ProductResourceLabelKey,
+} from '@components/cep/merchandise/products/enum'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { HttpError } from '@refinedev/core'
 import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
@@ -17,6 +21,7 @@ import { useCallback, useMemo, useState } from 'react'
 interface ISearch {
   search: string
   category_id: string
+  resource: string
 }
 
 function useProduct() {
@@ -49,6 +54,11 @@ function useProduct() {
         field: 'q',
         operator: 'eq',
         value: params.search ?? null,
+      },
+      {
+        field: 'resource',
+        operator: 'eq',
+        value: params.resource ?? null,
       },
     ],
   })
@@ -210,6 +220,17 @@ function useProduct() {
             {val}
           </div>
         ),
+      },
+      {
+        title: t('products.fields.resource'),
+        dataIndex: 'resource',
+        key: 'resource',
+        width: '8%',
+        render: (val: string) =>
+          t(
+            ProductResourceLabelKey[val as ProductResourceEnum] ??
+              ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+          ),
       },
       {
         title: t('products.list.table.headers.packagingQuantity'),

@@ -10,6 +10,7 @@
     "productName": "商品名",
     "productNameAbbr": "商品名 (略称)",
     "barcode": "バーコード",
+    "resource": "商品区分",
     "category": "カテゴリ",
     "unit": "単位",
     "taxRate": "消費税率",
@@ -108,11 +109,11 @@
     "home": "商品",
     "productList": "商品一覧",
     "productDetail": "商品詳細",
-    "comboDetail": "アソート詳細",
+    "comboDetail": "セット詳細",
     "productCreate": "商品登録",
     "productEdit": "商品編集",
-    "productCombos": "アソート一覧",
-    "productComboCreate": "アソート登録",
-    "productComboEdit": "アソート編集"
+    "productCombos": "セット一覧",
+    "productComboCreate": "セット登録",
+    "productComboEdit": "セット編集"
   }
 }

@@ -1,3 +1,12 @@
+import { QuotaCategoryEnum } from '@sdk/hey-api'
+
+// i18n keys for quota category labels (resolve with useTranslate's `t`)
+export const QuotaCategoryLabelKey: Record<QuotaCategoryEnum, string> = {
+  [QuotaCategoryEnum.MERCHANDISE]:
+    'quotas.action.basic_info.categories.merchandise',
+  [QuotaCategoryEnum.SERVICE]: 'quotas.action.basic_info.categories.service',
+}
+
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum QuotaStatus {
   Creating = 'creating',

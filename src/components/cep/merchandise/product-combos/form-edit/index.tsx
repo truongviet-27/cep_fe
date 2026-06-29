@@ -3,6 +3,7 @@ import { DownOutlined, RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { useGo, useTranslate } from '@refinedev/core'
+import { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import {
@@ -49,6 +50,11 @@ const ProductComboFormContainer: React.FC = () => {
   ] = useProductComboForm()
   const { form, formProps, query } = methods
   const product = query?.data?.data
+  const isResourceChangedByUserRef = useRef(false)
+  const [confirmedResource, setConfirmedResource] = useState<string>(
+    QuotaCategoryEnum.MERCHANDISE,
+  )
+
   const addRef = useRef<(defaultValue?: object, insertIndex?: number) => void>()
   const [isInitializingCode, setIsInitializingCode] = useState(!isUpdateMode)
 
@@ -107,6 +113,8 @@ const ProductComboFormContainer: React.FC = () => {
                   <BasicInfo
                     form={form as unknown as FormInstance<ProductComboFormType>}
                     setIsInitializingCode={setIsInitializingCode}
+                    isEdit={isUpdateMode}
+                    isResourceChangedByUserRef={isResourceChangedByUserRef}
                   />
                 ),
               },
@@ -137,6 +145,9 @@ const ProductComboFormContainer: React.FC = () => {
                   <ProductInformation
                     form={form as unknown as FormInstance<ProductComboFormType>}
                     addRef={addRef}
+                    isResourceChangedByUserRef={isResourceChangedByUserRef}
+                    confirmedResource={confirmedResource}
+                    onResourceConfirmed={setConfirmedResource}
                   />
                 ),
               },

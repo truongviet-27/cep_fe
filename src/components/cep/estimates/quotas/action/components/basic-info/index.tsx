@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line simple-import-sort/imports */
 import { useCallback, useEffect, useState } from 'react'
+import type { MutableRefObject } from 'react'
 import './basic-info.css'
 
 import {
@@ -36,12 +37,14 @@ import CreateCustomerModal from '../create-customer-modal'
 import type { ParameterSettingType } from '@interfaces/permission'
 
 const BasicInfo = ({
+  isCategoryChangedByUserRef,
   handleChangeProductPrincing,
   parameterSettings,
   isEdit,
   embeddedContactFromQuota,
   quotaCustomerContactId,
 }: {
+  isCategoryChangedByUserRef: MutableRefObject<boolean>
   handleChangeProductPrincing: (
     productIds: number[],
     productIdsOptional: number[],
@@ -477,6 +480,9 @@ const BasicInfo = ({
                     label: t('quotas.action.basic_info.categories.service'),
                   },
                 ]}
+                onChange={() => {
+                  isCategoryChangedByUserRef.current = true
+                }}
               />
             </Form.Item>
           </Col>

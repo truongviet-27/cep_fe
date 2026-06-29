@@ -1,4 +1,19 @@
 {
+  "pleaseSelect": "Please select",
+  "product_resource": {
+    "merchandise": "Goods",
+    "service": "Service",
+    "required": "Product classification is required."
+  },
+  "product_combos": {
+    "fields": {
+      "resource": "Set classification",
+      "resourceRequired": "Set classification is required.",
+      "resourceChangeConfirm": "Changing the set classification will clear the registered products. Are you sure?",
+      "resourceChangeOk": "Change",
+      "resourceChangeCancel": "Cancel"
+    }
+  },
   "login": {
     "title": "Lets get you started",
     "no_account": "Don't have an account?",

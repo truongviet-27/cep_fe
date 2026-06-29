@@ -1,9 +1,13 @@
+import {
+  ProductResourceEnum,
+  ProductResourceLabelKey,
+} from '@components/cep/merchandise/products/enum'
 import useCombo from '@components/cep/merchandise/products/use-combo'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
 import { CreateButton } from '@refinedev/antd'
-import { Button, Col, Form, Row } from 'antd'
+import { Button, Col, Form, Row, Select } from 'antd'
 import Link from 'next/link'
 
 export default function AssortmentTab() {
@@ -23,6 +27,37 @@ export default function AssortmentTab() {
             }
             placeholder={t('products.list.searchArea.productInputPlaceholder')}
           />
+        </Col>
+
+        <Col sm={12} md={6} lg={4}>
+          <Form.Item
+            label={
+              <span className="font-bold">
+                {t('product_combos.fields.resource')}
+              </span>
+            }
+            layout="vertical"
+            name="resource"
+          >
+            <Select
+              allowClear
+              placeholder={t('pleaseSelect')}
+              options={[
+                {
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+                  ),
+                  value: ProductResourceEnum.MERCHANDISE,
+                },
+                {
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.SERVICE],
+                  ),
+                  value: ProductResourceEnum.SERVICE,
+                },
+              ]}
+            />
+          </Form.Item>
         </Col>
 
         <Col sm={12} md={6} lg={4}>

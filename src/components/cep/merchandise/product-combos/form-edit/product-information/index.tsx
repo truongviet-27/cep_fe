@@ -3,13 +3,14 @@
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
+import { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import type { FormInstance } from 'antd'
 import { Button, Card, Flex, Form, InputNumber, notification } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import type { AlignType } from 'rc-table/lib/interface'
-import { type MutableRefObject, useEffect } from 'react'
+import { type MutableRefObject, useEffect, useRef, useState } from 'react'
 
 import type { ProductComboFormType } from '../use-product-combo-form'
 
@@ -18,15 +19,26 @@ interface ProductInformationProps {
   addRef: MutableRefObject<
     ((defaultValue?: object, insertIndex?: number) => void) | undefined
   >
+  isResourceChangedByUserRef: MutableRefObject<boolean>
+  confirmedResource: string
+  onResourceConfirmed: (resource: string) => void
 }
 const ProductInformation: React.FC<ProductInformationProps> = (props) => {
-  const { form, addRef } = props
+  const {
+    form,
+    addRef,
+    isResourceChangedByUserRef,
+    confirmedResource,
+    onResourceConfirmed,
+  } = props
   const t = useTranslate()
 
   const productsWatch = Form.useWatch('products', form) ?? []
   const idWatch = Form.useWatch('id', form)
   const nameWatch = Form.useWatch('name', form)
   const quantityWatch = Form.useWatch('quantity', form)
+  const resourceWatch =
+    Form.useWatch('resource', form) ?? QuotaCategoryEnum.MERCHANDISE
 
   const defaultRow = {
     id: '',
@@ -45,6 +57,21 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
       })
     }
   }, [productsWatch, form])
+
+  useEffect(() => {
+    if (isResourceChangedByUserRef.current) {
+      isResourceChangedByUserRef.current = false
+      onResourceConfirmed(resourceWatch ?? QuotaCategoryEnum.MERCHANDISE)
+      form.setFieldsValue({ products: [defaultRow] })
+      return
+    }
+    onResourceConfirmed(resourceWatch ?? QuotaCategoryEnum.MERCHANDISE)
+    const products = form.getFieldValue('products') || []
+    const hasSelected = products.some((p: any) => p && p.id)
+    if (!hasSelected) {
+      form.setFieldsValue({ products: [defaultRow] })
+    }
+  }, [resourceWatch])
 
   return (
     <Card
@@ -80,7 +107,15 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               render: (_, record, index: number) => {
                 return (
                   <CoreAutocompleteAPI
+                    key={`product-name-${index}-${confirmedResource}`}
                     name={[index, 'name']}
+                    filters={[
+                      {
+                        field: 'resource',
+                        operator: 'eq',
+                        value: confirmedResource,
+                      },
+                    ]}
                     rules={[
                       {
                         required: true,
