@@ -16,6 +16,10 @@ export const generateFilter = (filters?: CrudFilters) => {
       if ('field' in filter) {
         const { field, operator, value } = filter
 
+        if (value === null || value === undefined || value === '') {
+          return
+        }
+
         if (field === 'q') {
           queryFilters[field] = value
           return

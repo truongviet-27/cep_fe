@@ -70,6 +70,8 @@
       "productInputPlaceholder": "部分一致",
       "categoryLabel": "カテゴリ",
       "categoryPlaceholder": "選択してください",
+      "cmrStatusLabel": "CMR連携",
+      "cmrStatusPlaceholder": "選択してください",
       "clearButton": "クリア"
     },
     "actions": {
@@ -92,7 +94,10 @@
         "image": "写真"
       },
       "text": {
-        "pieces": "件"
+        "pieces": "件",
+        "cmrNotLinked": "CMR未連携",
+        "cmrInitiated": "CMR連携開始",
+        "cmrLinked": "CMR連携済"
       }
     }
   },
