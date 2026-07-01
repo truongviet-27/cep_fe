@@ -1,3 +1,4 @@
+import CoreAutocompleteAPI from '@components/common/autocomplete-api'
 import CommonTable from '@components/common/table'
 import useDate from '@hook/use-date'
 import { useTable } from '@refinedev/antd'
@@ -5,17 +6,7 @@ import type { useTranslate } from '@refinedev/core'
 import { useGo } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
-import {
-  Button,
-  Col,
-  DatePicker,
-  Flex,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Space,
-} from 'antd'
+import { Button, Col, DatePicker, Flex, Form, Input, Modal, Row } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
@@ -41,6 +32,16 @@ function CreateFromOldQuota({ open, onClose, t }: CreateFromOldQuotaProps) {
           field: 'code',
           operator: 'eq',
           value: values.code ?? null,
+        },
+        {
+          field: 'customer_id',
+          operator: 'eq',
+          value: values.customer_name?.value ?? null,
+        },
+        {
+          field: 'title',
+          operator: 'eq',
+          value: values.title ?? null,
         },
         {
           field: 'search_date_type',
@@ -80,12 +81,42 @@ function CreateFromOldQuota({ open, onClose, t }: CreateFromOldQuotaProps) {
         render(_, record) {
           return (
             <Flex vertical gap={2}>
-              <Space>
+              <div>
                 <span>
                   {boldText(t('quotas.popups.createFromOldQuota.quota_code'))}:{' '}
                   {record.code}
                 </span>
-              </Space>
+              </div>
+              {(record.customer_name || record.title) && (
+                <div>
+                  {record.customer_name && (
+                    <span
+                      className={
+                        record.title
+                          ? 'border-r-1 border-[#666666] pr-2 text-[#666666]'
+                          : 'text-[#666666]'
+                      }
+                    >
+                      {boldText(t('quotas.popups.createFromOldQuota.customer'))}
+                      : {record.customer_name}
+                    </span>
+                  )}
+                  {record.title && (
+                    <span
+                      className={
+                        record.customer_name
+                          ? 'pl-2 text-[#666666]'
+                          : 'text-[#666666]'
+                      }
+                    >
+                      {boldText(
+                        t('quotas.popups.createFromOldQuota.quota_title'),
+                      )}
+                      : {record.title}
+                    </span>
+                  )}
+                </div>
+              )}
               <div>
                 <span className="border-r-1 border-[#666666] pr-2 text-[#666666]">
                   {t('quotas.popups.createFromOldQuota.created_at')}:{' '}
@@ -109,6 +140,7 @@ function CreateFromOldQuota({ open, onClose, t }: CreateFromOldQuotaProps) {
         dataIndex: 'action',
         key: 'action',
         align: 'right',
+        onCell: () => ({ style: { verticalAlign: 'middle' } }),
         render(_, record) {
           return (
             <Button
@@ -172,13 +204,40 @@ function CreateFromOldQuota({ open, onClose, t }: CreateFromOldQuotaProps) {
           </Col>
 
           <Col xs={24} sm={8}>
+            <CoreAutocompleteAPI
+              name="customer_name"
+              pageSize={10}
+              optionLabel="name"
+              resource="customers"
+              label={
+                <span className="font-bold">
+                  {t('quotas.popups.createFromOldQuota.customer')}
+                </span>
+              }
+              placeholder={t('placeholders.select')}
+              onChangeClear={(callback) => {
+                if (callback) callback('')
+              }}
+            />
+          </Col>
+
+          <Col xs={24} sm={8}>
+            <Form.Item
+              label={
+                <span className="font-bold">
+                  {t('quotas.popups.createFromOldQuota.quota_title')}
+                </span>
+              }
+              layout="vertical"
+              name={'title'}
+            >
+              <Input placeholder={t('quotas.filters.partial_match')} />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} sm={8}>
             <Form.Item label=" " layout="vertical">
-              <Flex
-                gap={8}
-                style={{
-                  marginBottom: 10,
-                }}
-              >
+              <Flex gap={8}>
                 <Button
                   type="primary"
                   variant="filled"
@@ -190,7 +249,7 @@ function CreateFromOldQuota({ open, onClose, t }: CreateFromOldQuotaProps) {
                 <Button
                   type="default"
                   onClick={() => {
-                    searchFormProps.form?.setFieldsValue([])
+                    searchFormProps.form?.resetFields()
                     setFilters([], 'replace')
                   }}
                 >

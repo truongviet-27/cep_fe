@@ -14,6 +14,7 @@ interface Props {
     },
   ) => void
   allowClear?: boolean
+  filters?: any
 }
 
 const ProductSelect = ({
@@ -22,6 +23,7 @@ const ProductSelect = ({
   defaultValue,
   onChangeValue,
   allowClear,
+  filters,
 }: Props) => {
   return (
     <CoreAutocompleteAPI
@@ -35,6 +37,7 @@ const ProductSelect = ({
       allowClear={allowClear ?? false}
       placeholder="商品名・サービス名で検索"
       onChangeValue={onChangeValue}
+      filters={filters}
     />
   )
 }

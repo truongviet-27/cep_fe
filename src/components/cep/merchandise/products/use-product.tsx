@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { PictureOutlined } from '@ant-design/icons'
+import {
+  ProductResourceEnum,
+  ProductResourceLabelKey,
+} from '@components/cep/merchandise/products/enum'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
-import type { HttpError } from '@refinedev/core'
+import type { CrudFilters, HttpError } from '@refinedev/core'
 import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
 import { PermissionEnum, type ProductListItem } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -12,11 +16,56 @@ import type { TableRowSelection } from 'antd/es/table/interface'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface ISearch {
   search: string
   category_id: string
+  resource: string
+  is_sent_to_cmr?: number | string | null
+}
+
+const parseCmrStatusFilter = (
+  value: number | string | null | undefined,
+): number | null => {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+
+  const status = Number(value)
+  return [0, 1, 2].includes(status) ? status : null
+}
+
+// Shared by Search submit and CMR dropdown clear so filter logic stays in one place.
+const buildProductSearchFilters = (params: ISearch): CrudFilters => {
+  const cmrStatus = parseCmrStatusFilter(params.is_sent_to_cmr)
+
+  return [
+    {
+      field: 'category_id',
+      operator: 'eq',
+      value: params.category_id ?? null,
+    },
+    {
+      field: 'q',
+      operator: 'eq',
+      value: params.search ?? null,
+    },
+    {
+      field: 'resource',
+      operator: 'eq',
+      value: params.resource ?? null,
+    },
+    ...(cmrStatus === null
+      ? []
+      : [
+          {
+            field: 'is_sent_to_cmr',
+            operator: 'eq' as const,
+            value: cmrStatus,
+          },
+        ]),
+  ]
 }
 
 function useProduct() {
@@ -39,19 +88,30 @@ function useProduct() {
     pagination: { pageSize: 20 },
     resource: 'products',
     filters: {},
-    onSearch: (params) => [
-      {
-        field: 'category_id',
-        operator: 'eq',
-        value: params.category_id ?? null,
-      },
-      {
-        field: 'q',
-        operator: 'eq',
-        value: params.search ?? null,
-      },
-    ],
+    onSearch: (params) => buildProductSearchFilters(params),
   })
+
+  useEffect(() => {
+    const form = searchFormProps.form
+    if (!form) {
+      return
+    }
+
+    const raw = form.getFieldValue('is_sent_to_cmr')
+    if (raw === null || raw === undefined || raw === '') {
+      return
+    }
+
+    const status = Number(raw)
+    if ([0, 1, 2].includes(status)) {
+      if (raw !== status) {
+        form.setFieldValue('is_sent_to_cmr', status)
+      }
+      return
+    }
+
+    form.setFieldValue('is_sent_to_cmr', undefined)
+  }, [searchFormProps.form])
 
   const onSelectChange = useCallback(
     (newSelectedRowKeys: React.Key[], newSelectedRows: ProductListItem[]) => {
@@ -65,6 +125,20 @@ function useProduct() {
     selectedRowKeys,
     onChange: onSelectChange,
   }
+
+  const clearCmrFilterAndSearch = useCallback(() => {
+    const form = searchFormProps.form
+    if (!form) {
+      return
+    }
+
+    form.setFieldValue('is_sent_to_cmr', undefined)
+    const values = form.getFieldsValue() as ISearch
+    setFilters(
+      buildProductSearchFilters({ ...values, is_sent_to_cmr: undefined }),
+      'replace',
+    )
+  }, [searchFormProps.form, setFilters])
 
   const handleBulkDelete = useCallback(() => {
     mutate(
@@ -92,6 +166,28 @@ function useProduct() {
   }, [mutate, selectedRows, apiUrl, t, tableQuery])
 
   const columns = useMemo(() => {
+    // CMR sync state is now int-based (0/1/2) and rendered below product code in list.
+    const cmrStatusMeta: Record<
+      number,
+      { label: string; color: string; backgroundColor: string }
+    > = {
+      0: {
+        label: t('products.list.table.text.cmrNotLinked', 'CMR Not Linked'),
+        color: '#FF0000',
+        backgroundColor: '#FFDFDF',
+      },
+      1: {
+        label: t('products.list.table.text.cmrInitiated', 'CMR連携開始'),
+        color: '#666666',
+        backgroundColor: '#E2E2E2',
+      },
+      2: {
+        label: t('products.list.table.text.cmrLinked', 'CMR Linked'),
+        color: '#0066CC',
+        backgroundColor: '#DAEDFF',
+      },
+    }
+
     const baseColumns = [
       {
         title: t('products.list.table.headers.image'),
@@ -167,22 +263,46 @@ function useProduct() {
           },
         }),
         render: (_: unknown, record: ProductListItem) => (
-          <Link
-            href={`/products/show/${record.id}`}
-            onClick={() => {
-              sessionStorage.setItem('list_products', 'products')
-            }}
-            className="!underline underline-offset-4"
-            style={{
-              display: 'block',
-              width: '100%',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {record.code}
-          </Link>
+          <div>
+            <Link
+              href={`/products/show/${record.id}`}
+              onClick={() => {
+                sessionStorage.setItem('list_products', 'products')
+              }}
+              className="!underline"
+              style={{
+                display: 'block',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {record.code}
+            </Link>
+            {(() => {
+              const status = Number(record.is_sent_to_cmr ?? 0)
+              const { label, color, backgroundColor } =
+                cmrStatusMeta[status] ?? cmrStatusMeta[0]
+
+              return (
+                <span
+                  style={{
+                    display: 'inline-block',
+                    marginTop: 6,
+                    padding: '2px 8px',
+                    borderRadius: 4,
+                    fontSize: 12,
+                    lineHeight: '16px',
+                    color,
+                    backgroundColor,
+                  }}
+                >
+                  {label}
+                </span>
+              )
+            })()}
+          </div>
         ),
       },
       {
@@ -210,6 +330,17 @@ function useProduct() {
             {val}
           </div>
         ),
+      },
+      {
+        title: t('products.fields.resource'),
+        dataIndex: 'resource',
+        key: 'resource',
+        width: '8%',
+        render: (val: string) =>
+          t(
+            ProductResourceLabelKey[val as ProductResourceEnum] ??
+              ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+          ),
       },
       {
         title: t('products.list.table.headers.packagingQuantity'),
@@ -435,7 +566,13 @@ function useProduct() {
       isOpenManyDelete,
       isBulkDeleting,
     },
-    { t, setFilters, setIsOpenManyDelete, handleBulkDelete },
+    {
+      t,
+      setFilters,
+      setIsOpenManyDelete,
+      handleBulkDelete,
+      clearCmrFilterAndSearch,
+    },
   ] as const
 }
 

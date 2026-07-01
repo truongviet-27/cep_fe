@@ -1,14 +1,20 @@
+import {
+  ProductResourceEnum,
+  ProductResourceLabelKey,
+} from '@components/cep/merchandise/products/enum'
 import useCombo from '@components/cep/merchandise/products/use-combo'
 import CoreInput from '@components/common/core-input'
 import ProductCategoryDropdown from '@components/common/product-category-dropdown'
 import CommonTable from '@components/common/table'
 import { CreateButton } from '@refinedev/antd'
-import { Button, Col, Form, Row } from 'antd'
+import { Button, Col, Form, Row, Select } from 'antd'
 import Link from 'next/link'
 
 export default function AssortmentTab() {
-  const [{ columns, tableProps, searchFormProps }, { t, setFilters }] =
-    useCombo()
+  const [
+    { columns, tableProps, searchFormProps },
+    { t, setFilters, clearCmrFilterAndSearch },
+  ] = useCombo()
 
   return (
     <Form {...searchFormProps}>
@@ -29,6 +35,37 @@ export default function AssortmentTab() {
           <Form.Item
             label={
               <span className="font-bold">
+                {t('product_combos.fields.resource')}
+              </span>
+            }
+            layout="vertical"
+            name="resource"
+          >
+            <Select
+              allowClear
+              placeholder={t('pleaseSelect')}
+              options={[
+                {
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.MERCHANDISE],
+                  ),
+                  value: ProductResourceEnum.MERCHANDISE,
+                },
+                {
+                  label: t(
+                    ProductResourceLabelKey[ProductResourceEnum.SERVICE],
+                  ),
+                  value: ProductResourceEnum.SERVICE,
+                },
+              ]}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col sm={12} md={6} lg={4}>
+          <Form.Item
+            label={
+              <span className="font-bold">
                 {t('products.list.searchArea.categoryLabel')}
               </span>
             }
@@ -40,6 +77,61 @@ export default function AssortmentTab() {
               onSelect={(_, __, ___, categoryId) => {
                 searchFormProps.form?.setFieldValue('category_id', categoryId)
               }}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col sm={12} md={6} lg={4}>
+          <Form.Item
+            label={
+              <span className="font-bold">
+                {t('products.list.searchArea.cmrStatusLabel', 'CMR連携')}
+              </span>
+            }
+            layout="vertical"
+            name="is_sent_to_cmr"
+            normalize={(value) => {
+              if (value === null || value === undefined || value === '') {
+                return undefined
+              }
+
+              const status = Number(value)
+              return [0, 1, 2].includes(status) ? status : undefined
+            }}
+          >
+            <Select
+              allowClear
+              placeholder={t(
+                'products.list.searchArea.cmrStatusPlaceholder',
+                '選択してください',
+              )}
+              optionFilterProp="label"
+              onClear={clearCmrFilterAndSearch}
+              onChange={(value) => {
+                if (value === undefined || value === null) {
+                  clearCmrFilterAndSearch()
+                }
+              }}
+              options={[
+                {
+                  value: 0,
+                  label: t(
+                    'products.list.table.text.cmrNotLinked',
+                    'CMR Not Linked',
+                  ),
+                },
+                {
+                  value: 1,
+                  label: t(
+                    'products.list.table.text.cmrInitiated',
+                    'CMR連携開始',
+                  ),
+                },
+                {
+                  value: 2,
+                  label: t('products.list.table.text.cmrLinked', 'CMR Linked'),
+                },
+              ]}
             />
           </Form.Item>
         </Col>

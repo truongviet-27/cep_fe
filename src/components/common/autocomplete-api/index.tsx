@@ -28,6 +28,7 @@ type SelectPropsForm<
   onChangeValue?: (value: any, option?: any) => void
   onChangeClear?: (fn: ((value: string) => void) | undefined) => void
   onSelect?: (value: any, option?: any) => void
+  filters?: any
 }
 
 export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
@@ -53,6 +54,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     onChangeValue,
     onChangeClear,
     onSelect,
+    filters,
     ...restProps
   } = props
 
@@ -69,6 +71,7 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
     optionLabel,
     optionValue,
     meta: props.meta,
+    filters: filters,
     pagination: {
       mode: 'server',
       current,
@@ -81,10 +84,17 @@ export const CoreAutocompleteAPI = (props: SelectPropsForm) => {
       lastPageAdded.current = 0
       setIsPreApply(false)
       setCurrent(1)
-      if (!value) return []
-      return [{ field: 'q', operator: 'eq', value }]
+      const searchFilters = value ? [{ field: 'q', operator: 'eq', value }] : []
+      return [...(filters || []), ...searchFilters]
     },
   })
+
+  const stringifiedFilters = JSON.stringify(filters)
+  useEffect(() => {
+    setOptions([])
+    setCurrent(1)
+    lastPageAdded.current = 0
+  }, [stringifiedFilters])
 
   useEffect(() => {
     if (query.data?.data && current > lastPageAdded.current) {

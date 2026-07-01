@@ -1,16 +1,12 @@
 import {
   CopyOutlined,
-  DeleteOutlined,
-  EditOutlined,
   ExportOutlined,
-  EyeOutlined,
   HistoryOutlined,
   ImportOutlined,
-  PlusOutlined,
 } from '@ant-design/icons'
 import { useTranslate } from '@refinedev/core'
 import { Button, Popover } from 'antd'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 export type ActionType =
   | 'delete'
@@ -82,45 +78,50 @@ export const Action = ({
       {actionList.includes('view') && (
         <Button
           className="cursor-pointer"
-          color="blue"
-          variant="outlined"
+          size="small"
+          autoInsertSpace={false}
           onClick={onViewAction}
-          icon={
-            <EyeOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          style={{
+            color: '#2784FF',
+            borderColor: '#2784FF',
+          }}
+          icon={false}
+        >
+          {t('buttons.show')}
+        </Button>
       )}
 
       {actionList.includes('edit') && (
         <Button
-          className="cursor-pointer"
-          color="blue"
-          variant="outlined"
           onClick={onEditAction}
-          icon={
-            <EditOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          className="cursor-pointer"
+          size="small"
+          icon={null}
+          autoInsertSpace={false}
+          style={{
+            color: '#FFFFFF',
+            background: '#1FDB51',
+            borderColor: '#1FDB51',
+          }}
+        >
+          {t('buttons.edit')}
+        </Button>
       )}
 
       {actionList.includes('delete') && (
         <Button
+          className="cursor-pointer"
+          size="small"
           onClick={onDeleteAction}
-          icon={<DeleteOutlined />}
+          autoInsertSpace={false}
           style={{
-            color: '#721c24',
-            border: '1px solid #721c24',
+            color: '#FFFFFF',
+            background: '#E74C3C',
           }}
-          className="cursor-pointer hover:!opacity-70"
-        />
+          icon={false}
+        >
+          {t('buttons.delete')}
+        </Button>
       )}
 
       {actionList.includes('onAppendFromMasterOrCreateNewAction') && (
@@ -133,49 +134,43 @@ export const Action = ({
         >
           <Button
             className="cursor-pointer"
-            color="blue"
-            variant="outlined"
-            icon={
-              <PlusOutlined
-                style={{
-                  fontSize: 12,
-                }}
-              />
-            }
-          />
+            size="small"
+            type="primary"
+            icon={false}
+          >
+            {t('buttons.add')}
+          </Button>
         </Popover>
       )}
 
       {actionList.includes('append') && (
         <Button
           className="cursor-pointer"
-          color="blue"
-          variant="outlined"
+          size="small"
+          type="primary"
+          autoInsertSpace={false}
           onClick={onAppendAction}
-          icon={
-            <PlusOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          icon={false}
+        >
+          {t('buttons.add')}
+        </Button>
       )}
 
       {actionList.includes('remove') && (
         <Button
           className="cursor-pointer"
-          color="red"
-          variant="outlined"
+          size="small"
           onClick={onRemoveAction}
-          icon={
-            <DeleteOutlined
-              style={{
-                fontSize: 12,
-              }}
-            />
-          }
-        />
+          autoInsertSpace={false}
+          style={{
+            color: '#FFFFFF',
+            background: '#E74C3C',
+            borderColor: '#E74C3C',
+          }}
+          icon={false}
+        >
+          {t('buttons.delete')}
+        </Button>
       )}
 
       {actionList.includes('copy') && (

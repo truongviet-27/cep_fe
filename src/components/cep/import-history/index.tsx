@@ -92,6 +92,9 @@ function ImportHistory() {
                 <Select.Option value="FAILED">
                   {t('import_history.text.status.FAILED')}
                 </Select.Option>
+                <Select.Option value="ERROR">
+                  {t('import_history.text.status.ERROR')}
+                </Select.Option>
               </Select>
             </Form.Item>
           </Col>

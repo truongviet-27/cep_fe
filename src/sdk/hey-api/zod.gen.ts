@@ -1296,6 +1296,7 @@ export const zProductPackaging = z.object({
  */
 export const zProductDetail = z.object({
   id: z.optional(z.int()),
+  resource: z.optional(z.enum(['merchandise', 'service'])),
   category: z.optional(
     z.object({
       id: z.optional(z.int()),
@@ -1372,6 +1373,7 @@ export const zStoreProductInput = z.object({
   cost_price: z.int(),
   selling_price: z.int(),
   tax_rate: z.optional(z.int()).default(0),
+  resource: z.optional(z.enum(['merchandise', 'service'])),
   note: z.optional(z.union([z.string(), z.null()])),
   packagings: z.optional(z.union([z.array(zProductPackagingInput), z.null()])),
 })
@@ -1389,6 +1391,7 @@ export const zUpdateProductInput = z.object({
   cost_price: z.optional(z.union([z.int(), z.null()])),
   selling_price: z.optional(z.union([z.int(), z.null()])),
   tax_rate: z.optional(z.union([z.int(), z.null()])),
+  resource: z.optional(z.enum(['merchandise', 'service'])),
   note: z.optional(z.union([z.string(), z.null()])),
   packagings: z.optional(z.union([z.array(zProductPackagingInput), z.null()])),
 })
@@ -1416,6 +1419,7 @@ export const zProduct = z.object({
  */
 export const zProductListItem = z.object({
   id: z.optional(z.int()),
+  resource: z.optional(z.enum(['merchandise', 'service'])),
   code: z.optional(z.string()),
   name: z.optional(z.string()),
   barcode: z.optional(z.string()),
@@ -1424,6 +1428,7 @@ export const zProductListItem = z.object({
   packaging_count: z.optional(z.int()),
   cost_price: z.optional(z.int()),
   sale_price: z.optional(z.int()),
+  is_sent_to_cmr: z.optional(z.int()),
 })
 
 /**
@@ -4011,6 +4016,7 @@ export const zProductControllerIndexData = z.object({
       _page: z.optional(z.int()).default(1),
       _per_page: z.optional(z.int()).default(10),
       category_id: z.optional(z.int()),
+      resource: z.optional(z.enum(['merchandise', 'service'])),
     }),
   ),
 })

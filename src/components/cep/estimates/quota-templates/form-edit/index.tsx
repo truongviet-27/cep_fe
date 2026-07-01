@@ -2,11 +2,12 @@ import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import { useGo, useTranslate } from '@refinedev/core'
+import { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Divider, Flex, Form, Space, Spin } from 'antd'
 import Link from 'next/link'
-import { type FC } from 'react'
+import { type FC, useRef, useState } from 'react'
 
 import BasicInfo from './basic-info'
 import { useController } from './controller'
@@ -18,6 +19,12 @@ import TagForm from './tag'
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
+
+  const isCategoryChangedByUserRef = useRef(false)
+  const [confirmedCategory, setConfirmedCategory] = useState<QuotaCategoryEnum>(
+    QuotaCategoryEnum.MERCHANDISE,
+  )
+
   const {
     isUpdateMode,
     isLoading,
@@ -76,9 +83,13 @@ const QuoteTemplateFormEditContainer: FC = () => {
             block: 'center',
           }}
         >
-          <BasicInfo />
-          <DetailInfo />
-          <OptionalInfo />
+          <BasicInfo isCategoryChangedByUserRef={isCategoryChangedByUserRef} />
+          <DetailInfo
+            isCategoryChangedByUserRef={isCategoryChangedByUserRef}
+            confirmedCategory={confirmedCategory}
+            onCategoryConfirmed={setConfirmedCategory}
+          />
+          <OptionalInfo confirmedCategory={confirmedCategory} />
           <NoteForm />
           <TagForm />
           <Divider />
