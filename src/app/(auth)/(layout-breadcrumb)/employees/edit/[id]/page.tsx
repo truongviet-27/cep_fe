@@ -40,13 +40,12 @@ export default function EmployeeEdit() {
 
   const codeRules: Rule[] = useMemo(
     () => [
-      { required: true, message: '社員コードは必須です。' },
       {
-        pattern: /^(?!-)(?!.*-$)[A-Z0-9-]+$/,
+        pattern: /^[A-Z0-9-]+$/,
         message:
-          '社員コードにはA〜Z の英字、0〜9 の数字、およびハイフン（-）のみ使用できます。先頭・末尾にハイフンは使えません。',
+          '社員コードにはA〜Z の英字、0〜9 の数字、およびハイフン（-）のみ使用できます',
       },
-      { max: 20, message: '最大20文字までです。' },
+      { max: 20, message: '最大32文字までです。' },
     ],
     [],
   )
@@ -163,7 +162,7 @@ export default function EmployeeEdit() {
         colon={false}
         autoComplete="off"
       >
-        <Form.Item label={boldText(t('employees.fields.code'))} required={true}>
+        <Form.Item label={boldText(t('employees.fields.code'))}>
           <div
             style={{
               display: 'flex',

@@ -61,11 +61,7 @@ export default function DepartmentEdit() {
   const codeRules: Rule[] = useMemo(
     () => [
       { required: true, message: '部門コードは必須です。' },
-      {
-        pattern: /^(?!-)(?!.*-$)[A-Z0-9-]+$/,
-        message:
-          '部門コードにはA〜Z の英字、0〜9 の数字、およびハイフン（-）のみ使用できます。先頭・末尾にハイフンは使えません。',
-      },
+      { pattern: /^[A-Z0-9-]+$/, message: 'A-Z, 0-9, - のみ使用できます。' },
       { max: 20, message: '最大20文字までです。' },
     ],
     [],
