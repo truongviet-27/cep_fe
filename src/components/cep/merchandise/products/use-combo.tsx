@@ -6,7 +6,7 @@ import {
   ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
-import type { HttpError } from '@refinedev/core'
+import type { CrudFilters, HttpError } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
 import { PermissionEnum, type ProductListItem } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
@@ -14,12 +14,56 @@ import { Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 interface ISearch {
   search: string
   category_id: string
   resource: string
+  is_sent_to_cmr?: number | string | null
+}
+
+const parseCmrStatusFilter = (
+  value: number | string | null | undefined,
+): number | null => {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+
+  const status = Number(value)
+  return [0, 1, 2].includes(status) ? status : null
+}
+
+// Shared by Search submit and CMR dropdown clear so filter logic stays in one place.
+const buildComboSearchFilters = (params: ISearch): CrudFilters => {
+  const cmrStatus = parseCmrStatusFilter(params.is_sent_to_cmr)
+
+  return [
+    {
+      field: 'category_id',
+      operator: 'eq',
+      value: params.category_id ?? null,
+    },
+    {
+      field: 'q',
+      operator: 'eq',
+      value: params.search ?? null,
+    },
+    {
+      field: 'resource',
+      operator: 'eq',
+      value: params.resource ?? null,
+    },
+    ...(cmrStatus === null
+      ? []
+      : [
+          {
+            field: 'is_sent_to_cmr',
+            operator: 'eq' as const,
+            value: cmrStatus,
+          },
+        ]),
+  ]
 }
 
 function useCombo() {
@@ -35,26 +79,67 @@ function useCombo() {
     pagination: { pageSize: 20 },
     resource: 'product-combos',
     filters: {},
-    onSearch: (params) => [
-      {
-        field: 'category_id',
-        operator: 'eq',
-        value: params.category_id ?? null,
-      },
-      {
-        field: 'q',
-        operator: 'eq',
-        value: params.search ?? null,
-      },
-      {
-        field: 'resource',
-        operator: 'eq',
-        value: params.resource ?? null,
-      },
-    ],
+    onSearch: (params) => buildComboSearchFilters(params),
   })
 
+  useEffect(() => {
+    const form = searchFormProps.form
+    if (!form) {
+      return
+    }
+
+    const raw = form.getFieldValue('is_sent_to_cmr')
+    if (raw === null || raw === undefined || raw === '') {
+      return
+    }
+
+    const status = Number(raw)
+    if ([0, 1, 2].includes(status)) {
+      if (raw !== status) {
+        form.setFieldValue('is_sent_to_cmr', status)
+      }
+      return
+    }
+
+    form.setFieldValue('is_sent_to_cmr', undefined)
+  }, [searchFormProps.form])
+
+  const clearCmrFilterAndSearch = useCallback(() => {
+    const form = searchFormProps.form
+    if (!form) {
+      return
+    }
+
+    form.setFieldValue('is_sent_to_cmr', undefined)
+    const values = form.getFieldsValue() as ISearch
+    setFilters(
+      buildComboSearchFilters({ ...values, is_sent_to_cmr: undefined }),
+      'replace',
+    )
+  }, [searchFormProps.form, setFilters])
+
   const columns = useMemo(() => {
+    const cmrStatusMeta: Record<
+      number,
+      { label: string; color: string; backgroundColor: string }
+    > = {
+      0: {
+        label: t('products.list.table.text.cmrNotLinked', 'CMR Not Linked'),
+        color: '#FF0000',
+        backgroundColor: '#FFDFDF',
+      },
+      1: {
+        label: t('products.list.table.text.cmrInitiated', 'CMR連携開始'),
+        color: '#666666',
+        backgroundColor: '#E2E2E2',
+      },
+      2: {
+        label: t('products.list.table.text.cmrLinked', 'CMR Linked'),
+        color: '#0066CC',
+        backgroundColor: '#DAEDFF',
+      },
+    }
+
     const baseColumns = [
       {
         title: t('product_combos.list.table.headers.image'),
@@ -82,15 +167,39 @@ function useCombo() {
         key: 'code',
         width: 140,
         render: (_: unknown, record: ProductListItem) => (
-          <Link
-            href={`/product-combos/show/${record.id}`}
-            onClick={() => {
-              sessionStorage.setItem('list_products', 'products')
-            }}
-            className="!underline underline-offset-4"
-          >
-            {record.code}
-          </Link>
+          <div>
+            <Link
+              href={`/product-combos/show/${record.id}`}
+              onClick={() => {
+                sessionStorage.setItem('list_products', 'products')
+              }}
+              className="!underline underline-offset-4"
+            >
+              {record.code}
+            </Link>
+            {(() => {
+              const status = Number(record.is_sent_to_cmr ?? 0)
+              const { label, color, backgroundColor } =
+                cmrStatusMeta[status] ?? cmrStatusMeta[0]
+
+              return (
+                <span
+                  style={{
+                    display: 'inline-block',
+                    marginTop: 6,
+                    padding: '2px 8px',
+                    borderRadius: 4,
+                    fontSize: 12,
+                    lineHeight: '16px',
+                    color,
+                    backgroundColor,
+                  }}
+                >
+                  {label}
+                </span>
+              )
+            })()}
+          </div>
         ),
       },
       {
@@ -268,7 +377,7 @@ function useCombo() {
       tableProps,
       searchFormProps,
     },
-    { t, setFilters },
+    { t, setFilters, clearCmrFilterAndSearch },
   ] as const
 }
 
