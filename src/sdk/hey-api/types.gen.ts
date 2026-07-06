@@ -2061,6 +2061,10 @@ export type ProductDetail = {
   selling_price?: number
   tax_rate?: number
   note?: string | null
+  /**
+   * CMR sync status (0: not linked, 1: initiated, 2: linked)
+   */
+  is_sent_to_cmr?: number
   author?: {
     id?: number
     name?: string
@@ -2240,7 +2244,7 @@ export type ProductListItem = {
   packaging_count?: number
   cost_price?: number
   sale_price?: number
-  is_sent_to_cmr?: number
+  is_sent_to_cmr?: number | null
 }
 
 /**
@@ -7487,6 +7491,10 @@ export type ProductControllerIndexData = {
      * Filter by resource type: 物販 (merchandise) or 役務 (service)
      */
     resource?: 'merchandise' | 'service'
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/products'
 }
@@ -7572,6 +7580,10 @@ export type ProductControllerListAllData = {
      * Filter by category id
      */
     category_id?: number
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/products/list-all'
 }
@@ -7616,6 +7628,10 @@ export type ProductControllerExportCsvData = {
      * Filter by category id
      */
     category_id?: number
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/products/export-csv'
 }
@@ -8346,6 +8362,10 @@ export type ProductComboControllerIndexData = {
      * Filter by category id
      */
     category_id?: number
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/product-combos'
 }
