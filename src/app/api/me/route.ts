@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
     const cepId = getOrgFromToken(accessToken)?.id
 
-    const xTenant = (cepId || clientTenantId) as string | undefined
+    const xTenant = (clientTenantId || cepId) as string | undefined
 
     const headers: HeaderType = {
       Authorization: `Bearer ${accessToken}`,
