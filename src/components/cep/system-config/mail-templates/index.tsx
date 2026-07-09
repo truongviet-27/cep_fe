@@ -49,6 +49,7 @@ function MailTemplate() {
           [`title_${indexTab}`]: data?.title,
           [`content_${indexTab}`]: data?.body,
           [`signature_${indexTab}`]: data?.signature,
+          ...(indexTab === 1 ? { pdf_file_name_1: data?.pdf_file_name } : {}),
         }}
       >
         <TabsEmailTemplate
@@ -77,6 +78,9 @@ function MailTemplate() {
                           ),
                           [`signature_${indexTab}`]: t(
                             'mail_templates.form.signature.content',
+                          ),
+                          [`pdf_file_name_${indexTab}`]: t(
+                            'mail_templates.form.pdfFileNameDefault',
                           ),
                         }
                       : {
