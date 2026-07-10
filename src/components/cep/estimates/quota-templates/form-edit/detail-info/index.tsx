@@ -78,6 +78,12 @@ const DetailInfo: FC<Props> = ({
 
     if (watchedCategoryValue === previousCategoryRef.current) return
 
+    const emptyGroup = {
+      name: '',
+      kind: 'group',
+      quantity: 1,
+    }
+
     const emptyRow = {
       product_id: undefined,
       package_id: undefined,
@@ -95,8 +101,8 @@ const DetailInfo: FC<Props> = ({
 
     const clearProducts = () => {
       form.setFieldsValue({
-        main_product: [emptyRow],
-        optional_product: [{ ...emptyRow }],
+        main_product: [emptyGroup, emptyRow],
+        optional_product: [emptyGroup, { ...emptyRow }],
       })
     }
 
