@@ -1635,6 +1635,10 @@ export type MailTemplate = {
    * Email signature
    */
   signature?: string
+  /**
+   * Attached PDF file name
+   */
+  pdf_file_name?: string
 }
 
 /**
@@ -2244,7 +2248,7 @@ export type ProductListItem = {
   packaging_count?: number
   cost_price?: number
   sale_price?: number
-  is_sent_to_cmr?: number
+  is_sent_to_cmr?: number | null
 }
 
 /**
@@ -6945,6 +6949,7 @@ export type MailTemplateControllerStoreData = {
     title: string
     body: string
     signature: string
+    pdf_file_name?: string
   }
   path?: never
   query?: never

@@ -1008,6 +1008,7 @@ export const zMailTemplate = z.object({
   title: z.optional(z.string()),
   body: z.optional(z.string()),
   signature: z.optional(z.string()),
+  pdf_file_name: z.optional(z.string()),
 })
 
 /**
@@ -1429,7 +1430,7 @@ export const zProductListItem = z.object({
   packaging_count: z.optional(z.int()),
   cost_price: z.optional(z.int()),
   sale_price: z.optional(z.int()),
-  is_sent_to_cmr: z.optional(z.int()),
+  is_sent_to_cmr: z.optional(z.union([z.int(), z.null()])),
 })
 
 /**
@@ -3755,6 +3756,7 @@ export const zMailTemplateControllerStoreData = z.object({
     title: z.string(),
     body: z.string(),
     signature: z.string(),
+    pdf_file_name: z.optional(z.string()),
   }),
   path: z.optional(z.never()),
   query: z.optional(z.never()),
