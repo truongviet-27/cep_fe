@@ -155,6 +155,20 @@ export const useController = () => {
     calculateSummary()
   }, [mainProducts, taxRateWatch, consumptionTaxWatch, taxRoundingMethodWatch])
 
+  useEffect(() => {
+    if (mainProducts && Array.isArray(mainProducts)) {
+      const updatedList = mainProducts.map((item: any, index: number) => {
+        if (item.display_order !== index + 1) {
+          return { ...item, display_order: index + 1 }
+        }
+        return item
+      })
+      if (JSON.stringify(updatedList) !== JSON.stringify(mainProducts)) {
+        form.setFieldsValue({ main_product: updatedList })
+      }
+    }
+  }, [mainProducts, form])
+
   return {
     form,
     mainProducts,
