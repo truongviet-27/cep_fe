@@ -27,8 +27,8 @@ function History({ data }: { data: any }) {
       },
       {
         title: t('quotas.show.table.process_date'),
-        dataIndex: 'date',
-        key: 'date',
+        dataIndex: 'created_at',
+        key: 'created_at',
         render(value) {
           return dayjs(value).format(FORMAT_DATE_CROSS)
         },
