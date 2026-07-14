@@ -44,7 +44,7 @@ import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { BLACK, PRIMARY, WHITE } from '@utility/color'
-import { FORMAT_DATE_CROSS } from '@utility/instances'
+import { FORMAT_DATE_CROSS, FORMAT_DATE_TIME_CROSS } from '@utility/instances'
 import {
   Button,
   Col,
@@ -222,7 +222,7 @@ function QuotaList() {
               </Tag>
               {record.latest_approval_comment?.comment && (
                 <Tooltip
-                  title={`${record.latest_approval_comment?.approver_name} (${dayjs(record.latest_approval_comment?.update_at).format('YYYY/MM/DD')}) : ${record.latest_approval_comment?.comment}`}
+                  title={`${record.latest_approval_comment?.approver_name} (${dayjs(record.latest_approval_comment?.updated_at).format(FORMAT_DATE_TIME_CROSS)}) : ${record.latest_approval_comment?.comment}`}
                 >
                   <CommentOutlined
                     style={{
