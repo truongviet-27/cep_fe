@@ -222,7 +222,7 @@ function QuotaList() {
               </Tag>
               {record.latest_approval_comment?.comment && (
                 <Tooltip
-                  title={`${record.latest_approval_comment?.approver_name} (${dayjs(record.latest_approval_comment?.updated_at).format('YYYY/MM/DD')}) : ${record.latest_approval_comment?.comment}`}
+                  title={`${record.latest_approval_comment?.approver_name} (${dayjs(record.latest_approval_comment?.update_at).format('YYYY/MM/DD')}) : ${record.latest_approval_comment?.comment}`}
                 >
                   <CommentOutlined
                     style={{
