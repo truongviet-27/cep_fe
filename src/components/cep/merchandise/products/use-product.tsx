@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { PictureOutlined } from '@ant-design/icons'
+import { resolveCmrStatusBadge } from '@components/cep/merchandise/products/cmr-status'
 import {
   ProductResourceEnum,
   ProductResourceLabelKey,
@@ -166,28 +167,6 @@ function useProduct() {
   }, [mutate, selectedRows, apiUrl, t, tableQuery])
 
   const columns = useMemo(() => {
-    // CMR sync state is now int-based (0/1/2) and rendered below product code in list.
-    const cmrStatusMeta: Record<
-      number,
-      { label: string; color: string; backgroundColor: string }
-    > = {
-      0: {
-        label: t('products.list.table.text.cmrNotLinked', 'CMR Not Linked'),
-        color: '#FF0000',
-        backgroundColor: '#FFDFDF',
-      },
-      1: {
-        label: t('products.list.table.text.cmrInitiated', 'CMR連携開始'),
-        color: '#666666',
-        backgroundColor: '#E2E2E2',
-      },
-      2: {
-        label: t('products.list.table.text.cmrLinked', 'CMR Linked'),
-        color: '#0066CC',
-        backgroundColor: '#DAEDFF',
-      },
-    }
-
     const baseColumns = [
       {
         title: t('products.list.table.headers.image'),
@@ -281,9 +260,11 @@ function useProduct() {
               {record.code}
             </Link>
             {(() => {
-              const status = Number(record.is_sent_to_cmr ?? 0)
-              const { label, color, backgroundColor } =
-                cmrStatusMeta[status] ?? cmrStatusMeta[0]
+              const { label, color, backgroundColor } = resolveCmrStatusBadge(
+                record.resource,
+                record.is_sent_to_cmr,
+                t,
+              )
 
               return (
                 <span
