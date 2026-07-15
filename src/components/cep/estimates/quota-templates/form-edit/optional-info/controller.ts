@@ -4,10 +4,25 @@ import { getDefaultTaxRate } from '@components/cep/estimates/quotas/utils'
 import type { QuotaTemplateFormType } from '@interfaces/quota-templates'
 import type { ProductListItem } from '@sdk/hey-api'
 import { Form } from 'antd'
+import { useEffect } from 'react'
 
 export const useController = () => {
   const form = Form.useFormInstance<QuotaTemplateFormType>()
   const optionalProducts = Form.useWatch('optional_product', form)
+
+  useEffect(() => {
+    if (optionalProducts && Array.isArray(optionalProducts)) {
+      const updatedList = optionalProducts.map((item: any, index: number) => {
+        if (item.display_order !== index + 1) {
+          return { ...item, display_order: index + 1 }
+        }
+        return item
+      })
+      if (JSON.stringify(updatedList) !== JSON.stringify(optionalProducts)) {
+        form.setFieldsValue({ optional_product: updatedList })
+      }
+    }
+  }, [optionalProducts, form])
 
   const handleAddProduct = (index: number, isSelfCreate = false) => {
     const values = [...(form.getFieldValue('optional_product') || [])]
