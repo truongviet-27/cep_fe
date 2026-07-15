@@ -6,6 +6,7 @@ import {
   ProductResourceEnum,
   ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
+import { useIsCmrLinked } from '@components/cep/merchandise/products/use-is-cmr-linked'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { CrudFilters, HttpError } from '@refinedev/core'
 import { useTranslate } from '@refinedev/core'
@@ -69,6 +70,7 @@ const buildComboSearchFilters = (params: ISearch): CrudFilters => {
 
 function useCombo() {
   const t = useTranslate()
+  const isCmrLinked = useIsCmrLinked()
   const { hasFullAccessModule } = useUserStore.getState()
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
 
@@ -157,30 +159,31 @@ function useCombo() {
             >
               {record.code}
             </Link>
-            {(() => {
-              const { label, color, backgroundColor } = resolveCmrStatusBadge(
-                record.resource,
-                record.is_sent_to_cmr,
-                t,
-              )
+            {isCmrLinked &&
+              (() => {
+                const { label, color, backgroundColor } = resolveCmrStatusBadge(
+                  record.resource,
+                  record.is_sent_to_cmr,
+                  t,
+                )
 
-              return (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    marginTop: 6,
-                    padding: '2px 8px',
-                    borderRadius: 4,
-                    fontSize: 12,
-                    lineHeight: '16px',
-                    color,
-                    backgroundColor,
-                  }}
-                >
-                  {label}
-                </span>
-              )
-            })()}
+                return (
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      marginTop: 6,
+                      padding: '2px 8px',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      lineHeight: '16px',
+                      color,
+                      backgroundColor,
+                    }}
+                  >
+                    {label}
+                  </span>
+                )
+              })()}
           </div>
         ),
       },
@@ -350,7 +353,7 @@ function useCombo() {
         },
       }
     }) as ColumnsType
-  }, [t])
+  }, [t, isCmrLinked])
 
   return [
     {
