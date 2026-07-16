@@ -22,7 +22,7 @@ const getTenantForSuperAdmin = async () => {
 
     const API_URL =
       process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8001/api/v1'
-    const res = await fetch(`${API_URL}/tenants/`, {
+    const res = await fetch(`${API_URL}/tenants?oldest=true`, {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: 'no-store',
     })
