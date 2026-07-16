@@ -151,10 +151,24 @@ function useProduct() {
         },
         method: 'delete',
         url: `${apiUrl}/products`,
-        successNotification: () => ({
-          message: t('notifications.success'),
-          description: t('notifications.success'),
-          type: 'success' as const,
+        successNotification: (data) => {
+          const apiMessage =
+            (data as { message?: string } | undefined)?.message ??
+            (data as { data?: { message?: string } } | undefined)?.data?.message
+
+          return {
+            message: apiMessage || t('notifications.success'),
+            type: 'success' as const,
+          }
+        },
+        errorNotification: (error) => ({
+          message:
+            (error as { message?: string })?.message ||
+            t('notifications.deleteError'),
+          description:
+            (error as { message?: string })?.message ||
+            t('notifications.deleteError'),
+          type: 'error' as const,
         }),
       },
       {
@@ -237,14 +251,15 @@ function useProduct() {
         width: '11%',
         onCell: () => ({
           style: {
-            padding: '2px 2px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            padding: '8px 12px',
+            // Allow CMR badge to wrap under code (do not clip with nowrap/overflow).
+            overflow: 'visible',
+            whiteSpace: 'normal',
+            verticalAlign: 'middle',
           },
         }),
         render: (_: unknown, record: ProductListItem) => (
-          <div>
+          <div style={{ minWidth: 0 }}>
             <Link
               href={`/products/show/${record.id}`}
               onClick={() => {
@@ -280,6 +295,7 @@ function useProduct() {
                       lineHeight: '16px',
                       color,
                       backgroundColor,
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {label}
@@ -480,6 +496,15 @@ function useProduct() {
                 icon={null}
                 recordItemId={record.id}
                 resource="products"
+                errorNotification={(error) => ({
+                  message:
+                    (error as { message?: string })?.message ||
+                    t('notifications.deleteError'),
+                  description:
+                    (error as { message?: string })?.message ||
+                    t('notifications.deleteError'),
+                  type: 'error',
+                })}
                 style={{
                   color: '#FFFFFF',
                   background: '#E74C3C',

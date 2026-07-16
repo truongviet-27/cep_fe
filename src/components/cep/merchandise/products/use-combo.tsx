@@ -300,6 +300,15 @@ function useCombo() {
                 autoInsertSpace={false}
                 recordItemId={record.id}
                 resource={'product-combos'}
+                errorNotification={(error) => ({
+                  message:
+                    (error as { message?: string })?.message ||
+                    t('notifications.deleteError'),
+                  description:
+                    (error as { message?: string })?.message ||
+                    t('notifications.deleteError'),
+                  type: 'error',
+                })}
                 style={{
                   color: '#FFFFFF',
                   background: '#E74C3C',
