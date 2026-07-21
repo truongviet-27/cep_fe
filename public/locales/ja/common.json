@@ -722,6 +722,7 @@
       "titlePassword": "【見積書パスワードのご案内】[[自社名]]",
       "pdfFileName": "PDFファイル名",
       "pdfFileNameDefault": "見積書.pdf",
+      "documentType": "書類",
       "quotationMailTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n添付にてお見積書をお送りいたします。\nご確認のほどよろしくお願いいたします。\nご不明点等ございましたらお気軽にお申し付けください。",
       "quotationPasswordTemplate": "[[取引先会社名]]\n[[取引先部署名]]\n[[取引先担当者名]] 様\n\nいつもお世話になっております。\n[[自社名]]の[[自社担当者名]]です。\n\n先ほどお送りしたお見積書のパスワードをお知らせいたします。\nパスワードは下記の通りです。\n\n[[パスワード]]\n\nよろしくお願いいたします。",
       "signature": {
@@ -754,7 +755,10 @@
     "buttons": {
       "edit": "編集",
       "back": "戻る",
-      "resetDefault": "初期設定に戻す"
+      "resetDefault": "初期設定に戻す",
+      "changePdfFileName": "PDFファイル名変更",
+      "close": "閉じる",
+      "change": "変更"
     },
     "popup": {
       "reset": {
@@ -765,6 +769,11 @@
       },
       "cancel": {
         "message": "データをリセットしてもよろしいですか？"
+      },
+      "pdfFileName": {
+        "title": "PDFファイル名変更",
+        "successMessage": "PDFファイル名を変更しました。",
+        "errorMessage": "PDFファイル名の変更に失敗しました。"
       }
     },
     "validation": {

@@ -1,4 +1,5 @@
 import { RightOutlined } from '@ant-design/icons'
+import PdfFileNameModal from '@components/cep/system-config/mail-templates/pdf-file-name-modal'
 import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs'
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
 import PageContainer from '@components/common/page-container'
@@ -7,6 +8,7 @@ import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Form, Popconfirm } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
+import { useState } from 'react'
 
 function MailTemplate() {
   const [
@@ -26,6 +28,8 @@ function MailTemplate() {
   const { formProps, form, saveButtonProps } = methods
   const { resetFields } = form
 
+  const [openPdfFileNameModal, setOpenPdfFileNameModal] = useState(false)
+
   return (
     <PageContainer
       breadcrumbs={
@@ -42,14 +46,26 @@ function MailTemplate() {
         />
       }
       title={t('mail_templates.mail_templates')}
+      extra={
+        <Button
+          type="primary"
+          onClick={() => setOpenPdfFileNameModal(true)}
+          autoInsertSpace={false}
+        >
+          {t('mail_templates.buttons.changePdfFileName')}
+        </Button>
+      }
     >
+      <PdfFileNameModal
+        open={openPdfFileNameModal}
+        onClose={() => setOpenPdfFileNameModal(false)}
+      />
       <Form
         {...formProps}
         initialValues={{
           [`title_${indexTab}`]: data?.title,
           [`content_${indexTab}`]: data?.body,
           [`signature_${indexTab}`]: data?.signature,
-          ...(indexTab === 1 ? { pdf_file_name_1: data?.pdf_file_name } : {}),
         }}
       >
         <TabsEmailTemplate
@@ -78,9 +94,6 @@ function MailTemplate() {
                           ),
                           [`signature_${indexTab}`]: t(
                             'mail_templates.form.signature.content',
-                          ),
-                          [`pdf_file_name_${indexTab}`]: t(
-                            'mail_templates.form.pdfFileNameDefault',
                           ),
                         }
                       : {
