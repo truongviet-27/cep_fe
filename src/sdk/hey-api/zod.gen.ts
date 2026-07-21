@@ -3734,6 +3734,57 @@ export const zImportControllerGetImportHistoryResponse = z.object({
   ),
 })
 
+export const zMailTemplateControllerGetPdfFileNameSettingsData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * PDF file name settings retrieved successfully
+ */
+export const zMailTemplateControllerGetPdfFileNameSettingsResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.array(
+      z.object({
+        code: z.optional(z.string()),
+        label: z.optional(z.string()),
+        pdf_file_name: z.optional(z.union([z.string(), z.null()])),
+      }),
+    ),
+  ),
+})
+
+export const zMailTemplateControllerUpdatePdfFileNamesData = z.object({
+  body: z.object({
+    items: z.array(
+      z.object({
+        code: z.optional(z.string()),
+        pdf_file_name: z.optional(z.string()),
+      }),
+    ),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * PDF file name settings updated successfully
+ */
+export const zMailTemplateControllerUpdatePdfFileNamesResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.array(
+      z.object({
+        code: z.optional(z.string()),
+        label: z.optional(z.string()),
+        pdf_file_name: z.optional(z.union([z.string(), z.null()])),
+      }),
+    ),
+  ),
+})
+
 export const zMailTemplateControllerShowByCodeData = z.object({
   body: z.optional(z.never()),
   path: z.object({

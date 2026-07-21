@@ -1,8 +1,7 @@
 import { MailFilled } from '@ant-design/icons'
 import TabsContent from '@components/cep/system-config/mail-templates/tabs/content'
 import { useTranslate } from '@refinedev/core'
-import boldText from '@utility/bold-text'
-import { Card, Form, Input, Tabs } from 'antd'
+import { Card, Tabs } from 'antd'
 import { useMemo } from 'react'
 
 function TabsEmailTemplate({
@@ -121,54 +120,6 @@ function TabsEmailTemplate({
                 loading={isLoading}
               />
             </Card>
-
-            <Form.Item
-              layout="horizontal"
-              name="pdf_file_name_1"
-              label={boldText(t('mail_templates.form.pdfFileName'))}
-              colon
-              required={isEdit}
-              labelCol={{ flex: '0 0 auto', style: { whiteSpace: 'nowrap' } }}
-              wrapperCol={{ flex: '1 1 auto' }}
-              style={{ marginTop: '16px', alignItems: 'center' }}
-              className="pdf-file-name-item"
-              rules={
-                isEdit
-                  ? [
-                      {
-                        required: true,
-                        message: t(
-                          'mail_templates.validation.pdfFileName.required',
-                        ),
-                      },
-                      {
-                        max: 255,
-                        message: t(
-                          'mail_templates.validation.pdfFileName.max255',
-                        ),
-                      },
-                      {
-                        pattern: /^(?!\s*$).+/,
-                        message: t(
-                          'mail_templates.validation.pdfFileName.notBlank',
-                        ),
-                      },
-                      {
-                        pattern: /\.pdf$/i,
-                        message: t(
-                          'mail_templates.validation.pdfFileName.invalidExtension',
-                        ),
-                      },
-                    ]
-                  : []
-              }
-            >
-              <Input
-                variant={isEdit ? 'outlined' : 'borderless'}
-                readOnly={!isEdit}
-                name="pdf_file_name_1"
-              />
-            </Form.Item>
           </>
         ),
       },

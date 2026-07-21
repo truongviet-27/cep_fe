@@ -9,11 +9,13 @@ const PageContainer = ({
   breadcrumbs,
   children,
   loading = false,
+  extra,
 }: {
   title?: string | ReactNode
   breadcrumbs?: ReactNode
   children: ReactNode
   loading?: boolean
+  extra?: ReactNode
 }) => {
   return (
     <div className="h-full w-full overflow-hidden">
@@ -31,7 +33,10 @@ const PageContainer = ({
       >
         <div>
           {title ? (
-            <div className="mb-3">{boldText(title, PRIMARY, 18)}</div>
+            <div className="mb-3 flex items-center justify-between">
+              {boldText(title, PRIMARY, 18)}
+              {extra}
+            </div>
           ) : null}
           <Spin
             style={{

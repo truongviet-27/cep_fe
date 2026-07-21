@@ -6,7 +6,6 @@ type Form = {
   title_1: string
   content_1: string
   signature_1: string
-  pdf_file_name_1: string
   title_2: string
   content_2: string
   signature_2: string
@@ -58,9 +57,6 @@ function useMailTemplates() {
               title: values[`title_${indexTab}`],
               body: values[`content_${indexTab}`],
               signature: values[`signature_${indexTab}`],
-              ...(indexTab === 1
-                ? { pdf_file_name: values.pdf_file_name_1 }
-                : {}),
             },
           },
           {
@@ -82,7 +78,6 @@ function useMailTemplates() {
         [`title_${indexTab}`]: data.data.title,
         [`content_${indexTab}`]: data.data.body,
         [`signature_${indexTab}`]: data.data.signature,
-        ...(indexTab === 1 ? { pdf_file_name_1: data.data.pdf_file_name } : {}),
       })
     }
   }, [data, indexTab])

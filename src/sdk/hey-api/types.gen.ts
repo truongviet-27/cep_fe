@@ -6905,6 +6905,75 @@ export type ImportControllerGetImportHistoryResponses = {
 export type ImportControllerGetImportHistoryResponse =
   ImportControllerGetImportHistoryResponses[keyof ImportControllerGetImportHistoryResponses]
 
+export type MailTemplateControllerGetPdfFileNameSettingsData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/mail-templates/pdf-file-names'
+}
+
+export type MailTemplateControllerGetPdfFileNameSettingsResponses = {
+  /**
+   * PDF file name settings retrieved successfully
+   */
+  200: {
+    message?: string
+    data?: Array<{
+      code?: string
+      label?: string
+      pdf_file_name?: string | null
+    }>
+  }
+}
+
+export type MailTemplateControllerGetPdfFileNameSettingsResponse =
+  MailTemplateControllerGetPdfFileNameSettingsResponses[keyof MailTemplateControllerGetPdfFileNameSettingsResponses]
+
+export type MailTemplateControllerUpdatePdfFileNamesData = {
+  body: {
+    items: Array<{
+      code?: string
+      pdf_file_name?: string
+    }>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/mail-templates/pdf-file-names'
+}
+
+export type MailTemplateControllerUpdatePdfFileNamesErrors = {
+  /**
+   * Validation error
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type MailTemplateControllerUpdatePdfFileNamesError =
+  MailTemplateControllerUpdatePdfFileNamesErrors[keyof MailTemplateControllerUpdatePdfFileNamesErrors]
+
+export type MailTemplateControllerUpdatePdfFileNamesResponses = {
+  /**
+   * PDF file name settings updated successfully
+   */
+  200: {
+    message?: string
+    data?: Array<{
+      code?: string
+      label?: string
+      pdf_file_name?: string | null
+    }>
+  }
+}
+
+export type MailTemplateControllerUpdatePdfFileNamesResponse =
+  MailTemplateControllerUpdatePdfFileNamesResponses[keyof MailTemplateControllerUpdatePdfFileNamesResponses]
+
 export type MailTemplateControllerShowByCodeData = {
   body?: never
   path: {
