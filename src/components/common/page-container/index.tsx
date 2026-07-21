@@ -34,8 +34,10 @@ const PageContainer = ({
         <div>
           {title ? (
             <div className="mb-3 flex items-center justify-between">
-              {boldText(title, PRIMARY, 18)}
-              {extra}
+              <div className="min-w-0 flex-1">
+                {boldText(title, PRIMARY, 18)}
+              </div>
+              {extra ? <div className="shrink-0">{extra}</div> : null}
             </div>
           ) : null}
           <Spin

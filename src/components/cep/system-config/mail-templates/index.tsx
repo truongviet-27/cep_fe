@@ -48,7 +48,8 @@ function MailTemplate() {
       title={t('mail_templates.mail_templates')}
       extra={
         <Button
-          type="primary"
+          color="primary"
+          variant="outlined"
           onClick={() => setOpenPdfFileNameModal(true)}
           autoInsertSpace={false}
         >

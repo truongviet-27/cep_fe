@@ -1,3 +1,4 @@
+import CommonTable from '@components/common/table'
 import {
   useApiUrl,
   useCustom,
@@ -7,7 +8,7 @@ import {
 } from '@refinedev/core'
 import type { MailTemplateControllerGetPdfFileNameSettingsResponses } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
-import { Form, Input, Modal, Table } from 'antd'
+import { Form, Input, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -155,12 +156,13 @@ function PdfFileNameModal({
       width={600}
     >
       <Form form={form} component={false}>
-        <Table<PdfFileNameItem>
+        <CommonTable<PdfFileNameItem>
           rowKey="code"
           dataSource={items}
           columns={columns}
           pagination={false}
           loading={isFetching}
+          size="middle"
         />
       </Form>
     </Modal>
