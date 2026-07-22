@@ -26,6 +26,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (/[ ]/.test(name)) {
+      return NextResponse.json(
+        { error: '検索文字列に半角スペースを含めることはできません。' },
+        { status: 400 },
+      )
+    }
+
     const fullWidthName = moji(name).convert('HE', 'ZE').toString()
 
     const params = new URLSearchParams({
