@@ -64,14 +64,21 @@ const App = (props: React.PropsWithChildren) => {
         return
       }
 
+      const content =
+        typeof text === 'string' ? (
+          <span style={{ whiteSpace: 'pre-line' }}>{text}</span>
+        ) : (
+          text
+        )
+
       if (type !== 'progress') {
         notification[type]({
-          message: text,
+          message: content,
           key,
         })
       } else {
         notification.info({
-          message: text,
+          message: content,
           key,
         })
       }

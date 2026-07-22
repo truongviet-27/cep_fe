@@ -178,6 +178,9 @@ function useProduct() {
           setIsOpenManyDelete(false)
           tableQuery.refetch()
         },
+        onError: () => {
+          setIsOpenManyDelete(false)
+        },
       },
     )
   }, [mutate, selectedRows, apiUrl, t, tableQuery])
