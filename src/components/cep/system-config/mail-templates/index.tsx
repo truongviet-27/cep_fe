@@ -4,6 +4,7 @@ import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
 import PageContainer from '@components/common/page-container'
 import { EditButton } from '@refinedev/antd'
+import { useCan } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Form, Popconfirm } from 'antd'
@@ -30,6 +31,11 @@ function MailTemplate() {
 
   const [openPdfFileNameModal, setOpenPdfFileNameModal] = useState(false)
 
+  const { data: canEdit } = useCan({
+    resource: 'mail-templates',
+    action: 'edit',
+  })
+
   return (
     <PageContainer
       breadcrumbs={
@@ -51,6 +57,7 @@ function MailTemplate() {
           color="primary"
           variant="outlined"
           onClick={() => setOpenPdfFileNameModal(true)}
+          disabled={!canEdit?.can}
           autoInsertSpace={false}
         >
           {t('mail_templates.buttons.changePdfFileName')}
