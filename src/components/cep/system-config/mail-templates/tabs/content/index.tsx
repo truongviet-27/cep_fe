@@ -75,7 +75,7 @@ function TabsContent({
       <Spin size={'large'} />
     </div>
   ) : (
-    <>
+    <div className="mail-template-content">
       <Form.Item
         layout="vertical"
         name={`title_${index}`}
@@ -209,7 +209,7 @@ function TabsContent({
           onFocus={(e) => onFocus(e, `signature_${index}`)}
         />
       </Form.Item>
-    </>
+    </div>
   )
 }
 

@@ -1635,6 +1635,10 @@ export type MailTemplate = {
    * Email signature
    */
   signature?: string
+  /**
+   * Attached PDF file name
+   */
+  pdf_file_name?: string
 }
 
 /**
@@ -2061,6 +2065,10 @@ export type ProductDetail = {
   selling_price?: number
   tax_rate?: number
   note?: string | null
+  /**
+   * CMR sync status (0: not linked, 1: initiated, 2: linked)
+   */
+  is_sent_to_cmr?: number
   author?: {
     id?: number
     name?: string
@@ -2240,7 +2248,7 @@ export type ProductListItem = {
   packaging_count?: number
   cost_price?: number
   sale_price?: number
-  is_sent_to_cmr?: number
+  is_sent_to_cmr?: number | null
 }
 
 /**
@@ -6897,6 +6905,75 @@ export type ImportControllerGetImportHistoryResponses = {
 export type ImportControllerGetImportHistoryResponse =
   ImportControllerGetImportHistoryResponses[keyof ImportControllerGetImportHistoryResponses]
 
+export type MailTemplateControllerGetPdfFileNameSettingsData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/mail-templates/pdf-file-names'
+}
+
+export type MailTemplateControllerGetPdfFileNameSettingsResponses = {
+  /**
+   * PDF file name settings retrieved successfully
+   */
+  200: {
+    message?: string
+    data?: Array<{
+      code?: string
+      label?: string
+      pdf_file_name?: string | null
+    }>
+  }
+}
+
+export type MailTemplateControllerGetPdfFileNameSettingsResponse =
+  MailTemplateControllerGetPdfFileNameSettingsResponses[keyof MailTemplateControllerGetPdfFileNameSettingsResponses]
+
+export type MailTemplateControllerUpdatePdfFileNamesData = {
+  body: {
+    items: Array<{
+      code?: string
+      pdf_file_name?: string
+    }>
+  }
+  path?: never
+  query?: never
+  url: '/api/v1/mail-templates/pdf-file-names'
+}
+
+export type MailTemplateControllerUpdatePdfFileNamesErrors = {
+  /**
+   * Validation error
+   */
+  422: {
+    status?: boolean
+    message?: string
+    errors?: {
+      [key: string]: unknown
+    }
+  }
+}
+
+export type MailTemplateControllerUpdatePdfFileNamesError =
+  MailTemplateControllerUpdatePdfFileNamesErrors[keyof MailTemplateControllerUpdatePdfFileNamesErrors]
+
+export type MailTemplateControllerUpdatePdfFileNamesResponses = {
+  /**
+   * PDF file name settings updated successfully
+   */
+  200: {
+    message?: string
+    data?: Array<{
+      code?: string
+      label?: string
+      pdf_file_name?: string | null
+    }>
+  }
+}
+
+export type MailTemplateControllerUpdatePdfFileNamesResponse =
+  MailTemplateControllerUpdatePdfFileNamesResponses[keyof MailTemplateControllerUpdatePdfFileNamesResponses]
+
 export type MailTemplateControllerShowByCodeData = {
   body?: never
   path: {
@@ -6941,6 +7018,7 @@ export type MailTemplateControllerStoreData = {
     title: string
     body: string
     signature: string
+    pdf_file_name?: string
   }
   path?: never
   query?: never
@@ -7487,6 +7565,10 @@ export type ProductControllerIndexData = {
      * Filter by resource type: 物販 (merchandise) or 役務 (service)
      */
     resource?: 'merchandise' | 'service'
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/products'
 }
@@ -7572,6 +7654,10 @@ export type ProductControllerListAllData = {
      * Filter by category id
      */
     category_id?: number
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/products/list-all'
 }
@@ -7616,6 +7702,10 @@ export type ProductControllerExportCsvData = {
      * Filter by category id
      */
     category_id?: number
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/products/export-csv'
 }
@@ -8346,6 +8436,10 @@ export type ProductComboControllerIndexData = {
      * Filter by category id
      */
     category_id?: number
+    /**
+     * Filter by CMR sync status (0: not linked, 1: initiated, 2: linked)
+     */
+    is_sent_to_cmr?: 0 | 1 | 2
   }
   url: '/api/v1/product-combos'
 }
