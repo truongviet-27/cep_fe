@@ -64,12 +64,8 @@ const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
       <Form.List name={'optional_product'}>
         {(_, { add, remove }) => {
           const optionalProduct = form?.getFieldValue('optional_product') ?? []
-          const dataSource: any[] = (optionalProduct ?? [])
-            .sort(
-              (a: any, b: any) =>
-                (a.display_order ?? 0) - (b.display_order ?? 0),
-            )
-            .map((item: any, index: number) => {
+          const dataSource: any[] = (optionalProduct ?? []).map(
+            (item: any, index: number) => {
               if (item.kind === 'group') {
                 return {
                   ...item,
@@ -84,7 +80,8 @@ const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
                 isSelfCreate: !item.product_id && item.name,
                 ...item,
               }
-            })
+            },
+          )
 
           const columns: ColumnsType = [
             {

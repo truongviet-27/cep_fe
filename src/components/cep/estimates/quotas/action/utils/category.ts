@@ -1,5 +1,27 @@
 import type { FormInstance } from 'antd'
 
+export function buildEmptyProductGroupRow() {
+  return {
+    product: null,
+    product_id: null,
+    package: null,
+    package_id: null,
+    isSelfCreate: false,
+    name: '',
+    code: '',
+    package_name: '-',
+    cost_price: 0,
+    quantity: 1,
+    selling_price: 0,
+    profit_margin: 0,
+    is_add_total: true,
+    unit: null,
+    unit_name: '-',
+    tax_rate: 0,
+    kind: 'group',
+  }
+}
+
 export function buildEmptyProductRow(defaultUnit: string) {
   return {
     product: null,
@@ -26,10 +48,11 @@ export function clearProductsOnCategoryChange(
   form: FormInstance,
   defaultUnit: string,
 ) {
+  const emptyGroup = buildEmptyProductGroupRow()
   const emptyRow = buildEmptyProductRow(defaultUnit)
   form.setFieldsValue({
-    main_product: [emptyRow],
-    optional_product: [{ ...emptyRow }],
+    main_product: [emptyGroup, emptyRow],
+    optional_product: [emptyGroup, { ...emptyRow, is_add_total: false }],
   })
 }
 
