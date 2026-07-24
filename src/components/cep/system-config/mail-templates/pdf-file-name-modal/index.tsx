@@ -86,6 +86,7 @@ function PdfFileNameModal({
             openNotification?.({
               type: 'success',
               message: t('mail_templates.popup.pdfFileName.successMessage'),
+              description: t('mail_templates.popup.pdfFileName.successMessage'),
             })
             refetch()
             handleClose()
@@ -94,6 +95,7 @@ function PdfFileNameModal({
             openNotification?.({
               type: 'error',
               message: t('mail_templates.popup.pdfFileName.errorMessage'),
+              description: t('mail_templates.popup.pdfFileName.errorMessage'),
             })
           },
         },
