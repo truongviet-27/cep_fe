@@ -151,6 +151,11 @@ import type {
   ImportControllerGetImportHistoryData,
   ImportControllerGetImportHistoryResponses,
   ImportControllerGetImportHistoryErrors,
+  MailTemplateControllerGetPdfFileNameSettingsData,
+  MailTemplateControllerGetPdfFileNameSettingsResponses,
+  MailTemplateControllerUpdatePdfFileNamesData,
+  MailTemplateControllerUpdatePdfFileNamesResponses,
+  MailTemplateControllerUpdatePdfFileNamesErrors,
   MailTemplateControllerShowByCodeData,
   MailTemplateControllerShowByCodeResponses,
   MailTemplateControllerShowByCodeErrors,
@@ -470,6 +475,8 @@ import {
   zImportControllerGetTemplateData,
   zImportControllerImportData,
   zImportControllerGetImportHistoryData,
+  zMailTemplateControllerGetPdfFileNameSettingsData,
+  zMailTemplateControllerUpdatePdfFileNamesData,
   zMailTemplateControllerShowByCodeData,
   zMailTemplateControllerStoreData,
   zManualControllerIndexData,
@@ -1994,6 +2001,73 @@ export const importControllerGetImportHistory = <
     ],
     url: '/api/v1/csv-imports/history',
     ...options,
+  })
+}
+
+/**
+ * Get PDF file name settings
+ * Retrieve the PDF file name settings for all configurable document mail templates.
+ */
+export const mailTemplateControllerGetPdfFileNameSettings = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<
+    MailTemplateControllerGetPdfFileNameSettingsData,
+    ThrowOnError
+  >,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    MailTemplateControllerGetPdfFileNameSettingsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zMailTemplateControllerGetPdfFileNameSettingsData.parseAsync(
+        data,
+      )
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/mail-templates/pdf-file-names',
+    ...options,
+  })
+}
+
+/**
+ * Update PDF file name settings
+ * Bulk update the PDF file names for the given mail templates.
+ */
+export const mailTemplateControllerUpdatePdfFileNames = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<MailTemplateControllerUpdatePdfFileNamesData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    MailTemplateControllerUpdatePdfFileNamesResponses,
+    MailTemplateControllerUpdatePdfFileNamesErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) => {
+      return await zMailTemplateControllerUpdatePdfFileNamesData.parseAsync(
+        data,
+      )
+    },
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/api/v1/mail-templates/pdf-file-names',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   })
 }
 

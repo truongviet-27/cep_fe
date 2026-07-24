@@ -94,31 +94,33 @@ function TabsEmailTemplate({
         key: 'quota_mail',
         label: t('mail_templates.tab.quotation'),
         children: (
-          <Card
-            styles={{
-              header: {
-                backgroundColor: '#F0F9FF',
-              },
-            }}
-            title={
-              <div className="flex items-center justify-start gap-4">
-                <MailFilled
-                  style={{
-                    fontSize: '20px',
-                    color: '#1890FF',
-                  }}
-                />
-                {t('mail_templates.tab.quotation')}
-              </div>
-            }
-          >
-            <TabsContent
-              index={1}
-              isEdit={isEdit}
-              tags={tags}
-              loading={isLoading}
-            />
-          </Card>
+          <>
+            <Card
+              styles={{
+                header: {
+                  backgroundColor: '#F0F9FF',
+                },
+              }}
+              title={
+                <div className="flex items-center justify-start gap-4">
+                  <MailFilled
+                    style={{
+                      fontSize: '20px',
+                      color: '#1890FF',
+                    }}
+                  />
+                  {t('mail_templates.tab.quotation')}
+                </div>
+              }
+            >
+              <TabsContent
+                index={1}
+                isEdit={isEdit}
+                tags={tags}
+                loading={isLoading}
+              />
+            </Card>
+          </>
         ),
       },
       {
