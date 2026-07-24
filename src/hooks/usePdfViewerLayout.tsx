@@ -1,4 +1,5 @@
 'use client'
+import type { OpenFile } from '@react-pdf-viewer/core'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import type {
   ToolbarProps,
@@ -12,8 +13,19 @@ import React, { useRef } from 'react'
  * - Toolbar: only Zoom, Download, Print (all other buttons hidden).
  * - Sidebar: hidden (no thumbnails, bookmarks, attachments).
  */
-export function usePdfViewerLayoutPlugin() {
+export function usePdfViewerLayoutPlugin(
+  fileNameGenerator?: (file: OpenFile) => string,
+) {
   const pluginRef = useRef<ReturnType<typeof defaultLayoutPlugin> | null>(null)
+  const fileNameGeneratorRef = useRef(fileNameGenerator)
+  fileNameGeneratorRef.current = fileNameGenerator
+
+  // Stable identity across renders; always delegates to the latest
+  // fileNameGeneratorRef so the plugin instance used by <Viewer> at mount
+  // time still resolves fresh data at download time.
+  const stableFileNameGenerator = useRef(
+    (file: OpenFile) => fileNameGeneratorRef.current?.(file) ?? file.name,
+  ).current
 
   const empty = () => <></>
   const transform: TransformToolbarSlot = (slot: ToolbarSlot) => ({
@@ -49,6 +61,9 @@ export function usePdfViewerLayoutPlugin() {
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     sidebarTabs: () => [],
+    toolbarPlugin: {
+      getFilePlugin: { fileNameGenerator: stableFileNameGenerator },
+    },
     renderToolbar: (Toolbar: (props: ToolbarProps) => React.ReactElement) => (
       <Toolbar>
         {(slot) =>
