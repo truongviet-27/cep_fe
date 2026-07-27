@@ -50,7 +50,6 @@ function QuotaDetail() {
 
   const [isPdf, setIsPdf] = useState(false)
 
-  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
   const { id } = useParsed()
   const apiUrl = useApiUrl()
 
@@ -65,6 +64,22 @@ function QuotaDetail() {
   } = useCustom({
     url: `${apiUrl}/quotas/${id}`,
     method: 'get',
+  })
+
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin(() => {
+    const data = queryBasic?.data
+    const sanitize = (value?: string | null) =>
+      value?.replace(/[\\/:*?"<>|]/g, '')
+    const parts = [
+      '見積書',
+      sanitize(data?.code),
+      sanitize(data?.customer_name)
+        ? `${sanitize(data?.customer_name)}様`
+        : undefined,
+      sanitize(data?.title),
+    ].filter(Boolean)
+
+    return `${parts.join('_')}.pdf`
   })
   useEffect(() => {
     // khi quota show, lay setting cua quota, khong lay setting cua tenant
