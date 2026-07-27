@@ -47,7 +47,21 @@ function AgreedPriceQuotaDetail() {
 
   const [isPdf, setIsPdf] = useState(false)
 
-  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin(() => {
+    const data = queryBasic?.data
+    const sanitize = (value?: string | null) =>
+      value?.replace(/[\\/:*?"<>|]/g, '')
+    const parts = [
+      '見積書',
+      sanitize(data?.code),
+      sanitize(data?.customer_name)
+        ? `${sanitize(data?.customer_name)}様`
+        : undefined,
+      sanitize(data?.title),
+    ].filter(Boolean)
+
+    return `${parts.join('_')}.pdf`
+  })
   const { id } = useParsed()
   const apiUrl = useApiUrl()
   const go = useGo()
