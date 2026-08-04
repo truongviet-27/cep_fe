@@ -1008,6 +1008,7 @@ export const zMailTemplate = z.object({
   title: z.optional(z.string()),
   body: z.optional(z.string()),
   signature: z.optional(z.string()),
+  pdf_file_name: z.optional(z.string()),
 })
 
 /**
@@ -1318,6 +1319,7 @@ export const zProductDetail = z.object({
   selling_price: z.optional(z.int()),
   tax_rate: z.optional(z.int()),
   note: z.optional(z.union([z.string(), z.null()])),
+  is_sent_to_cmr: z.optional(z.int()),
   author: z.optional(
     z.union([
       z.object({
@@ -1428,7 +1430,7 @@ export const zProductListItem = z.object({
   packaging_count: z.optional(z.int()),
   cost_price: z.optional(z.int()),
   sale_price: z.optional(z.int()),
-  is_sent_to_cmr: z.optional(z.int()),
+  is_sent_to_cmr: z.optional(z.union([z.int(), z.null()])),
 })
 
 /**
@@ -3732,6 +3734,57 @@ export const zImportControllerGetImportHistoryResponse = z.object({
   ),
 })
 
+export const zMailTemplateControllerGetPdfFileNameSettingsData = z.object({
+  body: z.optional(z.never()),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * PDF file name settings retrieved successfully
+ */
+export const zMailTemplateControllerGetPdfFileNameSettingsResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.array(
+      z.object({
+        code: z.optional(z.string()),
+        label: z.optional(z.string()),
+        pdf_file_name: z.optional(z.union([z.string(), z.null()])),
+      }),
+    ),
+  ),
+})
+
+export const zMailTemplateControllerUpdatePdfFileNamesData = z.object({
+  body: z.object({
+    items: z.array(
+      z.object({
+        code: z.optional(z.string()),
+        pdf_file_name: z.optional(z.string()),
+      }),
+    ),
+  }),
+  path: z.optional(z.never()),
+  query: z.optional(z.never()),
+})
+
+/**
+ * PDF file name settings updated successfully
+ */
+export const zMailTemplateControllerUpdatePdfFileNamesResponse = z.object({
+  message: z.optional(z.string()),
+  data: z.optional(
+    z.array(
+      z.object({
+        code: z.optional(z.string()),
+        label: z.optional(z.string()),
+        pdf_file_name: z.optional(z.union([z.string(), z.null()])),
+      }),
+    ),
+  ),
+})
+
 export const zMailTemplateControllerShowByCodeData = z.object({
   body: z.optional(z.never()),
   path: z.object({
@@ -3754,6 +3807,7 @@ export const zMailTemplateControllerStoreData = z.object({
     title: z.string(),
     body: z.string(),
     signature: z.string(),
+    pdf_file_name: z.optional(z.string()),
   }),
   path: z.optional(z.never()),
   query: z.optional(z.never()),
@@ -4017,6 +4071,7 @@ export const zProductControllerIndexData = z.object({
       _per_page: z.optional(z.int()).default(10),
       category_id: z.optional(z.int()),
       resource: z.optional(z.enum(['merchandise', 'service'])),
+      is_sent_to_cmr: z.optional(z.unknown()),
     }),
   ),
 })
@@ -4046,6 +4101,7 @@ export const zProductControllerListAllData = z.object({
       _page: z.optional(z.int()).default(1),
       _per_page: z.optional(z.int()).default(10),
       category_id: z.optional(z.int()),
+      is_sent_to_cmr: z.optional(z.unknown()),
     }),
   ),
 })
@@ -4062,6 +4118,7 @@ export const zProductControllerExportCsvData = z.object({
     z.object({
       q: z.optional(z.string()),
       category_id: z.optional(z.int()),
+      is_sent_to_cmr: z.optional(z.unknown()),
     }),
   ),
 })
@@ -4367,6 +4424,7 @@ export const zProductComboControllerIndexData = z.object({
       _page: z.optional(z.int()).default(1),
       _per_page: z.optional(z.int()).default(10),
       category_id: z.optional(z.int()),
+      is_sent_to_cmr: z.optional(z.unknown()),
     }),
   ),
 })

@@ -340,6 +340,13 @@ const BasicInfo = ({
                   <CoreAutocompleteAPI
                     name={'customer'}
                     resource="customers"
+                    filters={[
+                      {
+                        field: 'exclude_suspended',
+                        operator: 'eq',
+                        value: true,
+                      },
+                    ]}
                     rules={[
                       {
                         required: true,

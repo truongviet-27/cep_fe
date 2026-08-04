@@ -1,7 +1,7 @@
-.ant-form-item-label > label {
+.mail-template-content .ant-form-item-label > label {
   width: 100%;
 }
-.ant-form-item-label > label::after {
+.mail-template-content .ant-form-item-label > label::after {
   display: none;
 }
 .ant-card-actions .ant-space-item {
