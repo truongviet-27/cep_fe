@@ -97,7 +97,8 @@
         "pieces": "件",
         "cmrNotLinked": "CMR未連携",
         "cmrInitiated": "CMR連携開始",
-        "cmrLinked": "CMR連携済"
+        "cmrLinked": "CMR連携済",
+        "cmrExcluded": "CMR連携対象外"
       }
     }
   },

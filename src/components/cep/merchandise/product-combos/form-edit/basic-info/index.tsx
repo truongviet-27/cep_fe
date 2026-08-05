@@ -93,6 +93,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               label={t('product_combos.fields.assortmentCode')}
               required={true}
               layout="horizontal"
+              disabled={isEdit}
               rules={[
                 {
                   required: true,
@@ -121,6 +122,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   onClick={handleAutoNumber}
                   loading={loadingPd}
                   disabled={
+                    isEdit ||
                     codeIssueSetting?.data?.issue_method !== 'automatic'
                   }
                 >
