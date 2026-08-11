@@ -2,9 +2,14 @@
 
 import { PictureOutlined } from '@ant-design/icons'
 import {
+  resolveCmrStatusBadge,
+  shouldShowCmrStatusBadge,
+} from '@components/cep/merchandise/products/cmr-status'
+import {
   ProductResourceEnum,
   ProductResourceLabelKey,
 } from '@components/cep/merchandise/products/enum'
+import { useIsCmrLinked } from '@components/cep/merchandise/products/use-is-cmr-linked'
 import { DeleteButton, EditButton, ShowButton, useTable } from '@refinedev/antd'
 import type { CrudFilters, HttpError } from '@refinedev/core'
 import { useApiUrl, useCustomMutation, useTranslate } from '@refinedev/core'
@@ -70,6 +75,7 @@ const buildProductSearchFilters = (params: ISearch): CrudFilters => {
 
 function useProduct() {
   const t = useTranslate()
+  const { isCmrLinked, cmrShopId } = useIsCmrLinked()
   const apiUrl = useApiUrl()
   const { hasFullAccessModule } = useUserStore.getState()
   const isFullAccess = hasFullAccessModule(PermissionEnum.PRODUCT_EDIT)
@@ -148,10 +154,24 @@ function useProduct() {
         },
         method: 'delete',
         url: `${apiUrl}/products`,
-        successNotification: () => ({
-          message: t('notifications.success'),
-          description: t('notifications.success'),
-          type: 'success' as const,
+        successNotification: (data) => {
+          const apiMessage =
+            (data as { message?: string } | undefined)?.message ??
+            (data as { data?: { message?: string } } | undefined)?.data?.message
+
+          return {
+            message: apiMessage || t('notifications.success'),
+            type: 'success' as const,
+          }
+        },
+        errorNotification: (error) => ({
+          message:
+            (error as { message?: string })?.message ||
+            t('notifications.deleteError'),
+          description:
+            (error as { message?: string })?.message ||
+            t('notifications.deleteError'),
+          type: 'error' as const,
         }),
       },
       {
@@ -161,33 +181,14 @@ function useProduct() {
           setIsOpenManyDelete(false)
           tableQuery.refetch()
         },
+        onError: () => {
+          setIsOpenManyDelete(false)
+        },
       },
     )
   }, [mutate, selectedRows, apiUrl, t, tableQuery])
 
   const columns = useMemo(() => {
-    // CMR sync state is now int-based (0/1/2) and rendered below product code in list.
-    const cmrStatusMeta: Record<
-      number,
-      { label: string; color: string; backgroundColor: string }
-    > = {
-      0: {
-        label: t('products.list.table.text.cmrNotLinked', 'CMR Not Linked'),
-        color: '#FF0000',
-        backgroundColor: '#FFDFDF',
-      },
-      1: {
-        label: t('products.list.table.text.cmrInitiated', 'CMR連携開始'),
-        color: '#666666',
-        backgroundColor: '#E2E2E2',
-      },
-      2: {
-        label: t('products.list.table.text.cmrLinked', 'CMR Linked'),
-        color: '#0066CC',
-        backgroundColor: '#DAEDFF',
-      },
-    }
-
     const baseColumns = [
       {
         title: t('products.list.table.headers.image'),
@@ -256,14 +257,15 @@ function useProduct() {
         width: '11%',
         onCell: () => ({
           style: {
-            padding: '2px 2px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            padding: '8px 12px',
+            // Allow CMR badge to wrap under code (do not clip with nowrap/overflow).
+            overflow: 'visible',
+            whiteSpace: 'normal',
+            verticalAlign: 'middle',
           },
         }),
         render: (_: unknown, record: ProductListItem) => (
-          <div>
+          <div style={{ minWidth: 0 }}>
             <Link
               href={`/products/show/${record.id}`}
               onClick={() => {
@@ -280,28 +282,37 @@ function useProduct() {
             >
               {record.code}
             </Link>
-            {(() => {
-              const status = Number(record.is_sent_to_cmr ?? 0)
-              const { label, color, backgroundColor } =
-                cmrStatusMeta[status] ?? cmrStatusMeta[0]
+            {shouldShowCmrStatusBadge(
+              isCmrLinked,
+              cmrShopId,
+              (record as { cmr_shop_id?: string | null }).cmr_shop_id,
+              record.resource,
+            ) &&
+              (() => {
+                const { label, color, backgroundColor } = resolveCmrStatusBadge(
+                  record.resource,
+                  record.is_sent_to_cmr,
+                  t,
+                )
 
-              return (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    marginTop: 6,
-                    padding: '2px 8px',
-                    borderRadius: 4,
-                    fontSize: 12,
-                    lineHeight: '16px',
-                    color,
-                    backgroundColor,
-                  }}
-                >
-                  {label}
-                </span>
-              )
-            })()}
+                return (
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      marginTop: 6,
+                      padding: '2px 8px',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      lineHeight: '16px',
+                      color,
+                      backgroundColor,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {label}
+                  </span>
+                )
+              })()}
           </div>
         ),
       },
@@ -496,6 +507,15 @@ function useProduct() {
                 icon={null}
                 recordItemId={record.id}
                 resource="products"
+                errorNotification={(error) => ({
+                  message:
+                    (error as { message?: string })?.message ||
+                    t('notifications.deleteError'),
+                  description:
+                    (error as { message?: string })?.message ||
+                    t('notifications.deleteError'),
+                  type: 'error',
+                })}
                 style={{
                   color: '#FFFFFF',
                   background: '#E74C3C',
@@ -553,7 +573,7 @@ function useProduct() {
         },
       }
     }) as ColumnsType
-  }, [t])
+  }, [t, isCmrLinked, cmrShopId])
 
   return [
     {
