@@ -92,6 +92,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
               label={t('products.fields.productCode')}
               required={true}
               layout="horizontal"
+              disabled={isEdit}
               rules={[
                 {
                   required: true,
@@ -119,7 +120,9 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                   size="small"
                   onClick={handleAutoNumber}
                   loading={loadingPd}
-                  disabled={codeIssueSetting?.issue_method !== 'automatic'}
+                  disabled={
+                    isEdit || codeIssueSetting?.issue_method !== 'automatic'
+                  }
                 >
                   {t('products.buttons.autoNumbering')}
                 </Button>

@@ -58,15 +58,27 @@ const App = (props: React.PropsWithChildren) => {
   }
 
   const customNotificationProvider: NotificationProvider = {
-    open: ({ description, type, key }) => {
+    open: ({ description, message, type, key }) => {
+      const text = description || message
+      if (!text) {
+        return
+      }
+
+      const content =
+        typeof text === 'string' ? (
+          <span style={{ whiteSpace: 'pre-line' }}>{text}</span>
+        ) : (
+          text
+        )
+
       if (type !== 'progress') {
         notification[type]({
-          message: description,
+          message: content,
           key,
         })
       } else {
         notification.info({
-          message: description,
+          message: content,
           key,
         })
       }
