@@ -1,15 +1,12 @@
 import { RightOutlined } from '@ant-design/icons'
-import PdfFileNameModal from '@components/cep/system-config/mail-templates/pdf-file-name-modal'
 import TabsEmailTemplate from '@components/cep/system-config/mail-templates/tabs'
 import useMailTemplates from '@components/cep/system-config/mail-templates/useMailTemplates'
 import PageContainer from '@components/common/page-container'
 import { EditButton } from '@refinedev/antd'
-import { useCan } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { Breadcrumb, Button, Form, Popconfirm } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import { useState } from 'react'
 
 function MailTemplate() {
   const [
@@ -29,13 +26,6 @@ function MailTemplate() {
   const { formProps, form, saveButtonProps } = methods
   const { resetFields } = form
 
-  const [openPdfFileNameModal, setOpenPdfFileNameModal] = useState(false)
-
-  const { data: canEdit } = useCan({
-    resource: 'mail-templates',
-    action: 'edit',
-  })
-
   return (
     <PageContainer
       breadcrumbs={
@@ -52,22 +42,7 @@ function MailTemplate() {
         />
       }
       title={t('mail_templates.mail_templates')}
-      extra={
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={() => setOpenPdfFileNameModal(true)}
-          disabled={!canEdit?.can}
-          autoInsertSpace={false}
-        >
-          {t('mail_templates.buttons.changePdfFileName')}
-        </Button>
-      }
     >
-      <PdfFileNameModal
-        open={openPdfFileNameModal}
-        onClose={() => setOpenPdfFileNameModal(false)}
-      />
       <Form
         {...formProps}
         initialValues={{
