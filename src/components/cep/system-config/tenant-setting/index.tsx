@@ -52,7 +52,7 @@ function TenantSetting() {
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
   const [pendingFormValues, setPendingFormValues] = useState<any>(null)
   const apiUrl = useApiUrl()
-  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin(() => 'Preview.pdf')
 
   const { mutate, isPending } = useUpdate({
     resource: `quota-form-settings`,

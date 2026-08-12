@@ -114,7 +114,20 @@ function QuotaAction() {
 
   const isUpdate = !!id
 
-  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin()
+  const pdfViewerLayoutPlugin = usePdfViewerLayoutPlugin(() => {
+    const sanitize = (value?: string | null) =>
+      value?.replace(/[\\/:*?"<>|]/g, '')
+    const parts = [
+      '見積書',
+      sanitize(form.getFieldValue('code')),
+      sanitize(form.getFieldValue('customer')?.label)
+        ? `${sanitize(form.getFieldValue('customer')?.label)}様`
+        : undefined,
+      sanitize(form.getFieldValue('title')),
+    ].filter(Boolean)
+
+    return `${parts.join('_')}.pdf`
+  })
   const go = useGo()
   const apiUrl = useApiUrl()
 
