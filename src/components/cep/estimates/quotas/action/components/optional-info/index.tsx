@@ -34,10 +34,26 @@ function OptionalInfo({
   confirmedCategory,
   productPrincing,
   optionalProduct,
+  priceReflectionChanges,
+  onPriceComputed,
+  isAwaitingPriceDecision,
 }: {
   confirmedCategory: QuotaCategoryEnum
   productPrincing?: number[]
   optionalProduct: any
+  priceReflectionChanges?: Array<{
+    parent: 'main_product' | 'optional_product'
+    index: number
+    oldPrice: number
+    newPrice: number
+  }>
+  onPriceComputed?: (
+    parent: string,
+    index: number,
+    oldPrice: number,
+    newPrice: number,
+  ) => void
+  isAwaitingPriceDecision?: boolean
 }) {
   const t = useTranslate()
   const form = Form.useFormInstance()
@@ -672,6 +688,8 @@ function OptionalInfo({
                             maxWidth: '200px',
                             width: '100%',
                           }}
+                          isAwaitingDecision={isAwaitingPriceDecision}
+                          onPriceComputed={onPriceComputed}
                         />
                       </Form.Item>
                     )
@@ -760,6 +778,10 @@ function OptionalInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                const isPriceChanged = priceReflectionChanges?.some(
+                  (c) =>
+                    c.parent === 'optional_product' && c.index === record.index,
+                )
                 return (
                   <Form.Item
                     className="ant-form-item-hidden-margin"
@@ -796,6 +818,7 @@ function OptionalInfo({
                       style={{
                         maxWidth: '100px',
                         width: '100%',
+                        backgroundColor: isPriceChanged ? '#FFF9C4' : undefined,
                       }}
                     />
                   </Form.Item>

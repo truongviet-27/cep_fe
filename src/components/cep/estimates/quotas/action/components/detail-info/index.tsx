@@ -55,6 +55,9 @@ function DetailInfo({
   productPrincing,
   // handleChangeProductPrincing,
   mainProduct,
+  priceReflectionChanges,
+  onPriceComputed,
+  isAwaitingPriceDecision,
 }: {
   isCategoryChangedByUserRef: MutableRefObject<boolean>
   confirmedCategory: QuotaCategoryEnum
@@ -62,6 +65,19 @@ function DetailInfo({
   productPrincing?: number[]
   // handleChangeProductPrincing: (productIds: number[]) => void
   mainProduct: any
+  priceReflectionChanges?: Array<{
+    parent: 'main_product' | 'optional_product'
+    index: number
+    oldPrice: number
+    newPrice: number
+  }>
+  onPriceComputed?: (
+    parent: string,
+    index: number,
+    oldPrice: number,
+    newPrice: number,
+  ) => void
+  isAwaitingPriceDecision?: boolean
 }) {
   const t = useTranslate()
   const form = Form.useFormInstance()
@@ -844,6 +860,8 @@ function DetailInfo({
                           filterPath2={['customer']}
                           resource={`products`}
                           parent="main_product"
+                          isAwaitingDecision={isAwaitingPriceDecision}
+                          onPriceComputed={onPriceComputed}
                         />
                       </Form.Item>
                     )
@@ -929,6 +947,10 @@ function DetailInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                const isPriceChanged = priceReflectionChanges?.some(
+                  (c) =>
+                    c.parent === 'main_product' && c.index === record.index,
+                )
                 return (
                   <Form.Item
                     className="ant-form-item-hidden-margin"
@@ -956,6 +978,7 @@ function DetailInfo({
                       style={{
                         maxWidth: '100px',
                         width: '100%',
+                        backgroundColor: isPriceChanged ? '#FFF9C4' : undefined,
                       }}
                     />
                   </Form.Item>

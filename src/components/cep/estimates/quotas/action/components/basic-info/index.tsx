@@ -39,6 +39,7 @@ import type { ParameterSettingType } from '@interfaces/permission'
 const BasicInfo = ({
   isCategoryChangedByUserRef,
   handleChangeProductPrincing,
+  onCustomerManualSelect,
   parameterSettings,
   isEdit,
   embeddedContactFromQuota,
@@ -49,6 +50,7 @@ const BasicInfo = ({
     productIds: number[],
     productIdsOptional: number[],
   ) => void
+  onCustomerManualSelect?: (customerHasRank: boolean) => void
   parameterSettings: ParameterSettingType
   isEdit?: boolean
   embeddedContactFromQuota?: {
@@ -363,6 +365,9 @@ const BasicInfo = ({
                       form.setFieldsValue({ rank_id: rankId })
                       setSelectedContact(null)
                       form.setFieldsValue({ customer_contact_id: null })
+                      if (!isEdit) {
+                        onCustomerManualSelect?.(!!valueOption?.rank)
+                      }
                       handleChangeProductPrincing(
                         (form.getFieldValue(['main_product']) ?? []).flatMap(
                           (item: any) => item.product_id,
