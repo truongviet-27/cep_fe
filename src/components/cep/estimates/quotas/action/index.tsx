@@ -1226,6 +1226,9 @@ function QuotaAction() {
   const [customerIdForRankCheck, setCustomerIdForRankCheck] = useState<
     number | null
   >(null)
+  const [isMainPricingFetching, setIsMainPricingFetching] = useState(false)
+  const [isOptionalPricingFetching, setIsOptionalPricingFetching] =
+    useState(false)
   const initialPriceCheckDoneRef = useRef(false)
 
   const { data: customerRankData } = useCustom<any>({
@@ -1398,7 +1401,12 @@ function QuotaAction() {
           message="現在の設定に基づき、商品の売単価が変更される可能性があります。最新の単価を反映しますか。"
           action={
             <Space>
-              <Button size="small" type="primary" onClick={handleReflectPrices}>
+              <Button
+                size="small"
+                type="primary"
+                loading={isMainPricingFetching || isOptionalPricingFetching}
+                onClick={handleReflectPrices}
+              >
                 反映する
               </Button>
               <Button size="small" onClick={handleDismissReflection}>
@@ -1468,6 +1476,7 @@ function QuotaAction() {
             priceReflectionChanges={priceReflection?.changes}
             onPriceComputed={onPriceComputed}
             isAwaitingPriceDecision={isAwaitingPriceDecision}
+            onPricingFetchingChange={setIsMainPricingFetching}
           />
           <OptionalInfo
             confirmedCategory={confirmedCategory}
@@ -1476,6 +1485,7 @@ function QuotaAction() {
             priceReflectionChanges={priceReflection?.changes}
             onPriceComputed={onPriceComputed}
             isAwaitingPriceDecision={isAwaitingPriceDecision}
+            onPricingFetchingChange={setIsOptionalPricingFetching}
           />
           <Row>
             <Col xs={24}>

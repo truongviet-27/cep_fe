@@ -58,6 +58,7 @@ function DetailInfo({
   priceReflectionChanges,
   onPriceComputed,
   isAwaitingPriceDecision,
+  onPricingFetchingChange,
 }: {
   isCategoryChangedByUserRef: MutableRefObject<boolean>
   confirmedCategory: QuotaCategoryEnum
@@ -78,6 +79,7 @@ function DetailInfo({
     newPrice: number,
   ) => void
   isAwaitingPriceDecision?: boolean
+  onPricingFetchingChange?: (isFetching: boolean) => void
 }) {
   const t = useTranslate()
   const form = Form.useFormInstance()
@@ -332,13 +334,15 @@ function DetailInfo({
     }
   }, [productPrincing])
 
-  const { data } = useCustom<any>({
+  const pricingEnabled =
+    !!customer?.value &&
+    productPrincingState.filter((x) => x != null).length > 0
+
+  const { data, isFetching: isPricingFetching } = useCustom<any>({
     url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      enabled:
-        !!customer?.value &&
-        productPrincingState.filter((x) => x != null).length > 0,
+      enabled: pricingEnabled,
     },
 
     config: {
@@ -351,6 +355,10 @@ function DetailInfo({
       ],
     },
   })
+
+  useEffect(() => {
+    onPricingFetchingChange?.(pricingEnabled && isPricingFetching)
+  }, [pricingEnabled, isPricingFetching, onPricingFetchingChange])
 
   useEffect(() => {
     if (data?.data && Array.isArray(data.data)) {
