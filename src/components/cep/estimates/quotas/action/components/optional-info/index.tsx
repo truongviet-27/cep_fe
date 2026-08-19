@@ -37,6 +37,7 @@ function OptionalInfo({
   priceReflectionChanges,
   onPriceComputed,
   isAwaitingPriceDecision,
+  onPricingFetchingChange,
 }: {
   confirmedCategory: QuotaCategoryEnum
   productPrincing?: number[]
@@ -54,6 +55,7 @@ function OptionalInfo({
     newPrice: number,
   ) => void
   isAwaitingPriceDecision?: boolean
+  onPricingFetchingChange?: (isFetching: boolean) => void
 }) {
   const t = useTranslate()
   const form = Form.useFormInstance()
@@ -120,25 +122,30 @@ function OptionalInfo({
 
   const customer = Form.useWatch(['customer'], form)
 
-  const { data } = useCustom<any>({
+  const pricingEnabled =
+    !!customer?.value &&
+    productPrincingState.filter((x) => x != null).length > 0
+
+  const { data, isFetching: isPricingFetching } = useCustom<any>({
     url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      // enabled: !!customer?.value && productIds.every((p: any) => !!p),
-      enabled:
-        !!customer?.value &&
-        productPrincingState.filter((x) => x != null).length > 0,
+      enabled: pricingEnabled,
     },
     config: {
       filters: [
         {
           field: 'ids',
           operator: 'eq',
-          value: productPrincingState.join(', '),
+          value: productPrincingState.join(','),
         },
       ],
     },
   })
+
+  useEffect(() => {
+    onPricingFetchingChange?.(pricingEnabled && isPricingFetching)
+  }, [pricingEnabled, isPricingFetching, onPricingFetchingChange])
 
   useEffect(() => {
     if (data?.data && Array.isArray(data.data)) {
@@ -464,6 +471,10 @@ function OptionalInfo({
                                 value: (valueOption?.packagings ?? [])[0]?.id,
                                 label: '-',
                               },
+                            )
+                            form.setFieldValue(
+                              ['optional_product', record.index, 'package_id'],
+                              (valueOption?.packagings ?? [])[0]?.id,
                             )
                             form.setFieldValue(
                               [
