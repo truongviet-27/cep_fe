@@ -34,10 +34,28 @@ function OptionalInfo({
   confirmedCategory,
   productPrincing,
   optionalProduct,
+  priceReflectionChanges,
+  onPriceComputed,
+  isAwaitingPriceDecision,
+  onPricingFetchingChange,
 }: {
   confirmedCategory: QuotaCategoryEnum
   productPrincing?: number[]
   optionalProduct: any
+  priceReflectionChanges?: Array<{
+    parent: 'main_product' | 'optional_product'
+    index: number
+    oldPrice: number
+    newPrice: number
+  }>
+  onPriceComputed?: (
+    parent: string,
+    index: number,
+    oldPrice: number,
+    newPrice: number,
+  ) => void
+  isAwaitingPriceDecision?: boolean
+  onPricingFetchingChange?: (isFetching: boolean) => void
 }) {
   const t = useTranslate()
   const form = Form.useFormInstance()
@@ -104,25 +122,30 @@ function OptionalInfo({
 
   const customer = Form.useWatch(['customer'], form)
 
-  const { data } = useCustom<any>({
+  const pricingEnabled =
+    !!customer?.value &&
+    productPrincingState.filter((x) => x != null).length > 0
+
+  const { data, isFetching: isPricingFetching } = useCustom<any>({
     url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      // enabled: !!customer?.value && productIds.every((p: any) => !!p),
-      enabled:
-        !!customer?.value &&
-        productPrincingState.filter((x) => x != null).length > 0,
+      enabled: pricingEnabled,
     },
     config: {
       filters: [
         {
           field: 'ids',
           operator: 'eq',
-          value: productPrincingState.join(', '),
+          value: productPrincingState.join(','),
         },
       ],
     },
   })
+
+  useEffect(() => {
+    onPricingFetchingChange?.(pricingEnabled && isPricingFetching)
+  }, [pricingEnabled, isPricingFetching, onPricingFetchingChange])
 
   useEffect(() => {
     if (data?.data && Array.isArray(data.data)) {
@@ -450,6 +473,10 @@ function OptionalInfo({
                               },
                             )
                             form.setFieldValue(
+                              ['optional_product', record.index, 'package_id'],
+                              (valueOption?.packagings ?? [])[0]?.id,
+                            )
+                            form.setFieldValue(
                               [
                                 'optional_product',
                                 record.index,
@@ -672,6 +699,8 @@ function OptionalInfo({
                             maxWidth: '200px',
                             width: '100%',
                           }}
+                          isAwaitingDecision={isAwaitingPriceDecision}
+                          onPriceComputed={onPriceComputed}
                         />
                       </Form.Item>
                     )
@@ -760,6 +789,10 @@ function OptionalInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                const isPriceChanged = priceReflectionChanges?.some(
+                  (c) =>
+                    c.parent === 'optional_product' && c.index === record.index,
+                )
                 return (
                   <Form.Item
                     className="ant-form-item-hidden-margin"
@@ -796,6 +829,7 @@ function OptionalInfo({
                       style={{
                         maxWidth: '100px',
                         width: '100%',
+                        backgroundColor: isPriceChanged ? '#FFF9C4' : undefined,
                       }}
                     />
                   </Form.Item>
