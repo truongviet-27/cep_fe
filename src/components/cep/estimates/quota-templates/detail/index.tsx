@@ -86,7 +86,7 @@ const QuoteTemplateDetailContainer: FC = () => {
           type="warning"
           showIcon
           style={{ marginBottom: 16 }}
-          message="商品の売単価が変更されました。"
+          message={t('quota_templates.priceReflection.message')}
         />
       )}
       {quoteTemplateDetail && (

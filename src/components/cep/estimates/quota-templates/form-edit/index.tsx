@@ -144,14 +144,14 @@ const QuoteTemplateFormEditContainer: FC = () => {
           type="warning"
           showIcon
           style={{ marginBottom: 16 }}
-          message="商品の売単価が変更されました。"
+          message={t('quota_templates.priceReflection.message')}
           action={
             <Space>
               <Button size="small" type="primary" onClick={handleReflectPrices}>
-                反映する
+                {t('quota_templates.priceReflection.reflect')}
               </Button>
               <Button size="small" onClick={handleDismissPriceAlert}>
-                反映しない
+                {t('quota_templates.priceReflection.notReflect')}
               </Button>
             </Space>
           }

@@ -1398,7 +1398,7 @@ function QuotaAction() {
           type="warning"
           showIcon
           style={{ marginBottom: 16 }}
-          message="現在の設定に基づき、商品の売単価が変更される可能性があります。最新の単価を反映しますか。"
+          message={t('quotas.action.priceReflection.message')}
           action={
             <Space>
               <Button
@@ -1407,10 +1407,10 @@ function QuotaAction() {
                 loading={isMainPricingFetching || isOptionalPricingFetching}
                 onClick={handleReflectPrices}
               >
-                反映する
+                {t('quotas.action.priceReflection.reflect')}
               </Button>
               <Button size="small" onClick={handleDismissReflection}>
-                反映しない
+                {t('quotas.action.priceReflection.notReflect')}
               </Button>
             </Space>
           }
