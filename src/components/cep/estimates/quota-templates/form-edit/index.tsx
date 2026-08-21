@@ -5,10 +5,27 @@ import { useGo, useTranslate } from '@refinedev/core'
 import { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Divider, Flex, Form, Space, Spin } from 'antd'
+import {
+  Alert,
+  Breadcrumb,
+  Button,
+  Divider,
+  Flex,
+  Form,
+  Space,
+  Spin,
+} from 'antd'
 import Link from 'next/link'
-import { type FC, useRef, useState } from 'react'
+import { type FC, useCallback, useEffect, useRef, useState } from 'react'
 
+import type {
+  TemplatePriceChange,
+  TemplatePriceChangeParent,
+} from '../utils/price-changes'
+import {
+  computeTemplatePriceChanges,
+  removeTemplatePriceChange,
+} from '../utils/price-changes'
 import BasicInfo from './basic-info'
 import { useController } from './controller'
 import DetailInfo from './detail-info'
@@ -40,6 +57,58 @@ const QuoteTemplateFormEditContainer: FC = () => {
     isFetchingQuotaTemplateDraft,
   } = useController()
 
+  const { form, query } = methods
+
+  const [priceChanges, setPriceChanges] = useState<TemplatePriceChange[]>([])
+  const [isPriceAlertVisible, setIsPriceAlertVisible] = useState(false)
+  const priceCheckDoneRef = useRef(false)
+
+  useEffect(() => {
+    if (priceCheckDoneRef.current) return
+    const detail = query?.data?.data as
+      | { main_product?: unknown[]; optional_product?: unknown[] }
+      | undefined
+    if (!detail) return
+    priceCheckDoneRef.current = true
+    const changes = computeTemplatePriceChanges(
+      detail.main_product,
+      detail.optional_product,
+    )
+    setPriceChanges(changes)
+    setIsPriceAlertVisible(changes.length > 0)
+  }, [query?.data?.data])
+
+  const handleReflectPrices = useCallback(() => {
+    priceChanges.forEach((change) => {
+      const list: Array<{ product_id?: number | null }> =
+        form.getFieldValue(change.parent) ?? []
+      const index = list.findIndex(
+        (item) => item?.product_id === change.productId,
+      )
+      if (index !== -1) {
+        form.setFieldValue(
+          [change.parent, index, 'selling_price'],
+          change.newPrice,
+        )
+      }
+    })
+    setIsPriceAlertVisible(false)
+    setPriceChanges([])
+  }, [priceChanges, form])
+
+  const handleDismissPriceAlert = useCallback(() => {
+    setIsPriceAlertVisible(false)
+  }, [])
+
+  const handleProductChanged = useCallback(
+    (parent: TemplatePriceChangeParent, oldProductId: number | null) => {
+      setPriceChanges((prev) =>
+        removeTemplatePriceChange(prev, parent, oldProductId),
+      )
+    },
+    [],
+  )
+
   return (
     <PageContainer
       breadcrumbs={
@@ -70,6 +139,24 @@ const QuoteTemplateFormEditContainer: FC = () => {
           : t('quota_templates.form.titleRegister')
       }
     >
+      {isPriceAlertVisible && (
+        <Alert
+          type="warning"
+          showIcon
+          style={{ marginBottom: 16 }}
+          message={t('quota_templates.priceReflection.message')}
+          action={
+            <Space>
+              <Button size="small" type="primary" onClick={handleReflectPrices}>
+                {t('quota_templates.priceReflection.reflect')}
+              </Button>
+              <Button size="small" onClick={handleDismissPriceAlert}>
+                {t('quota_templates.priceReflection.notReflect')}
+              </Button>
+            </Space>
+          }
+        />
+      )}
       <Spin spinning={isLoading}>
         <Form
           {...methods.formProps}
@@ -88,8 +175,14 @@ const QuoteTemplateFormEditContainer: FC = () => {
             isCategoryChangedByUserRef={isCategoryChangedByUserRef}
             confirmedCategory={confirmedCategory}
             onCategoryConfirmed={setConfirmedCategory}
+            priceChanges={priceChanges}
+            onProductChanged={handleProductChanged}
           />
-          <OptionalInfo confirmedCategory={confirmedCategory} />
+          <OptionalInfo
+            confirmedCategory={confirmedCategory}
+            priceChanges={priceChanges}
+            onProductChanged={handleProductChanged}
+          />
           <NoteForm />
           <TagForm />
           <Divider />

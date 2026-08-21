@@ -7,19 +7,20 @@ import { useGo, useShow, useTranslate } from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import { Breadcrumb, Button, Divider, Flex, Form, Space } from 'antd'
+import { Alert, Breadcrumb, Button, Divider, Flex, Form, Space } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
 import type { RoundingMethodEnumType } from '@sdk/hey-api'
 import { RoundingMethodEnumType as RoundingMethodEnum } from '@sdk/hey-api'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import BasicInfo from './basic-info'
 import DetailInfo from './detail-info'
 import NoteForm from './note'
 import OptionalInfo from './optional-info'
 import TagForm from './tag'
+import { computeTemplatePriceChanges } from '../utils/price-changes'
 
 const QuoteTemplateDetailContainer: FC = () => {
   const t = useTranslate()
@@ -46,6 +47,15 @@ const QuoteTemplateDetailContainer: FC = () => {
 
   const quoteTemplateDetail = query.data?.data
 
+  const priceChanges = useMemo(
+    () =>
+      computeTemplatePriceChanges(
+        quoteTemplateDetail?.main_product,
+        quoteTemplateDetail?.optional_product,
+      ),
+    [quoteTemplateDetail],
+  )
+
   return (
     <PageContainer
       breadcrumbs={
@@ -71,6 +81,14 @@ const QuoteTemplateDetailContainer: FC = () => {
       title={t('quota_templates.breadcrumb.quotasDetail')}
       loading={query.isFetching}
     >
+      {priceChanges.length > 0 && (
+        <Alert
+          type="warning"
+          showIcon
+          style={{ marginBottom: 16 }}
+          message={t('quota_templates.priceReflection.message')}
+        />
+      )}
       {quoteTemplateDetail && (
         <Form
           labelCol={{ xs: 24, sm: 8, md: 8, lg: 6, xl: 6, xxl: 5 }}
@@ -106,9 +124,11 @@ const QuoteTemplateDetailContainer: FC = () => {
           <DetailInfo
             detail={quoteTemplateDetail}
             taxRoundingMethod={taxRoundingMethod}
+            priceChanges={priceChanges}
           />
           <OptionalInfo
             optionalProducts={quoteTemplateDetail?.optional_product ?? []}
+            priceChanges={priceChanges}
           />
           <NoteForm note={quoteTemplateDetail?.note ?? ''} />
           <TagForm tags={quoteTemplateDetail?.tags ?? []} />

@@ -209,6 +209,11 @@
     }
   },
   "action": {
+    "priceReflection": {
+      "message": "現在の設定に基づき、商品の売単価が変更される可能性があります。最新の単価を反映しますか。",
+      "reflect": "反映する",
+      "notReflect": "反映しない"
+    },
     "preview": "プレビュー",
     "preview_pdf": "Preview PDF",
     "estimate_number": "見積番号",

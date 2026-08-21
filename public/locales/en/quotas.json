@@ -1,5 +1,10 @@
 {
   "action": {
+    "priceReflection": {
+      "message": "The selling price of the product may have changed based on the current settings. Do you want to reflect the latest price?",
+      "reflect": "Reflect",
+      "notReflect": "Don't reflect"
+    },
     "basic_info": {
       "warnings": {
         "no_approve_routes": "No approve routes available"

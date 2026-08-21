@@ -29,6 +29,10 @@ import { Table } from 'antd/lib'
 import type { FC, MutableRefObject } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import type {
+  TemplatePriceChange,
+  TemplatePriceChangeParent,
+} from '../../utils/price-changes'
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
 import { useController } from './controller'
@@ -39,12 +43,19 @@ interface Props {
   isCategoryChangedByUserRef: MutableRefObject<boolean>
   confirmedCategory: QuotaCategoryEnum
   onCategoryConfirmed: (category: QuotaCategoryEnum) => void
+  priceChanges?: TemplatePriceChange[]
+  onProductChanged?: (
+    parent: TemplatePriceChangeParent,
+    oldProductId: number | null,
+  ) => void
 }
 
 const DetailInfo: FC<Props> = ({
   isCategoryChangedByUserRef,
   confirmedCategory,
   onCategoryConfirmed,
+  priceChanges,
+  onProductChanged,
 }) => {
   const {
     form,
@@ -389,9 +400,10 @@ const DetailInfo: FC<Props> = ({
                         },
                       ]}
                       defaultValue={defaultValue}
-                      onChangeValue={(value: any) =>
+                      onChangeValue={(value: any) => {
+                        onProductChanged?.('main_product', productId)
                         onChangeProductName(value, record.index)
-                      }
+                      }}
                       allowClear={true}
                     />
                   )
@@ -669,6 +681,11 @@ const DetailInfo: FC<Props> = ({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                const isPriceChanged = priceChanges?.some(
+                  (c) =>
+                    c.parent === 'main_product' &&
+                    c.productId === record.product_id,
+                )
                 return (
                   <Form.Item
                     rules={[
@@ -685,7 +702,11 @@ const DetailInfo: FC<Props> = ({
                       className="quota-template-number-input-right"
                       min={0}
                       controls={false}
-                      style={{ width: '100%', minWidth: 0 }}
+                      style={{
+                        width: '100%',
+                        minWidth: 0,
+                        backgroundColor: isPriceChanged ? '#FFF9C4' : undefined,
+                      }}
                       title={(
                         form.getFieldValue([
                           'main_product',
