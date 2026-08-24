@@ -1,7 +1,7 @@
 import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
-import { useGo, useTranslate } from '@refinedev/core'
+import { useApiUrl, useCustom, useGo, useTranslate } from '@refinedev/core'
 import { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -36,6 +36,7 @@ import TagForm from './tag'
 const QuoteTemplateFormEditContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
+  const apiUrl = useApiUrl()
 
   const isCategoryChangedByUserRef = useRef(false)
   const [confirmedCategory, setConfirmedCategory] = useState<QuotaCategoryEnum>(
@@ -61,22 +62,73 @@ const QuoteTemplateFormEditContainer: FC = () => {
 
   const [priceChanges, setPriceChanges] = useState<TemplatePriceChange[]>([])
   const [isPriceAlertVisible, setIsPriceAlertVisible] = useState(false)
+  const [priceCheckProductIds, setPriceCheckProductIds] = useState<number[]>([])
   const priceCheckDoneRef = useRef(false)
+  const priceCheckIdsResolvedRef = useRef(false)
+
+  useEffect(() => {
+    if (priceCheckIdsResolvedRef.current) return
+    const detail = query?.data?.data as
+      | {
+          main_product?: Array<{ product_id?: number | null }>
+          optional_product?: Array<{ product_id?: number | null }>
+        }
+      | undefined
+    if (!detail) return
+    priceCheckIdsResolvedRef.current = true
+    const ids = new Set<number>()
+    ;[
+      ...(detail.main_product ?? []),
+      ...(detail.optional_product ?? []),
+    ].forEach((line) => {
+      if (line?.product_id) ids.add(line.product_id)
+    })
+    if (ids.size === 0) {
+      priceCheckDoneRef.current = true
+      return
+    }
+    setPriceCheckProductIds(Array.from(ids))
+  }, [query?.data?.data])
+
+  const { data: priceCheckProductsData } = useCustom<{
+    items?: Array<{ id?: number }>
+  }>({
+    url: `${apiUrl}/products`,
+    method: 'get',
+    queryOptions: {
+      enabled: priceCheckProductIds.length > 0 && !priceCheckDoneRef.current,
+    },
+    config: {
+      query: {
+        ids: priceCheckProductIds.join(','),
+        _page: 1,
+        _per_page: priceCheckProductIds.length,
+      },
+    },
+  })
 
   useEffect(() => {
     if (priceCheckDoneRef.current) return
+    if (priceCheckProductIds.length === 0) return
+    const items = priceCheckProductsData?.data?.items
+    if (!items) return
+    priceCheckDoneRef.current = true
     const detail = query?.data?.data as
       | { main_product?: unknown[]; optional_product?: unknown[] }
       | undefined
-    if (!detail) return
-    priceCheckDoneRef.current = true
+    const productsById = new Map<number, (typeof items)[number]>(
+      items
+        .filter((item): item is { id: number } => item.id != null)
+        .map((item) => [item.id, item]),
+    )
     const changes = computeTemplatePriceChanges(
-      detail.main_product,
-      detail.optional_product,
+      detail?.main_product,
+      detail?.optional_product,
+      productsById,
     )
     setPriceChanges(changes)
     setIsPriceAlertVisible(changes.length > 0)
-  }, [query?.data?.data])
+  }, [priceCheckProductsData, priceCheckProductIds, query?.data?.data])
 
   const handleReflectPrices = useCallback(() => {
     priceChanges.forEach((change) => {
@@ -87,7 +139,7 @@ const QuoteTemplateFormEditContainer: FC = () => {
       )
       if (index !== -1) {
         form.setFieldValue(
-          [change.parent, index, 'selling_price'],
+          [change.parent, index, change.field],
           change.newPrice,
         )
       }

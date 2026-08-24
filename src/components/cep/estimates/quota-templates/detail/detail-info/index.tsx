@@ -199,6 +199,18 @@ const DetailInfo: FC<Props> = (props) => {
       title: '原価',
       dataIndex: 'cost_price',
       key: 'cost_price',
+      onCell: (record: any) => ({
+        style: {
+          backgroundColor: priceChanges?.some(
+            (c) =>
+              c.parent === 'main_product' &&
+              c.productId === record.product_id &&
+              c.field === 'cost_price',
+          )
+            ? '#FFF9C4'
+            : undefined,
+        },
+      }),
       render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -214,7 +226,9 @@ const DetailInfo: FC<Props> = (props) => {
         style: {
           backgroundColor: priceChanges?.some(
             (c) =>
-              c.parent === 'main_product' && c.productId === record.product_id,
+              c.parent === 'main_product' &&
+              c.productId === record.product_id &&
+              c.field === 'selling_price',
           )
             ? '#FFF9C4'
             : undefined,
