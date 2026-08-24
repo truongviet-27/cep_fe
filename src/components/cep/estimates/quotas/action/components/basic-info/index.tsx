@@ -365,9 +365,7 @@ const BasicInfo = ({
                       form.setFieldsValue({ rank_id: rankId })
                       setSelectedContact(null)
                       form.setFieldsValue({ customer_contact_id: null })
-                      if (!isEdit) {
-                        onCustomerManualSelect?.(!!valueOption?.rank)
-                      }
+                      onCustomerManualSelect?.(!!valueOption?.rank)
                       handleChangeProductPrincing(
                         (form.getFieldValue(['main_product']) ?? []).flatMap(
                           (item: any) => item.product_id,
