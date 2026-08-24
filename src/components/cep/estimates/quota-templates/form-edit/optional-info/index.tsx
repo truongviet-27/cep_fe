@@ -492,6 +492,18 @@ const OptionalInfo: FC<Props> = ({
               dataIndex: 'cost_price',
               key: 'cost_price',
               width: '8%',
+              onCell: (record: any) => ({
+                style: {
+                  backgroundColor: priceChanges?.some(
+                    (c) =>
+                      c.parent === 'optional_product' &&
+                      c.productId === record.product_id &&
+                      c.field === 'cost_price',
+                  )
+                    ? '#FFF9C4'
+                    : undefined,
+                },
+              }),
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -551,7 +563,8 @@ const OptionalInfo: FC<Props> = ({
                 const isPriceChanged = priceChanges?.some(
                   (c) =>
                     c.parent === 'optional_product' &&
-                    c.productId === record.product_id,
+                    c.productId === record.product_id &&
+                    c.field === 'selling_price',
                 )
                 return (
                   <Form.Item

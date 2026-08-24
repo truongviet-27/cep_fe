@@ -3,7 +3,13 @@ import { RightOutlined } from '@ant-design/icons'
 import PageContainer from '@components/common/page-container'
 import ShowMoreInfo from '@components/common/show-more-info'
 import type { QuoteTemplateDetailType } from '@interfaces/quota-templates'
-import { useGo, useShow, useTranslate } from '@refinedev/core'
+import {
+  useApiUrl,
+  useCustom,
+  useGo,
+  useShow,
+  useTranslate,
+} from '@refinedev/core'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
@@ -25,6 +31,7 @@ import { computeTemplatePriceChanges } from '../utils/price-changes'
 const QuoteTemplateDetailContainer: FC = () => {
   const t = useTranslate()
   const go = useGo()
+  const apiUrl = useApiUrl()
   const { id } = useParams<{ id: string }>()
   const [taxRoundingMethod, setTaxRoundingMethod] =
     useState<RoundingMethodEnumType>(RoundingMethodEnum.ROUND_UP)
@@ -47,14 +54,48 @@ const QuoteTemplateDetailContainer: FC = () => {
 
   const quoteTemplateDetail = query.data?.data
 
-  const priceChanges = useMemo(
-    () =>
-      computeTemplatePriceChanges(
-        quoteTemplateDetail?.main_product,
-        quoteTemplateDetail?.optional_product,
-      ),
-    [quoteTemplateDetail],
-  )
+  const priceCheckProductIds = useMemo(() => {
+    const ids = new Set<number>()
+    ;[
+      ...(quoteTemplateDetail?.main_product ?? []),
+      ...(quoteTemplateDetail?.optional_product ?? []),
+    ].forEach((line: { product_id?: number | null }) => {
+      if (line?.product_id) ids.add(line.product_id)
+    })
+    return Array.from(ids)
+  }, [quoteTemplateDetail])
+
+  const { data: priceCheckProductsData } = useCustom<{
+    items?: Array<{ id?: number }>
+  }>({
+    url: `${apiUrl}/products`,
+    method: 'get',
+    queryOptions: {
+      enabled: priceCheckProductIds.length > 0,
+    },
+    config: {
+      query: {
+        ids: priceCheckProductIds.join(','),
+        _page: 1,
+        _per_page: priceCheckProductIds.length,
+      },
+    },
+  })
+
+  const priceChanges = useMemo(() => {
+    const items = priceCheckProductsData?.data?.items
+    if (!items || priceCheckProductIds.length === 0) return []
+    const productsById = new Map<number, (typeof items)[number]>(
+      items
+        .filter((item): item is { id: number } => item.id != null)
+        .map((item) => [item.id, item]),
+    )
+    return computeTemplatePriceChanges(
+      quoteTemplateDetail?.main_product,
+      quoteTemplateDetail?.optional_product,
+      productsById,
+    )
+  }, [priceCheckProductsData, priceCheckProductIds, quoteTemplateDetail])
 
   return (
     <PageContainer
