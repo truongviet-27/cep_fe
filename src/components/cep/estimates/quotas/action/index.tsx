@@ -1435,7 +1435,13 @@ function QuotaAction() {
           type="warning"
           showIcon
           style={{ marginBottom: 16 }}
-          message={t('quotas.action.priceReflection.message')}
+          message={
+            <>
+              {t('quotas.action.priceReflection.message')}
+              <br />
+              {t('quotas.action.priceReflection.note')}
+            </>
+          }
           action={
             <Space>
               <Button
