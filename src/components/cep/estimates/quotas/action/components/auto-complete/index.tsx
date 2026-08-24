@@ -45,6 +45,7 @@ function CoreAutoComplete({
     index: number,
     oldPrice: number,
     newPrice: number,
+    field?: 'selling_price' | 'cost_price',
   ) => void
 }) {
   const t = useTranslate()
@@ -77,9 +78,19 @@ function CoreAutoComplete({
         const newPrice = option?.rank_prices
           ? option?.rank_prices
           : option?.selling_price
+        const newCostPrice =
+          (data?.cost_price ?? 0) * (option?.quantity_in_package ?? 0)
         if (isAwaitingDecision && onPriceComputed) {
           const oldPrice = form.getFieldValue([parent, index, 'selling_price'])
-          onPriceComputed(parent, index, oldPrice, newPrice)
+          onPriceComputed(parent, index, oldPrice, newPrice, 'selling_price')
+          const oldCostPrice = form.getFieldValue([parent, index, 'cost_price'])
+          onPriceComputed(
+            parent,
+            index,
+            oldCostPrice,
+            newCostPrice,
+            'cost_price',
+          )
         } else {
           form.setFieldValue([parent, index, 'selling_price'], newPrice)
         }

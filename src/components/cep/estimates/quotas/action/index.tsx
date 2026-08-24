@@ -1208,6 +1208,7 @@ function QuotaAction() {
     changes: Array<{
       parent: 'main_product' | 'optional_product'
       index: number
+      field: 'selling_price' | 'cost_price'
       oldPrice: number
       newPrice: number
     }>
@@ -1218,6 +1219,7 @@ function QuotaAction() {
     Array<{
       parent: 'main_product' | 'optional_product'
       index: number
+      field: 'selling_price' | 'cost_price'
       oldPrice: number
       newPrice: number
     }>
@@ -1259,25 +1261,31 @@ function QuotaAction() {
   }, [isAwaitingPriceDecision, priceChanges, customerHasRank])
 
   const onPriceComputed = useCallback(
-    (parent: string, index: number, oldPrice: number, newPrice: number) => {
+    (
+      parent: string,
+      index: number,
+      oldPrice: number,
+      newPrice: number,
+      field: 'selling_price' | 'cost_price' = 'selling_price',
+    ) => {
       const normalizedOld = Number(oldPrice ?? 0)
       const normalizedNew = Number(newPrice ?? 0)
-      if (
+      const isNoop =
         Number.isNaN(normalizedOld) ||
         Number.isNaN(normalizedNew) ||
         normalizedOld === normalizedNew
-      ) {
-        return
-      }
       setPriceChanges((prev) => {
         const filtered = prev.filter(
-          (c) => !(c.parent === parent && c.index === index),
+          (c) =>
+            !(c.parent === parent && c.index === index && c.field === field),
         )
+        if (isNoop) return filtered
         return [
           ...filtered,
           {
             parent: parent as 'main_product' | 'optional_product',
             index,
+            field,
             oldPrice: normalizedOld,
             newPrice: normalizedNew,
           },
@@ -1300,7 +1308,7 @@ function QuotaAction() {
       if (prev) {
         prev.changes.forEach((change) => {
           form.setFieldValue(
-            [change.parent, change.index, 'selling_price'],
+            [change.parent, change.index, change.field],
             change.newPrice,
           )
         })

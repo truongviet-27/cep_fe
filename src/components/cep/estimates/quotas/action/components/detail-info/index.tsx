@@ -69,6 +69,7 @@ function DetailInfo({
   priceReflectionChanges?: Array<{
     parent: 'main_product' | 'optional_product'
     index: number
+    field: 'selling_price' | 'cost_price'
     oldPrice: number
     newPrice: number
   }>
@@ -77,6 +78,7 @@ function DetailInfo({
     index: number,
     oldPrice: number,
     newPrice: number,
+    field?: 'selling_price' | 'cost_price',
   ) => void
   isAwaitingPriceDecision?: boolean
   onPricingFetchingChange?: (isFetching: boolean) => void
@@ -898,6 +900,19 @@ function DetailInfo({
                   lineHeight: '1.2',
                 },
               }),
+              onCell: (record) => {
+                const isCostPriceChanged = priceReflectionChanges?.some(
+                  (c) =>
+                    c.parent === 'main_product' &&
+                    c.index === record.index &&
+                    c.field === 'cost_price',
+                )
+                return {
+                  style: {
+                    backgroundColor: isCostPriceChanged ? '#FFF9C4' : undefined,
+                  },
+                }
+              },
               ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
@@ -957,7 +972,9 @@ function DetailInfo({
                 }
                 const isPriceChanged = priceReflectionChanges?.some(
                   (c) =>
-                    c.parent === 'main_product' && c.index === record.index,
+                    c.parent === 'main_product' &&
+                    c.index === record.index &&
+                    c.field === 'selling_price',
                 )
                 return (
                   <Form.Item
