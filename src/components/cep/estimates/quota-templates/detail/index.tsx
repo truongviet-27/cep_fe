@@ -68,7 +68,7 @@ const QuoteTemplateDetailContainer: FC = () => {
   const { data: priceCheckProductsData } = useCustom<{
     items?: Array<{ id?: number }>
   }>({
-    url: `${apiUrl}/products`,
+    url: `${apiUrl}/products/list-all`,
     method: 'get',
     queryOptions: {
       enabled: priceCheckProductIds.length > 0,
