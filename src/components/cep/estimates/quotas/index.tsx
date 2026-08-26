@@ -251,18 +251,20 @@ function QuotaList() {
           },
         }),
         render: (value, record) => (
-          <Button
-            type="link"
+          <span
+            role="link"
             style={{
               display: 'block',
               width: '100%',
               whiteSpace: 'normal',
               wordBreak: 'break-all',
               textAlign: 'left',
-              padding: 0,
-              height: 'auto',
+              color: PRIMARY,
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              userSelect: 'text',
+              WebkitUserSelect: 'text',
             }}
-            className="underline"
             title={value}
             onClick={() => {
               go({
@@ -271,7 +273,7 @@ function QuotaList() {
             }}
           >
             {value}
-          </Button>
+          </span>
         ),
       },
       {
@@ -736,12 +738,15 @@ function QuotaList() {
         }
       },
       onCell: (record: any, rowIndex: any) => {
-        const originalOnCell = column.onCell?.(record, rowIndex) || {}
+        const originalOnCell: any = column.onCell?.(record, rowIndex) || {}
+        const isSelectableColumn = column.key === 'code'
         return {
           ...originalOnCell,
           style: {
-            ...(originalOnCell as any).style,
+            ...originalOnCell.style,
             padding: '8px 10px',
+            userSelect: isSelectableColumn ? 'text' : 'none',
+            WebkitUserSelect: isSelectableColumn ? 'text' : 'none',
           },
         }
       },
