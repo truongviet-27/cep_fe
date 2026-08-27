@@ -158,13 +158,13 @@ function QuotaDetail() {
   )
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any, method?: any) => {
+    (resource: string, values: any, method?: any, successMessage?: string) => {
       mutate({
         values,
         method: method ? method : 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
-          return notificationFunction(data?.data.message)
+          return notificationFunction(successMessage ?? data?.data.message)
         },
       })
     },
@@ -254,7 +254,7 @@ function QuotaDetail() {
     }
   }, [queryBasic?.data])
 
-  const handleUpdateStatus = () => {
+  const performUpdateStatus = (successMessage?: string) => {
     const action =
       currentActions.length === 1 ? currentActions[0].value : selectedValue
 
@@ -270,23 +270,33 @@ function QuotaDetail() {
         break
 
       case 'approve':
-        handleChangeStatus('approval-steps', [
-          {
-            quota_id: quotaId,
-            status: 'approved',
-            comment: form.getFieldValue('reason'),
-          },
-        ])
+        handleChangeStatus(
+          'approval-steps',
+          [
+            {
+              quota_id: quotaId,
+              status: 'approved',
+              comment: form.getFieldValue('reason'),
+            },
+          ],
+          undefined,
+          successMessage,
+        )
         break
 
       case 'reject':
-        handleChangeStatus('approval-steps', [
-          {
-            quota_id: quotaId,
-            status: 'rejected',
-            comment: form.getFieldValue('reason'),
-          },
-        ])
+        handleChangeStatus(
+          'approval-steps',
+          [
+            {
+              quota_id: quotaId,
+              status: 'rejected',
+              comment: form.getFieldValue('reason'),
+            },
+          ],
+          undefined,
+          successMessage,
+        )
         break
 
       case 'send-to-customer':
@@ -328,6 +338,43 @@ function QuotaDetail() {
         console.warn('Undefined', action)
         break
     }
+  }
+
+  const handleUpdateStatus = () => {
+    const action =
+      currentActions.length === 1 ? currentActions[0].value : selectedValue
+
+    if (action === 'approve') {
+      Modal.confirm({
+        title: t('quotas.action.confirm_approve'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        onOk: () => performUpdateStatus(t('quotas.action.approve_success')),
+      })
+      return
+    }
+
+    if (action === 'reject') {
+      const reason = form.getFieldValue('reason')
+      if (!reason || !String(reason).trim()) {
+        form.setFields([
+          {
+            name: 'reason',
+            errors: [t('quotas.validation.reason.required')],
+          },
+        ])
+        return
+      }
+      Modal.confirm({
+        title: t('quotas.action.confirm_reject'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        onOk: () => performUpdateStatus(t('quotas.action.reject_success')),
+      })
+      return
+    }
+
+    performUpdateStatus()
   }
 
   return (

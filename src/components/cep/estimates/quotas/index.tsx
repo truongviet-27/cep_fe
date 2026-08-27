@@ -53,6 +53,7 @@ import {
   Empty,
   Form,
   Input,
+  Modal,
   notification,
   Popconfirm,
   Row,
@@ -1119,62 +1120,65 @@ function QuotaList() {
         },
       })
     } else if (Number(info.key) === 3) {
-      mutate({
-        values: selectedRows.map((item: any) => ({
-          quota_id: item?.id,
-          status: 'approved',
-          comment: '',
-        })),
-        method: 'put',
-        url: `${apiUrl}/quotas/approval-steps`,
-        successNotification: (data) => {
-          const idToCodeMap = new Map(
-            selectedRows.map((item: any) => [item.id, item.code]),
-          )
-          const successCodes =
-            data?.data?.results
-              ?.map((id: number) => idToCodeMap.get(id))
-              .filter(Boolean) ?? []
+      Modal.confirm({
+        title: t('quotas.actions.confirm_approve'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        onOk: () => {
+          mutate({
+            values: selectedRows.map((item: any) => ({
+              quota_id: item?.id,
+              status: 'approved',
+              comment: '',
+            })),
+            method: 'put',
+            url: `${apiUrl}/quotas/approval-steps`,
+            successNotification: (data) => {
+              const idToCodeMap = new Map(
+                selectedRows.map((item: any) => [item.id, item.code]),
+              )
+              const successCodes =
+                data?.data?.results
+                  ?.map((id: number) => idToCodeMap.get(id))
+                  .filter(Boolean) ?? []
 
-          const errorCodes =
-            data?.data?.errors
-              ?.map((id: number) => idToCodeMap.get(id))
-              .filter(Boolean) ?? []
+              const errorCodes =
+                data?.data?.errors
+                  ?.map((id: number) => idToCodeMap.get(id))
+                  .filter(Boolean) ?? []
 
-          const formatCodes = (codes: string[], limit = 10) => {
-            if (codes.length <= limit) return codes.join(', ')
-            return `${codes.length}`
-          }
+              const formatCodes = (codes: string[], limit = 10) => {
+                if (codes.length <= limit) return codes.join(', ')
+                return `${codes.length}`
+              }
 
-          if (errorCodes.length) {
-            notification.open({
-              message: t('notifications.notProceedRecords', {
-                recordAsString: formatCodes(errorCodes),
-              }),
-              type: 'error',
-            })
-          }
+              if (errorCodes.length) {
+                notification.open({
+                  message: t('notifications.notProceedRecords', {
+                    recordAsString: formatCodes(errorCodes),
+                  }),
+                  type: 'error',
+                })
+              }
 
-          if (successCodes.length) {
-            return notificationFunction(
-              t('notifications.proceedRecords', {
-                recordAsString: formatCodes(successCodes),
-              }),
-            )
-          }
-          refetch()
-          refetchStats()
-          setSelectedRowKeys([])
-          setOptions([])
-          setIsOpenManyDelete(false)
-          return false
-        },
-        errorNotification: (data) => {
-          notification.open({
-            message: data?.message,
-            type: 'error',
+              if (successCodes.length) {
+                return notificationFunction(t('quotas.actions.approve_success'))
+              }
+              refetch()
+              refetchStats()
+              setSelectedRowKeys([])
+              setOptions([])
+              setIsOpenManyDelete(false)
+              return false
+            },
+            errorNotification: (data) => {
+              notification.open({
+                message: data?.message,
+                type: 'error',
+              })
+              return false
+            },
           })
-          return false
         },
       })
     } else if (Number(info.key) === 4) {
@@ -1234,16 +1238,23 @@ function QuotaList() {
         },
       })
     } else if (Number(info.key) === 9) {
-      mutate({
-        values: selectedRows.map((item: any) => ({
-          quota_id: item?.id,
-          status: 'rejected',
-          comment: '一括差戻',
-        })),
-        method: 'put',
-        url: `${apiUrl}/quotas/approval-steps`,
-        successNotification: (data) => {
-          return notificationFunction(data?.data.message)
+      Modal.confirm({
+        title: t('quotas.actions.confirm_reject'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        onOk: () => {
+          mutate({
+            values: selectedRows.map((item: any) => ({
+              quota_id: item?.id,
+              status: 'rejected',
+              comment: '一括差戻',
+            })),
+            method: 'put',
+            url: `${apiUrl}/quotas/approval-steps`,
+            successNotification: () => {
+              return notificationFunction(t('quotas.actions.reject_success'))
+            },
+          })
         },
       })
     }
