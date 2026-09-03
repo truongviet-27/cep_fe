@@ -561,6 +561,21 @@ function QuotaAction() {
             : defaultOptionalProduct,
           ...dataHistory?.data?.data,
         })
+
+        if (!initialPriceCheckDoneRef.current) {
+          initialPriceCheckDoneRef.current = true
+          setPriceChanges([])
+          setPriceReflection(null)
+          setCustomerHasRank(null)
+          setIsAwaitingPriceDecision(true)
+          setCustomerIdForRankCheck(dataBasicInfo.data.customer_id)
+          handleChangeProductPrincing(
+            dataProducts.data.main_product.map((item: any) => item.product_id),
+            (dataProducts.data.optional_product ?? []).map(
+              (item: any) => item.product_id,
+            ),
+          )
+        }
       }
     } else {
       // Edit case and Show case
@@ -649,6 +664,28 @@ function QuotaAction() {
             : defaultOptionalProduct,
           ...dataHistory?.data?.data,
         })
+
+        const isEditableQuotaStatus =
+          dataBasicInfo.data.status === QuotaStatus.Creating ||
+          dataBasicInfo.data.status === QuotaStatus.Rejected
+
+        if (
+          (isCloneNew || (isEdit && isEditableQuotaStatus)) &&
+          !initialPriceCheckDoneRef.current
+        ) {
+          initialPriceCheckDoneRef.current = true
+          setPriceChanges([])
+          setPriceReflection(null)
+          setCustomerHasRank(null)
+          setIsAwaitingPriceDecision(true)
+          setCustomerIdForRankCheck(dataBasicInfo.data.customer_id)
+          handleChangeProductPrincing(
+            dataProducts.data.main_product.map((item: any) => item.product_id),
+            (dataProducts.data.optional_product ?? []).map(
+              (item: any) => item.product_id,
+            ),
+          )
+        }
       }
     }
   }, [
@@ -657,6 +694,8 @@ function QuotaAction() {
     dataHistory,
     dataBasicInfo,
     taxRoundingMethod,
+    isCloneNew,
+    isEdit,
   ])
 
   useEffect(() => {
@@ -1173,6 +1212,147 @@ function QuotaAction() {
     [],
   )
 
+  const [priceReflection, setPriceReflection] = useState<{
+    visible: boolean
+    changes: Array<{
+      parent: 'main_product' | 'optional_product'
+      index: number
+      productId?: number
+      field: 'selling_price' | 'cost_price'
+      oldPrice: number
+      newPrice: number
+    }>
+    customerHasRank: boolean
+  } | null>(null)
+  const [isAwaitingPriceDecision, setIsAwaitingPriceDecision] = useState(false)
+  const [priceChanges, setPriceChanges] = useState<
+    Array<{
+      parent: 'main_product' | 'optional_product'
+      index: number
+      productId?: number
+      field: 'selling_price' | 'cost_price'
+      oldPrice: number
+      newPrice: number
+    }>
+  >([])
+  const [customerHasRank, setCustomerHasRank] = useState<boolean | null>(null)
+  const [customerIdForRankCheck, setCustomerIdForRankCheck] = useState<
+    number | null
+  >(null)
+  const [isMainPricingFetching, setIsMainPricingFetching] = useState(false)
+  const [isOptionalPricingFetching, setIsOptionalPricingFetching] =
+    useState(false)
+  const initialPriceCheckDoneRef = useRef(false)
+
+  const { data: customerRankData } = useCustom<any>({
+    url: `${apiUrl}/customers/${customerIdForRankCheck}`,
+    method: 'get',
+    queryOptions: {
+      enabled: !!customerIdForRankCheck,
+    },
+  })
+
+  useEffect(() => {
+    if (customerIdForRankCheck && customerRankData?.data) {
+      setCustomerHasRank(
+        !!customerRankData.data.price_rank_id || !!customerRankData.data.rank,
+      )
+    }
+  }, [customerRankData, customerIdForRankCheck])
+
+  useEffect(() => {
+    if (!isAwaitingPriceDecision) return
+    if (priceChanges.length > 0 || customerHasRank === true) {
+      setPriceReflection({
+        visible: true,
+        changes: priceChanges,
+        customerHasRank: !!customerHasRank,
+      })
+    }
+  }, [isAwaitingPriceDecision, priceChanges, customerHasRank])
+
+  const onPriceComputed = useCallback(
+    (
+      parent: string,
+      index: number,
+      oldPrice: number,
+      newPrice: number,
+      field: 'selling_price' | 'cost_price' = 'selling_price',
+      productId?: number,
+    ) => {
+      const normalizedOld = Number(oldPrice ?? 0)
+      const normalizedNew = Number(newPrice ?? 0)
+      const isNoop =
+        Number.isNaN(normalizedOld) ||
+        Number.isNaN(normalizedNew) ||
+        normalizedOld === normalizedNew
+      setPriceChanges((prev) => {
+        const filtered = prev.filter(
+          (c) =>
+            !(
+              c.parent === parent &&
+              c.field === field &&
+              (productId != null
+                ? c.productId === productId
+                : c.index === index)
+            ),
+        )
+        if (isNoop) return filtered
+        return [
+          ...filtered,
+          {
+            parent: parent as 'main_product' | 'optional_product',
+            index,
+            productId,
+            field,
+            oldPrice: normalizedOld,
+            newPrice: normalizedNew,
+          },
+        ]
+      })
+    },
+    [],
+  )
+
+  const onCustomerManualSelect = useCallback((hasRank: boolean) => {
+    setPriceChanges([])
+    setPriceReflection(null)
+    setCustomerHasRank(hasRank)
+    setCustomerIdForRankCheck(null)
+    setIsAwaitingPriceDecision(true)
+  }, [])
+
+  const handleReflectPrices = useCallback(() => {
+    setPriceReflection((prev) => {
+      if (prev) {
+        prev.changes.forEach((change) => {
+          let targetIndex = change.index
+          if (change.productId != null) {
+            const list: Array<{ product_id?: number | null }> =
+              form.getFieldValue(change.parent) ?? []
+            const foundIndex = list.findIndex(
+              (item) => item?.product_id === change.productId,
+            )
+            if (foundIndex === -1) return
+            targetIndex = foundIndex
+          }
+          form.setFieldValue(
+            [change.parent, targetIndex, change.field],
+            change.newPrice,
+          )
+        })
+      }
+      return null
+    })
+    setPriceChanges([])
+    setIsAwaitingPriceDecision(false)
+  }, [form])
+
+  const handleDismissReflection = useCallback(() => {
+    setPriceReflection((prev) => (prev ? { ...prev, visible: false } : prev))
+    setIsAwaitingPriceDecision(false)
+  }, [])
+
   return (
     <PageContainer
       breadcrumbs={
@@ -1250,6 +1430,35 @@ function QuotaAction() {
         </div>
       }
     >
+      {priceReflection?.visible && (
+        <Alert
+          type="warning"
+          showIcon
+          style={{ marginBottom: 16 }}
+          message={
+            <>
+              {t('quotas.action.priceReflection.message')}
+              <br />
+              {t('quotas.action.priceReflection.note')}
+            </>
+          }
+          action={
+            <Space>
+              <Button
+                size="small"
+                type="primary"
+                loading={isMainPricingFetching || isOptionalPricingFetching}
+                onClick={handleReflectPrices}
+              >
+                {t('quotas.action.priceReflection.reflect')}
+              </Button>
+              <Button size="small" onClick={handleDismissReflection}>
+                {t('quotas.action.priceReflection.notReflect')}
+              </Button>
+            </Space>
+          }
+        />
+      )}
       <Spin
         spinning={
           isFetching ||
@@ -1284,6 +1493,7 @@ function QuotaAction() {
             isCategoryChangedByUserRef={isCategoryChangedByUserRef}
             parameterSettings={parameterSettings}
             handleChangeProductPrincing={handleChangeProductPrincing}
+            onCustomerManualSelect={onCustomerManualSelect}
             isEdit={isEdit}
             embeddedContactFromQuota={
               dataBasicInfo?.data?.customer_contact_department !== undefined ||
@@ -1306,11 +1516,19 @@ function QuotaAction() {
             onCategoryConfirmed={setConfirmedCategory}
             productPrincing={productPrincing}
             mainProduct={dataProducts?.data.main_product}
+            priceReflectionChanges={priceReflection?.changes}
+            onPriceComputed={onPriceComputed}
+            isAwaitingPriceDecision={isAwaitingPriceDecision}
+            onPricingFetchingChange={setIsMainPricingFetching}
           />
           <OptionalInfo
             confirmedCategory={confirmedCategory}
             productPrincing={productPrincingOptional}
             optionalProduct={dataProducts?.data.optional_product}
+            priceReflectionChanges={priceReflection?.changes}
+            onPriceComputed={onPriceComputed}
+            isAwaitingPriceDecision={isAwaitingPriceDecision}
+            onPricingFetchingChange={setIsOptionalPricingFetching}
           />
           <Row>
             <Col xs={24}>
