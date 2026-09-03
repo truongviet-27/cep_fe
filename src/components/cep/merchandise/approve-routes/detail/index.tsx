@@ -276,13 +276,15 @@ function ApproveDetail() {
                                           item2.name,
                                           'department',
                                         ])}
-                                        ${form.getFieldValue([
-                                          'steps',
-                                          item.name,
-                                          'employees',
-                                          item2.name,
-                                          'code',
-                                        ])})`}
+                                        ${
+                                          form.getFieldValue([
+                                            'steps',
+                                            item.name,
+                                            'employees',
+                                            item2.name,
+                                            'code',
+                                          ]) ?? '未設定'
+                                        })`}
                                       </Space>
                                     </Col>
                                   </Row>
