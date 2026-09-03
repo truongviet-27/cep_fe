@@ -1,5 +1,10 @@
 {
   "quota_templates": "見積テンプレート",
+  "priceReflection": {
+    "message": "商品の売単価が変更されました。",
+    "reflect": "反映する",
+    "notReflect": "反映しない"
+  },
   "breadcrumb": {
     "home": "見積",
     "parent": "見積テンプレート",
