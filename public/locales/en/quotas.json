@@ -1,9 +1,10 @@
 {
   "action": {
     "priceReflection": {
-      "message": "The selling price of the product may have changed based on the current settings. Do you want to reflect the latest price?",
+      "message": "Based on the current settings, the unit price of the product may change. Do you want to reflect the latest price?",
+      "note": "* If the unit price of the product has changed, or if the selected customer has a price rank configured, the unit price of the product will be changed.",
       "reflect": "Reflect",
-      "notReflect": "Don't reflect"
+      "notReflect": "Do not reflect"
     },
     "basic_info": {
       "warnings": {

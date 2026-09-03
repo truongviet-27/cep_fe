@@ -55,6 +55,7 @@ function OptionalInfo({
     oldPrice: number,
     newPrice: number,
     field?: 'selling_price' | 'cost_price',
+    productId?: number,
   ) => void
   isAwaitingPriceDecision?: boolean
   onPricingFetchingChange?: (isFetching: boolean) => void

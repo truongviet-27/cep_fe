@@ -665,7 +665,14 @@ function QuotaAction() {
           ...dataHistory?.data?.data,
         })
 
-        if (isCloneNew && !initialPriceCheckDoneRef.current) {
+        const isEditableQuotaStatus =
+          dataBasicInfo.data.status === QuotaStatus.Creating ||
+          dataBasicInfo.data.status === QuotaStatus.Rejected
+
+        if (
+          (isCloneNew || (isEdit && isEditableQuotaStatus)) &&
+          !initialPriceCheckDoneRef.current
+        ) {
           initialPriceCheckDoneRef.current = true
           setPriceChanges([])
           setPriceReflection(null)
@@ -687,6 +694,8 @@ function QuotaAction() {
     dataHistory,
     dataBasicInfo,
     taxRoundingMethod,
+    isCloneNew,
+    isEdit,
   ])
 
   useEffect(() => {
@@ -1208,6 +1217,7 @@ function QuotaAction() {
     changes: Array<{
       parent: 'main_product' | 'optional_product'
       index: number
+      productId?: number
       field: 'selling_price' | 'cost_price'
       oldPrice: number
       newPrice: number
@@ -1219,6 +1229,7 @@ function QuotaAction() {
     Array<{
       parent: 'main_product' | 'optional_product'
       index: number
+      productId?: number
       field: 'selling_price' | 'cost_price'
       oldPrice: number
       newPrice: number
@@ -1267,6 +1278,7 @@ function QuotaAction() {
       oldPrice: number,
       newPrice: number,
       field: 'selling_price' | 'cost_price' = 'selling_price',
+      productId?: number,
     ) => {
       const normalizedOld = Number(oldPrice ?? 0)
       const normalizedNew = Number(newPrice ?? 0)
@@ -1277,7 +1289,13 @@ function QuotaAction() {
       setPriceChanges((prev) => {
         const filtered = prev.filter(
           (c) =>
-            !(c.parent === parent && c.index === index && c.field === field),
+            !(
+              c.parent === parent &&
+              c.field === field &&
+              (productId != null
+                ? c.productId === productId
+                : c.index === index)
+            ),
         )
         if (isNoop) return filtered
         return [
@@ -1285,6 +1303,7 @@ function QuotaAction() {
           {
             parent: parent as 'main_product' | 'optional_product',
             index,
+            productId,
             field,
             oldPrice: normalizedOld,
             newPrice: normalizedNew,
@@ -1307,8 +1326,18 @@ function QuotaAction() {
     setPriceReflection((prev) => {
       if (prev) {
         prev.changes.forEach((change) => {
+          let targetIndex = change.index
+          if (change.productId != null) {
+            const list: Array<{ product_id?: number | null }> =
+              form.getFieldValue(change.parent) ?? []
+            const foundIndex = list.findIndex(
+              (item) => item?.product_id === change.productId,
+            )
+            if (foundIndex === -1) return
+            targetIndex = foundIndex
+          }
           form.setFieldValue(
-            [change.parent, change.index, change.field],
+            [change.parent, targetIndex, change.field],
             change.newPrice,
           )
         })
@@ -1406,7 +1435,13 @@ function QuotaAction() {
           type="warning"
           showIcon
           style={{ marginBottom: 16 }}
-          message={t('quotas.action.priceReflection.message')}
+          message={
+            <>
+              {t('quotas.action.priceReflection.message')}
+              <br />
+              {t('quotas.action.priceReflection.note')}
+            </>
+          }
           action={
             <Space>
               <Button
