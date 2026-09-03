@@ -13,11 +13,14 @@ import { Table } from 'antd/lib'
 import type { FC } from 'react'
 import { useMemo, useState } from 'react'
 
+import type { TemplatePriceChange } from '../../utils/price-changes'
+
 const { Title, Text } = Typography
 
 interface Props {
   detail: QuoteTemplateDetailType
   taxRoundingMethod: RoundingMethodEnumType
+  priceChanges?: TemplatePriceChange[]
 }
 
 const DetailInfo: FC<Props> = (props) => {
@@ -28,7 +31,7 @@ const DetailInfo: FC<Props> = (props) => {
       prev.includes(id) ? prev.filter((key) => key !== id) : [...prev, id],
     )
   }
-  const { detail, taxRoundingMethod } = props
+  const { detail, taxRoundingMethod, priceChanges } = props
   const t = useTranslate()
 
   const dataSource: any[] = (detail?.main_product ?? [])
@@ -196,6 +199,18 @@ const DetailInfo: FC<Props> = (props) => {
       title: '原価',
       dataIndex: 'cost_price',
       key: 'cost_price',
+      onCell: (record: any) => ({
+        style: {
+          backgroundColor: priceChanges?.some(
+            (c) =>
+              c.parent === 'main_product' &&
+              c.productId === record.product_id &&
+              c.field === 'cost_price',
+          )
+            ? '#FFF9C4'
+            : undefined,
+        },
+      }),
       render: (value, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }
@@ -207,6 +222,18 @@ const DetailInfo: FC<Props> = (props) => {
       title: '売単価',
       dataIndex: 'selling_price',
       key: 'selling_price',
+      onCell: (record: any) => ({
+        style: {
+          backgroundColor: priceChanges?.some(
+            (c) =>
+              c.parent === 'main_product' &&
+              c.productId === record.product_id &&
+              c.field === 'selling_price',
+          )
+            ? '#FFF9C4'
+            : undefined,
+        },
+      }),
       render: (selling_price, record) => {
         if (record.isHeader) {
           return { props: { colSpan: 0 } }

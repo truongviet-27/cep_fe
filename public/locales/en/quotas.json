@@ -1,5 +1,11 @@
 {
   "action": {
+    "priceReflection": {
+      "message": "Based on the current settings, the unit price of the product may change. Do you want to reflect the latest price?",
+      "note": "* If the unit price of the product has changed, or if the selected customer has a price rank configured, the unit price of the product will be changed.",
+      "reflect": "Reflect",
+      "notReflect": "Do not reflect"
+    },
     "basic_info": {
       "warnings": {
         "no_approve_routes": "No approve routes available"
