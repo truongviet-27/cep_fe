@@ -269,21 +269,22 @@ function QuotaDetail() {
   }
 
   const handleReject = () => {
-    const reason = form.getFieldValue('reason')
-    if (!reason || !String(reason).trim()) {
-      form.setFields([
-        {
-          name: 'reason',
-          errors: [t('quotas.validation.reason.required')],
-        },
-      ])
-      return
-    }
     Modal.confirm({
       title: t('quotas.action.confirm_reject'),
       okText: t('buttons.confirm'),
       cancelText: t('buttons.cancel'),
       onOk: () => {
+        const reason = form.getFieldValue('reason')
+        if (!reason || !String(reason).trim()) {
+          form.setFields([
+            {
+              name: 'reason',
+              errors: [t('quotas.validation.reason.required')],
+            },
+          ])
+          form.scrollToField('reason', { behavior: 'smooth', block: 'center' })
+          return
+        }
         handleChangeStatus(
           'approval-steps',
           [
