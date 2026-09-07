@@ -219,13 +219,13 @@ function AgreedPriceQuotaDetail() {
   )
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any) => {
+    (resource: string, values: any, successMessage?: string) => {
       mutate({
         values,
         method: 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
-          return notificationFunction(data?.data.message)
+          return notificationFunction(successMessage ?? data?.data.message)
         },
       })
     },
@@ -364,13 +364,34 @@ function AgreedPriceQuotaDetail() {
                       icon={null}
                       size={'middle'}
                       onClick={() => {
-                        handleChangeStatus('approval-steps', [
-                          {
-                            quota_id: queryBasic?.data?.id,
-                            status: 'rejected',
-                            comment: form.getFieldValue('reason'),
+                        const reason = form.getFieldValue('reason')
+                        if (!reason || !String(reason).trim()) {
+                          form.setFields([
+                            {
+                              name: 'reason',
+                              errors: [t('quotas.validation.reason.required')],
+                            },
+                          ])
+                          return
+                        }
+                        Modal.confirm({
+                          title: t('quotas.action.confirm_reject'),
+                          okText: t('buttons.confirm'),
+                          cancelText: t('buttons.cancel'),
+                          onOk: () => {
+                            handleChangeStatus(
+                              'approval-steps',
+                              [
+                                {
+                                  quota_id: queryBasic?.data?.id,
+                                  status: 'rejected',
+                                  comment: reason,
+                                },
+                              ],
+                              t('quotas.action.reject_success'),
+                            )
                           },
-                        ])
+                        })
                       }}
                     >
                       差戻
@@ -383,13 +404,24 @@ function AgreedPriceQuotaDetail() {
                       icon={null}
                       size={'middle'}
                       onClick={() => {
-                        handleChangeStatus('approval-steps', [
-                          {
-                            quota_id: queryBasic?.data?.id,
-                            status: 'approved',
-                            comment: form.getFieldValue('reason'),
+                        Modal.confirm({
+                          title: t('quotas.action.confirm_approve'),
+                          okText: t('buttons.confirm'),
+                          cancelText: t('buttons.cancel'),
+                          onOk: () => {
+                            handleChangeStatus(
+                              'approval-steps',
+                              [
+                                {
+                                  quota_id: queryBasic?.data?.id,
+                                  status: 'approved',
+                                  comment: form.getFieldValue('reason'),
+                                },
+                              ],
+                              t('quotas.action.approve_success'),
+                            )
                           },
-                        ])
+                        })
                       }}
                     >
                       承認

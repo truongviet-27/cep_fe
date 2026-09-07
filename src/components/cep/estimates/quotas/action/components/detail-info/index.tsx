@@ -55,6 +55,10 @@ function DetailInfo({
   productPrincing,
   // handleChangeProductPrincing,
   mainProduct,
+  priceReflectionChanges,
+  onPriceComputed,
+  isAwaitingPriceDecision,
+  onPricingFetchingChange,
 }: {
   isCategoryChangedByUserRef: MutableRefObject<boolean>
   confirmedCategory: QuotaCategoryEnum
@@ -62,6 +66,23 @@ function DetailInfo({
   productPrincing?: number[]
   // handleChangeProductPrincing: (productIds: number[]) => void
   mainProduct: any
+  priceReflectionChanges?: Array<{
+    parent: 'main_product' | 'optional_product'
+    index: number
+    field: 'selling_price' | 'cost_price'
+    oldPrice: number
+    newPrice: number
+  }>
+  onPriceComputed?: (
+    parent: string,
+    index: number,
+    oldPrice: number,
+    newPrice: number,
+    field?: 'selling_price' | 'cost_price',
+    productId?: number,
+  ) => void
+  isAwaitingPriceDecision?: boolean
+  onPricingFetchingChange?: (isFetching: boolean) => void
 }) {
   const t = useTranslate()
   const form = Form.useFormInstance()
@@ -316,13 +337,15 @@ function DetailInfo({
     }
   }, [productPrincing])
 
-  const { data } = useCustom<any>({
+  const pricingEnabled =
+    !!customer?.value &&
+    productPrincingState.filter((x) => x != null).length > 0
+
+  const { data, isFetching: isPricingFetching } = useCustom<any>({
     url: `${apiUrl}/products/customer-pricing/${customer?.value}`,
     method: 'get',
     queryOptions: {
-      enabled:
-        !!customer?.value &&
-        productPrincingState.filter((x) => x != null).length > 0,
+      enabled: pricingEnabled,
     },
 
     config: {
@@ -335,6 +358,10 @@ function DetailInfo({
       ],
     },
   })
+
+  useEffect(() => {
+    onPricingFetchingChange?.(pricingEnabled && isPricingFetching)
+  }, [pricingEnabled, isPricingFetching, onPricingFetchingChange])
 
   useEffect(() => {
     if (data?.data && Array.isArray(data.data)) {
@@ -844,6 +871,8 @@ function DetailInfo({
                           filterPath2={['customer']}
                           resource={`products`}
                           parent="main_product"
+                          isAwaitingDecision={isAwaitingPriceDecision}
+                          onPriceComputed={onPriceComputed}
                         />
                       </Form.Item>
                     )
@@ -872,6 +901,19 @@ function DetailInfo({
                   lineHeight: '1.2',
                 },
               }),
+              onCell: (record) => {
+                const isCostPriceChanged = priceReflectionChanges?.some(
+                  (c) =>
+                    c.parent === 'main_product' &&
+                    c.index === record.index &&
+                    c.field === 'cost_price',
+                )
+                return {
+                  style: {
+                    backgroundColor: isCostPriceChanged ? '#FFF9C4' : undefined,
+                  },
+                }
+              },
               ellipsis: true,
               render: (_, record) => {
                 if (record.isHeader) {
@@ -929,6 +971,12 @@ function DetailInfo({
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                const isPriceChanged = priceReflectionChanges?.some(
+                  (c) =>
+                    c.parent === 'main_product' &&
+                    c.index === record.index &&
+                    c.field === 'selling_price',
+                )
                 return (
                   <Form.Item
                     className="ant-form-item-hidden-margin"
@@ -956,6 +1004,7 @@ function DetailInfo({
                       style={{
                         maxWidth: '100px',
                         width: '100%',
+                        backgroundColor: isPriceChanged ? '#FFF9C4' : undefined,
                       }}
                     />
                   </Form.Item>

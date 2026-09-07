@@ -21,6 +21,8 @@ function CoreAutoComplete({
   customer,
   productsData,
   labelInValue = false,
+  isAwaitingDecision = false,
+  onPriceComputed,
   ...rest
 }: {
   resource: string
@@ -37,6 +39,15 @@ function CoreAutoComplete({
   customer: any
   productsData: any
   labelInValue?: boolean
+  isAwaitingDecision?: boolean
+  onPriceComputed?: (
+    parent: string,
+    index: number,
+    oldPrice: number,
+    newPrice: number,
+    field?: 'selling_price' | 'cost_price',
+    productId?: number,
+  ) => void
 }) {
   const t = useTranslate()
 
@@ -65,10 +76,33 @@ function CoreAutoComplete({
         (item: any) => item?.id === packageWatch?.value,
       )
       if (option) {
-        form.setFieldValue(
-          [parent, index, 'selling_price'],
-          option?.rank_prices ? option?.rank_prices : option?.selling_price,
-        )
+        const newPrice = option?.rank_prices
+          ? option?.rank_prices
+          : option?.selling_price
+        const newCostPrice =
+          (data?.cost_price ?? 0) * (option?.quantity_in_package ?? 0)
+        if (isAwaitingDecision && onPriceComputed) {
+          const oldPrice = form.getFieldValue([parent, index, 'selling_price'])
+          onPriceComputed(
+            parent,
+            index,
+            oldPrice,
+            newPrice,
+            'selling_price',
+            data?.id,
+          )
+          const oldCostPrice = form.getFieldValue([parent, index, 'cost_price'])
+          onPriceComputed(
+            parent,
+            index,
+            oldCostPrice,
+            newCostPrice,
+            'cost_price',
+            data?.id,
+          )
+        } else {
+          form.setFieldValue([parent, index, 'selling_price'], newPrice)
+        }
       }
     }
   }, [data])

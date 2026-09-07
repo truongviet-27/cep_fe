@@ -35,6 +35,11 @@ export default function Page() {
           operator: 'eq',
           value: departmentData?.id,
         },
+        {
+          field: 'active_only',
+          operator: 'eq',
+          value: true,
+        },
       ],
     },
   })
