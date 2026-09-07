@@ -1227,14 +1227,21 @@ function QuotaList() {
         },
       })
     } else if (Number(info.key) === 8) {
-      mutate({
-        values: {
-          quota_ids: selectedRows?.map((item: any) => item?.id),
-        },
-        method: 'post',
-        url: `${apiUrl}/quotas/resend-email-to-customer`,
-        successNotification: (data) => {
-          return notificationFunction(data?.data.message)
+      Modal.confirm({
+        title: t('quotas.actions.confirm_resend'),
+        okText: t('buttons.confirm'),
+        cancelText: t('buttons.cancel'),
+        onOk: () => {
+          mutate({
+            values: {
+              quota_ids: selectedRows?.map((item: any) => item?.id),
+            },
+            method: 'post',
+            url: `${apiUrl}/quotas/resend-email-to-customer`,
+            successNotification: () => {
+              return notificationFunction(t('quotas.actions.resend_success'))
+            },
+          })
         },
       })
     } else if (Number(info.key) === 9) {

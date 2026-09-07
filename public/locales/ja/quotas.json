@@ -121,8 +121,10 @@
     "create_from_template": "テンプレートから作成",
     "confirm_approve": "本当に承認しますか？",
     "confirm_reject": "本当に差戻しますか？",
+    "confirm_resend": "再送信しますか？",
     "approve_success": "承認しました。",
-    "reject_success": "差戻しました。"
+    "reject_success": "差戻しました。",
+    "resend_success": "再送信しました。"
   },
   "modal": {
     "move_to_decided_estimate": "決定見積へ移動",
