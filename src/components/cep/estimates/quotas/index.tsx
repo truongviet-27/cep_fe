@@ -739,7 +739,7 @@ function QuotaList() {
       },
       onCell: (record: any, rowIndex: any) => {
         const originalOnCell: any = column.onCell?.(record, rowIndex) || {}
-        const isSelectableColumn = column.key === 'code'
+        const isSelectableColumn = column.key !== 'action'
         return {
           ...originalOnCell,
           style: {
