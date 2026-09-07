@@ -1070,39 +1070,27 @@ const AgreedPriceQuotaTab = () => {
           </Form.Item>
 
           <Form.Item label="適用開始日" style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <Form.Item
-                name="start_date"
-                rules={[
-                  {
-                    required: !isUnlimitedModal,
-                    message: t('validation.date.start_date.required'),
-                  },
-                ]}
-                noStyle
-              >
-                <DatePicker
-                  style={{ width: '65%' }}
-                  placeholder="YYYY/MM/DD"
-                  format="YYYY/MM/DD"
-                  inputReadOnly
-                  disabled={isUnlimitedModal}
-                  disabledDate={(current) =>
-                    current && current < dayjs().startOf('day')
-                  }
-                />
-              </Form.Item>
-
-              <span
-                style={{
-                  color: '#fa8c16',
-                  fontSize: '12px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                自動で終了日の翌日
-              </span>
-            </div>
+            <Form.Item
+              name="start_date"
+              rules={[
+                {
+                  required: !isUnlimitedModal,
+                  message: t('validation.date.start_date.required'),
+                },
+              ]}
+              noStyle
+            >
+              <DatePicker
+                style={{ width: '65%' }}
+                placeholder="YYYY/MM/DD"
+                format="YYYY/MM/DD"
+                inputReadOnly
+                disabled={isUnlimitedModal}
+                disabledDate={(current) =>
+                  current && current < dayjs().startOf('day')
+                }
+              />
+            </Form.Item>
           </Form.Item>
 
           <Form.Item
