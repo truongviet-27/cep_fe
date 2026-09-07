@@ -166,7 +166,12 @@ function QuotaDetail() {
         successNotification: (data) => {
           return notificationFunction(successMessage ?? data?.data.message)
         },
-      })
+        {
+          onSuccess: () => {
+            go({ to: '/quotas' })
+          },
+        },
+      )
     },
     [t],
   )
