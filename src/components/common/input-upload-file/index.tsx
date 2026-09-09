@@ -47,7 +47,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
     try {
       // Step 1: Get presigned URL from your API
       const { data: presignedData } = await dataProvider.custom({
-        url: `${apiUrl}/v1/${commonName}/presigned-url`,
+        url: `${apiUrl}/${commonName}/presigned-url`,
         method: 'post',
         payload: {
           file_name: f.name,

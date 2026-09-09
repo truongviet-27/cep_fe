@@ -21,6 +21,10 @@ import {
 import type { ColumnsType } from 'antd/es/table'
 import { type FC, useEffect, useState } from 'react'
 
+import type {
+  TemplatePriceChange,
+  TemplatePriceChangeParent,
+} from '../../utils/price-changes'
 import { ProductCategoryModal } from '../modal/product-category'
 import PackageSelect from '../package-select'
 import { useController } from './controller'
@@ -29,9 +33,18 @@ const { Title } = Typography
 
 interface Props {
   confirmedCategory: QuotaCategoryEnum
+  priceChanges?: TemplatePriceChange[]
+  onProductChanged?: (
+    parent: TemplatePriceChangeParent,
+    oldProductId: number | null,
+  ) => void
 }
 
-const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
+const OptionalInfo: FC<Props> = ({
+  confirmedCategory,
+  priceChanges,
+  onProductChanged,
+}) => {
   const t = useTranslate()
   const {
     form,
@@ -254,9 +267,10 @@ const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
                         },
                       ]}
                       defaultValue={defaultValue}
-                      onChangeValue={(value: any) =>
+                      onChangeValue={(value: any) => {
+                        onProductChanged?.('optional_product', productId)
                         onChangeProductName(value, record.index)
-                      }
+                      }}
                       allowClear={true}
                     />
                   )
@@ -478,6 +492,18 @@ const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
               dataIndex: 'cost_price',
               key: 'cost_price',
               width: '8%',
+              onCell: (record: any) => ({
+                style: {
+                  backgroundColor: priceChanges?.some(
+                    (c) =>
+                      c.parent === 'optional_product' &&
+                      c.productId === record.product_id &&
+                      c.field === 'cost_price',
+                  )
+                    ? '#FFF9C4'
+                    : undefined,
+                },
+              }),
               render: (_, record) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
@@ -534,6 +560,12 @@ const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
                 if (record.isHeader) {
                   return { props: { colSpan: 0 } }
                 }
+                const isPriceChanged = priceChanges?.some(
+                  (c) =>
+                    c.parent === 'optional_product' &&
+                    c.productId === record.product_id &&
+                    c.field === 'selling_price',
+                )
                 return (
                   <Form.Item
                     rules={[
@@ -561,7 +593,11 @@ const OptionalInfo: FC<Props> = ({ confirmedCategory }) => {
                       className="quota-template-number-input-right"
                       min={0}
                       controls={false}
-                      style={{ width: '100%', minWidth: 0 }}
+                      style={{
+                        width: '100%',
+                        minWidth: 0,
+                        backgroundColor: isPriceChanged ? '#FFF9C4' : undefined,
+                      }}
                       title={(
                         form.getFieldValue([
                           'optional_product',
