@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // done
 import { CommentOutlined, DownOutlined, RightOutlined } from '@ant-design/icons'
+import CreateFromOldQuota from '@components/cep/estimates/quotas/action/components/popups/create-from-old-quota'
 import CreateFromTemplate from '@components/cep/estimates/quotas/action/components/popups/create-from-template'
 import StatusDashboard from '@components/cep/estimates/quotas/action/components/status-dashboard'
 import {
@@ -106,8 +107,10 @@ function QuotaList() {
   const rightOptions: ItemType[] = [
     { key: 1, label: t('quotas.actions.new_create') },
     { key: 2, label: t('quotas.actions.create_from_template') },
+    { key: 3, label: t('quotas.popups.createFromOldQuota.title') },
   ]
   const [isCreateFromTemplate, setIsCreateFromTemplate] = useState(false)
+  const [isCreateFromOldQuota, setIsCreateFromOldQuota] = useState(false)
   const [isOpenManyDelete, setIsOpenManyDelete] = useState(false)
   const [isExportingCsv, setIsExportingCsv] = useState(false)
 
@@ -1785,6 +1788,8 @@ function QuotaList() {
                         go({ to: 'quotas/create' })
                       } else if (key == '2') {
                         setIsCreateFromTemplate(true)
+                      } else if (key == '3') {
+                        setIsCreateFromOldQuota(true)
                       }
                     },
                   }}
@@ -1849,6 +1854,13 @@ function QuotaList() {
           open={isCreateFromTemplate}
           t={t}
           onClose={() => setIsCreateFromTemplate(false)}
+        />
+      )}
+      {isCreateFromOldQuota && (
+        <CreateFromOldQuota
+          open={isCreateFromOldQuota}
+          t={t}
+          onClose={() => setIsCreateFromOldQuota(false)}
         />
       )}
     </List>
