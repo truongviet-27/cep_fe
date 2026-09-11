@@ -158,13 +158,13 @@ function QuotaDetail() {
   )
 
   const handleChangeStatus = useCallback(
-    (resource: string, values: any, method?: any) => {
+    (resource: string, values: any, method?: any, successMessage?: string) => {
       mutate({
         values,
         method: method ? method : 'put',
         url: `${apiUrl}/quotas/${resource}`,
         successNotification: (data) => {
-          return notificationFunction(data?.data.message)
+          return notificationFunction(successMessage ?? data?.data.message)
         },
       })
     },
@@ -192,14 +192,6 @@ function QuotaDetail() {
         value: 'send-to-approver',
         label: t('quotas.show.actions.request_approval'),
       })
-    }
-
-    if (hasRoute && status === QuotaStatus.WaitingApproval && data?.display) {
-      actions.push({
-        value: 'approve',
-        label: t('quotas.show.actions.approve'),
-      })
-      actions.push({ value: 'reject', label: t('quotas.show.actions.reject') })
     }
 
     const canSend = hasRoute
@@ -254,6 +246,61 @@ function QuotaDetail() {
     }
   }, [queryBasic?.data])
 
+  const handleApprove = () => {
+    Modal.confirm({
+      title: t('quotas.action.confirm_approve'),
+      okText: t('buttons.confirm'),
+      cancelText: t('buttons.cancel'),
+      onOk: () => {
+        handleChangeStatus(
+          'approval-steps',
+          [
+            {
+              quota_id: queryBasic?.data?.id,
+              status: 'approved',
+              comment: form.getFieldValue('reason'),
+            },
+          ],
+          undefined,
+          t('quotas.action.approve_success'),
+        )
+      },
+    })
+  }
+
+  const handleReject = () => {
+    Modal.confirm({
+      title: t('quotas.action.confirm_reject'),
+      okText: t('buttons.confirm'),
+      cancelText: t('buttons.cancel'),
+      onOk: () => {
+        const reason = form.getFieldValue('reason')
+        if (!reason || !String(reason).trim()) {
+          form.setFields([
+            {
+              name: 'reason',
+              errors: [t('quotas.validation.reason.required')],
+            },
+          ])
+          form.scrollToField('reason', { behavior: 'smooth', block: 'center' })
+          return
+        }
+        handleChangeStatus(
+          'approval-steps',
+          [
+            {
+              quota_id: queryBasic?.data?.id,
+              status: 'rejected',
+              comment: reason,
+            },
+          ],
+          undefined,
+          t('quotas.action.reject_success'),
+        )
+      },
+    })
+  }
+
   const handleUpdateStatus = () => {
     const action =
       currentActions.length === 1 ? currentActions[0].value : selectedValue
@@ -267,26 +314,6 @@ function QuotaDetail() {
         handleChangeStatus('send-to-approver', {
           quota_ids: [quotaId],
         })
-        break
-
-      case 'approve':
-        handleChangeStatus('approval-steps', [
-          {
-            quota_id: quotaId,
-            status: 'approved',
-            comment: form.getFieldValue('reason'),
-          },
-        ])
-        break
-
-      case 'reject':
-        handleChangeStatus('approval-steps', [
-          {
-            quota_id: quotaId,
-            status: 'rejected',
-            comment: form.getFieldValue('reason'),
-          },
-        ])
         break
 
       case 'send-to-customer':
@@ -351,24 +378,14 @@ function QuotaDetail() {
         <div className="flex justify-between">
           {t('quotas.detail')}
           <div className="flex justify-end gap-2">
-            {currentActions.length > 0 && (
+            {queryBasic?.data?.status === QuotaStatus.WaitingApproval &&
+            queryBasic?.data?.display ? (
               <div className="flex gap-2">
-                {currentActions.length === 1 ? (
-                  <span className="flex items-center rounded-[6px] border border-gray-300 px-3 text-[15px] font-normal text-black">
-                    {currentActions[0].label}
-                  </span>
-                ) : (
-                  <Select
-                    style={{ minWidth: '150px' }}
-                    value={selectedValue}
-                    onChange={(val) => setSelectedValue(val)}
-                    options={currentActions}
-                  />
-                )}
                 <Button
-                  type="primary"
-                  onClick={handleUpdateStatus}
-                  autoInsertSpace={false}
+                  style={{ background: '#721C24', color: WHITE }}
+                  icon={null}
+                  size="middle"
+                  onClick={handleReject}
                   disabled={
                     isFetching ||
                     isFetchingProducts ||
@@ -377,9 +394,55 @@ function QuotaDetail() {
                     !queryBasic?.data
                   }
                 >
-                  {t('quotas.action.update_status')}
+                  {t('quotas.show.actions.reject')}
+                </Button>
+                <Button
+                  style={{ background: '#10B981', color: WHITE }}
+                  icon={null}
+                  size="middle"
+                  onClick={handleApprove}
+                  disabled={
+                    isFetching ||
+                    isFetchingProducts ||
+                    isFetchingHistory ||
+                    isFetchingCustomerContact ||
+                    !queryBasic?.data
+                  }
+                >
+                  {t('quotas.show.actions.approve')}
                 </Button>
               </div>
+            ) : (
+              currentActions.length > 0 && (
+                <div className="flex gap-2">
+                  {currentActions.length === 1 ? (
+                    <span className="flex items-center rounded-[6px] border border-gray-300 px-3 text-[15px] font-normal text-black">
+                      {currentActions[0].label}
+                    </span>
+                  ) : (
+                    <Select
+                      style={{ minWidth: '150px' }}
+                      value={selectedValue}
+                      onChange={(val) => setSelectedValue(val)}
+                      options={currentActions}
+                    />
+                  )}
+                  <Button
+                    type="primary"
+                    onClick={handleUpdateStatus}
+                    autoInsertSpace={false}
+                    disabled={
+                      isFetching ||
+                      isFetchingProducts ||
+                      isFetchingHistory ||
+                      isFetchingCustomerContact ||
+                      !queryBasic?.data
+                    }
+                  >
+                    {t('quotas.action.update_status')}
+                  </Button>
+                </div>
+              )
             )}
             <Button
               type="default"

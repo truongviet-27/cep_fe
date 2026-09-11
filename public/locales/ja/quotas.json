@@ -118,7 +118,13 @@
     "re_estimate": "再見積",
     "template_list": "見積テンプレート一覧",
     "new_create": "新規作成",
-    "create_from_template": "テンプレートから作成"
+    "create_from_template": "テンプレートから作成",
+    "confirm_approve": "本当に承認しますか？",
+    "confirm_reject": "本当に差戻しますか？",
+    "confirm_resend": "再送信しますか？",
+    "approve_success": "承認しました。",
+    "reject_success": "差戻しました。",
+    "resend_success": "再送信しました。"
   },
   "modal": {
     "move_to_decided_estimate": "決定見積へ移動",
@@ -211,7 +217,7 @@
   "action": {
     "priceReflection": {
       "message": "現在の設定に基づき、商品の単価が変更される可能性があります。最新の単価を反映しますか。",
-      "note": "※商品マスタの単価更新および取引先のランク設定のうち、該当するすべての設定内容を反映して商品の単価が変更されます。",
+      "note": "※「反映する」を選択すると、商品マスタの単価更新および取引先のランク設定のうち、該当するすべての設定内容が反映され、現在の明細および今後追加する商品の単価に適用されます。",
       "reflect": "反映する",
       "notReflect": "反映しない"
     },
@@ -248,6 +254,10 @@
       "move_to_order": "受注に移動する",
       "move_to_send": "送信済に戻る"
     },
+    "confirm_approve": "本当に承認しますか？",
+    "confirm_reject": "本当に差戻しますか？",
+    "approve_success": "承認しました。",
+    "reject_success": "差戻しました。",
     "table": {
       "step": "ステップ",
       "process_date": "処理日",
@@ -425,6 +435,9 @@
     "create_new_tag": "タグを作成"
   },
   "validation": {
+    "reason": {
+      "required": "差戻理由は必須です。"
+    },
     "basic_info": {
       "required": {
         "code": "見積番号は必須です。",
