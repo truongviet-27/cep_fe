@@ -117,19 +117,7 @@ function BasicInfoExtended({
     <Card
       title={
         <Flex justify="space-between" align="center" wrap="wrap" gap={16}>
-          <div>
-            {boldText(t('quotas.show.basic_info'), PRIMARY, 16)}
-            <span
-              style={{
-                marginLeft: 8,
-                fontSize: 14,
-                color: '#000',
-                fontWeight: 'normal',
-              }}
-            >
-              {t('agreed_prices.basic_info_note')}
-            </span>
-          </div>
+          <div>{boldText(t('quotas.show.basic_info'), PRIMARY, 16)}</div>
           {showApplicablePeriod && agreedPriceItem?.is_active && (
             <div
               style={{

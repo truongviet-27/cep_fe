@@ -31,7 +31,7 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
       if (file.status === 'done' && file.response) {
         return {
           ...file,
-          url: file.response.file_key,
+          url: file.response.url,
         }
       }
       return file
@@ -68,10 +68,20 @@ export const InputUploadFile: React.FC<CustomUploadProps> = ({
         }
       }
 
-      xhr.onload = () => {
+      xhr.onload = async () => {
         if (xhr.status === 200) {
           if (onSuccess) {
-            onSuccess({ file_key, url: presigned_url, name: file_name }, xhr)
+            let viewUrl = presigned_url
+            try {
+              const { data: downloadUrlData } = await dataProvider.custom({
+                url: `${apiUrl}/v1/files/download-url`,
+                method: 'get',
+                query: { file_key },
+              })
+              viewUrl = downloadUrlData?.presigned_url || viewUrl
+            } catch {}
+
+            onSuccess({ file_key, url: viewUrl, name: file_name }, xhr)
             notification.success({
               message: '',
               description: t('notifications.uploadSuccess'),

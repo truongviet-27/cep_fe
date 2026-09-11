@@ -53,6 +53,7 @@ export const STATUS_DATE_RULES: Record<
 
 export const DEFAULT_TAX_RATES = [
   { label: '0%', value: 0 },
+  { label: '1%', value: 1 },
   { label: '8%', value: 8 },
   { label: '10%', value: 10, isDefault: true },
 ]
