@@ -16,6 +16,7 @@ import React from 'react'
 import { Edit } from '@/components/crud/edit'
 import ShowMoreInfo from '@components/common/show-more-info'
 import boldText from '@utility/bold-text'
+import requiredLabel from '@utility/required-label'
 import { validateRankRule } from '@validate/rank'
 import AutoHeading from '@components/common/auto-heading'
 
@@ -66,7 +67,11 @@ export const RankModalEdit: React.FC<Props> = ({
       >
         <Form.Item
           required={isShow ? undefined : true}
-          label={boldText(t('ranks.fields.code'))}
+          label={boldText(
+            isShow
+              ? t('ranks.fields.code')
+              : requiredLabel(t('ranks.fields.code')),
+          )}
         >
           <Flex>
             <Form.Item
@@ -92,7 +97,11 @@ export const RankModalEdit: React.FC<Props> = ({
         <Form.Item
           className={'!-mt-3'}
           required={isShow ? undefined : true}
-          label={boldText(t('ranks.fields.name'))}
+          label={boldText(
+            isShow
+              ? t('ranks.fields.name')
+              : requiredLabel(t('ranks.fields.name')),
+          )}
           name="name"
           rules={[validateRankRule(t)]}
         >
@@ -101,7 +110,11 @@ export const RankModalEdit: React.FC<Props> = ({
 
         <Form.Item
           required={isShow ? undefined : true}
-          label={boldText(t('ranks.fields.rate'))}
+          label={boldText(
+            isShow
+              ? t('ranks.fields.rate')
+              : requiredLabel(t('ranks.fields.rate')),
+          )}
           name="rate"
           rules={[validateRankRule(t)]}
         >

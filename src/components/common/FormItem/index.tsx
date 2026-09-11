@@ -1,3 +1,4 @@
+import requiredLabel from '@utility/required-label'
 import { Form } from 'antd'
 import React, { type CSSProperties, type ReactNode } from 'react'
 
@@ -17,7 +18,7 @@ function FormItem({
   return (
     <Form.Item
       layout={layout}
-      label={label}
+      label={label && required ? requiredLabel(label) : label}
       style={{ marginBottom: 0, ...style }}
       required={required}
     >

@@ -8,6 +8,7 @@ import {
   EXPIRATION_DATE,
   PAYMENT_DUE_DATE,
 } from '@utility/constant'
+import requiredLabel from '@utility/required-label'
 import {
   Col,
   DatePicker,
@@ -81,7 +82,9 @@ const BasicInfo = ({ isCategoryChangedByUserRef }: Props) => {
           {/* Row 2: 見積タイプ (非表示) + 取引条件 + カテゴリ + 見積日(cột phải) */}
           <Form.Item
             className="hidden"
-            label={boldText(t('quota_templates.form.label.quote_type'))}
+            label={boldText(
+              requiredLabel(t('quota_templates.form.label.quote_type')),
+            )}
             colon={false}
             required
             name="type"
@@ -111,7 +114,9 @@ const BasicInfo = ({ isCategoryChangedByUserRef }: Props) => {
             labelCol={{ span: 11 }}
             wrapperCol={{ span: 16 }}
             name={'customer_term'}
-            label={boldText(t('quotas.action.basic_info.fields.customer_term'))}
+            label={boldText(
+              requiredLabel(t('quotas.action.basic_info.fields.customer_term')),
+            )}
             rules={[
               {
                 required: true,
@@ -142,7 +147,9 @@ const BasicInfo = ({ isCategoryChangedByUserRef }: Props) => {
           style={{ paddingRight: '5px' }}
         >
           <Form.Item
-            label={boldText(t('quota_templates.form.label.quote_transaction'))}
+            label={boldText(
+              requiredLabel(t('quota_templates.form.label.quote_transaction')),
+            )}
             colon={false}
             required
             labelCol={{ span: 8 }}

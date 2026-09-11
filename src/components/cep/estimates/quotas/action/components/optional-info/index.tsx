@@ -16,6 +16,7 @@ import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import type { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import requiredTableTitle from '@utility/required-table-title'
 import {
   Button,
   Card,
@@ -1011,7 +1012,9 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.detail_info.table.tax_rate'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.tax_rate'),
+              ),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
               width: '7%',

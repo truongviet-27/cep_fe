@@ -7,6 +7,7 @@ import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-
 import { ParameterResourceEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
+import requiredLabel from '@utility/required-label'
 import { PRIMARY } from '@utility/color'
 import { countryOptions, typesCompanyOptions } from '@utility/options'
 import {
@@ -94,7 +95,7 @@ function BasicInformation(
     >
       <Panel header={boldText(t('customers.show.basic_info'))} key="1">
         <Form.Item
-          label={boldText(t('customers.fields.code'))}
+          label={boldText(requiredLabel(t('customers.fields.code')))}
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           required
         >
@@ -143,7 +144,7 @@ function BasicInformation(
           </Row>
         </Form.Item>
         <Form.Item
-          label={boldText(t('customers.fields.status'))}
+          label={boldText(requiredLabel(t('customers.fields.status')))}
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           required
         >
@@ -189,7 +190,9 @@ function BasicInformation(
         </Form.Item>
 
         <Form.Item
-          label={boldText(t('customers.fields.company_classification'))}
+          label={boldText(
+            requiredLabel(t('customers.fields.company_classification')),
+          )}
           required
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
@@ -314,7 +317,7 @@ function BasicInformation(
 
         <Form.Item
           style={{ marginTop: -10 }}
-          label={boldText(t('customers.fields.name'))}
+          label={boldText(requiredLabel(t('customers.fields.name')))}
           required
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
         >
@@ -435,7 +438,9 @@ function BasicInformation(
           </Row>
         </Form.Item>
         <Form.Item
-          label={boldText(t('customers.fields.unit_price_rank_code'))}
+          label={boldText(
+            requiredLabel(t('customers.fields.unit_price_rank_code')),
+          )}
           required
           style={{ marginTop: -10 }}
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}

@@ -26,6 +26,7 @@ import { calculateTax } from '@shared/tax/tax.utils'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import requiredTableTitle from '@utility/required-table-title'
 import {
   Button,
   Card,
@@ -406,7 +407,9 @@ function DetailInfo({
         {(_, { add, remove }) => {
           const baseColumns: ColumnsType = [
             {
-              title: t('quotas.action.detail_info.table.product_code'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.product_code'),
+              ),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
@@ -516,7 +519,9 @@ function DetailInfo({
               },
             },
             {
-              title: t('quotas.action.detail_info.table.product_service_name'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.product_service_name'),
+              ),
               dataIndex: 'name',
               key: 'name',
               width: '15%',
@@ -767,7 +772,9 @@ function DetailInfo({
               },
             },
             {
-              title: t('quotas.action.detail_info.table.unit'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.unit'),
+              ),
               dataIndex: 'unit',
               key: 'unit',
               width: '7%',
@@ -950,7 +957,9 @@ function DetailInfo({
               },
             },
             {
-              title: t('quotas.action.detail_info.table.selling_price'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.selling_price'),
+              ),
               dataIndex: 'selling_price',
               key: 'selling_price',
               width: '8%',
@@ -1012,7 +1021,9 @@ function DetailInfo({
               },
             },
             {
-              title: t('quotas.action.detail_info.table.quantity'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.quantity'),
+              ),
               dataIndex: 'quantity',
               key: 'quantity',
               width: '8%',

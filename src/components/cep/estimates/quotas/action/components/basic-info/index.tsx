@@ -31,6 +31,7 @@ import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import boldText from '@utility/bold-text'
+import requiredLabel from '@utility/required-label'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
 import CreateCustomerModal from '../create-customer-modal'
@@ -264,7 +265,9 @@ const BasicInfo = ({
             <Form.Item
               required
               label={boldText(
-                t('quotas.action.basic_info.fields.estimate_number'),
+                requiredLabel(
+                  t('quotas.action.basic_info.fields.estimate_number'),
+                ),
               )}
               labelCol={{ span: 3 }}
               className="[&>.ant-row]:!flex-nowrap"
@@ -333,7 +336,9 @@ const BasicInfo = ({
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              label={boldText(t('quotas.action.basic_info.fields.customer'))}
+              label={boldText(
+                requiredLabel(t('quotas.action.basic_info.fields.customer')),
+              )}
               labelCol={{ span: 3 }}
               required
             >
@@ -402,7 +407,9 @@ const BasicInfo = ({
               name={'type'}
               className="hidden"
               label={boldText(
-                t('quotas.action.basic_info.fields.estimate_type'),
+                requiredLabel(
+                  t('quotas.action.basic_info.fields.estimate_type'),
+                ),
               )}
               labelCol={{ span: 3 }}
               rules={[
@@ -429,7 +436,9 @@ const BasicInfo = ({
               required
               name={'customer_term'}
               label={boldText(
-                t('quotas.action.basic_info.fields.customer_term'),
+                requiredLabel(
+                  t('quotas.action.basic_info.fields.customer_term'),
+                ),
               )}
               labelCol={{ span: 3 }}
               rules={[
@@ -469,7 +478,9 @@ const BasicInfo = ({
               required
               name={'category'}
               label={boldText(
-                t('quotas.action.basic_info.fields.estimate_category'),
+                requiredLabel(
+                  t('quotas.action.basic_info.fields.estimate_category'),
+                ),
               )}
               labelCol={{ span: 3 }}
               rules={[
@@ -500,8 +511,10 @@ const BasicInfo = ({
             {/* Display selected contact information with validation */}
             <Form.Item
               label={boldText(
-                t(
-                  'quotas.action.customer_contact_modal.selected_contact_label',
+                requiredLabel(
+                  t(
+                    'quotas.action.customer_contact_modal.selected_contact_label',
+                  ),
                 ),
               )}
               name="customer_contact_id"
@@ -601,7 +614,9 @@ const BasicInfo = ({
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               required
-              label={boldText(t('quotas.action.basic_info.fields.title'))}
+              label={boldText(
+                requiredLabel(t('quotas.action.basic_info.fields.title')),
+              )}
               name={'title'}
               labelCol={{ span: 3 }}
               rules={[
@@ -646,7 +661,9 @@ const BasicInfo = ({
             <Form.Item
               name={'issue_date'}
               label={boldText(
-                t('quotas.action.basic_info.fields.estimate_date'),
+                requiredLabel(
+                  t('quotas.action.basic_info.fields.estimate_date'),
+                ),
               )}
               labelCol={{ span: 3 }}
               required
@@ -927,7 +944,9 @@ const BasicInfo = ({
               name="consumption_tax"
               className="hidden"
               label={boldText(
-                t('quotas.action.basic_info.fields.consumption_tax'),
+                requiredLabel(
+                  t('quotas.action.basic_info.fields.consumption_tax'),
+                ),
               )}
               style={{ marginBottom: 0, flex: 1 }}
               rules={[

@@ -11,6 +11,7 @@ import type { CodeIssueSetting, Department } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { DEPARTMENT_DEFAULT } from '@utility/constant'
+import requiredLabel from '@utility/required-label'
 import { Button, Form, Input, Modal, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
@@ -161,7 +162,9 @@ export default function DepartmentEdit() {
         <Form.Item
           required
           label={
-            <Text strong>{t('departments.list.columns.department_code')}</Text>
+            <Text strong>
+              {requiredLabel(t('departments.list.columns.department_code'))}
+            </Text>
           }
           style={{ marginBottom: 16 }}
         >
@@ -242,7 +245,9 @@ export default function DepartmentEdit() {
         </Form.Item>
 
         <Form.Item
-          label={<Text strong>{t('departments.fields.name')}</Text>}
+          label={
+            <Text strong>{requiredLabel(t('departments.fields.name'))}</Text>
+          }
           name="name"
           rules={nameRules}
         >
