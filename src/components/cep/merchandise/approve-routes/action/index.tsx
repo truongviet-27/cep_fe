@@ -21,7 +21,6 @@ import {
 } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { BLACK, GREY_TAG, PRIMARY, WHITE } from '@utility/color'
-import requiredLabel from '@utility/required-label'
 import {
   Breadcrumb,
   Button,
@@ -305,9 +304,7 @@ function ApproveAction() {
             <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
               <Form.Item
                 name={'departments'}
-                label={boldText(
-                  requiredLabel(t('approve_routes.labels.department')),
-                )}
+                label={boldText(t('approve_routes.labels.department'))}
                 required
                 layout="horizontal"
                 colon={false}
@@ -596,10 +593,8 @@ function ApproveAction() {
                                           >
                                             <Form.Item
                                               label={boldText(
-                                                requiredLabel(
-                                                  t(
-                                                    'approve_routes.labels.employee',
-                                                  ),
+                                                t(
+                                                  'approve_routes.labels.employee',
                                                 ),
                                               )}
                                               name={[item2.name, 'employee_id']}

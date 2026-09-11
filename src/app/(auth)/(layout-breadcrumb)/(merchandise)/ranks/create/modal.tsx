@@ -5,7 +5,6 @@ import React from 'react'
 import { Create } from '@components/crud/create'
 import { CreateButton, useForm } from '@refinedev/antd'
 import boldText from '@utility/bold-text'
-import requiredLabel from '@utility/required-label'
 import { validateRankRule } from '@validate/rank'
 import AutoHeading from '@components/common/auto-heading'
 
@@ -73,10 +72,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
         colon={false}
         onFinish={handleFinish}
       >
-        <Form.Item
-          required
-          label={boldText(requiredLabel(t('ranks.fields.code')))}
-        >
+        <Form.Item required label={boldText(t('ranks.fields.code'))}>
           <Flex>
             <Form.Item
               required
@@ -94,7 +90,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
 
         <Form.Item
           required
-          label={boldText(requiredLabel(t('ranks.fields.name')))}
+          label={boldText(t('ranks.fields.name'))}
           name="name"
           initialValue=""
           rules={[validateRankRule(t)]}
@@ -105,7 +101,7 @@ export const RankModalCreate: React.FC<Props> = ({ modalProps }) => {
 
         <Form.Item
           required
-          label={boldText(requiredLabel(t('ranks.fields.rate')))}
+          label={boldText(t('ranks.fields.rate'))}
           name="rate"
           rules={[validateRankRule(t)]}
         >

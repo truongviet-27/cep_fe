@@ -231,9 +231,12 @@ const DetailInfo: FC<Props> = ({
       <Form.Item name={'tax_rate_group'} hidden></Form.Item>
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
+          const hasSelfCreateRow = dataSource.some((r) => r.isSelfCreate)
           const columns: ColumnsType = [
             {
-              title: requiredTableTitle('商品コード'),
+              title: hasSelfCreateRow
+                ? requiredTableTitle('商品コード')
+                : '商品コード',
               dataIndex: 'code',
               key: 'code',
               align: 'left',

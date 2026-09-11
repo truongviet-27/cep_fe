@@ -265,9 +265,7 @@ const BasicInfo = ({
             <Form.Item
               required
               label={boldText(
-                requiredLabel(
-                  t('quotas.action.basic_info.fields.estimate_number'),
-                ),
+                t('quotas.action.basic_info.fields.estimate_number'),
               )}
               labelCol={{ span: 3 }}
               className="[&>.ant-row]:!flex-nowrap"
@@ -336,9 +334,7 @@ const BasicInfo = ({
           </Col>
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
-              label={boldText(
-                requiredLabel(t('quotas.action.basic_info.fields.customer')),
-              )}
+              label={boldText(t('quotas.action.basic_info.fields.customer'))}
               labelCol={{ span: 3 }}
               required
             >
@@ -407,9 +403,7 @@ const BasicInfo = ({
               name={'type'}
               className="hidden"
               label={boldText(
-                requiredLabel(
-                  t('quotas.action.basic_info.fields.estimate_type'),
-                ),
+                t('quotas.action.basic_info.fields.estimate_type'),
               )}
               labelCol={{ span: 3 }}
               rules={[
@@ -436,9 +430,7 @@ const BasicInfo = ({
               required
               name={'customer_term'}
               label={boldText(
-                requiredLabel(
-                  t('quotas.action.basic_info.fields.customer_term'),
-                ),
+                t('quotas.action.basic_info.fields.customer_term'),
               )}
               labelCol={{ span: 3 }}
               rules={[
@@ -478,9 +470,7 @@ const BasicInfo = ({
               required
               name={'category'}
               label={boldText(
-                requiredLabel(
-                  t('quotas.action.basic_info.fields.estimate_category'),
-                ),
+                t('quotas.action.basic_info.fields.estimate_category'),
               )}
               labelCol={{ span: 3 }}
               rules={[
@@ -511,10 +501,8 @@ const BasicInfo = ({
             {/* Display selected contact information with validation */}
             <Form.Item
               label={boldText(
-                requiredLabel(
-                  t(
-                    'quotas.action.customer_contact_modal.selected_contact_label',
-                  ),
+                t(
+                  'quotas.action.customer_contact_modal.selected_contact_label',
                 ),
               )}
               name="customer_contact_id"
@@ -614,9 +602,7 @@ const BasicInfo = ({
           <Col xs={24} sm={16} md={10} lg={10} xl={10}>
             <Form.Item
               required
-              label={boldText(
-                requiredLabel(t('quotas.action.basic_info.fields.title')),
-              )}
+              label={boldText(t('quotas.action.basic_info.fields.title'))}
               name={'title'}
               labelCol={{ span: 3 }}
               rules={[
@@ -661,9 +647,7 @@ const BasicInfo = ({
             <Form.Item
               name={'issue_date'}
               label={boldText(
-                requiredLabel(
-                  t('quotas.action.basic_info.fields.estimate_date'),
-                ),
+                t('quotas.action.basic_info.fields.estimate_date'),
               )}
               labelCol={{ span: 3 }}
               required

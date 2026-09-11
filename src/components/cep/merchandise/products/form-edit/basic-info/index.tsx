@@ -10,7 +10,6 @@ import UploadImage from '@components/common/upload-image/upload-image'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import requiredLabel from '@utility/required-label'
 import {
   Button,
   Col,
@@ -166,7 +165,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
           <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
             <Form.Item
               name="resource"
-              label={boldText(requiredLabel(t('products.fields.resource')))}
+              label={boldText(t('products.fields.resource'))}
               colon={false}
               required={true}
               rules={[
@@ -269,7 +268,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             <CoreInput name="unit" hidden />
             <Form.Item
               name="unit_id"
-              label={boldText(requiredLabel(t('products.fields.unit')))}
+              label={boldText(t('products.fields.unit'))}
               colon={false}
               required={true}
               rules={[
@@ -312,7 +311,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
         <Row className="mb-4 flex">
           <Col xs={24} sm={22} md={20} lg={16} xl={12} xxl={10}>
             <Form.Item
-              label={boldText(requiredLabel(t('products.fields.taxRate')))}
+              label={boldText(t('products.fields.taxRate'))}
               required={true}
               name="tax_rate"
               rules={[
@@ -370,7 +369,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
             <Form.Item
               className="!w-full"
               name="selling_price"
-              label={boldText(requiredLabel(t('products.fields.sellingPrice')))}
+              label={boldText(t('products.fields.sellingPrice'))}
               colon={false}
               required={true}
               layout="horizontal"

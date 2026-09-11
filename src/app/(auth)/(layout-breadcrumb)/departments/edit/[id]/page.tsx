@@ -158,9 +158,7 @@ export default function DepartmentEdit() {
         <Form.Item
           required
           label={
-            <Text strong>
-              {requiredLabel(t('departments.list.columns.department_code'))}
-            </Text>
+            <Text strong>{t('departments.list.columns.department_code')}</Text>
           }
           style={{ marginBottom: 16 }}
         >

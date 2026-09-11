@@ -10,7 +10,6 @@ import {
   INDUSTRY_OTHER_VALUE,
   industryOptions,
 } from '@utility/options'
-import requiredLabel from '@utility/required-label'
 import { Col, Collapse, DatePicker, Form, Input, Row, Select } from 'antd'
 import dayjs from 'dayjs'
 
@@ -59,7 +58,7 @@ function AddressContact(
       <Panel header={boldText(t('customers.show.address_contact'))} key="1">
         <Form.Item
           required
-          label={boldText(requiredLabel(t('customers.show.postal_code')))}
+          label={boldText(t('customers.show.postal_code'))}
           name="post_code"
           rules={[rule]}
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
@@ -72,7 +71,7 @@ function AddressContact(
         <Form.Item
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}
           required
-          label={boldText(requiredLabel(t('customers.show.address')))}
+          label={boldText(t('customers.show.address'))}
           name="address"
           rules={[rule]}
         >
