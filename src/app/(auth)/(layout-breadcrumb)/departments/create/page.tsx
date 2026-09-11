@@ -16,6 +16,7 @@ import {
 import type { CodeIssueSetting } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import requiredLabel from '@utility/required-label'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import Link from 'next/link'
@@ -154,7 +155,9 @@ export default function Page() {
       >
         <Form.Item
           required
-          label={<Text strong>{t(`departments.fields.code`)}</Text>}
+          label={
+            <Text strong>{requiredLabel(t(`departments.fields.code`))}</Text>
+          }
           style={{ marginBottom: 16 }}
         >
           <Row align="middle" gutter={[8, 8]}>
@@ -212,7 +215,9 @@ export default function Page() {
         </Form.Item>
 
         <Form.Item
-          label={<Text strong>{t('departments.fields.name')}</Text>}
+          label={
+            <Text strong>{requiredLabel(t('departments.fields.name'))}</Text>
+          }
           name="name"
           rules={nameRules}
         >

@@ -6,6 +6,7 @@ import { useTranslate } from '@refinedev/core'
 import { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import requiredTableTitle from '@utility/required-table-title'
 import type { FormInstance } from 'antd'
 import { Button, Card, Flex, Form, InputNumber, notification } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
@@ -99,7 +100,9 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               },
             },
             {
-              title: t('product_combos.productInfoTable.header.productName'),
+              title: requiredTableTitle(
+                t('product_combos.productInfoTable.header.productName'),
+              ),
               dataIndex: 'name',
               key: 'name',
               align: 'left',
@@ -211,7 +214,9 @@ const ProductInformation: React.FC<ProductInformationProps> = (props) => {
               },
             },
             {
-              title: t('quotas.action.detail_info.table.quantity'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.quantity'),
+              ),
               dataIndex: 'quantity',
               key: 'quantity',
               render: (_: unknown, __: unknown, index: number) => {

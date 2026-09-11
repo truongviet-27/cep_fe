@@ -3,6 +3,7 @@ import { getQuotaStatusStyle } from '@components/cep/estimates/quotas/utils'
 import { useForm } from '@refinedev/antd'
 import { useCreate, useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
+import requiredLabel from '@utility/required-label'
 import { Button, Col, DatePicker, Flex, Form, Row, Space, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo } from 'react'
@@ -103,7 +104,9 @@ function ModalAgreePrice({
       <Row>
         <Col xs={24}>
           <Form.Item
-            label={boldText(t('quotas.modal.agreed_price.valid_from'))}
+            label={boldText(
+              requiredLabel(t('quotas.modal.agreed_price.valid_from')),
+            )}
             name={'valid_from'}
             rules={[
               {
@@ -127,7 +130,9 @@ function ModalAgreePrice({
       <Row>
         <Col xs={24}>
           <Form.Item
-            label={boldText(t('quotas.modal.agreed_price.valid_to'))}
+            label={boldText(
+              requiredLabel(t('quotas.modal.agreed_price.valid_to')),
+            )}
             name={'valid_to'}
             rules={[
               {

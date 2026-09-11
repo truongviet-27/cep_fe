@@ -10,6 +10,7 @@ import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { typesCompanyOptions } from '@utility/options'
+import requiredLabel from '@utility/required-label'
 import { validateCustomerRule } from '@validate/customer'
 import {
   Button,
@@ -65,7 +66,10 @@ export default function BasicInformation() {
       )}
     >
       <Panel header={boldText(t('customers.show.basic_info'))} key="1">
-        <Form.Item label={boldText(t('customers.fields.code'))} required>
+        <Form.Item
+          label={boldText(requiredLabel(t('customers.fields.code')))}
+          required
+        >
           <Row align="middle" gutter={[8, 8]}>
             <Col>
               <Form.Item rules={[rule]} name="customer_code" required noStyle>
@@ -114,7 +118,10 @@ export default function BasicInformation() {
             </Col>
           </Row>
         </Form.Item>
-        <Form.Item label={boldText(t('customers.fields.status'))} required>
+        <Form.Item
+          label={boldText(requiredLabel(t('customers.fields.status')))}
+          required
+        >
           <Row align="middle" gutter={8}>
             <Col flex="none">
               <Form.Item
@@ -157,7 +164,9 @@ export default function BasicInformation() {
         </Form.Item>
 
         <Form.Item
-          label={boldText(t('customers.fields.company_classification'))}
+          label={boldText(
+            requiredLabel(t('customers.fields.company_classification')),
+          )}
           required
         >
           <Row align={'middle'} gutter={8} style={{ width: '100%' }}>
@@ -279,7 +288,7 @@ export default function BasicInformation() {
 
         <Form.Item
           style={{ marginTop: -10 }}
-          label={boldText(t('customers.fields.name'))}
+          label={boldText(requiredLabel(t('customers.fields.name')))}
           required
         >
           <Row>
@@ -309,7 +318,9 @@ export default function BasicInformation() {
         </Form.Item>
 
         <Form.Item
-          label={boldText(t('customers.fields.unit_price_rank_code'))}
+          label={boldText(
+            requiredLabel(t('customers.fields.unit_price_rank_code')),
+          )}
           required
           style={{ marginTop: -10 }}
         >

@@ -17,6 +17,7 @@ import {
 import { type QuotaAgreedPrice } from '@sdk/hey-api/types.gen'
 import { useUserStore } from '@stores/useUserStore'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
+import requiredLabel from '@utility/required-label'
 import type { TableProps } from 'antd'
 import {
   Button,
@@ -1069,7 +1070,12 @@ const AgreedPriceQuotaTab = () => {
             </span>
           </Form.Item>
 
-          <Form.Item label="適用開始日" style={{ marginBottom: 16 }}>
+          <Form.Item
+            label={
+              isUnlimitedModal ? '適用開始日' : requiredLabel('適用開始日')
+            }
+            style={{ marginBottom: 16 }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <Form.Item
                 name="start_date"
@@ -1106,7 +1112,9 @@ const AgreedPriceQuotaTab = () => {
           </Form.Item>
 
           <Form.Item
-            label="適用終了日"
+            label={
+              isUnlimitedModal ? '適用終了日' : requiredLabel('適用終了日')
+            }
             name="end_date"
             rules={[
               {
