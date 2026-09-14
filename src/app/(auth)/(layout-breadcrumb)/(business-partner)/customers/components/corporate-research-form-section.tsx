@@ -412,7 +412,10 @@ export const CorporateResearchFormSection = (
                     'company_research_information',
                     currentType.index,
                   ]),
-                  files: currentType.fileList,
+                  files: currentType.fileList.map((file) => ({
+                    ...file,
+                    url: file.response?.file_key ?? file.url,
+                  })),
                   judgement: currentType.judgement,
                   material_name: currentType.name,
                   updated_at: dayjs().format(FORMAT_DATE_CROSS),
