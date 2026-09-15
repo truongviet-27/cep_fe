@@ -329,8 +329,8 @@ function OptionalInfo({
               },
             },
             {
-              title: t(
-                'quotas.action.optional_info.table.product_service_name',
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.product_service_name'),
               ),
               dataIndex: 'name',
               key: 'name',
@@ -791,7 +791,9 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.optional_info.table.selling_price'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.selling_price'),
+              ),
               dataIndex: 'selling_price',
               key: 'selling_price',
               width: '10%',
@@ -857,7 +859,9 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.optional_info.table.quantity'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.quantity'),
+              ),
               dataIndex: 'quantity',
               key: 'quantity',
               width: '10%',
