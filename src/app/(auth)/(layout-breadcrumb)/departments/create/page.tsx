@@ -16,7 +16,6 @@ import {
 import type { CodeIssueSetting } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
-import requiredLabel from '@utility/required-label'
 import { Button, Col, Form, Input, Modal, Row, Space, Typography } from 'antd'
 import type { Rule } from 'antd/es/form'
 import Link from 'next/link'
@@ -213,9 +212,7 @@ export default function Page() {
         </Form.Item>
 
         <Form.Item
-          label={
-            <Text strong>{requiredLabel(t('departments.fields.name'))}</Text>
-          }
+          label={<Text strong>{t('departments.fields.name')}</Text>}
           name="name"
           rules={nameRules}
         >

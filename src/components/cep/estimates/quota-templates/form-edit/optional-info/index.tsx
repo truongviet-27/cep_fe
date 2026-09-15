@@ -7,6 +7,7 @@ import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import type { QuotaCategoryEnum } from '@sdk/hey-api'
 import { PRIMARY } from '@utility/color'
+import requiredTableTitle from '@utility/required-table-title'
 import {
   Button,
   Flex,
@@ -187,7 +188,7 @@ const OptionalInfo: FC<Props> = ({
               },
             },
             {
-              title: '商品・サービス名',
+              title: requiredTableTitle('商品・サービス名'),
               dataIndex: 'name',
               key: 'name',
               align: 'left',
@@ -552,7 +553,7 @@ const OptionalInfo: FC<Props> = ({
               },
             },
             {
-              title: '売単価',
+              title: requiredTableTitle('売単価'),
               dataIndex: 'selling_price',
               key: 'selling_price',
               width: '8%',
@@ -611,7 +612,7 @@ const OptionalInfo: FC<Props> = ({
               },
             },
             {
-              title: '数量',
+              title: requiredTableTitle('数量'),
               dataIndex: 'quantity',
               key: 'quantity',
               width: '8%',
