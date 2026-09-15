@@ -405,14 +405,11 @@ function DetailInfo({
 
       <Form.List name={'main_product'}>
         {(_, { add, remove }) => {
-          const hasSelfCreateRow = dataSource.some((r) => r.isSelfCreate)
           const baseColumns: ColumnsType = [
             {
-              title: hasSelfCreateRow
-                ? requiredTableTitle(
-                    t('quotas.action.detail_info.table.product_code'),
-                  )
-                : t('quotas.action.detail_info.table.product_code'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.product_code'),
+              ),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
@@ -775,9 +772,9 @@ function DetailInfo({
               },
             },
             {
-              title: hasSelfCreateRow
-                ? requiredTableTitle(t('quotas.action.detail_info.table.unit'))
-                : t('quotas.action.detail_info.table.unit'),
+              title: requiredTableTitle(
+                t('quotas.action.detail_info.table.unit'),
+              ),
               dataIndex: 'unit',
               key: 'unit',
               width: '7%',

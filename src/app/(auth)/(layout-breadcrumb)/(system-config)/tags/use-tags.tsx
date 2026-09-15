@@ -19,6 +19,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { isString } from 'lodash'
 import boldText from '@utility/bold-text'
+import requiredTableTitle from '@utility/required-table-title'
 
 export type TagRow = {
   id?: number | string
@@ -380,7 +381,7 @@ function useTags() {
 
   const columns: ColumnsType<RowVM> = [
     {
-      title: 'タグ名',
+      title: requiredTableTitle('タグ名'),
       dataIndex: 'name',
       key: 'name',
       onHeaderCell: () => ({

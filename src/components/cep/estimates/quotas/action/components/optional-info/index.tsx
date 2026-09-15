@@ -226,7 +226,9 @@ function OptionalInfo({
           const hasSelfCreateRow = dataSource.some((r) => r.isSelfCreate)
           const columns: ColumnsType = [
             {
-              title: t('quotas.action.optional_info.table.product_code'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.product_code'),
+              ),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
@@ -595,7 +597,9 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.optional_info.table.unit'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.unit'),
+              ),
               dataIndex: 'unit',
               key: 'unit',
               align: 'center',
