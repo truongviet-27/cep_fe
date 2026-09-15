@@ -223,6 +223,7 @@ function OptionalInfo({
     >
       <Form.List name={'optional_product'}>
         {(_, { add, remove }) => {
+          const hasSelfCreateRow = dataSource.some((r) => r.isSelfCreate)
           const columns: ColumnsType = [
             {
               title: t('quotas.action.optional_info.table.product_code'),
@@ -1012,9 +1013,11 @@ function OptionalInfo({
               },
             },
             {
-              title: requiredTableTitle(
-                t('quotas.action.detail_info.table.tax_rate'),
-              ),
+              title: hasSelfCreateRow
+                ? requiredTableTitle(
+                    t('quotas.action.detail_info.table.tax_rate'),
+                  )
+                : t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
               width: '7%',

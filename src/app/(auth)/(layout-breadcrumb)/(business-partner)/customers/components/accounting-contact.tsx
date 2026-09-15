@@ -3,7 +3,6 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(busines
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/styles.module.css'
 import boldText from '@utility/bold-text'
-import requiredLabel from '@utility/required-label'
 import { Collapse, Form, Input } from 'antd'
 
 const { Panel } = Collapse
@@ -27,7 +26,7 @@ function AccountingContact(
     >
       <Panel header={boldText(t('customers.show.accounting_contact'))} key="1">
         <Form.Item
-          label={boldText(requiredLabel(t('customers.show.contact_name')))}
+          label={boldText(t('customers.show.contact_name'))}
           name="person_in_charge_name"
           rules={[rule]}
           required
@@ -35,9 +34,7 @@ function AccountingContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
-          label={boldText(
-            requiredLabel(t('customers.show.contact_department')),
-          )}
+          label={boldText(t('customers.show.contact_department'))}
           name="person_in_charge_department"
           rules={[rule]}
           required
@@ -45,7 +42,7 @@ function AccountingContact(
           <Input style={{ maxWidth: 560 }} />
         </Form.Item>
         <Form.Item
-          label={boldText(requiredLabel(t('customers.show.contact_email')))}
+          label={boldText(t('customers.show.contact_email'))}
           name="person_in_charge_mail"
           rules={[rule]}
           required

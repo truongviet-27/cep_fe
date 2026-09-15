@@ -5,7 +5,6 @@ import { DownOutlined } from '@ant-design/icons'
 import styles from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/styles.module.css'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import requiredLabel from '@utility/required-label'
 import { validateCustomerRule } from '@validate/customer'
 import { Collapse, Form, Input } from 'antd'
 import React from 'react'
@@ -30,7 +29,7 @@ export default function AddressContact() {
       <Panel header={boldText(t('customers.show.address_contact'))} key="1">
         <Form.Item
           required
-          label={boldText(requiredLabel(t('customers.show.postal_code')))}
+          label={boldText(t('customers.show.postal_code'))}
           name="post_code"
           rules={[rule]}
         >
@@ -41,7 +40,7 @@ export default function AddressContact() {
         </Form.Item>
         <Form.Item
           required
-          label={boldText(requiredLabel(t('customers.show.address')))}
+          label={boldText(t('customers.show.address'))}
           name="address"
           rules={[rule]}
         >

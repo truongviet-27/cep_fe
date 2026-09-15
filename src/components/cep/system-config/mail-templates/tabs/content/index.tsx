@@ -6,7 +6,6 @@ import TextArea from 'antd/es/input/TextArea'
 import { useRef, useState } from 'react'
 import './style-email.css'
 import boldText from '@utility/bold-text'
-import requiredLabel from '@utility/required-label'
 
 function TabsContent({
   index,
@@ -80,11 +79,7 @@ function TabsContent({
       <Form.Item
         layout="vertical"
         name={`title_${index}`}
-        label={boldText(
-          isEdit
-            ? requiredLabel(t('mail_templates.form.subject'))
-            : t('mail_templates.form.subject'),
-        )}
+        label={boldText(t('mail_templates.form.subject'))}
         required={isEdit}
         rules={
           isEdit
@@ -118,11 +113,7 @@ function TabsContent({
         required={isEdit}
         label={
           <>
-            {boldText(
-              isEdit
-                ? requiredLabel(t('mail_templates.form.body'))
-                : t('mail_templates.form.body'),
-            )}
+            {boldText(t('mail_templates.form.body'))}
             {isEdit && (
               <Space
                 style={{
@@ -188,11 +179,7 @@ function TabsContent({
       <Form.Item
         layout="vertical"
         name={`signature_${index}`}
-        label={boldText(
-          isEdit
-            ? requiredLabel(t('mail_templates.form.signature.label'))
-            : t('mail_templates.form.signature.label'),
-        )}
+        label={boldText(t('mail_templates.form.signature.label'))}
         required={isEdit}
         rules={
           isEdit
