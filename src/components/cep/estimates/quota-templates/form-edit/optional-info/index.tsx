@@ -99,7 +99,7 @@ const OptionalInfo: FC<Props> = ({
 
           const columns: ColumnsType = [
             {
-              title: '商品コード',
+              title: requiredTableTitle('商品コード'),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
@@ -332,7 +332,7 @@ const OptionalInfo: FC<Props> = ({
               },
             },
             {
-              title: '単位',
+              title: requiredTableTitle('単位'),
               dataIndex: 'unit',
               key: 'unit',
               width: '5%',
