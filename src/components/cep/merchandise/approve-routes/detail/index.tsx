@@ -276,13 +276,14 @@ function ApproveDetail() {
                                           item2.name,
                                           'name',
                                         ])}
-                                        {` (${form.getFieldValue([
-                                          'steps',
-                                          item.name,
-                                          'employees',
-                                          item2.name,
-                                          'department',
-                                        ])}${employeeCode == null ? '' : ` ${employeeCode}`})`}
+                                        {employeeCode != null &&
+                                          ` (${form.getFieldValue([
+                                            'steps',
+                                            item.name,
+                                            'employees',
+                                            item2.name,
+                                            'department',
+                                          ])} ${employeeCode})`}
                                       </Space>
                                     </Col>
                                   </Row>
