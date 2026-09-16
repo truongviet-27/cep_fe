@@ -327,6 +327,7 @@ const BasicInfo: React.FC<BasicInfoProps> = (props) => {
                 options={[
                   { label: '10%', value: 10 },
                   { label: '8%', value: 8 },
+                  { label: '1%', value: 1 },
                   { label: '0%', value: 0 },
                 ]}
               />
