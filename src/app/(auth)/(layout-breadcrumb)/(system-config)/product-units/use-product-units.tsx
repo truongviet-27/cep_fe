@@ -15,6 +15,7 @@ import { PermissionEnum } from '@sdk/hey-api'
 import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import requiredTableTitle from '@utility/required-table-title'
 import { Button, Input, Modal, Space, Switch, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isString } from 'lodash'
@@ -375,7 +376,7 @@ export default function useProductUnits() {
 
   const baseColumns: ColumnsType<RowVM> = [
     {
-      title: '単位名',
+      title: requiredTableTitle('単位名'),
       dataIndex: 'name',
       key: 'name',
       align: 'left',
