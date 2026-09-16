@@ -38,7 +38,7 @@ type Form = {
     is_multi_appover: boolean
     employees: {
       employee_id: number | null
-      code: string
+      code: string | null
       name: string
       department_id: number | null
       department: string
