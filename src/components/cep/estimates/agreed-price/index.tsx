@@ -29,9 +29,6 @@ function AgreedPriceList() {
       }
       title={t('agreed_prices.title')}
     >
-      <div className="pb-[16px] text-[16px]">
-        {t('agreed_prices.description')}
-      </div>
       <AgreedPriceQuotaTab />
     </PageContainer>
   )
