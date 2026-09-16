@@ -159,21 +159,14 @@ function QuotaDetail() {
 
   const handleChangeStatus = useCallback(
     (resource: string, values: any, method?: any, successMessage?: string) => {
-      mutate(
-        {
-          values,
-          method: method ? method : 'put',
-          url: `${apiUrl}/quotas/${resource}`,
-          successNotification: (data) => {
-            return notificationFunction(successMessage ?? data?.data.message)
-          },
+      mutate({
+        values,
+        method: method ? method : 'put',
+        url: `${apiUrl}/quotas/${resource}`,
+        successNotification: (data) => {
+          return notificationFunction(successMessage ?? data?.data.message)
         },
-        {
-          onSuccess: () => {
-            go({ to: '/quotas' })
-          },
-        },
-      )
+      })
     },
     [t],
   )
