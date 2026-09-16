@@ -38,7 +38,7 @@ type Form = {
     is_multi_appover: boolean
     employees: {
       employee_id: number | null
-      code: string
+      code: string | null
       name: string
       department_id: number | null
       department: string
@@ -239,6 +239,13 @@ function ApproveDetail() {
                           return (
                             <div className="mt-4 ml-6 flex flex-col gap-4">
                               {fields2.map((item2) => {
+                                const employeeCode = form.getFieldValue([
+                                  'steps',
+                                  item.name,
+                                  'employees',
+                                  item2.name,
+                                  'code',
+                                ])
                                 const _isDeleted = form.getFieldValue([
                                   'steps',
                                   item.name,
@@ -275,16 +282,7 @@ function ApproveDetail() {
                                           'employees',
                                           item2.name,
                                           'department',
-                                        ])}
-                                        ${
-                                          form.getFieldValue([
-                                            'steps',
-                                            item.name,
-                                            'employees',
-                                            item2.name,
-                                            'code',
-                                          ]) ?? '未設定'
-                                        })`}
+                                        ])}${employeeCode == null ? '' : ` ${employeeCode}`})`}
                                       </Space>
                                     </Col>
                                   </Row>
