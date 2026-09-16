@@ -30,6 +30,8 @@ export const customDataProvider = (
       _per_page?: number
       _sort?: string
       _order?: string
+      sort_by?: string
+      sort_direction?: string
     } = {}
 
     if (mode === 'server') {
@@ -42,6 +44,11 @@ export const customDataProvider = (
       const { _sort, _order } = generatedSort
       query._sort = _sort.join(',')
       query._order = _order.join(',')
+    }
+
+    if (resource === 'customers' && !generatedSort) {
+      query.sort_by = 'customer_code'
+      query.sort_direction = 'asc'
     }
 
     const combinedQuery = { ...query, ...queryFilters }
