@@ -4,6 +4,7 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(busines
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import { CoreAutocompleteAPI } from '@components/common/autocomplete-api'
 import boldText from '@utility/bold-text'
+import { RED } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
 import {
   fieldDistinctionOptions,
@@ -55,7 +56,15 @@ function AddressContact(
         />
       )}
     >
-      <Panel header={boldText(t('customers.show.address_contact'))} key="1">
+      <Panel
+        header={boldText(
+          <>
+            {t('customers.show.address_contact')}{' '}
+            <span style={{ color: RED }}>*</span>
+          </>,
+        )}
+        key="1"
+      >
         <Form.Item
           required
           label={boldText(t('customers.show.postal_code'))}
