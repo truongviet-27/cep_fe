@@ -20,7 +20,7 @@
     "packagingCode": "荷姿コード",
     "packagingName": "荷姿名",
     "status": "ステータス",
-    "quantity": "入数",
+    "quantity": "数量",
     "standardPrice": "標準価格 (円)",
     "isStandard": "標準同額",
     "actions": "操作",

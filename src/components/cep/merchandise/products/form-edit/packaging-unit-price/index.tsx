@@ -118,6 +118,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               dataIndex: 'name',
               width: 15,
               align: 'left',
+              onHeaderCell: centerHeaderCell,
               className: '!content-start',
               render: (_: unknown, __: unknown, index: number) => (
                 <>

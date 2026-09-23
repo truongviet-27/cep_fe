@@ -242,7 +242,7 @@
     }
   },
   "barcode": {
-    "number_only": "バーコードは数字のみで入力してください"
+    "number_only": "バーコードは数字のみで入力してください。"
   },
   "date": {
     "end_date": {
