@@ -133,6 +133,10 @@ const OptionalInfo: FC<Props> = ({
                     className="ant-form-item-hidden-margin"
                     rules={[
                       {
+                        required: true,
+                        message: '',
+                      },
+                      {
                         whitespace: true,
                         message: '',
                       },
@@ -281,6 +285,10 @@ const OptionalInfo: FC<Props> = ({
                     className="ant-form-item-hidden-margin"
                     rules={[
                       {
+                        required: true,
+                        message: '',
+                      },
+                      {
                         whitespace: true,
                         message: '',
                       },
@@ -358,6 +366,10 @@ const OptionalInfo: FC<Props> = ({
                     name={[record.index, 'unit_name']}
                     className="ant-form-item-hidden-margin"
                     rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
                       {
                         whitespace: true,
                         message: '',

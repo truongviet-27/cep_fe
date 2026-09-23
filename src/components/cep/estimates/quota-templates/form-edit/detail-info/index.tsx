@@ -496,6 +496,10 @@ const DetailInfo: FC<Props> = ({
                     className="ant-form-item-hidden-margin"
                     rules={[
                       {
+                        required: true,
+                        message: '',
+                      },
+                      {
                         whitespace: true,
                         message: '',
                       },

@@ -275,6 +275,10 @@ function OptionalInfo({
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
+                          required: true,
+                          message: '',
+                        },
+                        {
                           whitespace: true,
                           message: '',
                         },
@@ -545,6 +549,10 @@ function OptionalInfo({
                       className="ant-form-item-hidden-margin"
                       rules={[
                         {
+                          required: true,
+                          message: '',
+                        },
+                        {
                           whitespace: true,
                           message: '',
                         },
@@ -625,6 +633,10 @@ function OptionalInfo({
                       name={[record.index, 'unit']}
                       className="ant-form-item-hidden-margin"
                       rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
                         {
                           whitespace: true,
                           message: '',
