@@ -7,6 +7,7 @@ import React from 'react'
 import { Edit } from '@/components/crud/edit'
 import { buildCodePreviewFromSetting } from '@app/(auth)/(layout-breadcrumb)/(system-config)/code-issue-settings/edit/utils'
 import ShowMoreInfo from '@components/common/show-more-info'
+import requiredLabel from '@utility/required-label'
 
 type Props = {
   modalProps: any
@@ -40,7 +41,7 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
         colon={false}
       >
         <Form.Item
-          label={t('ranks.fields.code')}
+          label={requiredLabel(t('ranks.fields.code'))}
           name="code"
           rules={[{ required: true }]}
         >
@@ -48,7 +49,7 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.name')}
+          label={requiredLabel(t('ranks.fields.name'))}
           name="name"
           rules={[{ required: true }]}
         >
@@ -56,7 +57,7 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.rate')}
+          label={requiredLabel(t('ranks.fields.rate'))}
           name="rate"
           rules={[{ required: true }]}
         >
@@ -64,7 +65,7 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.remarks')}
+          label={requiredLabel(t('ranks.fields.remarks'))}
           name="remarks"
           rules={[{ required: true }]}
         >
@@ -72,7 +73,7 @@ export const CategoryModal: React.FC<Props> = ({ modalProps }) => {
         </Form.Item>
 
         <Form.Item
-          label={t('ranks.fields.serial_length')}
+          label={requiredLabel(t('ranks.fields.serial_length'))}
           name="serial_length"
           rules={[{ required: true }]}
         >

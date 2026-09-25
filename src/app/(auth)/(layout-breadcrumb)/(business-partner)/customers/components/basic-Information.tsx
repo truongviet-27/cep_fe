@@ -9,6 +9,7 @@ import { useUserStore } from '@stores/useUserStore'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
 import { countryOptions, typesCompanyOptions } from '@utility/options'
+import requiredTableTitle from '@utility/required-table-title'
 import {
   Button,
   Col,
@@ -92,7 +93,10 @@ function BasicInformation(
         />
       )}
     >
-      <Panel header={boldText(t('customers.show.basic_info'))} key="1">
+      <Panel
+        header={boldText(requiredTableTitle(t('customers.show.basic_info')))}
+        key="1"
+      >
         <Form.Item
           label={boldText(t('customers.fields.code'))}
           labelCol={{ xs: 24, sm: 24, md: 4, lg: 3, xl: 2 }}

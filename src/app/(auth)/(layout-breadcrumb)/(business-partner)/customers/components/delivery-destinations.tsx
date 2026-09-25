@@ -6,6 +6,8 @@ import type { useCustomerCreate } from '@app/(auth)/(layout-breadcrumb)/(busines
 import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-partner)/customers/edit/[id]/use-customers-edit'
 import CommonTable from '@components/common/table'
 import boldText from '@utility/bold-text'
+import requiredTableTitle from '@utility/required-table-title'
+import { RED } from '@utility/color'
 import { Button, Collapse, Form, Input, Space } from 'antd'
 import React, { useEffect } from 'react'
 import styles from '../styles.module.css'
@@ -71,7 +73,12 @@ function DeliveryDestinations(
       )}
     >
       <Panel
-        header={boldText(t('customers.show.delivery_destinations'))}
+        header={boldText(
+          <>
+            {t('customers.show.delivery_destinations')}{' '}
+            <span style={{ color: RED }}>*</span>
+          </>,
+        )}
         key="1"
       >
         <Form.List name="delivery_addresses">
@@ -108,10 +115,9 @@ function DeliveryDestinations(
                     ),
                   },
                   {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.delivery.name')}
-                      </span>
+                    title: requiredTableTitle(
+                      t('customers.delivery.name'),
+                      styles.tableTitle,
                     ),
                     key: 'name',
                     width: '16%',
@@ -144,10 +150,9 @@ function DeliveryDestinations(
                     ),
                   },
                   {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.delivery.post_code')}
-                      </span>
+                    title: requiredTableTitle(
+                      t('customers.delivery.post_code'),
+                      styles.tableTitle,
                     ),
                     key: 'post_code',
                     width: '12%',
@@ -179,10 +184,9 @@ function DeliveryDestinations(
                     ),
                   },
                   {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.delivery.address')}
-                      </span>
+                    title: requiredTableTitle(
+                      t('customers.delivery.address'),
+                      styles.tableTitle,
                     ),
                     key: 'address',
                     width: '28%',
