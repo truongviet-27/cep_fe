@@ -16,6 +16,7 @@ import { useApiUrl, useCustom, useTranslate } from '@refinedev/core'
 import type { QuotaCategoryEnum } from '@sdk/hey-api'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import requiredTableTitle from '@utility/required-table-title'
 import {
   Button,
   Card,
@@ -222,9 +223,12 @@ function OptionalInfo({
     >
       <Form.List name={'optional_product'}>
         {(_, { add, remove }) => {
+          const hasSelfCreateRow = dataSource.some((r) => r.isSelfCreate)
           const columns: ColumnsType = [
             {
-              title: t('quotas.action.optional_info.table.product_code'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.product_code'),
+              ),
               dataIndex: 'code',
               key: 'code',
               align: 'left',
@@ -327,8 +331,8 @@ function OptionalInfo({
               },
             },
             {
-              title: t(
-                'quotas.action.optional_info.table.product_service_name',
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.product_service_name'),
               ),
               dataIndex: 'name',
               key: 'name',
@@ -593,7 +597,9 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.optional_info.table.unit'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.unit'),
+              ),
               dataIndex: 'unit',
               key: 'unit',
               align: 'center',
@@ -789,7 +795,9 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.optional_info.table.selling_price'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.selling_price'),
+              ),
               dataIndex: 'selling_price',
               key: 'selling_price',
               width: '10%',
@@ -855,7 +863,9 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.optional_info.table.quantity'),
+              title: requiredTableTitle(
+                t('quotas.action.optional_info.table.quantity'),
+              ),
               dataIndex: 'quantity',
               key: 'quantity',
               width: '10%',
@@ -1011,7 +1021,11 @@ function OptionalInfo({
               },
             },
             {
-              title: t('quotas.action.detail_info.table.tax_rate'),
+              title: hasSelfCreateRow
+                ? requiredTableTitle(
+                    t('quotas.action.detail_info.table.tax_rate'),
+                  )
+                : t('quotas.action.detail_info.table.tax_rate'),
               dataIndex: 'tax_rate',
               key: 'tax_rate',
               width: '7%',
