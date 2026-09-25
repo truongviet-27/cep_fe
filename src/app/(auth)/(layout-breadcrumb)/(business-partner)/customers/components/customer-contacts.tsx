@@ -5,7 +5,6 @@ import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-
 import CommonTable from '@components/common/table'
 import { useParsed } from '@refinedev/core'
 import boldText from '@utility/bold-text'
-import { RED } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
 import requiredTableTitle from '@utility/required-table-title'
 import { Button, Collapse, Form, Input, Space, Tooltip } from 'antd'
@@ -35,12 +34,7 @@ function CustomerContacts(
       )}
     >
       <Panel
-        header={boldText(
-          <>
-            {t('customers.receivers.title')}{' '}
-            <span style={{ color: RED }}>*</span>
-          </>,
-        )}
+        header={boldText(t('customers.receivers.title'))}
         key="1"
         forceRender
       >
