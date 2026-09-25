@@ -40,6 +40,7 @@ export default function EmployeeEdit() {
 
   const codeRules: Rule[] = useMemo(
     () => [
+      { required: true, message: '社員コードは必須です。' },
       {
         pattern: /^[A-Z0-9-]+$/,
         message:
@@ -162,7 +163,7 @@ export default function EmployeeEdit() {
         colon={false}
         autoComplete="off"
       >
-        <Form.Item label={boldText(t('employees.fields.code'))}>
+        <Form.Item label={boldText(t('employees.fields.code'))} required>
           <div
             style={{
               display: 'flex',
