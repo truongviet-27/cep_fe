@@ -14,6 +14,7 @@ import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils
 import { FORMAT_DATE_CROSS } from '@utility/instances'
 import boldText from '@utility/bold-text'
 import { PRIMARY } from '@utility/color'
+import requiredTableTitle from '@utility/required-table-title'
 
 interface CustomerContactSelectionModalProps {
   open: boolean
@@ -225,10 +226,8 @@ function CustomerContactSelectionModal({
         },
       },
       {
-        title: (
-          <span>
-            {t('quotas.action.customer_contact_modal.contact_person_name')}
-          </span>
+        title: requiredTableTitle(
+          t('quotas.action.customer_contact_modal.contact_person_name'),
         ),
         dataIndex: 'contact_person_name',
         key: 'contact_person_name',
@@ -270,7 +269,9 @@ function CustomerContactSelectionModal({
         },
       },
       {
-        title: <span>{t('quotas.action.customer_contact_modal.email')}</span>,
+        title: requiredTableTitle(
+          t('quotas.action.customer_contact_modal.email'),
+        ),
         dataIndex: 'email',
         key: 'email',
         width: '25%',

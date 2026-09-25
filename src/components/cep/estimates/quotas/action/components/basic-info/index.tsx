@@ -31,6 +31,7 @@ import { getExpiryDate } from '@components/cep/estimates/quotas/utils'
 import CustomerContactSelectionModal from '@components/cep/estimates/quotas/action/components/customer-contact-modal'
 import { axiosInstance } from '@providers/data-provider/rest-data-provider/utils/axios'
 import boldText from '@utility/bold-text'
+import requiredLabel from '@utility/required-label'
 import { PRIMARY } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
 import CreateCustomerModal from '../create-customer-modal'
@@ -927,7 +928,9 @@ const BasicInfo = ({
               name="consumption_tax"
               className="hidden"
               label={boldText(
-                t('quotas.action.basic_info.fields.consumption_tax'),
+                requiredLabel(
+                  t('quotas.action.basic_info.fields.consumption_tax'),
+                ),
               )}
               style={{ marginBottom: 0, flex: 1 }}
               rules={[

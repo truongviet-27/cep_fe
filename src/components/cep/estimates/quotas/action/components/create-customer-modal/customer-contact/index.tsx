@@ -7,6 +7,7 @@ import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
 import boldText from '@utility/bold-text'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
+import requiredTableTitle from '@utility/required-table-title'
 import { Button, Collapse, Form, Input, Space } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -75,10 +76,9 @@ export default function CustomerContact() {
                     ),
                   },
                   {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.receivers.contact_person_name')}
-                      </span>
+                    title: requiredTableTitle(
+                      t('customers.receivers.contact_person_name'),
+                      styles.tableTitle,
                     ),
                     key: 'contact_person_name',
                     width: '25%',
@@ -106,10 +106,9 @@ export default function CustomerContact() {
                     ),
                   },
                   {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.receivers.email')}
-                      </span>
+                    title: requiredTableTitle(
+                      t('customers.receivers.email'),
+                      styles.tableTitle,
                     ),
                     width: '30%',
                     key: 'email',

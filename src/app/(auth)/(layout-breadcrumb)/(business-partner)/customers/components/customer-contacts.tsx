@@ -5,7 +5,9 @@ import type { useCustomerEdit } from '@app/(auth)/(layout-breadcrumb)/(business-
 import CommonTable from '@components/common/table'
 import { useParsed } from '@refinedev/core'
 import boldText from '@utility/bold-text'
+import { RED } from '@utility/color'
 import { FORMAT_DATE_CROSS } from '@utility/instances'
+import requiredTableTitle from '@utility/required-table-title'
 import { Button, Collapse, Form, Input, Space, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -33,7 +35,12 @@ function CustomerContacts(
       )}
     >
       <Panel
-        header={boldText(t('customers.receivers.title'))}
+        header={boldText(
+          <>
+            {t('customers.receivers.title')}{' '}
+            <span style={{ color: RED }}>*</span>
+          </>,
+        )}
         key="1"
         forceRender
       >
@@ -79,10 +86,9 @@ function CustomerContacts(
                     ),
                   },
                   {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.receivers.contact_person_name')}
-                      </span>
+                    title: requiredTableTitle(
+                      t('customers.receivers.contact_person_name'),
+                      styles.tableTitle,
                     ),
                     key: 'contact_person_name',
                     width: '18%',
@@ -110,10 +116,9 @@ function CustomerContacts(
                     ),
                   },
                   {
-                    title: (
-                      <span className={styles.tableTitle}>
-                        {t('customers.receivers.email')}
-                      </span>
+                    title: requiredTableTitle(
+                      t('customers.receivers.email'),
+                      styles.tableTitle,
                     ),
                     key: 'email',
                     width: '36%',

@@ -239,6 +239,13 @@ function ApproveDetail() {
                           return (
                             <div className="mt-4 ml-6 flex flex-col gap-4">
                               {fields2.map((item2) => {
+                                const department = form.getFieldValue([
+                                  'steps',
+                                  item.name,
+                                  'employees',
+                                  item2.name,
+                                  'department',
+                                ])
                                 const _isDeleted = form.getFieldValue([
                                   'steps',
                                   item.name,
@@ -269,20 +276,7 @@ function ApproveDetail() {
                                           item2.name,
                                           'name',
                                         ])}
-                                        {` (${form.getFieldValue([
-                                          'steps',
-                                          item.name,
-                                          'employees',
-                                          item2.name,
-                                          'department',
-                                        ])}
-                                        ${form.getFieldValue([
-                                          'steps',
-                                          item.name,
-                                          'employees',
-                                          item2.name,
-                                          'code',
-                                        ])})`}
+                                        {department && ` (${department})`}
                                       </Space>
                                     </Col>
                                   </Row>

@@ -6,6 +6,7 @@ import { Action } from '@components/common/action'
 import CoreInput from '@components/common/core-input'
 import CommonTable from '@components/common/table'
 import { useTranslate } from '@refinedev/core'
+import requiredTableTitle from '@utility/required-table-title'
 import type { FormInstance } from 'antd'
 import { Button, Checkbox, Form, Input, InputNumber, notification } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -114,7 +115,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               ),
             },
             {
-              title: t('products.fields.packagingName'),
+              title: requiredTableTitle(t('products.fields.packagingName')),
               dataIndex: 'name',
               width: 15,
               align: 'left',
@@ -227,7 +228,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               ),
             },
             {
-              title: t('products.fields.quantity'),
+              title: requiredTableTitle(t('products.fields.quantity')),
               dataIndex: 'quantity_in_package',
               width: 10,
               className: '!content-start',
@@ -343,7 +344,7 @@ const PackagingUnitPrice: React.FC<PackagingUnitPriceProps> = (props) => {
               ),
             },
             {
-              title: t('products.fields.sellingPrice'),
+              title: requiredTableTitle(t('products.fields.sellingPrice')),
               dataIndex: 'selling_price',
               width: 10,
               className: '!content-start',
