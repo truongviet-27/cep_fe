@@ -162,7 +162,7 @@ export default function EmployeeEdit() {
         colon={false}
         autoComplete="off"
       >
-        <Form.Item label={boldText(t('employees.fields.code'))} required>
+        <Form.Item label={boldText(t('employees.fields.code'))} required={true}>
           <div
             style={{
               display: 'flex',
