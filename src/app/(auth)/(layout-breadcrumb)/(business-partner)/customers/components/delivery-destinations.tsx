@@ -73,7 +73,12 @@ function DeliveryDestinations(
       )}
     >
       <Panel
-        header={boldText(t('customers.show.delivery_destinations'))}
+        header={boldText(
+          <>
+            {t('customers.show.delivery_destinations')}{' '}
+            <span style={{ color: RED }}>*</span>
+          </>,
+        )}
         key="1"
       >
         <Form.List name="delivery_addresses">
